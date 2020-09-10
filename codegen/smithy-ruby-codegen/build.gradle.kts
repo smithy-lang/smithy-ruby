@@ -18,7 +18,6 @@ extra["displayName"] = "Smithy :: Ruby :: Codegen"
 extra["moduleName"] = "software.amazon.smithy.ruby.codegen"
 
 dependencies {
-    api("software.amazon.smithy:smithy-aws-traits:0.9.7")
-    implementation("software.amazon.smithy:smithy-codegen-core:0.9.7")
-    implementation("com.google.guava:guava:28.2-jre")
+    api("software.amazon.smithy:smithy-codegen-core:[1.0.10,1.1.0[")
+    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
 }

@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.logging.Logger;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 
@@ -29,8 +30,9 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
 
     @Override
     public void execute(PluginContext context) {
-        var fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.getFileManifest();
         LOGGER.info("test");
+        fileManifest.writeFile("foo.txt", "bar");
         System.out.println(fileManifest);
     }
 }
