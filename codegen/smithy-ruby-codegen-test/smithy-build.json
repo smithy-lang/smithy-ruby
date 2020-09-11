@@ -3,8 +3,12 @@
   "plugins": {
     "ruby-codegen": {
       "service": "example.weather#Weather",
-      "module": "weather",
-      "moduleVersion": "0.0.1"
+      "module": "Weather",
+      "gemspec": {
+        "gemName": "weather",
+        "gemVersion": "0.0.1",
+        "gemSummary": "Weather Service"
+      }
     }
   }
 }

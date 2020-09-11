@@ -30,10 +30,16 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
 
     @Override
     public void execute(PluginContext context) {
+        RubySettings rubySettings = RubySettings.from(context.getSettings());
         FileManifest fileManifest = context.getFileManifest();
-        LOGGER.info("test");
-        fileManifest.writeFile("foo.txt", "bar");
-        System.out.println(fileManifest);
+
+        GemspecWriter gemspecWriter = new GemspecWriter(rubySettings);
+        gemspecWriter.render(fileManifest);
+        LOGGER.info("wrote .gemspec");
+
+//        GemWriter gemWriter = new GemWriter(rubySettings);
+//        gemWriter.render(fileManifest);
+//        LOGGER.info("created gem");
     }
 }
 
