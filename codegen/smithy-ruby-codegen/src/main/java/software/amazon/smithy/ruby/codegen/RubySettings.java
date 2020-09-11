@@ -17,8 +17,6 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
-import lombok.Getter;
-import lombok.Setter;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -30,18 +28,16 @@ public final class RubySettings {
 
     private static final String SERVICE = "service";
     private static final String MODULE = "module";
-    private static final String NAMESPACE = "namespace";
     private static final String GEMSPEC = "gemspec";
     private static final String GEM_NAME = "gemName";
     private static final String GEM_VERSION = "gemVersion";
     private static final String GEM_SUMMARY = "gemSummary";
 
-    @Getter @Setter private ShapeId service;
-    @Getter @Setter private String module;
-    @Getter @Setter private String namespace;
-    @Getter @Setter private String gemName;
-    @Getter @Setter private String gemVersion;
-    @Getter @Setter private String gemSummary;
+    private ShapeId service;
+    private String module;
+    private String gemName;
+    private String gemVersion;
+    private String gemSummary;
 
     /**
      * Create a settings object from a configuration object node.
@@ -52,12 +48,11 @@ public final class RubySettings {
     public static RubySettings from(ObjectNode config) {
         RubySettings settings = new RubySettings();
         config.warnIfAdditionalProperties(
-                Arrays.asList(SERVICE, MODULE, NAMESPACE, GEMSPEC, GEM_NAME, GEM_VERSION, GEM_SUMMARY));
+                Arrays.asList(SERVICE, MODULE, GEMSPEC, GEM_NAME, GEM_VERSION, GEM_SUMMARY));
 
         settings.setService(config.expectStringMember(SERVICE).expectShapeId());
         // module and namespace
         settings.setModule(config.expectStringMember(MODULE).getValue());
-        // config.getStringMember(NAMESPACE).ifPresent(s -> settings.setNamespace(s.getValue()));
         // required gemspec values
         ObjectNode gemspec = config.expectObjectMember(GEMSPEC);
         settings.setGemName(gemspec.expectStringMember(GEM_NAME).getValue());
@@ -67,5 +62,45 @@ public final class RubySettings {
         LOGGER.info("Created Ruby Settings: " + settings.toString());
 
         return settings;
+    }
+
+    public ShapeId getService() {
+        return service;
+    }
+
+    public void setService(ShapeId service) {
+        this.service = service;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public String getGemName() {
+        return gemName;
+    }
+
+    public void setGemName(String gemName) {
+        this.gemName = gemName;
+    }
+
+    public String getGemVersion() {
+        return gemVersion;
+    }
+
+    public void setGemVersion(String gemVersion) {
+        this.gemVersion = gemVersion;
+    }
+
+    public String getGemSummary() {
+        return gemSummary;
+    }
+
+    public void setGemSummary(String gemSummary) {
+        this.gemSummary = gemSummary;
     }
 }

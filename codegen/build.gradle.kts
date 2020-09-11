@@ -21,7 +21,6 @@ plugins {
     jacoco
     id("com.github.spotbugs") version "1.6.10"
     id("io.codearte.nexus-staging") version "0.21.0"
-    id("io.freefair.lombok") version "5.2.1"
 }
 
 allprojects {
@@ -254,11 +253,5 @@ subprojects {
                 html.setEnabled(true)
             }
         }
-
-        /*
-         * Lombok
-         * ====================================================
-         */
-        apply(plugin = "io.freefair.lombok")
     }
 }
