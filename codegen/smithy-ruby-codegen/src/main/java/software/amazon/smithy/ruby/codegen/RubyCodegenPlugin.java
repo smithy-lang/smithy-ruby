@@ -37,9 +37,9 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         gemspecWriter.render(fileManifest);
         LOGGER.info("wrote .gemspec");
 
-//        GemWriter gemWriter = new GemWriter(rubySettings);
-//        gemWriter.render(fileManifest);
-//        LOGGER.info("created gem");
+        ModuleWriter moduleWriter = new ModuleWriter(rubySettings);
+        moduleWriter.render(fileManifest);
+        LOGGER.info("created module");
     }
 }
 
