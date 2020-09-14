@@ -13,37 +13,34 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen;
+package software.amazon.smithy.ruby.codegen.generators;
 
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.CodeWriter;
 
-public class ModuleWriter {
+public class GemspecGenerator {
+
     private final RubySettings settings;
 
-    public ModuleWriter(RubySettings settings) {
+    public GemspecGenerator(RubySettings settings) {
         this.settings = settings;
     }
 
     public void render(FileManifest fileManifest) {
         CodeWriter writer = RubyCodeWriter.createDefault();
-
-        writer.write("require 'aws-sdk-core'")
-                .write("require 'aws-sigv4'\n");
-
-        String[] requires = {"types", "client_api", "client", "errors", "waiters", "customizations"};
-
-        for (String require : requires) {
-            writer.write("require_relative '$L/$L'", settings.getGemName(), require);
-        }
-
-        writer.write("");
-
-        writer.openBlock("module $L", settings.getModule())
-                .write("GEM_VERSION = '$L'", settings.getGemVersion())
+        writer.openBlock("Gem::Specification.new do |spec|")
+                .write("spec.name          = '$L'", settings.getGemName())
+                .write("spec.version       = '$L'", settings.getGemVersion())
+                .write("spec.author        = 'Amazon Web Services'")
+                .write("spec.summary       = '$L'", settings.getGemSummary())
+                .write("spec.files         = Dir['lib/**/*.rb']")
+                .write("spec.add_dependency('aws-sdk-core', '~> 4')")
+                .write("spec.add_dependency('aws-sigv4', '~> 2')")
                 .closeBlock("end");
 
-        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
+        String fileName = settings.getGemName() + "/" + settings.getGemName() + ".gemspec";
 
         fileManifest.writeFile(fileName, writer.toString());
     }

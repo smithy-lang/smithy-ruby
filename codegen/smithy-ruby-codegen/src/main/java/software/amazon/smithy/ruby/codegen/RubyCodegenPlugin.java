@@ -16,9 +16,15 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
+import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 
 public final class RubyCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER = Logger.getLogger(RubyCodegenPlugin.class.getName());
@@ -33,13 +39,19 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         RubySettings rubySettings = RubySettings.from(context.getSettings());
         FileManifest fileManifest = context.getFileManifest();
 
-        GemspecWriter gemspecWriter = new GemspecWriter(rubySettings);
-        gemspecWriter.render(fileManifest);
+        GemspecGenerator gemspecGenerator = new GemspecGenerator(rubySettings);
+        gemspecGenerator.render(fileManifest);
         LOGGER.info("wrote .gemspec");
 
-        ModuleWriter moduleWriter = new ModuleWriter(rubySettings);
-        moduleWriter.render(fileManifest);
+        ModuleGenerator moduleGenerator = new ModuleGenerator(rubySettings);
+        moduleGenerator.render(fileManifest);
         LOGGER.info("created module");
+
+        Model model = context.getModelWithoutTraitShapes();
+        Stream<StructureShape> shapes = model.shapes(StructureShape.class);
+        TypesGenerator typesGenerator = new TypesGenerator(rubySettings, shapes);
+        typesGenerator.render(fileManifest);
+        LOGGER.info("created types");
     }
 }
 
