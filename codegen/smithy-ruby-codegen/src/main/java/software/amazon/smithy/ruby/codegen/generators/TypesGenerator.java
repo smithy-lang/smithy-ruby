@@ -29,7 +29,6 @@ public class TypesGenerator {
     private final RubySettings settings;
     private final Stream<StructureShape> shapes;
 
-
     public TypesGenerator(RubySettings settings, Stream<StructureShape> shapes) {
         this.settings = settings;
         this.shapes = shapes;
@@ -50,13 +49,10 @@ public class TypesGenerator {
 
                 String membersBlock = structureShape.members()
                         .stream()
-                        .map(memberShape ->
-                                RubyFormatter.asSymbol(memberShape.getMemberName()))
+                        .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
                         .collect(Collectors.joining(",\n"));
-                    membersBlock += ")";
-                    writer
-                            .write(membersBlock)
-                            .write("include Aws::Structure");
+                membersBlock += ")";
+                writer.write(membersBlock).write("include Aws::Structure");
                 writer.closeBlock("end");
             }
             writer.write("");

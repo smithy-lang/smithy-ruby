@@ -21,7 +21,9 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
@@ -48,10 +50,15 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         LOGGER.info("created module");
 
         Model model = context.getModelWithoutTraitShapes();
-        Stream<StructureShape> shapes = model.shapes(StructureShape.class);
-        TypesGenerator typesGenerator = new TypesGenerator(rubySettings, shapes);
+        Stream<StructureShape> structureShapeStream = model.shapes(StructureShape.class);
+        TypesGenerator typesGenerator = new TypesGenerator(rubySettings, structureShapeStream);
         typesGenerator.render(fileManifest);
         LOGGER.info("created types");
+
+        Stream<OperationShape> operationShapeStream = model.shapes(OperationShape.class);
+        ClientGenerator clientGenerator = new ClientGenerator(rubySettings, operationShapeStream);
+        clientGenerator.render(fileManifest);
+        LOGGER.info("created operations");
     }
 }
 
