@@ -43,7 +43,7 @@ public class TypesGenerator {
             String classDeclaration = "class " + structureShape.getId().getName();
 
             if (structureShape.members().isEmpty()) {
-                writer.write(classDeclaration + " < Aws::EmptyStructure; end");
+                writer.write(classDeclaration + " < Seahorse::Model::EmptyStructure; end");
             } else {
                 writer.openBlock(classDeclaration + " < Struct.new(");
 
@@ -52,7 +52,7 @@ public class TypesGenerator {
                         .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
                         .collect(Collectors.joining(",\n"));
                 membersBlock += ")";
-                writer.write(membersBlock).write("include Aws::Structure");
+                writer.write(membersBlock).write("include Seahorse::Model::Structure");
                 writer.closeBlock("end");
             }
             writer.write("");

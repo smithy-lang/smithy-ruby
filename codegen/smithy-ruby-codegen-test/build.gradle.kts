@@ -31,3 +31,9 @@ dependencies {
     implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
     implementation(project(":smithy-ruby-codegen"))
 }
+
+tasks.register<Copy>("copyGem") {
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen")
+    into("$buildDir/../../../")
+}
+tasks["build"].finalizedBy(tasks["copyGem"])
