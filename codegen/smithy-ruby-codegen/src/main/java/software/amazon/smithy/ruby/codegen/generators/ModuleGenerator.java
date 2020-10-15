@@ -30,10 +30,9 @@ public class ModuleGenerator {
     public void render(FileManifest fileManifest) {
         CodeWriter writer = RubyCodeWriter.createDefault();
 
-        writer.write("require 'aws-sdk-core'")
-                .write("require 'aws-sigv4'\n");
+        writer.write("require 'seahorse'\n");
 
-        String[] requires = {"types", "client_api", "client", "errors", "waiters", "customizations"};
+        String[] requires = {"builders", "client", "errors", "parsers", "types"};
 
         for (String require : requires) {
             writer.write("require_relative '$L/$L'", settings.getGemName(), require);

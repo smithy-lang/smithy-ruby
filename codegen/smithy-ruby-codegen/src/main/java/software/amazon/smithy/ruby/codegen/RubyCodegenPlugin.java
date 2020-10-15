@@ -25,7 +25,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.ruby.codegen.generators.ClientApiGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
@@ -63,10 +62,6 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         ClientGenerator clientGenerator = new ClientGenerator(rubySettings, operationShapeStream);
         clientGenerator.render(fileManifest);
         LOGGER.info("created client");
-
-        ClientApiGenerator clientApiGenerator = new ClientApiGenerator(rubySettings, model);
-        clientApiGenerator.render(fileManifest);
-        LOGGER.info("created client API");
 
         Stream<Shape> errorShapeStream = model.shapes().filter((s) -> s.hasTrait(ErrorTrait.class));
         ErrorsGenerator errorsGenerator = new ErrorsGenerator(rubySettings, errorShapeStream);

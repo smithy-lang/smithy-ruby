@@ -36,8 +36,6 @@ public class GemspecGenerator {
                 .write("spec.author        = 'Amazon Web Services'")
                 .write("spec.summary       = '$L'", settings.getGemSummary())
                 .write("spec.files         = Dir['lib/**/*.rb']")
-                .write("spec.add_dependency('aws-sdk-core', '~> 4')")
-                .write("spec.add_dependency('aws-sigv4', '~> 2')")
                 .closeBlock("end");
 
         String fileName = settings.getGemName() + "/" + settings.getGemName() + ".gemspec";

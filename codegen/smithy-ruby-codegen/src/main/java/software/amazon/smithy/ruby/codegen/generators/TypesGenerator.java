@@ -40,20 +40,22 @@ public class TypesGenerator {
                 .openBlock("module Types");
 
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(structureShape -> {
-            String classDeclaration = "class " + structureShape.getId().getName();
+            String className = structureShape.getId().getName();
 
             if (structureShape.members().isEmpty()) {
-                writer.write(classDeclaration + " < Seahorse::Model::EmptyStructure; end");
+                writer.write(className + " < Seahorse::Model::EmptyStructure; end");
             } else {
-                writer.openBlock(classDeclaration + " < Struct.new(");
-
                 String membersBlock = structureShape.members()
                         .stream()
                         .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
                         .collect(Collectors.joining(",\n"));
-                membersBlock += ")";
-                writer.write(membersBlock).write("include Seahorse::Model::Structure");
-                writer.closeBlock("end");
+                writer.openBlock(className + " = Struct.new(")
+                        .write(membersBlock)
+                        .closeBlock(") do")
+                        .indent()
+                        .write("include Seahorse::StructAddons")
+                        .dedent()
+                        .write("end");
             }
             writer.write("");
         });
