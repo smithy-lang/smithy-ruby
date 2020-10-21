@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -36,34 +37,47 @@ public class TypesGenerator {
 
     public void render(FileManifest fileManifest) {
         CodeWriter writer = RubyCodeWriter.createDefault();
-        writer.openBlock("module $L", settings.getModule())
-                .openBlock("module Types");
 
-        shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(structureShape -> {
-            String className = structureShape.getId().getName();
-
-            if (structureShape.members().isEmpty()) {
-                writer.write(className + " < Seahorse::Model::EmptyStructure; end");
-            } else {
-                String membersBlock = structureShape.members()
-                        .stream()
-                        .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
-                        .collect(Collectors.joining(",\n"));
-                writer.openBlock(className + " = Struct.new(")
-                        .write(membersBlock)
-                        .closeBlock(") do")
-                        .indent()
-                        .write("include Seahorse::StructAddons")
-                        .dedent()
-                        .write("end");
-            }
-            writer.write("");
-        });
-
-        writer.closeBlock("end")
+        writer
+                .openBlock("module $L", settings.getModule())
+                .openBlock("module Types")
+                .call(() -> renderTypes(writer))
+                .closeBlock("end")
                 .closeBlock("end");
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
         fileManifest.writeFile(fileName, writer.toString());
+    }
+
+    private void renderTypes(CodeWriter writer) {
+        shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(structureShape -> {
+            // errors are not types
+            if (!structureShape.hasTrait(ErrorTrait.class)) {
+                renderType(writer, structureShape);
+            }
+        });
+    }
+
+    private void renderType(CodeWriter writer, StructureShape structureShape) {
+        String shapeName = structureShape.getId().getName();
+
+        if (structureShape.members().isEmpty()) {
+            writer.write(shapeName + " < Seahorse::EmptyStructure; end");
+        } else {
+            String membersBlock = structureShape
+                    .members()
+                    .stream()
+                    .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
+                    .collect(Collectors.joining(",\n"));
+
+            writer
+                    .openBlock(shapeName + " = Struct.new(")
+                    .write(membersBlock)
+                    .closeBlock(") do")
+                    .indent()
+                    .write("include Seahorse::StructAddons")
+                    .dedent()
+                    .write("end");
+        }
     }
 }

@@ -30,12 +30,15 @@ public class GemspecGenerator {
 
     public void render(FileManifest fileManifest) {
         CodeWriter writer = RubyCodeWriter.createDefault();
-        writer.openBlock("Gem::Specification.new do |spec|")
+        writer
+                .openBlock("Gem::Specification.new do |spec|")
                 .write("spec.name          = '$L'", settings.getGemName())
                 .write("spec.version       = '$L'", settings.getGemVersion())
                 .write("spec.author        = 'Amazon Web Services'")
                 .write("spec.summary       = '$L'", settings.getGemSummary())
                 .write("spec.files         = Dir['lib/**/*.rb']")
+                .write("")
+                .write("spec.add_runtime_dependency 'seahorse', '~> 1'")
                 .closeBlock("end");
 
         String fileName = settings.getGemName() + "/" + settings.getGemName() + ".gemspec";

@@ -246,6 +246,9 @@ subprojects {
 
         // Configure the bug filter for spotbugs.
         tasks.withType<com.github.spotbugs.SpotBugsTask> {
+            // generate the report but don't fail the build
+            ignoreFailures = true
+
             effort = "max"
             excludeFilterConfig = project.resources.text.fromFile("${project.rootDir}/config/spotbugs/filter.xml")
             reports {

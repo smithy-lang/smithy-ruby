@@ -19,7 +19,8 @@ import software.amazon.smithy.utils.CodeWriter;
 
 public class RubyCodeWriter extends CodeWriter {
     public static CodeWriter createDefault() {
-        CodeWriter writer = new CodeWriter().trimTrailingSpaces().setIndentText("  ");
+        CodeWriter writer =
+                new CodeWriter().trimTrailingSpaces().setIndentText("  ");
         writer.write("# frozen_string_literal: true\n");
 
         writer.write("# WARNING ABOUT GENERATED CODE")
@@ -31,4 +32,12 @@ public class RubyCodeWriter extends CodeWriter {
 
         return writer;
     }
+//
+//    public CodeWriter rdoc(Runnable runnable) {
+//        pushState();
+//        setNewlinePrefix("# ");
+//        runnable.run();
+//        popState();
+//        return this;
+//    }
 }

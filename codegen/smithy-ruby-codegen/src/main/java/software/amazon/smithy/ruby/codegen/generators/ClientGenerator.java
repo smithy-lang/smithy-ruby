@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class ClientGenerator {
@@ -36,15 +37,15 @@ public class ClientGenerator {
     public void render(FileManifest fileManifest) {
         CodeWriter writer = RubyCodeWriter.createDefault();
 
-        writer.openBlock("module $L", settings.getModule())
-                .openBlock("class Client < Seahorse::Client::Base")
-                .openBlock("def initialize(*args)")
-                .write("super")
+        writer
+                .openBlock("module $L", settings.getModule())
+                .openBlock("class Client")
+                .openBlock("def initialize(options = {})")
+                .write("# todo")
                 .closeBlock("end")
                 .call(() -> renderOperations(writer))
-                .call(() -> renderBuildRequest(writer))
                 .write("private")
-                .call(() -> renderSelfMethods(writer))
+                .call(() -> renderOutputStreamMethod(writer))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -54,38 +55,22 @@ public class ClientGenerator {
 
     private void renderOperations(CodeWriter writer) {
         operations.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(o -> {
-                    String operation = RubyFormatter.toSnakeCase(o.getId().getName());
-                    writer.openBlock("def $L(params = {}, options = {})", operation)
-                            .write("req = build_request($L, params)", operation)
-                            .write("req.send_request(options)")
-                            .closeBlock("end");
-                }
-        );
+            String operation = RubyFormatter.toSnakeCase(o.getId().getName());
+            MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder(o.getId().getName());
+            writer
+                    .openBlock("def $L(params = {}, options = {})", operation)
+                    .call(() -> middlewareBuilder.render(writer))
+                    .closeBlock("end")
+                    .write("\n");
+        });
     }
 
-    private void renderBuildRequest(CodeWriter writer) {
-        writer.openBlock("def build_request(operation_name, params = {})")
-                .write("handlers = @handlers.for(operation_name)")
-                .openBlock("context = Seahorse::Client::RequestContext.new(")
-                .write("operation_name: operation_name,")
-                .write("operation: config.api.operation(operation_name),")
-                .write("client: self,")
-                .write("params: params,")
-                .write("config:config")
-                .closeBlock(")")
-                .write("context[:gem_name] = '$L'", settings.getGemName())
-                .write("context[:gem_version] = '$L'", settings.getGemVersion())
-                .write("Seahorse::Client::Request.new(handlers, context)")
-                .closeBlock("end");
-    }
-
-    private void renderSelfMethods(CodeWriter writer) {
+    private void renderOutputStreamMethod(CodeWriter writer) {
         writer
-                .openBlock("class << self")
-                .write("attr_reader :identifier")
-                .openBlock("def errors_module")
-                .write("Errors")
-                .closeBlock("end")
+                .openBlock("def output_stream(options = {}, block = nil)")
+                .write("return options[:output_stream] if options[:output_stream]")
+                .write("return Seahorse::BlockIO.new(block) if block")
+                .write("Seahorse::BufferedIO.new")
                 .closeBlock("end");
     }
 }
