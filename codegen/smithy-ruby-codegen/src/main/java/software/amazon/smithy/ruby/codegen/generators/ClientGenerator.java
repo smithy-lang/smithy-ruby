@@ -40,9 +40,7 @@ public class ClientGenerator {
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("class Client")
-                .openBlock("def initialize(options = {})")
-                .write("# todo")
-                .closeBlock("end")
+                .call(() -> renderInitializeMethod(writer))
                 .call(() -> renderOperations(writer))
                 .write("private")
                 .call(() -> renderOutputStreamMethod(writer))
@@ -53,15 +51,36 @@ public class ClientGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
+    private void renderInitializeMethod(CodeWriter writer) {
+        writer
+                .openBlock("def initialize(options = {})")
+                .write("@region = NawsRegion.resolve(options)")
+                .write("@endpoint = options[:endpoint] || Regions[@region].url(options)")
+                .openBlock("@signer = NawsAuth.signer_for(options.merge(")
+                .write("service: 's3',")
+                .write("region: @region,")
+                .write("uri_escape_path: false")
+                .closeBlock("))")
+                .write("@stub_responses = options.fetch(:stub_responses, false)")
+                .write("@max_attempts = options.fetch(:max_attempts, 4)")
+                .write("@max_delay = options.fetch(:max_delay, 8)")
+                .write("@raise_api_errors = options.fetch(:raise_api_errors, true)")
+                .write("@middleware = Seahorse::MiddlewareBuilder.new(options[:middleware])")
+                .closeBlock("end");
+    }
+
     private void renderOperations(CodeWriter writer) {
         operations.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(o -> {
             String operation = RubyFormatter.toSnakeCase(o.getId().getName());
             MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder(o.getId().getName());
             writer
                     .openBlock("def $L(params = {}, options = {})", operation)
+                    .write("stack = Seahorse::MiddlewareStack.new")
                     .call(() -> middlewareBuilder.render(writer))
-                    .closeBlock("end")
-                    .write("\n");
+                    .write("@middleware.apply(stack)")
+                    .write("raise resp.error if resp.error && @raise_api_errors")
+                    .write("resp")
+                    .closeBlock("end");
         });
     }
 
