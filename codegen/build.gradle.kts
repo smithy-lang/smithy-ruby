@@ -204,6 +204,11 @@ subprojects {
 
         tasks["checkstyleTest"].enabled = false
 
+        tasks.withType<Checkstyle>() {
+            // generate the report but don't fail the build
+            ignoreFailures = true
+        }
+
         /*
          * Tests
          * ====================================================

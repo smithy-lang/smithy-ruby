@@ -18,26 +18,25 @@ package software.amazon.smithy.ruby.codegen;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class RubyCodeWriter extends CodeWriter {
-    public static CodeWriter createDefault() {
-        CodeWriter writer =
-                new CodeWriter().trimTrailingSpaces().setIndentText("  ");
-        writer.write("# frozen_string_literal: true\n");
+    public RubyCodeWriter() {
+        trimTrailingSpaces();
+        setIndentText("  ");
 
-        writer.write("# WARNING ABOUT GENERATED CODE")
-                .write("#")
-                .write("# This file was code generated using smithy-ruby.")
-                .write("# https://github.com/awslabs/smithy-ruby")
-                .write("#")
-                .write("# WARNING ABOUT GENERATED CODE\n");
+        write("# frozen_string_literal: true\n");
 
-        return writer;
+        write("# WARNING ABOUT GENERATED CODE");
+        write("#");
+        write("# This file was code generated using smithy-ruby.");
+        write("# https://github.com/awslabs/smithy-ruby");
+        write("#");
+        write("# WARNING ABOUT GENERATED CODE\n");
     }
-//
-//    public CodeWriter rdoc(Runnable runnable) {
-//        pushState();
-//        setNewlinePrefix("# ");
-//        runnable.run();
-//        popState();
-//        return this;
-//    }
+
+    public RubyCodeWriter rdoc(Runnable task) {
+        pushState();
+        setNewlinePrefix("# ");
+        task.run();
+        popState();
+        return this;
+    }
 }

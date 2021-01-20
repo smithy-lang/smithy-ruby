@@ -21,10 +21,14 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+// import software.amazon.smithy.ruby.codegen.generators.BuilderGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
@@ -67,6 +71,11 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         ErrorsGenerator errorsGenerator = new ErrorsGenerator(rubySettings, errorShapeStream);
         errorsGenerator.render(fileManifest);
         LOGGER.info("created errors");
+
+        ServiceShape serviceShape = model.getShape(rubySettings.getService()).get().asServiceShape().get();
+        Stream<Shape> shapes = new Walker(model).walkShapes(serviceShape).stream();
+        // BuilderGenerator builderGenerator = new BuilderGenerator(rubySettings, shapes);
+        LOGGER.info("created builders");
     }
 }
 

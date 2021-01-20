@@ -23,7 +23,6 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
-import software.amazon.smithy.utils.CodeWriter;
 
 public class ClientGenerator {
     private final RubySettings settings;
@@ -35,7 +34,7 @@ public class ClientGenerator {
     }
 
     public void render(FileManifest fileManifest) {
-        CodeWriter writer = RubyCodeWriter.createDefault();
+        RubyCodeWriter writer = new RubyCodeWriter();
 
         writer
                 .openBlock("module $L", settings.getModule())
@@ -51,7 +50,7 @@ public class ClientGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    private void renderInitializeMethod(CodeWriter writer) {
+    private void renderInitializeMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("def initialize(options = {})")
                 .write("@region = NawsRegion.resolve(options)")
@@ -69,7 +68,7 @@ public class ClientGenerator {
                 .closeBlock("end");
     }
 
-    private void renderOperations(CodeWriter writer) {
+    private void renderOperations(RubyCodeWriter writer) {
         operations.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(o -> {
             String operation = RubyFormatter.toSnakeCase(o.getId().getName());
             MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder(o.getId().getName());
@@ -84,7 +83,7 @@ public class ClientGenerator {
         });
     }
 
-    private void renderOutputStreamMethod(CodeWriter writer) {
+    private void renderOutputStreamMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("def output_stream(options = {}, block = nil)")
                 .write("return options[:output_stream] if options[:output_stream]")

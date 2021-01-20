@@ -22,7 +22,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.utils.CodeWriter;
 
 public class ErrorsGenerator {
 
@@ -35,7 +34,7 @@ public class ErrorsGenerator {
     }
 
     public void render(FileManifest fileManifest) {
-        CodeWriter writer = RubyCodeWriter.createDefault();
+        RubyCodeWriter writer = new RubyCodeWriter();
 
         writer
                 .openBlock("module $L", settings.getModule())
@@ -51,7 +50,7 @@ public class ErrorsGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    private void renderApiRedirectError(CodeWriter writer) {
+    private void renderApiRedirectError(RubyCodeWriter writer) {
         writer
                 .write("# Base class for all errors returned where the service returned")
                 .write("# a 3XX redirection.")
@@ -65,21 +64,21 @@ public class ErrorsGenerator {
                 .closeBlock("end\n");
     }
 
-    private void renderClientError(CodeWriter writer) {
+    private void renderClientError(RubyCodeWriter writer) {
         writer
                 .write("# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < Seahorse::ApiError; end\n");
     }
 
-    private void renderServerError(CodeWriter writer) {
+    private void renderServerError(RubyCodeWriter writer) {
         writer
                 .write("# Base class for all errors returned where the server is at fault.")
                 .write("# These are generally errors with 5XX HTTP status codes.")
                 .write("class ApiServerError < Seahorse::ApiError; end\n");
     }
 
-    private void renderServiceModelErrors(CodeWriter writer) {
+    private void renderServiceModelErrors(RubyCodeWriter writer) {
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(error -> {
             String errorName = error.getId().getName();
             // assumes shapes are all filtered by error traits already
@@ -90,7 +89,7 @@ public class ErrorsGenerator {
         });
     }
 
-    private void renderServiceModelError(CodeWriter writer, String errorName, String apiErrorType) {
+    private void renderServiceModelError(RubyCodeWriter writer, String errorName, String apiErrorType) {
         writer
                 .openBlock("class $L < $L", errorName, apiErrorType)
                 .openBlock("def initialize(**args)")

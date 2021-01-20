@@ -24,7 +24,6 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.utils.CodeWriter;
 
 public class TypesGenerator {
     private final RubySettings settings;
@@ -36,7 +35,7 @@ public class TypesGenerator {
     }
 
     public void render(FileManifest fileManifest) {
-        CodeWriter writer = RubyCodeWriter.createDefault();
+        RubyCodeWriter writer = new RubyCodeWriter();
 
         writer
                 .openBlock("module $L", settings.getModule())
@@ -49,7 +48,7 @@ public class TypesGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    private void renderTypes(CodeWriter writer) {
+    private void renderTypes(RubyCodeWriter writer) {
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(structureShape -> {
             // errors are not types
             if (!structureShape.hasTrait(ErrorTrait.class)) {
@@ -58,26 +57,25 @@ public class TypesGenerator {
         });
     }
 
-    private void renderType(CodeWriter writer, StructureShape structureShape) {
+    private void renderType(RubyCodeWriter writer, StructureShape structureShape) {
         String shapeName = structureShape.getId().getName();
+        String membersBlock;
 
         if (structureShape.members().isEmpty()) {
-            writer.write(shapeName + " < Seahorse::EmptyStructure; end");
+            membersBlock = "nil";
         } else {
-            String membersBlock = structureShape
+            membersBlock = structureShape
                     .members()
                     .stream()
                     .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
                     .collect(Collectors.joining(",\n"));
-
-            writer
-                    .openBlock(shapeName + " = Struct.new(")
-                    .write(membersBlock)
-                    .closeBlock(") do")
-                    .indent()
-                    .write("include Seahorse::StructAddons")
-                    .dedent()
-                    .write("end");
         }
+        membersBlock += ",";
+
+        writer
+                .openBlock(shapeName + " = Struct.new(")
+                .write(membersBlock)
+                .write("keyword_init: true")
+                .closeBlock(")");
     }
 }

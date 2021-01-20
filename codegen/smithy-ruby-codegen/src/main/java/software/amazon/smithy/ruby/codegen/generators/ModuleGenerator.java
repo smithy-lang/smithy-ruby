@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.utils.CodeWriter;
 
 public class ModuleGenerator {
     private final RubySettings settings;
@@ -28,7 +27,7 @@ public class ModuleGenerator {
     }
 
     public void render(FileManifest fileManifest) {
-        CodeWriter writer = RubyCodeWriter.createDefault();
+        RubyCodeWriter writer = new RubyCodeWriter();
 
         writer.write("require 'seahorse'\n");
 
