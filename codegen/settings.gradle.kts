@@ -13,13 +13,16 @@
  * permissions and limitations under the License.
  */
 
-rootProject.name = "smithy-ruby"
-include(":smithy-ruby-codegen")
-include(":smithy-ruby-codegen-test")
-
 pluginManagement {
     repositories {
-        mavenLocal()
+        maven("https://dl.bintray.com/kotlin/kotlin-eap")
+        mavenCentral()
+        maven("https://plugins.gradle.org/m2/")
+        google()
         gradlePluginPortal()
     }
 }
+
+rootProject.name = "smithy-ruby"
+include(":smithy-ruby-codegen")
+include(":smithy-ruby-codegen-test")

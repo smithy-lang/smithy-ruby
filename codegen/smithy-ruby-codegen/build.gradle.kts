@@ -13,11 +13,28 @@
  * permissions and limitations under the License.
  */
 
+plugins {
+    kotlin("jvm")
+    id("org.jetbrains.dokka")
+    jacoco
+    maven
+}
+
 description = "Generates Ruby code from Smithy models"
 extra["displayName"] = "Smithy :: Ruby :: Codegen"
 extra["moduleName"] = "software.amazon.smithy.ruby.codegen"
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
     api("software.amazon.smithy:smithy-codegen-core:[1.0.10,1.1.0[")
     implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
+}
+
+// target 1.8 to comply with Smithy requirements
+tasks.compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
 }
