@@ -72,10 +72,10 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         errorsGenerator.render(fileManifest);
         LOGGER.info("created errors");
 
-        ServiceShape serviceShape = model.getShape(rubySettings.getService()).get().asServiceShape().get();
-        Stream<Shape> shapes = new Walker(model).walkShapes(serviceShape).stream();
+//        ServiceShape serviceShape = model.getShape(rubySettings.getService()).get().asServiceShape().get();
+//        Stream<Shape> shapes = new Walker(model).walkShapes(serviceShape).stream();
         // BuilderGenerator builderGenerator = new BuilderGenerator(rubySettings, shapes);
-        LOGGER.info("created builders");
+        // LOGGER.info("created builders");
     }
 }
 
