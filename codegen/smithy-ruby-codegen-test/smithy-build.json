@@ -9,6 +9,15 @@
         "gemVersion": "0.0.1",
         "gemSummary": "Weather Service"
       }
+    },
+    "ruby-rails-json-codegen": {
+      "service": "example.railsjson.weather#Weather",
+      "module": "Weather",
+      "gemspec": {
+        "gemName": "rails-weather",
+        "gemVersion": "0.0.1",
+        "gemSummary": "Rails Weather Service"
+      }
     }
   }
 }
