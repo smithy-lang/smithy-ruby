@@ -1,5 +1,5 @@
 $version: "1.0"
- namespace example.railsjson.weather
+ namespace example.weather
 
  use smithy.railsjson#ErrorName
  use smithy.railsjson#RailsJson
