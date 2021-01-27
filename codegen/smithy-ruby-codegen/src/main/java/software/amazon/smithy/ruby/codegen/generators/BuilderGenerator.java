@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -107,26 +108,24 @@ public class BuilderGenerator {
         System.out.println("\tURI BUILDER: " + operation.getId() + " has " + labelMembers.size() + " labels...");
 
         if (labelMembers.size() > 0) {
-            String uri = httpTrait.getUri().toString();
+            String formatUri = httpTrait.getUri().toString()
+                    .replaceAll("[{]([a-zA-Z0-9_]+)[}]", "%<$1>s"); //TODO: Handle greedy labels?
             String formatArgs = ""; // use string builder instead?
-            System.out.println("\t\tURI: " + httpTrait.getUri());
+            System.out.println("\t\tURI: " + httpTrait.getUri() + " -> " + formatUri);
+
             for(MemberShape m : labelMembers) {
                 HttpLabelTrait label = m.expectTrait(HttpLabelTrait.class);
-                Shape target = model.expectShape(label.toShapeId());
+                Shape target = model.expectShape(m.getTarget());
                 System.out.println("\t\tAdding url subs for: " + target.getId());
-
-
+                String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
+                formatArgs += ",\n" + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].non_empty!.to_str)";
             }
-
+            writer.openBlock("http_req.append_path(format(");
+            writer.write("'$L'$L\n)", formatUri, formatArgs);
+            writer.closeBlock(")");
         } else {
-            writer.write("http_req.append_path($L)", httpTrait.getUri());
+            writer.write("http_req.append_path('$L')", httpTrait.getUri());
         }
-
-        /*
-                http_req.append_path(format('/cities/%<city_id>s',
-          city_id: Seahorse::HTTP.uri_escape(params[:city_id].non_empty!.to_str)
-        ))
-         */
     }
 
     private void renderBuilderForStructure(RubyCodeWriter writer, StructureShape s) {
