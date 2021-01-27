@@ -73,6 +73,8 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         ParserGenerator parserGenerator = new ParserGenerator(rubySettings, model);
         parserGenerator.render(fileManifest);
         LOGGER.info("created parsers");
+
+        System.out.println("\n\n----------------------------------\n\n");
     }
 }
 

@@ -77,7 +77,7 @@ public class ClientGenerator {
                     .openBlock("def $L(params = {}, options = {})", operation)
                     .write("stack = Seahorse::MiddlewareStack.new")
                     .call(() -> middlewareBuilder.render(writer))
-                    .write("@middleware.apply(stack) ")
+                    .write("@middleware.apply(stack)")
                     .openBlock("resp = stack.run(")
                     .write("http_req: Seahorse::HTTP::Request.new(url: @endpoint),")
                     .write("http_resp: Seahorse::HTTP::Response.new(body: output_stream),")

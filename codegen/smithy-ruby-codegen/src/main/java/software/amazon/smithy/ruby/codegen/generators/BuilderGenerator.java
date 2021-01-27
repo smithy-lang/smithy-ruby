@@ -22,6 +22,7 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -65,12 +66,13 @@ public class BuilderGenerator {
 
         System.out.println("Generating builders for Operation: " + operation.getId());
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+        Shape inputShape = model.expectShape(inputShapeId);
 
         writer
                 .openBlock("class $LOperation", operation.getId().getName())
                 .openBlock("def self.build(http_req:, params:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
-                .write("http_req.append_path('$L')", httpTrait.getUri()) // TODO: How do we know if we have labels to format here?
+                .call(() -> renderUriBuilder(writer, operation, inputShape))
                 .write("json = Builders::$L.build(params)", inputShapeId.getName())
                 .write("http_req.body = StringIO.new(JSON.dump(json))")
                 .closeBlock("end")
@@ -78,7 +80,6 @@ public class BuilderGenerator {
 
         generatedBuilders.add(operation.toShapeId());
 
-        Shape inputShape = model.expectShape(inputShapeId);
         for (Iterator<Shape> it = new Walker(model).iterateShapes(inputShape); it.hasNext(); ) {
             Shape s = it.next();
             if (!generatedBuilders.contains(s.getId())) {
@@ -94,6 +95,38 @@ public class BuilderGenerator {
             }
 
         }
+    }
+
+    private void renderUriBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        // get a list of all of HttpLabel members
+        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+        List<MemberShape> labelMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpLabelTrait.class))
+                .collect(Collectors.toList());
+        System.out.println("\tURI BUILDER: " + operation.getId() + " has " + labelMembers.size() + " labels...");
+
+        if (labelMembers.size() > 0) {
+            String uri = httpTrait.getUri().toString();
+            String formatArgs = ""; // use string builder instead?
+            System.out.println("\t\tURI: " + httpTrait.getUri());
+            for(MemberShape m : labelMembers) {
+                HttpLabelTrait label = m.expectTrait(HttpLabelTrait.class);
+                Shape target = model.expectShape(label.toShapeId());
+                System.out.println("\t\tAdding url subs for: " + target.getId());
+
+
+            }
+
+        } else {
+            writer.write("http_req.append_path($L)", httpTrait.getUri());
+        }
+
+        /*
+                http_req.append_path(format('/cities/%<city_id>s',
+          city_id: Seahorse::HTTP.uri_escape(params[:city_id].non_empty!.to_str)
+        ))
+         */
     }
 
     private void renderBuilderForStructure(RubyCodeWriter writer, StructureShape s) {
