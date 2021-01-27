@@ -23,6 +23,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -70,7 +71,7 @@ public class BuilderGenerator {
                 .openBlock("def self.build(http_req:, params:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .write("http_req.append_path('$L')", httpTrait.getUri()) // TODO: How do we know if we have labels to format here?
-                .write("json = Builders::$L.build(params: params)", inputShapeId.getName())
+                .write("json = Builders::$L.build(params)", inputShapeId.getName())
                 .write("http_req.body = StringIO.new(JSON.dump(json))")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -140,9 +141,27 @@ public class BuilderGenerator {
             if (target.isListShape() || target.isStructureShape()) {
                 writer.write("data[$L] = Builders::$L.build(params[$L])", symbolName, target.getId().getName(), symbolName);
             } else {
-                // TODO: This is incomplete, many times need conversion...
-                writer.write("data[$L] = params[$L]", symbolName, symbolName);
+                String convert = "";
+                switch(target.getType()) {
+                    case STRING:
+                        convert = ".to_s";
+                        break;
+                    case INTEGER:
+                        convert = ".to_i";
+                        break;
+                    case FLOAT:
+                        convert = ".to_f";
+                        break;
+                }
+                if (target.hasTrait(RequiredTrait.class))
+                {
+                    writer.write("data[$L] = params[$L].non_empty!$L", symbolName, symbolName, convert);
+                } else {
+                    writer.write("data[$L] = params[$L].non_empty!$L if params.key?($L)", symbolName, symbolName, convert, symbolName);
+                }
             }
         }
+
+        writer.write("return data");
     }
 }

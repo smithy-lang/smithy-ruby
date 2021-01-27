@@ -18,7 +18,7 @@ module Seahorse
       @http_headers = http_headers
       @http_body = http_body
       @request_id = request_id
-      super("#{error_message}\n\n---\n#{http_body}".rstrip)
+      super("#{error_message}")
     end
 
     # @return [String]

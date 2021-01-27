@@ -8,15 +8,15 @@ module Seahorse
       @middleware = []
     end
 
-    def use(middleware, *middleware_args, &block)
-      @middleware.push([middleware, middleware_args, block])
+    def use(middleware, **middleware_kwargs, &block)
+      @middleware.push([middleware, middleware_kwargs, block])
     end
 
-    def use_before(before, middleware, *middleware_args, &block)
+    def use_before(before, middleware, **middleware_kwargs, &block)
       new_middleware = []
       @middleware.each do |klass, args|
         if before == klass
-          new_middleware << [middleware, middleware_args, block]
+          new_middleware << [middleware, middleware_kwargs, block]
         end
         new_middleware << [klass, args]
       end
@@ -26,12 +26,12 @@ module Seahorse
       @middleware = new_middleware
     end
 
-    def use_after(after, middleware, *middleware_args, &block)
+    def use_after(after, middleware, **middleware_kwargs, &block)
       new_middleware = []
       @middleware.each do |klass, args|
         new_middleware << [klass, args]
         if after == klass
-          new_middleware << [middleware, middleware_args, block]
+          new_middleware << [middleware, middleware_kwargs, block]
         end
       end
       unless new_middleware.size == @middleware.size + 1
@@ -57,7 +57,8 @@ module Seahorse
     def stack
       app = nil
       @middleware.reverse_each do |(middleware, middleware_args, block)|
-        app = middleware.new(app, *middleware_args, &block)
+        puts "Middleware args: #{middleware} #{middleware_args}"
+        app = middleware.new(app, **middleware_args, &block)
       end
       app
     end

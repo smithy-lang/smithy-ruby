@@ -16,6 +16,7 @@ module Seahorse
       # @param [Response] http_resp
       # @return [Response]
       def transmit(http_req:, http_resp:)
+        @curl.verbose = true
         setup_req_url(http_req)
         setup_req_headers(http_req)
         setup_resp_header_events(http_resp)
@@ -31,7 +32,6 @@ module Seahorse
 
       def setup_req_url(req)
         @curl.url = req.url
-        @curl.verbose = true
       end
 
       def setup_req_headers(req)
@@ -77,11 +77,12 @@ module Seahorse
       end
 
       def xfer_put_request(req)
-        @curl.http_put(req.body)
+        @curl.http_put(req.body.read)
       end
 
       def xfer_post_request(req)
-        @curl.http_post(req.body)
+        # TODO: Curb has an issue with StringIO as input
+        @curl.http_post(req.body.read)
       end
 
       def xfer_head_request(req)
