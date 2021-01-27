@@ -24,6 +24,7 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
+import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -74,8 +75,8 @@ public class BuilderGenerator {
                 .openBlock("def self.build(http_req:, params:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
-                .write("json = Builders::$L.build(params)", inputShapeId.getName())
-                .write("http_req.body = StringIO.new(JSON.dump(json))")
+                .call(() -> renderQueryParamsBuilder(writer, operation, inputShape))
+                .call(() -> renderOperationBodyBuilder(writer, operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -95,6 +96,34 @@ public class BuilderGenerator {
                 System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
 
+        }
+    }
+
+    private void renderOperationBodyBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        //determine if there are any members of the input that need to be serialized to the body
+        boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class));
+        if (serializeBody) {
+            writer
+                    .write("json = Builders::$L.build(params)", inputShape.getId().getName())
+                    .write("http_req.body = StringIO.new(JSON.dump(json))");
+        }
+    }
+
+    private void renderQueryParamsBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        // get a list of all of HttpLabel members
+        List<MemberShape> queryMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpQueryTrait.class))
+                .collect(Collectors.toList());
+        System.out.println("\tQUERY BUILDER: " + operation.getId() + " has " + queryMembers.size() + " query params...");
+
+        for(MemberShape m : queryMembers) {
+            HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
+            Shape target = model.expectShape(m.getTarget());
+            System.out.println("\t\tAdding query params for: " + queryTrait.getValue() + " -> " + target.getId());
+            String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
+            // TODO: Handle required
+            writer.write("http_req.append_query_param('$1L', params[$2L].to_str) if params.key?($2L)", queryTrait.getValue(), symbolName);
         }
     }
 

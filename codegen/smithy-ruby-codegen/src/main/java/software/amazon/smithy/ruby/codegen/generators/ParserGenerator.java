@@ -22,6 +22,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
 public class ParserGenerator {
@@ -108,7 +109,7 @@ public class ParserGenerator {
                 .openBlock("\nclass $L", s.getId().getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("json.map do |entry|")
-                .write("$L.parse(entry)", s.getMember().getId().getName())
+                .write("$L.parse(entry)", s.getMember().getTarget().getName())
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -120,10 +121,10 @@ public class ParserGenerator {
             System.out.println("\t\tMEMBER PARSER FOR: " + member.getId() + " target type: " + target.getType());
             // TODO: This may be where a vistor pattern is useful?
             if (target.isListShape() || target.isStructureShape()) {
-                writer.write("data.$L = Parsers::$L.parse(json['$L'])", member.getMemberName(), target.getId().getName(), member.getMemberName());
+                writer.write("data.$1L = Parsers::$2L.parse(json['$1L']) if json.key?('$1L')", RubyFormatter.toSnakeCase(member.getMemberName()), target.getId().getName());
             } else {
                 // TODO: This is incomplete, many times need conversion...
-                writer.write("data.$L = json['$L']", member.getMemberName(), member.getMemberName());
+                writer.write("data.$1L = json['$1L']", RubyFormatter.toSnakeCase(member.getMemberName()));
             }
         }
     }
