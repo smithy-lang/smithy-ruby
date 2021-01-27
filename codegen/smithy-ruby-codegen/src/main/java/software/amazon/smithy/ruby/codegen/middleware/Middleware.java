@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.middleware;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class Middleware {
@@ -30,7 +31,7 @@ public class Middleware {
        this.params = params;
     }
 
-    public void render(CodeWriter writer) {
+    public void render(RubyCodeWriter writer) {
         if (params.isEmpty()) {
             writer.write("stack.use($L)", klass);
         }

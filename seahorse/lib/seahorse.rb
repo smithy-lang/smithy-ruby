@@ -11,6 +11,7 @@ require_relative 'seahorse/params'
 require_relative 'seahorse/response'
 require_relative 'seahorse/struct_addons'
 require_relative 'seahorse/time_helper'
+require_relative 'seahorse/json/error_parser'
 
 module Seahorse
   VERSION = '1.0.0.pre1'.freeze

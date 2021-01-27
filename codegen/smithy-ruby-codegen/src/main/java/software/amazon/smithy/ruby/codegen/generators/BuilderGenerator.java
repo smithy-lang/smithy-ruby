@@ -15,10 +15,14 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -26,11 +30,13 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 public class BuilderGenerator {
 
     private final RubySettings settings;
-    private final Stream<Shape> shapes;
+    private final Model model;
+    private final Set<ShapeId> generatedBuilders;
 
-    public BuilderGenerator(RubySettings settings, Stream<Shape> shapes) {
+    public BuilderGenerator(RubySettings settings, Model model) {
         this.settings = settings;
-        this.shapes = shapes;
+        this.model = model;
+        this.generatedBuilders = new HashSet<>();
     }
 
     public void render(FileManifest fileManifest) {
@@ -47,23 +53,63 @@ public class BuilderGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    public void renderBuilders(RubyCodeWriter writer) {
-        shapes.forEach(shape -> {
-            renderBuilder(writer, shape);
-            writer.write("");
-        });
+    private void renderBuilders(RubyCodeWriter writer) {
+        Stream<OperationShape> operations = model.shapes(OperationShape.class);
+        operations.forEach(o -> renderBuildersForOperation(writer, o));
     }
 
-    public void renderBuilder(RubyCodeWriter writer, Shape shape) {
+    private void renderBuildersForOperation(RubyCodeWriter writer, OperationShape operation) {
+        //TODO: An optional check on the Output Type being present
+        ShapeId inputShapeId = operation.getInput().get();
+
+        System.out.println("Generating builders for Operation: " + operation.getId());
+        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+
         writer
-                .openBlock("class $L", shape.getId().getName())
-                .call(() -> renderPermittedValues(writer, shape))
-                .write("")
-                .call(() -> renderBuilderMethod(writer, shape))
+                .openBlock("class $LOperation", operation.getId().getName())
+                .openBlock("def self.build(http_req:, params:)")
+                .write("http_req.http_method = '$L'", httpTrait.getMethod())
+                .write("http_req.append_path('$L')", httpTrait.getUri()) // TODO: How do we know if we have labels to format here?
+                .write("json = Builders::$L.build(params: params)", inputShapeId.getName())
+                .write("http_req.body = StringIO.new(JSON.dump(json))")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        generatedBuilders.add(operation.toShapeId());
+
+        Shape inputShape = model.expectShape(inputShapeId);
+        for (Iterator<Shape> it = new Walker(model).iterateShapes(inputShape); it.hasNext(); ) {
+            Shape s = it.next();
+            if (!generatedBuilders.contains(s.getId())) {
+                if (s.isStructureShape()) {
+                    renderBuilderForStructure(writer, s.asStructureShape().get());
+                } else if (s.isListShape()) {
+                    renderBuilderForList(writer, s.asListShape().get());
+                } else {
+                    System.out.println("\tSkipping " + s.getId() + " it is not a structure.  Type = " + s.getType());
+                }
+            } else {
+                System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
+            }
+
+        }
+    }
+
+    private void renderBuilderForStructure(RubyCodeWriter writer, StructureShape s) {
+        System.out.println("\tRENDER builder for STRUCTURE: " + s.getId());
+        generatedBuilders.add(s.toShapeId());
+
+        writer
+                .openBlock("\nclass $L", s.getId().getName())
+                .call(() -> renderPermittedValues(writer, s))
+                .openBlock("def self.build(params)")
+                .write("params = Seahorse::Params.hash_value(params, permit: PERMIT)")
+                .call(() -> renderMemberBuilders(writer, s))
+                .closeBlock("end")
                 .closeBlock("end");
     }
 
-    public void renderPermittedValues(RubyCodeWriter writer, Shape shape) {
+    private void renderPermittedValues(RubyCodeWriter writer, Shape shape) {
         String membersBlock = shape.members()
                 .stream()
                 .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
@@ -75,18 +121,28 @@ public class BuilderGenerator {
                 .closeBlock("])");
     }
 
-    public void renderBuilderMethod(RubyCodeWriter writer, Shape shape) {
-        String methodSignature;
-        if (shape.isOperationShape()) {
-            methodSignature = "def self.build(http_req:, params:)";
-        } else {
-            methodSignature = "def self.build(params:)";
-        }
-        writer
-                .openBlock(methodSignature)
-                .write("params = Seahorse::Params.hash_value(params, permit: PERMIT)")
-                .write("# TODO")
-                .closeBlock("end");
+    private void renderBuilderForList(RubyCodeWriter writer, ListShape s) {
+        System.out.println("\tRENDER parser for LIST: " + s.getId());
+        generatedBuilders.add(s.toShapeId());
 
+        // TODO
+    }
+
+    private void renderMemberBuilders(RubyCodeWriter writer, StructureShape s) {
+        writer.write("data = {}");
+
+        for(MemberShape member : s.members()) {
+            Shape target = model.expectShape(member.getTarget());
+            System.out.println("\t\tMEMBER BUILDER FOR: " + member.getId() + " target type: " + target.getType());
+
+            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
+            // TODO: This may be where a vistor pattern is useful?
+            if (target.isListShape() || target.isStructureShape()) {
+                writer.write("data[$L] = Builders::$L.build(params[$L])", symbolName, target.getId().getName(), symbolName);
+            } else {
+                // TODO: This is incomplete, many times need conversion...
+                writer.write("data[$L] = params[$L]", symbolName, symbolName);
+            }
+        }
     }
 }

@@ -27,12 +27,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.ruby.codegen.generators.BuilderGenerator;
-import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
-import software.amazon.smithy.ruby.codegen.generators.ErrorsGenerator;
-import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
-import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
-import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
+import software.amazon.smithy.ruby.codegen.generators.*;
 
 public final class RubyCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER = Logger.getLogger(RubyCodegenPlugin.class.getName());
@@ -71,11 +66,13 @@ public final class RubyCodegenPlugin implements SmithyBuildPlugin {
         errorsGenerator.render(fileManifest);
         LOGGER.info("created errors");
 
-        ServiceShape serviceShape = model.getShape(rubySettings.getService()).get().asServiceShape().get();
-        Stream<Shape> shapes = new Walker(model).walkShapes(serviceShape).stream();
-        BuilderGenerator builderGenerator = new BuilderGenerator(rubySettings, shapes);
+        BuilderGenerator builderGenerator = new BuilderGenerator(rubySettings, model);
         builderGenerator.render(fileManifest);
         LOGGER.info("created builders");
+
+        ParserGenerator parserGenerator = new ParserGenerator(rubySettings, model);
+        parserGenerator.render(fileManifest);
+        LOGGER.info("created parsers");
     }
 }
 

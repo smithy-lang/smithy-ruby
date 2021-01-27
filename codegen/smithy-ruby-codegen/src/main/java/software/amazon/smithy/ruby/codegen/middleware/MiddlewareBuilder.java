@@ -17,6 +17,8 @@ package software.amazon.smithy.ruby.codegen.middleware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class MiddlewareBuilder {
@@ -43,7 +45,7 @@ public class MiddlewareBuilder {
         HashMap<String, String> params;
 
         params = new HashMap<>();
-        params.put("builder", "Builders::" + operationName + "Operation.new");
+        params.put("builder", "Builders::" + operationName + "Operation");
         params.put("params", "params");
         defaultMiddleware.add(
                 new Middleware("Seahorse::Middleware::Build", params)
@@ -57,8 +59,8 @@ public class MiddlewareBuilder {
         );
 
         params = new HashMap<>();
-        params.put("error_parser", "Seahorse::XML::ErrorParser.new(errors_module: Errors)");
-        params.put("data_parser", "Parsers::" + operationName + "Operation.new");
+        params.put("error_parser", "Seahorse::JSON::ErrorParser.new(errors_module: Errors)");
+        params.put("data_parser", "Parsers::" + operationName + "Operation");
         defaultMiddleware.add(
                 new Middleware("Seahorse::Middleware::Parse", params)
         );
@@ -78,7 +80,7 @@ public class MiddlewareBuilder {
         return defaultMiddleware;
     }
 
-    public void render(CodeWriter writer) {
+    public void render(RubyCodeWriter writer) {
         for (Middleware middleware : middlewares) {
             middleware.render(writer);
         }

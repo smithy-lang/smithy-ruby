@@ -51,15 +51,16 @@ public class ClientGenerator {
     }
 
     private void renderInitializeMethod(RubyCodeWriter writer) {
+        //TODO: Initialize has dependencies on protocol: Add a hook here (eg region, signer, ect)
         writer
                 .openBlock("def initialize(options = {})")
-                .write("@region = NawsRegion.resolve(options)")
-                .write("@endpoint = options[:endpoint] || Regions[@region].url(options)")
-                .openBlock("@signer = NawsAuth.signer_for(options.merge(")
-                .write("service: 's3',")
-                .write("region: @region,")
-                .write("uri_escape_path: false")
-                .closeBlock("))")
+//                .write("@region = NawsRegion.resolve(options)")
+                .write("@endpoint = options[:endpoint] # || Regions[@region].url(options)")
+//                .openBlock("@signer = NawsAuth.signer_for(options.merge(")
+//                .write("service: 's3',")
+//                .write("region: @region,")
+//                .write("uri_escape_path: false")
+//                .closeBlock("))")
                 .write("@stub_responses = options.fetch(:stub_responses, false)")
                 .write("@max_attempts = options.fetch(:max_attempts, 4)")
                 .write("@max_delay = options.fetch(:max_delay, 8)")
@@ -76,8 +77,8 @@ public class ClientGenerator {
                     .openBlock("def $L(params = {}, options = {})", operation)
                     .write("stack = Seahorse::MiddlewareStack.new")
                     .call(() -> middlewareBuilder.render(writer))
-                    .write("@middleware.apply(stack)")
-                    .write("raise resp.error if resp.error && @raise_api_errors")
+                    .write("resp = @middleware.apply(stack)")
+                    .write("# raise resp.error if resp.error && @raise_api_errors")
                     .write("resp")
                     .closeBlock("end");
         });
