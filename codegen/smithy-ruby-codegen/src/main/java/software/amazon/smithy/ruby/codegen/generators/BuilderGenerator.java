@@ -147,7 +147,7 @@ public class BuilderGenerator {
                 Shape target = model.expectShape(m.getTarget());
                 System.out.println("\t\tAdding url subs for: " + target.getId());
                 String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
-                formatArgs += ",\n" + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].non_empty!.to_str)";
+                formatArgs += ",\n" + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
             }
             writer.openBlock("http_req.append_path(format(");
             writer.write("'$L'$L\n)", formatUri, formatArgs);
@@ -216,9 +216,9 @@ public class BuilderGenerator {
                 }
                 if (target.hasTrait(RequiredTrait.class))
                 {
-                    writer.write("data[$L] = params[$L].non_empty!$L", symbolName, symbolName, convert);
+                    writer.write("data[$L] = params[$L]$L", symbolName, symbolName, convert);
                 } else {
-                    writer.write("data[$L] = params[$L].non_empty!$L if params.key?($L)", symbolName, symbolName, convert, symbolName);
+                    writer.write("data[$L] = params[$L]$L if params.key?($L)", symbolName, symbolName, convert, symbolName);
                 }
             }
         }
