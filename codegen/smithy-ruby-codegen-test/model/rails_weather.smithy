@@ -153,7 +153,7 @@ $version: "1.0"
  // The paginated trait indicates that the operation may
  // return truncated results.
  @readonly
- @paginated(items: "items", inputToken: "nextToken", outputToken: "nextToken")
+ @paginated(items: "items", pageSize: "maxResults", inputToken: "nextToken", outputToken: "nextToken")
  @http(method: "GET", uri: "/cities")
  operation ListCities {
      input: ListCitiesInput,
@@ -165,7 +165,7 @@ $version: "1.0"
      nextToken: String,
 
      @httpQuery("pageSize")
-     pageSize: Integer
+     maxResults: Integer
  }
 
  structure ListCitiesOutput {
