@@ -174,7 +174,7 @@ public class BuilderGenerator {
     private void renderPermittedValues(RubyCodeWriter writer, Shape shape) {
         String membersBlock = shape.members()
                 .stream()
-                .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
+                .map(memberShape -> RubyFormatter.toSnakeCase(memberShape.getMemberName()))
                 .collect(Collectors.joining(" "));
 
         writer
