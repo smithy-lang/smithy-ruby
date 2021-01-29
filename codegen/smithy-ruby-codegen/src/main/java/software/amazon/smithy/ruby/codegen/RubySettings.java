@@ -16,9 +16,17 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Settings used by {@link RubyCodegenPlugin}.
@@ -103,4 +111,24 @@ public final class RubySettings {
     public void setGemSummary(String gemSummary) {
         this.gemSummary = gemSummary;
     }
+
+    // TODO: This assume a single protocol per service that we resolve for.  May need handling for multiple
+    public ShapeId resolveServiceProtocol(ServiceShape service, Model model, Set<ShapeId> supportedProtocolTraits) {
+        Map<ShapeId, Trait> resolvedProtocols = ServiceIndex.of(model).getProtocols(service);
+        ShapeId protocol = resolvedProtocols.keySet()
+                .stream()
+                .filter((p) -> supportedProtocolTraits.contains(p))
+                .findFirst()
+                .orElseThrow(() -> new UnresolvableProtocolException("No protocol generators were found "));
+        System.out.println("Resolved protocol: " + protocol.getName());
+        return protocol;
+    }
 }
+
+class UnresolvableProtocolException extends CodegenException {
+
+    public UnresolvableProtocolException(String message) {
+        super(message);
+    }
+}
+

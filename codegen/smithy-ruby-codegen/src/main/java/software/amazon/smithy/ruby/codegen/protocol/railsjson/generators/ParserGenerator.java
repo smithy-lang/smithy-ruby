@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.generators;
+package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import java.util.*;
 import java.util.stream.Stream;
