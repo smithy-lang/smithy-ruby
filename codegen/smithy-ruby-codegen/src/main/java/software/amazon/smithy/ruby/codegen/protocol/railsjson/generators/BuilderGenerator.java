@@ -23,6 +23,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -76,6 +77,7 @@ public class BuilderGenerator {
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
                 .call(() -> renderQueryParamsBuilder(writer, operation, inputShape))
+                .call(() -> renderHeadersBuilder(writer, operation, inputShape))
                 .call(() -> renderOperationBodyBuilder(writer, operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -101,7 +103,7 @@ public class BuilderGenerator {
 
     private void renderOperationBodyBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
         //determine if there are any members of the input that need to be serialized to the body
-        boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class));
+        boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
                     .write("json = Builders::$L.build(params)", inputShape.getId().getName())
@@ -124,6 +126,24 @@ public class BuilderGenerator {
             String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
             // TODO: Handle required
             writer.write("http_req.append_query_param('$1L', params[$2L].to_str) if params.key?($2L)", queryTrait.getValue(), symbolName);
+        }
+    }
+
+    private void renderHeadersBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        // get a list of all of HttpLabel members
+        List<MemberShape> headerMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
+                .collect(Collectors.toList());
+        System.out.println("\tHEADER BUILDER: " + operation.getId() + " has " + headerMembers.size() + " query params...");
+
+        for(MemberShape m : headerMembers) {
+            HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
+            Shape target = model.expectShape(m.getTarget());
+            System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
+            String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
+            // TODO: Handle required
+            writer.write("http_req.headers['$1L'] = params[$2L].to_str if params.key?($2L)", headerTrait.getValue(), symbolName);
         }
     }
 

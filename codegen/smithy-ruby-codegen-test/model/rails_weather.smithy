@@ -165,7 +165,10 @@ $version: "1.0"
      nextToken: String,
 
      @httpQuery("pageSize")
-     maxResults: Integer
+     maxResults: Integer,
+
+     @httpHeader("X-Rails")
+     rails: String
  }
 
  structure ListCitiesOutput {
@@ -173,6 +176,9 @@ $version: "1.0"
 
      @required
      items: CitySummaries,
+
+     @httpHeader("Rails")
+     rails: String
  }
 
  // CitySummaries is a list of CitySummary structures.

@@ -16,11 +16,15 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.traits.HttpHeaderTrait;
+import software.amazon.smithy.model.traits.HttpLabelTrait;
+import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -66,6 +70,7 @@ public class ParserGenerator {
                 .openBlock("def self.parse(http_resp:, resp:)")
                 .write("data = JSON.parse(http_resp.body.read)")
                 .write("resp.data = Parsers::$L.parse(data)", outputShapeId.getName())
+                .call(() -> renderHeaderParsers(writer, operation))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -86,6 +91,22 @@ public class ParserGenerator {
                 System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
 
+        }
+    }
+
+    private void renderHeaderParsers(RubyCodeWriter writer, OperationShape operation) {
+        Shape outputShape = model.expectShape(operation.getOutput().get());
+        List<MemberShape> headerMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
+                .collect(Collectors.toList());
+
+        for(MemberShape m : headerMembers) {
+            HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
+            Shape target = model.expectShape(m.getTarget());
+            System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
+            String symbolName =  RubyFormatter.toSnakeCase(m.getMemberName());
+            writer.write("resp.data.$L = http_resp.headers['$L']", symbolName, headerTrait.getValue());
         }
     }
 
@@ -122,7 +143,7 @@ public class ParserGenerator {
             // TODO: This may be where a vistor pattern is useful?
             if (target.isListShape() || target.isStructureShape()) {
                 writer.write("data.$1L = Parsers::$2L.parse(json['$1L']) if json.key?('$1L')", RubyFormatter.toSnakeCase(member.getMemberName()), target.getId().getName());
-            } else {
+            } else if(!target.hasTrait(HttpHeaderTrait.class)) {
                 // TODO: This is incomplete, many times need conversion...
                 writer.write("data.$1L = json['$1L']", RubyFormatter.toSnakeCase(member.getMemberName()));
             }
