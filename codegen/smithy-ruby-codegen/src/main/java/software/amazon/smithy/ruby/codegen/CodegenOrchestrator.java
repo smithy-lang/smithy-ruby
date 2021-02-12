@@ -22,8 +22,6 @@ public class CodegenOrchestrator {
 
     private final GenerationContext context;
 
-
-
     public CodegenOrchestrator(PluginContext pluginContext) {
 
         RubySettings rubySettings = RubySettings.from(pluginContext.getSettings());
@@ -101,6 +99,7 @@ public class CodegenOrchestrator {
 
             protocolGenerator.generateBuilders(context);
             protocolGenerator.generateParsers(context);
+            protocolGenerator.generateErrors(context);
             protocolGenerator.generateProtocolUnitTests(context);
             protocolGenerator.generateProtocolClient(context);
         }
@@ -118,8 +117,7 @@ public class CodegenOrchestrator {
     }
 
     private void generateTypes() {
-        Stream<StructureShape> structureShapeStream = context.getModel().shapes(StructureShape.class);
-        TypesGenerator typesGenerator = new TypesGenerator(context.getRubySettings(), structureShapeStream);
+        TypesGenerator typesGenerator = new TypesGenerator(context);
         typesGenerator.render(context.getFileManifest());
         LOGGER.info("created types");
     }

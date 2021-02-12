@@ -16,55 +16,92 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
-import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.ruby.codegen.*;
 
-public class TypesGenerator {
+public class TypesGenerator extends ShapeVisitor.Default<Void>  {
+    private final GenerationContext context;
     private final RubySettings settings;
-    private final Stream<StructureShape> shapes;
+    private final RubyCodeWriter writer;
+    private final RubyTypesWriter typesWriter;
+    private final RubyTypeMapper typeMapper;
 
-    public TypesGenerator(RubySettings settings, Stream<StructureShape> shapes) {
-        this.settings = settings;
-        this.shapes = shapes;
+    public TypesGenerator(GenerationContext context) {
+        this.context = context;
+        this.settings = context.getRubySettings();
+        this.writer = new RubyCodeWriter();
+        this.typesWriter = new RubyTypesWriter();
+        this.typeMapper = new RubyTypeMapper(context.getModel());
     }
 
     public void render(FileManifest fileManifest) {
-        RubyCodeWriter writer = new RubyCodeWriter();
+        //TODO: We need some mechanism to do both at once.
+        typesWriter
+                .openBlock("module $L", settings.getModule())
+                .openBlock("module Types");
 
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
-                .call(() -> renderTypes(writer))
+                .call(() -> renderTypes())
+                .closeBlock("end")
+                .closeBlock("end");
+
+        typesWriter
                 .closeBlock("end")
                 .closeBlock("end");
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
         fileManifest.writeFile(fileName, writer.toString());
+
+        String typesFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
+        fileManifest.writeFile(typesFile, typesWriter.toString());
     }
 
-    private void renderTypes(RubyCodeWriter writer) {
-        shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(structureShape -> {
-            // errors are not types
-            if (!structureShape.hasTrait(ErrorTrait.class)) {
-                renderType(writer, structureShape);
-            }
-        });
+    private void renderTypes() {
+
+        System.out.println("Walking shapes from " + context.getService().getId() + " to find shapes to generate");
+
+        Model modelWithoutTraitShapes = ModelTransformer.create().getModelWithoutTraitShapes(context.getModel());
+
+        Set<Shape> serviceShapes = new TreeSet<>(new Walker(modelWithoutTraitShapes).walkShapes(context.getService()));
+
+        for (Shape shape : serviceShapes) {
+            shape.accept(this);
+        }
     }
 
-    private void renderType(RubyCodeWriter writer, StructureShape structureShape) {
-        String shapeName = structureShape.getId().getName();
+    @Override
+    protected Void getDefault(Shape shape) {
+        return null;
+    }
+
+    @Override
+    public Void structureShape(StructureShape shape) {
+        if (shape.hasTrait(ErrorTrait.class)) {
+            System.out.println("Skipping " + shape.getId() + " because it is an error type.");
+            return null;
+        }
+        System.out.println("Visit Structure Shape: " + shape.getId());
+        String shapeName = shape.getId().getName();
         String membersBlock;
 
-        if (structureShape.members().isEmpty()) {
+        if (shape.members().isEmpty()) {
             membersBlock = "nil";
         } else {
-            membersBlock = structureShape
+            membersBlock = shape
                     .members()
                     .stream()
                     .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
@@ -73,9 +110,42 @@ public class TypesGenerator {
         membersBlock += ",";
 
         writer
+                .write("")
                 .openBlock(shapeName + " = Struct.new(")
                 .write(membersBlock)
                 .write("keyword_init: true")
                 .closeBlock(")");
+
+        String initTypes = shape.members().stream()
+                .map(m -> "?" + RubyFormatter.toSnakeCase(m.getMemberName()) + ": " + typeFor(targetShape(m)))
+                .collect(Collectors.joining(", "));
+
+        String memberAttrTypes = shape.members().stream()
+                .map(m -> "attr_accessor " + RubyFormatter.toSnakeCase(m.getMemberName()) + "(): " + typeFor(targetShape(m)))
+                .collect(Collectors.joining("\n"));
+
+        typesWriter
+                .write("")
+                .openBlock("class " + shapeName + " < Struct[untyped]")
+                .write("def initialize: (" + initTypes + ") -> untyped")
+                .write(memberAttrTypes)
+                .closeBlock("end");
+        return null;
+    }
+
+    @Override
+    public Void unionShape(UnionShape shape) {
+        // TODO: Generate a structure
+        return null;
+    }
+
+    private Shape targetShape(MemberShape m) {
+        return this.context.getModel().expectShape(m.getTarget());
+    }
+
+    private String typeFor(Shape m) {
+        String rubyType = m.accept(typeMapper);
+        System.out.println("\t\tMapping to ruby type: " + m.getId() + " Smithy Type: " + m.getType() + " -> " + rubyType);
+        return rubyType;
     }
 }
