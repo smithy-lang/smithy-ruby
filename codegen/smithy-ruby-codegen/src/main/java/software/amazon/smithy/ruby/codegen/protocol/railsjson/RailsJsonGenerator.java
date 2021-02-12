@@ -25,7 +25,7 @@ public class RailsJsonGenerator implements ProtocolGenerator {
 
     @Override
     public void generateBuilders(GenerationContext context) {
-        BuilderGenerator builderGenerator = new BuilderGenerator(context.getRubySettings(), context.getModel());
+        BuilderGenerator builderGenerator = new BuilderGenerator(context);
         builderGenerator.render(context.getFileManifest());
         LOGGER.info("created builders");
     }

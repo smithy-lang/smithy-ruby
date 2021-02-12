@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
+import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -140,12 +141,17 @@ public class ParserGenerator {
         for(MemberShape member : s.members()) {
             Shape target = model.expectShape(member.getTarget());
             System.out.println("\t\tMEMBER PARSER FOR: " + member.getId() + " target type: " + target.getType());
+            String dataName = RubyFormatter.toSnakeCase(member.getMemberName());
+            String jsonName = dataName;
+            if (member.hasTrait(JsonNameTrait.class)) {
+                jsonName = member.getTrait(JsonNameTrait.class).get().getValue();
+            }
             // TODO: This may be where a vistor pattern is useful?
             if (target.isListShape() || target.isStructureShape()) {
-                writer.write("data.$1L = Parsers::$2L.parse(json['$1L']) if json.key?('$1L')", RubyFormatter.toSnakeCase(member.getMemberName()), target.getId().getName());
+                writer.write("data.$1L = Parsers::$2L.parse(json['$3L']) if json.key?('$3L')", dataName, target.getId().getName(), jsonName);
             } else if(!target.hasTrait(HttpHeaderTrait.class)) {
-                // TODO: This is incomplete, many times need conversion...
-                writer.write("data.$1L = json['$1L']", RubyFormatter.toSnakeCase(member.getMemberName()));
+                // TODO: This is incomplete, many types need conversion...
+                writer.write("data.$L = json['$L']", dataName, jsonName);
             }
         }
     }

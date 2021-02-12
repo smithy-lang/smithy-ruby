@@ -116,12 +116,13 @@ $version: "1.0"
 
      name: String,
 
+     @NestedAttributes
      coordinates: CityCoordinates,
  }
 
  structure UpdateCityOutput {
      @required
-     cityId: CityId,
+     id: CityId,
 
      @required
      name: String,
