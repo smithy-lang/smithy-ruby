@@ -20,7 +20,7 @@ public class RailsJsonGenerator implements ProtocolGenerator {
 
     @Override
     public ShapeId getProtocol() {
-        return ShapeId.from("smithy.railsjson#RailsJson");
+        return ShapeId.from("smithy.rails#RailsJson");
     }
 
     @Override

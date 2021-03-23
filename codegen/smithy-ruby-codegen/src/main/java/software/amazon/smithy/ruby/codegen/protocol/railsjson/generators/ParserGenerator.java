@@ -62,10 +62,15 @@ public class ParserGenerator {
     }
 
     private void renderParsersForOperation(RubyCodeWriter writer, OperationShape operation) {
+        System.out.println("Generating parsers for Operation: " + operation.getId());
+
         //TODO: An optional check on the Output Type being present
+        if (!operation.getOutput().isPresent()) {
+            System.out.println("\tSKIPPING.  No Output type.");
+            return;
+        }
         ShapeId outputShapeId = operation.getOutput().get();
 
-        System.out.println("Generating parsers for Operation: " + operation.getId());
         writer
                 .openBlock("class $LOperation", operation.getId().getName())
                 .openBlock("def self.parse(http_resp:, resp:)")

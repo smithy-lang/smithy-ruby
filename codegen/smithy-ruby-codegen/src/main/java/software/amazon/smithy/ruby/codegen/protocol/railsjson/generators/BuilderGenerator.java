@@ -67,10 +67,15 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderBuildersForOperation(RubyCodeWriter writer, OperationShape operation) {
+        System.out.println("Generating builders for Operation: " + operation.getId());
+
         //TODO: An optional check on the Output Type being present
+        if (!operation.getInput().isPresent()) {
+            System.out.println("\tSKIPPING.  No Output type.");
+            return;
+        }
         ShapeId inputShapeId = operation.getInput().get();
 
-        System.out.println("Generating builders for Operation: " + operation.getId());
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         Shape inputShape = model.expectShape(inputShapeId);
 
