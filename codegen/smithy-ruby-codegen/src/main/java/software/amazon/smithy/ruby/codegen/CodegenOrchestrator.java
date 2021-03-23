@@ -62,6 +62,15 @@ public class CodegenOrchestrator {
         ShapeId protocol = rubySettings.resolveServiceProtocol(service, resolvedModel, supportedProtocols);
         Optional<ProtocolGenerator> protocolGenerator = resolveProtocolGenerator(protocol, integrations);
 
+        ApplicationTransport applicationTransport; // Java9+ replace with ifPresentOrElse
+        if (protocolGenerator.isPresent()) {
+            applicationTransport = protocolGenerator.get().getApplicationTransport();
+        } else {
+            applicationTransport = ApplicationTransport.createDefaultHttpApplicationTransport();
+        }
+
+        System.out.println("Resolved ApplicationTransport: " + applicationTransport);
+
         context = new GenerationContext(
                 rubySettings,
                 pluginContext.getFileManifest(),
@@ -69,7 +78,8 @@ public class CodegenOrchestrator {
                 resolvedModel,
                 service,
                 protocol,
-                protocolGenerator);
+                protocolGenerator,
+                applicationTransport);
     }
 
     /*
@@ -90,7 +100,6 @@ public class CodegenOrchestrator {
 
         System.out.println("\n\n----------------------------------\n\n");
         System.out.println("Starting CodeGen execute");
-
 
         generateTypes();
 

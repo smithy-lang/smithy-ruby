@@ -4,6 +4,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.RubyCodegenPlugin;
@@ -21,6 +22,11 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     @Override
     public ShapeId getProtocol() {
         return ShapeId.from("smithy.rails#RailsJson");
+    }
+
+    @Override
+    public ApplicationTransport getApplicationTransport() {
+        return ApplicationTransport.createDefaultHttpApplicationTransport();
     }
 
     @Override

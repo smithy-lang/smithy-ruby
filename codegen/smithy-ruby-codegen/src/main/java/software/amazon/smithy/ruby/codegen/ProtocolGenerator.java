@@ -6,6 +6,8 @@ public interface ProtocolGenerator {
 
     ShapeId getProtocol();
 
+    ApplicationTransport getApplicationTransport();
+
     void generateBuilders(GenerationContext context);
 
     void generateParsers(GenerationContext context);
