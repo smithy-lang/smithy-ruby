@@ -1,1 +1,3 @@
 software.amazon.smithy.ruby.codegen.integrations.RailsIntegration
+software.amazon.smithy.ruby.codegen.integrations.RailsLocalRegion
+software.amazon.smithy.ruby.codegen.integrations.GameArn
