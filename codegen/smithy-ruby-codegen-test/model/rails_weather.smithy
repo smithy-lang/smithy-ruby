@@ -100,6 +100,7 @@ structure DeleteHighScoreOutput {}
 operation ListHighScores {
     output: ListHighScoresOutput
 }
+
 // TODO use @httpPayload when it's relaxed for lists
 structure ListHighScoresOutput {
     highScores: HighScoreSummaries

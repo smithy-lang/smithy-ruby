@@ -11,18 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RailsIntegration implements RubyIntegration {
-    @Override
-    public Byte getOrder() {
-        return 0;
-    }
 
     @Override
     public List<ProtocolGenerator> getProtocolGenerators() {
         return Arrays.asList(new RailsJsonGenerator());
-    }
-
-    @Override
-    public Model preprocessModel(PluginContext context, Model model, RubySettings settings) {
-        return model;
     }
 }

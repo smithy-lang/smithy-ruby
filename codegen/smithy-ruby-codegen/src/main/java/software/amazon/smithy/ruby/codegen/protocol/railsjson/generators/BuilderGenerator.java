@@ -69,10 +69,9 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private void renderBuildersForOperation(RubyCodeWriter writer, OperationShape operation) {
         System.out.println("Generating builders for Operation: " + operation.getId());
 
-        //TODO: An optional check on the Output Type being present
+        // Operations MUST have an Input type, even if it is empty
         if (!operation.getInput().isPresent()) {
-            System.out.println("\tSKIPPING.  No Output type.");
-            return;
+            throw new RuntimeException("Missing Input Shape for: " + operation.getId());
         }
         ShapeId inputShapeId = operation.getInput().get();
 
@@ -80,8 +79,9 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         Shape inputShape = model.expectShape(inputShapeId);
 
         writer
-                .openBlock("class $LOperation", operation.getId().getName())
-                .openBlock("def self.build(http_req:, params:)")
+                .write("\n# Operation Builder for $L", operation.getId().getName())
+                .openBlock("class $L", operation.getId().getName())
+                .openBlock("def self.build(http_req, params:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
                 .call(() -> renderQueryParamsBuilder(writer, operation, inputShape))
@@ -104,14 +104,20 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
+    // The Input shape is combined with the OperationBuilder
+    // This generates the setting of the body (if any non-http params) as if it was the Builder for the Input
+    // Also marks the InputShape as generated
     private void renderOperationBodyBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        generatedBuilders.add(inputShape.getId());
+
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
-                    .write("http_req.headers['Content-Type'] = 'application/json'")
-                    .write("json = Builders::$L.build(params)", inputShape.getId().getName())
-                    .write("http_req.body = StringIO.new(JSON.dump(json))");
+                .write("")
+                .write("http_req.headers['Content-Type'] = 'application/json'")
+                .call(() -> renderMemberBuilders(writer, inputShape))
+                .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
     }
 
@@ -171,10 +177,10 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 Shape target = model.expectShape(m.getTarget());
                 System.out.println("\t\tAdding url subs for: " + target.getId());
                 String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
-                formatArgs += ",\n" + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
+                formatArgs += ",\n  " + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
             }
             writer.openBlock("http_req.append_path(format(");
-            writer.write("'$L'$L\n)", formatUri, formatArgs);
+            writer.write("  '$L'$L\n)", formatUri, formatArgs);
             writer.closeBlock(")");
         } else {
             writer.write("http_req.append_path('$L')", httpTrait.getUri());
@@ -185,11 +191,11 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape shape) {
         System.out.println("\tRENDER builder for STRUCTURE: " + shape.getId());
         writer
-                .openBlock("\nclass $L", shape.getId().getName())
-                .call(() -> renderPermittedValues(writer, shape))
+                .write("\n# Structure Builder for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
                 .openBlock("def self.build(params)")
-                .write("params = Seahorse::Params.hash_value(params, permit: PERMIT)")
                 .call(() -> renderMemberBuilders(writer, shape))
+                .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -200,6 +206,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     public Void listShape(ListShape shape) {
         System.out.println("\tRENDER builder for LIST: " + shape.getId());
         writer
+                .write("\n# List Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("def self.build(params)")
                 .write("data = []")
@@ -224,19 +231,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         return null;
     }
 
-    private void renderPermittedValues(RubyCodeWriter writer, Shape shape) {
-        String membersBlock = shape.members()
-                .stream()
-                .map(memberShape -> RubyFormatter.toSnakeCase(memberShape.getMemberName()))
-                .collect(Collectors.joining(" "));
-
-        writer
-                .openBlock("PERMIT = Set.new(%i[")
-                .write(membersBlock)
-                .closeBlock("])");
-    }
-
-    private void renderMemberBuilders(RubyCodeWriter writer, StructureShape s) {
+    private void renderMemberBuilders(RubyCodeWriter writer, Shape s) {
         writer.write("data = {}");
         Stream<MemberShape> nonHttpMembers = s.members().stream().filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
 
@@ -251,8 +246,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             }
             target.accept(new MemberSerializer(writer, dataName, symbolName));
         });
-
-        writer.write("return data");
     }
 
     @Override
@@ -273,11 +266,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         }
 
         public String checkRequired(Shape shape) {
-            if (shape.hasTrait(RequiredTrait.class)) {
-                return "";
-            } else {
-                return " if params.key?(" + symbolName + ")";
-            }
+            return " unless params[" + symbolName + "].nil?";
         }
 
         @Override
@@ -287,31 +276,31 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("data[$L] = params[$L].bool$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("data[$L] = params[$L].to_int$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write("data[$L] = params[$L].to_float$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("data[$L] = params[$L].to_s$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("data[$L] = params[$L].time$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("data[$L] = params[$L].to_s$L", symbolName, symbolName, checkRequired(shape));
             return null;
         }
 

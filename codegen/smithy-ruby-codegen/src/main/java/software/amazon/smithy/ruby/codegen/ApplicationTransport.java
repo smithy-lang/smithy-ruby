@@ -14,8 +14,11 @@
  */
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.Objects;
+import java.util.*;
+
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.ruby.codegen.middleware.Middleware;
+import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
 
 /**
@@ -25,24 +28,36 @@ import software.amazon.smithy.codegen.core.Symbol;
 public final class ApplicationTransport {
 
     private final String name;
-    private final Symbol requestType;
-    private final Symbol responseType;
+    private final ClientFragment request;
+    private final ClientFragment response;
+    private final ClientFragment transportClient;
+    private final MiddlewareList defaultMiddleware;
 
     /**
      * Creates a resolved application transport.
-     *
-     * @param name         The transport name (e.g., http, mqtt, etc).
-     * @param requestType  The type used to represent request messages for the transport.
-     * @param responseType The type used to represent response messages for the transport.
      */
     public ApplicationTransport(
             String name,
-            Symbol requestType,
-            Symbol responseType
+            ClientFragment request,
+            ClientFragment response,
+            ClientFragment transportClient,
+            MiddlewareList defaultMiddleware
+
     ) {
+        //TODO: Create a builder for this
         this.name = name;
-        this.requestType = requestType;
-        this.responseType = responseType;
+        this.request = request;
+        this.response = response;
+        this.transportClient = transportClient;
+        this.defaultMiddleware = defaultMiddleware;
+    }
+
+    @FunctionalInterface
+    public interface MiddlewareList {
+        /**
+         * Called to Render the addition of this middleware to the stack
+         */
+        List<Middleware> list(ApplicationTransport transport, GenerationContext context);
     }
 
     /**
@@ -51,17 +66,82 @@ public final class ApplicationTransport {
      * @return Returns the created application Transport.
      */
     public static ApplicationTransport createDefaultHttpApplicationTransport() {
+        ClientConfig endpoint = (new ClientConfig.Builder())
+                .name("endpoint")
+                .type("string")
+                .documentation("Endpoint of the service")
+                .build();
+
+        ClientFragment request = (new ClientFragment.Builder())
+                .addConfig(endpoint)
+                .render( (self, ctx) -> "Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
+                .build();
+
+        ClientFragment response = (new ClientFragment.Builder())
+                .render( (self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream)")
+                .build();
+
+        ClientConfig wireTrace = (new ClientConfig.Builder())
+                .name("http_wire_trace")
+                .type("bool")
+                .defaultValue("false")
+                .documentation("Enable debug wire trace on http requests.")
+                .build();
+
+        ClientConfig logger = (new ClientConfig.Builder())
+                .name("logger")
+                .type("Logger")
+                .defaultValue("stdout")
+                .initializationCustomization("@logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))")
+                .documentation("Logger to use for output")
+                .build();
+
+        ClientConfig logLevel = (new ClientConfig.Builder())
+                .name("log_level")
+                .type("symbol")
+                .defaultValue(":info")
+                .documentation("Default log level to use")
+                .build();
+
+        ClientFragment client = (new ClientFragment.Builder())
+                .addConfig(wireTrace)
+                .addConfig(logger)
+                .addConfig(logLevel)
+                .render( (self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace)")
+                .build();
+
+        MiddlewareList defaultMiddleware = (transport, context) -> {
+            List<Middleware> middleware = new ArrayList();
+            middleware.add((new Middleware.Builder())
+                    .klass("Seahorse::HTTP::Middleware::ContentLength")
+                    .step(MiddlewareStackStep.BUILD)
+                    .build()
+            );
+
+            middleware.add((new Middleware.Builder())
+                    .klass("Seahorse::Middleware::Parse")
+                    .step(MiddlewareStackStep.DESERIALIZE)
+                    .operationParams( (ctx, operation) -> {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("data_parser", "Parsers::" + operation.getId().getName());
+                        //TODO: Extract these from the operation, http trait.
+                        String successCode = "200";
+                        String errors = "[]";
+                        params.put("error_parser", "Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status_code: " + successCode + ", errors: " + errors + ")");
+                        return params;
+                    })
+                    .build()
+            );
+
+            return middleware;
+        };
+
         return new ApplicationTransport(
                 "http",
-                createHttpSymbol("Request"),
-                createHttpSymbol("Response")
-        );
-    }
-
-    private static Symbol createHttpSymbol(String symbolName) {
-        return Symbol.builder()
-                .namespace("Seahorse::HTTP", "::")
-                .name(symbolName).build();
+                request,
+                response,
+                client,
+                defaultMiddleware);
     }
 
     /**
@@ -85,29 +165,33 @@ public final class ApplicationTransport {
         return getName().startsWith("http");
     }
 
-    /**
-     * Gets the symbol used to refer to the request type for this Transport.
-     *
-     * @return Returns the Transport request type.
-     */
-    public Symbol getRequestType() {
-        return requestType;
+    public ClientFragment getRequest() {
+        return request;
     }
 
-    /**
-     * Gets the symbol used to refer to the response type for this Transport.
-     *
-     * @return Returns the Transport response type.
-     */
-    public Symbol getResponseType() {
-        return responseType;
+    public ClientFragment getResponse() {
+        return response;
+    }
+
+    public ClientFragment getTransportClient() {
+        return transportClient;
+    }
+
+    public List<Middleware> defaultMiddleware(GenerationContext context) {
+        return this.defaultMiddleware.list(this, context);
+    }
+
+    public Set<ClientConfig> getClientConfig() {
+        Set<ClientConfig> config = new HashSet();
+        config.addAll(request.getClientConfig());
+        config.addAll(response.getClientConfig());
+        config.addAll(transportClient.getClientConfig());
+        return config;
     }
 
     @Override
     public String toString() {
-        return "ApplicationTransport<" +
-                getName() + ", request: " +
-                getRequestType() + ", response: " + getRequestType() + ">";
+        return "ApplicationTransport<" + getName() + ">";
     }
 
     @Override
@@ -119,12 +203,6 @@ public final class ApplicationTransport {
         }
 
         ApplicationTransport that = (ApplicationTransport) o;
-        return requestType.equals(that.requestType)
-                && responseType.equals(that.responseType);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(requestType, responseType);
+        return name.equals(that.name);
     }
 }

@@ -5,7 +5,8 @@ import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
+import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
@@ -13,7 +14,6 @@ import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class CodegenOrchestrator {
@@ -36,7 +36,7 @@ public class CodegenOrchestrator {
         List<RubyIntegration> integrations =
                 StreamSupport.stream(integrationServiceLoader.spliterator(), false)
                         .peek((i) -> System.out.println("Loaded RubyIntegration: " + i.getClass().getName()))
-                .sorted(Comparator.comparing(RubyIntegration::getOrder))
+                    .sorted(Comparator.comparing(RubyIntegration::getOrder))
                 .collect(Collectors.toList());
         System.out.println("Loaded integrations: " + integrations.size());
 
@@ -47,6 +47,15 @@ public class CodegenOrchestrator {
         }
 
         ServiceShape service = resolvedModel.expectShape(rubySettings.getService()).asServiceShape().orElseThrow(() -> new CodegenException("Shape is not a service"));
+
+        // Add unique operation input/output shapes
+        resolvedModel = AddOperationShapes.execute(resolvedModel, service.getId());
+
+        // Now that service and model are resolved, filter integrations for the service
+        Model finalResolvedModel = resolvedModel;
+        integrations = integrations.stream()
+                .filter((integration) -> integration.includeFor(service, finalResolvedModel))
+                .collect(Collectors.toList());
 
         Set<ShapeId> supportedProtocols = new HashSet<>();
         for (RubyIntegration integration : integrations) {
@@ -101,7 +110,11 @@ public class CodegenOrchestrator {
         System.out.println("\n\n----------------------------------\n\n");
         System.out.println("Starting CodeGen execute");
 
+        // Integration hook - processFinalizedModel
+        context.getIntegrations().forEach( (integration) -> integration.processFinalizedModel(context));
+
         generateTypes();
+        generateValidators();
 
         if (context.getProtocolGenerator().isPresent()) {
             ProtocolGenerator protocolGenerator = context.getProtocolGenerator().get();
@@ -109,25 +122,51 @@ public class CodegenOrchestrator {
             protocolGenerator.generateBuilders(context);
             protocolGenerator.generateParsers(context);
             protocolGenerator.generateErrors(context);
+            protocolGenerator.generateStubbers(context);
             protocolGenerator.generateProtocolUnitTests(context);
-            protocolGenerator.generateProtocolClient(context);
         }
 
-        //TODO: This needs to have the "requires" injected by customizations
-        ModuleGenerator moduleGenerator = new ModuleGenerator(context.getRubySettings());
-        moduleGenerator.render(context.getFileManifest());
-        LOGGER.info("created module");
+        generateClient();
 
-        //TODO: dependencies need to be injected
-        GemspecGenerator gemspecGenerator = new GemspecGenerator(context.getRubySettings());
-        gemspecGenerator.render(context.getFileManifest());
-        LOGGER.info("wrote .gemspec");
+        generateModule();
 
+        generateGemSpec();
     }
 
     private void generateTypes() {
         TypesGenerator typesGenerator = new TypesGenerator(context);
-        typesGenerator.render(context.getFileManifest());
+        typesGenerator.render();
         LOGGER.info("created types");
+    }
+
+    private void generateValidators() {
+        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(context);
+        validatorsGenerator.render();
+        LOGGER.info("created types");
+    }
+
+    private void generateClient() {
+        ClientGenerator clientGenerator = new ClientGenerator(context);
+        clientGenerator.render();
+    }
+
+    private void generateModule() {
+        List<String> additionalFiles = context.getIntegrations().stream()
+                .map((integration) -> integration.writeAdditionalFiles(context))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        ModuleGenerator moduleGenerator = new ModuleGenerator(context);
+        moduleGenerator.render(additionalFiles);
+        LOGGER.info("created module");
+    }
+
+    private void generateGemSpec() {
+        List<RubyDependency> additionalDependencies = context.getIntegrations().stream()
+                .map((integration) -> integration.additionalGemDependencies(context))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
+        gemspecGenerator.render(additionalDependencies);
+        LOGGER.info("wrote .gemspec");
     }
 }

@@ -54,6 +54,8 @@ public class GenerationContext {
         return service;
     }
 
+    public ApplicationTransport getApplicationTransport() { return applicationTransport; }
+
     public ShapeId getProtocol() {
         return protocol;
     }

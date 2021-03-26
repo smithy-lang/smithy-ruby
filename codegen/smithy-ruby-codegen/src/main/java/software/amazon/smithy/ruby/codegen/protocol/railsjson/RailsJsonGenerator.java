@@ -52,15 +52,12 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     }
 
     @Override
-    public void generateProtocolUnitTests(GenerationContext context) {
+    public void generateStubbers(GenerationContext context) {
         LOGGER.info("Implement me!");
     }
 
     @Override
-    public void generateProtocolClient(GenerationContext context) {
-        Stream<OperationShape> operationShapeStream = context.getModel().shapes(OperationShape.class);
-        ClientGenerator clientGenerator = new ClientGenerator(context.getRubySettings(), operationShapeStream);
-        clientGenerator.render(context.getFileManifest());
-        LOGGER.info("created client");
+    public void generateProtocolUnitTests(GenerationContext context) {
+        LOGGER.info("Implement me!");
     }
 }

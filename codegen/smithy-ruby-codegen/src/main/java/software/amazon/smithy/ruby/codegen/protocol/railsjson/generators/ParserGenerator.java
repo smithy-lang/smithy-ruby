@@ -22,14 +22,12 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
-import software.amazon.smithy.model.traits.HttpHeaderTrait;
-import software.amazon.smithy.model.traits.HttpLabelTrait;
-import software.amazon.smithy.model.traits.HttpQueryTrait;
-import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.*;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
+//TODO: Clean this class up to match the Visitor pattern used in BuidlerGenerator
 public class ParserGenerator {
 
     private final RubySettings settings;
@@ -64,25 +62,30 @@ public class ParserGenerator {
     private void renderParsersForOperation(RubyCodeWriter writer, OperationShape operation) {
         System.out.println("Generating parsers for Operation: " + operation.getId());
 
-        //TODO: An optional check on the Output Type being present
+        // Operations MUST have an Output type, even if it is empty
         if (!operation.getOutput().isPresent()) {
-            System.out.println("\tSKIPPING.  No Output type.");
-            return;
+            throw new RuntimeException("Missing Output Shape for: " + operation.getId());
         }
+
         ShapeId outputShapeId = operation.getOutput().get();
+        Shape outputShape = model.expectShape(outputShapeId);
+
 
         writer
-                .openBlock("class $LOperation", operation.getId().getName())
-                .openBlock("def self.parse(http_resp:, resp:)")
-                .write("data = JSON.parse(http_resp.body.read)")
-                .write("resp.data = Parsers::$L.parse(data)", outputShapeId.getName())
-                .call(() -> renderHeaderParsers(writer, operation))
+                .write("\n# Operation Parser for $L", operation.getId().getName())
+                .openBlock("class $L", operation.getId().getName())
+                .openBlock("def self.parse(http_resp, output:)")
+                .write("json = Seahorse::JSON.load(http_resp.body)")
+                .write("data = Types::$L.new", outputShapeId.getName())
+                .call(() -> renderHeaderParsers(writer, operation, outputShape))
+                .call(() -> renderOperationBodyParser(writer, operation, outputShape))
+                .write("output.data = data")
                 .closeBlock("end")
                 .closeBlock("end");
 
         generatedParsers.add(operation.toShapeId());
+        generatedParsers.add(outputShapeId);
 
-        Shape outputShape = model.expectShape(outputShapeId);
         for (Iterator<Shape> it = new Walker(model).iterateShapes(outputShape); it.hasNext(); ) {
             Shape s = it.next();
             if (!generatedParsers.contains(s.getId())) {
@@ -100,8 +103,7 @@ public class ParserGenerator {
         }
     }
 
-    private void renderHeaderParsers(RubyCodeWriter writer, OperationShape operation) {
-        Shape outputShape = model.expectShape(operation.getOutput().get());
+    private void renderHeaderParsers(RubyCodeWriter writer, OperationShape operation, Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
@@ -116,6 +118,25 @@ public class ParserGenerator {
         }
     }
 
+    // The Output shape is combined with the Operation Parser
+    // This generates the parsing of the body as if it was the Parser for the Out[put
+    private void renderOperationBodyParser(RubyCodeWriter writer, OperationShape operation, Shape outputShape) {
+        //determine if there is an httpPayload member
+        List<MemberShape> httpPayloadMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
+                .collect(Collectors.toList());
+
+        if (httpPayloadMembers.size() == 0) {
+            renderMemberParsers(writer, outputShape);
+        } else if (httpPayloadMembers.size() == 1) {
+            MemberShape payloadMember = httpPayloadMembers.get(0);
+            Shape target = model.expectShape(payloadMember.getTarget());
+            String dataName = RubyFormatter.toSnakeCase(payloadMember.getMemberName());
+            writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, target.getId().getName());
+
+        }
+    }
     private void renderParserForStructure(RubyCodeWriter writer, StructureShape s) {
         System.out.println("\tRENDER parser for STRUCTURE: " + s.getId());
         generatedParsers.add(s.getId());
@@ -142,7 +163,8 @@ public class ParserGenerator {
                 .closeBlock("end");
     }
 
-    private void renderMemberParsers(RubyCodeWriter writer, StructureShape s) {
+    // TODO: Apply the same pattern as MemberBuilders (in BuilderGenerator)
+    private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
         for(MemberShape member : s.members()) {
             Shape target = model.expectShape(member.getTarget());
             System.out.println("\t\tMEMBER PARSER FOR: " + member.getId() + " target type: " + target.getType());
@@ -151,11 +173,9 @@ public class ParserGenerator {
             if (member.hasTrait(JsonNameTrait.class)) {
                 jsonName = member.getTrait(JsonNameTrait.class).get().getValue();
             }
-            // TODO: This may be where a vistor pattern is useful?
             if (target.isListShape() || target.isStructureShape()) {
                 writer.write("data.$1L = Parsers::$2L.parse(json['$3L']) if json.key?('$3L')", dataName, target.getId().getName(), jsonName);
             } else if(!target.hasTrait(HttpHeaderTrait.class)) {
-                // TODO: This is incomplete, many types need conversion...
                 writer.write("data.$L = json['$L']", dataName, jsonName);
             }
         }
