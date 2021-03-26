@@ -11,6 +11,7 @@ import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.Gemspec
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -25,10 +26,11 @@ public class CodegenOrchestrator {
     public CodegenOrchestrator(PluginContext pluginContext) {
 
         RubySettings rubySettings = RubySettings.from(pluginContext.getSettings());
+
+        // If this fails to load changes, run: ./gradlew --stop
         ServiceLoader<RubyIntegration> integrationServiceLoader = ServiceLoader
                 .load(RubyIntegration.class,
-                        this.getClass().getClassLoader() // TODO: For some reason, the pluginClassLoader only works during debug.
-                        //pluginContext.getPluginClassLoader().orElse(this.getClass().getClassLoader())
+                        pluginContext.getPluginClassLoader().orElse(this.getClass().getClassLoader())
                 );
 
         System.out.println("\n\n----------------------------------\n\n");

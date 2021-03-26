@@ -31,6 +31,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
 public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
@@ -233,9 +234,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderMemberBuilders(RubyCodeWriter writer, Shape s) {
         writer.write("data = {}");
-        Stream<MemberShape> nonHttpMembers = s.members().stream().filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
 
-        nonHttpMembers.forEach((member) -> {
+        //remove members w/ http traits or marked NoSerialize
+        Stream<MemberShape> serializeMembers = s.members().stream().filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
+        serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
+
+        serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
             System.out.println("\t\tMEMBER BUILDER FOR: " + member.getId() + " target type: " + target.getType());
 

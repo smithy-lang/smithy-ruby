@@ -13,6 +13,7 @@ public class ClientConfig {
     private final String documentation;
     private final String defaultValue;
     private final String initializationCustomization;
+    private final String postInitializeCustomization;
 
     public ClientConfig(Builder builder) {
         this.name = builder.name;
@@ -20,6 +21,7 @@ public class ClientConfig {
         this.documentation = builder.documentation;
         this.defaultValue = builder.defaultValue;
         this.initializationCustomization = builder.initializationCustomization;
+        this.postInitializeCustomization = builder.postInitializeCustomization;
     }
 
     public String getName() {
@@ -41,6 +43,8 @@ public class ClientConfig {
     public String getInitializationCustomization() {
         return initializationCustomization;
     }
+
+    public String getPostInitializeCustomization() { return postInitializeCustomization; }
 
     @Override
     public boolean equals(Object o) {
@@ -66,6 +70,7 @@ public class ClientConfig {
         private String documentation;
         private String defaultValue;
         private String initializationCustomization;
+        private String postInitializeCustomization;
 
         public Builder name(String name) {
             this.name = name;
@@ -89,6 +94,11 @@ public class ClientConfig {
 
         public Builder initializationCustomization(String initializationCustomization) {
             this.initializationCustomization = initializationCustomization;
+            return this;
+        }
+
+        public Builder postInitializeCustomization(String postInitializeCustomization) {
+            this.postInitializeCustomization = postInitializeCustomization;
             return this;
         }
 

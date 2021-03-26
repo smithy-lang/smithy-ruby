@@ -199,9 +199,12 @@ public class Middleware {
          * <p>By default, a plugin applies globally to a service, which thereby
          * applies to every operation when the middleware stack is copied.
          *
-         * @param operationNames Set of operation names.
          * @return Returns the builder.
          */
+        public Builder appliesOnlyToOperations(String... operationNames) {
+            return appliesOnlyToOperations(new HashSet(Arrays.asList(operationNames)));
+        }
+
         public Builder appliesOnlyToOperations(Set<String> operationNames) {
             return operationPredicate((model, service, operation) -> operationNames.contains(operation.getId().getName()));
         }
