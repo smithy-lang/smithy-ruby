@@ -65,14 +65,57 @@ public class MiddlewareBuilder {
         ServiceShape service = context.getService();
 
         for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
-            List<Middleware> orderedStepMiddleware = middlewares.get(step)
-                    .stream().filter( (m) -> m.includeFor(model, service, operation))
-                    .sorted(Comparator.comparing(Middleware::getOrder))
-                    .collect(Collectors.toList());
+            List<Middleware> orderedStepMiddleware = resolveAndFilter(step, model, service, operation);
 
             for (Middleware middleware : orderedStepMiddleware) {
                 middleware.renderAdd(writer, context, operation);
             }
+        }
+    }
+
+    private  List<Middleware> resolveAndFilter(MiddlewareStackStep step, Model model, ServiceShape service, OperationShape operation) {
+        Set<Middleware> resolved = new HashSet<>();
+        Map<Middleware, Integer> order = new HashMap<>();
+        Map<String, Middleware> idMiddlewareMap = new HashMap<>();
+
+
+        List<Middleware> filteredMiddleware = middlewares.get(step)
+                .stream().filter( (m) -> m.includeFor(model, service, operation))
+                .collect(Collectors.toList());
+
+        filteredMiddleware.forEach( (m) -> idMiddlewareMap.put(m.getId(), m));
+
+        try {
+            for (Middleware middleware : filteredMiddleware) {
+                resolve(middleware, resolved, order, idMiddlewareMap);
+            }
+        } catch (StackOverflowError e) {
+            String msg = "Stackoverflow error when resolving middleware order.  This likely means you have a circular dependency.";
+            System.out.println(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        return filteredMiddleware.stream()
+                .sorted(Comparator.comparingInt(order::get))
+                .collect(Collectors.toList());
+    }
+
+    private void resolve(Middleware middleware, Set<Middleware> resolved, Map<Middleware, Integer> order, Map<String, Middleware> idMiddlewareMap) {
+        // skip if its already been resolved
+        if (!resolved.contains(middleware)) {
+            if (Objects.nonNull(middleware.getRelative())) {
+                Middleware relativeTo = Objects.requireNonNull(idMiddlewareMap.get(middleware.getRelative().getTo()));
+                resolve(relativeTo, resolved, order, idMiddlewareMap); //recursively resolve the relative middleware
+                // the order of relativeTo should now be set
+                if (middleware.getRelative().getType().equals(Middleware.Relative.Type.BEFORE)) {
+                    order.put(middleware, order.get(relativeTo) - 1);
+                } else {
+                    order.put(middleware, order.get(relativeTo) + 1);
+                }
+            } else {
+                // Base case - middleware is not relative to anything else, give it a default 0 order.
+                order.put(middleware, 0);
+            }
+            resolved.add(middleware);
         }
     }
 
@@ -87,7 +130,7 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware validate = (new Middleware.Builder())
-                .klass("Seahorse::Middleware::Validate")
+                .rubyClass("Seahorse::Middleware::Validate")
                 .step(MiddlewareStackStep.INITIALIZE)
                 .operationParams( (ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
@@ -99,7 +142,7 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware build = (new Middleware.Builder())
-                .klass("Seahorse::Middleware::Build")
+                .rubyClass("Seahorse::Middleware::Build")
                 .step(MiddlewareStackStep.SERIALIZE)
                 .addParam("params", "params")
                 .operationParams( (ctx, operation) -> {
@@ -123,7 +166,7 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware send = (new Middleware.Builder())
-                .klass("Seahorse::Middleware::Send")
+                .rubyClass("Seahorse::Middleware::Send")
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client", transport.getTransportClient().render(context))
                 .operationParams( (ctx, operation) -> {
@@ -138,6 +181,22 @@ public class MiddlewareBuilder {
         // register(validate); //TODO: Enable once support for validation done.
         register(build);
         register(send);
+
+        // Add two demo relative middlewares
+        Middleware a = (new Middleware.Builder())
+                .rubyClass("Seahorse::Middleware::Middleware1")
+                .step(MiddlewareStackStep.SERIALIZE)
+                .relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE, "Seahorse::Middleware::Middleware2"))
+                .build();
+
+        Middleware b = (new Middleware.Builder())
+                .rubyClass("Seahorse::Middleware::Middleware2")
+                .step(MiddlewareStackStep.SERIALIZE)
+                .relative(new Middleware.Relative(Middleware.Relative.Type.AFTER, "Seahorse::Middleware::Build"))
+                .build();
+
+        register(a);
+        register(b);
 
         register(transport.defaultMiddleware(context));
     }

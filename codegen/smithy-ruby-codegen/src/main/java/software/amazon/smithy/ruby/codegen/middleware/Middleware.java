@@ -24,6 +24,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.*;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Class representing Middleware to be added during codegeneration
@@ -32,9 +33,10 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * must provide the ClientConfig required for its params.
  */
 public class Middleware {
-    private final String klass;
+    private final String id; // usually the rubyClass, but may be set uniquely if needed
+    private final String rubyClass;
     private final MiddlewareStackStep step;
-    private final byte order;
+    private final Relative relative;
     private final Set<ClientConfig> clientConfig;
     private final OperationParams operationParams;
     private final Map<String, String> additionalParams;
@@ -47,9 +49,10 @@ public class Middleware {
 
     // params could include any Ruby code
     public Middleware(Builder builder) {
-        this.klass = builder.klass;
+        this.rubyClass = builder.rubyClass;
+        this.id = StringUtils.isNotBlank(builder.id) ? builder.id : rubyClass; // fallback to the RubyClass
         this.step = builder.step;
-        this.order = builder.order;
+        this.relative = builder.relative;
         this.clientConfig = builder.clientConfig;
         this.operationParams = builder.operationParams;
         this.additionalParams = builder.additionalParams;
@@ -59,16 +62,18 @@ public class Middleware {
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
     }
 
-    public String getKlass() {
-        return klass;
+    public String getId() { return id; }
+
+    public String getRubyClass() {
+        return rubyClass;
     }
 
     public MiddlewareStackStep getStep() {
         return step;
     }
 
-    public byte getOrder() {
-        return order;
+    public Relative getRelative() {
+        return relative;
     }
 
     public Set<ClientConfig> getClientConfig() {
@@ -134,10 +139,10 @@ public class Middleware {
                     });
 
             if (params.isEmpty()) {
-                writer.write("stack.use($L)", middleware.getKlass());
+                writer.write("stack.use($L)", middleware.getRubyClass());
             }
             else {
-                writer.write("stack.use($L,", middleware.getKlass());
+                writer.write("stack.use($L,", middleware.getRubyClass());
                 writer.indent();
                 String methodArgsBlock = params
                         .entrySet()
@@ -150,9 +155,10 @@ public class Middleware {
             }
         };
 
-        private String klass;
+        private String id;
+        private String rubyClass;
         private MiddlewareStackStep step;
-        private byte order = 0;
+        private Relative relative;
         private Set<ClientConfig> clientConfig = new HashSet<>();
         private OperationParams operationParams = (context, operation) -> new HashMap<>();
         private Map<String, String> additionalParams = new HashMap<>();
@@ -161,13 +167,23 @@ public class Middleware {
         private RenderAdd renderAdd = DEFAULT_RENDER_ADD;
         private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
 
-        public Builder klass(String klass) {
-            this.klass = klass;
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder rubyClass(String klass) {
+            this.rubyClass = klass;
             return this;
         }
 
         public Builder step(MiddlewareStackStep step) {
             this.step = step;
+            return this;
+        }
+
+        public Builder relative(Relative relative) {
+            this.relative = relative;
             return this;
         }
 
@@ -241,6 +257,35 @@ public class Middleware {
         @Override
         public Middleware build() {
             return new Middleware(this);
+        }
+    }
+
+
+
+    public static class Relative {
+        private final Type type;
+        private final String to;
+
+        public Relative(Type type, String to) {
+            this.type = type;
+            this.to = to;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public String getTo() {
+            return to;
+        }
+
+        public String toString() {
+            return type + " " + to;
+        }
+
+        public enum Type {
+            BEFORE,
+            AFTER
         }
     }
 }

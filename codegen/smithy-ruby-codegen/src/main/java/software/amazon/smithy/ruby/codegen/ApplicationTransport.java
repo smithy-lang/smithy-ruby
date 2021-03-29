@@ -113,13 +113,13 @@ public final class ApplicationTransport {
         MiddlewareList defaultMiddleware = (transport, context) -> {
             List<Middleware> middleware = new ArrayList();
             middleware.add((new Middleware.Builder())
-                    .klass("Seahorse::HTTP::Middleware::ContentLength")
+                    .rubyClass("Seahorse::HTTP::Middleware::ContentLength")
                     .step(MiddlewareStackStep.BUILD)
                     .build()
             );
 
             middleware.add((new Middleware.Builder())
-                    .klass("Seahorse::Middleware::Parse")
+                    .rubyClass("Seahorse::Middleware::Parse")
                     .step(MiddlewareStackStep.DESERIALIZE)
                     .operationParams( (ctx, operation) -> {
                         Map<String, String> params = new HashMap<>();
