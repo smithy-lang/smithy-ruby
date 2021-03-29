@@ -182,22 +182,6 @@ public class MiddlewareBuilder {
         register(build);
         register(send);
 
-        // Add two demo relative middlewares
-        Middleware a = (new Middleware.Builder())
-                .rubyClass("Seahorse::Middleware::Middleware1")
-                .step(MiddlewareStackStep.SERIALIZE)
-                .relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE, "Seahorse::Middleware::Middleware2"))
-                .build();
-
-        Middleware b = (new Middleware.Builder())
-                .rubyClass("Seahorse::Middleware::Middleware2")
-                .step(MiddlewareStackStep.SERIALIZE)
-                .relative(new Middleware.Relative(Middleware.Relative.Type.AFTER, "Seahorse::Middleware::Build"))
-                .build();
-
-        register(a);
-        register(b);
-
         register(transport.defaultMiddleware(context));
     }
 }
