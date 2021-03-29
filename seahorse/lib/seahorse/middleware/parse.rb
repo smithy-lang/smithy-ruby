@@ -10,38 +10,37 @@ module Seahorse
         @data_parser = data_parser
       end
 
-      # @param http_req
-      # @param http_resp
-      # @param metadata
-      # @return [Response]
-      def call(http_req:, http_resp:, metadata:)
-        resp = @app.call(
-          http_req: http_req,
-          http_resp: http_resp,
-          metadata: metadata
+      # @param request
+      # @param response
+      # @param context
+      # @return [Output]
+      def call(request:, response:, context:)
+        output = @app.call(
+          request: request,
+          response: response,
+          context: context
         )
-        parse_error(http_resp, resp) unless resp.error
-        parse_data(http_resp, resp) unless resp.error
-        resp
+        parse_error(response, output) unless output.error
+        parse_data(response, output) unless output.error
+        output
       end
 
       private
 
-      def parse_error(http_resp, resp)
-        resp.error = @error_parser.parse(http_resp: http_resp)
-        if resp.error.is_a?(Seahorse::ApiError)
-          resp.metadata[:request_id] = resp.error.request_id
+      def parse_error(response, output)
+        output.error = @error_parser.parse(response: response)
+        if output.error.is_a?(Seahorse::ApiError)
+          output.context[:request_id] = output.error.request_id
         end
       end
 
-      def parse_data(http_resp, resp)
-        return unless (200..299).cover?(http_resp.status_code)
+      def parse_data(response, output)
+        return unless (200..299).cover?(response.status_code)
         @data_parser.parse(
-          http_resp: http_resp,
-          resp: resp
+          response,
+          output: output
         )
       end
-
     end
   end
 end

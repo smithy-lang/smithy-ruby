@@ -32,8 +32,8 @@ dependencies {
     implementation(project(":smithy-ruby-codegen"))
 }
 
-tasks.register<Copy>("copyGem") {
-    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen")
-    into("$buildDir/../../../")
-}
-tasks["build"].finalizedBy(tasks["copyGem"])
+//tasks.register<Copy>("copyGem") {
+//    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen")
+//    into("$buildDir/../../../")
+//}
+//tasks["build"].finalizedBy(tasks["copyGem"])

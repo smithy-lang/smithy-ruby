@@ -10,17 +10,17 @@ module Seahorse
         @max_delay = max_delay
       end
 
-      # @param http_req
-      # @param http_resp
-      # @param metadata
-      # @return [Response]
-      def call(http_req:, http_resp:, metadata:)
+      # @param request
+      # @param response
+      # @param context
+      # @return [Output]
+      def call(request:, response:, context:)
         attempt = 1
         begin
           @app.call(
-            http_req: http_req,
-            http_resp: http_resp,
-            metadata: metadata
+            request: request,
+            response: response,
+            context: context
           )
         rescue Seahorse::HTTP::NetworkingError => error
           if attempt < @max_attempts

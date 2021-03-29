@@ -7,15 +7,14 @@ module Seahorse
   module HTTP
     # Represents an HTTP request.
     class Request
-
       # @param [String] http_method
       # @param [String] url
       # @param [Headers] headers
       # @param [IO] body
-      def initialize(http_method: nil, url: nil, headers: {}, body: StringIO.new(''))
+      def initialize(http_method: nil, url: nil, headers: Headers.new, body: StringIO.new)
         @http_method = http_method
         @url = url
-        @headers = Headers.new(headers: headers)
+        @headers = headers
         @body = body
       end
 
@@ -55,7 +54,9 @@ module Seahorse
       # The provided path should be URI escaped before being passed.
       #
       #     http_req.url = "https://foo.com
-      #     http_req.append_path(NawsHttp.uri_escape_path('/part 1/part 2'))
+      #     http_req.append_path(
+      #       Seahorse::HTTP.uri_escape_path('/part 1/part 2')
+      #     )
       #     http_req.url
       #     #=> "https://foo.com/part%201/part%202"
       #
@@ -96,7 +97,7 @@ module Seahorse
           when 1 then escape(args[0])
           when 2 then "#{escape(args[0])}=#{escape(args[1])}"
           else raise ArgumentError, 'wrong number of arguments ' \
-            "(given #{values.size}, expected 1 or 2)"
+            "(given #{args.size}, expected 1 or 2)"
           end
         uri = URI.parse(@url)
         uri.query = uri.query ? "#{uri.query}&#{param}" : param
@@ -108,7 +109,6 @@ module Seahorse
       def escape(value)
         Seahorse::HTTP.uri_escape(value.to_s)
       end
-
     end
   end
 end

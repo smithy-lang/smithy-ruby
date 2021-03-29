@@ -4,9 +4,8 @@ require 'stringio'
 
 module Seahorse
   module HTTP
-    # HTTP Response.
+    # Represents an HTTP Response.
     class Response
-
       # @param [Integer] status_code
       # @param [Headers] headers
       # @param [IO] body
@@ -24,7 +23,6 @@ module Seahorse
 
       # @return [IO]
       attr_accessor :body
-
     end
   end
 end
