@@ -4,6 +4,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.RubyCodegenPlugin;
@@ -20,12 +21,17 @@ public class RailsJsonGenerator implements ProtocolGenerator {
 
     @Override
     public ShapeId getProtocol() {
-        return ShapeId.from("smithy.railsjson#RailsJson");
+        return ShapeId.from("smithy.rails#RailsJson");
+    }
+
+    @Override
+    public ApplicationTransport getApplicationTransport() {
+        return ApplicationTransport.createDefaultHttpApplicationTransport();
     }
 
     @Override
     public void generateBuilders(GenerationContext context) {
-        BuilderGenerator builderGenerator = new BuilderGenerator(context.getRubySettings(), context.getModel());
+        BuilderGenerator builderGenerator = new BuilderGenerator(context);
         builderGenerator.render(context.getFileManifest());
         LOGGER.info("created builders");
     }
@@ -46,15 +52,12 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     }
 
     @Override
-    public void generateProtocolUnitTests(GenerationContext context) {
+    public void generateStubbers(GenerationContext context) {
         LOGGER.info("Implement me!");
     }
 
     @Override
-    public void generateProtocolClient(GenerationContext context) {
-        Stream<OperationShape> operationShapeStream = context.getModel().shapes(OperationShape.class);
-        ClientGenerator clientGenerator = new ClientGenerator(context.getRubySettings(), operationShapeStream);
-        clientGenerator.render(context.getFileManifest());
-        LOGGER.info("created client");
+    public void generateProtocolUnitTests(GenerationContext context) {
+        LOGGER.info("Implement me!");
     }
 }

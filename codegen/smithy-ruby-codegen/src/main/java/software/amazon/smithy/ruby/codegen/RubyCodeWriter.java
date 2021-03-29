@@ -39,4 +39,11 @@ public class RubyCodeWriter extends CodeWriter {
         popState();
         return this;
     }
+
+    public void writeWithNoFormatting(String s) {
+        pushState();
+        setExpressionStart('*');
+        write(s);
+        popState();
+    }
 }

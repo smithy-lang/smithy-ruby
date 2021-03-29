@@ -1,10 +1,14 @@
 package software.amazon.smithy.ruby.codegen;
 
 import software.amazon.smithy.build.PluginContext;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,9 +17,119 @@ import java.util.List;
  */
 public interface RubyIntegration {
 
-    Byte getOrder();
+    /**
+     * Should this Integration be included for the given Service
+     * @param service
+     * @param model
+     * @return
+     */
+    default boolean includeFor(ServiceShape service, Model model) {
+        return true;
+    }
 
-    List<ProtocolGenerator> getProtocolGenerators();
+    /**
+     * Gets the sort order of the customization from -128 to 127.
+     *
+     * <p>Customizations are applied according to this sort order. Lower values
+     * are executed before higher values (for example, -128 comes before 0,
+     * comes before 127). Customizations default to 0, which is the middle point
+     * between the minimum and maximum order values. The customization
+     * applied later can override the runtime configurations that provided
+     * by customizations applied earlier.
+     *
+     * @return Returns the sort order, defaulting to 0.
+     */
+    default byte getOrder() {
+        return 0;
+    }
 
-    Model preprocessModel(PluginContext context, Model model, RubySettings settings);
+    /**
+     * Gets a list of protocol generators to register.
+     *
+     * @return Returns the list of protocol generators to register.
+     */
+    default List<ProtocolGenerator> getProtocolGenerators() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Preprocess the model before code generation.
+     *
+     * <p>This can be used to remove unsupported features, remove traits
+     * from shapes (e.g., make members optional), etc.
+     * @param context
+     * @param model model definition.
+     * @param settings Setting used to generate.
+     * @return Returns the updated model.
+     */
+    default Model preprocessModel(PluginContext context, Model model, RubySettings settings) {
+        return model;
+    }
+
+    /**
+     * Updates the {@link SymbolProvider} used when generating code.
+     *
+     * <p>This can be used to customize the names of shapes, the package
+     * that code is generated into, add dependencies, add imports, etc.
+     *
+     * @param context
+     * @param settings Setting used to generate.
+     * @param model Model being generated.
+     * @param symbolProvider The original {@code SymbolProvider}.
+     * @return The decorated {@code SymbolProvider}.
+     */
+    default SymbolProvider decorateSymbolProvider(
+            PluginContext context,
+            RubySettings settings,
+            Model model,
+            SymbolProvider symbolProvider
+    ) {
+        return symbolProvider;
+    }
+
+    /**
+     * Processes the finalized model before runtime plugins are consumed and
+     * code generation starts. This plugin can be used to add RuntimeClientPlugins
+     * to the integration's list of plugin.
+     *
+     * @param context
+     */
+    default void processFinalizedModel(GenerationContext context) {
+        // pass
+    }
+
+    /**
+     * Return all of the Middleware to be registered on the Client
+     */
+    default List<Middleware> getClientMiddleware() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a list of additional (non-middleware) Config
+     * to be added to the generated Client.
+     */
+    default List<ClientConfig> getAdditionalClientConfig() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Writes additional files.
+     *
+     * @param context - context for generation
+     * @return List of relative paths generated to be added to module requires.
+     */
+    default List<String> writeAdditionalFiles(GenerationContext context ) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Adds additional Gem Dependencies
+     *
+     * @param context - context for generation
+     * @return List of relative paths generated to be added to module requires.
+     */
+    default List<RubyDependency> additionalGemDependencies(GenerationContext context ) {
+        return Collections.emptyList();
+    }
 }

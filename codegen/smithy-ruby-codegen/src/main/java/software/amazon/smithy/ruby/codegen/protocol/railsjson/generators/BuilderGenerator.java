@@ -21,36 +21,40 @@ import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
-public class BuilderGenerator {
+public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
+    private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedBuilders;
+    private final RubyCodeWriter writer;
 
-    public BuilderGenerator(RubySettings settings, Model model) {
-        this.settings = settings;
-        this.model = model;
+    public BuilderGenerator(GenerationContext context) {
+        this.settings = context.getRubySettings();
+        this.model = context.getModel();
         this.generatedBuilders = new HashSet<>();
+        this.context = context;
+        this.writer = new RubyCodeWriter();
     }
 
     public void render(FileManifest fileManifest) {
-        RubyCodeWriter writer = new RubyCodeWriter();
 
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Builders")
-                .call(() -> renderBuilders(writer))
+                .call(() -> renderBuilders())
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -58,22 +62,27 @@ public class BuilderGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    private void renderBuilders(RubyCodeWriter writer) {
+    private void renderBuilders() {
         Stream<OperationShape> operations = model.shapes(OperationShape.class);
         operations.forEach(o -> renderBuildersForOperation(writer, o));
     }
 
     private void renderBuildersForOperation(RubyCodeWriter writer, OperationShape operation) {
-        //TODO: An optional check on the Output Type being present
+        System.out.println("Generating builders for Operation: " + operation.getId());
+
+        // Operations MUST have an Input type, even if it is empty
+        if (!operation.getInput().isPresent()) {
+            throw new RuntimeException("Missing Input Shape for: " + operation.getId());
+        }
         ShapeId inputShapeId = operation.getInput().get();
 
-        System.out.println("Generating builders for Operation: " + operation.getId());
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         Shape inputShape = model.expectShape(inputShapeId);
 
         writer
-                .openBlock("class $LOperation", operation.getId().getName())
-                .openBlock("def self.build(http_req:, params:)")
+                .write("\n# Operation Builder for $L", operation.getId().getName())
+                .openBlock("class $L", operation.getId().getName())
+                .openBlock("def self.build(http_req, params:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
                 .call(() -> renderQueryParamsBuilder(writer, operation, inputShape))
@@ -87,13 +96,8 @@ public class BuilderGenerator {
         for (Iterator<Shape> it = new Walker(model).iterateShapes(inputShape); it.hasNext(); ) {
             Shape s = it.next();
             if (!generatedBuilders.contains(s.getId())) {
-                if (s.isStructureShape()) {
-                    renderBuilderForStructure(writer, s.asStructureShape().get());
-                } else if (s.isListShape()) {
-                    renderBuilderForList(writer, s.asListShape().get());
-                } else {
-                    System.out.println("\tSkipping " + s.getId() + " it is not a structure.  Type = " + s.getType());
-                }
+                generatedBuilders.add(s.getId());
+                s.accept(this);
             } else {
                 System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
@@ -101,13 +105,20 @@ public class BuilderGenerator {
         }
     }
 
+    // The Input shape is combined with the OperationBuilder
+    // This generates the setting of the body (if any non-http params) as if it was the Builder for the Input
+    // Also marks the InputShape as generated
     private void renderOperationBodyBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        generatedBuilders.add(inputShape.getId());
+
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
-                    .write("json = Builders::$L.build(params)", inputShape.getId().getName())
-                    .write("http_req.body = StringIO.new(JSON.dump(json))");
+                .write("")
+                .write("http_req.headers['Content-Type'] = 'application/json'")
+                .call(() -> renderMemberBuilders(writer, inputShape))
+                .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
     }
 
@@ -167,82 +178,168 @@ public class BuilderGenerator {
                 Shape target = model.expectShape(m.getTarget());
                 System.out.println("\t\tAdding url subs for: " + target.getId());
                 String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
-                formatArgs += ",\n" + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
+                formatArgs += ",\n  " + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
             }
             writer.openBlock("http_req.append_path(format(");
-            writer.write("'$L'$L\n)", formatUri, formatArgs);
+            writer.write("  '$L'$L\n)", formatUri, formatArgs);
             writer.closeBlock(")");
         } else {
             writer.write("http_req.append_path('$L')", httpTrait.getUri());
         }
     }
 
-    private void renderBuilderForStructure(RubyCodeWriter writer, StructureShape s) {
-        System.out.println("\tRENDER builder for STRUCTURE: " + s.getId());
-        generatedBuilders.add(s.toShapeId());
-
+    @Override
+    public Void structureShape(StructureShape shape) {
+        System.out.println("\tRENDER builder for STRUCTURE: " + shape.getId());
         writer
-                .openBlock("\nclass $L", s.getId().getName())
-                .call(() -> renderPermittedValues(writer, s))
+                .write("\n# Structure Builder for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
                 .openBlock("def self.build(params)")
-                .write("params = Seahorse::Params.hash_value(params, permit: PERMIT)")
-                .call(() -> renderMemberBuilders(writer, s))
+                .call(() -> renderMemberBuilders(writer, shape))
+                .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
+
+        return null;
     }
 
-    private void renderPermittedValues(RubyCodeWriter writer, Shape shape) {
-        String membersBlock = shape.members()
-                .stream()
-                .map(memberShape -> RubyFormatter.toSnakeCase(memberShape.getMemberName()))
-                .collect(Collectors.joining(" "));
-
+    @Override
+    public Void listShape(ListShape shape) {
+        System.out.println("\tRENDER builder for LIST: " + shape.getId());
         writer
-                .openBlock("PERMIT = Set.new(%i[")
-                .write(membersBlock)
-                .closeBlock("])");
+                .write("\n# List Builder for $L", shape.getId().getName())
+                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("def self.build(params)")
+                .write("data = []")
+                .openBlock("params.each do |p|")
+                .write("data << p") // TODO: This likely needs conversion here.  Another nested visitor?
+                .closeBlock("end")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        return null;
     }
 
-    private void renderBuilderForList(RubyCodeWriter writer, ListShape s) {
-        System.out.println("\tRENDER parser for LIST: " + s.getId());
-        generatedBuilders.add(s.toShapeId());
-
-        // TODO
+    @Override
+    public Void mapShape(MapShape shape) {
+        // TODO: Support map shape
+        return null;
     }
 
-    private void renderMemberBuilders(RubyCodeWriter writer, StructureShape s) {
+    @Override
+    public Void unionShape(UnionShape shape) {
+        // TODO: Support union shape
+        return null;
+    }
+
+    private void renderMemberBuilders(RubyCodeWriter writer, Shape s) {
         writer.write("data = {}");
 
-        for(MemberShape member : s.members()) {
+        //remove members w/ http traits or marked NoSerialize
+        Stream<MemberShape> serializeMembers = s.members().stream().filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
+        serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
+
+        serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
             System.out.println("\t\tMEMBER BUILDER FOR: " + member.getId() + " target type: " + target.getType());
 
             String symbolName = RubyFormatter.asSymbol(member.getMemberName());
-            // TODO: This may be where a vistor pattern is useful?
-            if (target.isListShape() || target.isStructureShape()) {
-                writer.write("data[$L] = Builders::$L.build(params[$L])", symbolName, target.getId().getName(), symbolName);
-            } else {
-                String convert = "";
-                switch(target.getType()) {
-                    case STRING:
-                        convert = ".to_s";
-                        break;
-                    case INTEGER:
-                        convert = ".to_i";
-                        break;
-                    case FLOAT:
-                        convert = ".to_f";
-                        break;
-                }
-                if (target.hasTrait(RequiredTrait.class))
-                {
-                    writer.write("data[$L] = params[$L]$L", symbolName, symbolName, convert);
-                } else {
-                    writer.write("data[$L] = params[$L]$L if params.key?($L)", symbolName, symbolName, convert, symbolName);
-                }
+            String dataName = symbolName;
+            if (member.hasTrait("smithy.railsjson#NestedAttributes")) {
+                dataName = symbolName + "_attributes";
             }
+            target.accept(new MemberSerializer(writer, dataName, symbolName));
+        });
+    }
+
+    @Override
+    protected Void getDefault(Shape shape) {
+        return null;
+    }
+
+    private static class MemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final RubyCodeWriter writer;
+        private final String symbolName;
+        private final String dataName;
+
+        public MemberSerializer(RubyCodeWriter writer, String dataName, String symbolName) {
+            this.writer = writer;
+            this.symbolName = symbolName;
+            this.dataName = dataName;
         }
 
-        writer.write("return data");
+        public String checkRequired(Shape shape) {
+            return " unless params[" + symbolName + "].nil?";
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape shape) {
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
+            return null;
+        }
+
+        @Override
+        public Void integerShape(IntegerShape shape) {
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer.write("data[$L] = params[$L]$L", symbolName, symbolName, checkRequired(shape));
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            writer.write("data[$L] = params[$L].to_s$L", symbolName, symbolName, checkRequired(shape));
+            return null;
+        }
+
+        /**
+         *  For complex shapes, simply delegate to their builder
+         */
+        private void defaultComplexSerializer(Shape shape) {
+            writer.write("data[$L] = Builders::$L.build(params[$L])$L", dataName, shape.getId().getName(), symbolName, checkRequired(shape));
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
     }
 }
+
+

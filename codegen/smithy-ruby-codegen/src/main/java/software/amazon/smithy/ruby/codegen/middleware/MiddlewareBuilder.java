@@ -15,74 +15,130 @@
 
 package software.amazon.smithy.ruby.codegen.middleware;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.ruby.codegen.ApplicationTransport;
+import software.amazon.smithy.ruby.codegen.ClientConfig;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class MiddlewareBuilder {
-    private ArrayList<Middleware> middlewares;
+    private Map<MiddlewareStackStep, List<Middleware>> middlewares;
 
-    public MiddlewareBuilder(String operationName) {
-        this.middlewares = new ArrayList<Middleware>();
-        for (Middleware defaultMiddleware : defaultMiddlewares(operationName)) {
-            add(defaultMiddleware);
+    public MiddlewareBuilder() {
+        this.middlewares = new HashMap<>();
+        Arrays.stream(MiddlewareStackStep.values())
+                .forEach( (step) -> this.middlewares.put(step, new ArrayList<>()));
+    }
+
+    public void register(Middleware middleware) {
+        middlewares.get(middleware.getStep()).add(middleware);
+    }
+
+    public void register(List<Middleware> middleware) {
+        middleware.forEach( (m) -> register(m) );
+    }
+
+    public Set<ClientConfig> getClientConfig(GenerationContext context) {
+        Model model = context.getModel();
+        ServiceShape service = context.getService();
+        Set<ClientConfig> config = new HashSet<>();
+
+        for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
+            Set<ClientConfig> stepConfig = middlewares.get(step)
+                    .stream().filter( (m) -> m.includeFor(model, service))
+                    .map((m) -> m.getClientConfig())
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+            config.addAll(stepConfig);
+        }
+        return config;
+    }
+
+    public void render(RubyCodeWriter writer, GenerationContext context, OperationShape operation) {
+        Model model = context.getModel();
+        ServiceShape service = context.getService();
+
+        for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
+            List<Middleware> orderedStepMiddleware = middlewares.get(step)
+                    .stream().filter( (m) -> m.includeFor(model, service, operation))
+                    .sorted(Comparator.comparing(Middleware::getOrder))
+                    .collect(Collectors.toList());
+
+            for (Middleware middleware : orderedStepMiddleware) {
+                middleware.renderAdd(writer, context, operation);
+            }
         }
     }
 
-    public void add(Middleware middleware) {
-        middlewares.add(middleware);
-    }
+    public void addDefaultMiddleware(GenerationContext context) {
+        ApplicationTransport transport = context.getApplicationTransport();
 
-    public ArrayList<Middleware> getMiddlewares() {
-        return middlewares;
-    }
+        ClientConfig validateParams = (new ClientConfig.Builder())
+                .name("validate_params")
+                .type("Bool")
+                .defaultValue("true")
+                .documentation("Enable type checking and validation of input parameters")
+                .build();
 
-    // Default middleware includes build, retry, parse, signing, and sending
-    public ArrayList<Middleware> defaultMiddlewares(String operationName) {
-        ArrayList<Middleware> defaultMiddleware = new ArrayList<Middleware>();
-        HashMap<String, String> params;
+        Middleware validate = (new Middleware.Builder())
+                .klass("Seahorse::Middleware::Validate")
+                .step(MiddlewareStackStep.INITIALIZE)
+                .operationParams( (ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("builder", "Validators::" + operation.getId().getName() + "Input");
+                    return params;
+                })
+                .addParam("params", "params")
+                .addConfig(validateParams)
+                .build();
 
-        params = new HashMap<>();
-        params.put("builder", "Builders::" + operationName + "Operation");
-        params.put("params", "params");
-        defaultMiddleware.add(
-                new Middleware("Seahorse::Middleware::Build", params)
-        );
+        Middleware build = (new Middleware.Builder())
+                .klass("Seahorse::Middleware::Build")
+                .step(MiddlewareStackStep.SERIALIZE)
+                .addParam("params", "params")
+                .operationParams( (ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("builder", "Builders::" + operation.getId().getName());
+                    return params;
+                })
+                .build();
 
-        params = new HashMap<>();
-        params.put("max_attempts", "@max_attempts");
-        params.put("max_delay", "@max_delay");
-        defaultMiddleware.add(
-                new Middleware("Seahorse::Middleware::Retry", params)
-        );
+        ClientConfig stubResponses = (new ClientConfig.Builder())
+                .name("stub_responses")
+                .type("Bool")
+                .defaultValue("false")
+                .documentation("Enable response stubbing. See documentation for {#stub_responses}")
+                .build();
 
-        params = new HashMap<>();
-        params.put("error_parser", "Seahorse::JSON::ErrorParser.new(errors_module: Errors)");
-        params.put("data_parser", "Parsers::" + operationName + "Operation");
-        defaultMiddleware.add(
-                new Middleware("Seahorse::Middleware::Parse", params)
-        );
+        ClientConfig stubs = (new ClientConfig.Builder())
+                .name("stubs")
+                .type("Seahorse::Stubbing::Stubs")
+                .initializationCustomization("@stubs = Seahorse::Stubbing::Stubs.new")
+                .build();
 
-        params = new HashMap<>();
-        params.put("signer", "@signer");
-        defaultMiddleware.add(
-                new Middleware("Seahorse::Middleware::Sign", params)
-        );
+        Middleware send = (new Middleware.Builder())
+                .klass("Seahorse::Middleware::Send")
+                .step(MiddlewareStackStep.SEND)
+                .addParam("client", transport.getTransportClient().render(context))
+                .operationParams( (ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("stub_class", "Builders::" + operation.getId().getName()); // TODO: Generate stubs....
+                    return params;
+                })
+                .addConfig(stubResponses)
+                .addConfig(stubs)
+                .build();
 
-        params = new HashMap<>();
-        params.put("client", "Seahorse::HTTP::Xfer.new");
-        defaultMiddleware.add(
-                new Middleware("Seahorse::Middleware::Send", params)
-        );
+        // register(validate); //TODO: Enable once support for validation done.
+        register(build);
+        register(send);
 
-        return defaultMiddleware;
-    }
-
-    public void render(RubyCodeWriter writer) {
-        for (Middleware middleware : middlewares) {
-            middleware.render(writer);
-        }
+        register(transport.defaultMiddleware(context));
     }
 }

@@ -2,10 +2,10 @@
   "version": "1.0",
   "plugins": {
     "ruby-codegen": {
-      "service": "example.weather#Weather",
-      "module": "Weather",
+      "service": "example.rails#SampleService",
+      "module": "SampleService",
       "gemspec": {
-        "gemName": "weather",
+        "gemName": "SampleService",
         "gemVersion": "0.0.1",
         "gemSummary": "Weather Service"
       }

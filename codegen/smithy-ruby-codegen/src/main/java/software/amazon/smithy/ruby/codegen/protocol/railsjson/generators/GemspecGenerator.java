@@ -16,18 +16,24 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyDependency;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+
+import java.util.List;
 
 public class GemspecGenerator {
 
-    private final RubySettings settings;
+    private final GenerationContext context;
 
-    public GemspecGenerator(RubySettings settings) {
-        this.settings = settings;
+    public GemspecGenerator(GenerationContext context) {
+        this.context = context;
     }
 
-    public void render(FileManifest fileManifest) {
+    public void render(List<RubyDependency> additionalDependencies) {
+        FileManifest fileManifest = context.getFileManifest();
+        RubySettings settings = context.getRubySettings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
         writer
@@ -39,6 +45,7 @@ public class GemspecGenerator {
                 .write("spec.files         = Dir['lib/**/*.rb']")
                 .write("")
                 .write("spec.add_runtime_dependency 'seahorse', '~> 1'")
+                // TODO: Add additionalDependencies!
                 .closeBlock("end");
 
         String fileName = settings.getGemName() + "/" + settings.getGemName() + ".gemspec";

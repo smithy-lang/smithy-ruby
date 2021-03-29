@@ -31,16 +31,18 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.*;
 
-public class TypesGenerator extends ShapeVisitor.Default<Void>  {
+public class ValidatorsGenerator extends ShapeVisitor.Default<Void>  {
     private final GenerationContext context;
     private final RubySettings settings;
+    private final Model model;
     private final RubyCodeWriter writer;
     private final RubyTypesWriter typesWriter;
     private final RubyTypeMapper typeMapper;
 
-    public TypesGenerator(GenerationContext context) {
+    public ValidatorsGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
+        this.model = context.getModel();
         this.writer = new RubyCodeWriter();
         this.typesWriter = new RubyTypesWriter();
         this.typeMapper = new RubyTypeMapper(context.getModel());
@@ -48,39 +50,30 @@ public class TypesGenerator extends ShapeVisitor.Default<Void>  {
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
-        //TODO: We need some mechanism to do both at once.
-        typesWriter
-                .openBlock("module $L", settings.getModule())
-                .openBlock("module Types");
-
         writer
                 .openBlock("module $L", settings.getModule())
-                .openBlock("module Types")
-                .call(() -> renderTypes())
+                .openBlock("module Params")
+                .call(() -> renderParams())
                 .closeBlock("end")
                 .closeBlock("end");
 
-        typesWriter
-                .closeBlock("end")
-                .closeBlock("end");
-
-        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
+        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/params.rb";
         fileManifest.writeFile(fileName, writer.toString());
 
-        String typesFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
-        fileManifest.writeFile(typesFile, typesWriter.toString());
     }
 
-    private void renderTypes() {
+    private void renderParams() {
+        Stream<OperationShape> operations = model.shapes(OperationShape.class);
+        operations.forEach(o -> renderParamsForOperation(writer, o));
+    }
 
-        System.out.println("Walking shapes from " + context.getService().getId() + " to find shapes to generate");
+    private void renderParamsForOperation(RubyCodeWriter writer, OperationShape operation) {
+        System.out.println("Generating builders for Operation: " + operation.getId());
 
-        Model modelWithoutTraitShapes = ModelTransformer.create().getModelWithoutTraitShapes(context.getModel());
-
-        Set<Shape> serviceShapes = new TreeSet<>(new Walker(modelWithoutTraitShapes).walkShapes(context.getService()));
-
-        for (Shape shape : serviceShapes) {
-            shape.accept(this);
+        //TODO: An optional check on the Output Type being present
+        if (!operation.getInput().isPresent()) {
+            System.out.println("\tSKIPPING.  No Output type.");
+            return;
         }
     }
 

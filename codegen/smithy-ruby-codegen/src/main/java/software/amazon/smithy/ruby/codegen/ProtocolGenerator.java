@@ -6,14 +6,15 @@ public interface ProtocolGenerator {
 
     ShapeId getProtocol();
 
+    ApplicationTransport getApplicationTransport();
+
     void generateBuilders(GenerationContext context);
 
     void generateParsers(GenerationContext context);
 
     void generateErrors(GenerationContext context);
 
+    void generateStubbers(GenerationContext context);
+
     void generateProtocolUnitTests(GenerationContext context);
-
-    void generateProtocolClient(GenerationContext context);
-
 }

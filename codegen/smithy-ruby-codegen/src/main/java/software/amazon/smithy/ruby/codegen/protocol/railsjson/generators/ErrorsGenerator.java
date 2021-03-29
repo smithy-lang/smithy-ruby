@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.CodeWriter;
 
 public class ErrorsGenerator {
 
@@ -39,9 +40,8 @@ public class ErrorsGenerator {
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
-                .call(() -> renderApiRedirectError(writer))
-                .call(() -> renderClientError(writer))
-                .call(() -> renderServerError(writer))
+                .call(() -> renderErrorCode(writer))
+                .call(() -> renderBaseErrors(writer))
                 .call(() -> renderServiceModelErrors(writer))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -50,33 +50,45 @@ public class ErrorsGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    private void renderApiRedirectError(RubyCodeWriter writer) {
+    private void renderBaseErrors(RubyCodeWriter writer) {
+
+        writer
+                .write("\n# Base class for all errors returned by this service")
+                .write("class ApiError < Seahorse::HTTP::ApiError; end");
+
+        writer
+                .write("\n# Base class for all errors returned where the client is at fault.")
+                .write("# These are generally errors with 4XX HTTP status codes.")
+                .write("class ApiClientError < ApiError; end");
+
+        writer
+                .write("\n# Base class for all errors returned where the server is at fault.")
+                .write("# These are generally errors with 5XX HTTP status codes.")
+                .write("class ApiServerError < ApiError; end");
+
         writer
                 .write("# Base class for all errors returned where the service returned")
                 .write("# a 3XX redirection.")
-                .openBlock("class ApiRedirectError < Seahorse::ApiError")
-                .openBlock("def initialize(location:, **api_error_options)")
+                .openBlock("class ApiRedirectError < ApiError")
+                .openBlock("def initialize(location:, **kwargs)")
                 .write("@location = location")
-                .write("super(api_error_options)")
+                .write("super(kwargs)")
                 .closeBlock("end\n")
                 .write("# @return [String] location")
                 .write("attr_reader :location")
                 .closeBlock("end\n");
+
+
     }
 
-    private void renderClientError(RubyCodeWriter writer) {
+    private void renderErrorCode(RubyCodeWriter writer) {
         writer
-                .write("# Base class for all errors returned where the client is at fault.")
-                .write("# These are generally errors with 4XX HTTP status codes.")
-                .write("class ApiClientError < Seahorse::ApiError; end\n");
+                .write("# Given an http_resp, return the error code")
+                .openBlock("def self.error_code(http_resp)")
+                .write("http_resp.headers['x-smithy-error']") // TODO: Generate based on the Service Definition trait
+                .closeBlock("end");
     }
 
-    private void renderServerError(RubyCodeWriter writer) {
-        writer
-                .write("# Base class for all errors returned where the server is at fault.")
-                .write("# These are generally errors with 5XX HTTP status codes.")
-                .write("class ApiServerError < Seahorse::ApiError; end\n");
-    }
 
     private void renderServiceModelErrors(RubyCodeWriter writer) {
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(error -> {
@@ -92,9 +104,10 @@ public class ErrorsGenerator {
     private void renderServiceModelError(RubyCodeWriter writer, String errorName, String apiErrorType) {
         writer
                 .openBlock("class $L < $L", errorName, apiErrorType)
-                .openBlock("def initialize(**args)")
-                .write("super(error_code: '$L', **args)", errorName)
-                .write("@data = Parsers::$L.parse(http_body)", errorName)
+                .openBlock("def initialize(http_resp:, **kwargs)")
+                .write("@data = Parsers::$L.parse(http_resp)", errorName)
+                .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
+                .write("super(http_resp: http_resp, **kwargs)")
                 .closeBlock("end\n");
 
         writer.write("attr_reader :data");

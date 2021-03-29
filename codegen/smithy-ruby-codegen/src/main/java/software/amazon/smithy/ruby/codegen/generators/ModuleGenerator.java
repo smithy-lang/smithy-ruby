@@ -16,17 +16,22 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
-public class ModuleGenerator {
-    private final RubySettings settings;
+import java.util.List;
 
-    public ModuleGenerator(RubySettings settings) {
-        this.settings = settings;
+public class ModuleGenerator {
+    private final GenerationContext context;
+
+    public ModuleGenerator(GenerationContext context) {
+        this.context = context;
     }
 
-    public void render(FileManifest fileManifest) {
+    public void render(List<String> additionalFiles) {
+        FileManifest fileManifest = context.getFileManifest();
+        RubySettings settings = context.getRubySettings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
         writer.write("require 'seahorse'\n");
@@ -35,6 +40,10 @@ public class ModuleGenerator {
 
         for (String require : requires) {
             writer.write("require_relative '$L/$L'", settings.getGemName(), require);
+        }
+
+        for (String require : additionalFiles) {
+            writer.write("require_relative '$L'", require);
         }
 
         writer.write("");
