@@ -15,9 +15,14 @@
 
 package software.amazon.smithy.ruby.codegen.middleware;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -87,6 +92,10 @@ public class Middleware {
 
     public void renderAdd(CodeWriter writer, GenerationContext context, OperationShape operation) {
         renderAdd.renderAdd(writer, this, context, operation);
+    }
+
+    public List<String> writeAdditionalFiles(GenerationContext context) {
+        return writeAdditionalFiles.writeAdditionalFiles(context);
     }
 
     @FunctionalInterface
@@ -235,6 +244,24 @@ public class Middleware {
 
         public Builder writeAdditionalFiles(WriteAdditionalFiles w) {
             this.writeAdditionalFiles = Objects.requireNonNull(w);
+            return this;
+        }
+
+        public Builder rubySource(String rubyFileName) {
+            this.writeAdditionalFiles = (context) -> {
+                try {
+
+                    File f = new File(rubyFileName);
+                    Reader fileReader = new FileReader(f);
+                    System.out.println("Basename: " + f.getName());
+                    String relativeName =  "/middleware/" + f.getName();
+                    String fileName = context.getRubySettings().getGemName() + "/lib/" + context.getRubySettings().getGemName() + relativeName + ".rb";
+                    context.getFileManifest().writeFile(fileName, fileReader);
+                    return Collections.singletonList(relativeName);
+                } catch (FileNotFoundException e) {
+                    throw new CodegenException("Unable to read rubySource file: " + rubyFileName, e);
+                }
+            };
             return this;
         }
 
