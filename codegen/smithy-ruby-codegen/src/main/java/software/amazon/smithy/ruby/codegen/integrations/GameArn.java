@@ -80,45 +80,8 @@ public class GameArn implements RubyIntegration {
                 .addConfig(disableGameArn)
                 .addParam("params", "params")
                 .appliesOnlyToOperations(OPERATIONS)
+                .rubySource("../customizations/game_arn.rb")
                 .build();
         return Collections.singletonList(gameArn);
     }
-
-    @Override
-    public List<String> writeAdditionalFiles(GenerationContext context ) {
-        FileManifest fileManifest = context.getFileManifest();
-        RubySettings settings = context.getRubySettings();
-        RubyCodeWriter writer = new RubyCodeWriter();
-
-
-        //NOTE: This could instead be done by the middleware definition above using the Middleware#writeAddtionalFiles
-        writer
-                .openBlock("module $L", settings.getModule())
-                .openBlock("module Middleware")
-                .write("# Resolve GameArns")
-                .openBlock("class GameArn")
-                .openBlock("def initialize(app, disable_game_arn:, params:)")
-                .write("@app = app")
-                .write("@disable_game_arn = disable_game_arn")
-                .write("@params = params")
-                .closeBlock("end")
-                .write("")
-                .openBlock("def call(request:, response:, context:)")
-                .openBlock("unless @disable_game_arn")
-                .write("@params[:id] ||= @params[:game_arn]&.split(':')&.last")
-                .closeBlock("end")
-                .write("@app.call(request: request, response: response, context: context)")
-                .closeBlock("end")
-                .closeBlock("end")
-                .closeBlock("end")
-                .closeBlock("end");
-
-        String relativeName = settings.getGemName() + "/middleware/game_arn";
-        String fileName = settings.getGemName() + "/lib/" + relativeName + ".rb";
-        fileManifest.writeFile(fileName, writer.toString());
-
-        return Collections.singletonList(relativeName);
-    }
-
-
 }
