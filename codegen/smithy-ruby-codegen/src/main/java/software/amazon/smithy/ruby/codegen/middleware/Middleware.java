@@ -255,7 +255,7 @@ public class Middleware {
                     Reader fileReader = new FileReader(f);
                     System.out.println("Basename: " + f.getName());
                     String relativeName =  "/middleware/" + f.getName();
-                    String fileName = context.getRubySettings().getGemName() + "/lib/" + context.getRubySettings().getGemName() + relativeName + ".rb";
+                    String fileName = context.getRubySettings().getGemName() + "/lib/" + context.getRubySettings().getGemName() + relativeName;
                     context.getFileManifest().writeFile(fileName, fileReader);
                     return Collections.singletonList(relativeName);
                 } catch (FileNotFoundException e) {
