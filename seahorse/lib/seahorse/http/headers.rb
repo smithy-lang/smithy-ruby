@@ -2,6 +2,7 @@
 
 module Seahorse
   module HTTP
+    # Provides Hash like access for Headers with key normalization
     # @api private
     class Headers
 
@@ -31,7 +32,7 @@ module Seahorse
         @headers.key?(normalize(key))
       end
 
-      # @return [Array<String>
+      # @return [Array<String>]
       def keys
         @headers.keys
       end

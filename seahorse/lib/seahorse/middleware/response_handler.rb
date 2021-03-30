@@ -4,22 +4,22 @@ module Seahorse
   module Middleware
     class ResponseHandler
 
-      def initialize(app, handler)
+      def initialize(app, handler:)
         @app = app
         @handler = handler
       end
 
-      # @param http_req
-      # @param http_resp
-      # @param metadata
-      # @return [Response]
-      def call(http_req:, http_resp:, metadata:)
+      # @param request
+      # @param response
+      # @param context
+      # @return [Output]
+      def call(request:, response:, context:)
         response = @app.call(
-          http_req: http_req,
-          http_resp: http_resp,
-          metadata: metadata
+          request: request,
+          response: response,
+          context: context
         )
-        @handler.call(response, http_req, http_resp)
+        @handler.call(response, request, response)
         response
       end
 

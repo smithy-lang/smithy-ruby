@@ -40,15 +40,15 @@ module Seahorse
       @middleware = new_middleware
     end
 
-    # @param http_req
-    # @param http_resp
-    # @param metadata
+    # @param request
+    # @param response
+    # @param context
     # @return [Response]
-    def run(http_req: nil, http_resp: nil, metadata: {})
+    def run(request: nil, response: nil, context: {})
       stack.call(
-        http_req: http_req,
-        http_resp: http_resp,
-        metadata: metadata
+        request: request,
+        response: response,
+        context: context
       )
     end
 
@@ -57,7 +57,6 @@ module Seahorse
     def stack
       app = nil
       @middleware.reverse_each do |(middleware, middleware_args, block)|
-        puts "Middleware args: #{middleware} #{middleware_args}"
         app = middleware.new(app, **middleware_args, &block)
       end
       app

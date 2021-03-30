@@ -60,6 +60,16 @@ public class MiddlewareBuilder {
         return config;
     }
 
+    // Write out all additional files for every middleware
+    // return the list of all files
+    public List<String> writeAdditionalFiles(GenerationContext context) {
+        return middlewares.values().stream()
+                .flatMap(Collection::stream)
+                .map((m) -> m.writeAdditionalFiles(context))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
     public void render(RubyCodeWriter writer, GenerationContext context, OperationShape operation) {
         Model model = context.getModel();
         ServiceShape service = context.getService();

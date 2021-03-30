@@ -10,16 +10,16 @@ module Seahorse
         @signer = signer
       end
 
-      # @param http_req
-      # @param http_resp
-      # @param metadata
-      # @return [Response]
-      def call(http_req:, http_resp:, metadata:)
-        @signer.sign_request(http_req) if @signer
+      # @param request
+      # @param response
+      # @param context
+      # @return [Output]
+      def call(request:, response:, context:)
+        @signer.sign_request(request) if @signer
         @app.call(
-          http_req: http_req,
-          http_resp: http_resp,
-          metadata: metadata
+          request: request,
+          response: response,
+          context: context
         )
       end
 

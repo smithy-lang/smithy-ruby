@@ -22,7 +22,7 @@ module Seahorse
   #
   #    # invoked after a request has been built, but before it has
   #    # been signed/authorized
-  #    middleware.before_sign do |http_req, http_resp, metadata|
+  #    middleware.before_sign do |request, response, context|
   #      # do something here
   #    end
   #
@@ -40,10 +40,10 @@ module Seahorse
   # and a HTTP response has been received.
   #
   #    # invoked after the HTTP response has been parsed
-  #    middleware.after_parse do |response, http_req, http_resp|
+  #    middleware.after_parse do |response, request, response|
   #      # response.data
   #      # response.error
-  #      # response.metadata
+  #      # response.context
   #    end
   #
   # The complete list of response handlers include:
@@ -63,16 +63,16 @@ module Seahorse
   #
   #     # invoke before the request  has been sent, receives the
   #     # response from the send middleware
-  #     middleware.around_send do |app, http_req, http_resp, metadata|
+  #     middleware.around_send do |app, request, response, context|
   #
   #       # this code is invoked before the request is sent
   #       # ...
   #
   #       # around handlers must call the next middleware in the stack
   #       response = app.call(
-  #         http_req: http_req,
-  #         http_resp: http_resp,
-  #         metadata: metadata
+  #         request: request,
+  #         response: response,
+  #         context: context
   #       )
   #
   #       # this code is invoked after the response has been received
@@ -127,19 +127,20 @@ module Seahorse
     # @param [MiddlewareStack] middleware_stack
     def apply(middleware_stack)
       @middleware.each do |handler|
-        middleware_stack.send(*handler)
+        # TODO: There needs to be a better way to do this with Ruby 2.7/3 kwargs
+        middleware_stack.send(handler[0], handler[1], handler[2], **handler[3])
       end
     end
 
     # Register a handler that is invoked before the request is built.
-    # Changes to the `http_req` may be overridden during the actual
-    # request build step. The `http_resp` will be empty.
+    # Changes to the `request` may be overridden during the actual
+    # request build step. The `response` will be empty.
     #
     # @overload before_build(&block)
-    #   @yield [http_req, http_resp, metadata]
-    #   @yieldparam [NawsHttp::Request] http_req
-    #   @yieldparam [NawsHttp::Response] http_resp
-    #   @yieldparam [Hash] metadata
+    #   @yield [request, response, context]
+    #   @yieldparam [NawsHttp::Request] request
+    #   @yieldparam [NawsHttp::Response] response
+    #   @yieldparam [Hash] context
     #   @yieldreturn [void]
     #
     # @overload before_build(request_handler)
@@ -147,16 +148,16 @@ module Seahorse
     #     The request handler must respond to `#call` accepting
     #     three arguments:
     #
-    #     * `http_req` ({NawsHttp::Request})
-    #     * `http_resp` ({NawsHttp::Response})
-    #     * `metadata` (Hash)
+    #     * `request` ({NawsHttp::Request})
+    #     * `response` ({NawsHttp::Response})
+    #     * `context` (Hash)
     #
     def before_build(*args, &block)
       @middleware << [
         :use_before,
         Seahorse::Middleware::Build,
         Middleware::RequestHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -165,7 +166,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Build,
         Middleware::AroundHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -174,7 +175,7 @@ module Seahorse
         :use_after,
         Seahorse::Middleware::Build,
         Middleware::RequestHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -183,7 +184,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Sign,
         Middleware::RequestHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -192,7 +193,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Sign,
         Middleware::AroundHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -201,7 +202,7 @@ module Seahorse
         :use_after,
         Seahorse::Middleware::Sign,
         Middleware::RequestHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -210,7 +211,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Send,
         Middleware::RequestHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -219,7 +220,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Send,
         Middleware::AroundHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -228,7 +229,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Send,
         Middleware::ResponseHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -237,7 +238,7 @@ module Seahorse
         :use_after,
         Seahorse::Middleware::Parse,
         Middleware::ResponseHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -246,7 +247,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Parse,
         Middleware::AroundHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -255,7 +256,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Parse,
         Middleware::ResponseHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -264,7 +265,7 @@ module Seahorse
         :use_after,
         Seahorse::Middleware::Retry,
         Middleware::ResponseHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -273,7 +274,7 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Retry,
         Middleware::AroundHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
 
@@ -282,15 +283,15 @@ module Seahorse
         :use_before,
         Seahorse::Middleware::Retry,
         Middleware::ResponseHandler,
-        handler_or_proc!(args, &block)
+        handler: handler_or_proc!(args, &block)
       ]
     end
-
-    private
 
     def to_a
       @middleware
     end
+
+    private
 
     def handler_or_proc!(args, &block)
       raise ArgumentError, BOTH if args.size > 0 && block

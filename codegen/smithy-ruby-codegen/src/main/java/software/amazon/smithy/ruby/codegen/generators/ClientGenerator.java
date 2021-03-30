@@ -65,6 +65,16 @@ public class ClientGenerator {
         RubySettings settings = context.getRubySettings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
+        List<String> additionalFiles = middlewareBuilder.writeAdditionalFiles(context);
+        for (String require : additionalFiles) {
+            System.out.println("Requiring additional file: " + require);
+            writer.write("require_relative '$L'", require);
+        }
+
+        if (additionalFiles.size() > 0) {
+            writer.write("");
+        }
+
         writer
                 .openBlock("module $L", settings.getModule())
                 .write("# An API client for $L", settings.getService().getName())
