@@ -67,8 +67,7 @@ public class ClientGenerator {
 
         List<String> additionalFiles = middlewareBuilder.writeAdditionalFiles(context);
         for (String require : additionalFiles) {
-            System.out.println("Requiring additional file: " + require);
-            writer.write("require_relative '$L'", require);
+            writer.write("require_relative '$L'", removeRbExtension(require));
         }
 
         if (additionalFiles.size() > 0) {
@@ -95,6 +94,13 @@ public class ClientGenerator {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/client.rb";
         fileManifest.writeFile(fileName, writer.toString());
+    }
+
+    private Object removeRbExtension(String s) {
+        if (s != null && s.endsWith(".rb")) {
+            return s.split(".rb")[0];
+        }
+        return s;
     }
 
     private void renderInitializeMethod(RubyCodeWriter writer) {
