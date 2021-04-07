@@ -115,6 +115,10 @@ public final class RubySettings {
     // TODO: This assume a single protocol per service that we resolve for.  May need handling for multiple
     public ShapeId resolveServiceProtocol(ServiceShape service, Model model, Set<ShapeId> supportedProtocolTraits) {
         Map<ShapeId, Trait> resolvedProtocols = ServiceIndex.of(model).getProtocols(service);
+        for (ShapeId p : resolvedProtocols.keySet()) {
+            System.out.println("Service Protocol: " + p.getName() + " -> " + p.toString());
+        }
+
         ShapeId protocol = resolvedProtocols.keySet()
                 .stream()
                 .filter((p) -> supportedProtocolTraits.contains(p))

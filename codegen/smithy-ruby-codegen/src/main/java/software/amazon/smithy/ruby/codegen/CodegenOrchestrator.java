@@ -65,7 +65,7 @@ public class CodegenOrchestrator {
                     integration.getProtocolGenerators()
                             .stream()
                             .map((g) -> g.getProtocol())
-                            .peek((s) -> System.out.println(integration.getClass().getSimpleName() + " registered protocolGenerator for: " + s.getName()))
+                            .peek((s) -> System.out.println(integration.getClass().getSimpleName() + " registered protocolGenerator for: " + s.getName() + " -> " + s.toString()))
                             .collect(Collectors.toSet())
             );
         }
