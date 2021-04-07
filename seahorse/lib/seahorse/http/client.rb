@@ -31,14 +31,16 @@ module Seahorse
         uri = URI.parse(request.url)
         http = Net::HTTP.new(uri.host, uri.port)
         http.set_debug_output(@logger) if @http_wire_trace
+
+        if uri.scheme == 'https'
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          # TODO: Support for Verify Peer + pass through ca bundle/dir/store
+        else
+          http.use_ssl = false
+        end
+
         http.start do |http|
-          if uri.scheme == 'https'
-            http.use_ssl = true
-            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-            # TODO: Support for Verify Peer + pass through ca bundle/dir/store
-          else
-            http.use_ssl = false
-          end
           http.request(build_net_request(request)) do |net_resp|
             response.status_code = net_resp.code.to_i
             response.headers = extract_headers(net_resp)
