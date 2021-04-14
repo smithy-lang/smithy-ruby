@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'seahorse/api_error'
 
 module Seahorse
   module HTTP
