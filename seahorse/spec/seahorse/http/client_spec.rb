@@ -1,5 +1,5 @@
 require 'webmock/rspec'
-require 'seahorse/http'
+require 'seahorse'
 
 module Seahorse
   module HTTP
