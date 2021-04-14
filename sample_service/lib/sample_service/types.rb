@@ -60,11 +60,13 @@ module SampleService
     )
 
     ListHighScoresInput = Struct.new(
-      nil,
+      :max_results,
+      :next_token,
       keyword_init: true
     )
 
     ListHighScoresOutput = Struct.new(
+      :next_token,
       :high_scores,
       keyword_init: true
     )

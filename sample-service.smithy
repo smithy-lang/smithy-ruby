@@ -118,15 +118,21 @@ structure DeleteHighScoreOutput {}
 /// List all high scores
 @http(method: "GET", uri: "/high_scores")
 @readonly
+@paginated(inputToken: "nextToken", outputToken: "nextToken",
+           pageSize: "maxResults", items: "highScores")
 operation ListHighScores {
     input: ListHighScoresInput,
     output: ListHighScoresOutput
 }
 
-structure ListHighScoresInput {}
+structure ListHighScoresInput {
+    maxResults: Integer,
+    nextToken: String
+}
 
 structure ListHighScoresOutput {
-    @httpPayload
+    nextToken: String,
+
     highScores: HighScores
 }
 
