@@ -18,9 +18,43 @@ module Seahorse
         Net::HTTPFatalError # for proxy connection failures
       ]
 
-      def initialize(http_wire_trace:, logger:)
+      # @param [Boolean] :http_wire_trace (false) When `true`,
+      #   HTTP debug output will be sent to the `:logger`.
+      #
+      # @param [Logger] :logger Where debug output is sent.
+      #    Defaults to `nil` when `:http_wire_trace` is `false`.
+      #    Defaults to `Logger.new($stdout)` when `:http_wire_trace` is
+      #    `true`.
+      #
+      # @param [URI::HTTP,String] :http_proxy A proxy to send
+      #   requests through.  Formatted like 'http://proxy.com:123'.
+      #
+      # @param [Boolean] :ssl_verify_peer (true) When `true`,
+      #   SSL peer certificates are verified when establishing a
+      #   connection.
+      #
+      # @oparam [String] :ssl_ca_bundle Full path to the SSL
+      #   certificate authority bundle file that should be used when
+      #   verifying peer certificates.  If you do not pass
+      #   `:ssl_ca_bundle` or `:ssl_ca_directory` the system default
+      #   will be used if available.
+      #
+      # @oparam [String] :ssl_ca_directory Full path of the
+      #   directory that contains the unbundled SSL certificate
+      #   authority files for verifying peer certificates.  If you do
+      #   not pass `:ssl_ca_bundle` or `:ssl_ca_directory` the
+      #   system default will be used if available.
+      def initialize(http_wire_trace:, logger:,
+                     http_proxy: nil, ssl_verify_peer: true,
+                     ssl_ca_bundle: nil, ssl_ca_directory: nil,
+                     ssl_ca_store: nil)
         @http_wire_trace =  http_wire_trace
         @logger = logger
+        @http_proxy = URI.parse(http_proxy.to_s) if http_proxy
+        @ssl_verify_peer = ssl_verify_peer
+        @ssl_ca_bundle = ssl_ca_bundle
+        @ssl_ca_directory = ssl_ca_directory
+        @ssl_ca_store = ssl_ca_store
       end
 
       # @param [Request] request
@@ -29,13 +63,11 @@ module Seahorse
       def transmit(request:, response:)
         # TODO: connection pool for connections
         uri = URI.parse(request.url)
-        http = Net::HTTP.new(uri.host, uri.port)
+        http = create_http(uri)
         http.set_debug_output(@logger) if @http_wire_trace
 
         if uri.scheme == 'https'
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          # TODO: Support for Verify Peer + pass through ca bundle/dir/store
+          configure_ssl(http)
         else
           http.use_ssl = false
         end
@@ -56,6 +88,30 @@ module Seahorse
       end
 
       private
+
+      # Creates an HTTP connection to the endpoint
+      # Applies proxy if set
+      def create_http(endpoint)
+        args = []
+        args << endpoint.host
+        args << endpoint.port
+        args += http_proxy_parts if @http_proxy
+        # Net::HTTP.new uses positional arguments: host, port, proxy_args....
+        Net::HTTP.new(*args.compact)
+      end
+
+      # applies ssl settings to the HTTP object
+      def configure_ssl(http)
+        http.use_ssl = true
+        if @ssl_verify_peer
+          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          http.ca_file = @ssl_ca_bundle if @ssl_ca_bundle
+          http.ca_path = @ssl_ca_directory if @ssl_ca_directory
+          http.cert_store = @ssl_ca_store if @ssl_ca_store
+        else
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+      end
 
       # Constructs and returns a Net::HTTP::Request object from
       # a {Http::Request}.
@@ -86,6 +142,17 @@ module Seahorse
       rescue NameError
         msg = "`#{request.http_method}` is not a valid http verb"
         raise ArgumentError, msg
+      end
+
+      # Extract the parts of the http_proxy URI
+      # @return [Array(String)]
+      def http_proxy_parts
+        return [
+          @http_proxy.host,
+          @http_proxy.port,
+          (@http_proxy.user && CGI::unescape(@http_proxy.user)),
+          (@http_proxy.password && CGI::unescape(@http_proxy.password))
+        ]
       end
     end
 
