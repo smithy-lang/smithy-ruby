@@ -6,7 +6,7 @@ structure RailsJson {}
 
 @trait(selector: ":is(service,operation)")
 structure errorOn {
-    location: ErrorLocation,
+    location: String,
     name: String
 }
 @enum([
@@ -23,14 +23,6 @@ structure errorOn {
         name: "BODY"
     }
 ])
-string ErrorLocation
 
-
-@trait(selector: "structure [trait|error]")
-structure ErrorName {
-    @required
-    errorText: String
-}
-
-@trait(selector: "structure > member")
-structure NestedAttributes {}
+// @trait(selector: "structure > member")
+// structure NestedAttributes {}

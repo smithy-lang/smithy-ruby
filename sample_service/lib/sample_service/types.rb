@@ -1,17 +1,46 @@
 module SampleService
   module Types
+
+    # Permitted params for a High Score
+    # @!attribute game
+    #   The game for the high score
+    #   @return [String]
+    #
+    # @!attribute score
+    #   The high score for the game
+    #   @return [Integer]
+    #
     HighScoreParams = Struct.new(
       :game,
       :score,
-      :time,
       keyword_init: true
     )
 
+    # Modeled attributes for a High Score
+    # @!attribute id
+    #   The high score id
+    #   @return [String]
+    #
+    # @!attribute game
+    #   The game for the high score
+    #   @return [String]
+    #
+    # @!attribute score
+    #   The high score for the game
+    #   @return [Integer]
+    #
+    # @!attribute created_at
+    #   The time the high score was created at
+    #   @return [Time]
+    #
+    # @!attribute updated_at
+    #   The time the high score was updated at
+    #   @return [Time]
+    #
     HighScoreAttributes = Struct.new(
       :id,
       :game,
       :score,
-      :time,
       :created_at,
       :updated_at,
       keyword_init: true
@@ -69,9 +98,11 @@ module SampleService
       keyword_init: true
     )
 
+    # Raised when high score is invalid
     UnprocessableEntityError = Struct.new(
       :errors,
       keyword_init: true
     )
+
   end
 end

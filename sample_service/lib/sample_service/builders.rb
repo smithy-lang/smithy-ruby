@@ -1,4 +1,5 @@
 module SampleService
+  # @api private
   module Builders
 
     class HighScoreParams
@@ -6,7 +7,6 @@ module SampleService
         json = {}
         json[:game] = params[:game] unless params[:game].nil?
         json[:score] = params[:score] unless params[:score].nil?
-        json[:time] = params[:time].to_s unless params[:time].nil?
         json
       end
     end

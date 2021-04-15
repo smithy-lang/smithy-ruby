@@ -24,18 +24,24 @@ resource HighScore {
 
 /// Modeled attributes for a High Score
 structure HighScoreAttributes {
+    /// The high score id
     id: Integer,
+    /// The game for the high score
     game: String,
+    /// The high score for the game
     score: Integer,
+    // The time the high score was created at
     createdAt: Timestamp,
+    // The time the high score was updated at
     updatedAt: Timestamp
 }
 
 /// Permitted params for a High Score
 structure HighScoreParams {
+    /// The game for the high score
     game: String,
-    score: Integer,
-    time: Timestamp
+    /// The high score for the game
+    score: Integer
 }
 
 /// Get a high score
@@ -134,6 +140,7 @@ list HighScores {
     member: HighScoreAttributes
 }
 
+/// Raised when high score is invalid
 @error("client")
 @httpError(422)
 structure UnprocessableEntityError {

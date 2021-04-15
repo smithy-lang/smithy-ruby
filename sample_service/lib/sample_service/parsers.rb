@@ -1,4 +1,5 @@
 module SampleService
+  # @api private
   module Parsers
 
     class HighScoreAttributes
@@ -7,7 +8,6 @@ module SampleService
         data.id = json['id']
         data.game = json['game']
         data.score = json['score']
-        data.time = Time.parse(json['time']) if json['time']
         data.created_at = Time.parse(json['created_at']) if json['created_at']
         data.updated_at = Time.parse(json['updated_at']) if json['updated_at']
         data

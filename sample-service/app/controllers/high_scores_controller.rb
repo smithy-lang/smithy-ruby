@@ -47,6 +47,6 @@ class HighScoresController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def high_score_params
-      params.require(:high_score).permit(:game, :score, :time)
+      params.require(:high_score).permit(:game, :score)
     end
 end
