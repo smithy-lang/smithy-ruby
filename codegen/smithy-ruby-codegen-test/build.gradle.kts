@@ -30,6 +30,7 @@ repositories {
 dependencies {
     implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
     implementation(project(":smithy-ruby-codegen"))
+    implementation(project(":smithy-ruby-rails-codegen"))
 }
 
 //tasks.register<Copy>("copyGem") {

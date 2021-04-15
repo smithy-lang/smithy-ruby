@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
+package software.amazon.smithy.ruby.codegen.generators;
 
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.GenerationContext;

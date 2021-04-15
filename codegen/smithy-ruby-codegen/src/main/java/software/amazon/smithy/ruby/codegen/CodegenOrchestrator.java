@@ -5,11 +5,7 @@ import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
-import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
-import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.GemspecGenerator;
-import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
-import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
+import software.amazon.smithy.ruby.codegen.generators.*;
 
 import java.net.URLClassLoader;
 import java.util.*;

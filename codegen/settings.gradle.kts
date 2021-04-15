@@ -23,3 +23,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+include("smithy-ruby-rails-codegen")

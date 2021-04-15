@@ -10,6 +10,7 @@ import software.amazon.smithy.ruby.codegen.protocol.railsjson.RailsJsonGenerator
 import java.util.Arrays;
 import java.util.List;
 
+// Provide support for generating SDKs for Rails (RailsJson)
 public class RailsIntegration implements RubyIntegration {
 
     @Override
