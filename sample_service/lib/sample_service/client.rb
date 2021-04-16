@@ -97,6 +97,19 @@ module SampleService
     end
 
     # Get a high score
+    #
+    # @option params [required, String] :id
+    #   The high score id
+    #
+    # @return [Seahorse::Output] Returns an {Seahorse::Output output}
+    #   object with {Types::GetHighScoreOutput} as the data.
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.get_high_score(
+    #     id: 'id'
+    #   )
+    #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       stack.use(
@@ -153,6 +166,22 @@ module SampleService
     end
 
     # Create a new high score
+    #
+    # @option params [required, Hash, Types::HighScoreParams] :high_score
+    #   The high score params
+    #
+    # @return [Seahorse::Output] Returns an {Seahorse::Output output}
+    #   object with {Types::CreateHighScoreOutput} as the data.
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.create_high_score(
+    #     high_score: {
+    #       game: 'Game',
+    #       score: 42
+    #     }
+    #   )
+    #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       stack.use(
@@ -208,6 +237,23 @@ module SampleService
     end
 
     # Update a high score
+    #
+    # @option params [required, Hash, Types::HighScoreParams] :high_score
+    #   The high score params
+    #
+    # @return [Seahorse::Output] Returns an {Seahorse::Output output}
+    #   object with {Types::UpdateHighScoreOutput} as the data.
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.update_high_score(
+    #     id: 'id',
+    #     high_score: {
+    #       game: 'Game',
+    #       score: 42
+    #     }
+    #   )
+    #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       stack.use(
@@ -263,6 +309,19 @@ module SampleService
     end
 
     # Delete a high score
+    #
+    # @option params [required, String] :id
+    #   The high score id
+    #
+    # @return [Seahorse::Output] Returns an {Seahorse::Output output}
+    #   object with {Types::DeleteHighScoreOutput} as the data.
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.delete_high_score(
+    #     id: 'id'
+    #   )
+    #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       stack.use(
@@ -318,6 +377,14 @@ module SampleService
     end
 
     # List all high scores
+    #
+    # @return [Seahorse::Output] Returns an {Seahorse::Output output}
+    #   object with {Types::ListHighScoresOutput} as the data.
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.list_high_scores
+    #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       stack.use(

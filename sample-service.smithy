@@ -25,7 +25,7 @@ resource HighScore {
 /// Modeled attributes for a High Score
 structure HighScoreAttributes {
     /// The high score id
-    id: Integer,
+    id: String,
     /// The game for the high score
     game: String,
     /// The high score for the game
@@ -53,6 +53,7 @@ operation GetHighScore {
 }
 
 structure GetHighScoreInput {
+    /// The high score id
     @required
     @httpLabel
     id: String
@@ -72,6 +73,7 @@ operation CreateHighScore {
 }
 
 structure CreateHighScoreInput {
+    /// The high score params
     highScore: HighScoreParams
 }
 
@@ -93,10 +95,12 @@ operation UpdateHighScore {
 }
 
 structure UpdateHighScoreInput {
+    /// The high score id
     @required
     @httpLabel
     id: String,
 
+    /// The high score params
     highScore: HighScoreParams
 }
 
@@ -114,6 +118,7 @@ operation DeleteHighScore {
 }
 
 structure DeleteHighScoreInput {
+    /// The high score id
     @required
     @httpLabel
     id: String
