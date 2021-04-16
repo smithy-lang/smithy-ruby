@@ -9,6 +9,7 @@ structure errorOn {
     location: ErrorLocation,
     name: String
 }
+
 @enum([
     {
         value: "status_code",
@@ -25,12 +26,5 @@ structure errorOn {
 ])
 string ErrorLocation
 
-
-@trait(selector: "structure [trait|error]")
-structure ErrorName {
-    @required
-    errorText: String
-}
-
-@trait(selector: "structure > member")
-structure NestedAttributes {}
+// @trait(selector: "structure > member")
+// structure NestedAttributes {}

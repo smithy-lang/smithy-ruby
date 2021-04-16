@@ -1,4 +1,5 @@
 module SampleService
+  # @api private
   module Stubs
 
     class HighScoreAttributes

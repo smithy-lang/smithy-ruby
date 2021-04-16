@@ -18,28 +18,25 @@ module Seahorse
         Net::HTTPFatalError # for proxy connection failures
       ]
 
-      # @param [Boolean] :http_wire_trace (false) When `true`,
+      # @param [Boolean] http_wire_trace (false) When `true`,
       #   HTTP debug output will be sent to the `:logger`.
       #
-      # @param [Logger] :logger Where debug output is sent.
-      #    Defaults to `nil` when `:http_wire_trace` is `false`.
-      #    Defaults to `Logger.new($stdout)` when `:http_wire_trace` is
-      #    `true`.
+      # @param [Logger] logger (Logger.new($stdout)) Where debug output is sent.
       #
-      # @param [URI::HTTP,String] :http_proxy A proxy to send
-      #   requests through.  Formatted like 'http://proxy.com:123'.
+      # @param [URI::HTTP,String] http_proxy A proxy to send
+      #   requests through. Formatted like 'http://proxy.com:123'.
       #
-      # @param [Boolean] :ssl_verify_peer (true) When `true`,
+      # @param [Boolean] ssl_verify_peer (true) When `true`,
       #   SSL peer certificates are verified when establishing a
       #   connection.
       #
-      # @oparam [String] :ssl_ca_bundle Full path to the SSL
+      # @param [String] ssl_ca_bundle Full path to the SSL
       #   certificate authority bundle file that should be used when
       #   verifying peer certificates.  If you do not pass
       #   `:ssl_ca_bundle` or `:ssl_ca_directory` the system default
       #   will be used if available.
       #
-      # @oparam [String] :ssl_ca_directory Full path of the
+      # @param [String] ssl_ca_directory Full path of the
       #   directory that contains the unbundled SSL certificate
       #   authority files for verifying peer certificates.  If you do
       #   not pass `:ssl_ca_bundle` or `:ssl_ca_directory` the

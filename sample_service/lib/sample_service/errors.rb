@@ -1,5 +1,6 @@
 module SampleService
   module Errors
+
     # Given an http_resp, return the error code
     # nil if no error code is present
     # This is codegen based on @RailsJson service definition
@@ -30,6 +31,7 @@ module SampleService
     # These are generally errors with 5XX HTTP status codes.
     class ApiServerError < ApiError; end
 
+    # Raised when high score is invalid
     class UnprocessableEntityError < ApiClientError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
@@ -40,5 +42,6 @@ module SampleService
       # @return [Types::UnprocessableEntityError]
       attr_reader :data
     end
+
   end
 end
