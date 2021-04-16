@@ -63,6 +63,7 @@ module Seahorse
   #
   #     # invoke before the request  has been sent, receives the
   #     # response from the send middleware
+  #     middleware = Seahorse::MiddlewareBuilder.new
   #     middleware.around_send do |app, request, response, context|
   #
   #       # this code is invoked before the request is sent
@@ -297,7 +298,7 @@ module Seahorse
       raise ArgumentError, BOTH if args.size > 0 && block
       raise ArgumentError, NEITHER if args.empty? && block.nil?
       raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
-      callable = args.first || Proc.new
+      callable = args.first || block
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
       callable
     end

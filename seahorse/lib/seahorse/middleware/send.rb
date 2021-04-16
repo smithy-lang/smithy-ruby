@@ -51,7 +51,7 @@ module Seahorse
           response.status_code = stub[:status_code]
           response.headers = stub[:headers]
         else
-          @stub_class.stub(http_resp: response, stub_data: stub)
+          @stub_class.stub(response, stub)
         end
       end
     end
