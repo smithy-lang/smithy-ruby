@@ -76,7 +76,7 @@ module SampleService
     #   {Seahorse::ClientStubs#stub_responses}.
     #
     # @option options [Symbol] :log_level (:info)
-    #   The log level to send messages to the `:logger` at.
+    #   The log level used to create a logger if none has been provided.
     #
     # @option options [Logger] :logger (Logger.new($stdout))
     #   The Logger instance to send log messages to. If this option

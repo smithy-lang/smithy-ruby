@@ -18,6 +18,7 @@ module Seahorse
           apply_stub(stub, request, response, context, output)
           output
         else
+          context[:logger].debug("Sending request #{request}")
           @client.transmit(
             request: request,
             response: response
@@ -50,7 +51,7 @@ module Seahorse
           response.status_code = stub[:status_code]
           response.headers = stub[:headers]
         else
-          @stub_class.stub(response: response, stub_data: stub)
+          @stub_class.stub(http_resp: response, stub_data: stub)
         end
       end
     end

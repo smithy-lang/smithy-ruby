@@ -16,6 +16,7 @@ module Seahorse
       # @return [Output]
       def call(request:, response:, context:)
         @builder.build(request, params: @params)
+        context[:logger].debug("Building request with #{@params.inspect}")
         @app.call(
           request: request,
           response: response,

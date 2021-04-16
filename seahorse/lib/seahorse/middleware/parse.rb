@@ -20,6 +20,7 @@ module Seahorse
           response: response,
           context: context
         )
+        context[:logger].debug("Parsing response #{response.inspect}")
         parse_error(response, output) unless output.error
         parse_data(response, output) unless output.error
         output
