@@ -78,9 +78,9 @@ module SampleService
     # @option options [Symbol] :log_level (:info)
     #   The log level to send messages to the `:logger` at.
     #
-    # @option options [Logger] :logger (Logger)
+    # @option options [Logger] :logger (Logger.new($stdout))
     #   The Logger instance to send log messages to. If this option
-    #   is not set, a default Ruby {Logger} is used.
+    #   is not set, a default Ruby Logger is used.
     #
     def initialize(options = {})
       @endpoint = options[:endpoint]

@@ -138,8 +138,8 @@ module Seahorse
     #
     # @overload before_build(&block)
     #   @yield [request, response, context]
-    #   @yieldparam [NawsHttp::Request] request
-    #   @yieldparam [NawsHttp::Response] response
+    #   @yieldparam [Seahorse::HTTP::Request] request
+    #   @yieldparam [Seahorse::HTTP::Response] response
     #   @yieldparam [Hash] context
     #   @yieldreturn [void]
     #
@@ -148,8 +148,8 @@ module Seahorse
     #     The request handler must respond to `#call` accepting
     #     three arguments:
     #
-    #     * `request` ({NawsHttp::Request})
-    #     * `response` ({NawsHttp::Response})
+    #     * `request` ({Seahorse::HTTP::Request})
+    #     * `response` ({Seahorse::HTTP::Response})
     #     * `context` (Hash)
     #
     def before_build(*args, &block)

@@ -8,7 +8,7 @@ module Seahorse
   # return when a client is using stubbed responses.
   # This module should be included in generated service clients.
   #
-  # Pass `:stub_responses => true` to a client constructor to enable this
+  # Pass `stub_responses: true` to a client constructor to enable this
   # behavior.
   #
   module ClientStubs
@@ -46,16 +46,6 @@ module Seahorse
     #     client.operation.param1.map(&:name)
     #     #=> ['value1']
     #
-    # With a Resource class {#stub_responses} on the corresponding client:
-    #
-    #     r = Service::Resource.new(stub_responses: true)
-    #     r.client.stub_responses(:operation1, {
-    #       param1: [{ name: 'value1' }]
-    #     })
-    #
-    #     r.operation.map(&:name)
-    #     #=> ['value1']
-    #
     # ## Dynamic Stubbing
     #
     # In addition to creating static stubs, it's also possible to generate
@@ -66,8 +56,6 @@ module Seahorse
     #     client.stub_responses(:operation, -> (context) {
     #       client.stub_responses(:operation2, content_type: context.params[:content_type])
     #     })
-    #
-    # The yielded object is an instance of {Seahorse::Client::RequestContext}.
     #
     # ## Stubbing Errors
     #

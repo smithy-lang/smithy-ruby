@@ -16,23 +16,22 @@ module Seahorse
       # @api private
       HTTP_5XX = 500..599
 
-      # @param [Module] :error_module - the code generated Errors module.
+      # @param [Module] error_module The code generated Errors module.
       #   Must contain service specific implementations of
-      #   ApiRedirectError, ApiClientError and ApiServerError
+      #   ApiRedirectError, ApiClientError, and ApiServerError
       #
-      # @param [Integer] :success_status_code - The status code of a
+      # @param [Integer] success_status_code The status code of a
       #   successful response as defined by the model for
       #   this operation. If this is a non 2XX value,
       #   the request will be considered successful if
       #   it has the success_status_code and does not
       #   have an error code.
       #
-      # @param [Array<Class < APIError>] :errors  -
-      #   Array of Error classes modeled for the operation.
+      # @param [Array<Class<ApiError>>] errors Array of Error classes
+      #   modeled for the operation.
       #
-      # @param [callable] :error_code_fn -
-      #   Protocol specific function that will return
-      #   the error code from a response, or nil if
+      # @param [callable] error_code_fn Protocol specific function
+      #   that will return the error code from a response, or nil if
       #   there is none.
       def initialize(error_module:, success_status_code:, errors:, error_code_fn:)
         @error_module = error_module
@@ -44,7 +43,7 @@ module Seahorse
       # parse and set the error on the response if
       # the response is not success.
       #
-      # @param [Response]
+      # @param [Response] response The HTTP response
       def parse(response:)
         extract_error(response) if error?(response)
       end
