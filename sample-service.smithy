@@ -52,6 +52,7 @@ operation GetHighScore {
     output: GetHighScoreOutput
 }
 
+/// Input structure for GetHighScore
 structure GetHighScoreInput {
     /// The high score id
     @required
@@ -59,7 +60,9 @@ structure GetHighScoreInput {
     id: String
 }
 
+/// Output structure for GetHighScore
 structure GetHighScoreOutput {
+    /// The high score attributes
     @httpPayload
     highScore: HighScoreAttributes
 }
@@ -72,15 +75,19 @@ operation CreateHighScore {
     errors: [UnprocessableEntityError]
 }
 
+/// Input structure for CreateHighScore
 structure CreateHighScoreInput {
     /// The high score params
     highScore: HighScoreParams
 }
 
+/// Output structure for CreateHighScore
 structure CreateHighScoreOutput {
+    /// The high score attributes
     @httpPayload
     highScore: HighScoreAttributes,
 
+    /// The location of the high score
     @httpHeader("Location")
     location: String
 }
@@ -94,6 +101,7 @@ operation UpdateHighScore {
     errors: [UnprocessableEntityError]
 }
 
+/// Input structure for UpdateHighScore
 structure UpdateHighScoreInput {
     /// The high score id
     @required
@@ -104,7 +112,9 @@ structure UpdateHighScoreInput {
     highScore: HighScoreParams
 }
 
+/// Output structure for UpdateHighScore
 structure UpdateHighScoreOutput {
+    /// The high score attributes
     @httpPayload
     highScore: HighScoreAttributes
 }
@@ -117,6 +127,7 @@ operation DeleteHighScore {
     output: DeleteHighScoreOutput
 }
 
+/// Input structure for DeleteHighScore
 structure DeleteHighScoreInput {
     /// The high score id
     @required
@@ -124,6 +135,7 @@ structure DeleteHighScoreInput {
     id: String
 }
 
+/// Output structure for DeleteHighScore
 structure DeleteHighScoreOutput {}
 
 /// List all high scores
@@ -134,9 +146,12 @@ operation ListHighScores {
     output: ListHighScoresOutput
 }
 
+/// Input structure for ListHighScores
 structure ListHighScoresInput {}
 
+/// Output structure for ListHighScores
 structure ListHighScoresOutput {
+    /// A list of high scores
     @httpPayload
     highScores: HighScores
 }
