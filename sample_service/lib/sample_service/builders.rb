@@ -57,10 +57,8 @@ module SampleService
       def self.build(http_req, params:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
-        json = {}
-        json[:max_results] = params[:max_results] unless params[:max_results].nil?
-        json[:next_token] = params[:next_token] unless params[:next_token].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(json))
+        http_req.append_query_param(:max_results, params[:max_results]) unless params[:max_results].nil?
+        http_req.append_query_param(:next_token, params[:next_token]) unless params[:next_token].nil?
       end
     end
 

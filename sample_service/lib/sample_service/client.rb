@@ -291,6 +291,16 @@ module SampleService
         }
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
+
+      # codegen based on traits
+      if resp.next_page?
+        resp.pager.request_next_page = proc do
+          next_page_params = params.merge(next_token: resp.pager.next_token)
+
+          self.list_high_scores(next_page_params, options)
+        end
+      end
+
       resp
     end
 

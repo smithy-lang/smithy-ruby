@@ -52,9 +52,11 @@ module SampleService
       def self.parse(http_resp, output:)
         json = Seahorse::JSON.load(http_resp.body)
         data = Types::ListHighScoresOutput.new
+        puts json
         data.next_token = json['next_token'] if json['next_token']
         data.high_scores = HighScores.parse(json['high_scores']) if json['high_scores']
         output.data = data
+        output.pager = Seahorse::Pager.new(next_token: data.next_token) # codegen based on traits
       end
     end
 
