@@ -18,7 +18,6 @@ module Seahorse
           apply_stub(stub, request, response, context, output)
           output
         else
-          context[:logger].debug("Sending request #{request}")
           @client.transmit(
             request: request,
             response: response

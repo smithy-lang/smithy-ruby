@@ -24,9 +24,8 @@ module Seahorse
           )
         rescue Seahorse::HTTP::NetworkingError => error
           if attempt < @max_attempts
-            sleep(backoff_with_jitter(attempt))
+            Kernel.sleep(backoff_with_jitter(attempt))
             attempt += 1
-            context[:logger].debug("Retrying request #{request.inspect}")
             retry
           else
             raise error
@@ -39,7 +38,7 @@ module Seahorse
       # https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
       def backoff_with_jitter(attempt)
         # scales like 1,2,4,8
-        Kernel.rand * ([@max_delay, 2 ** (attempt - 1)].min)
+        Kernel.rand * [@max_delay, 2**(attempt - 1)].min
       end
 
     end

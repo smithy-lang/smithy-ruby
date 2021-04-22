@@ -20,7 +20,6 @@ module Seahorse
           response: response,
           context: context
         )
-        context[:logger].debug("Parsing response #{response.inspect}")
         parse_error(response, output) unless output.error
         parse_data(response, output) unless output.error
         output
@@ -29,14 +28,12 @@ module Seahorse
       private
 
       def parse_error(response, output)
-        output.error = @error_parser.parse(response: response)
-        if output.error.is_a?(Seahorse::ApiError)
-          output.context[:request_id] = output.error.request_id
-        end
+        output.error = @error_parser.parse(
+          response: response
+        )
       end
 
       def parse_data(response, output)
-        return unless (200..299).cover?(response.status_code)
         @data_parser.parse(
           response,
           output: output

@@ -9,7 +9,7 @@ module Seahorse
       # @param [Integer] status_code
       # @param [Headers] headers
       # @param [IO] body
-      def initialize(status_code: 0, headers: Headers.new, body: StringIO.new)
+      def initialize(status_code: 200, headers: Headers.new, body: StringIO.new)
         @status_code = status_code
         @headers = headers
         @body = body

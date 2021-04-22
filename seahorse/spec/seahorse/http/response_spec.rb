@@ -14,7 +14,7 @@ module Seahorse
       describe '#initialize' do
         it 'sets empty defaults' do
           response = Response.new
-          expect(response.status_code).to eq 0
+          expect(response.status_code).to eq 200
           expect(response.headers).to be_a Headers
           expect(response.body).to be_a StringIO
         end

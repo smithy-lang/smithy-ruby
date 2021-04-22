@@ -9,6 +9,9 @@
 #
 # See https://docs.rubocop.org/rubocop/configuration
 
+Layout/LineLength:
+  Max: 80
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
