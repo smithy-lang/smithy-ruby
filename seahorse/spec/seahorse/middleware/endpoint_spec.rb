@@ -9,7 +9,7 @@ module Seahorse
       let(:app) { double('app') }
       let(:disable_host_prefix) { false }
       let(:host_prefix) { 'foo.' }
-      let(:params) { { foo: 'bar' } }
+      let(:params) { {} }
 
       subject do
         Endpoint.new(
@@ -66,6 +66,7 @@ module Seahorse
 
         context 'host prefix has labels' do
           let(:host_prefix) { '{foo}.' }
+          let(:params) { { foo: 'bar' } }
 
           it 'populates the label with params' do
             expect(app).to receive(:call).with(
