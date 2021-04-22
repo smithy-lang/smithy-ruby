@@ -104,6 +104,22 @@ module Seahorse
         @url = uri.to_s
       end
 
+      # Append a host prefix to the HTTP request URL.
+      #
+      #     http_req.url = "https://foo.com"
+      #     http_req.prefix_host('data.')
+      #
+      #     http_req.url
+      #     #=> "https://data.foo.com
+      #
+      # @param [String] prefix A dot (.) terminated prefix for the host.
+      #
+      def prefix_host(prefix)
+        uri = URI.parse(@url)
+        uri.host = prefix + uri.host
+        @url = uri.to_s
+      end
+
       private
 
       def escape(value)

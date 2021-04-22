@@ -97,6 +97,13 @@ module Seahorse
             .to eq('http://example.com?test%20space=test%2Fvalue')
         end
       end
+
+      describe '#prefix_host' do
+        it 'prefixes the host' do
+          subject.prefix_host('data.')
+          expect(subject.url).to eq('http://data.example.com')
+        end
+      end
     end
   end
 end
