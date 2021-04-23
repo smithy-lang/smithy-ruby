@@ -19,8 +19,11 @@ require_relative 'seahorse/middleware_builder'
 require_relative 'seahorse/middleware_stack'
 require_relative 'seahorse/output'
 require_relative 'seahorse/time_helper'
+
 require_relative 'seahorse/stubbing/client_stubs'
 require_relative 'seahorse/stubbing/stubs'
+
+require_relative 'seahorse/xml'
 
 module Seahorse
   VERSION = '0.2.0'.freeze
