@@ -13,6 +13,8 @@ module SampleService
 
     class GetHighScore
       def self.build(http_req, params:)
+        raise ArgumentError if params[:id].nil? || params[:id].empty?
+
         http_req.http_method = 'GET'
         http_req.append_path(format('/high_scores/%<id>s',
           id: Seahorse::HTTP.uri_escape(params[:id])
@@ -33,6 +35,8 @@ module SampleService
 
     class UpdateHighScore
       def self.build(http_req, params:)
+        raise ArgumentError if params[:id].nil? || params[:id].empty?
+
         http_req.http_method = 'PUT'
         http_req.append_path(format('/high_scores/%<id>s',
           id: Seahorse::HTTP.uri_escape(params[:id])
@@ -46,6 +50,8 @@ module SampleService
 
     class DeleteHighScore
       def self.build(http_req, params:)
+        raise ArgumentError if params[:id].nil? || params[:id].empty?
+
         http_req.http_method = 'DELETE'
         http_req.append_path(format('/high_scores/%<id>s',
           id: Seahorse::HTTP.uri_escape(params[:id])

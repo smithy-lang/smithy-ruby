@@ -5,11 +5,11 @@ module Seahorse
   module Middleware
     class Validate
 
-      def initialize(app, validator:, params:, validate_params:)
+      def initialize(app, validator:, validate_params:, input:)
         @app = app
         @validator = validator
-        @params = params
         @validate_params = validate_params
+        @input = input
       end
 
       # @param request
@@ -17,7 +17,9 @@ module Seahorse
       # @param context
       # @return [Output]
       def call(request:, response:, context:)
-        @validator.validate(params: @params, context: 'params') if @validate_params
+        if @validate_params
+          @validator.validate!(params: @input, context: 'params')
+        end
         @app.call(
           request: request,
           response: response,

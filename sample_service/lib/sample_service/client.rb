@@ -61,9 +61,9 @@ module SampleService
     # @option options [Boolean] :http_wire_trace (false) When `true`,
     #   HTTP debug output will be sent to the `:logger`.
     #
-    # @option options [Boolean] :validate_params (true)
-    #   When `true`, request parameters are validated before
-    #   sending the request.
+    # @option options [Boolean] :validate_params (false)
+    #   When `true`, request parameters are validated using constraints
+    #   before sending the request.
     #
     # @option options [Proc, Seahorse::MiddlewareBuilder] :middleware
     #   Middleware to apply to each request sent by this
@@ -88,7 +88,7 @@ module SampleService
       @max_delay = options.fetch(:max_delay, 8)
       @raise_api_errors = options.fetch(:raise_api_errors, true)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
-      @validate_params = options.fetch(:validate_params, true)
+      @validate_params = options.fetch(:validate_params, false)
       @middleware = Seahorse::MiddlewareBuilder.new(options[:middleware])
       @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Seahorse::Stubbing::Stubs.new
@@ -112,11 +112,12 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
+      input = Params::GetHighScore.build(params: params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::GetHighScoreInput,
-        params: params,
-        validate_params: options.fetch(:validate_params, @validate_params)
+        validator: Validators::GetHighScore,
+        validate_params: options.fetch(:validate_params, @validate_params),
+        input: input
       )
       stack.use(
         Seahorse::Middleware::Build,
@@ -184,11 +185,12 @@ module SampleService
     #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
+      input = Params::CreateHighScore.build(params: params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::CreateHighScoreInput,
-        params: params,
-        validate_params: options.fetch(:validate_params, @validate_params)
+        validator: Validators::CreateHighScore,
+        validate_params: options.fetch(:validate_params, @validate_params),
+        input: input
       )
       stack.use(
         Seahorse::Middleware::Build,
@@ -256,11 +258,12 @@ module SampleService
     #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
+      input = Params::UpdateHighScore.build(params: params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::UpdateHighScoreInput,
-        params: params,
-        validate_params: options.fetch(:validate_params, @validate_params)
+        validator: Validators::UpdateHighScore,
+        validate_params: options.fetch(:validate_params, @validate_params),
+        input: input
       )
       stack.use(
         Seahorse::Middleware::Build,
@@ -324,11 +327,12 @@ module SampleService
     #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
+      input = Params::DeleteHighScore.build(params: params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::DeleteHighScoreInput,
-        params: params,
-        validate_params: options.fetch(:validate_params, @validate_params)
+        validator: Validators::DeleteHighScore,
+        validate_params: options.fetch(:validate_params, @validate_params),
+        input: input
       )
       stack.use(
         Seahorse::Middleware::Build,
@@ -387,11 +391,12 @@ module SampleService
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
+      input = Params::ListHighScores.build(params: params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::ListHighScoresInput,
-        params: params,
-        validate_params: options.fetch(:validate_params, @validate_params)
+        validator: Validators::ListHighScores,
+        validate_params: options.fetch(:validate_params, @validate_params),
+        input: input
       )
       stack.use(
         Seahorse::Middleware::Build,
