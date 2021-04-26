@@ -11,7 +11,7 @@ module SampleService
       end
     end
 
-    class GetHighScore
+    class GetHighScoreInput
       def self.build(params:)
         type = Types::GetHighScoreInput.new
         type.id = params[:id]
@@ -19,7 +19,7 @@ module SampleService
       end
     end
 
-    class CreateHighScore
+    class CreateHighScoreInput
       def self.build(params:)
         type = Types::CreateHighScoreInput.new
         type.high_score = HighScoreParams.build(params: params[:high_score]) if params[:high_score]
@@ -27,7 +27,7 @@ module SampleService
       end
     end
 
-    class UpdateHighScore
+    class UpdateHighScoreInput
       def self.build(params:)
         type = Types::UpdateHighScoreInput.new
         type.id = params[:id]
@@ -36,7 +36,7 @@ module SampleService
       end
     end
 
-    class DeleteHighScore
+    class DeleteHighScoreInput
       def self.build(params:)
         type = Types::DeleteHighScoreInput.new
         type.id = params[:id]
@@ -44,7 +44,7 @@ module SampleService
       end
     end
 
-    class ListHighScores
+    class ListHighScoresInput
       def self.build(params:)
         type = Types::ListHighScoresInput.new
         type

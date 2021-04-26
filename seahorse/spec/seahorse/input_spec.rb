@@ -9,12 +9,12 @@ module Seahorse
 
     subject { Input.new(params: params, context: context) }
 
-    describe '#validate_params!' do
+    describe '#validate_input!' do
       context 'params is a hash' do
         let(:params) { { foo: 'bar' } }
 
         it 'does not raise an error' do
-          expect { subject.validate_params!(type) }.to_not raise_error
+          expect { subject.validate_input!(type) }.to_not raise_error
         end
       end
 
@@ -22,7 +22,7 @@ module Seahorse
         let(:params) { type.new(foo: 'bar') }
 
         it 'does not raise an error' do
-          expect { subject.validate_params!(type) }.to_not raise_error
+          expect { subject.validate_input!(type) }.to_not raise_error
         end
       end
 
@@ -30,7 +30,7 @@ module Seahorse
         let(:params) { nil }
 
         it 'raises an ArgumentError' do
-          expect { subject.validate_params!(type) }
+          expect { subject.validate_input!(type) }
             .to raise_error(
               ArgumentError,
               "Expected #{context} to be a Hash or #{type},"\

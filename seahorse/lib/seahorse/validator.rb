@@ -8,45 +8,45 @@ module Seahorse
   #
   class Validator
     # Initialize a new instance of Input.
-    # @param [Struct] params The params for this shape.
-    # @param [String] context The nested context for these params, for error
+    # @param [Struct] input The input type for this shape.
+    # @param [String] context The nested context of the input, for error
     #   messaging.
-    def initialize(params:, context:)
-      @params = params
+    def initialize(input:, context:)
+      @input = input
       @context = context
     end
 
     def validate_enum!(key, enums:)
-      unless enums.include?(@params[key])
+      unless enums.include?(@input[key])
         raise ArgumentError,
               "Expected #{@context}[:#{key}] to be in #{enums}."
       end
     end
 
     def validate_length!(key, min: nil, max: nil)
-      if min && @params[key].length < min
+      if min && @input[key].length < min
         raise ArgumentError,
               "Expected #{@context}[:#{key}] to be longer than #{min}."
       end
-      if max && @params[key].length > max
+      if max && @input[key].length > max
         raise ArgumentError,
               "Expected #{@context}[:#{key}] to be shorter than #{max}."
       end
     end
 
     def validate_pattern!(key, pattern:)
-      unless @params[key].match?(Regexp.new(pattern))
+      unless @input[key].match?(Regexp.new(pattern))
         raise ArgumentError,
               "Expected #{@context}[:#{key}] to match #{pattern}."
       end
     end
 
     def validate_range!(key, min: nil, max: nil)
-      if min && @params[key] < min
+      if min && @input[key] < min
         raise ArgumentError,
               "Expected #{@context}[:#{key}] to be larger than #{min}."
       end
-      if max && @params[key] > max
+      if max && @input[key] > max
         raise ArgumentError,
               "Expected #{@context}[:#{key}] to be smaller than #{max}."
       end
@@ -55,7 +55,7 @@ module Seahorse
     # Validate required parameters
     # @raise [ArgumentError] Raises when parameters are required.
     def validate_required!(key)
-      if (v = @params[key])
+      if (v = @input[key])
         if v.respond_to?(:empty?) && v.empty?
           raise ArgumentError,
                 "Expected #{@context}[:#{key}] to be non-empty."
@@ -67,7 +67,7 @@ module Seahorse
     end
 
     def validate_unique_items!(key)
-      if @params[key].size != @params[key].uniq.size
+      if @input[key].size != @input[key].uniq.size
         raise ArgumentError,
               "Expected items in #{@context}[:#{key}] to be unique."
       end

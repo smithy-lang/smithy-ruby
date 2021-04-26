@@ -3,45 +3,45 @@ module SampleService
   module Validators
 
     class HighScoreParams
-      def self.validate!(params:, context:)
-        input = Seahorse::Validator.new(params: params, context: context)
-        input.validate_length!(:game, min: 2) if params[:game]
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
+        validator.validate_length!(:game, min: 2) if input[:game]
       end
     end
 
     class GetHighScore
-      def self.validate!(params:, context:)
-        input = Seahorse::Validator.new(params: params, context: context)
-        input.validate_required!(:id)
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
+        validator.validate_required!(:id)
       end
     end
 
     class CreateHighScore
-      def self.validate!(params:, context:)
-        input = Seahorse::Validator.new(params: params, context: context)
-        input.validate_required!(:high_score)
-        HighScoreParams.validate!(params: params[:high_score], context: "#{context}[:high_score]")
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
+        validator.validate_required!(:high_score)
+        HighScoreParams.validate!(input: input[:high_score], context: "#{context}[:high_score]")
       end
     end
 
     class UpdateHighScore
-      def self.validate!(params:, context:)
-        input = Seahorse::Validator.new(params: params, context: context)
-        input.validate_required!(:id)
-        HighScoreParams.validate!(params: params[:high_score], context: "#{context}[:high_score]")
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
+        validator.validate_required!(:id)
+        HighScoreParams.validate!(input: input[:high_score], context: "#{context}[:high_score]")
       end
     end
 
     class DeleteHighScore
-      def self.validate!(params:, context:)
-        input = Seahorse::Validator.new(params: params, context: context)
-        input.validate_required!(:id)
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
+        validator.validate_required!(:id)
       end
     end
 
     class ListHighScores
-      def self.validate!(params:, context:)
-        input = Seahorse::Validator.new(params: params, context: context)
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
       end
     end
 

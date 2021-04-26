@@ -14,7 +14,7 @@ module Seahorse
           app,
           validator: validator,
           params: params,
-          validate_params: validate_params
+          validate_input: validate_input
         )
       end
 
@@ -24,8 +24,8 @@ module Seahorse
         let(:context) { {} }
         let(:output) { Seahorse::Output.new }
 
-        context 'validate_params is true' do
-          let(:validate_params) { true }
+        context 'validate_input is true' do
+          let(:validate_input) { true }
 
           it 'validates the request then calls the next middleware' do
             expect(validator).to receive(:validate)
@@ -44,8 +44,8 @@ module Seahorse
           end
         end
 
-        context 'validate_params is false' do
-          let(:validate_params) { false }
+        context 'validate_input is false' do
+          let(:validate_input) { false }
 
           it 'calls the next middleware' do
             expect(app).to receive(:call).with(
