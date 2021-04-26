@@ -7,7 +7,7 @@ module Seahorse
   # * Raise errors with context when validation fails.
   #
   class Validator
-    # Initialize a new instance of Input.
+    # Initialize a new instance of the validator.
     # @param [Struct] input The input type for this shape.
     # @param [String] context The nested context of the input, for error
     #   messaging.
@@ -16,6 +16,11 @@ module Seahorse
       @context = context
     end
 
+    # Validates that a key's value is present in a list of enum values.
+    # @param [Symbol] key The key to validate.
+    # @param [Array<String>] enums A list of all available enums.
+    # @raise [ArgumentError] Raises when the key's value is not in the list
+    #   of enums.
     def validate_enum!(key, enums:)
       unless enums.include?(@input[key])
         raise ArgumentError,
@@ -23,6 +28,13 @@ module Seahorse
       end
     end
 
+    # Validates that a key's value is longer or shorter than min and max values
+    #   (inclusive). This validation is used with strings, arrays, and hashes.
+    # @param [Symbol] key The key to validate.
+    # @param [Integer,Float] min A minimum numeric value.
+    # @param [Integer,Float] max A maximum numeric value.
+    # @raise [ArgumentError] Raises when the key's value is not within the min
+    #   or max length.
     def validate_length!(key, min: nil, max: nil)
       if min && @input[key].length < min
         raise ArgumentError,
@@ -34,6 +46,11 @@ module Seahorse
       end
     end
 
+    # Validates that a key's value conforms to a regular expression.
+    # @param [Symbol] key The key to validate.
+    # @param [String] pattern A regex pattern as a string.
+    # @raise [ArgumentError] Raises when the key's value does not match the
+    #   regular expression pattern.
     def validate_pattern!(key, pattern:)
       unless @input[key].match?(Regexp.new(pattern))
         raise ArgumentError,
@@ -41,6 +58,13 @@ module Seahorse
       end
     end
 
+    # Validates that a key's value is larger or smaller than min and max values
+    #   (inclusive). This validation is used with numeric values.
+    # @param [Symbol] key The key to validate.
+    # @param [Integer,Float] min A minimum numeric value.
+    # @param [Integer,Float] max A maximum numeric value.
+    # @raise [ArgumentError] Raises when the key's value is not within the min
+    #   or max range.
     def validate_range!(key, min: nil, max: nil)
       if min && @input[key] < min
         raise ArgumentError,
@@ -52,8 +76,9 @@ module Seahorse
       end
     end
 
-    # Validate required parameters
-    # @raise [ArgumentError] Raises when parameters are required.
+    # Validate that a key's value is present and not empty.
+    # @param [Symbol] key The key to validate.
+    # @raise [ArgumentError] Raises when the key's value is nil or empty.
     def validate_required!(key)
       if (v = @input[key])
         if v.respond_to?(:empty?) && v.empty?
@@ -66,6 +91,10 @@ module Seahorse
       end
     end
 
+    # Validate that a key's value is an array with unique items (Set).
+    # @param [Symbol] key The key to validate.
+    # @raise [ArgumentError] Raises when the key's value is not an array with
+    #   unique items.
     def validate_unique_items!(key)
       if @input[key].size != @input[key].uniq.size
         raise ArgumentError,

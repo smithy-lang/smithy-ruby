@@ -62,8 +62,10 @@ module SampleService
     #   HTTP debug output will be sent to the `:logger`.
     #
     # @option options [Boolean] :validate_input (false)
-    #   When `true`, request parameters are validated using constraints
-    #   before sending the request.
+    #   When `true`, request parameters are validated using modeled constraints
+    #   before sending the request. Enabling this feature will prevent the
+    #   Client from making forwards-compatible calls unless a new version that
+    #   matches the model is used.
     #
     # @option options [Proc, Seahorse::MiddlewareBuilder] :middleware
     #   Middleware to apply to each request sent by this
