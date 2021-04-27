@@ -47,6 +47,8 @@ module SampleService
     class ListHighScoresInput
       def self.build(params:)
         type = Types::ListHighScoresInput.new
+        type.next_token = params[:next_token]
+        type.max_results = params[:max_results]
         type
       end
     end

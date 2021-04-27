@@ -4,7 +4,10 @@ class HighScoresController < ApplicationController
   def index
     @high_scores = HighScore.all
 
-    render json: @high_scores
+    render json: {
+      high_scores: @high_scores,
+      next_token: "#{params['nextToken']}_iter"
+    }
   end
 
   # GET /high_scores/1
