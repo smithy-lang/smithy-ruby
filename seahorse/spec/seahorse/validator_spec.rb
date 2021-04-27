@@ -4,6 +4,7 @@ require 'seahorse/validator'
 
 module Seahorse
   describe Validator do
+
     let(:input_type) { Struct.new(:member, keyword_init: true) }
     let(:input) { input_type.new(params) }
     let(:context) { 'input' }
@@ -16,7 +17,7 @@ module Seahorse
       context 'value is in the enum list' do
         let(:params) { { member: 'cool' } }
 
-        it 'does nothing' do
+        it 'does not raise' do
           expect(subject.validate_enum!(:member, enums: enums)).to be_nil
         end
       end
@@ -64,7 +65,7 @@ module Seahorse
       context 'value is just right' do
         let(:params) { { member: 'cool' } }
 
-        it 'does nothing' do
+        it 'does not raise' do
           expect(subject.validate_length!(:member, min: 1, max: 10)).to be_nil
         end
       end
@@ -76,7 +77,7 @@ module Seahorse
       context 'value matches the pattern' do
         let(:params) { { member: 'cool' } }
 
-        it 'does nothing' do
+        it 'does not raise' do
           expect(subject.validate_pattern!(:member, pattern: pattern)).to be_nil
         end
       end
@@ -124,7 +125,7 @@ module Seahorse
       context 'value is just right' do
         let(:params) { { member: 5 } }
 
-        it 'does nothing' do
+        it 'does not raise' do
           expect(subject.validate_range!(:member, min: 1, max: 10)).to be_nil
         end
       end
@@ -158,7 +159,7 @@ module Seahorse
       context 'value is set and non-empty' do
         let(:params) { { member: 'bar' } }
 
-        it 'does nothing' do
+        it 'does not raise' do
           expect(subject.validate_required!(:member)).to be_nil
         end
       end
@@ -168,7 +169,7 @@ module Seahorse
       context 'value has unique items' do
         let(:params) { { member: %w[cool beans] } }
 
-        it 'does nothing' do
+        it 'does not raise' do
           expect(subject.validate_unique_items!(:member)).to be_nil
         end
       end
