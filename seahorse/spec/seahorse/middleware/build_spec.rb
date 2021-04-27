@@ -7,13 +7,13 @@ module Seahorse
     describe Build do
       let(:app) { double('app') }
       let(:builder) { double('builder') }
-      let(:params) { { foo: 'bar' } }
+      let(:input) { { foo: 'bar' } }
 
       subject do
         Build.new(
           app,
           builder: builder,
-          params: params
+          input: input
         )
       end
 
@@ -24,7 +24,7 @@ module Seahorse
 
         it 'builds then calls the next middleware' do
           expect(builder).to receive(:build)
-            .with(request, params: params).ordered
+            .with(request, input: input).ordered
           expect(app).to receive(:call).with(
             request: request,
             response: response,
