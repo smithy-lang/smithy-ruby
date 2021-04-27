@@ -3,58 +3,64 @@ module SampleService
   module Builders
 
     class HighScoreParams
-      def self.build(params:)
+      def self.build(input:)
         json = {}
-        json[:game] = params[:game] unless params[:game].nil?
-        json[:score] = params[:score] unless params[:score].nil?
+        json[:game] = input[:game] unless input[:game].nil?
+        json[:score] = input[:score] unless input[:score].nil?
         json
       end
     end
 
     class GetHighScore
-      def self.build(http_req, params:)
+      def self.build(http_req, input:)
+        raise ArgumentError if input[:id].nil? || input[:id].empty?
+
         http_req.http_method = 'GET'
         http_req.append_path(format('/high_scores/%<id>s',
-          id: Seahorse::HTTP.uri_escape(params[:id])
+          id: Seahorse::HTTP.uri_escape(input[:id])
         ))
       end
     end
 
     class CreateHighScore
-      def self.build(http_req, params:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/high_scores')
         http_req.headers['Content-Type'] = 'application/json'
         json = {}
-        json[:high_score] = HighScoreParams.build(params: params[:high_score])
+        json[:high_score] = HighScoreParams.build(input: input[:high_score])
         http_req.body = StringIO.new(Seahorse::JSON.dump(json))
       end
     end
 
     class UpdateHighScore
-      def self.build(http_req, params:)
+      def self.build(http_req, input:)
+        raise ArgumentError if input[:id].nil? || input[:id].empty?
+
         http_req.http_method = 'PUT'
         http_req.append_path(format('/high_scores/%<id>s',
-          id: Seahorse::HTTP.uri_escape(params[:id])
+          id: Seahorse::HTTP.uri_escape(input[:id])
         ))
         http_req.headers['Content-Type'] = 'application/json'
         json = {}
-        json[:high_score] = HighScoreParams.build(params: params[:high_score])
+        json[:high_score] = HighScoreParams.build(input: input[:high_score])
         http_req.body = StringIO.new(Seahorse::JSON.dump(json))
       end
     end
 
     class DeleteHighScore
-      def self.build(http_req, params:)
+      def self.build(http_req, input:)
+        raise ArgumentError if input[:id].nil? || input[:id].empty?
+
         http_req.http_method = 'DELETE'
         http_req.append_path(format('/high_scores/%<id>s',
-          id: Seahorse::HTTP.uri_escape(params[:id])
+          id: Seahorse::HTTP.uri_escape(input[:id])
         ))
       end
     end
 
     class ListHighScores
-      def self.build(http_req, params:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
       end

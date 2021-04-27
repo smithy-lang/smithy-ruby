@@ -4,10 +4,10 @@ module Seahorse
   module Middleware
     class Build
 
-      def initialize(app, builder:, params:)
+      def initialize(app, builder:, input:)
         @app = app
         @builder = builder
-        @params = params
+        @input = input
       end
 
       # @param request
@@ -15,7 +15,7 @@ module Seahorse
       # @param context
       # @return [Output]
       def call(request:, response:, context:)
-        @builder.build(request, params: @params)
+        @builder.build(request, input: @input)
         @app.call(
           request: request,
           response: response,
