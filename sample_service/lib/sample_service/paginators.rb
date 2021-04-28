@@ -1,9 +1,7 @@
 module SampleService
-  # @api private
   module Paginators
 
     class ListHighScores
-      include Enumerable
 
       def initialize(params = {}, options = {}, client:)
         @params = params
@@ -11,29 +9,30 @@ module SampleService
         @client = client
       end
 
-      def each(&block)
-        # Enumerator.new do |e|
-          @prev_token = input_token(@params)
-          response = @client.list_high_scores(@params, @options)
-          yield(response)
+      def pages
+        params = @params
+        Enumerator.new do |e|
+          @prev_token = input_token(params)
+          response = @client.list_high_scores(params, @options)
+          e.yield(response)
           until last_page?(response)
-            @params = @params.merge(next_token: output_token(response))
-            response = @client.list_high_scores(@params, @options)
-            yield(response)
+            params = params.merge(next_token: output_token(response))
+            response = @client.list_high_scores(params, @options)
+            e.yield(response)
           end
-        # end
+        end
       end
 
-      # def each_item
-      #   Enumerator.new do |e|
-      #     each_page do |page|
-      #       # @items field
-      #       page.data.high_scores do |item|
-      #         e.yield(item)
-      #       end
-      #     end
-      #   end
-      # end
+      def items
+        Enumerator.new do |e|
+          each_page do |page|
+            # @items field
+            page.data.high_scores do |item|
+              e.yield(item)
+            end
+          end
+        end
+      end
 
       private
 

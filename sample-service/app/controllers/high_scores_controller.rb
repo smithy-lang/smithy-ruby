@@ -5,7 +5,7 @@ class HighScoresController < ApplicationController
     @high_scores = HighScore.all
 
     output = {
-      high_scores: [@high_scores.first] * params['maxResults'].to_i,
+      high_scores: [@high_scores.first] * (params['maxResults'] || '1').to_i,
       next_token: "#{params['nextToken']}_iter"
     }
 
