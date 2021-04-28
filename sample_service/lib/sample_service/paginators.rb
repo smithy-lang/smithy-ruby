@@ -25,9 +25,9 @@ module SampleService
 
       def items
         Enumerator.new do |e|
-          each_page do |page|
+          pages.each do |page|
             # @items field
-            page.data.high_scores do |item|
+            page.data.high_scores.each do |item|
               e.yield(item)
             end
           end
