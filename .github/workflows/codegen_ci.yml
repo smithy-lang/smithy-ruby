@@ -1,0 +1,36 @@
+name: Codegen CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+env:
+  java_version: 8
+
+jobs:
+  unit-tests:
+    name: Codegen test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.java_version }}
+    - name: test
+      working-directory: codegen
+      run:
+        ./gradlew :smithy-ruby-codegen-test:build

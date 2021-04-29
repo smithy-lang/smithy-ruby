@@ -1,4 +1,4 @@
-name: RubyCI
+name: Seahorse CI
 
 on:
   push:
