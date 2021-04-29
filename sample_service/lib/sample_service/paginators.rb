@@ -2,43 +2,26 @@ module SampleService
   module Paginators
 
     class ListHighScores
+      include Seahorse::Paginator
 
-      def initialize(params = {}, options = {}, client:)
-        @params = params
-        @options = options
-        @client = client
+      def merge_next_token(params, response)
+        # code gen next token from output
+        params.merge(next_token: output_token_path(response))
       end
 
-      def pages
-        params = @params
-        Enumerator.new do |e|
-          @prev_token = input_token(params)
-          response = @client.list_high_scores(params, @options)
-          e.yield(response)
-          until last_page?(response)
-            params = params.merge(next_token: output_token(response))
-            response = @client.list_high_scores(params, @options)
-            e.yield(response)
-          end
-        end
+      def call_operation(client, params, options)
+        # code gen operation name
+        client.list_high_scores(params, options)
       end
 
-      def items
-        Enumerator.new do |e|
-          pages.each do |page|
-            # @items field
-            page.data.high_scores.each do |item|
-              e.yield(item)
-            end
-          end
-        end
-      end
-
-      private
-
-      def output_token(response)
+      def output_token_path(response)
         # code gen path to output token from response
         response.data.next_token
+      end
+
+      def items_path(response)
+        # code gen path to items from response
+        response.data.high_scores
       end
 
       def input_token(params)
@@ -46,9 +29,9 @@ module SampleService
         params[:next_token]
       end
 
-      def last_page?(response)
-        next_token = output_token(response)
-        next_token.nil? || @prev_token == next_token
+      def page_size(params)
+        # code gen path to page size from params
+        params[:max_results]
       end
 
     end
