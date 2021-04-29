@@ -31,6 +31,6 @@ jobs:
       with:
         java-version: ${{ env.java_version }}
     - name: test
+      working-directory: codegen
       run:
-        cd codegen
         ./gradlew :smithy-ruby-codegen-test:build
