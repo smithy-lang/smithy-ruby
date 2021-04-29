@@ -1,22 +1,26 @@
 module Seahorse
-  module Paginator
+  class Paginator
 
-    def initialize(client, params = {}, options = {})
-      @client = client
+    def initialize(input_token:, operation_lambda:, output_token_lambda:, items_lambda:, params:, options:, client:)
+      @operation_lambda = operation_lambda
+      @input_token = input_token
+      @output_token_lambda = output_token_lambda
+      @items_lambda = items_lambda
       @params = params
       @options = options
+      @client = client
     end
 
     def pages
       params = @params
       options = @options
       Enumerator.new do |e|
-        @prev_token = input_token(params)
-        response = call_operation(@client, params, options)
+        @prev_token = params[@input_token]
+        response = @operation_lambda.call(@client, params, options)
         e.yield(response)
         until last_page?(response)
-          params = merge_next_token(params, response)
-          response = call_operation(@client, params, options)
+          params = params.merge(@input_token => @output_token_lambda.call(response))
+          response = @operation_lambda.call(@client, params, options)
           e.yield(response)
         end
       end
@@ -26,7 +30,7 @@ module Seahorse
       Enumerator.new do |e|
         pages.each do |response|
           # @items field
-          items_path(response).each do |item|
+          @items_lambda.call(response).each do |item|
             e.yield(item)
           end
         end
@@ -36,7 +40,7 @@ module Seahorse
     private
 
     def last_page?(response)
-      next_token = output_token_path(response)
+      next_token = @output_token_lambda.call(response)
       next_token.nil? || @prev_token == next_token
     end
 
