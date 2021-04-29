@@ -39,6 +39,7 @@ structure HighScoreAttributes {
 /// Permitted params for a High Score
 structure HighScoreParams {
     /// The game for the high score
+    @length(min: 2)
     game: String,
     /// The high score for the game
     score: Integer
@@ -78,6 +79,7 @@ operation CreateHighScore {
 /// Input structure for CreateHighScore
 structure CreateHighScoreInput {
     /// The high score params
+    @required
     highScore: HighScoreParams
 }
 

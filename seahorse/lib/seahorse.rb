@@ -1,7 +1,6 @@
 require_relative 'seahorse/api_error'
 require_relative 'seahorse/block_io'
 require_relative 'seahorse/http'
-require_relative 'seahorse/input'
 require_relative 'seahorse/json/engines'
 
 require_relative 'seahorse/middleware/around_handler'
@@ -22,6 +21,7 @@ require_relative 'seahorse/time_helper'
 
 require_relative 'seahorse/stubbing/client_stubs'
 require_relative 'seahorse/stubbing/stubs'
+require_relative 'seahorse/validator'
 
 require_relative 'seahorse/xml'
 
