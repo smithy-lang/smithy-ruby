@@ -1,4 +1,4 @@
-name: RubyCI
+name: CodegenCI
 
 on:
   push:
@@ -31,4 +31,6 @@ jobs:
       with:
         java-version: ${{ env.java_version }}
     - name: test
-      run: ./gradlew :smithy-ruby-codegen-test:build
+      run:
+        cd codegen
+        ./gradlew :smithy-ruby-codegen-test:build
