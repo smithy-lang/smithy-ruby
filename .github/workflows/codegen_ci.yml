@@ -1,4 +1,4 @@
-name: CodegenCI
+name: Codegen CI
 
 on:
   push:
