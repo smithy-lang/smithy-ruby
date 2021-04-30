@@ -4,7 +4,17 @@ class HighScoresController < ApplicationController
   def index
     @high_scores = HighScore.all
 
-    render json: @high_scores
+    output = {
+      high_scores: [@high_scores.first] * (params['maxResults'] || '1').to_i,
+      next_token: "#{params['nextToken']}_iter"
+    }
+
+    # simulate last page
+    if rand(5) == 4
+      output.delete(:next_token)
+    end
+
+    render json: output
   end
 
   # GET /high_scores/1
