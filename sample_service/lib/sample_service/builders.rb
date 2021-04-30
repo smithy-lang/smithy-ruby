@@ -63,6 +63,8 @@ module SampleService
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
+        http_req.append_query_param('maxResults', input[:max_results]) unless input[:max_results].nil?
+        http_req.append_query_param('nextToken', input[:next_token]) unless input[:next_token].nil?
       end
     end
 
