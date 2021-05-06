@@ -114,7 +114,7 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::GetHighScoreInput.build(params: params)
+      input = Params::GetHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
@@ -187,7 +187,7 @@ module SampleService
     #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::CreateHighScoreInput.build(params: params)
+      input = Params::CreateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScore,
@@ -260,7 +260,7 @@ module SampleService
     #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::UpdateHighScoreInput.build(params: params)
+      input = Params::UpdateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScore,
@@ -329,7 +329,7 @@ module SampleService
     #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::DeleteHighScoreInput.build(params: params)
+      input = Params::DeleteHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScore,
@@ -393,7 +393,7 @@ module SampleService
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::ListHighScoresInput.build(params: params)
+      input = Params::ListHighScoresInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::ListHighScores,
