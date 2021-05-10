@@ -143,10 +143,6 @@ module SampleService
         data_parser: Parsers::GetHighScore
       )
       stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
-      )
-      stack.use(
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
@@ -214,10 +210,6 @@ module SampleService
           success_status_code: 201, errors: [Errors::UnprocessableEntityError],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::CreateHighScore
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,
@@ -289,10 +281,6 @@ module SampleService
         data_parser: Parsers::UpdateHighScore
       )
       stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
-      )
-      stack.use(
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
@@ -358,10 +346,6 @@ module SampleService
         data_parser: Parsers::DeleteHighScore
       )
       stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
-      )
-      stack.use(
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
@@ -420,10 +404,6 @@ module SampleService
           success_status_code: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::ListHighScores
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,
