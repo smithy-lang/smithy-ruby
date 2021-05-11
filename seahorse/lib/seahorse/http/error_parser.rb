@@ -40,11 +40,10 @@ module Seahorse
         @error_code_fn = error_code_fn
       end
 
-      # parse and set the error on the response if
-      # the response is not success.
+      # Parse and return the error if the response is not successful.
       #
       # @param [Response] response The HTTP response
-      def parse(response:)
+      def parse(response)
         extract_error(response) if error?(response)
       end
 

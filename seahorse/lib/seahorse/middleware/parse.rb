@@ -28,16 +28,11 @@ module Seahorse
       private
 
       def parse_error(response, output)
-        output.error = @error_parser.parse(
-          response: response
-        )
+        output.error = @error_parser.parse(response)
       end
 
       def parse_data(response, output)
-        @data_parser.parse(
-          response,
-          output: output
-        )
+        output.data = @data_parser.parse(response)
       end
     end
   end
