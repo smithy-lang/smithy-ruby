@@ -4,6 +4,7 @@ require 'seahorse/middleware/build'
 
 module Seahorse
   module Middleware
+
     describe Build do
       let(:app) { double('app') }
       let(:builder) { double('builder') }
@@ -39,5 +40,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

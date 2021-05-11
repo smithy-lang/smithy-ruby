@@ -4,7 +4,7 @@ module Seahorse
   module Middleware
     class Send
 
-      def initialize(_app, client:, stub_responses:, stub_class:, stubs: Seahorse::Stubbing::Stubs.new)
+      def initialize(_app, client:, stub_responses:, stub_class:, stubs:)
         @client = client
         @stub_responses = stub_responses
         @stub_class = stub_class
