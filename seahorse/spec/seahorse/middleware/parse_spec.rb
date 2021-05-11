@@ -4,6 +4,7 @@ require 'seahorse/middleware/parse'
 
 module Seahorse
   module Middleware
+
     describe Parse do
       let(:app) { double('app') }
       let(:error_parser) { double('error_parser') }
@@ -94,5 +95,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

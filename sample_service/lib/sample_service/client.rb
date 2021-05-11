@@ -114,7 +114,7 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::GetHighScoreInput.build(params: params)
+      input = Params::GetHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
@@ -141,10 +141,6 @@ module SampleService
           success_status_code: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::GetHighScore
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,
@@ -187,7 +183,7 @@ module SampleService
     #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::CreateHighScoreInput.build(params: params)
+      input = Params::CreateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScore,
@@ -214,10 +210,6 @@ module SampleService
           success_status_code: 201, errors: [Errors::UnprocessableEntityError],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::CreateHighScore
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,
@@ -260,7 +252,7 @@ module SampleService
     #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::UpdateHighScoreInput.build(params: params)
+      input = Params::UpdateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScore,
@@ -287,10 +279,6 @@ module SampleService
           success_status_code: 200, errors: [Errors::UnprocessableEntityError],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::UpdateHighScore
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,
@@ -329,7 +317,7 @@ module SampleService
     #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::DeleteHighScoreInput.build(params: params)
+      input = Params::DeleteHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScore,
@@ -356,10 +344,6 @@ module SampleService
           success_status_code: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::DeleteHighScore
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,
@@ -393,7 +377,7 @@ module SampleService
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::ListHighScoresInput.build(params: params)
+      input = Params::ListHighScoresInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::ListHighScores,
@@ -420,10 +404,6 @@ module SampleService
           success_status_code: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::ListHighScores
-      )
-      stack.use(
-        Seahorse::Middleware::Sign,
-        signer: @signer
       )
       stack.use(
         Seahorse::Middleware::Send,

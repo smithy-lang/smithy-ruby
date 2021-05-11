@@ -11,7 +11,6 @@ require_relative 'seahorse/middleware/request_handler'
 require_relative 'seahorse/middleware/response_handler'
 require_relative 'seahorse/middleware/retry'
 require_relative 'seahorse/middleware/send'
-require_relative 'seahorse/middleware/sign'
 require_relative 'seahorse/middleware/validate'
 
 require_relative 'seahorse/middleware_builder'

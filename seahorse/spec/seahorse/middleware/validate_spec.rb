@@ -4,6 +4,7 @@ require 'seahorse/middleware/validate'
 
 module Seahorse
   module Middleware
+
     describe Validate do
       let(:app) { double('app') }
       let(:validator) { double('validator') }
@@ -22,7 +23,6 @@ module Seahorse
         let(:request) { Seahorse::HTTP::Request.new }
         let(:response) { Seahorse::HTTP::Response.new }
         let(:context) { {} }
-        let(:output) { Seahorse::Output.new }
 
         context 'validate_input is true' do
           let(:validate_input) { true }
@@ -63,5 +63,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

@@ -4,6 +4,7 @@ require 'seahorse/middleware/retry'
 
 module Seahorse
   module Middleware
+
     describe Retry do
       let(:app) { double('app') }
       let(:max_attempts) { 4 }
@@ -21,7 +22,6 @@ module Seahorse
         let(:request) { Seahorse::HTTP::Request.new }
         let(:response) { Seahorse::HTTP::Response.new }
         let(:context) { {} }
-        let(:output) { Seahorse::Output.new }
 
         it 'calls the next middleware' do
           expect(app).to receive(:call).with(
@@ -101,5 +101,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

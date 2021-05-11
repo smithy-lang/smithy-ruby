@@ -16,7 +16,7 @@ module SampleService
 
     class GetHighScore
       def self.stub(http_resp, stub_data)
-        data = HighScoreAttributes.stub(stub_data)
+        data = HighScoreAttributes.stub(stub_data[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status_code = 200
       end
@@ -24,7 +24,7 @@ module SampleService
 
     class CreateHighScore
       def self.stub(http_resp, stub_data)
-        data = HighScoreAttributes.stub(stub_data)
+        data = HighScoreAttributes.stub(stub_data[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status_code = 201
       end
@@ -32,7 +32,7 @@ module SampleService
 
     class UpdateHighScore
       def self.stub(http_resp, stub_data)
-        data = HighScoreAttributes.stub(stub_data)
+        data = HighScoreAttributes.stub(stub_data[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status_code = 200
       end
@@ -48,7 +48,7 @@ module SampleService
 
     class ListHighScores
       def self.stub(http_resp, stub_data)
-        data = HighScores.stub(stub_data)
+        data = HighScores.stub(stub_data[:high_scores])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status_code = 200
       end
