@@ -116,7 +116,7 @@ module Seahorse
           node = Node.new('name')
           expect do
             node << nil
-          end.to raise_error(ArgumentError, 'expected NawsXml::Node or String, got NilClass')
+          end.to raise_error(ArgumentError, 'expected Seahorse::XML::Node or String, got NilClass')
         end
 
         it 'raises when appending a child node to node with text' do

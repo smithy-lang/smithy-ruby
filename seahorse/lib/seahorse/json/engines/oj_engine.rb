@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
+require 'oj'
+
 module Seahorse
   module JSON
+    # @api private
     module Engines
-      class Oj
-        def self.available?
-          require 'oj'
-          true
-        rescue LoadError
-          false
-        end
+      # @api private
+      class OjEngine
 
         def self.load(json)
           ::Oj.load(json, mode: :compat, symbol_keys: false, empty_string: false)
@@ -20,6 +18,7 @@ module Seahorse
         def self.dump(value)
           ::Oj.dump(value, mode: :compat)
         end
+
       end
     end
   end

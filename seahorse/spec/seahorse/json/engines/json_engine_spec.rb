@@ -1,29 +1,13 @@
 # frozen_string_literal: true
 
-require 'seahorse/json/engines'
+require 'seahorse/json/engines/json_engine'
 
 module Seahorse
   module JSON
     module Engines
-      describe JSON do
+
+      describe JsonEngine do
         subject { described_class }
-
-        describe '.available?' do
-          context 'gem is loaded' do
-            it 'returns true' do
-              expect(subject).to receive(:require).with('json').and_return(true)
-              expect(subject.available?).to be true
-            end
-          end
-
-          context 'gem is not loaded' do
-            it 'returns false' do
-              expect(subject).to receive(:require)
-                .with('json').and_raise(LoadError)
-              expect(subject.available?).to be false
-            end
-          end
-        end
 
         describe '.load' do
           context 'valid json' do
@@ -48,6 +32,7 @@ module Seahorse
           end
         end
       end
+
     end
   end
 end

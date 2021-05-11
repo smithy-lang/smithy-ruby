@@ -215,7 +215,8 @@ module SampleService
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
-        stub_class: Stubs::CreateHighScore
+        stub_class: Stubs::CreateHighScore,
+        stubs: @stubs
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
@@ -284,7 +285,8 @@ module SampleService
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
-        stub_class: Stubs::UpdateHighScore
+        stub_class: Stubs::UpdateHighScore,
+        stubs: @stubs
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
@@ -349,7 +351,8 @@ module SampleService
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
-        stub_class: Stubs::DeleteHighScore
+        stub_class: Stubs::DeleteHighScore,
+        stubs: @stubs
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
@@ -409,7 +412,8 @@ module SampleService
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
-        stub_class: Stubs::ListHighScores
+        stub_class: Stubs::ListHighScores,
+        stubs: @stubs
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
