@@ -15,46 +15,42 @@ module SampleService
     end
 
     class GetHighScore
-      def self.parse(http_resp, output:)
+      def self.parse(http_resp, data = Types::GetHighScoreOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
-        data = Types::GetHighScoreOutput.new
         data.high_score = HighScoreAttributes.parse(json)
-        output.data = data
+        data
       end
     end
 
     class CreateHighScore
-      def self.parse(http_resp, output:)
+      def self.parse(http_resp, data = Types::CreateHighScoreOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
-        data = Types::CreateHighScoreOutput.new
         data.location = http_resp.headers['location']
         data.high_score = HighScoreAttributes.parse(json)
-        output.data = data
+        data
       end
     end
 
     class UpdateHighScore
-      def self.parse(http_resp, output:)
+      def self.parse(http_resp, data = Types::UpdateHighScoreOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
-        data = Types::UpdateHighScoreOutput.new
         data.high_score = HighScoreAttributes.parse(json)
-        output.data = data
+        data
       end
     end
 
     class DeleteHighScore
-      def self.parse(http_resp, output:)
-        output.data = Types::DeleteHighScoreOutput.new
+      def self.parse(http_resp, data = Types::DeleteHighScoreOutput.new)
+        data
       end
     end
 
     class ListHighScores
-      def self.parse(http_resp, output:)
+      def self.parse(http_resp, data = Types::ListHighScoresOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
-        data = Types::ListHighScoresOutput.new
         data.next_token = json['next_token'] if json['next_token']
         data.high_scores = HighScores.parse(json['high_scores']) if json['high_scores']
-        output.data = data
+        data
       end
     end
 

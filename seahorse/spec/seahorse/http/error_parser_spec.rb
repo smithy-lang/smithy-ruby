@@ -45,7 +45,7 @@ module Seahorse
             let(:success_status_code) { 303 }
             let(:resp_status_code) { success_status_code }
             it 'does not return an error' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_nil
             end
           end
@@ -53,7 +53,7 @@ module Seahorse
           context 'successful response: 2XX code, no success_status_code' do
             let(:resp_status_code) { 201 }
             it 'does not return an error' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_nil
             end
           end
@@ -61,7 +61,7 @@ module Seahorse
           context 'error response: 3XX code' do
             let(:resp_status_code) { 300 }
             it 'returns an APIRedirectError' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_a(TestErrors::ApiRedirectError)
             end
           end
@@ -69,7 +69,7 @@ module Seahorse
           context 'error response: 4XX code' do
             let(:resp_status_code) { 400 }
             it 'returns an APIClientError' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_a(TestErrors::ApiClientError)
             end
           end
@@ -77,7 +77,7 @@ module Seahorse
           context 'error response: 5XX code' do
             let(:resp_status_code) { 500 }
             it 'returns an APIServerError' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_a(TestErrors::ApiServerError)
             end
           end
@@ -90,7 +90,7 @@ module Seahorse
             let(:resp_status_code) { 200 }
 
             it 'returns the modeled error' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_a(TestErrors::TestModeledError)
             end
 
@@ -98,7 +98,7 @@ module Seahorse
               let(:errors) { [] }
 
               it 'returns the generic APIError' do
-                error = subject.parse(response: http_resp)
+                error = subject.parse(http_resp)
                 expect(error).to be_a(TestErrors::ApiError)
               end
             end
@@ -108,7 +108,7 @@ module Seahorse
             let(:resp_status_code) { 400 }
 
             it 'returns the modeled error' do
-              error = subject.parse(response: http_resp)
+              error = subject.parse(http_resp)
               expect(error).to be_a(TestErrors::TestModeledError)
             end
           end

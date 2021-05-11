@@ -32,10 +32,8 @@ module Seahorse
             context: context
           ).and_return(output).ordered
 
-          expect(error_parser).to receive(:parse)
-            .with(response: response).ordered
-          expect(data_parser).to receive(:parse)
-            .with(response, output: output).ordered
+          expect(error_parser).to receive(:parse).with(response).ordered
+          expect(data_parser).to receive(:parse).with(response).ordered
 
           subject.call(
             request: request,
@@ -60,7 +58,7 @@ module Seahorse
               context: context
             ).and_return(output).ordered
             expect(error_parser).to receive(:parse)
-              .with(response: response).and_return(error).ordered
+              .with(response).ordered.and_return(error)
             expect(data_parser).not_to receive(:parse)
 
             output = subject.call(
@@ -81,9 +79,8 @@ module Seahorse
               response: response,
               context: context
             ).and_return(output).ordered
-            expect(error_parser).to receive(:parse)
-              .with(response: response).ordered
-            expect(data_parser).to receive(:parse) { output.data = data }
+            expect(error_parser).to receive(:parse).with(response).ordered
+            expect(data_parser).to receive(:parse).with(response).and_return(data)
 
             output = subject.call(
               request: request,
