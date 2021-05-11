@@ -83,8 +83,11 @@ module Seahorse
 
           it 'raises an error on nodes with mixed content' do
             expect do
-              n = parser.parse('<root>abc<foo>bar</foo></root>')
-            end.to raise_error(ParseError, 'Nodes may not have both text and child nodes')
+              parser.parse('<root>abc<foo>bar</foo></root>')
+            end.to raise_error(
+              ParseError,
+              /Nodes may not have both text and child nodes/
+            )
           end
 
         end
