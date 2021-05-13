@@ -152,7 +152,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :get_high_score,
           api_name: 'GetHighScore',
@@ -221,7 +221,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :create_high_score,
           api_name: 'CreateHighScore',
@@ -291,7 +291,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :update_high_score,
           api_name: 'UpdateHighScore',
@@ -357,7 +357,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :delete_high_score,
           api_name: 'DeleteHighScore',
@@ -418,10 +418,59 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :list_high_scores,
           api_name: 'ListHighScores',
+          params: params,
+          logger: @logger
+        }
+      )
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
+      resp
+    end
+
+    def stream(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::StreamInputOutput.build(params)
+      stack.use(
+        Seahorse::Middleware::Validate,
+        validator: Validators::Stream,
+        validate_input: options.fetch(:validate_input, @validate_input),
+        input: input
+      )
+      stack.use(
+        Seahorse::Middleware::Build,
+        builder: Builders::Stream,
+        input: input
+      )
+      stack.use(
+        Seahorse::Middleware::Retry,
+        max_delay: options.fetch(:max_delay, @max_delay),
+        max_attempts: options.fetch(:max_attempts, @max_attempts)
+      )
+      stack.use(
+        Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status_code: 200, errors: [],
+          error_code_fn: Errors.method(:error_code)),
+        data_parser: Parsers::Stream
+      )
+      stack.use(
+        Seahorse::Middleware::Send,
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        stub_responses: @stub_responses,
+        stub_class: Stubs::Stream,
+        stubs: @stubs
+      )
+      apply_middleware(stack, options[:middleware])
+      resp = stack.run(
+        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+        response: Seahorse::HTTP::Response.new(body: output_stream(options, block)),
+        context: {
+          api_method: :stream,
+          api_name: 'Stream',
           params: params,
           logger: @logger
         }

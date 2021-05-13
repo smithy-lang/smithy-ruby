@@ -54,6 +54,14 @@ module SampleService
       end
     end
 
+    class Stream
+      def self.parse(http_resp, data = Types::StreamInputOutput.new)
+        data.stream_id = http_resp.headers['streamid']
+        data.blob = http_resp.body
+        data
+      end
+    end
+
     class HighScores
       def self.parse(list)
         data = []

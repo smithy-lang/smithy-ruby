@@ -160,6 +160,12 @@ module SampleService
       keyword_init: true
     )
 
+    # Input and Output structure for Stream
+    StreamInputOutput = Struct.new(
+      :stream_id,
+      :blob
+    )
+
     # Raised when high score is invalid
     UnprocessableEntityError = Struct.new(
       :errors,

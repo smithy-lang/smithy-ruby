@@ -49,6 +49,13 @@ class HighScoresController < ApplicationController
     @high_score.destroy
   end
 
+  def stream
+    body = request.body.read
+    request.body.rewind
+    response.set_header('StreamID', request.headers['StreamID'])
+    render json: 'abc' * rand(5) + body
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_high_score

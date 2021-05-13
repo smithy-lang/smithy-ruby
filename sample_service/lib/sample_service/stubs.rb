@@ -54,6 +54,14 @@ module SampleService
       end
     end
 
+    class Stream
+      def self.stub(http_resp, stub_data)
+        http_resp.headers['StreamID'] = stub_data[:stream_id] || 'stream_id'
+        http_resp.body = stub_data[:blob] || StringIO.new('blob')
+        http_resp.status_code = 200
+      end
+    end
+
     class HighScores
       def self.stub(stub_data = [])
         stub_data.map do |stub|
