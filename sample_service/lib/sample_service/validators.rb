@@ -45,5 +45,11 @@ module SampleService
       end
     end
 
+    class Stream
+      def self.validate!(input:, context:)
+        validator = Seahorse::Validator.new(input: input, context: context)
+      end
+    end
+
   end
 end

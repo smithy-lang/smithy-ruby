@@ -53,5 +53,14 @@ module SampleService
       end
     end
 
+    class StreamInputOutput
+      def self.build(params)
+        type = Types::StreamInputOutput.new
+        type.stream_id = params[:stream_id]
+        type.blob = params[:blob]
+        type
+      end
+    end
+
   end
 end

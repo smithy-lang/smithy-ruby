@@ -68,5 +68,15 @@ module SampleService
       end
     end
 
+    class Stream
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/stream')
+        http_req.headers['Transfer-Encoding'] = 'chunked'
+        http_req.headers['StreamID'] = input[:stream_id] if input[:stream_id]
+        http_req.body = input[:blob]
+      end
+    end
+
   end
 end

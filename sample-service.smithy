@@ -170,6 +170,25 @@ list HighScores {
     member: HighScoreAttributes
 }
 
+/// A test for streaming operations
+@http(method: "POST", uri: "/stream")
+@readonly
+operation Stream {
+    input: StreamInputOutput,
+    output: StreamInputOutput
+}
+
+/// Input and Output structure for Stream
+structure StreamInputOutput {
+    @httpHeader("StreamID")
+    streamId: String,
+    @httpPayload
+    blob: StreamingBlob
+}
+
+@streaming
+blob StreamingBlob
+
 /// Raised when high score is invalid
 @error("client")
 @httpError(422)
