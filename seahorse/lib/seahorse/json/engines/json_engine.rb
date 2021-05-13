@@ -9,13 +9,13 @@ module Seahorse
       # @api private
       class JsonEngine
 
-        def self.load(json)
+        def load(json)
           ::JSON.load(json)
         rescue ::JSON::ParserError => e
           raise ParseError, e
         end
 
-        def self.dump(value)
+        def dump(value)
           ::JSON.dump(value)
         end
 

@@ -1,28 +1,48 @@
 # frozen_string_literal: true
 
-require_relative 'json/engine'
 require_relative 'json/parse_error'
 
-# Seahorse::JSON is a purpose-built set of utilities for working with
-# JSON. It does not support many/most features of generic JSON
-# parsing and serialization.
-# @api private
 module Seahorse
+
+  # Seahorse::JSON is a purpose-built set of utilities for working with
+  # JSON. It does not support many/most features of generic JSON
+  # parsing and serialization.
+  # @api private
   module JSON
-    class << self
+    extend self
 
-      # @param [String] json
-      # @return [Hash]
-      def load(json, engine: Engine.default_engine)
-        Engine.new(engine: engine).load(json)
-      end
+    def engine
+      @engine ||= default_engine
+    end
 
-      # @param [Hash]
-      # @return [String] json
-      def dump(value, engine: Engine.default_engine)
-        Engine.new(engine: engine).dump(value)
-      end
+    def engine=(engine)
+      @engine = engine
+    end
 
+    def load(json, engine: self.engine)
+      engine.load(json)
+    end
+
+    def dump(value, engine: self.engine)
+      engine.dump(value)
+    end
+
+    private
+
+    def default_engine
+      oj_engine.new
+    rescue LoadError
+      json_engine.new
+    end
+
+    def oj_engine
+      require_relative 'json/engines/oj_engine'
+      Engines::OjEngine
+    end
+
+    def json_engine
+      require_relative 'json/engines/json_engine'
+      Engines::JsonEngine
     end
   end
 end
