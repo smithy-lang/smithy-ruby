@@ -152,7 +152,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :get_high_score,
           api_name: 'GetHighScore',
@@ -221,7 +221,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :create_high_score,
           api_name: 'CreateHighScore',
@@ -291,7 +291,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :update_high_score,
           api_name: 'UpdateHighScore',
@@ -357,7 +357,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :delete_high_score,
           api_name: 'DeleteHighScore',
@@ -418,7 +418,7 @@ module SampleService
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :list_high_scores,
           api_name: 'ListHighScores',
