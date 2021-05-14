@@ -3,6 +3,7 @@
 module Seahorse
   module XML
 
+    # XML Parse Error
     class ParseError < StandardError
       MSG = 'Encountered an error while parsing the response: %<message>s'
 

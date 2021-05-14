@@ -1,0 +1,5 @@
+<foo bar="value1">
+  <nested1>
+    value2
+  </nested1>
+</foo>
