@@ -5,14 +5,14 @@ require 'seahorse/middleware/endpoint'
 module Seahorse
   module Middleware
 
-    describe Endpoint do
+    describe HostPrefix do
       let(:app) { double('app') }
       let(:disable_host_prefix) { false }
       let(:host_prefix) { 'foo.' }
       let(:params) { {} }
 
       subject do
-        Endpoint.new(
+        HostPrefix.new(
           app,
           disable_host_prefix: disable_host_prefix,
           host_prefix: host_prefix,

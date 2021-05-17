@@ -2,7 +2,7 @@
 
 module Seahorse
   module Middleware
-    class Endpoint
+    class HostPrefix
 
       def initialize(app, disable_host_prefix:, host_prefix:, params:)
         @app = app
