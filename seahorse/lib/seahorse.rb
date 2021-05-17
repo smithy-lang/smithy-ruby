@@ -5,7 +5,7 @@ require_relative 'seahorse/json'
 
 require_relative 'seahorse/middleware/around_handler'
 require_relative 'seahorse/middleware/build'
-require_relative 'seahorse/middleware/endpoint'
+require_relative 'seahorse/middleware/host_prefix'
 require_relative 'seahorse/middleware/parse'
 require_relative 'seahorse/middleware/request_handler'
 require_relative 'seahorse/middleware/response_handler'

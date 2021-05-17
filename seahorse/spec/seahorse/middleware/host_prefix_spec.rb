@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'seahorse/middleware/endpoint'
+require 'seahorse/middleware/host_prefix'
 
 module Seahorse
   module Middleware
