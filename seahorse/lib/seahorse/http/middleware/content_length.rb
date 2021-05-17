@@ -11,20 +11,15 @@ module Seahorse
         end
 
         # @param request
-        # @param response
         # @param context
-        # @return [Output]
-        def call(request:, response:, context:)
+        # @return [Output, Response]
+        def call(request, context)
           if request&.body&.respond_to?(:size)
             length = request.body.size
             request.headers['Content-Length'] = length
           end
 
-          @app.call(
-            request: request,
-            response: response,
-            context: context
-          )
+          @app.call(request, context)
         end
       end
     end

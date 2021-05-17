@@ -54,11 +54,18 @@ module Seahorse
         @ssl_ca_store = ssl_ca_store
       end
 
+      # Initialize a Response for this transport
+      # @param [IO] output_stream - Writable IO to use for the body
+      # @return [Response] - initialized, empty http response
+      def init_response(output_stream)
+        Seahorse::HTTP::Response.new(body: output_stream)
+      end
+
       # @param [Request] request
-      # @param [Response] response
       # @return [Response]
-      def transmit(request:, response:)
+      def transmit(request, output_stream)
         # TODO: connection pool for connections
+        response = init_response(output_stream)
         uri = URI.parse(request.url)
         http = create_http(uri)
         http.set_debug_output(@logger) if @http_wire_trace

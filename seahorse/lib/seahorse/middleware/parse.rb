@@ -11,18 +11,13 @@ module Seahorse
       end
 
       # @param request
-      # @param response
       # @param context
-      # @return [Output]
-      def call(request:, response:, context:)
-        output = @app.call(
-          request: request,
-          response: response,
-          context: context
-        )
+      # @return [Output, Response]
+      def call(request, context)
+        output, response = @app.call(request, context)
         parse_error(response, output) unless output.error
         parse_data(response, output) unless output.error
-        output
+        [output, response]
       end
 
       private

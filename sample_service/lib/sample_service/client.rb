@@ -145,14 +145,14 @@ module SampleService
       stack.use(
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        output_stream: StringIO.new,
         stub_responses: @stub_responses,
         stub_class: Stubs::GetHighScore,
         stubs: @stubs
       )
       apply_middleware(stack, options[:middleware])
-      resp = stack.run(
+      output = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
         context: {
           api_method: :get_high_score,
           api_name: 'GetHighScore',
@@ -160,8 +160,8 @@ module SampleService
           logger: @logger
         }
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise output.error if output.error && options.fetch(:raise_api_errors, @raise_api_errors)
+      output
     end
 
     # Create a new high score

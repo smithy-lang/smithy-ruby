@@ -10,17 +10,12 @@ module Seahorse
       end
 
       # @param request
-      # @param response
       # @param context
-      # @return [Output]
-      def call(request:, response:, context:)
-        response = @app.call(
-          request: request,
-          response: response,
-          context: context
-        )
-        @handler.call(response, request, response)
-        response
+      # @return [Output, Response]
+      def call(request, context)
+        output, response = @app.call(request, context)
+        @handler.call(request, context, output, response)
+        [output, response]
       end
 
     end

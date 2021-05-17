@@ -41,15 +41,10 @@ module Seahorse
     end
 
     # @param request
-    # @param response
     # @param context
-    # @return [Response]
-    def run(request: nil, response: nil, context: {})
-      stack.call(
-        request: request,
-        response: response,
-        context: context
-      )
+    # @return [Output]
+    def run(request:, context:)
+      stack.call(request, context).first
     end
 
     private
