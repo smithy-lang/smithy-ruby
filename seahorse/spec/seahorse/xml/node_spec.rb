@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'seahorse/xml'
+require 'seahorse/xml/node'
 
 module Seahorse
   module XML

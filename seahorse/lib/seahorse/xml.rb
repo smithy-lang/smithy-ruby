@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'xml/formatter'
-require_relative 'xml/node_parser'
 require_relative 'xml/node'
 require_relative 'xml/parse_error'
 
