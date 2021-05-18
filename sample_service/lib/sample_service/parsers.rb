@@ -2,6 +2,34 @@ module SampleService
   # @api private
   module Parsers
 
+    class EventStream
+      def self.parse(json)
+        key, value = json.flatten
+        case key
+        when 'start'
+          Types::EventStream::Start.new(
+            StructuredEvent.parse(value)
+          )
+        when 'end'
+          Types::EventStream::End.new(
+            StructuredEvent.parse(value)
+          )
+        when 'log'
+          Types::EventStream::Log.new(value)
+        else
+          Types::EventStream::Unknown.new(json)
+        end
+      end
+    end
+
+    class StructuredEvent
+      def self.parse(json)
+        data = Types::StructuredEvent.new
+        data.message = json['message']
+        data
+      end
+    end
+
     class HighScoreAttributes
       def self.parse(json)
         data = Types::HighScoreAttributes.new

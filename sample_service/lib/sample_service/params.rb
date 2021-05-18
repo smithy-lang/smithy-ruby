@@ -11,6 +11,38 @@ module SampleService
       end
     end
 
+  class EventStream
+    def self.build(params)
+      return params if params.is_a?(Types::EventStream)
+
+      if params.compact.size > 1
+        raise ArgumentError,
+              "EventStream must have exactly one member, got: #{params}"
+      end
+      key, value = params.flatten
+      case key
+      when :start
+        Types::EventStream::Start.new(
+          StructuredEvent.build(params)
+        )
+      when :end
+        Types::EventStream::End.new(
+          StructuredEvent.build(params)
+        )
+      when :log
+        Types::EventStream::Log.new(value)
+      end
+    end
+  end
+
+  class StructuredEvent
+    def self.build(params)
+      type = Types::StructuredEvent.new
+      type.message = params[:message]
+      type
+    end
+  end
+
     class GetHighScoreInput
       def self.build(params)
         type = Types::GetHighScoreInput.new

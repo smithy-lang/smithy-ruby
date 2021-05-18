@@ -1,6 +1,15 @@
 module SampleService
   module Types
 
+    StructuredEvent = Struct.new(:message, keyword_init: true)
+
+    class EventStream < SimpleDelegator
+      class Start < EventStream; end
+      class End < EventStream; end
+      class Log < EventStream; end
+      class Unknown < EventStream; end
+    end
+
     # Permitted params for a High Score
     #
     # @!attribute game

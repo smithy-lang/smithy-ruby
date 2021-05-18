@@ -2,6 +2,29 @@ module SampleService
   # @api private
   module Builders
 
+    class EventStream
+      def self.build(input)
+        json = {}
+        case input
+        when Types::EventStream::Start
+          json[:start] = StructuredEvent.build(input)
+        when Types::EventStream::End
+          json[:end] = StructuredEvent.build(input)
+        when Types::EventStream::Log
+          json[:log] = input[:log]
+        end
+        json
+      end
+    end
+
+    class StructuredEvent
+      def self.build(input)
+        json = {}
+        json[:message] = input[:message] unless input[:message].nil?
+        json
+      end
+    end
+
     class HighScoreParams
       def self.build(input:)
         json = {}
