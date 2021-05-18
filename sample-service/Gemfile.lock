@@ -83,14 +83,18 @@ GEM
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     method_source (1.0.0)
-    mimemagic (0.3.5)
+    mimemagic (0.3.10)
+      nokogiri (~> 1)
+      rake
     mini_mime (1.0.2)
     minitest (5.14.3)
     msgpack (1.4.2)
-    nio4r (2.5.5)
-    nokogiri (1.11.1-x86_64-darwin)
+    nio4r (2.5.7)
+    nokogiri (1.11.4-x86_64-darwin)
       racc (~> 1.4)
-    puma (5.2.1)
+    nokogiri (1.11.4-x86_64-linux)
+      racc (~> 1.4)
+    puma (5.3.1)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -145,12 +149,13 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap (>= 1.4.4)
   byebug
   listen (~> 3.3)
-  puma (~> 5.0)
+  puma (~> 5.3)
   rails (~> 6.1.2, >= 6.1.2.1)
   spring
   sqlite3 (~> 1.4)
