@@ -3,7 +3,7 @@ module SampleService
   module Builders
 
     class EventStream
-      def self.build(input)
+      def self.build(input = Types::EventStream.new)
         json = {}
         case input
         when Types::EventStream::Start

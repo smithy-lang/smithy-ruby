@@ -25,7 +25,7 @@ module Seahorse
 
         it 'builds then calls the next middleware' do
           expect(builder).to receive(:build)
-            .with(request, input: input).ordered
+            .with(request, input).ordered
           expect(app).to receive(:call).with(
             request: request,
             response: response,
