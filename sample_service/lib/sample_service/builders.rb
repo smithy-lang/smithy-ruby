@@ -51,7 +51,7 @@ module SampleService
         http_req.append_path('/high_scores')
         http_req.headers['Content-Type'] = 'application/json'
         json = {}
-        json[:high_score] = HighScoreParams.build(input: input[:high_score])
+        json[:high_score] = HighScoreParams.build(input[:high_score])
         http_req.body = StringIO.new(Seahorse::JSON.dump(json))
       end
     end
@@ -66,7 +66,7 @@ module SampleService
         ))
         http_req.headers['Content-Type'] = 'application/json'
         json = {}
-        json[:high_score] = HighScoreParams.build(input: input[:high_score])
+        json[:high_score] = HighScoreParams.build(input[:high_score])
         http_req.body = StringIO.new(Seahorse::JSON.dump(json))
       end
     end
