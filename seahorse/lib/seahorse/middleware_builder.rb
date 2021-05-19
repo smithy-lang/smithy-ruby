@@ -6,8 +6,9 @@ module Seahorse
   # You register middleware handlers to execute at key request
   # lifecycle events including:
   #
+  # * validate
+  # * host prefix
   # * build
-  # * sign
   # * send
   # * parse
   # * retry
@@ -20,18 +21,19 @@ module Seahorse
   #
   # A request handler is invoked before the request is sent.
   #
-  #    # invoked after a request has been built, but before it has
-  #    # been signed/authorized
-  #    middleware.before_sign do |request, response, context|
+  #    # invoked after a request has been built, but before it has been sent
+  #    middleware.before_send do |request, response, context|
   #      # do something here
   #    end
   #
   # The complete list of request handlers include:
   #
+  # * {#before_validate}
+  # * {#after_validate}
+  # * {#before_host_prefix}
+  # * {#after_host_prefix}
   # * {#before_build}
   # * {#after_build}
-  # * {#before_sign}
-  # * {#after_sign}
   # * {#before_send}
   #
   # ## Response Handlers
@@ -70,7 +72,7 @@ module Seahorse
   #       # ...
   #
   #       # around handlers must call the next middleware in the stack
-  #       response = app.call(
+  #       output = app.call(
   #         request: request,
   #         response: response,
   #         context: context
@@ -80,15 +82,16 @@ module Seahorse
   #       # ...
   #
   #       # around handlers must return the response down the stack
-  #       response
+  #       output
   #     end
   #
   # The complete list of around handlers include:
   #
+  # * {#around_validate}
+  # * {#around_host_prefix}
   # * {#around_build}
-  # * {#around_retry}
   # * {#around_parse}
-  # * {#around_sign}
+  # * {#around_retry}
   # * {#around_send}
   #
   class MiddlewareBuilder
@@ -180,28 +183,55 @@ module Seahorse
       ]
     end
 
-    def before_sign(*args, &block)
+    def before_validate(*args, &block)
       @middleware << [
         :use_before,
-        Seahorse::Middleware::Sign,
+        Seahorse::Middleware::Validate,
         Middleware::RequestHandler,
         handler: handler_or_proc!(args, &block)
       ]
     end
 
-    def around_sign(*args, &block)
+    def around_validate(*args, &block)
       @middleware << [
         :use_before,
-        Seahorse::Middleware::Sign,
+        Seahorse::Middleware::Validate,
         Middleware::AroundHandler,
         handler: handler_or_proc!(args, &block)
       ]
     end
 
-    def after_sign(*args, &block)
+    def after_validate(*args, &block)
       @middleware << [
         :use_after,
-        Seahorse::Middleware::Sign,
+        Seahorse::Middleware::Validate,
+        Middleware::RequestHandler,
+        handler: handler_or_proc!(args, &block)
+      ]
+    end
+
+    def before_host_prefix(*args, &block)
+      @middleware << [
+        :use_before,
+        Seahorse::Middleware::HostPrefix,
+        Middleware::RequestHandler,
+        handler: handler_or_proc!(args, &block)
+      ]
+    end
+
+    def around_host_prefix(*args, &block)
+      @middleware << [
+        :use_before,
+        Seahorse::Middleware::HostPrefix,
+        Middleware::AroundHandler,
+        handler: handler_or_proc!(args, &block)
+      ]
+    end
+
+    def after_host_prefix(*args, &block)
+      @middleware << [
+        :use_after,
+        Seahorse::Middleware::HostPrefix,
         Middleware::RequestHandler,
         handler: handler_or_proc!(args, &block)
       ]
