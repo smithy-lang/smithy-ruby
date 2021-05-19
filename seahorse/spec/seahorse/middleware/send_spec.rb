@@ -6,6 +6,7 @@ module Seahorse
     describe Send do
       let(:app) { double('app') }
       let(:client) { double('client') }
+      let(:operation) { :operation }
       let(:stub_responses) { false }
       let(:stub_class) { double('stub_class') }
       let(:stubs) { Seahorse::Stubbing::Stubs.new }
@@ -23,7 +24,7 @@ module Seahorse
       describe '#call' do
         let(:request) { Seahorse::HTTP::Request.new }
         let(:response) { Seahorse::HTTP::Response.new }
-        let(:context) { {} }
+        let(:context) { {api_method: operation} }
 
         it 'sends the request and returns an output object' do
           expect(client).to receive(:transmit).with(
@@ -43,7 +44,60 @@ module Seahorse
         context 'stub_responses is true' do
           let(:stub_responses) { true }
 
-          it 'todo'
+          it 'gets the next stub and applies it' do
+            expect(stubs).to receive(:next).with(:operation).and_return(Exception)
+            output = subject.call(request: request, response: response, context: context)
+            expect(output.error).to be_a(Exception)
+          end
+
+          context 'stub is a proc' do
+            let(:exception) { Exception.new }
+            let(:stub_proc) { proc { exception } }
+
+            before { stubs.add_stubs(operation, [stub_proc]) }
+            it 'calls the stub and applies it' do
+              expect(stub_proc).to receive(:call).and_call_original
+              output = subject.call(request: request, response: response, context: context)
+              expect(output.error).to be(exception)
+            end
+          end
+
+          context 'stub is an Exception' do
+            let(:exception) { Exception.new }
+            before { stubs.add_stubs(operation, [exception]) }
+            it 'sets the output error to a new instance of the class' do
+              output = subject.call(request: request, response: response, context: context)
+              expect(output.error).to be(exception)
+            end
+          end
+
+          context 'stub is a class' do
+            before { stubs.add_stubs(operation, [Exception]) }
+            it 'sets the output error to a new instance of the class' do
+              output = subject.call(request: request, response: response, context: context)
+              expect(output.error).to be_a(Exception)
+            end
+          end
+
+          context 'stub is a hash' do
+            let(:stub_hash) { {param1: 'value'} }
+            before { stubs.add_stubs(operation, [stub_hash]) }
+
+            it 'uses the stub class to stub the response' do
+              expect(stub_class).to receive(:stub).with(response, stub_hash)
+              subject.call(request: request, response: response, context: context)
+            end
+          end
+
+          context 'stub is a String' do
+            before { stubs.add_stubs(operation, ['error_code']) }
+
+            it 'raises a NotImplementedError' do
+              expect do
+                subject.call(request: request, response: response, context: context)
+              end.to raise_error(NotImplementedError)
+            end
+          end
         end
       end
     end

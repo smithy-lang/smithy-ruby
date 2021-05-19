@@ -38,19 +38,9 @@ module Seahorse
         when String then
           # TODO: Need a protocol specific error stubber
           raise NotImplementedError, 'String error codes are not yet supported'
-        when Hash then apply_hash_stub(stub, request, response, context, output)
+        when Hash then @stub_class.stub(response, stub)
         else
           raise ArgumentError, 'Unsupported stub type'
-        end
-      end
-
-      def apply_hash_stub(stub, request, response, context, output)
-        if stub.keys.sort == [:body, :headers, :status_code]
-          response.body = stub[:body]
-          response.status_code = stub[:status_code]
-          response.headers = stub[:headers]
-        else
-          @stub_class.stub(response, stub)
         end
       end
     end
