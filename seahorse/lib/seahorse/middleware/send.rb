@@ -45,9 +45,9 @@ module Seahorse
       end
 
       def apply_hash_stub(stub, request, response, context, output)
-        if stub.keys.sort == [:body, :headers, :status_code]
+        if stub.keys.sort == [:body, :headers, :status]
           response.body = stub[:body]
-          response.status_code = stub[:status_code]
+          response.status = stub[:status]
           response.headers = stub[:headers]
         else
           @stub_class.stub(response, stub)

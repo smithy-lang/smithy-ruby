@@ -71,7 +71,7 @@ module Seahorse
 
         http.start do |http|
           http.request(build_net_request(request)) do |net_resp|
-            response.status_code = net_resp.code.to_i
+            response.status = net_resp.code.to_i
             response.headers = extract_headers(net_resp)
             net_resp.read_body do |chunk|
               response.body.write(chunk)

@@ -43,7 +43,7 @@ module Seahorse
         end
 
         context 'response has an error' do
-          let(:response) { Seahorse::HTTP::Response.new(status_code: 404) }
+          let(:response) { Seahorse::HTTP::Response.new(status: 404) }
           let(:error) do
             Seahorse::ApiError.new(
               error_code: 'error_code',

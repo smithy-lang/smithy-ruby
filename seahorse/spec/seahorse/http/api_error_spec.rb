@@ -8,7 +8,7 @@ require 'seahorse/http/response'
 module Seahorse
   module HTTP
     describe ApiError do
-      let(:http_status_code) { 404 }
+      let(:http_status) { 404 }
       let(:http_headers) do
         Headers.new(headers: { 'x-request-id' => request_id })
       end
@@ -17,7 +17,7 @@ module Seahorse
 
       let(:http_resp) do
         Response.new(
-          status_code: http_status_code,
+          status: http_status,
           headers: http_headers,
           body: http_body
         )
@@ -41,9 +41,9 @@ module Seahorse
         expect { raise subject }.to raise_error(ApiError, message)
       end
 
-      describe '#http_status_code' do
-        it 'gets the http_status_code field' do
-          expect(subject.http_status_code).to be http_status_code
+      describe '#http_status' do
+        it 'gets the http_status field' do
+          expect(subject.http_status).to be http_status
         end
       end
 

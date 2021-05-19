@@ -138,7 +138,7 @@ module SampleService
         Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(
           error_module: Errors,
-          success_status_code: 200, errors: [],
+          success_status: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::GetHighScore
       )
@@ -207,7 +207,7 @@ module SampleService
         Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(
           error_module: Errors,
-          success_status_code: 201, errors: [Errors::UnprocessableEntityError],
+          success_status: 201, errors: [Errors::UnprocessableEntityError],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::CreateHighScore
       )
@@ -277,7 +277,7 @@ module SampleService
         Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(
           error_module: Errors,
-          success_status_code: 200, errors: [Errors::UnprocessableEntityError],
+          success_status: 200, errors: [Errors::UnprocessableEntityError],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::UpdateHighScore
       )
@@ -343,7 +343,7 @@ module SampleService
         Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(
           error_module: Errors,
-          success_status_code: 200, errors: [],
+          success_status: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::DeleteHighScore
       )
@@ -404,7 +404,7 @@ module SampleService
         Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(
           error_module: Errors,
-          success_status_code: 200, errors: [],
+          success_status: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::ListHighScores
       )
@@ -453,7 +453,7 @@ module SampleService
         Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(
           error_module: Errors,
-          success_status_code: 200, errors: [],
+          success_status: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
         data_parser: Parsers::Stream
       )

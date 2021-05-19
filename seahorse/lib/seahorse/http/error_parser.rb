@@ -20,11 +20,11 @@ module Seahorse
       #   Must contain service specific implementations of
       #   ApiRedirectError, ApiClientError, and ApiServerError
       #
-      # @param [Integer] success_status_code The status code of a
+      # @param [Integer] success_status The status code of a
       #   successful response as defined by the model for
       #   this operation. If this is a non 2XX value,
       #   the request will be considered successful if
-      #   it has the success_status_code and does not
+      #   it has the success_status and does not
       #   have an error code.
       #
       # @param [Array<Class<ApiError>>] errors Array of Error classes
@@ -33,9 +33,9 @@ module Seahorse
       # @param [callable] error_code_fn Protocol specific function
       #   that will return the error code from a response, or nil if
       #   there is none.
-      def initialize(error_module:, success_status_code:, errors:, error_code_fn:)
+      def initialize(error_module:, success_status:, errors:, error_code_fn:)
         @error_module = error_module
-        @success_status_code = success_status_code
+        @success_status = success_status
         @errors = errors
         @error_code_fn = error_code_fn
       end
@@ -58,9 +58,9 @@ module Seahorse
       # 7. Everything else -> unknown client error
       def error?(http_resp)
         return true if @error_code_fn.call(http_resp)
-        return false if http_resp.status_code == @success_status_code
+        return false if http_resp.status == @success_status
 
-        return !(200..299).cover?(http_resp.status_code)
+        return !(200..299).cover?(http_resp.status)
       end
 
       def extract_error(http_resp)
@@ -76,7 +76,7 @@ module Seahorse
         if error_class
           error_class.new(**error_opts)
         else
-          case http_resp.status_code
+          case http_resp.status
           when HTTP_3XX then @error_module::ApiRedirectError.new(location: http_resp.headers['location'], **error_opts)
           when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
           when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
