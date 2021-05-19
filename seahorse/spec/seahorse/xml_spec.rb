@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/xml'
-
 module Seahorse
   describe XML do
 

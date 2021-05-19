@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/middleware/around_handler'
-
 module Seahorse
   module Middleware
 

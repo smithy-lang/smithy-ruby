@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/xml/formatter'
-
 module Seahorse
   module XML
     describe Formatter do

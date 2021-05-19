@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/xml/parse_error'
-
 module Seahorse
   module XML
 

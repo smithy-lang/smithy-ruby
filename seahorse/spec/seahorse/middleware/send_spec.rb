@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/middleware/send'
-
 module Seahorse
   module Middleware
 

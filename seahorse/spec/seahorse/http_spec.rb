@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/http'
-
 module Seahorse
   describe HTTP do
     describe '.uri_escape' do

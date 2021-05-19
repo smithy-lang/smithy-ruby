@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/middleware/validate'
-
 module Seahorse
   module Middleware
 

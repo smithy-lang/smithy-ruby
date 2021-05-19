@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/output'
-
 module Seahorse
   describe Output do
     let(:error) { StandardError.new }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/validator'
-
 module Seahorse
   describe Validator do
 

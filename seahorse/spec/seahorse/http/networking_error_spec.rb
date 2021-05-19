@@ -1,4 +1,4 @@
-require 'seahorse/http/networking_error'
+# frozen_string_literal: true
 
 module Seahorse
   module HTTP

@@ -1,5 +1,4 @@
-require 'seahorse/stubbing/client_stubs'
-require 'seahorse/stubbing/stubs'
+# frozen_string_literal: true
 
 module Seahorse
   class TestClient

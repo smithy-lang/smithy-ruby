@@ -1,4 +1,4 @@
-require 'seahorse/api_error'
+# frozen_string_literal: true
 
 module Seahorse
   describe ApiError do

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/middleware/build'
-
 module Seahorse
   module Middleware
 
