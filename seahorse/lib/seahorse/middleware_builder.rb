@@ -93,9 +93,6 @@ module Seahorse
 
     # @param [Proc, MiddlewareBuilder] middleware
     #
-    #   If `middleware` is a Proc, then this builder is yielded to the
-    #   Proc object via `#call`.
-    #
     #   If `middleware` is another {MiddlewareBuilder} instance, then
     #   the middleware handlers are copied.
     #
@@ -103,10 +100,9 @@ module Seahorse
       @middleware = []
       case middleware
       when MiddlewareBuilder then @middleware.concat(middleware.to_a)
-      when Proc then middleware.call(self)
       when nil
       else
-        raise ArgumentError, 'expected :middleware to be a Proc or a' \
+        raise ArgumentError, 'expected :middleware to be a' \
           "Seahorse::MiddlewareBuilder, got #{middleware.class}"
       end
     end
