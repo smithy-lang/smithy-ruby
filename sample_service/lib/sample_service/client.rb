@@ -153,12 +153,13 @@ module SampleService
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
         response: Seahorse::HTTP::Response.new,
-        context: {
-          api_method: :get_high_score,
-          api_name: 'GetHighScore',
+        context: Seahorse::Context.new(
           params: params,
-          logger: @logger
-        }
+          logger: @logger,
+          metadata: {
+            api_method: :get_high_score
+          }
+        )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
@@ -222,12 +223,13 @@ module SampleService
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
         response: Seahorse::HTTP::Response.new,
-        context: {
-          api_method: :create_high_score,
-          api_name: 'CreateHighScore',
+        context: Seahorse::Context.new(
           params: params,
-          logger: @logger
-        }
+          logger: @logger,
+          metadata: {
+            api_method: :create_high_score
+          }
+        )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
@@ -292,12 +294,13 @@ module SampleService
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
         response: Seahorse::HTTP::Response.new,
-        context: {
-          api_method: :update_high_score,
-          api_name: 'UpdateHighScore',
+        context: Seahorse::Context.new(
           params: params,
-          logger: @logger
-        }
+          logger: @logger,
+          metadata: {
+            api_method: :update_high_score
+          }
+        )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
@@ -358,12 +361,13 @@ module SampleService
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
         response: Seahorse::HTTP::Response.new,
-        context: {
-          api_method: :delete_high_score,
-          api_name: 'DeleteHighScore',
+        context: Seahorse::Context.new(
           params: params,
-          logger: @logger
-        }
+          logger: @logger,
+          metadata: {
+            api_method: :delete_high_score
+          }
+        )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
@@ -419,12 +423,13 @@ module SampleService
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
         response: Seahorse::HTTP::Response.new,
-        context: {
-          api_method: :list_high_scores,
-          api_name: 'ListHighScores',
+        context: Seahorse::Context.new(
           params: params,
-          logger: @logger
-        }
+          logger: @logger,
+          metadata: {
+            api_method: :list_high_scores
+          }
+        )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
@@ -468,12 +473,13 @@ module SampleService
       resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
         response: Seahorse::HTTP::Response.new(body: output_stream(options, block)),
-        context: {
-          api_method: :stream,
-          api_name: 'Stream',
+        context: Seahorse::Context.new(
           params: params,
-          logger: @logger
-        }
+          logger: @logger,
+          metadata: {
+            api_method: :stream
+          }
+        )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp

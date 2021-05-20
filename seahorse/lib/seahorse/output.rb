@@ -2,7 +2,7 @@
 
 module Seahorse
   class Output
-    def initialize(error: nil, data: nil, context: {})
+    def initialize(error: nil, data: nil, context: nil)
       @error = error
       @data = data
       @context = context
@@ -14,7 +14,7 @@ module Seahorse
     # @return [Struct, nil]
     attr_accessor :data
 
-    # @return [Hash]
+    # @return [Context]
     attr_accessor :context
   end
 end

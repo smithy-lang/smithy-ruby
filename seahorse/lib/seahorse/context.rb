@@ -2,17 +2,17 @@
 
 module Seahorse
   class Context
-    def initialize(params:, logger:, metadata: {})
+    def initialize(params: nil, logger: nil, metadata: {})
       @params = params
       @logger = logger
       @metadata = metadata
     end
 
     # @return [Hash]
-    attr_accessor :params
+    attr_reader :params
 
     # @return [Logger]
-    attr_accessor :logger
+    attr_reader :logger
 
     # @return [Hash]
     attr_reader :metadata
