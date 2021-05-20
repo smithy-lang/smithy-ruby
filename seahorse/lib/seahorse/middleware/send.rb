@@ -31,10 +31,8 @@ module Seahorse
       def apply_stub(stub, request, response, context, output)
         case stub
         when Proc
-          apply_stub(
-            stub.call(context.merge(request: request)),
-            request, response, context, output
-          )
+          stub = stub.call(request, response, context)
+          apply_stub(stub, request, response, context, output) if stub
         when Exception
           output.error = stub
         when Class

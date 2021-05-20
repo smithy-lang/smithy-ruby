@@ -56,18 +56,51 @@ module Seahorse
           end
 
           context 'stub is a proc' do
-            let(:exception) { Exception.new }
-            let(:stub_proc) { proc { exception } }
-
             before { stubs.add_stubs(operation, [stub_proc]) }
-            it 'calls the stub and applies it' do
-              expect(stub_proc).to receive(:call).and_call_original
-              output = subject.call(
-                request: request,
-                response: response,
-                context: context
-              )
-              expect(output.error).to be(exception)
+
+            context 'proc returns a stub' do
+              let(:exception) { Exception.new }
+              let(:stub_proc) { proc { exception } }
+
+              it 'calls the stub and applies it' do
+                expect(stub_proc).to receive(:call)
+                  .with(request, response, context).and_call_original
+                output = subject.call(
+                  request: request,
+                  response: response,
+                  context: context
+                )
+                expect(output.error).to be(exception)
+              end
+            end
+
+            context 'proc returns nil' do
+              let(:url) { 'https://example.com' }
+              let(:status_code) { 418 }
+              let(:more_context) { { foo: 'bar' } }
+
+              let(:stub_proc) do
+                lambda do |req, res, ctx|
+                  req.url = url
+                  res.status_code = status_code
+                  ctx.merge!(more_context)
+                  nil
+                end
+              end
+
+              it 'allows stubbing of request, response, and context' do
+                expect(stub_proc).to receive(:call)
+                  .with(request, response, context).and_call_original
+                expect(stub_class).to_not receive(:stub)
+                subject.call(
+                  request: request,
+                  response: response,
+                  context: context
+                )
+                expect(request.url).to eq url
+                expect(response.status_code).to eq status_code
+                expect(context).to include(more_context)
+              end
             end
           end
 
