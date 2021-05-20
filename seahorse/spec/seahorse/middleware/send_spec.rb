@@ -76,13 +76,13 @@ module Seahorse
 
             context 'proc returns nil' do
               let(:url) { 'https://example.com' }
-              let(:status_code) { 418 }
+              let(:status) { 418 }
               let(:more_context) { { foo: 'bar' } }
 
               let(:stub_proc) do
                 lambda do |req, res, ctx|
                   req.url = url
-                  res.status_code = status_code
+                  res.status = status
                   ctx.merge!(more_context)
                   nil
                 end
@@ -98,7 +98,7 @@ module Seahorse
                   context: context
                 )
                 expect(request.url).to eq url
-                expect(response.status_code).to eq status_code
+                expect(response.status).to eq status
                 expect(context).to include(more_context)
               end
             end

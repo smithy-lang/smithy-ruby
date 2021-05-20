@@ -80,7 +80,7 @@ module Seahorse
     # an HTTP response.
     #
     #     client.stub_responses(:operation, {
-    #       status_code: 200,
+    #       status: 200,
     #       headers: { 'header-name' => 'header-value' },
     #       body: "...",
     #     })
@@ -88,7 +88,7 @@ module Seahorse
     # To stub a HTTP response, pass a Hash with all three of the following
     # keys set:
     #
-    # * **`:status_code`** - <Integer> - The HTTP status code
+    # * **`:status`** - <Integer> - The HTTP status code
     # * **`:headers`** - Hash<String,String> - A hash of HTTP header keys and values
     # * **`:body`** - <String,IO> - The HTTP response body.
     #

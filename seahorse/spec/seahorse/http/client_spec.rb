@@ -79,7 +79,7 @@ module Seahorse
           stub_request(http_method, url)
             .to_return(status: 242)
           subject.transmit(request: request, response: response)
-          expect(response.status_code).to eq(242)
+          expect(response.status).to eq(242)
         end
 
         it 'sets the response headers' do

@@ -5,7 +5,7 @@ module Seahorse
     # Base class for HTTP errors returned from an API
     class ApiError < Seahorse::ApiError
       def initialize(http_resp:, **kwargs)
-        @http_status_code = http_resp.status_code
+        @http_status = http_resp.status
         @http_headers = http_resp.headers
         @http_body = http_resp.body
         @request_id = http_resp.headers['x-request-id']
@@ -13,7 +13,7 @@ module Seahorse
       end
 
       # @return [Integer]
-      attr_reader :http_status_code
+      attr_reader :http_status
 
       # @return [Hash<String, String>]
       attr_reader :http_headers

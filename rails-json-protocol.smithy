@@ -12,7 +12,7 @@ structure errorOn {
 
 @enum([
     {
-        value: "status_code",
+        value: "status",
         name: "STATUS_CODE"
     },
     {
