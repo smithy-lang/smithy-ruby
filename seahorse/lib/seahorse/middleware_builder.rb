@@ -4,10 +4,14 @@ module Seahorse
 
   # A utility class for registering middleware for a request.
   # You register middleware handlers to execute relative to
-  # Middleware classes.  These map to key request
-  # lifecycle events including:
+  # Middleware classes.  You can register middleware
+  # before/after/around any middleware class in the stack.
+  # There are also convenience methods
+  # (eg: before_build, after_parse, ect)
+  # defined for all of the key request lifecycle events:
   #
   # * validate
+  # * host_prefix
   # * build
   # * send
   # * parse
@@ -16,6 +20,12 @@ module Seahorse
   # You can register request handlers that invoke before, after,
   # or around each lifecycle events. These handlers are
   # request, response, or around handlers.
+  #
+  # All before/after/around methods are defined on the class
+  # and instance and are chainable:
+  #
+  #    MiddlewareBuilder.before_send(my_request_handler)
+  #       .after_parse(my_response_handler)
   #
   # ## Request Handlers
   #
@@ -83,9 +93,6 @@ module Seahorse
 
     # @param [Proc, MiddlewareBuilder] middleware
     #
-    #   If `middleware` is a Proc, then this builder is yielded to the
-    #   Proc object via `#call`.
-    #
     #   If `middleware` is another {MiddlewareBuilder} instance, then
     #   the middleware handlers are copied.
     #
@@ -93,10 +100,9 @@ module Seahorse
       @middleware = []
       case middleware
       when MiddlewareBuilder then @middleware.concat(middleware.to_a)
-      when Proc then middleware.call(self)
       when nil
       else
-        raise ArgumentError, 'expected :middleware to be a Proc or a' \
+        raise ArgumentError, 'expected :middleware to be a' \
           "Seahorse::MiddlewareBuilder, got #{middleware.class}"
       end
     end
@@ -157,18 +163,21 @@ module Seahorse
     # define convenience methods for standard middleware classes
     # these define methods and class methods for before,after,around
     # eg: before_build, after_build, around_build.
-    STANDARD_MIDDLEWARE = [Seahorse::Middleware::Build,
+    STANDARD_MIDDLEWARE = [Seahorse::Middleware::Validate,
+                           Seahorse::Middleware::HostPrefix,
+                           Seahorse::Middleware::Build,
                            Seahorse::Middleware::Send,
                            Seahorse::Middleware::Retry,
                            Seahorse::Middleware::Parse].freeze
     STANDARD_MIDDLEWARE.each do |klass|
       simple_step_name = klass.to_s.split('::').last.downcase
-      ["before", "after", "around"].each do |method|
-        define_method("#{method}_#{simple_step_name}") do |*args, &block|
+      %w[before after around].each do |method|
+        method_name = "#{method}_#{simple_step_name}"
+        define_method(method_name) do |*args, &block|
           return send(method, klass, *args, &block)
         end
 
-        define_singleton_method("#{method}_#{simple_step_name}") do |*args, &block|
+        define_singleton_method(method_name) do |*args, &block|
           return send(method, klass, *args, &block)
         end
       end
@@ -184,7 +193,7 @@ module Seahorse
       raise ArgumentError, BOTH if args.size > 0 && block
       raise ArgumentError, NEITHER if args.empty? && block.nil?
       raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
-      callable = args.first || Proc.new
+      callable = args.first || Proc.new(&block)
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
       callable
     end
