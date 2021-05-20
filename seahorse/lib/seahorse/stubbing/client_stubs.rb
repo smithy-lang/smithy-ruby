@@ -109,8 +109,8 @@ module Seahorse
       if @stub_responses
         @stubs.add_stubs(operation_name, stubs.flatten)
       else
-        msg = 'stubbing is not enabled; enable stubbing in the constructor '\
-              'with `:stub_responses => true`'
+        msg = 'Stubbing is not enabled. Enable stubbing in the constructor '\
+              'with `stub_responses: true`'
         raise ArgumentError, msg
       end
     end
