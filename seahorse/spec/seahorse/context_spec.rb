@@ -6,14 +6,13 @@ module Seahorse
     let(:logger) { Logger.new($stdout) }
     let(:metadata) { { foo: 'bar' } }
 
-    subject { Context.new(params: params, logger: logger, metadata: metadata) }
+    subject { Context.new(metadata.merge({params: params, logger: logger})) }
 
     describe '#initialize' do
       it 'sets empty defaults' do
         context = Context.new
         expect(context.params).to be_nil
         expect(context.logger).to be_nil
-        expect(context.metadata).to eq({})
       end
     end
 
@@ -29,12 +28,6 @@ module Seahorse
       end
     end
 
-    describe '#metadata' do
-      it 'gets the metadata field' do
-        expect(subject.metadata).to be metadata
-      end
-    end
-
     describe '#[]' do
       it 'delegates to metadata' do
         expect(subject[:foo]).to eq 'bar'
@@ -45,7 +38,7 @@ module Seahorse
     describe '#[]=' do
       it 'delegates to metadata' do
         subject[:bar] = 'baz'
-        expect(subject.metadata[:bar]).to eq 'baz'
+        expect(subject[:bar]).to eq 'baz'
       end
     end
   end

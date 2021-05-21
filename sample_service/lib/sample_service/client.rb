@@ -156,9 +156,7 @@ module SampleService
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
-          metadata: {
-            api_method: :get_high_score
-          }
+          api_method: :get_high_score
         )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
@@ -226,9 +224,7 @@ module SampleService
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
-          metadata: {
-            api_method: :create_high_score
-          }
+          api_method: :create_high_score
         )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
@@ -297,9 +293,7 @@ module SampleService
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
-          metadata: {
-            api_method: :update_high_score
-          }
+          api_method: :update_high_score
         )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
@@ -364,9 +358,7 @@ module SampleService
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
-          metadata: {
-            api_method: :delete_high_score
-          }
+          api_method: :delete_high_score
         )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
@@ -426,9 +418,7 @@ module SampleService
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
-          metadata: {
-            api_method: :list_high_scores
-          }
+          api_method: :list_high_scores
         )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
@@ -476,9 +466,7 @@ module SampleService
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
-          metadata: {
-            api_method: :stream
-          }
+          api_method: :stream
         )
       )
       raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)

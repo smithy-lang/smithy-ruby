@@ -2,20 +2,19 @@
 
 module Seahorse
   class Context
-    def initialize(params: nil, logger: nil, metadata: {})
-      @params = params
-      @logger = logger
+    def initialize(metadata = {})
       @metadata = metadata
     end
 
     # @return [Hash]
-    attr_reader :params
+    def params
+      @metadata[:params]
+    end
 
     # @return [Logger]
-    attr_reader :logger
-
-    # @return [Hash]
-    attr_reader :metadata
+    def logger
+      @metadata[:logger]
+    end
 
     # Returns the metadata for the given `key`.
     # @param [Symbol] key
