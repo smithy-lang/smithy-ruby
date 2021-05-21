@@ -1,5 +1,4 @@
-require 'seahorse/http'
-require 'seahorse/output'
+# frozen_string_literal: true
 
 module Seahorse
   module HTTP

@@ -25,37 +25,15 @@ module Seahorse
     #     client.operation
     #     #=> #<struct Service:Types::Operation param1=[], param2=nil>
     #
-    # You can provide stub data that will be returned by the client.
-    #
-    #     # stub data in the constructor
-    #     client = Service::Client.new(stub_responses: {
-    #       operation: { param1: [{name: 'value1' }] },
-    #       operation2: { body: 'data' },
-    #     })
-    #
-    #     client.operation.param1.map(&:name) #=> ['value1']
-    #     client.operation2().body.read #=> 'data'
-    #
-    # You can also specify the stub data using {#stub_responses}
+    # You can specify the stub data using {#stub_responses}
     #
     #     client = Service::Client.new(stub_responses: true)
-    #     client.stub_responses(:operation1, {
+    #     client.stub_responses(:operation, {
     #       param1: [{ name: 'value1' }]
     #     })
     #
     #     client.operation.param1.map(&:name)
     #     #=> ['value1']
-    #
-    # ## Dynamic Stubbing
-    #
-    # In addition to creating static stubs, it's also possible to generate
-    # stubs dynamically based on the parameters with which operations were
-    # called, by passing a `Proc` object:
-    #
-    #     client = Service::Client.new(stub_responses: true)
-    #     client.stub_responses(:operation, -> (context) {
-    #       client.stub_responses(:operation2, content_type: context.params[:content_type])
-    #     })
     #
     # ## Stubbing Errors
     #
@@ -74,23 +52,32 @@ module Seahorse
     #     client.operation(param1: 'value')
     #     #=> raises the given runtime error object
     #
-    # ## Stubbing HTTP Responses
+    # ## Dynamic Stubbing
     #
-    # As an alternative to providing the response data, you can provide
-    # an HTTP response.
+    # In addition to creating static stubs, it's also possible to generate
+    # stubs dynamically based on the parameters with which operations were
+    # called, by passing a `Proc` object:
     #
-    #     client.stub_responses(:operation, {
-    #       status: 200,
-    #       headers: { 'header-name' => 'header-value' },
-    #       body: "...",
+    #     client.stub_responses(:operation, -> (req, res, ctx) {
+    #       if ctx.params[:param] == 'foo'
+    #         # return a stub
+    #         { param1: [{ name: 'value1'}]}
+    #       else
+    #         # return an error
+    #         Services::Errors::NotFound
+    #       end
     #     })
     #
-    # To stub a HTTP response, pass a Hash with all three of the following
-    # keys set:
+    # ## Stubbing Raw Responses
     #
-    # * **`:status`** - <Integer> - The HTTP status code
-    # * **`:headers`** - Hash<String,String> - A hash of HTTP header keys and values
-    # * **`:body`** - <String,IO> - The HTTP response body.
+    # As an alternative to providing the response data, you can modify the
+    # response object provided by the `Proc` object and then
+    # return nil.
+    #
+    #     client.stub_responses(:operation, -> (req, res, ctx) {
+    #       res.status = 404 # simulate an error
+    #       nil
+    #     })
     #
     # ## Stubbing Multiple Responses
     #
@@ -120,11 +107,10 @@ module Seahorse
     #   `:stub_responses => true`.
     def stub_responses(operation_name, *stubs)
       if @stub_responses
-        @stubs ||= Seahorse::Stubbing::Stubs.new
         @stubs.add_stubs(operation_name, stubs.flatten)
       else
-        msg = 'stubbing is not enabled; enable stubbing in the constructor '\
-              'with `:stub_responses => true`'
+        msg = 'Stubbing is not enabled. Enable stubbing in the constructor '\
+              'with `stub_responses: true`'
         raise ArgumentError, msg
       end
     end

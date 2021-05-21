@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/output'
-
 module Seahorse
   describe Output do
     let(:error) { StandardError.new }
@@ -15,7 +13,7 @@ module Seahorse
         output = Output.new
         expect(output.error).to be_nil
         expect(output.data).to be_nil
-        expect(output.context).to eq({})
+        expect(output.context).to be_nil
       end
     end
 

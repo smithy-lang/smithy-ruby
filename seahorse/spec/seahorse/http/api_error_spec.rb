@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/api_error'
-require 'seahorse/http/api_error'
-require 'seahorse/http/headers'
-require 'seahorse/http/response'
-
 module Seahorse
   module HTTP
     describe ApiError do

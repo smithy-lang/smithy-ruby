@@ -1,4 +1,4 @@
-require 'seahorse/stubbing/stubs'
+# frozen_string_literal: true
 
 module Seahorse
   module Stubbing

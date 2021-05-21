@@ -16,6 +16,7 @@ module Seahorse
       def call(request:, response:, context:)
         @handler.call(@app, request, response, context)
       end
+
     end
   end
 end

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seahorse/json'
-
 module Seahorse
 
   describe JSON do

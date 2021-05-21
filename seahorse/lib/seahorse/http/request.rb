@@ -32,33 +32,33 @@ module Seahorse
 
       # Append a path to the HTTP request URL.
       #
-      #     http_req.url = "https://foo.com"
+      #     http_req.url = "https://example.com"
       #     http_req.append_path('/')
       #     http_req.url
-      #     #=> "https://foo.com/"
+      #     #=> "https://example.com/"
       #
       # Paths will be joined by a single '/':
       #
-      #     http_req.url = "https://foo.com/path-prefix/"
+      #     http_req.url = "https://example.com/path-prefix/"
       #     http_req.append_path('/path-suffix')
       #     http_req.url
-      #     #=> "https://foo.com/path-prefix/path-suffix"
+      #     #=> "https://example.com/path-prefix/path-suffix"
       #
       # Resultant URL preserves the querystring:
       #
-      #     http_req.url = "https://foo.com/path-prefix?querystring
+      #     http_req.url = "https://example.com/path-prefix?querystring
       #     http_req.append_path('/path-suffix')
       #     http_req.url
-      #     #=> "https://foo.com/path-prefix/path-suffix?querystring"
+      #     #=> "https://example.com/path-prefix/path-suffix?querystring"
       #
       # The provided path should be URI escaped before being passed.
       #
-      #     http_req.url = "https://foo.com
+      #     http_req.url = "https://example.com
       #     http_req.append_path(
       #       Seahorse::HTTP.uri_escape_path('/part 1/part 2')
       #     )
       #     http_req.url
-      #     #=> "https://foo.com/part%201/part%202"
+      #     #=> "https://example.com/part%201/part%202"
       #
       # @param [String] path A URI escaped path.
       def append_path(path)
@@ -71,12 +71,12 @@ module Seahorse
 
       # Append querystring parameter to the HTTP request URL.
       #
-      #     http_req.url = "https://foo.com"
+      #     http_req.url = "https://example.com"
       #     http_req.append_query_param('query')
       #     http_req.append_query_param('key 1', 'value 1')
       #
       #     http_req.url
-      #     #=> "https://foo.com?query&key%201=value%201
+      #     #=> "https://example.com?query&key%201=value%201
       #
       # @overload append_query_param(name)
       #   @param [String] name
@@ -106,7 +106,7 @@ module Seahorse
 
       # Append a host prefix to the HTTP request URL.
       #
-      #     http_req.url = "https://foo.com"
+      #     http_req.url = "https://example.com"
       #     http_req.prefix_host('data.')
       #
       #     http_req.url

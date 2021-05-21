@@ -3,16 +3,14 @@
 module Seahorse
   module Middleware
 
-    describe Build do
+    describe ResponseHandler do
       let(:app) { double('app') }
-      let(:builder) { double('builder') }
-      let(:input) { { foo: 'bar' } }
+      let(:handler) { double('handler') }
 
       subject do
-        Build.new(
+        ResponseHandler.new(
           app,
-          builder: builder,
-          input: input
+          handler: handler
         )
       end
 
@@ -20,14 +18,19 @@ module Seahorse
         let(:request) { Seahorse::HTTP::Request.new }
         let(:response) { Seahorse::HTTP::Response.new }
         let(:context) { {} }
+        let(:output) { Seahorse::Output.new }
 
-        it 'builds then calls the next middleware' do
-          expect(builder).to receive(:build)
-            .with(request, input).ordered
+        it 'calls the next middleware and then the handler' do
           expect(app).to receive(:call).with(
             request: request,
             response: response,
             context: context
+          ).and_return(output).ordered
+
+          expect(handler).to receive(:call).with(
+            request,
+            response,
+            context
           ).ordered
 
           subject.call(

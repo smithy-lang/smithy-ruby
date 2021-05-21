@@ -3,16 +3,14 @@
 module Seahorse
   module Middleware
 
-    describe Build do
+    describe AroundHandler do
       let(:app) { double('app') }
-      let(:builder) { double('builder') }
-      let(:input) { { foo: 'bar' } }
+      let(:handler) { double('handler') }
 
       subject do
-        Build.new(
+        AroundHandler.new(
           app,
-          builder: builder,
-          input: input
+          handler: handler
         )
       end
 
@@ -21,13 +19,12 @@ module Seahorse
         let(:response) { Seahorse::HTTP::Response.new }
         let(:context) { {} }
 
-        it 'builds then calls the next middleware' do
-          expect(builder).to receive(:build)
-            .with(request, input).ordered
-          expect(app).to receive(:call).with(
-            request: request,
-            response: response,
-            context: context
+        it 'calls the handler with the stack' do
+          expect(handler).to receive(:call).with(
+            app,
+            request,
+            response,
+            context
           ).ordered
 
           subject.call(

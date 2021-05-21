@@ -3,11 +3,16 @@
 module Seahorse
 
   # A utility class for registering middleware for a request.
-  # You register middleware handlers to execute at key request
-  # lifecycle events including:
+  # You register middleware handlers to execute relative to
+  # Middleware classes.  You can register middleware
+  # before/after/around any middleware class in the stack.
+  # There are also convenience methods
+  # (eg: before_build, after_parse, ect)
+  # defined for all of the key request lifecycle events:
   #
+  # * validate
+  # * host_prefix
   # * build
-  # * sign
   # * send
   # * parse
   # * retry
@@ -16,23 +21,21 @@ module Seahorse
   # or around each lifecycle events. These handlers are
   # request, response, or around handlers.
   #
+  # All before/after/around methods are defined on the class
+  # and instance and are chainable:
+  #
+  #    MiddlewareBuilder.before_send(my_request_handler)
+  #       .after_parse(my_response_handler)
+  #
   # ## Request Handlers
   #
   # A request handler is invoked before the request is sent.
   #
   #    # invoked after a request has been built, but before it has
   #    # been signed/authorized
-  #    middleware.before_sign do |request, response, context|
+  #    middleware.before_build do |request, response, context|
   #      # do something here
   #    end
-  #
-  # The complete list of request handlers include:
-  #
-  # * {#before_build}
-  # * {#after_build}
-  # * {#before_sign}
-  # * {#after_sign}
-  # * {#before_send}
   #
   # ## Response Handlers
   #
@@ -46,14 +49,6 @@ module Seahorse
   #      # response.context
   #    end
   #
-  # The complete list of response handlers include:
-  #
-  # * {#after_send}
-  # * {#before_parse}
-  # * {#after_parse}
-  # * {#before_retry}
-  # * {#after_retry}
-  #
   # ## Around Handlers
   #
   # Around handlers see a request before it has been sent along
@@ -63,7 +58,6 @@ module Seahorse
   #
   #     # invoke before the request  has been sent, receives the
   #     # response from the send middleware
-  #     middleware = Seahorse::MiddlewareBuilder.new
   #     middleware.around_send do |app, request, response, context|
   #
   #       # this code is invoked before the request is sent
@@ -83,14 +77,6 @@ module Seahorse
   #       response
   #     end
   #
-  # The complete list of around handlers include:
-  #
-  # * {#around_build}
-  # * {#around_retry}
-  # * {#around_parse}
-  # * {#around_sign}
-  # * {#around_send}
-  #
   class MiddlewareBuilder
 
     # @private
@@ -107,9 +93,6 @@ module Seahorse
 
     # @param [Proc, MiddlewareBuilder] middleware
     #
-    #   If `middleware` is a Proc, then this builder is yielded to the
-    #   Proc object via `#call`.
-    #
     #   If `middleware` is another {MiddlewareBuilder} instance, then
     #   the middleware handlers are copied.
     #
@@ -117,10 +100,9 @@ module Seahorse
       @middleware = []
       case middleware
       when MiddlewareBuilder then @middleware.concat(middleware.to_a)
-      when Proc then middleware.call(self)
       when nil
       else
-        raise ArgumentError, 'expected :middleware to be a Proc or a' \
+        raise ArgumentError, 'expected :middleware to be a' \
           "Seahorse::MiddlewareBuilder, got #{middleware.class}"
       end
     end
@@ -133,159 +115,72 @@ module Seahorse
       end
     end
 
-    # Register a handler that is invoked before the request is built.
-    # Changes to the `request` may be overridden during the actual
-    # request build step. The `response` will be empty.
-    #
-    # @overload before_build(&block)
-    #   @yield [request, response, context]
-    #   @yieldparam [Seahorse::HTTP::Request] request
-    #   @yieldparam [Seahorse::HTTP::Response] response
-    #   @yieldparam [Hash] context
-    #   @yieldreturn [void]
-    #
-    # @overload before_build(request_handler)
-    #   @param [Proc, #call] request_handler
-    #     The request handler must respond to `#call` accepting
-    #     three arguments:
-    #
-    #     * `request` ({Seahorse::HTTP::Request})
-    #     * `response` ({Seahorse::HTTP::Response})
-    #     * `context` (Hash)
-    #
-    def before_build(*args, &block)
+    def before(klass, *args, &block)
       @middleware << [
         :use_before,
-        Seahorse::Middleware::Build,
+        klass,
         Middleware::RequestHandler,
         handler: handler_or_proc!(args, &block)
       ]
+      self
     end
 
-    def around_build(*args, &block)
+    def after(klass, *args, &block)
       @middleware << [
         :use_before,
-        Seahorse::Middleware::Build,
-        Middleware::AroundHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def after_build(*args, &block)
-      @middleware << [
-        :use_after,
-        Seahorse::Middleware::Build,
-        Middleware::RequestHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def before_sign(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Sign,
-        Middleware::RequestHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def around_sign(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Sign,
-        Middleware::AroundHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def after_sign(*args, &block)
-      @middleware << [
-        :use_after,
-        Seahorse::Middleware::Sign,
-        Middleware::RequestHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def before_send(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Send,
-        Middleware::RequestHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def around_send(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Send,
-        Middleware::AroundHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def after_send(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Send,
+        klass,
         Middleware::ResponseHandler,
         handler: handler_or_proc!(args, &block)
       ]
+      self
     end
 
-    def before_parse(*args, &block)
-      @middleware << [
-        :use_after,
-        Seahorse::Middleware::Parse,
-        Middleware::ResponseHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def around_parse(*args, &block)
+    def around(klass, *args, &block)
       @middleware << [
         :use_before,
-        Seahorse::Middleware::Parse,
+        klass,
         Middleware::AroundHandler,
         handler: handler_or_proc!(args, &block)
       ]
+      self
     end
 
-    def after_parse(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Parse,
-        Middleware::ResponseHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
+    # Define convenience methods for chaining
+    class << self
+      def before(klass, *args, &block)
+        MiddlewareBuilder.new.before(klass, *args, &block)
+      end
+
+      def after(klass, *args, &block)
+        MiddlewareBuilder.new.after(klass, *args, &block)
+      end
+
+      def around(klass, *args, &block)
+        MiddlewareBuilder.new.around(klass, *args, &block)
+      end
     end
 
-    def before_retry(*args, &block)
-      @middleware << [
-        :use_after,
-        Seahorse::Middleware::Retry,
-        Middleware::ResponseHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
+    # define convenience methods for standard middleware classes
+    # these define methods and class methods for before,after,around
+    # eg: before_build, after_build, around_build.
+    STANDARD_MIDDLEWARE = [Seahorse::Middleware::Validate,
+                           Seahorse::Middleware::HostPrefix,
+                           Seahorse::Middleware::Build,
+                           Seahorse::Middleware::Send,
+                           Seahorse::Middleware::Retry,
+                           Seahorse::Middleware::Parse].freeze
+    STANDARD_MIDDLEWARE.each do |klass|
+      simple_step_name = klass.to_s.split('::').last.downcase
+      %w[before after around].each do |method|
+        method_name = "#{method}_#{simple_step_name}"
+        define_method(method_name) do |*args, &block|
+          return send(method, klass, *args, &block)
+        end
 
-    def around_retry(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Retry,
-        Middleware::AroundHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
-    end
-
-    def after_retry(*args, &block)
-      @middleware << [
-        :use_before,
-        Seahorse::Middleware::Retry,
-        Middleware::ResponseHandler,
-        handler: handler_or_proc!(args, &block)
-      ]
+        define_singleton_method(method_name) do |*args, &block|
+          return send(method, klass, *args, &block)
+        end
+      end
     end
 
     def to_a
@@ -298,7 +193,7 @@ module Seahorse
       raise ArgumentError, BOTH if args.size > 0 && block
       raise ArgumentError, NEITHER if args.empty? && block.nil?
       raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
-      callable = args.first || block
+      callable = args.first || Proc.new(&block)
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
       callable
     end

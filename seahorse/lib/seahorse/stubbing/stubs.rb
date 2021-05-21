@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require 'thread'
-
 module Seahorse
   module Stubbing
-
     # Provides a thread safe data structure for adding
     # and getting stubs per operation
     # @api private
@@ -31,6 +28,7 @@ module Seahorse
           end
         end
       end
+
     end
   end
 end

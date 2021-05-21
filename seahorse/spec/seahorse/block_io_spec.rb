@@ -1,4 +1,4 @@
-require 'seahorse/block_io'
+# frozen_string_literal: true
 
 module Seahorse
   describe BlockIO do

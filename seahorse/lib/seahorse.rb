@@ -1,5 +1,6 @@
 require_relative 'seahorse/api_error'
 require_relative 'seahorse/block_io'
+require_relative 'seahorse/context'
 require_relative 'seahorse/http'
 require_relative 'seahorse/json'
 
