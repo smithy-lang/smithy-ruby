@@ -114,7 +114,7 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::GetHighScoreInput.build(params)
+      input = Types::GetHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
@@ -182,7 +182,7 @@ module SampleService
     #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::CreateHighScoreInput.build(params)
+      input = Types::CreateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScore,
@@ -251,7 +251,7 @@ module SampleService
     #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::UpdateHighScoreInput.build(params)
+      input = Types::UpdateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScore,
@@ -316,7 +316,7 @@ module SampleService
     #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::DeleteHighScoreInput.build(params)
+      input = Types::DeleteHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScore,
@@ -376,7 +376,7 @@ module SampleService
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::ListHighScoresInput.build(params)
+      input = Types::ListHighScoresInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::ListHighScores,
@@ -427,7 +427,7 @@ module SampleService
 
     def stream(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::StreamInputOutput.build(params)
+      input = Types::StreamInputOutput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::Stream,
