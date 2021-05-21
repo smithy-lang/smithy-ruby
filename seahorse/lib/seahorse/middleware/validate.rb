@@ -16,13 +16,12 @@ module Seahorse
       # @param response
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
+      def call(request:, context:)
         if @validate_input
           @validator.validate!(input: @input, context: 'input')
         end
         @app.call(
           request: request,
-          response: response,
           context: context
         )
       end

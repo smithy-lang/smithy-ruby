@@ -44,10 +44,9 @@ module Seahorse
     # @param response
     # @param context
     # @return [Response]
-    def run(request:, response:, context:)
+    def run(request:, context:)
       stack.call(
         request: request,
-        response: response,
         context: context
       )
     end

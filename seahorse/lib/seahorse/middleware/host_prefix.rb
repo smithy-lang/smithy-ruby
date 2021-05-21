@@ -15,14 +15,13 @@ module Seahorse
       # @param response
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
+      def call(request:, context:)
         unless @disable_host_prefix
           prefix = apply_labels(@host_prefix, @params)
           request.prefix_host(prefix)
         end
         @app.call(
           request: request,
-          response: response,
           context: context
         )
       end

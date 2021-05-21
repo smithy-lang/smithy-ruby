@@ -14,11 +14,10 @@ module Seahorse
       # @param response
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
+      def call(request:, context:)
         @builder.build(request, @input)
         @app.call(
           request: request,
-          response: response,
           context: context
         )
       end

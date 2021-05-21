@@ -4,26 +4,26 @@ module Seahorse
   module Middleware
     class Send
 
-      def initialize(_app, client:, stub_responses:, stub_class:, stubs:)
+      def initialize(_app, client:, stub_responses:, stub_class:, stubs:, response:, output:)
         @client = client
         @stub_responses = stub_responses
         @stub_class = stub_class
         @stubs = stubs
+        @response = response
+        @output = output
       end
 
-      def call(request:, response:, context:)
+      def call(request:, context:)
         if @stub_responses
           stub = @stubs.next(context[:api_method])
-          output = Output.new(context: context)
-          apply_stub(stub, request, response, context, output)
-          output
+          apply_stub(stub, request, @response, context, @output)
         else
           @client.transmit(
             request: request,
-            response: response
+            response: @response
           )
-          Output.new(context: context)
         end
+        @response
       end
 
       private

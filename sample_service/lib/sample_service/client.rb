@@ -115,6 +115,7 @@ module SampleService
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
+      output = Seahorse::Output.new
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
@@ -140,27 +141,29 @@ module SampleService
           error_module: Errors,
           success_status: 200, errors: [],
           error_code_fn: Errors.method(:error_code)),
-        data_parser: Parsers::GetHighScore
+        data_parser: Parsers::GetHighScore,
+        output: output
       )
       stack.use(
         Seahorse::Middleware::Send,
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
         stub_responses: @stub_responses,
         stub_class: Stubs::GetHighScore,
-        stubs: @stubs
+        stubs: @stubs,
+        response: Seahorse::HTTP::Response.new,
+        output: output
       )
       apply_middleware(stack, options[:middleware])
-      resp = stack.run(
+      _resp = stack.run(
         request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
         context: Seahorse::Context.new(
           params: params,
           logger: @logger,
           api_method: :get_high_score
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise output.error if output.error && options.fetch(:raise_api_errors, @raise_api_errors)
+      output
     end
 
     # Create a new high score
