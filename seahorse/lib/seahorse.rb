@@ -16,6 +16,7 @@ require_relative 'seahorse/middleware/validate'
 
 require_relative 'seahorse/middleware_builder'
 require_relative 'seahorse/middleware_stack'
+require_relative 'seahorse/input'
 require_relative 'seahorse/output'
 require_relative 'seahorse/time_helper'
 

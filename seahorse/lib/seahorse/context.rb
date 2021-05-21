@@ -16,6 +16,14 @@ module Seahorse
       @metadata[:logger]
     end
 
+    def request
+      @metadata[:request]
+    end
+
+    def response
+      @metadata[:response]
+    end
+
     # Returns the metadata for the given `key`.
     # @param [Symbol] key
     # @return [Object]

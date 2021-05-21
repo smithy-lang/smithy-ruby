@@ -114,17 +114,15 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Params::GetHighScoreInput.build(params)
+      input = Seahorse::Input.new(params: params, data: Params::GetHighScoreInput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
-        validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
+        validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
         Seahorse::Middleware::Build,
-        builder: Builders::GetHighScore,
-        input: input
+        builder: Builders::GetHighScore
       )
       stack.use(
         Seahorse::HTTP::Middleware::ContentLength
@@ -151,11 +149,11 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
+        input: input,
         context: Seahorse::Context.new(
-          params: params,
           logger: @logger,
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new,
           api_method: :get_high_score
         )
       )

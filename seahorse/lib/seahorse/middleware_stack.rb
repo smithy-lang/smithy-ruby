@@ -40,16 +40,11 @@ module Seahorse
       @middleware = new_middleware
     end
 
-    # @param request
-    # @param response
+    # @param input
     # @param context
-    # @return [Response]
-    def run(request:, response:, context:)
-      stack.call(
-        request: request,
-        response: response,
-        context: context
-      )
+    # @return [Output]
+    def run(input:, context:)
+      stack.call(input, context)
     end
 
     private

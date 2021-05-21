@@ -5,26 +5,20 @@ module Seahorse
   module Middleware
     class Validate
 
-      def initialize(app, validator:, validate_input:, input:)
+      def initialize(app, validator:, validate_input:)
         @app = app
         @validator = validator
         @validate_input = validate_input
-        @input = input
       end
 
-      # @param request
-      # @param response
+      # @param input
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
+      def call(input, context)
         if @validate_input
-          @validator.validate!(input: @input, context: 'input')
+          @validator.validate!(input: input.data, context: 'input')
         end
-        @app.call(
-          request: request,
-          response: response,
-          context: context
-        )
+        @app.call(input, context)
       end
 
     end

@@ -9,12 +9,11 @@ module Seahorse
         @handler = handler
       end
 
-      # @param request
-      # @param response
+      # @param input
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
-        @handler.call(@app, request, response, context)
+      def call(input, context)
+        @handler.call(@app, input, context)
       end
 
     end
