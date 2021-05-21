@@ -71,7 +71,7 @@ module Seahorse
     # ## Stubbing Raw Responses
     #
     # As an alternative to providing the response data, you can modify the
-    # request and response objects provided by the `Proc` object and then
+    # response object provided by the `Proc` object and then
     # return nil.
     #
     #     client.stub_responses(:operation, -> (req, res, ctx) {
