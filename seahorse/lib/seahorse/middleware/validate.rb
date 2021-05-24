@@ -13,7 +13,7 @@ module Seahorse
 
       # @param input
       # @param context
-      # @return [Types::<Operation>Output]
+      # @return [Output]
       def call(input, context)
         if @validate_input
           @validator.validate!(input: input, context: 'input')

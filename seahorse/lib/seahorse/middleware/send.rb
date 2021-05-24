@@ -13,24 +13,24 @@ module Seahorse
 
       # @param input
       # @param context
-      # @return [Types::<Operation>Output]
+      # @return [Output]
       def call(input, context)
         if @stub_responses
           stub = @stubs.next(context.metadata[:api_method])
-          apply_stub(stub, context)
-          nil
+          output = Output.new
+          apply_stub(stub, context, output)
+          output
         else
           @client.transmit(
             request: context.request,
             response: context.response
           )
-          nil
+          Output.new
         end
       end
 
       private
 
-      # TODO: Remove output here
       def apply_stub(stub, context, output)
         case stub
         when Proc

@@ -11,7 +11,7 @@ module Seahorse
 
       # @param input
       # @param context
-      # @return [Types::<Operation>Output]
+      # @return [Output]
       def call(input, context)
         output = @app.call(input, context)
         @handler.call(context.response, context)

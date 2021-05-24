@@ -13,7 +13,7 @@ module Seahorse
 
       # @param input
       # @param context
-      # @return [Types::<Operation>Output]
+      # @return [Output]
       def call(input, context)
         unless @disable_host_prefix
           prefix = apply_labels(@host_prefix, @params)

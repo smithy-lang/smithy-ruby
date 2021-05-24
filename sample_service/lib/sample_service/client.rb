@@ -52,6 +52,11 @@ module SampleService
     #
     #       rand_between(0, min(max_delay, 2^num_of_attempts))
     #
+    # @option options [Boolean] :raise_api_errors (true)
+    #   When `true`, errors returned from the API in the HTTP
+    #   response will be raised. When `false`, API errors can
+    #   be accessed by calling `#error` on the response
+    #   object returned.
     #
     # @option options [Boolean] :http_wire_trace (false) When `true`,
     #   HTTP debug output will be sent to the `:logger`.
@@ -83,6 +88,7 @@ module SampleService
       @endpoint = options[:endpoint]
       @max_attempts = options.fetch(:max_attempts, 4)
       @max_delay = options.fetch(:max_delay, 8)
+      @raise_api_errors = options.fetch(:raise_api_errors, true)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
       @validate_input = options.fetch(:validate_input, false)
       @middleware = Seahorse::MiddlewareBuilder.new(options[:middleware])
@@ -152,7 +158,7 @@ module SampleService
           api_method: :get_high_score
         )
       )
-      raise resp if resp.is_a?(StandardError)
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
     end
 
@@ -219,7 +225,7 @@ module SampleService
           api_method: :create_high_score
         )
       )
-      raise resp if resp.is_a?(StandardError)
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
     end
 
@@ -287,7 +293,7 @@ module SampleService
           api_method: :update_high_score
         )
       )
-      raise resp if resp.is_a?(StandardError)
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
     end
 
@@ -351,7 +357,7 @@ module SampleService
           api_method: :delete_high_score
         )
       )
-      raise resp if resp.is_a?(StandardError)
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
     end
 
@@ -410,7 +416,7 @@ module SampleService
           api_method: :list_high_scores
         )
       )
-      raise resp if resp.is_a?(StandardError)
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
     end
 
@@ -457,7 +463,7 @@ module SampleService
           api_method: :stream
         )
       )
-      raise resp if resp.is_a?(StandardError)
+      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
       resp
     end
 

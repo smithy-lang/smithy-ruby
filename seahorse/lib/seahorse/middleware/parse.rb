@@ -12,22 +12,22 @@ module Seahorse
 
       # @param input
       # @param context
-      # @return [Types::<Operation>Output]
+      # @return [Output]
       def call(input, context)
         output = @app.call(input, context)
-        output = parse_error(context.response) unless output.is_a?(StandardError)
-        output = parse_data(context.response) unless output.is_a?(StandardError)
+        parse_error(context.response, output) unless output.error
+        parse_data(context.response, output) unless output.error
         output
       end
 
       private
 
-      def parse_error(response)
-        @error_parser.parse(response)
+      def parse_error(response, output)
+        output.error = @error_parser.parse(response)
       end
 
-      def parse_data(response)
-        @data_parser.parse(response)
+      def parse_data(response, output)
+        output.data = @data_parser.parse(response)
       end
     end
   end
