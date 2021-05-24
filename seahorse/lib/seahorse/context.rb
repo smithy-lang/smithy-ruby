@@ -2,19 +2,32 @@
 
 module Seahorse
   class Context
-    def initialize(metadata = {})
-      @request = metadata.delete(:request)
-      @response = metadata.delete(:response)
-      @params = metadata.delete(:params)
-      @logger = metadata.delete(:logger)
-      @metadata = metadata
+
+    def initialize(options = {})
+      @operation_name = options[:operation_name]
+      @request = options[:request]
+      @response = options[:response]
+      @logger = options[:logger]
+      @params = options[:params]
+      @metadata = options[:metadata] || {}
     end
 
-    # TODO: Document methods
+    # @return [Symbol] Name of the API operation called.
+    attr_reader :operation_name
+
+    # @return [Seahorse::HTTP::Request]
     attr_reader :request
+
+    # @return [Seahorse::HTTP::Response]
     attr_reader :response
-    attr_reader :params
+
+    # @return [Logger] An instance of the logger configured for the Client.
     attr_reader :logger
+
+    # @return [Hash] The hash of the original request parameters.
+    attr_accessor :params
+
+    # @return [Hash]
     attr_reader :metadata
 
   end

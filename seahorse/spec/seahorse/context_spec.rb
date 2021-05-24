@@ -1,61 +1,42 @@
 # frozen_string_literal: true
 
 module Seahorse
+
   describe Context do
-    let(:params) { { key: 'value' } }
-    let(:logger) { Logger.new($stdout) }
+    let(:operation_name) { :operation }
     let(:request) { double('request') }
     let(:response) { double('response') }
+    let(:logger) { Logger.new($stdout) }
+    let(:params) { { key: 'value' } }
     let(:metadata) { { foo: 'bar' } }
 
     subject do
       Context.new(
-        metadata.merge({
-                         request: request,
-                         response: response,
-                         params: params,
-                         logger: logger
-                       })
+        operation_name: operation_name,
+        request: request,
+        response: response,
+        logger: logger,
+        params: params,
+        metadata: metadata
       )
     end
 
     describe '#initialize' do
       it 'sets empty defaults' do
         context = Context.new
-        expect(context.params).to be_nil
-        expect(context.logger).to be_nil
+        expect(context.operation_name). to be_nil
         expect(context.request).to be_nil
         expect(context.response).to be_nil
-      end
-    end
-
-    describe '#request' do
-      it 'gets the request' do
-        expect(subject.request).to be request
-      end
-    end
-
-    describe '#response' do
-      it 'gets the response' do
-        expect(subject.response).to be response
-      end
-    end
-
-    describe '#params' do
-      it 'gets the params field' do
-        expect(subject.params).to be params
-      end
-    end
-
-    describe '#logger' do
-      it 'gets the logger field' do
-        expect(subject.logger).to be logger
+        expect(context.logger).to be_nil
+        expect(context.params).to be_nil
+        expect(context.metadata).to eq({})
       end
     end
 
     describe '#metadata' do
-      it 'gets the metadata field' do
-        expect(subject.metadata).to eq metadata
+      it 'allows for metadata to be set' do
+        subject.metadata[:bar] = 'baz'
+        expect(subject.metadata).to include(bar: 'baz')
       end
     end
   end
