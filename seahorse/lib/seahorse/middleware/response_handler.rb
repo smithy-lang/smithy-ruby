@@ -14,7 +14,7 @@ module Seahorse
       # @return [Output]
       def call(input, context)
         output = @app.call(input, context)
-        @handler.call(context.response, context)
+        @handler.call(@app, input, context)
         output
       end
 

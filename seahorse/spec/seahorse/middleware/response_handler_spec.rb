@@ -4,7 +4,7 @@ module Seahorse
   module Middleware
 
     describe ResponseHandler do
-      let(:app) { double('app') }
+      let(:app) { double('app', call: output) }
       let(:handler) { double('handler') }
 
       subject do
@@ -15,29 +15,26 @@ module Seahorse
       end
 
       describe '#call' do
-        let(:request) { Seahorse::HTTP::Request.new }
-        let(:response) { Seahorse::HTTP::Response.new }
-        let(:context) { {} }
-        let(:output) { Seahorse::Output.new }
+        let(:input) { double('input') }
+        let(:output) { double('output') }
+        let(:request) { double('request') }
+        let(:response) { double('response') }
+        let(:context) do
+          Context.new(
+            request: request,
+            response: response
+          )
+        end
 
         it 'calls the next middleware and then the handler' do
-          expect(app).to receive(:call).with(
-            request: request,
-            response: response,
-            context: context
-          ).and_return(output).ordered
+          expect(app).to receive(:call)
+            .with(input, context).ordered
 
-          expect(handler).to receive(:call).with(
-            request,
-            response,
-            context
-          ).ordered
+          expect(handler).to receive(:call)
+            .with(app, input, context).ordered
 
-          subject.call(
-            request: request,
-            response: response,
-            context: context
-          )
+          resp = subject.call(input, context)
+          expect(resp).to be output
         end
       end
     end
