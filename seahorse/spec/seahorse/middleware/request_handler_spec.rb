@@ -28,7 +28,7 @@ module Seahorse
 
         it 'calls the handler then the next middleware' do
           expect(handler).to receive(:call)
-            .with(app, input, context).ordered
+            .with(input, context).ordered
 
           expect(app).to receive(:call)
             .with(input, context).ordered
