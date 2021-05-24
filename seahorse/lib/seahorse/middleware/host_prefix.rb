@@ -4,11 +4,10 @@ module Seahorse
   module Middleware
     class HostPrefix
 
-      def initialize(app, disable_host_prefix:, host_prefix:, params:)
+      def initialize(app, disable_host_prefix:, host_prefix:)
         @app = app
         @disable_host_prefix = disable_host_prefix
         @host_prefix = host_prefix
-        @params = params
       end
 
       # @param input
@@ -16,8 +15,8 @@ module Seahorse
       # @return [Output]
       def call(input, context)
         unless @disable_host_prefix
-          prefix = apply_labels(@host_prefix, @params)
-          request.prefix_host(prefix)
+          prefix = apply_labels(@host_prefix, context.params)
+          context.request.prefix_host(prefix)
         end
         @app.call(input, context)
       end

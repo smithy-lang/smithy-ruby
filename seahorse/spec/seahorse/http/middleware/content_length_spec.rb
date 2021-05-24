@@ -32,7 +32,7 @@ module Seahorse
           context 'body is not set' do
             let(:body) { nil }
 
-            it 'does nothing and calls next middleware' do
+            it 'does not set the content-length and calls next middleware' do
               expect(app).to receive(:call).with(input, context)
               resp = subject.call(input, context)
               expect(request.headers['Content-Length']).to be_nil
