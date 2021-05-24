@@ -10,6 +10,7 @@ module Seahorse
       let(:stub_responses) { false }
       let(:stub_class) { double('stub_class') }
       let(:stubs) { Seahorse::Stubbing::Stubs.new }
+      let(:input) { Seahorse::Input.new }
 
       subject do
         Send.new(
@@ -24,7 +25,13 @@ module Seahorse
       describe '#call' do
         let(:request) { Seahorse::HTTP::Request.new }
         let(:response) { Seahorse::HTTP::Response.new }
-        let(:context) { { api_method: operation } }
+        let(:context) do
+          Seahorse::Context.new(
+            request: request,
+            response: response,
+            api_method: operation
+          )
+        end
 
         it 'sends the request and returns an output object' do
           expect(client).to receive(:transmit).with(
@@ -33,11 +40,7 @@ module Seahorse
           )
 
           expect(
-            subject.call(
-              request: request,
-              response: response,
-              context: context
-            )
+            subject.call(input, context)
           ).to be_a Seahorse::Output
         end
 
@@ -47,11 +50,7 @@ module Seahorse
           it 'gets the next stub and applies it' do
             expect(stubs).to receive(:next)
               .with(:operation).and_return(Exception)
-            output = subject.call(
-              request: request,
-              response: response,
-              context: context
-            )
+            output = subject.call(input, context)
             expect(output.error).to be_a(Exception)
           end
 
@@ -64,12 +63,8 @@ module Seahorse
 
               it 'calls the stub and applies it' do
                 expect(stub_proc).to receive(:call)
-                  .with(request, response, context).and_call_original
-                output = subject.call(
-                  request: request,
-                  response: response,
-                  context: context
-                )
+                  .with(context).and_call_original
+                output = subject.call(input, context)
                 expect(output.error).to be(exception)
               end
             end
@@ -77,29 +72,23 @@ module Seahorse
             context 'proc returns nil' do
               let(:url) { 'https://example.com' }
               let(:status) { 418 }
-              let(:more_context) { { foo: 'bar' } }
+              let(:more_context) { 'more_context' }
 
               let(:stub_proc) do
-                lambda do |req, res, ctx|
-                  req.url = url
-                  res.status = status
-                  ctx.merge!(more_context)
+                lambda do |ctx|
+                  ctx.response.status = status
+                  ctx[:more_context] = more_context
                   nil
                 end
               end
 
               it 'allows stubbing of request, response, and context' do
                 expect(stub_proc).to receive(:call)
-                  .with(request, response, context).and_call_original
+                  .with(context).and_call_original
                 expect(stub_class).to_not receive(:stub)
-                subject.call(
-                  request: request,
-                  response: response,
-                  context: context
-                )
-                expect(request.url).to eq url
+                subject.call(input, context)
                 expect(response.status).to eq status
-                expect(context).to include(more_context)
+                expect(context[:more_context]).to eq(more_context)
               end
             end
           end
@@ -108,11 +97,7 @@ module Seahorse
             let(:exception) { Exception.new }
             before { stubs.add_stubs(operation, [exception]) }
             it 'sets the output error to a new instance of the class' do
-              output = subject.call(
-                request: request,
-                response: response,
-                context: context
-              )
+              output = subject.call(input, context)
               expect(output.error).to be(exception)
             end
           end
@@ -120,11 +105,7 @@ module Seahorse
           context 'stub is a class' do
             before { stubs.add_stubs(operation, [Exception]) }
             it 'sets the output error to a new instance of the class' do
-              output = subject.call(
-                request: request,
-                response: response,
-                context: context
-              )
+              output = subject.call(input, context)
               expect(output.error).to be_a(Exception)
             end
           end
@@ -135,11 +116,7 @@ module Seahorse
 
             it 'uses the stub class to stub the response' do
               expect(stub_class).to receive(:stub).with(response, stub_hash)
-              subject.call(
-                request: request,
-                response: response,
-                context: context
-              )
+              subject.call(input, context)
             end
           end
 
@@ -148,11 +125,7 @@ module Seahorse
 
             it 'raises a ArgumentError' do
               expect do
-                subject.call(
-                  request: request,
-                  response: response,
-                  context: context
-                )
+                subject.call(input, context)
               end.to raise_error(ArgumentError)
             end
           end
