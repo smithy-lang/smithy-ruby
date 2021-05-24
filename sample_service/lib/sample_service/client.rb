@@ -148,7 +148,7 @@ module SampleService
           response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :get_high_score
+          operation_name: :get_high_score
         )
       )
       raise resp.error if resp.error
@@ -215,7 +215,7 @@ module SampleService
           response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :create_high_score
+          operation_name: :create_high_score
         )
       )
       raise resp.error if resp.error
@@ -283,7 +283,7 @@ module SampleService
           response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :update_high_score
+          operation_name: :update_high_score
         )
       )
       raise resp.error if resp.error
@@ -347,7 +347,7 @@ module SampleService
           response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :delete_high_score
+          operation_name: :delete_high_score
         )
       )
       raise resp.error if resp.error
@@ -406,7 +406,7 @@ module SampleService
           response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :list_high_scores
+          operation_name: :list_high_scores
         )
       )
       raise resp.error if resp.error
@@ -453,7 +453,7 @@ module SampleService
           response: Seahorse::HTTP::Response.new(body: output_stream(options, block)),
           params: params,
           logger: @logger,
-          api_method: :stream
+          operation_name: :stream
         )
       )
       raise resp.error if resp.error

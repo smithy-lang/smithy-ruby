@@ -4,13 +4,11 @@ module Seahorse
   module Middleware
 
     describe Send do
-      let(:app) { double('app') }
+      let(:app) { double('app', call: output) }
       let(:client) { double('client') }
-      let(:operation) { :operation }
       let(:stub_responses) { false }
       let(:stub_class) { double('stub_class') }
       let(:stubs) { Seahorse::Stubbing::Stubs.new }
-      let(:input) { double('Type::OperationInput') }
 
       subject do
         Send.new(
@@ -23,13 +21,16 @@ module Seahorse
       end
 
       describe '#call' do
-        let(:request) { Seahorse::HTTP::Request.new }
-        let(:response) { Seahorse::HTTP::Response.new }
+        let(:operation) { :operation }
+        let(:input) { double('Type::OperationInput') }
+
+        let(:request) { double('request') }
+        let(:response) { double('response') }
         let(:context) do
           Seahorse::Context.new(
             request: request,
             response: response,
-            api_method: operation
+            operation_name: operation
           )
         end
 
@@ -73,6 +74,7 @@ module Seahorse
               let(:url) { 'https://example.com' }
               let(:status) { 418 }
               let(:more_context) { 'more_context' }
+              let(:response) { Seahorse::HTTP::Response.new }
 
               let(:stub_proc) do
                 lambda do |ctx|
