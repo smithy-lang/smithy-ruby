@@ -4,10 +4,9 @@ module Seahorse
   module Middleware
 
     describe Parse do
-      let(:app) { double('app') }
+      let(:app) { double('app', call: output) }
       let(:error_parser) { double('error_parser') }
       let(:data_parser) { double('data_parser') }
-      let(:params) { { foo: 'bar' } }
 
       subject do
         Parse.new(
@@ -18,30 +17,30 @@ module Seahorse
       end
 
       describe '#call' do
-        let(:request) { Seahorse::HTTP::Request.new }
-        let(:response) { Seahorse::HTTP::Response.new }
-        let(:context) { {} }
-        let(:output) { Seahorse::Output.new }
+        let(:input) { double('input') }
+        let(:output) { Output.new }
+        let(:request) { double('request') }
+        let(:response) { double('response') }
+        let(:context) do
+          Context.new(
+            request: request,
+            response: response
+          )
+        end
 
         it 'calls the next middleware then parses an error or data' do
-          expect(app).to receive(:call).with(
-            request: request,
-            response: response,
-            context: context
-          ).and_return(output).ordered
+          expect(app).to receive(:call)
+            .with(input, context).ordered
 
           expect(error_parser).to receive(:parse).with(response).ordered
           expect(data_parser).to receive(:parse).with(response).ordered
 
-          subject.call(
-            request: request,
-            response: response,
-            context: context
-          )
+          resp = subject.call(input, context)
+          expect(resp).to be output
         end
 
         context 'response has an error' do
-          let(:response) { Seahorse::HTTP::Response.new(status: 404) }
+          let(:response) { double('response', status: 404) }
           let(:error) do
             Seahorse::ApiError.new(
               error_code: 'error_code',
@@ -50,20 +49,14 @@ module Seahorse
           end
 
           it 'parses the error' do
-            expect(app).to receive(:call).with(
-              request: request,
-              response: response,
-              context: context
-            ).and_return(output).ordered
+            expect(app).to receive(:call).with(input, context)
+              .and_return(output).ordered
             expect(error_parser).to receive(:parse)
               .with(response).ordered.and_return(error)
             expect(data_parser).not_to receive(:parse)
 
-            output = subject.call(
-              request: request,
-              response: response,
-              context: context
-            )
+            resp = subject.call(input, context)
+            expect(resp).to be output
             expect(output.error).to eq error
           end
         end
@@ -72,20 +65,15 @@ module Seahorse
           let(:data) { double('data') }
 
           it 'parses the data' do
-            expect(app).to receive(:call).with(
-              request: request,
-              response: response,
-              context: context
-            ).and_return(output).ordered
+            expect(app).to receive(:call)
+              .with(input, context).ordered
             expect(error_parser).to receive(:parse).with(response).ordered
-            expect(data_parser).to receive(:parse).with(response).and_return(data)
+            expect(data_parser).to receive(:parse)
+              .with(response).and_return(data)
 
-            output = subject.call(
-              request: request,
-              response: response,
-              context: context
-            )
-            expect(output.data).to eq data
+            resp = subject.call(input, context)
+            expect(resp).to be output
+            expect(resp.data).to eq data
           end
         end
       end

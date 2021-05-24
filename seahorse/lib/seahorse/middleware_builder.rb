@@ -33,8 +33,9 @@ module Seahorse
   #
   #    # invoked after a request has been built, but before it has
   #    # been signed/authorized
-  #    middleware.before_build do |request, response, context|
-  #      # do something here
+  #    middleware.before_build do |input, context|
+  #      # use input, inspect or modify the request
+  #      # context.request
   #    end
   #
   # ## Response Handlers
@@ -43,10 +44,11 @@ module Seahorse
   # and a HTTP response has been received.
   #
   #    # invoked after the HTTP response has been parsed
-  #    middleware.after_parse do |response, request, response|
-  #      # response.data
-  #      # response.error
-  #      # response.context
+  #    middleware.after_parse do |output, context|
+  #      # inspect or modify the output or context
+  #      # output.data
+  #      # output.error
+  #      # context.response
   #    end
   #
   # ## Around Handlers
@@ -58,23 +60,19 @@ module Seahorse
   #
   #     # invoke before the request  has been sent, receives the
   #     # response from the send middleware
-  #     middleware.around_send do |app, request, response, context|
+  #     middleware.around_send do |app, input, context|
   #
   #       # this code is invoked before the request is sent
   #       # ...
   #
-  #       # around handlers must call the next middleware in the stack
-  #       response = app.call(
-  #         request: request,
-  #         response: response,
-  #         context: context
-  #       )
+  #       # around handlers MUST call the next middleware in the stack
+  #       output = app.call(input, context)
   #
   #       # this code is invoked after the response has been received
   #       # ...
   #
   #       # around handlers must return the response down the stack
-  #       response
+  #       output
   #     end
   #
   class MiddlewareBuilder

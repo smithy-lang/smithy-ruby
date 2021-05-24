@@ -2,34 +2,33 @@
 
 module Seahorse
   class Context
-    def initialize(metadata = {})
-      @metadata = metadata
+
+    def initialize(options = {})
+      @operation_name = options[:operation_name]
+      @request = options[:request]
+      @response = options[:response]
+      @logger = options[:logger]
+      @params = options[:params]
+      @metadata = options[:metadata] || {}
     end
+
+    # @return [Symbol] Name of the API operation called.
+    attr_reader :operation_name
+
+    # @return [Seahorse::HTTP::Request]
+    attr_reader :request
+
+    # @return [Seahorse::HTTP::Response]
+    attr_reader :response
+
+    # @return [Logger] An instance of the logger configured for the Client.
+    attr_reader :logger
+
+    # @return [Hash] The hash of the original request parameters.
+    attr_reader :params
 
     # @return [Hash]
-    def params
-      @metadata[:params]
-    end
+    attr_reader :metadata
 
-    # @return [Logger]
-    def logger
-      @metadata[:logger]
-    end
-
-    # Returns the metadata for the given `key`.
-    # @param [Symbol] key
-    # @return [Object]
-    def [](key)
-      @metadata[key]
-    end
-
-    # Sets the request context metadata for the given `key`. Metadata is
-    # useful for middleware that need to keep state on the request, without
-    # sending that data with the request over HTTP.
-    # @param [Symbol] key
-    # @param [Object] value
-    def []=(key, value)
-      @metadata[key] = value
-    end
   end
 end

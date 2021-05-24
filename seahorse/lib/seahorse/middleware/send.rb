@@ -11,34 +11,37 @@ module Seahorse
         @stubs = stubs
       end
 
-      def call(request:, response:, context:)
+      # @param input
+      # @param context
+      # @return [Output]
+      def call(input, context)
         if @stub_responses
-          stub = @stubs.next(context[:api_method])
-          output = Output.new(context: context)
-          apply_stub(stub, request, response, context, output)
+          stub = @stubs.next(context.operation_name)
+          output = Output.new
+          apply_stub(stub, context, output)
           output
         else
           @client.transmit(
-            request: request,
-            response: response
+            request: context.request,
+            response: context.response
           )
-          Output.new(context: context)
+          Output.new
         end
       end
 
       private
 
-      def apply_stub(stub, request, response, context, output)
+      def apply_stub(stub, context, output)
         case stub
         when Proc
-          stub = stub.call(request, response, context)
-          apply_stub(stub, request, response, context, output) if stub
+          stub = stub.call(context)
+          apply_stub(stub, context, output) if stub
         when Exception
           output.error = stub
         when Class
           output.error = stub.new
         when Hash
-          @stub_class.stub(response, stub)
+          @stub_class.stub(context.response, stub)
         else
           raise ArgumentError, 'Unsupported stub type'
         end

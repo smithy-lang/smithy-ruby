@@ -2,6 +2,7 @@
 
 module Seahorse
   module HTTP
+
     describe Response do
       let(:status) { 242 }
       let(:headers) { Headers.new(headers: { 'key' => 'value' }) }
@@ -19,24 +20,7 @@ module Seahorse
           expect(response.body).to be_a StringIO
         end
       end
-
-      describe '#status' do
-        it 'gets the status field' do
-          expect(subject.status).to be status
-        end
-      end
-
-      describe '#headers' do
-        it 'gets the headers field' do
-          expect(subject.headers).to be headers
-        end
-      end
-
-      describe '#body' do
-        it 'gets the body field' do
-          expect(subject.body).to be body
-        end
-      end
     end
+
   end
 end
