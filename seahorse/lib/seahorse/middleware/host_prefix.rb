@@ -15,7 +15,7 @@ module Seahorse
       # @return [Output]
       def call(input, context)
         unless @disable_host_prefix
-          prefix = apply_labels(@host_prefix, context.params)
+          prefix = apply_labels(@host_prefix, input)
           context.request.prefix_host(prefix)
         end
         @app.call(input, context)
@@ -23,10 +23,10 @@ module Seahorse
 
       private
 
-      def apply_labels(host_prefix, params)
+      def apply_labels(host_prefix, input)
         host_prefix.gsub(/\{.+?\}/) do |host_label|
           key = host_label.delete('{}')
-          value = params[key.to_sym]
+          value = input[key.to_sym]
 
           if value.nil? || value.empty?
             raise ArgumentError,

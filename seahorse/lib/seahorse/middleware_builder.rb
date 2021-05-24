@@ -44,8 +44,8 @@ module Seahorse
   # and a HTTP response has been received.
   #
   #    # invoked after the HTTP response has been parsed
-  #    middleware.after_parse do |input, output, response|
-  #      # inspect or modify the output or response
+  #    middleware.after_parse do |output, context|
+  #      # inspect or modify the output or context
   #      # output.data
   #      # output.error
   #      # context.response

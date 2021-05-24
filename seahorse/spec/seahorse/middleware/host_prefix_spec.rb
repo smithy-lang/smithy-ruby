@@ -16,17 +16,17 @@ module Seahorse
       end
 
       describe '#call' do
-        let(:input) { double('input') }
+        let(:struct) { Struct.new(:foo, keyword_init: true) }
+        let(:input) { struct.new }
+
         let(:output) { double('output') }
         let(:url) { 'https://example.com' }
         let(:request) { Seahorse::HTTP::Request.new(url: url) }
         let(:response) { double('response') }
-        let(:params) { {} }
         let(:context) do
           Context.new(
             request: request,
-            response: response,
-            params: params
+            response: response
           )
         end
 
@@ -45,9 +45,9 @@ module Seahorse
 
           context 'host prefix has labels' do
             let(:host_prefix) { '{foo}.' }
-            let(:params) { { foo: 'bar' } }
+            let(:input) { struct.new(foo: 'bar') }
 
-            it 'populates the label with params' do
+            it 'populates the label with input' do
               expect(app).to receive(:call).with(input, context)
 
               resp = subject.call(input, context)
@@ -56,7 +56,7 @@ module Seahorse
             end
 
             context 'params does not have the label' do
-              let(:params) { {} }
+              let(:input) { struct.new }
 
               it 'raises an ArgumentError' do
                 expect do
@@ -66,7 +66,7 @@ module Seahorse
             end
 
             context 'params has an empty label' do
-              let(:params) { { foo: '' } }
+              let(:input) { struct.new(foo: '') }
 
               it 'raises an ArgumentError' do
                 expect do

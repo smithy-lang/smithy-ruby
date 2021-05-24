@@ -25,7 +25,7 @@ module Seahorse
     attr_reader :logger
 
     # @return [Hash] The hash of the original request parameters.
-    attr_accessor :params
+    attr_reader :params
 
     # @return [Hash]
     attr_reader :metadata
