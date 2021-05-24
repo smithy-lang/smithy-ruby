@@ -114,7 +114,7 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Seahorse::Input.new(params: params, data: Params::GetHighScoreInput.build(params))
+      input = Seahorse::Input.new(params: params, data: Types::GetHighScoreInput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
@@ -180,7 +180,7 @@ module SampleService
     #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Seahorse::Input.new(params: params, data: Params::CreateHighScoreInput.build(params))
+      input = Seahorse::Input.new(params: params, data: Types::CreateHighScoreInput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScore,
@@ -248,7 +248,7 @@ module SampleService
     #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Seahorse::Input.new(params: params, data: Params::UpdateHighScoreInput.build(params))
+      input = Seahorse::Input.new(params: params, data: Types::UpdateHighScoreInput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScore,
@@ -312,7 +312,7 @@ module SampleService
     #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Seahorse::Input.new(params: params, data: Params::DeleteHighScoreInput.build(params))
+      input = Seahorse::Input.new(params: params, data: Types::DeleteHighScoreInput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScore,
@@ -371,7 +371,7 @@ module SampleService
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Seahorse::Input.new(params: params, data: Params::ListHighScoresInput.build(params))
+      input = Seahorse::Input.new(params: params, data: Types::ListHighScoresInput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::ListHighScores,
@@ -421,7 +421,7 @@ module SampleService
 
     def stream(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Seahorse::Input.new(params: params, data: Params::StreamInputOutput.build(params))
+      input = Seahorse::Input.new(params: params, data: Types::StreamInputOutput.build(params))
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::Stream,
