@@ -54,7 +54,7 @@ module Seahorse
     end
 
     describe '#metadata' do
-      it 'gets the metadat field' do
+      it 'gets the metadata field' do
         expect(subject.metadata).to eq metadata
       end
     end

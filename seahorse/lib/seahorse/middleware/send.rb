@@ -16,7 +16,7 @@ module Seahorse
       # @return [Output]
       def call(input, context)
         if @stub_responses
-          stub = @stubs.next(context[:api_method])
+          stub = @stubs.next(context.metadata[:api_method])
           output = Output.new
           apply_stub(stub, context, output)
           output

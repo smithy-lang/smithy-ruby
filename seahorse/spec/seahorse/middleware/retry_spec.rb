@@ -7,6 +7,7 @@ module Seahorse
       let(:app) { double('app') }
       let(:max_attempts) { 4 }
       let(:max_delay) { 10 }
+      let(:input) { double('Type::OperationInput') }
 
       subject do
         Retry.new(
@@ -19,20 +20,16 @@ module Seahorse
       describe '#call' do
         let(:request) { Seahorse::HTTP::Request.new }
         let(:response) { Seahorse::HTTP::Response.new }
-        let(:context) { {} }
-
+        let(:context) do
+          Seahorse::Context.new(
+            request: request,
+            response: response,
+          )
+        end
         it 'calls the next middleware' do
-          expect(app).to receive(:call).with(
-            request: request,
-            response: response,
-            context: context
-          )
+          expect(app).to receive(:call).with(input, context)
 
-          subject.call(
-            request: request,
-            response: response,
-            context: context
-          )
+          subject.call(input, context)
         end
 
         context 'middleware raises NetworkingError' do
@@ -40,9 +37,7 @@ module Seahorse
 
           it 'retries with exponential backoff and jitter' do
             expect(app).to receive(:call).with(
-              request: request,
-              response: response,
-              context: context
+              input, context
             ).and_raise(error).exactly(4).times
             allow(Kernel).to receive(:rand).and_return(1)
             expect(Kernel).to receive(:sleep).with(1)
@@ -50,28 +45,18 @@ module Seahorse
             expect(Kernel).to receive(:sleep).with(4)
 
             expect do
-              subject.call(
-                request: request,
-                response: response,
-                context: context
-              )
+              subject.call(input, context)
             end.to raise_error(error)
           end
 
           it 'retries up to max_attempts times' do
             expect(app).to receive(:call).with(
-              request: request,
-              response: response,
-              context: context
+              input, context
             ).and_raise(error).exactly(4).times
             allow(Kernel).to receive(:sleep)
 
             expect do
-              subject.call(
-                request: request,
-                response: response,
-                context: context
-              )
+              subject.call(input, context)
             end.to raise_error(error)
           end
 
@@ -80,19 +65,13 @@ module Seahorse
 
             it 'backoff is bounded by max_delay' do
               expect(app).to receive(:call).with(
-                request: request,
-                response: response,
-                context: context
+                input, context
               ).and_raise(error).exactly(4).times
               allow(Kernel).to receive(:rand).and_return(1)
               expect(Kernel).to receive(:sleep).with(1).exactly(3).times
 
               expect do
-                subject.call(
-                  request: request,
-                  response: response,
-                  context: context
-                )
+                subject.call(input, context)
               end.to raise_error(error)
             end
           end

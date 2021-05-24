@@ -10,7 +10,7 @@ module Seahorse
       let(:stub_responses) { false }
       let(:stub_class) { double('stub_class') }
       let(:stubs) { Seahorse::Stubbing::Stubs.new }
-      let(:input) { Seahorse::Input.new }
+      let(:input) { double('Type::OperationInput') }
 
       subject do
         Send.new(
@@ -77,7 +77,7 @@ module Seahorse
               let(:stub_proc) do
                 lambda do |ctx|
                   ctx.response.status = status
-                  ctx[:more_context] = more_context
+                  ctx.metadata[:more_context] = more_context
                   nil
                 end
               end
@@ -88,7 +88,7 @@ module Seahorse
                 expect(stub_class).to_not receive(:stub)
                 subject.call(input, context)
                 expect(response.status).to eq status
-                expect(context[:more_context]).to eq(more_context)
+                expect(context.metadata[:more_context]).to eq(more_context)
               end
             end
           end
