@@ -55,7 +55,7 @@ module Seahorse
               expect(resp).to be output
             end
 
-            context 'params does not have the label' do
+            context 'input does not have the label' do
               let(:input) { struct.new }
 
               it 'raises an ArgumentError' do
@@ -65,7 +65,7 @@ module Seahorse
               end
             end
 
-            context 'params has an empty label' do
+            context 'input has an empty label' do
               let(:input) { struct.new(foo: '') }
 
               it 'raises an ArgumentError' do
