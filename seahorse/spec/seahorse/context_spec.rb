@@ -4,15 +4,40 @@ module Seahorse
   describe Context do
     let(:params) { { key: 'value' } }
     let(:logger) { Logger.new($stdout) }
+    let(:request) { double('request') }
+    let(:response) { double('response') }
     let(:metadata) { { foo: 'bar' } }
 
-    subject { Context.new(metadata.merge({params: params, logger: logger})) }
+    subject do
+      Context.new(
+        metadata.merge({
+                         request: request,
+                         response: response,
+                         params: params,
+                         logger: logger
+                       })
+      )
+    end
 
     describe '#initialize' do
       it 'sets empty defaults' do
         context = Context.new
         expect(context.params).to be_nil
         expect(context.logger).to be_nil
+        expect(context.request).to be_nil
+        expect(context.response).to be_nil
+      end
+    end
+
+    describe '#request' do
+      it 'gets the request' do
+        expect(subject.request).to be request
+      end
+    end
+
+    describe '#response' do
+      it 'gets the response' do
+        expect(subject.response).to be response
       end
     end
 
@@ -28,18 +53,11 @@ module Seahorse
       end
     end
 
-    describe '#[]' do
-      it 'delegates to metadata' do
-        expect(subject[:foo]).to eq 'bar'
-      end
-
-    end
-
-    describe '#[]=' do
-      it 'delegates to metadata' do
-        subject[:bar] = 'baz'
-        expect(subject[:bar]).to eq 'baz'
+    describe '#metadata' do
+      it 'gets the metadat field' do
+        expect(subject.metadata).to eq metadata
       end
     end
   end
+
 end
