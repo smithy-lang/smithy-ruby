@@ -4,7 +4,7 @@ module Seahorse
   describe Struct do
 
     let(:struct) do
-      Struct.new(
+      ::Struct.new(
         :struct_value,
         :array_value,
         :hash_value,
