@@ -27,30 +27,6 @@ module Seahorse
         end
       end
 
-      describe '#http_method' do
-        it 'gets the http_method field' do
-          expect(subject.http_method).to be http_method
-        end
-      end
-
-      describe '#url' do
-        it 'gets the url field' do
-          expect(subject.url).to be url
-        end
-      end
-
-      describe '#headers' do
-        it 'gets the headers field' do
-          expect(subject.headers).to be headers
-        end
-      end
-
-      describe '#body' do
-        it 'gets the body field' do
-          expect(subject.body).to be body
-        end
-      end
-
       describe '#append_path' do
         it 'appends to the url' do
           subject.append_path('test')

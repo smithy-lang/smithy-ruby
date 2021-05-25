@@ -10,18 +10,13 @@ module Seahorse
         @data_parser = data_parser
       end
 
-      # @param request
-      # @param response
+      # @param input
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
-        output = @app.call(
-          request: request,
-          response: response,
-          context: context
-        )
-        parse_error(response, output) unless output.error
-        parse_data(response, output) unless output.error
+      def call(input, context)
+        output = @app.call(input, context)
+        parse_error(context.response, output) unless output.error
+        parse_data(context.response, output) unless output.error
         output
       end
 

@@ -16,12 +16,6 @@ module Seahorse
       it 'adds to the original errors message' do
         expect(subject.message).to include(original_message)
       end
-
-      describe '#original_error' do
-        it 'gets the original_error field' do
-          expect(subject.original_error).to be original_error
-        end
-      end
     end
 
   end

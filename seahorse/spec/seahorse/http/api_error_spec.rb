@@ -2,6 +2,7 @@
 
 module Seahorse
   module HTTP
+
     describe ApiError do
       let(:http_status) { 404 }
       let(:http_headers) do
@@ -35,30 +36,7 @@ module Seahorse
       it 'raises with the message' do
         expect { raise subject }.to raise_error(ApiError, message)
       end
-
-      describe '#http_status' do
-        it 'gets the http_status field' do
-          expect(subject.http_status).to be http_status
-        end
-      end
-
-      describe '#http_headers' do
-        it 'gets the http_headers field' do
-          expect(subject.http_headers).to be http_headers
-        end
-      end
-
-      describe '#http_body' do
-        it 'gets the http_body field' do
-          expect(subject.http_body).to be http_body
-        end
-      end
-
-      describe '#request_id' do
-        it 'gets the request_id field' do
-          expect(subject.request_id).to be request_id
-        end
-      end
     end
+
   end
 end

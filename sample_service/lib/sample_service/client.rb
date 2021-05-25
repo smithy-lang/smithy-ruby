@@ -52,12 +52,6 @@ module SampleService
     #
     #       rand_between(0, min(max_delay, 2^num_of_attempts))
     #
-    # @option options [Boolean] :raise_api_errors (true)
-    #   When `true`, errors returned from the API in the HTTP
-    #   response will be raised. When `false`, API errors can
-    #   be accessed by calling `#error` on the response
-    #   object returned.
-    #
     # @option options [Boolean] :http_wire_trace (false) When `true`,
     #   HTTP debug output will be sent to the `:logger`.
     #
@@ -88,7 +82,6 @@ module SampleService
       @endpoint = options[:endpoint]
       @max_attempts = options.fetch(:max_attempts, 4)
       @max_delay = options.fetch(:max_delay, 8)
-      @raise_api_errors = options.fetch(:raise_api_errors, true)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
       @validate_input = options.fetch(:validate_input, false)
       @middleware = Seahorse::MiddlewareBuilder.new(options[:middleware])
@@ -118,13 +111,11 @@ module SampleService
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::GetHighScore,
-        validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
+        validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
         Seahorse::Middleware::Build,
-        builder: Builders::GetHighScore,
-        input: input
+        builder: Builders::GetHighScore
       )
       stack.use(
         Seahorse::HTTP::Middleware::ContentLength
@@ -151,16 +142,17 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
+        input: input,
         context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :get_high_score
+          operation_name: :get_high_score
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise resp.error if resp.error
+      resp.data
     end
 
     # Create a new high score
@@ -187,12 +179,10 @@ module SampleService
         Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScore,
         validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
       )
       stack.use(
         Seahorse::Middleware::Build,
         builder: Builders::CreateHighScore,
-        input: input
       )
       stack.use(
         Seahorse::HTTP::Middleware::ContentLength
@@ -219,16 +209,17 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
+        input: input,
         context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :create_high_score
+          operation_name: :create_high_score
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise resp.error if resp.error
+      resp.data
     end
 
     # Update a high score
@@ -255,13 +246,11 @@ module SampleService
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScore,
-        validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
+        validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
         Seahorse::Middleware::Build,
-        builder: Builders::UpdateHighScore,
-        input: input
+        builder: Builders::UpdateHighScore
       )
       stack.use(
         Seahorse::HTTP::Middleware::ContentLength
@@ -288,16 +277,17 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
+        input: input,
         context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :update_high_score
+          operation_name: :update_high_score
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise resp.error if resp.error
+      resp.data
     end
 
     # Delete a high score
@@ -320,13 +310,11 @@ module SampleService
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScore,
-        validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
+        validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
         Seahorse::Middleware::Build,
-        builder: Builders::DeleteHighScore,
-        input: input
+        builder: Builders::DeleteHighScore
       )
       stack.use(
         Seahorse::HTTP::Middleware::ContentLength
@@ -353,16 +341,17 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
+        input: input,
         context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :delete_high_score
+          operation_name: :delete_high_score
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise resp.error if resp.error
+      resp.data
     end
 
     # List all high scores
@@ -380,13 +369,11 @@ module SampleService
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::ListHighScores,
-        validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
+        validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
         Seahorse::Middleware::Build,
-        builder: Builders::ListHighScores,
-        input: input
+        builder: Builders::ListHighScores
       )
       stack.use(
         Seahorse::HTTP::Middleware::ContentLength
@@ -413,16 +400,17 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new,
+        input: input,
         context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new,
           params: params,
           logger: @logger,
-          api_method: :list_high_scores
+          operation_name: :list_high_scores
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise resp.error if resp.error
+      resp.data
     end
 
     def stream(params = {}, options = {}, &block)
@@ -431,13 +419,11 @@ module SampleService
       stack.use(
         Seahorse::Middleware::Validate,
         validator: Validators::Stream,
-        validate_input: options.fetch(:validate_input, @validate_input),
-        input: input
+        validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
         Seahorse::Middleware::Build,
-        builder: Builders::Stream,
-        input: input
+        builder: Builders::Stream
       )
       stack.use(
         Seahorse::Middleware::Retry,
@@ -461,16 +447,17 @@ module SampleService
       )
       apply_middleware(stack, options[:middleware])
       resp = stack.run(
-        request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-        response: Seahorse::HTTP::Response.new(body: output_stream(options, block)),
+        input: input,
         context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, block)),
           params: params,
           logger: @logger,
-          api_method: :stream
+          operation_name: :stream
         )
       )
-      raise resp.error if resp.error && options.fetch(:raise_api_errors, @raise_api_errors)
-      resp
+      raise resp.error if resp.error
+      resp.data
     end
 
     private

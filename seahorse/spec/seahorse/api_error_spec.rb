@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Seahorse
+
   describe ApiError do
     let(:error_code) { 'error_code' }
     let(:message) { 'message' }
@@ -19,11 +20,6 @@ module Seahorse
     it 'raises with the message' do
       expect { raise subject }.to raise_error(ApiError, message)
     end
-
-    describe '#error_code' do
-      it 'gets the error_code field' do
-        expect(subject.error_code).to be error_code
-      end
-    end
   end
+
 end

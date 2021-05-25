@@ -6,20 +6,19 @@ module Seahorse
     describe Validate do
       let(:app) { double('app') }
       let(:validator) { double('validator') }
-      let(:input) { { foo: 'bar' } }
+      let(:data) { {foo: 'bar'} }
+      let(:input) { double('Type::OperationInput') }
 
       subject do
         Validate.new(
           app,
           validator: validator,
-          input: input,
           validate_input: validate_input
         )
       end
 
       describe '#call' do
         let(:request) { Seahorse::HTTP::Request.new }
-        let(:response) { Seahorse::HTTP::Response.new }
         let(:context) { {} }
 
         context 'validate_input is true' do
@@ -28,17 +27,9 @@ module Seahorse
           it 'validates the request then calls the next middleware' do
             expect(validator).to receive(:validate!)
               .with(input: input, context: 'input').ordered
-            expect(app).to receive(:call).with(
-              request: request,
-              response: response,
-              context: context
-            ).ordered
+            expect(app).to receive(:call).with(input, context)
 
-            subject.call(
-              request: request,
-              response: response,
-              context: context
-            )
+            subject.call(input, context)
           end
         end
 
@@ -46,17 +37,10 @@ module Seahorse
           let(:validate_input) { false }
 
           it 'calls the next middleware' do
-            expect(app).to receive(:call).with(
-              request: request,
-              response: response,
-              context: context
-            )
+            expect(validator).not_to receive(:validate!)
+            expect(app).to receive(:call).with(input, context)
 
-            subject.call(
-              request: request,
-              response: response,
-              context: context
-            )
+            subject.call(input, context)
           end
         end
       end

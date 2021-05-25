@@ -10,18 +10,13 @@ module Seahorse
         @max_delay = max_delay
       end
 
-      # @param request
-      # @param response
+      # @param input
       # @param context
       # @return [Output]
-      def call(request:, response:, context:)
+      def call(input, context)
         attempt = 1
         begin
-          @app.call(
-            request: request,
-            response: response,
-            context: context
-          )
+          @app.call(input, context)
         rescue Seahorse::HTTP::NetworkingError => error
           if attempt < @max_attempts
             Kernel.sleep(backoff_with_jitter(attempt))

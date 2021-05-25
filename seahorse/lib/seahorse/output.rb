@@ -2,10 +2,9 @@
 
 module Seahorse
   class Output
-    def initialize(error: nil, data: nil, context: nil)
+    def initialize(error: nil, data: nil)
       @error = error
       @data = data
-      @context = context
     end
 
     # @return [StandardError, nil]
@@ -13,8 +12,5 @@ module Seahorse
 
     # @return [Struct, nil]
     attr_accessor :data
-
-    # @return [Context]
-    attr_accessor :context
   end
 end
