@@ -3,7 +3,7 @@
 module Seahorse
   describe Validator do
 
-    let(:input_type) { Struct.new(:member, keyword_init: true) }
+    let(:input_type) { ::Struct.new(:member, keyword_init: true) }
     let(:input) { input_type.new(params) }
     let(:context) { 'input' }
 
