@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seahorse
-  module Struct
+  module Shape
 
     # Deeply converts the Struct into a hash. Structure members that
     # are `nil` are omitted from the resultant hash.

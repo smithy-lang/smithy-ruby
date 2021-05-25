@@ -4,14 +4,14 @@ module Seahorse
   describe Struct do
 
     let(:struct) do
-      ::Struct.new(
+      Struct.new(
         :struct_value,
         :array_value,
         :hash_value,
         :value,
         keyword_init: true
       ) do
-        include Seahorse::Struct
+        include Seahorse::Shape
       end
     end
 
