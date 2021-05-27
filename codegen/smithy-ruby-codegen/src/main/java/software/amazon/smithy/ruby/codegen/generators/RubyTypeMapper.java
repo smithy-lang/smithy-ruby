@@ -1,41 +1,10 @@
-/*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 package software.amazon.smithy.ruby.codegen.generators;
 
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.FloatShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
-import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
-import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.SetShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
-import software.amazon.smithy.model.shapes.StringShape;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.shapes.*;
 
 /**
- * Maps Shapes to their RBS type (eg string to String, list to Array[Type]).
+ * Maps Shapes to their RBS type (eg string to String, list to Array[Type])
  */
 public class RubyTypeMapper extends ShapeVisitor.Default<String> {
     private final Model model;
@@ -102,9 +71,7 @@ public class RubyTypeMapper extends ShapeVisitor.Default<String> {
 
     @Override
     public String mapShape(MapShape shape) {
-        //TODO: Infer type of value
-        // is symbol the right type for key or should it be String?
-        return "Hash[Symbol, untyped]";
+        return "Hash[Symbol, untyped]"; //TODO: Infer type of value,and is symbol the right type for key or should it be String?
     }
 
     @Override
@@ -119,8 +86,7 @@ public class RubyTypeMapper extends ShapeVisitor.Default<String> {
 
     @Override
     public String unionShape(UnionShape shape) {
-        return shape.getId()
-                .getName(); //TODO: Right now this will jsut be a struct.  but pending union type
+        return shape.getId().getName(); //TODO: Right now this will jsut be a struct.  but pending union type
     }
 
     @Override

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -30,8 +31,7 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
  * parameters that should not be serialized, but are needed for the SDK's customizations.
  */
 public class NoSerializeTrait extends AnnotationTrait {
-    public static final ShapeId ID =
-            ShapeId.from("smithy.go.trait#NoSerialize");
+    public static final ShapeId ID = ShapeId.from("smithy.go.trait#NoSerialize");
 
     public NoSerializeTrait() {
         this(Node.objectNode());
@@ -39,6 +39,12 @@ public class NoSerializeTrait extends AnnotationTrait {
 
     public NoSerializeTrait(ObjectNode node) {
         super(ID, node);
+    }
+
+    public static final class Provider extends AnnotationTrait.Provider<NoSerializeTrait> {
+        public Provider() {
+            super(ID, NoSerializeTrait::new);
+        }
     }
 
     /**
@@ -58,13 +64,6 @@ public class NoSerializeTrait extends AnnotationTrait {
      */
     public static Predicate<HttpBinding> excludeNoSerializeHttpBindingMembers() {
         return binding -> !binding.getMember().hasTrait(NoSerializeTrait.class);
-    }
-
-    public static final class Provider
-            extends AnnotationTrait.Provider<NoSerializeTrait> {
-        public Provider() {
-            super(ID, NoSerializeTrait::new);
-        }
     }
 }
 

@@ -16,30 +16,17 @@
 package software.amazon.smithy.ruby.codegen.middleware;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.ruby.codegen.ClientConfig;
-import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.OperationPredicate;
-import software.amazon.smithy.ruby.codegen.ServicePredicate;
+import software.amazon.smithy.ruby.codegen.*;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -60,6 +47,7 @@ public class Middleware {
     private final OperationPredicate operationPredicate;
     private final RenderAdd renderAdd;
     private final WriteAdditionalFiles writeAdditionalFiles;
+
 
 
     // params could include any Ruby code
@@ -92,21 +80,17 @@ public class Middleware {
         return clientConfig;
     }
 
-    public Map<String, String> getAdditionalParams() {
-        return additionalParams;
-    }
+    public Map<String, String> getAdditionalParams() { return additionalParams; }
 
     public boolean includeFor(Model model, ServiceShape service) {
         return servicePredicate.test(model, service);
     }
 
-    public boolean includeFor(Model model, ServiceShape service,
-                              OperationShape operation) {
+    public boolean includeFor(Model model, ServiceShape service, OperationShape operation) {
         return operationPredicate.test(model, service, operation);
     }
 
-    public void renderAdd(CodeWriter writer, GenerationContext context,
-                          OperationShape operation) {
+    public void renderAdd(CodeWriter writer, GenerationContext context, OperationShape operation) {
         renderAdd.renderAdd(writer, this, context, operation);
     }
 
@@ -117,23 +101,17 @@ public class Middleware {
     @FunctionalInterface
     public interface RenderAdd {
         /**
-         * Called to Render the addition of this middleware to the stack.
-         *
-         * @param writer     - codewriter to render with
-         * @param middleware - middleware to render
-         * @param context    - additional context
-         * @param operation  - operation being rendered
+         * Called to Render the addition of this middleware to the stack
          */
-        void renderAdd(CodeWriter writer, Middleware middleware,
-                       GenerationContext context, OperationShape operation);
+        void renderAdd(CodeWriter writer, Middleware middleware, GenerationContext context, OperationShape operation);
     }
 
     @FunctionalInterface
     public interface WriteAdditionalFiles {
         /**
-         * Called to write out additional files needed by this Middleware.
+         * Called to write out additional files needed by this Middleware
          *
-         * @param context GenerationContext - allows access to file manifest and symbol providers
+         * @param context   GenerationContext - allows access to file manifest and symbol providers
          * @return List of the relative paths of files written, which will be required in client.rb.
          */
         List<String> writeAdditionalFiles(GenerationContext context);
@@ -142,71 +120,58 @@ public class Middleware {
     @FunctionalInterface
     public interface OperationParams {
         /**
-         * Called to get additional, operation specific parameters.
+         * Called to get additional, operation specific parameters
          *
          * @param context   GenerationContext - allows access to file manifest and symbol providers
          * @param operation The operation
          * @return List of the relative paths of files written, which will be required in client.rb.
          */
-        Map<String, String> params(GenerationContext context,
-                                   OperationShape operation);
+        Map<String, String> params(GenerationContext context, OperationShape operation);
     }
 
     public static class Builder implements SmithyBuilder<Middleware> {
 
-        private static final RenderAdd DEFAULT_RENDER_ADD =
-                (writer, middleware, context, operation) -> {
-                    Set<ClientConfig> config = middleware.getClientConfig();
+        private static final RenderAdd DEFAULT_RENDER_ADD = (writer, middleware, context, operation) -> {
+            Set<ClientConfig> config = middleware.getClientConfig();
 
-                    Map<String, String> params =
-                            middleware.getAdditionalParams();
-                    params.putAll(middleware.operationParams
-                            .params(context, operation));
+            Map<String, String> params = middleware.getAdditionalParams();
+            params.putAll(middleware.operationParams.params(context, operation));
 
-                    config.stream()
-                            .forEach((c) -> {
-                                params.put(c.getName(),
-                                        "options.fetch(:" + c.getName()
-                                                + ", @" + c.getName() + ")");
-                            });
+            config.stream()
+                    .forEach((c) -> {
+                        params.put(c.getName(), "options.fetch(:" + c.getName() + ", @" + c.getName() + ")");
+                    });
 
-                    if (params.isEmpty()) {
-                        writer.write("stack.use($L)", middleware.getKlass());
-                    } else {
-                        writer.write("stack.use($L,", middleware.getKlass());
-                        writer.indent();
-                        String methodArgsBlock = params
-                                .entrySet()
-                                .stream()
-                                .map(entry -> entry.getKey() + ": "
-                                        + entry.getValue())
-                                .collect(Collectors.joining(",\n"));
-                        writer.writeInline(methodArgsBlock);
-                        writer.dedent();
-                        writer.write("\n)");
-                    }
-                };
-        private byte order = 0;
+            if (params.isEmpty()) {
+                writer.write("stack.use($L)", middleware.getKlass());
+            }
+            else {
+                writer.write("stack.use($L,", middleware.getKlass());
+                writer.indent();
+                String methodArgsBlock = params
+                        .entrySet()
+                        .stream()
+                        .map(entry -> entry.getKey() + ": " + entry.getValue())
+                        .collect(Collectors.joining(",\n"));
+                writer.writeInline(methodArgsBlock);
+                writer.dedent();
+                writer.write("\n)");
+            }
+        };
+
         private String klass;
         private MiddlewareStackStep step;
+        private byte order = 0;
         private Set<ClientConfig> clientConfig = new HashSet<>();
-        private OperationParams operationParams =
-                (context, operation) -> new HashMap<>();
+        private OperationParams operationParams = (context, operation) -> new HashMap<>();
         private Map<String, String> additionalParams = new HashMap<>();
         private ServicePredicate servicePredicate = (model, service) -> true;
-        private OperationPredicate operationPredicate =
-                (model, service, operation) -> true;
+        private OperationPredicate operationPredicate = (model, service, operation) -> true;
         private RenderAdd renderAdd = DEFAULT_RENDER_ADD;
-        private WriteAdditionalFiles writeAdditionalFiles =
-                (context) -> Collections.emptyList();
+        private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
 
         public Builder klass(String klass) {
             this.klass = klass;
-            return this;
-        }
-
-        public Builder order(byte order) {
-            this.order = order;
             return this;
         }
 
@@ -243,18 +208,14 @@ public class Middleware {
          * <p>By default, a plugin applies globally to a service, which thereby
          * applies to every operation when the middleware stack is copied.
          *
-         * @param operationNames - operations this should apply to
          * @return Returns the builder.
          */
         public Builder appliesOnlyToOperations(String... operationNames) {
-            return appliesOnlyToOperations(
-                    new HashSet(Arrays.asList(operationNames)));
+            return appliesOnlyToOperations(new HashSet(Arrays.asList(operationNames)));
         }
 
         public Builder appliesOnlyToOperations(Set<String> operationNames) {
-            return operationPredicate(
-                    (model, service, operation) -> operationNames
-                            .contains(operation.getId().getName()));
+            return operationPredicate((model, service, operation) -> operationNames.contains(operation.getId().getName()));
         }
 
         public Builder operationPredicate(OperationPredicate p) {
@@ -263,8 +224,7 @@ public class Middleware {
         }
 
         public Builder appliesOnlyToServices(Set<String> serviceNames) {
-            return servicePredicate((model, service) -> serviceNames
-                    .contains(service.getId().getName()));
+            return servicePredicate( (model, service) -> serviceNames.contains(service.getId().getName()));
         }
 
         public Builder servicePredicate(ServicePredicate p) {
@@ -292,23 +252,14 @@ public class Middleware {
                 try {
 
                     File f = new File(rubyFileName);
-                    InputStream inputStream = new FileInputStream(f);
-                    Reader fileReader =
-                            new InputStreamReader(inputStream,
-                                    StandardCharsets.UTF_8);
+                    Reader fileReader = new FileReader(f);
                     System.out.println("Basename: " + f.getName());
-                    String relativeName = "middleware/" + f.getName();
-                    String fileName =
-                            context.getRubySettings().getGemName() + "/lib/"
-                                    + context.getRubySettings().getGemName()
-                                    + "/" + relativeName;
+                    String relativeName =  "middleware/" + f.getName();
+                    String fileName = context.getRubySettings().getGemName() + "/lib/" + context.getRubySettings().getGemName() + "/" + relativeName;
                     context.getFileManifest().writeFile(fileName, fileReader);
-                    fileReader.close();
                     return Collections.singletonList(relativeName);
-                } catch (IOException e) {
-                    throw new CodegenException(
-                            "Error reading rubySource file: " + rubyFileName,
-                            e);
+                } catch (FileNotFoundException e) {
+                    throw new CodegenException("Unable to read rubySource file: " + rubyFileName, e);
                 }
             };
             return this;

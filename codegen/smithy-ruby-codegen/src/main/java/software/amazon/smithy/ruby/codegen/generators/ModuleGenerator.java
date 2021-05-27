@@ -15,11 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.List;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+
+import java.util.List;
 
 public class ModuleGenerator {
     private final GenerationContext context;
@@ -35,12 +36,10 @@ public class ModuleGenerator {
 
         writer.write("require 'seahorse'\n");
 
-        String[] requires =
-                {"builders", "client", "errors", "parsers", "types"};
+        String[] requires = {"builders", "client", "errors", "parsers", "types"};
 
         for (String require : requires) {
-            writer.write("require_relative '$L/$L'", settings.getGemName(),
-                    require);
+            writer.write("require_relative '$L/$L'", settings.getGemName(), require);
         }
 
         for (String require : additionalFiles) {
@@ -53,8 +52,7 @@ public class ModuleGenerator {
                 .write("GEM_VERSION = '$L'", settings.getGemVersion())
                 .closeBlock("end");
 
-        String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
+        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
 
         fileManifest.writeFile(fileName, writer.toString());
     }
