@@ -5,7 +5,7 @@ module SampleService
       :message,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -58,7 +58,7 @@ module SampleService
       :score,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -98,7 +98,7 @@ module SampleService
       :updated_at,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -121,7 +121,7 @@ module SampleService
       :id,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -140,7 +140,7 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -159,7 +159,7 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -183,7 +183,7 @@ module SampleService
       :location,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -208,7 +208,7 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -228,7 +228,7 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -247,7 +247,7 @@ module SampleService
       :id,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -261,7 +261,7 @@ module SampleService
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -275,7 +275,7 @@ module SampleService
       :next_token,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -296,7 +296,7 @@ module SampleService
       :high_scores,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -313,7 +313,7 @@ module SampleService
       :stream_id,
       :blob
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new
@@ -328,7 +328,7 @@ module SampleService
       :errors,
       keyword_init: true
     ) do
-      include Seahorse::Shape
+      include Seahorse::Structure
 
       def self.build(params)
         type = new

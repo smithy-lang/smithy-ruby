@@ -11,7 +11,7 @@ module Seahorse
         :value,
         keyword_init: true
       ) do
-        include Seahorse::Shape
+        include Seahorse::Structure
       end
     end
 
