@@ -15,21 +15,11 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.codegen.core.CodegenException;
 
-public interface ProtocolGenerator {
+class UnresolvableProtocolException extends CodegenException {
 
-    ShapeId getProtocol();
-
-    ApplicationTransport getApplicationTransport();
-
-    void generateBuilders(GenerationContext context);
-
-    void generateParsers(GenerationContext context);
-
-    void generateErrors(GenerationContext context);
-
-    void generateStubbers(GenerationContext context);
-
-    void generateProtocolUnitTests(GenerationContext context);
+    UnresolvableProtocolException(String message) {
+        super(message);
+    }
 }
