@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -129,10 +128,4 @@ public final class RubySettings {
     }
 }
 
-class UnresolvableProtocolException extends CodegenException {
-
-    public UnresolvableProtocolException(String message) {
-        super(message);
-    }
-}
 

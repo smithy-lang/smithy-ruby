@@ -22,3 +22,13 @@ dependencies {
     implementation("software.amazon.smithy:smithy-waiters:[1.4.0,2.0.0[")
     implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
 }
+
+// Override project settings and fail on checkstyle
+tasks.withType<Checkstyle>() {
+    ignoreFailures = false
+}
+
+// Override project settings and fail on spotbugs
+tasks.withType<com.github.spotbugs.SpotBugsTask> {
+    ignoreFailures = false
+}
