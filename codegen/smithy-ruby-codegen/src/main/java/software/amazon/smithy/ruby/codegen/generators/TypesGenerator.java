@@ -15,23 +15,26 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Comparator;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.shapes.*;
-import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
-import software.amazon.smithy.ruby.codegen.*;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubyTypesWriter;
 
-public class TypesGenerator extends ShapeVisitor.Default<Void>  {
+public class TypesGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
     private final RubySettings settings;
     private final RubyCodeWriter writer;
@@ -64,20 +67,29 @@ public class TypesGenerator extends ShapeVisitor.Default<Void>  {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
+        String fileName =
+                settings.getGemName() + "/lib/" + settings.getGemName()
+                        + "/types.rb";
         fileManifest.writeFile(fileName, writer.toString());
 
-        String typesFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
+        String typesFile =
+                settings.getGemName() + "/sig/" + settings.getGemName()
+                        + "/types.rbs";
         fileManifest.writeFile(typesFile, typesWriter.toString());
     }
 
     private void renderTypes() {
 
-        System.out.println("Walking shapes from " + context.getService().getId() + " to find shapes to generate");
+        System.out.println(
+                "Walking shapes from " + context.getService().getId()
+                        + " to find shapes to generate");
 
-        Model modelWithoutTraitShapes = ModelTransformer.create().getModelWithoutTraitShapes(context.getModel());
+        Model modelWithoutTraitShapes = ModelTransformer.create()
+                .getModelWithoutTraitShapes(context.getModel());
 
-        Set<Shape> serviceShapes = new TreeSet<>(new Walker(modelWithoutTraitShapes).walkShapes(context.getService()));
+        Set<Shape> serviceShapes = new TreeSet<>(
+                new Walker(modelWithoutTraitShapes)
+                        .walkShapes(context.getService()));
 
         for (Shape shape : serviceShapes) {
             shape.accept(this);
@@ -92,7 +104,8 @@ public class TypesGenerator extends ShapeVisitor.Default<Void>  {
     @Override
     public Void structureShape(StructureShape shape) {
         if (shape.hasTrait(ErrorTrait.class)) {
-            System.out.println("Skipping " + shape.getId() + " because it is an error type.");
+            System.out.println("Skipping " + shape.getId()
+                    + " because it is an error type.");
             return null;
         }
         System.out.println("Visit Structure Shape: " + shape.getId());
@@ -105,7 +118,8 @@ public class TypesGenerator extends ShapeVisitor.Default<Void>  {
             membersBlock = shape
                     .members()
                     .stream()
-                    .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
+                    .map(memberShape -> RubyFormatter
+                            .asSymbol(memberShape.getMemberName()))
                     .collect(Collectors.joining(",\n"));
         }
         membersBlock += ",";
@@ -118,11 +132,14 @@ public class TypesGenerator extends ShapeVisitor.Default<Void>  {
                 .closeBlock(")");
 
         String initTypes = shape.members().stream()
-                .map(m -> "?" + RubyFormatter.toSnakeCase(m.getMemberName()) + ": " + typeFor(targetShape(m)))
+                .map(m -> "?" + RubyFormatter.toSnakeCase(m.getMemberName())
+                        + ": " + typeFor(targetShape(m)))
                 .collect(Collectors.joining(", "));
 
         String memberAttrTypes = shape.members().stream()
-                .map(m -> "attr_accessor " + RubyFormatter.toSnakeCase(m.getMemberName()) + "(): " + typeFor(targetShape(m)))
+                .map(m -> "attr_accessor "
+                        + RubyFormatter.toSnakeCase(m.getMemberName()) + "(): "
+                        + typeFor(targetShape(m)))
                 .collect(Collectors.joining("\n"));
 
         typesWriter
@@ -146,7 +163,9 @@ public class TypesGenerator extends ShapeVisitor.Default<Void>  {
 
     private String typeFor(Shape m) {
         String rubyType = m.accept(typeMapper);
-        System.out.println("\t\tMapping to ruby type: " + m.getId() + " Smithy Type: " + m.getType() + " -> " + rubyType);
+        System.out.println(
+                "\t\tMapping to ruby type: " + m.getId() + " Smithy Type: "
+                        + m.getType() + " -> " + rubyType);
         return rubyType;
     }
 }
