@@ -7,4 +7,6 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Amazon Web Services']
   spec.require_paths = ['lib']
   spec.files         = Dir['lib/**/*.rb']
+
+  spec.add_runtime_dependency 'jmespath', '~> 1.4'
 end
