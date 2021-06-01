@@ -39,6 +39,12 @@ module SampleService
     end
 
     class CreateHighScore
+      def self.default
+        {
+          high_score: HighScoreAttributes.default
+        }
+      end
+
       def self.stub(http_resp, stub_data)
         data = HighScoreAttributes.stub(stub_data[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -47,6 +53,12 @@ module SampleService
     end
 
     class UpdateHighScore
+      def self.default
+        {
+          high_score: HighScoreAttributes.default
+        }
+      end
+
       def self.stub(http_resp, stub_data)
         data = HighScoreAttributes.stub(stub_data[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -55,6 +67,10 @@ module SampleService
     end
 
     class DeleteHighScore
+      def self.default
+        {}
+      end
+
       def self.stub(http_resp, stub_data)
         data = {}
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -63,6 +79,12 @@ module SampleService
     end
 
     class ListHighScores
+      def self.default
+        {
+          high_scores: HighScores.default
+        }
+      end
+
       def self.stub(http_resp, stub_data)
         data = HighScores.stub(stub_data[:high_scores])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -86,6 +108,12 @@ module SampleService
     end
 
     class HighScores
+      def self.default
+        {
+          high_scores: []
+        }
+      end
+
       def self.stub(stub_data = [])
         stub_data.map do |stub|
           HighScoreAttributes.stub(stub)

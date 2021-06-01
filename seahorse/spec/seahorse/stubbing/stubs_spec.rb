@@ -22,8 +22,8 @@ module Seahorse
 
       describe '#next' do
         context 'zero stubs' do
-          it 'returns an empty hash' do
-            expect(subject.next(:operation)).to eq({})
+          it 'returns nil' do
+            expect(subject.next(:operation)).to be_nil
           end
         end
 
