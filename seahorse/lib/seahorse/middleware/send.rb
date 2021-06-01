@@ -42,6 +42,8 @@ module Seahorse
           output.error = stub.new
         when Hash
           @stub_class.stub(context.response, stub)
+        when NilClass
+          @stub_class.stub(context.response, @stub_class.default)
         else
           raise ArgumentError, 'Unsupported stub type'
         end

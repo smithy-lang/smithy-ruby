@@ -22,7 +22,7 @@ module Seahorse
         @stub_mutex.synchronize do
           stubs = @stubs[operation_name] || []
           case stubs.length
-          when 0 then {}
+          when 0 then nil
           when 1 then stubs.first
           else stubs.shift
           end
