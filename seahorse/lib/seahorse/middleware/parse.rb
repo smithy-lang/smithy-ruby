@@ -29,6 +29,7 @@ module Seahorse
       def parse_data(response, output)
         output.data = @data_parser.parse(response)
       end
+
     end
   end
 end
