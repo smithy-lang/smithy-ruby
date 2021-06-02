@@ -4,50 +4,57 @@ module SampleService
 
     class HighScoreParams
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
-        validator.validate_length!(:game, min: 2) if input[:game]
+        v = Seahorse::Validator.new(input: input, context: context)
+        v.validate_type!(:id, String)
+        v.validate_type!(:game, String)
+        v.validate_type!(:score, Integer)
+        v.validate_type!(:created_at, Time)
+        v.validate_type!(:updated_at, Time)
       end
     end
 
-    class GetHighScore
+    class GetHighScoreInput
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
-        validator.validate_required!(:id)
+        v = Seahorse::Validator.new(input: input, context: context)
+        v.validate_type!(:id, String)
       end
     end
 
-    class CreateHighScore
+    class CreateHighScoreInput
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
-        validator.validate_required!(:high_score)
+        v = Seahorse::Validator.new(input: input, context: context)
         HighScoreParams.validate!(input: input[:high_score], context: "#{context}[:high_score]")
       end
     end
 
-    class UpdateHighScore
+    class UpdateHighScoreInput
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
-        validator.validate_required!(:id)
+        v = Seahorse::Validator.new(input: input, context: context)
+        v.validate_type!(:id, String)
         HighScoreParams.validate!(input: input[:high_score], context: "#{context}[:high_score]")
       end
     end
 
-    class DeleteHighScore
+    class DeleteHighScoreInput
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
-        validator.validate_required!(:id)
+        v = Seahorse::Validator.new(input: input, context: context)
+        v.validate_type!(:id, String)
       end
     end
 
-    class ListHighScores
+    class ListHighScoresInput
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
+        v = Seahorse::Validator.new(input: input, context: context)
+        v.validate_type!(:max_results, Integer)
+        v.validate_type!(:next_token, String)
       end
     end
 
-    class Stream
+    class StreamInputOutput
       def self.validate!(input:, context:)
-        validator = Seahorse::Validator.new(input: input, context: context)
+        v = Seahorse::Validator.new(input: input, context: context)
+        v.validate_type!(:stream_id, String)
+        v.validate_type!(:blob, String)
       end
     end
 

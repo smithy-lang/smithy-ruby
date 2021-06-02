@@ -55,11 +55,8 @@ module SampleService
     # @option options [Boolean] :http_wire_trace (false) When `true`,
     #   HTTP debug output will be sent to the `:logger`.
     #
-    # @option options [Boolean] :validate_input (false)
-    #   When `true`, request parameters are validated using modeled constraints
-    #   before sending the request. Enabling this feature will prevent the
-    #   Client from making forwards-compatible calls unless a new version that
-    #   matches the model is used.
+    # @option options [Boolean] :validate_input (true)
+    #   When `true`, request parameters are validated using the modeled types.
     #
     # @option options [Proc, Seahorse::MiddlewareBuilder] :middleware
     #   Middleware to apply to each request sent by this
@@ -83,7 +80,7 @@ module SampleService
       @max_attempts = options.fetch(:max_attempts, 4)
       @max_delay = options.fetch(:max_delay, 8)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
-      @validate_input = options.fetch(:validate_input, false)
+      @validate_input = options.fetch(:validate_input, true)
       @middleware = Seahorse::MiddlewareBuilder.new(options[:middleware])
       @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Seahorse::Stubbing::Stubs.new
@@ -110,7 +107,7 @@ module SampleService
       input = Types::GetHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::GetHighScore,
+        validator: Validators::GetHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
@@ -177,7 +174,7 @@ module SampleService
       input = Types::CreateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::CreateHighScore,
+        validator: Validators::CreateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input),
       )
       stack.use(
@@ -245,7 +242,7 @@ module SampleService
       input = Types::UpdateHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::UpdateHighScore,
+        validator: Validators::UpdateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
@@ -309,7 +306,7 @@ module SampleService
       input = Types::DeleteHighScoreInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::DeleteHighScore,
+        validator: Validators::DeleteHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
@@ -368,7 +365,7 @@ module SampleService
       input = Types::ListHighScoresInput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::ListHighScores,
+        validator: Validators::ListHighScoresInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
@@ -418,7 +415,7 @@ module SampleService
       input = Types::StreamInputOutput.build(params)
       stack.use(
         Seahorse::Middleware::Validate,
-        validator: Validators::Stream,
+        validator: Validators::StreamInputOutput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(
