@@ -5,7 +5,7 @@ module Seahorse
   describe MiddlewareBuilder do
     let(:stack) { double('middleware stack') }
     let(:handler) { proc {} }
-    let(:middleware_klass) { Seahorse::Middleware::Build }
+    let(:middleware_klass) { Class }
 
     subject { MiddlewareBuilder.new }
 
@@ -18,14 +18,25 @@ module Seahorse
         when :request then Seahorse::Middleware::RequestHandler
         when :response then Seahorse::Middleware::ResponseHandler
         when :around then Seahorse::Middleware::AroundHandler
-        else type
         end
       expect(middleware[0]).to eq :use_before
       expect(middleware[1]).to eq klass
       expect(middleware[2]).to eq type_klass
       expect(middleware[3]).to eq({ handler: handler })
     end
-    
+
+    describe '#initialize' do
+      it 'appends other MiddlewareBuilder' do
+        subject.before(middleware_klass, handler)
+        expect(MiddlewareBuilder.new(subject).to_a)
+          .to include(array_including(middleware_klass))
+      end
+
+      it 'raises when provided something else' do
+        expect { MiddlewareBuilder.new('error') }.to raise_error(ArgumentError)
+      end
+    end
+
     describe '#apply' do
       it 'applies the middleware to the stack' do
         subject.before(middleware_klass, handler)
@@ -153,7 +164,6 @@ module Seahorse
         end
       end
     end
-
   end
 
 end

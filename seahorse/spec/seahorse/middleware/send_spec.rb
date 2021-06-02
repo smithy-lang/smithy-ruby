@@ -122,6 +122,17 @@ module Seahorse
             end
           end
 
+          context 'stub is nil' do
+            let(:stub_hash) { {param1: 'value'} }
+            before { stubs.add_stubs(operation, [nil]) }
+
+            it 'uses the stub class default' do
+              expect(stub_class).to receive(:default).and_return(stub_hash)
+              expect(stub_class).to receive(:stub).with(response, stub_hash)
+              subject.call(input, context)
+            end
+          end
+
           context 'stub is something else' do
             before { stubs.add_stubs(operation, ['some string']) }
 

@@ -45,7 +45,7 @@ module Seahorse
         text = rexml_node.text
         return if text.nil?
         return if text.strip.empty? && !node.empty?
-        node << text
+        node.append(text)
       end
 
       def apply_child_nodes(node, rexml_node)

@@ -26,7 +26,7 @@ module Seahorse
       # @return [Array<Node, String>]
       attr_reader :children
 
-      def append(*children)
+      def <<(*children)
         children.flatten.each do |child|
           case child
           when Node
@@ -43,7 +43,7 @@ module Seahorse
           end
         end
       end
-      alias << append
+      alias append <<
 
       # @return [String, nil]
       def text
