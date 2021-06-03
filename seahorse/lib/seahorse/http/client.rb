@@ -58,7 +58,6 @@ module Seahorse
       # @param [Response] response
       # @return [Response]
       def transmit(request:, response:)
-        # TODO: connection pool for connections
         uri = URI.parse(request.url)
         http = create_http(uri)
         http.set_debug_output(@logger) if @http_wire_trace

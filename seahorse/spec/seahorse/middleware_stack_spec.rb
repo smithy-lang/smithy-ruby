@@ -4,7 +4,7 @@ module Seahorse
 
   describe MiddlewareStack do
     subject { MiddlewareStack.new }
-    let(:middleware_klass) { Class }
+    let(:app) { double('app') }
 
     describe '#use' do
       it 'adds middleware and kwargs to the stack'
