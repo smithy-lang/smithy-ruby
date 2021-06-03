@@ -2,7 +2,14 @@
 
 module Seahorse
   module Middleware
+    # A middleware that prefixes the host.
     class HostPrefix
+      # @param [Class] app The next middleware in the stack.
+      # @param [Boolean] disable_host_prefix If true, this option will not
+      #  modify the host url.
+      # @param [String] host_prefix The prefix for the host. It may contain
+      #  labels populated by input (i.e. "{foo.}" would be populated by
+      #  input[:foo]).
       def initialize(app, disable_host_prefix:, host_prefix:)
         @app = app
         @disable_host_prefix = disable_host_prefix

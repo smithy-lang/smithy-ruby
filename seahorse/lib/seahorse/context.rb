@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Seahorse
+  # Stores request and response objects, and other useful things used by
+  # multiple Middleware.
   class Context
     def initialize(options = {})
       @operation_name = options[:operation_name]

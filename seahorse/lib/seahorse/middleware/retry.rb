@@ -2,7 +2,12 @@
 
 module Seahorse
   module Middleware
+    # A middleware that retries the request.
     class Retry
+      # @param [Class] app The next middleware in the stack.
+      # @param [Integer] max_attempts The maximum number of attempts to make
+      #  before giving up.
+      # @param [Integer] max_delay The maximum delay between attempts.
       def initialize(app, max_attempts:, max_delay:)
         @app = app
         @max_attempts = max_attempts

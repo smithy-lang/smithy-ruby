@@ -19,7 +19,7 @@ module Seahorse
       # @param [Boolean] http_wire_trace (false) When `true`,
       #   HTTP debug output will be sent to the `:logger`.
       #
-      # @param [Logger] logger (Logger.new($stdout)) Where debug output is sent.
+      # @param [Logger] logger A logger where debug output is sent.
       #
       # @param [URI::HTTP,String] http_proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
@@ -66,8 +66,8 @@ module Seahorse
           http.use_ssl = false
         end
 
-        http.start do |http|
-          http.request(build_net_request(request)) do |net_resp|
+        http.start do |conn|
+          conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
             response.headers = extract_headers(net_resp)
             net_resp.read_body do |chunk|
@@ -77,7 +77,7 @@ module Seahorse
         end
         response.body.rewind if response.body.respond_to?(:rewind)
         response
-      rescue *NETWORK_ERRORS => e
+      rescue *NETWORK_ERRORS => e # TODO - rescue from StandardError?
         raise Seahorse::HTTP::NetworkingError, e
       end
 

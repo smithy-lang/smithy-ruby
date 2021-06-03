@@ -3,7 +3,7 @@ module SampleService
   module Validators
 
     class HighScoreParams
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         v.validate_type!(:id, String)
         v.validate_type!(:game, String)
@@ -14,21 +14,21 @@ module SampleService
     end
 
     class GetHighScoreInput
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         v.validate_type!(:id, String)
       end
     end
 
     class CreateHighScoreInput
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         HighScoreParams.validate!(input: input[:high_score], context: "#{context}[:high_score]")
       end
     end
 
     class UpdateHighScoreInput
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         v.validate_type!(:id, String)
         HighScoreParams.validate!(input: input[:high_score], context: "#{context}[:high_score]")
@@ -36,14 +36,14 @@ module SampleService
     end
 
     class DeleteHighScoreInput
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         v.validate_type!(:id, String)
       end
     end
 
     class ListHighScoresInput
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         v.validate_type!(:max_results, Integer)
         v.validate_type!(:next_token, String)
@@ -51,7 +51,7 @@ module SampleService
     end
 
     class StreamInputOutput
-      def self.validate!(input:, context:)
+      def self.validate!(input, context)
         v = Seahorse::Validator.new(input: input, context: context)
         v.validate_type!(:stream_id, String)
         v.validate_type!(:blob, String)

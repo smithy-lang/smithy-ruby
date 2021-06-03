@@ -2,7 +2,16 @@
 
 module Seahorse
   module Middleware
+    # A middleware used to send the request.
     class Send
+      # @param [Class] _app The next middleware in the stack.
+      # @param [Boolean] stub_responses If true, a request is not sent and a
+      #   stubbed response is returned.
+      # @param [Class] stub_class A stub object that is responsible for creating
+      #   a stubbed response. It must respond to #stub and take the response
+      #   and stub data as arguments.
+      # @param [Stubs] stubs A {Stubs} object containing stubbed data for any
+      #   given operation.
       def initialize(_app, client:, stub_responses:, stub_class:, stubs:)
         @client = client
         @stub_responses = stub_responses

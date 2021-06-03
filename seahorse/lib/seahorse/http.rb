@@ -11,11 +11,14 @@ require_relative 'http/request'
 require_relative 'http/response'
 
 module Seahorse
+  # HTTP namespace for HTTP specific functionality. Also includes utility
+  # methods for URI escaping.
   module HTTP
+    # TODO - do these belong here?
     class << self
       # URI escapes the given value.
       #
-      #   Seahorse::HTTP.uri_escape("a b/c")
+      #   Seahorse::_escape("a b/c")
       #   #=> "a%20b%2Fc"
       #
       # @param [String] value

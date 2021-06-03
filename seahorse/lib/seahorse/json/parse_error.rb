@@ -3,6 +3,7 @@
 module Seahorse
   # @api private
   module JSON
+    # An error class encountered when parsing JSON.
     class ParseError < StandardError
       MSG = 'Encountered an error while parsing the response: %<message>s'
 

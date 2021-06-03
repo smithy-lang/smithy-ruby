@@ -11,7 +11,8 @@ module Seahorse
       # @param [String] url
       # @param [Headers] headers
       # @param [IO] body
-      def initialize(http_method: nil, url: nil, headers: Headers.new, body: StringIO.new)
+      def initialize(http_method: nil, url: nil, headers: Headers.new,
+                     body: StringIO.new)
         @http_method = http_method
         @url = url
         @headers = headers

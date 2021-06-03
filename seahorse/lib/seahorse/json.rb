@@ -13,7 +13,7 @@ module Seahorse
       # @param [String] json
       # @return [Hash]
       def load(json)
-        ::JSON.load(json)
+        ::JSON.parse(json)
       rescue ::JSON::ParserError => e
         raise ParseError, e
       end
