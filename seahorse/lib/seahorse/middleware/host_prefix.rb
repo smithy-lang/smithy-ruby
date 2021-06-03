@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class HostPrefix
-
       def initialize(app, disable_host_prefix:, host_prefix:)
         @app = app
         @disable_host_prefix = disable_host_prefix
@@ -36,7 +35,6 @@ module Seahorse
           value
         end
       end
-
     end
   end
 end

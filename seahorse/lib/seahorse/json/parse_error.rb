@@ -4,7 +4,6 @@ module Seahorse
   # @api private
   module JSON
     class ParseError < StandardError
-
       MSG = 'Encountered an error while parsing the response: %<message>s'
 
       def initialize(original_error)
@@ -14,7 +13,6 @@ module Seahorse
 
       # @return [StandardError]
       attr_reader :original_error
-
     end
   end
 end

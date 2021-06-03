@@ -7,7 +7,6 @@ module Seahorse
   # * Raise errors with context when validation fails.
   #
   class Validator
-
     # Initialize a new instance of the validator.
     # @param [Struct] input The input type for this shape.
     # @param [String] context The nested context of the input, for error
@@ -25,6 +24,5 @@ module Seahorse
               "Expected #{@context}[:#{key}] to be a #{type}, got #{v.class}."
       end
     end
-
   end
 end

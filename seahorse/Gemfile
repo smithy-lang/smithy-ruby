@@ -4,8 +4,9 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
+gem 'rexml'
+
 group :test do
-  gem 'rexml'
   gem 'rspec'
   gem 'simplecov'
   gem 'webmock'

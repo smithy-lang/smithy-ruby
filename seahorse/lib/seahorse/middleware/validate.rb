@@ -4,7 +4,6 @@ module Seahorse
   # @api private
   module Middleware
     class Validate
-
       def initialize(app, validator:, validate_input:)
         @app = app
         @validator = validator
@@ -18,7 +17,6 @@ module Seahorse
         @validator.validate!(input: input, context: 'input') if @validate_input
         @app.call(input, context)
       end
-
     end
   end
 end

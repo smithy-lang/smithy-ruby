@@ -29,7 +29,5 @@ require_relative 'seahorse/validator'
 require_relative 'seahorse/xml'
 
 module Seahorse
-
   VERSION = '0.2.0'
-
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe BlockIO do
     let(:data) { 'data' }
 
@@ -35,5 +34,4 @@ module Seahorse
       end
     end
   end
-
 end

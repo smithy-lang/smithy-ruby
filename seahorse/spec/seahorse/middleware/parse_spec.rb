@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Parse do
       let(:app) { double('app', call: output) }
       let(:error_parser) { double('error_parser') }
@@ -78,6 +77,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

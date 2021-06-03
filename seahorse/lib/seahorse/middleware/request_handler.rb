@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class RequestHandler
-
       def initialize(app, handler:)
         @app = app
         @handler = handler
@@ -16,7 +15,6 @@ module Seahorse
         @handler.call(input, context)
         @app.call(input, context)
       end
-
     end
   end
 end

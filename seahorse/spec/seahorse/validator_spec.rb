@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe Validator do
     let(:input_type) { Struct.new(:foo, keyword_init: true) }
     let(:input) { input_type.new(params) }
@@ -41,5 +40,4 @@ module Seahorse
       end
     end
   end
-
 end

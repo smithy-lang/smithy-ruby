@@ -12,9 +12,7 @@ module Seahorse
   # parsing and serialization.
   # @api private
   module XML
-
     class << self
-
       # @param [String] xml
       # @return [Node]
       def parse(xml)
@@ -55,8 +53,6 @@ module Seahorse
           node.append(parse_node(value))
         end
       end
-
     end
-
   end
 end

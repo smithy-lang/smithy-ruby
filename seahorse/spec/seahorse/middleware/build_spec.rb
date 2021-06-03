@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Build do
       let(:app) { double('app', call: output) }
       let(:builder) { double('builder') }
@@ -37,6 +36,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

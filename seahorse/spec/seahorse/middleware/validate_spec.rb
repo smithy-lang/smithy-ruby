@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Validate do
       let(:app) { double('app') }
       let(:validator) { double('validator') }
@@ -45,6 +44,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

@@ -9,9 +9,7 @@ module Seahorse
   # parsing and serialization.
   # @api private
   module JSON
-
     class << self
-
       # @param [String] json
       # @return [Hash]
       def load(json)
@@ -25,8 +23,6 @@ module Seahorse
       def dump(value)
         ::JSON.dump(value)
       end
-
     end
-
   end
 end

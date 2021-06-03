@@ -6,7 +6,6 @@ module Seahorse
     # a request or receiving a response. You can access the original error
     # by calling {#original_error}.
     class NetworkingError < StandardError
-
       MSG = 'Encountered an error while transmitting the request: %<message>s'
 
       def initialize(original_error)
@@ -16,7 +15,6 @@ module Seahorse
 
       # @return [StandardError]
       attr_reader :original_error
-
     end
   end
 end

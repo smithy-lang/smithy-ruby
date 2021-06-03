@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   class TestClient
-
     include ClientStubs
 
     def initialize(stub_responses: false)
@@ -13,7 +11,6 @@ module Seahorse
 
     # for testing
     attr_reader :stubs
-
   end
 
   describe ClientStubs do
@@ -48,5 +45,4 @@ module Seahorse
       end
     end
   end
-
 end

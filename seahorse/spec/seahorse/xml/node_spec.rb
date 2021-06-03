@@ -2,7 +2,6 @@
 
 module Seahorse
   module XML
-
     describe Node do
       describe '#initialize' do
         it 'accepts a name with text arguments' do
@@ -322,6 +321,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

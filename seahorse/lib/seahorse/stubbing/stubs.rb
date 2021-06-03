@@ -6,7 +6,6 @@ module Seahorse
     # and getting stubs per operation
     # @api private
     class Stubs
-
       def initialize
         @stubs = {}
         @stub_mutex = Mutex.new
@@ -28,7 +27,6 @@ module Seahorse
           end
         end
       end
-
     end
   end
 end

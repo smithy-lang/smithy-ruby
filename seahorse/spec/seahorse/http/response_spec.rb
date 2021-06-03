@@ -2,7 +2,6 @@
 
 module Seahorse
   module HTTP
-
     describe Response do
       describe '#initialize' do
         it 'sets empty defaults' do
@@ -13,6 +12,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

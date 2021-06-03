@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe HTTP do
     describe '.uri_escape' do
       it 'URI escapes a value' do
@@ -27,5 +26,4 @@ module Seahorse
       end
     end
   end
-
 end

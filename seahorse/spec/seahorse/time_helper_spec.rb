@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe TimeHelper do
     let(:time) { Time.utc(1970, 1, 1) }
 
@@ -23,5 +22,4 @@ module Seahorse
       end
     end
   end
-
 end

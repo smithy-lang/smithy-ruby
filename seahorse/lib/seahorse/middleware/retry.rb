@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class Retry
-
       def initialize(app, max_attempts:, max_delay:)
         @app = app
         @max_attempts = max_attempts
@@ -35,7 +34,6 @@ module Seahorse
         # scales like 1,2,4,8
         Kernel.rand * [@max_delay, 2**(attempt - 1)].min
       end
-
     end
   end
 end

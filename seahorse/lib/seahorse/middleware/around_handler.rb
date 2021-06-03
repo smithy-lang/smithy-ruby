@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class AroundHandler
-
       def initialize(app, handler:)
         @app = app
         @handler = handler
@@ -15,7 +14,6 @@ module Seahorse
       def call(input, context)
         @handler.call(@app, input, context)
       end
-
     end
   end
 end

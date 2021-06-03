@@ -75,7 +75,6 @@ module Seahorse
   #     end
   #
   class MiddlewareBuilder
-
     # @private
     BOTH = 'expected a handler or a Proc, got both'
 
@@ -144,7 +143,6 @@ module Seahorse
 
     # Define convenience methods for chaining
     class << self
-
       def before(klass, *args, &block)
         MiddlewareBuilder.new.before(klass, *args, &block)
       end
@@ -156,7 +154,6 @@ module Seahorse
       def around(klass, *args, &block)
         MiddlewareBuilder.new.around(klass, *args, &block)
       end
-
     end
 
     # define convenience methods for standard middleware classes
@@ -201,6 +198,5 @@ module Seahorse
 
       callable
     end
-
   end
 end

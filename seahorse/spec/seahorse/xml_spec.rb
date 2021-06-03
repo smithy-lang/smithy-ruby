@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe XML do
     it 'raises on an empty string' do
       expect do
@@ -83,5 +82,4 @@ module Seahorse
       )
     end
   end
-
 end

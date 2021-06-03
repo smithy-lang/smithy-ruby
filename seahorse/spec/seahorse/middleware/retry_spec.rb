@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Retry do
       let(:app) { double('app') }
       let(:max_attempts) { 4 }
@@ -78,6 +77,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

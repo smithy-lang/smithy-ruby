@@ -2,7 +2,6 @@
 
 module Seahorse
   class Output
-
     def initialize(error: nil, data: nil)
       @error = error
       @data = data
@@ -13,6 +12,5 @@ module Seahorse
 
     # @return [Struct, nil]
     attr_accessor :data
-
   end
 end

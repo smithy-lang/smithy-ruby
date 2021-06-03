@@ -5,7 +5,6 @@ module Seahorse
     module Middleware
       # @api private
       class ContentLength
-
         def initialize(app)
           @app = app
         end
@@ -22,7 +21,6 @@ module Seahorse
 
           @app.call(input, context)
         end
-
       end
     end
   end

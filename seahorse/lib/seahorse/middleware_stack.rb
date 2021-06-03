@@ -3,7 +3,6 @@
 module Seahorse
   # @api private
   class MiddlewareStack
-
     def initialize
       @middleware = []
     end
@@ -58,6 +57,5 @@ module Seahorse
       end
       app
     end
-
   end
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe Struct do
     let(:struct) do
       Struct.new(
@@ -44,5 +43,4 @@ module Seahorse
       end
     end
   end
-
 end

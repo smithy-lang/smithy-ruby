@@ -2,7 +2,6 @@
 
 module Seahorse
   module XML
-
     describe Formatter do
       describe '#initialize' do
         it 'raises when indent is not a String' do
@@ -64,6 +63,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

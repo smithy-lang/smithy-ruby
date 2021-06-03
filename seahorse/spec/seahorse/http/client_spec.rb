@@ -4,7 +4,6 @@ require 'webmock/rspec'
 
 module Seahorse
   module HTTP
-
     describe Client do
       before(:each) { WebMock.disable_net_connect! }
 
@@ -258,6 +257,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

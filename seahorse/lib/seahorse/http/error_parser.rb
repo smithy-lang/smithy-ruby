@@ -8,7 +8,6 @@ module Seahorse
     # logic as well.
     # @api private
     class ErrorParser
-
       # @api private
       HTTP_3XX = 300..399
 
@@ -92,7 +91,6 @@ module Seahorse
           end
         end
       end
-
     end
   end
 end

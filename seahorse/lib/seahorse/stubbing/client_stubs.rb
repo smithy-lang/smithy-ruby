@@ -11,7 +11,6 @@ module Seahorse
   # behavior.
   #
   module ClientStubs
-
     # Configures what data / errors should be returned from the named operation
     # when response stubbing is enabled.
     #
@@ -113,6 +112,5 @@ module Seahorse
         raise ArgumentError, msg
       end
     end
-
   end
 end

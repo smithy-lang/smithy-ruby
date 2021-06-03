@@ -2,7 +2,6 @@
 
 module Seahorse
   module Stubbing
-
     describe Stubs do
       let(:stub1) { { data: 1 } }
       let(:stub2) { { data: 2 } }
@@ -48,6 +47,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

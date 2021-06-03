@@ -5,7 +5,6 @@ require 'stringio'
 module Seahorse
   module XML
     class Formatter
-
       NEGATIVE_INDENT = 'indent must be greater than or equal to zero'
 
       # @param [String] indent
@@ -61,7 +60,6 @@ module Seahorse
           " #{key}=#{value.to_s.encode(xml: :attr)}"
         end.join
       end
-
     end
   end
 end

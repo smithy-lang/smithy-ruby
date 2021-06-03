@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class Build
-
       def initialize(app, builder:)
         @app = app
         @builder = builder
@@ -16,7 +15,6 @@ module Seahorse
         @builder.build(context.request, input)
         @app.call(input, context)
       end
-
     end
   end
 end

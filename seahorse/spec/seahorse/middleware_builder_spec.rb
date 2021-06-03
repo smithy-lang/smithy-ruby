@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe MiddlewareBuilder do
     let(:stack) { double('middleware stack') }
     let(:handler) { proc {} }
@@ -164,5 +163,4 @@ module Seahorse
       end
     end
   end
-
 end

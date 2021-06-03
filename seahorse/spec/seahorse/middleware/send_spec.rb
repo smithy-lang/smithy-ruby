@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Send do
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
@@ -145,6 +144,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

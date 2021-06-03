@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe Context do
     let(:operation_name) { :operation }
     let(:request) { double('request') }
@@ -40,5 +39,4 @@ module Seahorse
       end
     end
   end
-
 end

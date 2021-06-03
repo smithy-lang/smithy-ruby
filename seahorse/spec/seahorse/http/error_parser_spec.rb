@@ -2,18 +2,14 @@
 
 module Seahorse
   module HTTP
-
     module TestErrors
-
       class ApiError < Seahorse::HTTP::ApiError; end
 
       class ApiRedirectError < ApiError
-
         def initialize(location:, **kwargs)
           @location = location
           super(**kwargs)
         end
-
       end
 
       class ApiClientError < ApiError; end
@@ -21,7 +17,6 @@ module Seahorse
       class ApiServerError < ApiError; end
 
       class TestModeledError < ApiClientError; end
-
     end
 
     describe ErrorParser do
@@ -120,6 +115,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

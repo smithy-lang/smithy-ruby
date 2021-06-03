@@ -4,9 +4,7 @@ require 'time'
 
 module Seahorse
   module TimeHelper
-
     class << self
-
       # @param [Time] time
       # @return [String<Date Time>] The time as an ISO8601 string.
       def to_date_time(time)
@@ -29,8 +27,6 @@ module Seahorse
       def to_http_date(time)
         time.utc.httpdate
       end
-
     end
-
   end
 end

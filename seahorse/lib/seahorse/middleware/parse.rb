@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class Parse
-
       def initialize(app, error_parser:, data_parser:)
         @app = app
         @error_parser = error_parser
@@ -29,7 +28,6 @@ module Seahorse
       def parse_data(response, output)
         output.data = @data_parser.parse(response)
       end
-
     end
   end
 end

@@ -2,7 +2,6 @@
 
 module Seahorse
   class Context
-
     def initialize(options = {})
       @operation_name = options[:operation_name]
       @request = options[:request]
@@ -29,6 +28,5 @@ module Seahorse
 
     # @return [Hash]
     attr_reader :metadata
-
   end
 end

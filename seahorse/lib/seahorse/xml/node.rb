@@ -3,7 +3,6 @@
 module Seahorse
   module XML
     class Node
-
       # @api private
       BOTH_TYPES = 'Nodes may not have both text and child nodes'
 
@@ -119,7 +118,6 @@ module Seahorse
       end
       alias to_str to_xml
       alias to_s to_xml
-
     end
   end
 end

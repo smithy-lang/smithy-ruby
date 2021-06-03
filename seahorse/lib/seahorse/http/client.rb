@@ -8,7 +8,6 @@ module Seahorse
   module HTTP
     # Transmits an HTTP {Request} object, returning an HTTP {Response}.
     class Client
-
       NETWORK_ERRORS = [
         SocketError, EOFError, IOError, Timeout::Error,
         Errno::ECONNABORTED, Errno::ECONNRESET, Errno::EPIPE,
@@ -146,7 +145,6 @@ module Seahorse
           (@http_proxy.password && CGI.unescape(@http_proxy.password))
         ]
       end
-
     end
   end
 end

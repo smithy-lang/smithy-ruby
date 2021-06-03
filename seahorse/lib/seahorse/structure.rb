@@ -2,7 +2,6 @@
 
 module Seahorse
   module Structure
-
     # Deeply converts the Struct into a hash. Structure members that
     # are `nil` are omitted from the resultant hash.
     #
@@ -24,6 +23,5 @@ module Seahorse
       end
     end
     alias to_hash to_h
-
   end
 end

@@ -3,7 +3,6 @@
 module Seahorse
   module Middleware
     class Send
-
       def initialize(_app, client:, stub_responses:, stub_class:, stubs:)
         @client = client
         @stub_responses = stub_responses
@@ -48,7 +47,6 @@ module Seahorse
           raise ArgumentError, 'Unsupported stub type'
         end
       end
-
     end
   end
 end

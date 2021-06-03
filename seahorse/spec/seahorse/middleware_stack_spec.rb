@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe MiddlewareStack do
     subject { MiddlewareStack.new }
     let(:app) { double('app') }
@@ -22,5 +21,4 @@ module Seahorse
       it 'runs the middleware in reverse order'
     end
   end
-
 end
