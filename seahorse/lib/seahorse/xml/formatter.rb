@@ -4,6 +4,7 @@ require 'stringio'
 
 module Seahorse
   module XML
+    # A class used for formatting XML strings.
     class Formatter
       NEGATIVE_INDENT = 'indent must be greater than or equal to zero'
 
@@ -43,7 +44,8 @@ module Seahorse
       end
 
       def text_node(node, pad)
-        "#{pad}<#{node.name}#{attrs(node)}>#{node.text.encode(xml: :text)}</#{node.name}>#{@eol}"
+        text = node.text.encode(xml: :text)
+        "#{pad}<#{node.name}#{attrs(node)}>#{text}</#{node.name}>#{@eol}"
       end
 
       def serialize_nested(buffer, node, pad)

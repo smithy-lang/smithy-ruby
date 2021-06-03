@@ -3,6 +3,8 @@
 require 'time'
 
 module Seahorse
+  # A module that provides helper methods to convert from {Time} objects to
+  # serializable formats.
   module TimeHelper
     class << self
       # @param [Time] time

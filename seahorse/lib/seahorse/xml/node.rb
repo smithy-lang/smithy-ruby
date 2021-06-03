@@ -2,6 +2,7 @@
 
 module Seahorse
   module XML
+    # A class used to represent an XML node.
     class Node
       # @api private
       BOTH_TYPES = 'Nodes may not have both text and child nodes'
@@ -21,9 +22,6 @@ module Seahorse
 
       # @return [Hash<String, String>]
       attr_reader :attributes
-
-      # @return [Array<Node, String>]
-      attr_reader :children
 
       def <<(*children)
         children.flatten.each do |child|
@@ -61,7 +59,8 @@ module Seahorse
       #   @return [Array<Node>] Returns an array of all child nodes.
       # @overload children(child_name)
       #   @param [String] child_name
-      #   @return [Array<Node>] Returns an array of child nodes with the given name.
+      #   @return [Array<Node>] Returns an array of child nodes with the given
+      #     name.
       def children(*args)
         nodes =
           case args.count

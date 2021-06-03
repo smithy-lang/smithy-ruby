@@ -8,48 +8,42 @@ module Seahorse
   module HTTP
     # Transmits an HTTP {Request} object, returning an HTTP {Response}.
     class Client
-      NETWORK_ERRORS = [
-        SocketError, EOFError, IOError, Timeout::Error,
-        Errno::ECONNABORTED, Errno::ECONNRESET, Errno::EPIPE,
-        Errno::EINVAL, Errno::ETIMEDOUT, OpenSSL::SSL::SSLError,
-        Errno::EHOSTUNREACH, Errno::ECONNREFUSED,
-        Net::HTTPFatalError # for proxy connection failures
-      ].freeze
-
-      # @param [Boolean] http_wire_trace (false) When `true`,
+      # Initialize an instance of this HTTP client.
+      #
+      # @param [Hash] options The options for this HTTP Client
+      #
+      # @option options [Boolean] :http_wire_trace (false) When `true`,
       #   HTTP debug output will be sent to the `:logger`.
       #
-      # @param [Logger] logger A logger where debug output is sent.
+      # @option options [Logger] :logger A logger where debug output is sent.
       #
-      # @param [URI::HTTP,String] http_proxy A proxy to send
+      # @option options [URI::HTTP,String] :http_proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
       #
-      # @param [Boolean] ssl_verify_peer (true) When `true`,
+      # @option options [Boolean] :ssl_verify_peer (true) When `true`,
       #   SSL peer certificates are verified when establishing a
       #   connection.
       #
-      # @param [String] ssl_ca_bundle Full path to the SSL
+      # @option options [String] :ssl_ca_bundle Full path to the SSL
       #   certificate authority bundle file that should be used when
       #   verifying peer certificates.  If you do not pass
       #   `:ssl_ca_bundle` or `:ssl_ca_directory` the system default
       #   will be used if available.
       #
-      # @param [String] ssl_ca_directory Full path of the
+      # @option options [String] :ssl_ca_directory Full path of the
       #   directory that contains the unbundled SSL certificate
       #   authority files for verifying peer certificates.  If you do
       #   not pass `:ssl_ca_bundle` or `:ssl_ca_directory` the
       #   system default will be used if available.
-      def initialize(http_wire_trace:, logger:,
-                     http_proxy: nil, ssl_verify_peer: true,
-                     ssl_ca_bundle: nil, ssl_ca_directory: nil,
-                     ssl_ca_store: nil)
-        @http_wire_trace =  http_wire_trace
-        @logger = logger
-        @http_proxy = URI.parse(http_proxy.to_s) if http_proxy
-        @ssl_verify_peer = ssl_verify_peer
-        @ssl_ca_bundle = ssl_ca_bundle
-        @ssl_ca_directory = ssl_ca_directory
-        @ssl_ca_store = ssl_ca_store
+      def initialize(options = {})
+        @http_wire_trace = options[:http_wire_trace]
+        @logger = options[:logger]
+        @http_proxy = options[:http_proxy]
+        @http_proxy = URI.parse(@http_proxy.to_s) if @http_proxy
+        @ssl_verify_peer = options[:ssl_verify_peer]
+        @ssl_ca_bundle = options[:ssl_ca_bundle]
+        @ssl_ca_directory = options[:ssl_ca_directory]
+        @ssl_ca_store = options[:ssl_ca_store]
       end
 
       # @param [Request] request
@@ -66,6 +60,16 @@ module Seahorse
           http.use_ssl = false
         end
 
+        start_connection(http, request, response)
+        response.body.rewind if response.body.respond_to?(:rewind)
+        response
+      rescue StandardError => e
+        raise Seahorse::HTTP::NetworkingError, e
+      end
+
+      private
+
+      def start_connection(http, request, response)
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
@@ -75,13 +79,7 @@ module Seahorse
             end
           end
         end
-        response.body.rewind if response.body.respond_to?(:rewind)
-        response
-      rescue *NETWORK_ERRORS => e # TODO - rescue from StandardError?
-        raise Seahorse::HTTP::NetworkingError, e
       end
-
-      private
 
       # Creates an HTTP connection to the endpoint
       # Applies proxy if set

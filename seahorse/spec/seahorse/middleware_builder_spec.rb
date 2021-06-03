@@ -18,10 +18,8 @@ module Seahorse
         when :response then Seahorse::Middleware::ResponseHandler
         when :around then Seahorse::Middleware::AroundHandler
         end
-      expect(middleware[0]).to eq :use_before
-      expect(middleware[1]).to eq klass
-      expect(middleware[2]).to eq type_class
-      expect(middleware[3]).to eq({ handler: handler })
+      expect(middleware)
+        .to eq [:use_before, klass, type_class, { handler: handler }]
     end
 
     describe '#initialize' do
@@ -120,21 +118,21 @@ module Seahorse
     end
 
     describe '.before' do
-      it 'creates a new instance and adds the handler to the middleware list with a RequestHandler' do
+      it 'adds the handler to the middleware list with a RequestHandler' do
         builder = MiddlewareBuilder.before(middleware_class, handler)
         expect_middleware(builder, middleware_class, :request, handler)
       end
     end
 
     describe '.after' do
-      it 'creates a new instance and adds the handler to the middleware list with a ResponseHandler' do
+      it 'adds the handler to the middleware list with a ResponseHandler' do
         builder = MiddlewareBuilder.after(middleware_class, handler)
         expect_middleware(builder, middleware_class, :response, handler)
       end
     end
 
     describe '.around' do
-      it 'creates a new instance and adds the handler to the middleware list with an AroundHandler' do
+      it 'adds the handler to the middleware list with an AroundHandler' do
         builder = MiddlewareBuilder.around(middleware_class, handler)
         expect_middleware(builder, middleware_class, :around, handler)
       end
@@ -142,14 +140,14 @@ module Seahorse
 
     MiddlewareBuilder::STANDARD_MIDDLEWARE.each do |klass|
       simple_step_name = klass.to_s.split('::').last.downcase
+      types = {
+        'before' => :request,
+        'after' => :response,
+        'around' => :around
+      }
       %w[before after around].each do |method|
         method_name = "#{method}_#{simple_step_name}"
-        type =
-          case method
-          when 'before' then :request
-          when 'after' then :response
-          when 'around' then :around
-          end
+        type = types[method]
 
         it "defines a #{method_name} on the instance that calls #{method}" do
           expect(subject.send(method_name, handler)).to eq(subject)

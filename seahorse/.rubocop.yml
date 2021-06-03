@@ -1,10 +1,18 @@
 AllCops:
   NewCops: enable
+  TargetRubyVersion: 3.0.0
 
 Layout/LineLength:
   Max: 80
 
 Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*.rb'
 

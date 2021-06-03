@@ -68,11 +68,7 @@ module Seahorse
 
       def extract_error(http_resp)
         error_code = @error_code_fn.call(http_resp)
-        if error_code
-          error_class = @errors.find do |e|
-            e.name.include? error_code
-          end
-        end
+        error_class = error_class(error_code) if error_code
 
         error_opts = {
           http_resp: http_resp,
@@ -83,14 +79,24 @@ module Seahorse
         if error_class
           error_class.new(**error_opts)
         else
-          case http_resp.status
-          when HTTP_3XX then @error_module::ApiRedirectError.new(
-            location: http_resp.headers['location'], **error_opts
-          )
-          when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
-          when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
-          else @error_module::ApiError.new(http_resp: http_resp, **error_opts)
-          end
+          generic_error(http_resp, error_opts)
+        end
+      end
+
+      def error_class(error_code)
+        @errors.find do |e|
+          e.name.include? error_code
+        end
+      end
+
+      def generic_error(http_resp, error_opts)
+        case http_resp.status
+        when HTTP_3XX then @error_module::ApiRedirectError.new(
+          location: http_resp.headers['location'], **error_opts
+        )
+        when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
+        when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
+        else @error_module::ApiError.new(http_resp: http_resp, **error_opts)
         end
       end
     end

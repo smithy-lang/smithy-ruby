@@ -25,7 +25,7 @@ module Seahorse
 
           it 'validates the request then calls the next middleware' do
             expect(validator).to receive(:validate!)
-              .with(input: input, context: 'input').ordered
+              .with(input, context: 'input').ordered
             expect(app).to receive(:call).with(input, context)
 
             subject.call(input, context)

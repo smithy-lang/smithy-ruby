@@ -96,7 +96,7 @@ module Seahorse
       @middleware = []
       case middleware
       when MiddlewareBuilder then @middleware.concat(middleware.to_a)
-      when nil
+      when nil then nil
       else
         raise ArgumentError, 'expected :middleware to be a' \
           "Seahorse::MiddlewareBuilder, got #{middleware.class}"
@@ -189,14 +189,17 @@ module Seahorse
     private
 
     def handler_or_proc!(args, &block)
-      raise ArgumentError, BOTH if args.size.positive? && block
-      raise ArgumentError, NEITHER if args.empty? && block.nil?
-      raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
-
+      validate_args!(args, block)
       callable = args.first || Proc.new(&block)
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
 
       callable
+    end
+
+    def validate_args!(args, &block)
+      raise ArgumentError, BOTH if args.size.positive? && block
+      raise ArgumentError, NEITHER if args.empty? && block.nil?
+      raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
     end
   end
 end

@@ -13,7 +13,9 @@ module Seahorse
       # @param [String] json
       # @return [Hash]
       def load(json)
-        ::JSON.parse(json)
+        # rubocop:disable Security/JSONLoad
+        ::JSON.load(json)
+        # rubocop:enable Security/JSONLoad
       rescue ::JSON::ParserError => e
         raise ParseError, e
       end

@@ -7,4 +7,6 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Amazon Web Services']
   spec.require_paths = ['lib']
   spec.files         = Dir['lib/**/*.rb']
+
+  spec.required_ruby_version '>= 3.0.0'
 end

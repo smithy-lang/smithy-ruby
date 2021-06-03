@@ -91,10 +91,11 @@ module Seahorse
 
         it 'raises ArgumentError when appending non-text/non-node' do
           node = Node.new('name')
-          expect do
-            node << nil
-          end.to raise_error(ArgumentError,
-                             'expected Seahorse::XML::Node or String, got NilClass')
+          expect { node << nil }
+            .to raise_error(
+              ArgumentError,
+              'expected Seahorse::XML::Node or String, got NilClass'
+            )
         end
 
         it 'raises when appending a child node to node with text' do
@@ -237,11 +238,6 @@ module Seahorse
 
       describe '#child_node?' do
         it 'returns false if there is no child-node with the given name' do
-          node = Node.new('name')
-          expect(node.child_node?('child')).to be(false)
-        end
-
-        it 'returns false if the node does not have a child with the given name' do
           node = Node.new('name')
           node << Node.new('other-child')
           expect(node.child_node?('child')).to be(false)

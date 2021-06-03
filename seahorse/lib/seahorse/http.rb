@@ -14,7 +14,7 @@ module Seahorse
   # HTTP namespace for HTTP specific functionality. Also includes utility
   # methods for URI escaping.
   module HTTP
-    # TODO - do these belong here?
+    # TODO: - do these belong here?
     class << self
       # URI escapes the given value.
       #

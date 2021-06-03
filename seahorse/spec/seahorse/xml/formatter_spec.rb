@@ -13,7 +13,8 @@ module Seahorse
         it 'generates xml without whitespaces by default' do
           node = Node.new('name', Node.new('child', 'text'))
           node.attributes['key'] = 'value'
-          expect(Formatter.new.format(node)).to eq('<name key="value"><child>text</child></name>')
+          expect(Formatter.new.format(node))
+            .to eq('<name key="value"><child>text</child></name>')
         end
 
         it 'accepts an indent that is used to pretty-format the xml' do

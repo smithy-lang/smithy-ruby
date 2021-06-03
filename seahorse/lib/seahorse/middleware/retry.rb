@@ -22,13 +22,11 @@ module Seahorse
         begin
           @app.call(input, context)
         rescue Seahorse::HTTP::NetworkingError => e
-          if attempt < @max_attempts
-            Kernel.sleep(backoff_with_jitter(attempt))
-            attempt += 1
-            retry
-          else
-            raise e
-          end
+          raise e if attempt >= @max_attempts
+
+          Kernel.sleep(backoff_with_jitter(attempt))
+          attempt += 1
+          retry
         end
       end
 
