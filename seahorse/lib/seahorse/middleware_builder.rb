@@ -117,7 +117,7 @@ module Seahorse
         :use_before,
         klass,
         Middleware::RequestHandler,
-        handler: handler_or_proc!(args, &block)
+        { handler: handler_or_proc!(args, &block) }
       ]
       self
     end
@@ -127,7 +127,7 @@ module Seahorse
         :use_before,
         klass,
         Middleware::ResponseHandler,
-        handler: handler_or_proc!(args, &block)
+        { handler: handler_or_proc!(args, &block) }
       ]
       self
     end
@@ -137,13 +137,14 @@ module Seahorse
         :use_before,
         klass,
         Middleware::AroundHandler,
-        handler: handler_or_proc!(args, &block)
+        { handler: handler_or_proc!(args, &block) }
       ]
       self
     end
 
     # Define convenience methods for chaining
     class << self
+
       def before(klass, *args, &block)
         MiddlewareBuilder.new.before(klass, *args, &block)
       end
@@ -155,6 +156,7 @@ module Seahorse
       def around(klass, *args, &block)
         MiddlewareBuilder.new.around(klass, *args, &block)
       end
+
     end
 
     # define convenience methods for standard middleware classes
@@ -190,11 +192,13 @@ module Seahorse
     private
 
     def handler_or_proc!(args, &block)
-      raise ArgumentError, BOTH if args.size > 0 && block
+      raise ArgumentError, BOTH if args.size.positive? && block
       raise ArgumentError, NEITHER if args.empty? && block.nil?
       raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
+
       callable = args.first || Proc.new(&block)
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
+
       callable
     end
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Seahorse
-  describe XML do
 
+  describe XML do
     it 'raises on an empty string' do
       expect do
         XML.parse('')
@@ -78,10 +78,10 @@ module Seahorse
       expect do
         XML.parse('<root>abc<foo>bar</foo></root>')
       end.to raise_error(
-               XML::ParseError,
-               /Nodes may not have both text and child nodes/
-             )
+        XML::ParseError,
+        /Nodes may not have both text and child nodes/
+      )
     end
-
   end
+
 end

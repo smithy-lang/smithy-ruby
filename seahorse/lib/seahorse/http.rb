@@ -12,7 +12,9 @@ require_relative 'http/response'
 
 module Seahorse
   module HTTP
+
     class << self
+
       # URI escapes the given value.
       #
       #   Seahorse::HTTP.uri_escape("a b/c")
@@ -27,6 +29,8 @@ module Seahorse
       def uri_escape_path(path)
         path.gsub(%r{[^/]+}) { |part| uri_escape(part) }
       end
+
     end
+
   end
 end

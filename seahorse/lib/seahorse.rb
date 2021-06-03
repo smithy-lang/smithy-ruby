@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'seahorse/api_error'
 require_relative 'seahorse/block_io'
 require_relative 'seahorse/context'
@@ -27,5 +29,7 @@ require_relative 'seahorse/validator'
 require_relative 'seahorse/xml'
 
 module Seahorse
-  VERSION = '0.2.0'.freeze
+
+  VERSION = '0.2.0'
+
 end

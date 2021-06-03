@@ -20,9 +20,10 @@ module Seahorse
       def parse(xml)
         doc = REXML::Document.new(xml.strip)
         raise "no XML element found: #{xml.inspect}" unless doc.root
+
         parse_node(doc.root)
-      rescue StandardError => error
-        raise ParseError.new(error)
+      rescue StandardError => e
+        raise ParseError, e
       end
 
       private
@@ -45,6 +46,7 @@ module Seahorse
         text = rexml_node.text
         return if text.nil?
         return if text.strip.empty? && !node.empty?
+
         node.append(text)
       end
 

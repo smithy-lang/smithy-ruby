@@ -113,7 +113,7 @@ module Seahorse
           end
 
           context 'stub is a hash' do
-            let(:stub_hash) { {param1: 'value'} }
+            let(:stub_hash) { { param1: 'value' } }
             before { stubs.add_stubs(operation, [stub_hash]) }
 
             it 'uses the stub class to stub the response' do
@@ -123,7 +123,7 @@ module Seahorse
           end
 
           context 'stub is nil' do
-            let(:stub_hash) { {param1: 'value'} }
+            let(:stub_hash) { { param1: 'value' } }
             before { stubs.add_stubs(operation, [nil]) }
 
             it 'uses the stub class default' do

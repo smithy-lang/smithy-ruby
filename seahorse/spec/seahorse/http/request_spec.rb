@@ -2,6 +2,7 @@
 
 module Seahorse
   module HTTP
+
     describe Request do
       let(:http_method) { :get }
       let(:url) { 'http://example.com' }
@@ -81,5 +82,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

@@ -22,6 +22,7 @@ module Seahorse
 
           @app.call(input, context)
         end
+
       end
     end
   end

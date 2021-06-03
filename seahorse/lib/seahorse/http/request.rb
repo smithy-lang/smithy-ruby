@@ -7,6 +7,7 @@ module Seahorse
   module HTTP
     # Represents an HTTP request.
     class Request
+
       # @param [String] http_method
       # @param [String] url
       # @param [Headers] headers
@@ -125,6 +126,7 @@ module Seahorse
       def escape(value)
         Seahorse::HTTP.uri_escape(value.to_s)
       end
+
     end
   end
 end

@@ -6,6 +6,7 @@ module Seahorse
   module HTTP
     # Represents an HTTP Response.
     class Response
+
       # @param [Integer] status
       # @param [Headers] headers
       # @param [IO] body
@@ -23,6 +24,7 @@ module Seahorse
 
       # @return [IO]
       attr_accessor :body
+
     end
   end
 end

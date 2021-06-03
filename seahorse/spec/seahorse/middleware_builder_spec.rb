@@ -52,7 +52,7 @@ module Seahorse
             middleware_class,
             Seahorse::Middleware::RequestHandler,
             { handler: handler }
-         )
+          )
         subject.apply(stack)
       end
     end
@@ -78,7 +78,6 @@ module Seahorse
           subject.before(middleware_class, handler) { {} }
         end.to raise_error(ArgumentError)
       end
-
 
       it 'raises when no handler is provided' do
         expect do

@@ -50,7 +50,7 @@ module Seahorse
 
           it 'parses the error' do
             expect(app).to receive(:call).with(input, context)
-              .and_return(output).ordered
+                                         .and_return(output).ordered
             expect(error_parser).to receive(:parse)
               .with(response).ordered.and_return(error)
             expect(data_parser).not_to receive(:parse)

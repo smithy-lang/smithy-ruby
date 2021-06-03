@@ -15,9 +15,7 @@ module Seahorse
       # @param context
       # @return [Output]
       def call(input, context)
-        if @validate_input
-          @validator.validate!(input: input, context: 'input')
-        end
+        @validator.validate!(input: input, context: 'input') if @validate_input
         @app.call(input, context)
       end
 

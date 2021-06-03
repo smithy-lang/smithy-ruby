@@ -23,7 +23,7 @@ module Seahorse
         let(:context) do
           Seahorse::Context.new(
             request: request,
-            response: response,
+            response: response
           )
         end
         it 'calls the next middleware' do

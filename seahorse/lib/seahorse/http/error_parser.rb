@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seahorse
   module HTTP
     # Uses HTTP specific logic + Protocol defined Errors and
@@ -60,30 +62,37 @@ module Seahorse
         return true if @error_code_fn.call(http_resp)
         return false if http_resp.status == @success_status
 
-        return !(200..299).cover?(http_resp.status)
+        !(200..299).cover?(http_resp.status)
       end
 
       def extract_error(http_resp)
         error_code = @error_code_fn.call(http_resp)
-        error_class = @errors.find{ |e| e.name.include? error_code } if error_code
+        if error_code
+          error_class = @errors.find do |e|
+            e.name.include? error_code
+          end
+        end
 
         error_opts = {
           http_resp: http_resp,
           error_code: error_code,
-          message: nil, # must be set later
+          message: nil # must be set later
         }
 
         if error_class
           error_class.new(**error_opts)
         else
           case http_resp.status
-          when HTTP_3XX then @error_module::ApiRedirectError.new(location: http_resp.headers['location'], **error_opts)
+          when HTTP_3XX then @error_module::ApiRedirectError.new(
+            location: http_resp.headers['location'], **error_opts
+          )
           when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
           when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
           else @error_module::ApiError.new(http_resp: http_resp, **error_opts)
           end
         end
       end
+
     end
   end
 end

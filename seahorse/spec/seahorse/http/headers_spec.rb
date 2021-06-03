@@ -2,6 +2,7 @@
 
 module Seahorse
   module HTTP
+
     describe Headers do
       let(:header1) { 'test-header' }
       let(:header1_normalized) { 'Test-Header' }
@@ -74,5 +75,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

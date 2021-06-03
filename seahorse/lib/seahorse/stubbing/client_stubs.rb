@@ -3,7 +3,6 @@
 require_relative 'stubs'
 
 module Seahorse
-
   # This module provides the ability to specify the data and/or errors to
   # return when a client is using stubbed responses.
   # This module should be included in generated service clients.
@@ -114,5 +113,6 @@ module Seahorse
         raise ArgumentError, msg
       end
     end
+
   end
 end

@@ -14,9 +14,10 @@ module Seahorse
       #   `indent`.
       # @raise [ArgumentError] when indent is not a String.
       def initialize(indent: '')
-        if !indent.is_a?(String)
+        unless indent.is_a?(String)
           raise ArgumentError, "expected a String, got #{indent.class}"
         end
+
         @indent = indent
         @eol = indent.empty? ? '' : "\n"
       end
@@ -34,6 +35,7 @@ module Seahorse
       def serialize(buffer, node, pad)
         return buffer.write(self_close_node(node, pad)) if node.empty?
         return buffer.write(text_node(node, pad)) if node.text
+
         serialize_nested(buffer, node, pad)
       end
 

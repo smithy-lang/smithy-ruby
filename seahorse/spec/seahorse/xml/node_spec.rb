@@ -2,6 +2,7 @@
 
 module Seahorse
   module XML
+
     describe Node do
       describe '#initialize' do
         it 'accepts a name with text arguments' do
@@ -11,7 +12,7 @@ module Seahorse
         end
 
         it 'accepts a name with an array of text' do
-          node = Node.new('name', ['te', 'xt'])
+          node = Node.new('name', %w[te xt])
           expect(node.name).to eq('name')
           expect(node.text).to eq('text')
         end
@@ -93,7 +94,8 @@ module Seahorse
           node = Node.new('name')
           expect do
             node << nil
-          end.to raise_error(ArgumentError, 'expected Seahorse::XML::Node or String, got NilClass')
+          end.to raise_error(ArgumentError,
+                             'expected Seahorse::XML::Node or String, got NilClass')
         end
 
         it 'raises when appending a child node to node with text' do
@@ -226,7 +228,7 @@ module Seahorse
           node << Node.new('child1')
           node << Node.new('child2')
           node << Node.new('child2')
-          expect(node.child_node_names).to eq(%w(child1 child2))
+          expect(node.child_node_names).to eq(%w[child1 child2])
         end
 
         it 'returns an empty array for an empty node' do
@@ -320,5 +322,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

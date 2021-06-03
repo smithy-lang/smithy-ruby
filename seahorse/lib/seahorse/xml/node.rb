@@ -31,11 +31,13 @@ module Seahorse
           case child
           when Node
             raise ArgumentError, BOTH_TYPES unless @text.empty?
+
             @child_nodes << child
             @child_node_map[child.name] ||= []
             @child_node_map[child.name] << child
           when String
             raise ArgumentError, BOTH_TYPES unless @child_nodes.empty?
+
             @text << child
           else
             raise ArgumentError, 'expected Seahorse::XML::Node or String, ' \
@@ -47,7 +49,7 @@ module Seahorse
 
       # @return [String, nil]
       def text
-        @text.empty? ? nil : @text.join('')
+        @text.empty? ? nil : @text.join
       end
 
       # @param [String] node_name
@@ -66,7 +68,7 @@ module Seahorse
           case args.count
           when 0 then @child_nodes
           when 1 then @child_node_map.fetch(args.first, [])
-          else raise ArgumentError, "expected 0 or 1 arguments"
+          else raise ArgumentError, 'expected 0 or 1 arguments'
           end
         yield(nodes) if block_given? && !nodes.empty?
         nodes

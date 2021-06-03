@@ -14,7 +14,7 @@ module Seahorse
       # @param input
       # @param context
       # @return [Output]
-      def call(input, context)
+      def call(_input, context)
         if @stub_responses
           stub = @stubs.next(context.operation_name)
           output = Output.new
@@ -48,6 +48,7 @@ module Seahorse
           raise ArgumentError, 'Unsupported stub type'
         end
       end
+
     end
   end
 end

@@ -4,6 +4,7 @@ require 'webmock/rspec'
 
 module Seahorse
   module HTTP
+
     describe Client do
       before(:each) { WebMock.disable_net_connect! }
 
@@ -23,7 +24,7 @@ module Seahorse
           ssl_ca_bundle: ssl_ca_bundle,
           ssl_ca_directory: ssl_ca_directory,
           ssl_ca_store: ssl_ca_store
-          )
+        )
       end
 
       let(:http_method) { :get }
@@ -214,7 +215,7 @@ module Seahorse
         end
 
         context 'http_proxy set' do
-          let(:http_proxy) { 'http://my-proxy-host.com:88'}
+          let(:http_proxy) { 'http://my-proxy-host.com:88' }
           it 'sets the http proxy' do
             stub_request(:any, url)
             expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
@@ -228,7 +229,9 @@ module Seahorse
           context 'user and password set on proxy' do
             let(:password) { 'pass/word' }
             let(:user) { 'my user' }
-            let(:http_proxy) { "http://#{CGI.escape(user)}:#{CGI.escape(password)}@my-proxy-host.com:88"}
+            let(:http_proxy) do
+              "http://#{CGI.escape(user)}:#{CGI.escape(password)}@my-proxy-host.com:88"
+            end
 
             it 'unescapes and sets user and password' do
               stub_request(:any, url)
@@ -255,5 +258,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

@@ -4,6 +4,7 @@ module Seahorse
   module HTTP
     # Base class for HTTP errors returned from an API
     class ApiError < Seahorse::ApiError
+
       def initialize(http_resp:, **kwargs)
         @http_status = http_resp.status
         @http_headers = http_resp.headers
@@ -23,6 +24,7 @@ module Seahorse
 
       # @return [String]
       attr_reader :request_id
+
     end
   end
 end

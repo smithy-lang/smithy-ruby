@@ -9,6 +9,7 @@ module Seahorse
   # parsing and serialization.
   # @api private
   module JSON
+
     class << self
 
       # @param [String] json

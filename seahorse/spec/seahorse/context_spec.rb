@@ -24,7 +24,7 @@ module Seahorse
     describe '#initialize' do
       it 'sets empty defaults' do
         context = Context.new
-        expect(context.operation_name). to be_nil
+        expect(context.operation_name).to be_nil
         expect(context.request).to be_nil
         expect(context.response).to be_nil
         expect(context.logger).to be_nil

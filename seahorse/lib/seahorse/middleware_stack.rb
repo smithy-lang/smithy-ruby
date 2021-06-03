@@ -23,6 +23,7 @@ module Seahorse
       unless new_middleware.size == @middleware.size + 1
         raise "Failed to insert #{middleware} before #{before}"
       end
+
       @middleware = new_middleware
     end
 
@@ -37,6 +38,7 @@ module Seahorse
       unless new_middleware.size == @middleware.size + 1
         raise "Failed to insert #{middleware} after #{after}"
       end
+
       @middleware = new_middleware
     end
 

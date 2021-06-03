@@ -2,6 +2,7 @@
 
 module Seahorse
   module XML
+
     describe Formatter do
       describe '#initialize' do
         it 'raises when indent is not a String' do
@@ -48,7 +49,9 @@ module Seahorse
         end
 
         it 'can format deeply nested nodes' do
-          node = Node.new('name', Node.new('child1', Node.new('child2', Node.new('child3'))))
+          node = Node.new('name',
+                          Node.new('child1',
+                                   Node.new('child2', Node.new('child3'))))
           expect(Formatter.new(indent: '  ').format(node)).to eq(<<~XML)
             <name>
               <child1>
@@ -61,5 +64,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

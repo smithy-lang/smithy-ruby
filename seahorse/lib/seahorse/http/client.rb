@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-#
+
 require 'net/http'
 require 'logger'
 require 'openssl'
 
 module Seahorse
   module HTTP
-
     # Transmits an HTTP {Request} object, returning an HTTP {Response}.
     class Client
 
@@ -16,7 +15,7 @@ module Seahorse
         Errno::EINVAL, Errno::ETIMEDOUT, OpenSSL::SSL::SSLError,
         Errno::EHOSTUNREACH, Errno::ECONNREFUSED,
         Net::HTTPFatalError # for proxy connection failures
-      ]
+      ].freeze
 
       # @param [Boolean] http_wire_trace (false) When `true`,
       #   HTTP debug output will be sent to the `:logger`.
@@ -123,10 +122,7 @@ module Seahorse
       # @param [Net::HTTP::Response] response
       # @return [Hash<String, String>]
       def extract_headers(response)
-        response.to_hash.inject({}) do |headers, (k, v)|
-          headers[k] = v.first
-          headers
-        end
+        response.to_hash.transform_values(&:first)
       end
 
       # @param [Http::Request] request
@@ -143,14 +139,14 @@ module Seahorse
       # Extract the parts of the http_proxy URI
       # @return [Array(String)]
       def http_proxy_parts
-        return [
+        [
           @http_proxy.host,
           @http_proxy.port,
-          (@http_proxy.user && CGI::unescape(@http_proxy.user)),
-          (@http_proxy.password && CGI::unescape(@http_proxy.password))
+          (@http_proxy.user && CGI.unescape(@http_proxy.user)),
+          (@http_proxy.password && CGI.unescape(@http_proxy.password))
         ]
       end
-    end
 
+    end
   end
 end

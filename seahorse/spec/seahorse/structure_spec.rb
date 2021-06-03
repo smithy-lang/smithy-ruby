@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Seahorse
-  describe Struct do
 
+  describe Struct do
     let(:struct) do
       Struct.new(
         :struct_value,
@@ -28,7 +28,6 @@ module Seahorse
     end
 
     describe '#to_hash' do
-
       it 'serializes nested structs to a hash' do
         expected = {
           struct_value: { value: 'foo' },
@@ -43,8 +42,7 @@ module Seahorse
         }
         expect(subject.to_h).to eq expected
       end
-
     end
-
   end
+
 end

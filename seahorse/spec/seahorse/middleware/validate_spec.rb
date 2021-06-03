@@ -6,7 +6,7 @@ module Seahorse
     describe Validate do
       let(:app) { double('app') }
       let(:validator) { double('validator') }
-      let(:data) { {foo: 'bar'} }
+      let(:data) { { foo: 'bar' } }
       let(:input) { double('Type::OperationInput') }
 
       subject do
