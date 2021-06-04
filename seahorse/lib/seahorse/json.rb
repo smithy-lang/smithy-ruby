@@ -20,7 +20,7 @@ module Seahorse
         raise ParseError, e
       end
 
-      # @param [Hash]
+      # @param [Hash] value
       # @return [String] json
       def dump(value)
         ::JSON.dump(value)

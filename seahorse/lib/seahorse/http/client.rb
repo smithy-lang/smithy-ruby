@@ -63,6 +63,9 @@ module Seahorse
         start_connection(http, request, response)
         response.body.rewind if response.body.respond_to?(:rewind)
         response
+      rescue ArgumentError => e
+        # Invalid verb, ArgumentError is a StandardError
+        raise e
       rescue StandardError => e
         raise Seahorse::HTTP::NetworkingError, e
       end

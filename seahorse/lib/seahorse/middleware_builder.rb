@@ -189,7 +189,7 @@ module Seahorse
     private
 
     def handler_or_proc!(args, &block)
-      validate_args!(args, block)
+      validate_args!(args, &block)
       callable = args.first || Proc.new(&block)
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
 

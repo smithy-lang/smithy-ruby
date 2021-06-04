@@ -116,17 +116,11 @@ module Seahorse
           end.to raise_error(ArgumentError)
         end
 
-        Client::NETWORK_ERRORS.each do |error|
-          if error == Net::HTTPFatalError
-            error = Net::HTTPFatalError.new(nil, nil)
-          end
-
-          it "rescues #{error} and converts to a NetworkingError" do
-            stub_request(:any, url).to_raise(error)
-            expect do
-              subject.transmit(request: request, response: response)
-            end.to raise_error(NetworkingError)
-          end
+        it 'rescues StandardError and converts to a NetworkingError' do
+          stub_request(:any, url).to_raise(StandardError)
+          expect do
+            subject.transmit(request: request, response: response)
+          end.to raise_error(NetworkingError)
         end
 
         context 'https' do
