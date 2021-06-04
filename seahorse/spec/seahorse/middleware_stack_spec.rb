@@ -92,23 +92,23 @@ module Seahorse
       end
     end
 
-    let(:parser) { double('parser') }
-    let(:builder) { double('builder') }
-    let(:input) { double('input') }
-    let(:context) { double('context') }
-    let(:app) { double('app') }
-
     describe '#run' do
+      let(:parser) { double('parser') }
+      let(:builder) { double('builder') }
+      let(:input) { double('input') }
+      let(:context) { double('context') }
+
       it 'runs the middleware in reverse order' do
-        # subject.use(build_middleware, **builder_params)
-        # subject.use(parse_middleware, **parser_params)
-        #
-        # expect(parse_middleware).to receive(:new).and_return(app).ordered
-        # expect(build_middleware).to receive(:new).and_return(app).ordered
-        # expect(app).to receive(:call)
-        # expect(app).to receive(:call)
-        #
-        # subject.run(input: input, context: context)
+        subject.use(build_middleware, **builder_params)
+        subject.use(parse_middleware, **parser_params)
+
+        expect(parse_middleware).to receive(:new)
+          .with(nil, parser_params).and_return(parser).ordered
+        expect(build_middleware).to receive(:new)
+          .with(parser, builder_params).and_return(builder).ordered
+
+        expect(builder).to receive(:call) # first middleware is called
+        subject.run(input: input, context: context)
       end
     end
   end
