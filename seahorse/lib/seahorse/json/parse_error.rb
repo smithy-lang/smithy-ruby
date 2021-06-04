@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-  # @api private
   module JSON
     # An error class encountered when parsing JSON.
     class ParseError < StandardError

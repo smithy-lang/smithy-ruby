@@ -3,6 +3,7 @@
 module Seahorse
   module Middleware
     # A middleware that retries the request.
+    # @api private
     class Retry
       # @param [Class] app The next middleware in the stack.
       # @param [Integer] max_attempts The maximum number of attempts to make

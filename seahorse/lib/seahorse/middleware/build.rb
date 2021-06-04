@@ -3,6 +3,7 @@
 module Seahorse
   module Middleware
     # A middleware that builds a request object.
+    # @api private
     class Build
       # @param [Class] app The next middleware in the stack.
       # @param [Class] builder A builder object responsible for building the

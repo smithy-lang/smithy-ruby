@@ -3,6 +3,7 @@
 module Seahorse
   module Middleware
     # A middleware used to validate input.
+    # @api private
     class Validate
       # @param [Class] app The next middleware in the stack.
       # @param [Boolean] validate_input If true, the input is validated against

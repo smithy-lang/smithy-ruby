@@ -1,0 +1,3 @@
+--title Seahorse, the base Smithy Ruby SDK
+--hide-api private
+lib/

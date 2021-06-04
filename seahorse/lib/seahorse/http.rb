@@ -13,6 +13,7 @@ require_relative 'http/response'
 module Seahorse
   # HTTP namespace for HTTP specific functionality. Also includes utility
   # methods for URI escaping.
+  # @api private
   module HTTP
     # TODO: - do these belong here?
     class << self

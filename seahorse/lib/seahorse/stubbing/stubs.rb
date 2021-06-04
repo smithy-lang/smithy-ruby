@@ -2,8 +2,8 @@
 
 module Seahorse
   module Stubbing
-    # Provides a thread safe data structure for adding
-    # and getting stubs per operation
+    # Provides a thread safe data structure for adding and getting stubs
+    # per operation.
     # @api private
     class Stubs
       def initialize

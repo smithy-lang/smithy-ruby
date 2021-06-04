@@ -3,6 +3,7 @@
 module Seahorse
   module Middleware
     # A middleware that parses a response object.
+    # @api private
     class Parse
       # @param [Class] app The next middleware in the stack.
       # @param [Class] error_parser A parser object responsible for parsing the

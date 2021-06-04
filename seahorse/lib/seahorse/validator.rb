@@ -5,7 +5,7 @@ module Seahorse
   #
   # * Validate structure of parameters against the expected type.
   # * Raise errors with context when validation fails.
-  #
+  # @api private
   class Validator
     # Initialize a new instance of the validator.
     # @param [Struct] input The input type for this shape.

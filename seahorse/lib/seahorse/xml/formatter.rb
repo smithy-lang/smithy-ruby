@@ -5,6 +5,7 @@ require 'stringio'
 module Seahorse
   module XML
     # A class used for formatting XML strings.
+    # @api private
     class Formatter
       NEGATIVE_INDENT = 'indent must be greater than or equal to zero'
 

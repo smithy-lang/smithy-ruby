@@ -7,6 +7,7 @@ require 'openssl'
 module Seahorse
   module HTTP
     # Transmits an HTTP {Request} object, returning an HTTP {Response}.
+    # @api private
     class Client
       # Initialize an instance of this HTTP client.
       #

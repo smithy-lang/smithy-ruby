@@ -6,6 +6,7 @@ require 'uri'
 module Seahorse
   module HTTP
     # Represents an HTTP request.
+    # @api private
     class Request
       # @param [String] http_method
       # @param [String] url
