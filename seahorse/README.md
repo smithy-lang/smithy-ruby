@@ -3,21 +3,48 @@
 ## What is it
 Seahorse is a base dependency for Ruby SDK API Clients built by
 [smithy-ruby][smithy-ruby] using a [Smithy][Smithy] model. Seahorse provides an
-implementation of the components necessary to make requests and parse responses
+implementation of the components necessary to make requests and handle responses
 from a service. Seahorse is only intended to be used with clients that were code
 generated using Smithy, but it may be used for any service client
 implementation.
 
 ## Components
-Seahorse contains reusable components that are used by a code generated generic
-Ruby SDK. Such components include, but are not limited to: transport clients,
-request and response objects, middleware, serialization helpers for JSON and
-XML, error classes and parsers, stubbing modules, etc.
+Seahorse contains reusable components that are used by code generated Ruby SDKs.
+Such components include, but are not limited to: transport clients, request and
+response objects, middleware, serialization and deserialization helpers for JSON
+and XML, error classes and parsers, stubbing modules, etc.
 
 ### Middleware
 Seahorse uses middleware to handle the request and response cycle for service
 operations. Middleware is used for building requests, parsing responses, sending
 requests, and everything in-between.
+
+#### Interface
+All middleware must conform to the same interface. Middleware must have an
+`#initialize` method that takes `app` as a positional parameter and any number
+of keyword arguments that the middleware will use. Middleware must also have a
+`#call` method that takes `input` (a Struct) and `context` (`Seahorse::Context`)
+as positional parameters. The method must return the result of the next
+middleware call (`@app.call(input, context)`).
+
+```ruby
+def initialize(app, some_option:)
+  @app = app
+  ...
+end
+
+def call(input, context)
+  # do a thing
+  output = @app.call(input, context)
+  # do another thing
+  output
+end
+```
+
+#### Context
+Middleware shares a context object (`Seahorse::Context`) which allows middleware
+to share state. The context object contains a logger, the request, the response,
+the original params, the operation name, and a metadata hash for arbitrary data.
 
 #### List of Middleware
 
@@ -61,9 +88,9 @@ For HTTP, Seahorse implements a `ContentLength` middleware for setting the
 
 #### Middleware Usage Example
 
-For each operation invocation, a middleware stack is created and middleware is
-added to it in a specific order. The middleware stack is then run in a reverse
-order. An example code generated Client operation is as follows:
+For each client operation invocation, a middleware stack is created and
+middleware is added to it in a specific order. The middleware stack is then run
+in a reverse order. An example code generated Client operation is as follows:
 
 ```ruby
 def get_high_score(params = {}, options = {})
@@ -133,15 +160,23 @@ as well as configure proxy and SSL related values.
 #### HTTP 2
 Not yet supported.
 
+### Request and Response objects
+Seahorse includes request and response objects for protocols, such as
+`Seahorse::HTTP::Request` and `Seahorse::HTTP::Response`. These objects contain
+raw HTTP request and response information, such as a URL, headers, body, status,
+etc.
+
 ### XML and JSON Protocols
 Seahorse includes serialization and deserialization helpers for JSON and XML
 based protocols. `Seahorse::JSON` can be used to dump and load JSON strings and
 `Seahorse::XML` can be used to build XML strings and parse XML documents.
 
 ### Stubbing
-Seahorse includes a `Seahorse::Stubbing::Stubs` class that can holds stub data
-used by the client's `stub_responses` method, defined in
-`Seahorse::Stubbing::ClientStubs`.
+Seahorse includes a `Seahorse::Stubbing::Stubs` class that can hold stub data
+used by the client's `stub_responses` method. The `stub_responses` method is
+defined in the `Seahorse::Stubbing::ClientStubs` module. To support stubbing,
+generated SDK clients must include this module and include protocol specific
+stub classes which serialize stub data into a response.
 
 ### Errors
 Seahorse defines a base `Seahorse::ApiError` that can be inherited by protocol
