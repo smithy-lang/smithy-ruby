@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Seahorse
+  # @api private
   module Stubbing
     # Provides a thread safe data structure for adding and getting stubs
     # per operation.
-    # @api private
     class Stubs
       def initialize
         @stubs = {}

@@ -61,7 +61,7 @@ module Seahorse
           http.use_ssl = false
         end
 
-        start_connection(http, request, response)
+        _transmit(http, request, response)
         response.body.rewind if response.body.respond_to?(:rewind)
         response
       rescue ArgumentError => e
@@ -73,7 +73,7 @@ module Seahorse
 
       private
 
-      def start_connection(http, request, response)
+      def _transmit(http, request, response)
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
