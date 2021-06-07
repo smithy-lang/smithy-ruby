@@ -10,22 +10,21 @@ module Seahorse
   # @api private
   module JSON
     class << self
-
       # @param [String] json
       # @return [Hash]
       def load(json)
+        # rubocop:disable Security/JSONLoad
         ::JSON.load(json)
+        # rubocop:enable Security/JSONLoad
       rescue ::JSON::ParserError => e
         raise ParseError, e
       end
 
-      # @param [Hash]
+      # @param [Hash] value
       # @return [String] json
       def dump(value)
         ::JSON.dump(value)
       end
-
     end
-
   end
 end

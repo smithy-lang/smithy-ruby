@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe Validator do
     let(:input_type) { Struct.new(:foo, keyword_init: true) }
     let(:input) { input_type.new(params) }
     let(:context) { 'input' }
 
-    subject { Validator.new(input: input, context: context) }
+    subject { Validator.new(input, context: context) }
 
     describe '#validate_type!' do
       context 'key is set' do
@@ -41,5 +40,4 @@ module Seahorse
       end
     end
   end
-
 end

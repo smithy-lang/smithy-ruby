@@ -2,31 +2,31 @@
 
 module Seahorse
   module HTTP
-
     module TestErrors
       class ApiError < Seahorse::HTTP::ApiError; end
+
       class ApiRedirectError < ApiError
         def initialize(location:, **kwargs)
           @location = location
           super(**kwargs)
         end
       end
+
       class ApiClientError < ApiError; end
+
       class ApiServerError < ApiError; end
 
       class TestModeledError < ApiClientError; end
     end
 
     describe ErrorParser do
-
       let(:error_module) { TestErrors }
       let(:success_status) { 200 }
       let(:errors) { [TestErrors::TestModeledError] }
-      let(:error_code_fn) { proc { nil } }
+      let(:error_code_fn) { proc {} }
 
       let(:resp_status) { 200 }
       let(:http_resp) { Response.new(status: resp_status) }
-
 
       subject do
         Seahorse::HTTP::ErrorParser.new(
@@ -39,7 +39,7 @@ module Seahorse
 
       describe '#parse' do
         context 'no error code' do
-          let(:error_code_fn) { proc { nil } }
+          let(:error_code_fn) { proc {} }
 
           context 'successful response: non-2XX success code matches' do
             let(:success_status) { 303 }

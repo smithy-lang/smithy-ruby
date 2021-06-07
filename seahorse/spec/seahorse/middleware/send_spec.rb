@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Send do
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
@@ -113,10 +112,21 @@ module Seahorse
           end
 
           context 'stub is a hash' do
-            let(:stub_hash) { {param1: 'value'} }
+            let(:stub_hash) { { param1: 'value' } }
             before { stubs.add_stubs(operation, [stub_hash]) }
 
             it 'uses the stub class to stub the response' do
+              expect(stub_class).to receive(:stub).with(response, stub_hash)
+              subject.call(input, context)
+            end
+          end
+
+          context 'stub is nil' do
+            let(:stub_hash) { { param1: 'value' } }
+            before { stubs.add_stubs(operation, [nil]) }
+
+            it 'uses the stub class default' do
+              expect(stub_class).to receive(:default).and_return(stub_hash)
               expect(stub_class).to receive(:stub).with(response, stub_hash)
               subject.call(input, context)
             end
@@ -134,6 +144,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

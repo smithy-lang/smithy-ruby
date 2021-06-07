@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe Context do
     let(:operation_name) { :operation }
     let(:request) { double('request') }
@@ -24,7 +23,7 @@ module Seahorse
     describe '#initialize' do
       it 'sets empty defaults' do
         context = Context.new
-        expect(context.operation_name). to be_nil
+        expect(context.operation_name).to be_nil
         expect(context.request).to be_nil
         expect(context.response).to be_nil
         expect(context.logger).to be_nil
@@ -40,5 +39,4 @@ module Seahorse
       end
     end
   end
-
 end

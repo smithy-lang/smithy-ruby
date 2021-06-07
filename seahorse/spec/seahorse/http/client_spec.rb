@@ -23,7 +23,7 @@ module Seahorse
           ssl_ca_bundle: ssl_ca_bundle,
           ssl_ca_directory: ssl_ca_directory,
           ssl_ca_store: ssl_ca_store
-          )
+        )
       end
 
       let(:http_method) { :get }
@@ -116,17 +116,11 @@ module Seahorse
           end.to raise_error(ArgumentError)
         end
 
-        Client::NETWORK_ERRORS.each do |error|
-          if error == Net::HTTPFatalError
-            error = Net::HTTPFatalError.new(nil, nil)
-          end
-
-          it "rescues #{error} and converts to a NetworkingError" do
-            stub_request(:any, url).to_raise(error)
-            expect do
-              subject.transmit(request: request, response: response)
-            end.to raise_error(NetworkingError)
-          end
+        it 'rescues StandardError and converts to a NetworkingError' do
+          stub_request(:any, url).to_raise(StandardError)
+          expect do
+            subject.transmit(request: request, response: response)
+          end.to raise_error(NetworkingError)
         end
 
         context 'https' do
@@ -214,7 +208,7 @@ module Seahorse
         end
 
         context 'http_proxy set' do
-          let(:http_proxy) { 'http://my-proxy-host.com:88'}
+          let(:http_proxy) { 'http://my-proxy-host.com:88' }
           it 'sets the http proxy' do
             stub_request(:any, url)
             expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
@@ -228,7 +222,9 @@ module Seahorse
           context 'user and password set on proxy' do
             let(:password) { 'pass/word' }
             let(:user) { 'my user' }
-            let(:http_proxy) { "http://#{CGI.escape(user)}:#{CGI.escape(password)}@my-proxy-host.com:88"}
+            let(:http_proxy) do
+              "http://#{CGI.escape(user)}:#{CGI.escape(password)}@my-proxy-host.com:88"
+            end
 
             it 'unescapes and sets user and password' do
               stub_request(:any, url)

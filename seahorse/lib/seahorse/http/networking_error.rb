@@ -2,7 +2,7 @@
 
 module Seahorse
   module HTTP
-    # Thrown by {Client} when encountering a networking error while transmitting
+    # Thrown by a Client when encountering a networking error while transmitting
     # a request or receiving a response. You can access the original error
     # by calling {#original_error}.
     class NetworkingError < StandardError

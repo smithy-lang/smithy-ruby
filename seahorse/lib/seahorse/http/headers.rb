@@ -5,7 +5,6 @@ module Seahorse
     # Provides Hash like access for Headers with key normalization
     # @api private
     class Headers
-
       # @param [Hash<String,String>] headers
       def initialize(headers: {})
         @headers = {}
@@ -66,7 +65,6 @@ module Seahorse
       def normalize(key)
         key.to_s.gsub(/[^-]+/, &:capitalize)
       end
-
     end
   end
 end

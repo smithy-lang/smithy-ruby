@@ -44,6 +44,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

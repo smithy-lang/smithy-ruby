@@ -58,7 +58,10 @@ module SampleService
 
     class UpdateHighScore
       def self.build(http_req, input = Types::UpdateHighScoreInput.new)
-        raise ArgumentError if input[:id].nil? || input[:id].empty?
+        if input[:id].nil? || input[:id].empty?
+          raise ArgumentError,
+                'input[:id] is nil or empty'
+        end
 
         http_req.http_method = 'PUT'
         http_req.append_path(format('/high_scores/%<id>s',
