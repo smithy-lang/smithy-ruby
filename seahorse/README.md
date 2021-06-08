@@ -35,8 +35,10 @@ end
 
 def call(input, context)
   # do a thing
+  # inspect or modify input or context.request
   output = @app.call(input, context)
   # do another thing
+  # inspect or modify output or context.response
   output
 end
 ```
