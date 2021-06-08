@@ -116,7 +116,8 @@ module Seahorse
             before { stubs.add_stubs(operation, [stub_hash]) }
 
             it 'uses the stub class to stub the response' do
-              expect(stub_class).to receive(:stub).with(response, stub_hash)
+              expect(stub_class).to receive(:stub)
+                .with(response, stub: stub_hash)
               subject.call(input, context)
             end
           end
@@ -127,7 +128,8 @@ module Seahorse
 
             it 'uses the stub class default' do
               expect(stub_class).to receive(:default).and_return(stub_hash)
-              expect(stub_class).to receive(:stub).with(response, stub_hash)
+              expect(stub_class).to receive(:stub)
+                .with(response, stub: stub_hash)
               subject.call(input, context)
             end
           end

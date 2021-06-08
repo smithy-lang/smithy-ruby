@@ -13,13 +13,13 @@ module SampleService
         }
       end
 
-      def self.stub(stub_data = {})
+      def self.stub(stub: {})
         data = {}
-        data[:id] = stub_data[:id]
-        data[:game] = stub_data[:game]
-        data[:score] = stub_data[:score]
-        data[:created_at] = stub_data[:created_at]
-        data[:updated_at] = stub_data[:updated_at]
+        data[:id] = stub[:id]
+        data[:game] = stub[:game]
+        data[:score] = stub[:score]
+        data[:created_at] = stub[:created_at]
+        data[:updated_at] = stub[:updated_at]
         data
       end
     end
@@ -31,8 +31,8 @@ module SampleService
         }
       end
 
-      def self.stub(http_resp, stub_data)
-        data = HighScoreAttributes.stub(stub_data[:high_score])
+      def self.stub(http_resp, stub: nil)
+        data = HighScoreAttributes.stub(stub: stub[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status = 200
       end
@@ -45,8 +45,8 @@ module SampleService
         }
       end
 
-      def self.stub(http_resp, stub_data)
-        data = HighScoreAttributes.stub(stub_data[:high_score])
+      def self.stub(http_resp, stub: nil)
+        data = HighScoreAttributes.stub(stub: stub[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status = 201
       end
@@ -59,8 +59,8 @@ module SampleService
         }
       end
 
-      def self.stub(http_resp, stub_data)
-        data = HighScoreAttributes.stub(stub_data[:high_score])
+      def self.stub(http_resp, stub: nil)
+        data = HighScoreAttributes.stub(stub: stub[:high_score])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status = 200
       end
@@ -71,7 +71,7 @@ module SampleService
         {}
       end
 
-      def self.stub(http_resp, stub_data)
+      def self.stub(http_resp, stub: nil)
         data = {}
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status = 200
@@ -85,8 +85,8 @@ module SampleService
         }
       end
 
-      def self.stub(http_resp, stub_data)
-        data = HighScores.stub(stub_data[:high_scores])
+      def self.stub(http_resp, stub: nil)
+        data = HighScores.stub(stub[:high_scores])
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
         http_resp.status = 200
       end
@@ -100,9 +100,9 @@ module SampleService
         }
       end
 
-      def self.stub(http_resp, stub_data)
-        http_resp.headers['StreamID'] = stub_data[:stream_id]
-        http_resp.body = stub_data[:blob]
+      def self.stub(http_resp, stub: nil)
+        http_resp.headers['StreamID'] = stub[:stream_id]
+        http_resp.body = stub[:blob]
         http_resp.status = 200
       end
     end
@@ -114,8 +114,8 @@ module SampleService
         }
       end
 
-      def self.stub(stub_data = [])
-        stub_data.map do |stub|
+      def self.stub(stub: [])
+        stub.map do |stub|
           HighScoreAttributes.stub(stub)
         end
       end
