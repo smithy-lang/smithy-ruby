@@ -5,9 +5,9 @@
       "service": "example.rails#SampleService",
       "module": "SampleService",
       "gemspec": {
-        "gemName": "SampleService",
+        "gemName": "sample_service_real",
         "gemVersion": "0.0.1",
-        "gemSummary": "Weather Service"
+        "gemSummary": "Sample Rails Service"
       }
     }
   }
