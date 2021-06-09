@@ -16,14 +16,14 @@ module Seahorse
       @context = context
     end
 
-    # Validate the given key is the given type.
+    # Validate the given key(s) is the given type.
     # @raise [ArgumentError] Raises when the key's value is not the given type.
-    def validate_type!(key, type)
+    def validate_type!(key, *types)
       v = @input[key]
-      return if !v || v.is_a?(type)
+      return if !v || types.member?(v.class)
 
       raise ArgumentError,
-            "Expected #{@context}[:#{key}] to be a #{type}, got #{v.class}."
+            "Expected #{@context}[:#{key}] to be in #{types}, got #{v.class}."
     end
   end
 end
