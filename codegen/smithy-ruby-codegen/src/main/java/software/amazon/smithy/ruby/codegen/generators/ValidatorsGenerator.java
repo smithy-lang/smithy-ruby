@@ -17,7 +17,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
@@ -88,11 +87,12 @@ public class ValidatorsGenerator {
     }
 
     private void renderValidatorForStructure(StructureShape structureShape) {
-        Collection<MemberShape> members = structureShape.members();
         if (generatedValidators.contains(structureShape.getId())) {
             return;
         }
         generatedValidators.add(structureShape.getId());
+
+        Collection<MemberShape> members = structureShape.members();
 
         writer
                 .openBlock("class $L", structureShape.getId().getName())
@@ -100,36 +100,34 @@ public class ValidatorsGenerator {
                 .write("v = Seahorse::Validator.new(input, context: context)")
                 .call(() -> renderValidatorForMembers(members))
                 .closeBlock("end")
-                .closeBlock("end");
+                .closeBlock("end")
+                .write("");
 
-        Iterator<MemberShape> iterator = members.iterator();
-        while (iterator.hasNext()) {
-            MemberShape member = iterator.next();
+        members.forEach(member -> {
             Shape target = model.expectShape(member.getTarget());
             if (target.isStructureShape()) {
                 renderValidatorForStructure(target.asStructureShape().get());
             }
-            if (iterator.hasNext()) {
-                writer.write("\n");
-            }
-        }
+        });
     }
 
     private void renderValidatorForMembers(Collection<MemberShape> members) {
         members.forEach(member -> {
             Shape target = model.expectShape(member.getTarget());
             String symbolName = RubyFormatter.asSymbol(member.getMemberName());
-            target.accept(new MemberValidator(writer, symbolName));
+            target.accept(new MemberValidator(writer, symbolName, model));
         });
     }
 
     private static class MemberValidator extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
         private final String symbolizedName;
+        private final Model model;
 
-        MemberValidator(RubyCodeWriter writer, String symbolName) {
+        MemberValidator(RubyCodeWriter writer, String symbolName, Model model) {
             this.writer = writer;
             this.symbolizedName = symbolName;
+            this.model = model;
         }
 
         @Override
@@ -139,86 +137,104 @@ public class ValidatorsGenerator {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("v.validate!($L, String)", symbolizedName);
+            writer.write("v.validate_type!($L, String)", symbolizedName);
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("v.validate!($L, TrueClass, FalseClass)", symbolizedName);
+            writer.write("v.validate_type!($L, TrueClass, FalseClass)", symbolizedName);
             return null;
         }
 
         @Override
         public Void listShape(ListShape shape) {
-            // TODO - do we iterate a list and check elements?
+            writer.openBlock("input.each_with_index do |element, index|");
+            Shape valueShape = model.expectShape(shape.getMember().getTarget());
+            if (valueShape.isStructureShape()) {
+                writer.write("$L.validate!(element, context: \"#{context}[#{index}])\"",
+                        valueShape.getId().getName());
+            } else {
+                writer.write("v.validate_type!(element, $L)", valueShape.getType());
+            }
+            writer.closeBlock("end");
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
-            writer.write("v.validate!($L, Set)", symbolizedName);
+            writer.write("v.validate_type!($L, Set)", symbolizedName);
             return null;
         }
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.write("v.validate!($L, Integer)", symbolizedName);
+            writer.write("v.validate_type!($L, Integer)", symbolizedName);
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.write("v.validate!($L, Integer)", symbolizedName);
+            writer.write("v.validate_type!($L, Integer)", symbolizedName);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("v.validate!($L, Integer)", symbolizedName);
+            writer.write("v.validate_type!($L, Integer)", symbolizedName);
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.write("v.validate!($L, Integer)", symbolizedName);
+            writer.write("v.validate_type!($L, Integer)", symbolizedName);
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write("v.validate!($L, Float)", symbolizedName);
+            writer.write("v.validate_type!($L, Float)", symbolizedName);
             return null;
         }
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.write("v.validate!($L, Hash, String, Array, TrueClass, FalseClass, Numeric)", symbolizedName);
+            writer.write("v.validate_type!($L, Hash, String, Array, TrueClass, FalseClass, Numeric)", symbolizedName);
             return null;
         }
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.write("v.validate!($L, Float)", symbolizedName);
+            writer.write("v.validate_type!($L, Float)", symbolizedName);
             return null;
         }
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
             // TODO - how do we "require" this?
-            writer.write("v.validate!($L, BigDecimal)", symbolizedName);
+            writer.write("v.validate_type!($L, BigDecimal)", symbolizedName);
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            // TODO - do we iterate a map and check key val?
+            writer
+                    .openBlock("input.each do |key, value|")
+                    .write("v.validate_type!(key, String, Symbol)");
+            Shape valueShape = model.expectShape(shape.getValue().getTarget());
+            if (valueShape.isStructureShape()) {
+                writer.write("$L.validate!(value, context: \"#{context}[#{key}])\"",
+                        valueShape.getId().getName());
+            } else {
+                writer.write("v.validate_type!(value, $L)", valueShape.getType());
+            }
+            writer.closeBlock("end");
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("v.validate!($L, String)", symbolizedName);
+            writer.write("v.validate_type!($L, String)", symbolizedName);
             return null;
         }
 
@@ -238,7 +254,7 @@ public class ValidatorsGenerator {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("v.validate!($L, Time)", symbolizedName);
+            writer.write("v.validate_type!($L, Time)", symbolizedName);
             return null;
         }
 

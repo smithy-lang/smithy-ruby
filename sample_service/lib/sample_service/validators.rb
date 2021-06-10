@@ -58,5 +58,38 @@ module SampleService
       end
     end
 
+    class ThingWithListAndMap
+      def self.validate!(input, context:)
+        v = Seahorse::Validator.new(input, context: context)
+        List.validate!(input[:list], context: "#{context}[:list]")
+        Map.validate!(input[:map], context: "#{context}[:map]")
+      end
+    end
+
+    class List
+      def self.validate!(input, context:)
+        v = Seahorse::Validator.new(input, context: context)
+        input.each_with_index do |element, index|
+          # if it's a simple type
+          v.validate_type!(element, String)
+          # or if it's a structure/ complex type
+          SomeOtherType.validate!(element, context: "#{context}[#{index}]")
+        end
+      end
+    end
+
+    class Map
+      def self.validate!(input, context:)
+        v = Seahorse::Validator.new(input, context: context)
+        input.each do |key, value|
+          v.validate_type!(key, String, Symbol)
+          # if it's a simple type
+          v.validate_type!(value, String)
+          # if it's a complex type
+          SomeOtherType.validate!(value, context: "#{context}[#{key}]")
+        end
+      end
+    end
+
   end
 end

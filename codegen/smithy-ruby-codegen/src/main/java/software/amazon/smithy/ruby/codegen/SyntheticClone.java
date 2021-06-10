@@ -30,7 +30,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Must only be used as a runtime trait-only applied to shapes based on model processing
  */
 public final class SyntheticClone extends AbstractTrait implements ToSmithyBuilder<SyntheticClone> {
-    public static final ShapeId ID = ShapeId.from("smithy.go.traits#SyntheticClone");
+    public static final ShapeId ID = ShapeId.from("smithy.ruby.traits#SyntheticClone");
 
     private static final String ARCHETYPE = "archetype";
 

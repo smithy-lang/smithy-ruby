@@ -31,7 +31,7 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
  */
 public class NoSerializeTrait extends AnnotationTrait {
     public static final ShapeId ID =
-            ShapeId.from("smithy.go.trait#NoSerialize");
+            ShapeId.from("smithy.ruby.trait#NoSerialize");
 
     public NoSerializeTrait() {
         this(Node.objectNode());
