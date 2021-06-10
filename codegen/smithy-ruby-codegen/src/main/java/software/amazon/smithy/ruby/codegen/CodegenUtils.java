@@ -19,7 +19,7 @@ import java.util.Optional;
 import software.amazon.smithy.model.shapes.Shape;
 
 public final class CodegenUtils {
-    private static final String SYNTHETIC_NAMESPACE = "smithy.go.synthetic";
+    private static final String SYNTHETIC_NAMESPACE = "smithy.ruby.synthetic";
 
     private CodegenUtils() {
 
