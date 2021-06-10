@@ -32,13 +32,15 @@ public class GenerationContext {
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
+    private final RubySymbolProvider symbolProvider;
 
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
                              List<RubyIntegration> integrations, Model model,
                              ServiceShape service, ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
-                             ApplicationTransport applicationTransport) {
+                             ApplicationTransport applicationTransport,
+                             RubySymbolProvider symbolProvider) {
 
         this.rubySettings = rubySettings;
         this.fileManifest = fileManifest;
@@ -48,6 +50,7 @@ public class GenerationContext {
         this.protocol = protocol;
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
+        this.symbolProvider = symbolProvider;
     }
 
     public RubySettings getRubySettings() {
@@ -80,5 +83,9 @@ public class GenerationContext {
 
     public Optional<ProtocolGenerator> getProtocolGenerator() {
         return protocolGenerator;
+    }
+
+    public RubySymbolProvider getSymbolProvider() {
+        return symbolProvider;
     }
 }
