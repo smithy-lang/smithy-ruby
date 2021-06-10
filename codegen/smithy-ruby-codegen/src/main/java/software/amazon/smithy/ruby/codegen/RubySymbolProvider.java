@@ -108,7 +108,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public String toMemberName(MemberShape shape) {
-        Shape container = model.expectShape(shape.getContainer());
+        // Shape container = model.expectShape(shape.getContainer());
         // TODO: handle container.isUnionShape() if required
 
         String memberName = getDefaultMemberName(shape);
@@ -147,8 +147,8 @@ public class RubySymbolProvider implements SymbolProvider,
 
         String remaining = value.substring(i);
         if (remaining.length() == 0) {
-            throw new CodegenException("tried to clean name " + value +
-                    ", but resulted in empty string");
+            throw new CodegenException("tried to clean name " + value
+                    + ", but resulted in empty string");
         }
 
         return remaining;
@@ -175,6 +175,10 @@ public class RubySymbolProvider implements SymbolProvider,
         return createSymbolBuilder(shape, typeName).namespace(namespace, "::");
     }
 
+    @Override
+    public Symbol stringShape(StringShape shape) {
+        return createSymbolBuilder(shape, "String").build();
+    }
 
     @Override
     public Symbol blobShape(BlobShape shape) {
@@ -184,24 +188,6 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol booleanShape(BooleanShape shape) {
         return createSymbolBuilder(shape, "bool").build();
-    }
-
-    @Override
-    public Symbol listShape(ListShape shape) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public Symbol setShape(SetShape shape) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public Symbol mapShape(MapShape shape) {
-        // TODO
-        return null;
     }
 
     @Override
@@ -230,12 +216,6 @@ public class RubySymbolProvider implements SymbolProvider,
     }
 
     @Override
-    public Symbol documentShape(DocumentShape shape) {
-        // TODO
-        return createSymbolBuilder(shape, "Document").build();
-    }
-
-    @Override
     public Symbol doubleShape(DoubleShape shape) {
         return createSymbolBuilder(shape, "Float").build();
     }
@@ -247,17 +227,49 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol bigDecimalShape(BigDecimalShape shape) {
-        return createSymbolBuilder(shape, "BigDecimal").build();
+        return createSymbolBuilder(shape, "BigDecimal")
+                .addDependency(RubyDependency.BIG_DECIMAL).build();
     }
 
     @Override
-    public Symbol operationShape(OperationShape shape) {
-        return null;
+    public Symbol timestampShape(TimestampShape shape) {
+        RubyDependency d = RubyDependency.TIME;
+        System.out.println("TIME: " + d);
+        return createSymbolBuilder(shape, "Time")
+                .addDependency(d).build();
+    }
+
+
+    @Override
+    public Symbol listShape(ListShape shape) {
+        Symbol member = toSymbol(
+                model.expectShape(shape.getMember().getTarget()));
+        String type = "Array[" + member.getName() + "]";
+        return createSymbolBuilder(shape, type).build();
     }
 
     @Override
-    public Symbol resourceShape(ResourceShape shape) {
-        return null;
+    public Symbol setShape(SetShape shape) {
+        Symbol member = toSymbol(
+                model.expectShape(shape.getMember().getTarget()));
+        String type = "Set[" + member.getName() + "]";
+        return createSymbolBuilder(shape, type).build();
+    }
+
+    @Override
+    public Symbol mapShape(MapShape shape) {
+        Symbol key = toSymbol(
+                model.expectShape(shape.getKey().getTarget()));
+        Symbol value = toSymbol(
+                model.expectShape(shape.getValue().getTarget()));
+        String type = "Hash[" + key.getName() + ", " + value.getName() + "]";
+        return createSymbolBuilder(shape, type).build();
+    }
+
+    @Override
+    public Symbol documentShape(DocumentShape shape) {
+        // TODO
+        return createSymbolBuilder(shape, "Document").build();
     }
 
     @Override
@@ -268,27 +280,36 @@ public class RubySymbolProvider implements SymbolProvider,
     }
 
     @Override
-    public Symbol stringShape(StringShape shape) {
-        return createSymbolBuilder(shape, "String").build();
-    }
-
-    @Override
     public Symbol structureShape(StructureShape shape) {
-        return null;
+        String name = getDefaultShapeName(shape);
+        Symbol.Builder builder = createSymbolBuilder(shape, name, typesPackageName)
+                .definitionFile("types.rb");
+        return builder.build();
     }
 
     @Override
     public Symbol unionShape(UnionShape shape) {
-        return null;
+        // TODO: Confirm this implementation is correct after impl of Unions
+        String name = getDefaultShapeName(shape);
+        Symbol.Builder builder = createSymbolBuilder(shape, name, typesPackageName)
+                .definitionFile("types.rb");
+        return builder.build();
     }
 
     @Override
     public Symbol memberShape(MemberShape shape) {
-        return null;
+        Shape targetShape = model.expectShape(shape.getTarget());
+        return toSymbol(targetShape);
     }
 
     @Override
-    public Symbol timestampShape(TimestampShape shape) {
-        return null;
+    public Symbol operationShape(OperationShape shape) {
+        // We do not currently generate shapes for operations
+        throw new CodegenException("Unexpected codegen path");
+    }
+
+    @Override
+    public Symbol resourceShape(ResourceShape shape) {
+        throw new CodegenException("Resources are not currently supported");
     }
 }

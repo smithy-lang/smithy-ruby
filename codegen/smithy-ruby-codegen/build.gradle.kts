@@ -25,10 +25,10 @@ dependencies {
 
 // Override project settings and fail on checkstyle
 tasks.withType<Checkstyle>() {
-    ignoreFailures = true
+    ignoreFailures = false
 }
 
 // Override project settings and fail on spotbugs
 tasks.withType<com.github.spotbugs.SpotBugsTask> {
-    ignoreFailures = true
+    ignoreFailures = false
 }

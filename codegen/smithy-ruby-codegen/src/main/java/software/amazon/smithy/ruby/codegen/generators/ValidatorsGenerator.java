@@ -18,6 +18,8 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -38,7 +40,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyTypesWriter typesWriter;
-    private final RubyTypeMapper typeMapper;
+    private final SymbolProvider symbolProvider;
 
     public ValidatorsGenerator(GenerationContext context) {
         this.context = context;
@@ -46,7 +48,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
         this.typesWriter = new RubyTypesWriter();
-        this.typeMapper = new RubyTypeMapper(context.getModel());
+        this.symbolProvider = context.getSymbolProvider();
     }
 
     public void render() {
@@ -148,10 +150,10 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private String typeFor(Shape m) {
-        String rubyType = m.accept(typeMapper);
+        Symbol symbol = symbolProvider.toSymbol(m);
         System.out.println(
                 "\t\tMapping to ruby type: " + m.getId() + " Smithy Type: "
-                        + m.getType() + " -> " + rubyType);
-        return rubyType;
+                        + m.getType() + " -> " + symbol);
+        return symbol.getName();
     }
 }

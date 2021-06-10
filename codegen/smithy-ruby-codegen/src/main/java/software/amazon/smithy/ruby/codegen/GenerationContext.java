@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -32,7 +33,7 @@ public class GenerationContext {
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
-    private final RubySymbolProvider symbolProvider;
+    private final SymbolProvider symbolProvider;
 
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
@@ -85,7 +86,7 @@ public class GenerationContext {
         return protocolGenerator;
     }
 
-    public RubySymbolProvider getSymbolProvider() {
+    public SymbolProvider getSymbolProvider() {
         return symbolProvider;
     }
 }
