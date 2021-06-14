@@ -42,7 +42,8 @@ structure HighScoreParams {
     @length(min: 2)
     game: String,
     /// The high score for the game
-    score: Integer
+    score: Integer,
+    errorMessages: ErrorMessages
 }
 
 /// Get a high score
