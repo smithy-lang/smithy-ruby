@@ -41,7 +41,6 @@ public class ShapeCollector extends ShapeVisitor.Default<Void> {
         this.model = model;
         this.includeCollections = includeCollections;
         this.collectedShapes = new HashSet<>();
-
     }
 
     public static Set<Shape> inputShapes(Model model, ShapeId serviceShapeId,

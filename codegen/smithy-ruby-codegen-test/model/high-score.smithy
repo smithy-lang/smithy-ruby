@@ -43,7 +43,28 @@ structure HighScoreParams {
     game: String,
     /// The high score for the game
     score: Integer,
-    errorMessages: ErrorMessages
+    simpleList: SimpleList,
+    complexList: ComplexList,
+    simpleMap: SimpleMap,
+    complexMap: ComplexMap
+}
+
+list SimpleList {
+    member: String
+}
+
+list ComplexList {
+    member: HighScoreAttributes
+}
+
+map SimpleMap {
+    key: String,
+    value: Integer
+}
+
+map ComplexMap {
+    key: String,
+    value: HighScoreAttributes
 }
 
 /// Get a high score
