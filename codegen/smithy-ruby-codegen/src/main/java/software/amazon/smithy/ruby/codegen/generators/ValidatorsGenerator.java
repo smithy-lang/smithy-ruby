@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -33,7 +32,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -47,8 +45,9 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.ShapeCollector;
 
-public class ValidatorsGenerator {
+public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -77,21 +76,14 @@ public class ValidatorsGenerator {
     }
 
     private void renderValidators() {
-        Stream<OperationShape> operations = model.shapes(OperationShape.class);
-
-        operations.forEach(operation -> {
-            ShapeId inputShapeId = operation.getInput().get();
-            StructureShape structureShape = model.expectShape(inputShapeId, StructureShape.class);
-            renderValidatorForStructure(structureShape);
-        });
+        Set<Shape> inputShapes = ShapeCollector.inputShapes(model, context.getService().toShapeId(), true);
+        for (Shape inputShape : inputShapes) {
+            inputShape.accept(this);
+        }
     }
 
-    private void renderValidatorForStructure(StructureShape structureShape) {
-        if (generatedValidators.contains(structureShape.getId())) {
-            return;
-        }
-        generatedValidators.add(structureShape.getId());
-
+    @Override
+    public Void structureShape(StructureShape structureShape) {
         Collection<MemberShape> members = structureShape.members();
 
         writer
@@ -103,12 +95,37 @@ public class ValidatorsGenerator {
                 .closeBlock("end")
                 .write("");
 
-        members.forEach(member -> {
-            Shape target = model.expectShape(member.getTarget());
-            if (target.isStructureShape()) {
-                renderValidatorForStructure(target.asStructureShape().get());
-            }
-        });
+        return null;
+    }
+
+    @Override
+    public Void mapShape(MapShape mapShape) {
+
+        writer
+                .openBlock("class $L", mapShape.getId().getName())
+                .openBlock("def self.validate!(input, context:)")
+                .write("v = Seahorse::Validator.new(input, context: context)")
+                 //TODO
+                .closeBlock("end")
+                .closeBlock("end")
+                .write("");
+
+        return null;
+    }
+
+    @Override
+    public Void listShape(ListShape listShape) {
+
+        writer
+                .openBlock("class $L", listShape.getId().getName())
+                .openBlock("def self.validate!(input, context:)")
+                .write("v = Seahorse::Validator.new(input, context: context)")
+                //TODO
+                .closeBlock("end")
+                .closeBlock("end")
+                .write("");
+
+        return null;
     }
 
     private void renderValidatorForMembers(Collection<MemberShape> members) {
@@ -117,6 +134,11 @@ public class ValidatorsGenerator {
             String symbolName = RubyFormatter.asSymbol(member.getMemberName());
             target.accept(new MemberValidator(writer, symbolName, model));
         });
+    }
+
+    @Override
+    protected Void getDefault(Shape shape) {
+        return null;
     }
 
     private static class MemberValidator extends ShapeVisitor.Default<Void> {
