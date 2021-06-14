@@ -115,16 +115,18 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape listShape) {
-
+        Shape memberTarget = model.expectShape(listShape.getMember().getTarget());
         writer
                 .openBlock("class $L", listShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("v = Seahorse::Validator.new(input, context: context)")
-                //TODO
+                .write("v.validate_type!(input, Array)")
+                .openBlock("input.each_with_index do |element, index|")
+                .call(() -> memberTarget.accept(new MemberValidator(writer, "index", model)))
+                .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end")
                 .write("");
-
         return null;
     }
 
@@ -171,21 +173,17 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.openBlock("input.each_with_index do |element, index|");
-            Shape valueShape = model.expectShape(shape.getMember().getTarget());
-            if (valueShape.isStructureShape()) {
-                writer.write("$L.validate!(element, context: \"#{context}[#{index}])\"",
-                        valueShape.getId().getName());
-            } else {
-                writer.write("v.validate_type!(element, $L)", valueShape.getType());
-            }
-            writer.closeBlock("end");
+            String name = shape.getId().getName();
+            writer.write("$L.validate!(input[$L], context: \"#{context}[$L]\"",
+                    name, this.symbolizedName, this.symbolizedName);
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
-            writer.write("v.validate_type!($L, Set)", symbolizedName);
+            String name = shape.getId().getName();
+            writer.write("$L.validate!(input[$L], context: \"#{context}[$L]\"",
+                    name, this.symbolizedName, this.symbolizedName);
             return null;
         }
 
@@ -240,17 +238,9 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer
-                    .openBlock("input.each do |key, value|")
-                    .write("v.validate_type!(key, String, Symbol)");
-            Shape valueShape = model.expectShape(shape.getValue().getTarget());
-            if (valueShape.isStructureShape()) {
-                writer.write("$L.validate!(value, context: \"#{context}[#{key}])\"",
-                        valueShape.getId().getName());
-            } else {
-                writer.write("v.validate_type!(value, $L)", valueShape.getType());
-            }
-            writer.closeBlock("end");
+            String name = shape.getId().getName();
+            writer.write("$L.validate!(input[$L], context: \"#{context}[$L]\"",
+                    name, this.symbolizedName, this.symbolizedName);
             return null;
         }
 
