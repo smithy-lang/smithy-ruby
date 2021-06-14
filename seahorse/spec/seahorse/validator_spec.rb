@@ -17,6 +17,14 @@ module Seahorse
         end
       end
 
+      context 'value is a sub type' do
+        let(:params) { { foo: 1 } }
+
+        it 'does not raise an error' do
+          expect { subject.validate_type!(:foo, Numeric) }.to_not raise_error
+        end
+      end
+
       context 'value is not the type' do
         let(:params) { { foo: [1, 2, 3] } }
 

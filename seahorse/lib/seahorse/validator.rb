@@ -20,7 +20,7 @@ module Seahorse
     # @raise [ArgumentError] Raises when the key's value is not the given type.
     def validate_type!(key, *types)
       v = @input[key]
-      return if !v || types.member?(v.class)
+      return if !v || types.any? { |type| v.is_a?(type) }
 
       raise ArgumentError,
             "Expected #{@context}[:#{key}] to be in #{types}, got #{v.class}."
