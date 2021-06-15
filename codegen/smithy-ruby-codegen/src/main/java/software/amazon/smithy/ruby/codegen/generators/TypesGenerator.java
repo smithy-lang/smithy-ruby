@@ -19,6 +19,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -39,14 +41,14 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final RubyCodeWriter writer;
     private final RubyTypesWriter typesWriter;
-    private final RubyTypeMapper typeMapper;
+    private final SymbolProvider symbolProvider;
 
     public TypesGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.writer = new RubyCodeWriter();
         this.typesWriter = new RubyTypesWriter();
-        this.typeMapper = new RubyTypeMapper(context.getModel());
+        this.symbolProvider = context.getSymbolProvider();
     }
 
     public void render() {
@@ -108,8 +110,9 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                     + " because it is an error type.");
             return null;
         }
-        System.out.println("Visit Structure Shape: " + shape.getId());
-        String shapeName = shape.getId().getName();
+        Symbol symbol = symbolProvider.toSymbol(shape);
+        System.out.println("Visit Structure Shape: " + shape.getId() + " Symbol: " + symbol);
+        String shapeName = symbol.getName();
         String membersBlock;
 
         if (shape.members().isEmpty()) {
@@ -118,8 +121,8 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
             membersBlock = shape
                     .members()
                     .stream()
-                    .map(memberShape -> RubyFormatter
-                            .asSymbol(memberShape.getMemberName()))
+                    .map(memberShape -> RubyFormatter.asSymbol(
+                            symbolProvider.toMemberName(memberShape)))
                     .collect(Collectors.joining(",\n"));
         }
         membersBlock += ",";
@@ -132,7 +135,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .closeBlock(")");
 
         String initTypes = shape.members().stream()
-                .map(m -> "?" + RubyFormatter.toSnakeCase(m.getMemberName())
+                .map(m -> "?" + symbolProvider.toMemberName(m)
                         + ": " + typeFor(targetShape(m)))
                 .collect(Collectors.joining(", "));
 
@@ -162,10 +165,10 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private String typeFor(Shape m) {
-        String rubyType = m.accept(typeMapper);
+        Symbol symbol = symbolProvider.toSymbol(m);
         System.out.println(
                 "\t\tMapping to ruby type: " + m.getId() + " Smithy Type: "
-                        + m.getType() + " -> " + rubyType);
-        return rubyType;
+                        + m.getType() + " -> " + symbol);
+        return symbol.getName();
     }
 }

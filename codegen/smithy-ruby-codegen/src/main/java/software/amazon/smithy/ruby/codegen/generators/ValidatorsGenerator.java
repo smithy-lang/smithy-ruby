@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -51,12 +53,16 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final Model model;
     private final RubyCodeWriter writer;
+    private final RubyTypesWriter typesWriter;
+    private final SymbolProvider symbolProvider;
 
     public ValidatorsGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
+        this.typesWriter = new RubyTypesWriter();
+        this.symbolProvider = context.getSymbolProvider();
     }
 
     public void render() {
@@ -285,5 +291,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                     symbolizedName, symbolizedName);
             return null;
         }
+    }
+
+    private String typeFor(Shape m) {
+        Symbol symbol = symbolProvider.toSymbol(m);
+        System.out.println(
+                "\t\tMapping to ruby type: " + m.getId() + " Smithy Type: "
+                        + m.getType() + " -> " + symbol);
+        return symbol.getName();
     }
 }

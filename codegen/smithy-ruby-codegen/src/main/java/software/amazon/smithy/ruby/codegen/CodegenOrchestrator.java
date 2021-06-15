@@ -107,6 +107,9 @@ public class CodegenOrchestrator {
             );
         }
 
+        RubySymbolProvider symbolProvider = new RubySymbolProvider(
+                resolvedModel, rubySettings);
+
         ShapeId protocol = rubySettings
                 .resolveServiceProtocol(service, resolvedModel,
                         supportedProtocols);
@@ -134,7 +137,8 @@ public class CodegenOrchestrator {
                 service,
                 protocol,
                 protocolGenerator,
-                applicationTransport);
+                applicationTransport,
+                symbolProvider);
     }
 
     /*
