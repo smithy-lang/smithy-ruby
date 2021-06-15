@@ -6,14 +6,15 @@ module Seahorse
     let(:input) { input_type.new(params) }
     let(:context) { 'input' }
 
-    subject { Validator.new(input, context: context) }
+    subject { Validator }
 
-    describe '#validate_type!' do
+    describe '.validate!' do
       context 'value is the type' do
         let(:params) { { foo: 'bar' } }
 
         it 'does not raise an error' do
-          expect { subject.validate_type!(:foo, String) }.to_not raise_error
+          expect { subject.validate!(input[:foo], String, context: context) }
+            .to_not raise_error
         end
       end
 
@@ -21,7 +22,8 @@ module Seahorse
         let(:params) { { foo: 1 } }
 
         it 'does not raise an error' do
-          expect { subject.validate_type!(:foo, Numeric) }.to_not raise_error
+          expect { subject.validate!(input[:foo], Numeric, context: context) }
+            .to_not raise_error
         end
       end
 
@@ -29,10 +31,10 @@ module Seahorse
         let(:params) { { foo: [1, 2, 3] } }
 
         it 'raises an ArgumentError' do
-          expect { subject.validate_type!(:foo, String) }
+          expect { subject.validate!(input[:foo], String, context: context) }
             .to raise_error(
               ArgumentError,
-              "Expected #{context}[:foo] to be in [String], got Array."
+              "Expected #{context} to be in [String], got Array."
             )
         end
       end
@@ -41,7 +43,8 @@ module Seahorse
         let(:params) { {} }
 
         it 'returns nil' do
-          expect(subject.validate_type!(:foo, String)).to be_nil
+          expect(subject.validate!(input[:foo], String, context: context))
+            .to be_nil
         end
       end
 
@@ -50,7 +53,11 @@ module Seahorse
 
         it 'checks value against multiple args' do
           expect do
-            subject.validate_type!(:foo, TrueClass, FalseClass)
+            subject.validate!(
+              input[:foo],
+              TrueClass, FalseClass,
+              context: context
+            )
           end.to_not raise_error
         end
       end

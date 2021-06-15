@@ -46,7 +46,9 @@ structure HighScoreParams {
     simpleList: SimpleList,
     complexList: ComplexList,
     simpleMap: SimpleMap,
-    complexMap: ComplexMap
+    complexMap: ComplexMap,
+    simpleSet: SimpleSet,
+    complexSet: ComplexSet
 }
 
 list SimpleList {
@@ -65,6 +67,14 @@ map SimpleMap {
 map ComplexMap {
     key: String,
     value: HighScoreAttributes
+}
+
+set SimpleSet {
+    member: String
+}
+
+set ComplexSet {
+    member: HighScoreAttributes
 }
 
 /// Get a high score
