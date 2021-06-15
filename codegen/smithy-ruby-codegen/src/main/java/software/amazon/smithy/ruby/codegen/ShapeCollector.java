@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,48 +31,56 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 
-public class ShapeCollector extends ShapeVisitor.Default<Void> {
+/**
+ * A utility class that returns a Set of shapes used only on input or output.
+ */
+public final class ShapeCollector extends ShapeVisitor.Default<Void> {
 
     private final Model model;
     private final boolean includeCollections;
     private final Set<Shape> collectedShapes;
 
+    /**
+     * Create a new instance of ShapeCollector.
+     * @param model The Smithy model.
+     * @param includeCollections A boolean, to include collection shapes such as list, set, and maps.
+     */
     public ShapeCollector(Model model, boolean includeCollections) {
         this.model = model;
         this.includeCollections = includeCollections;
         this.collectedShapes = new HashSet<>();
     }
 
-    public static Set<Shape> inputShapes(Model model, ShapeId serviceShapeId,
-                                         boolean includeCollections) {
-        ShapeCollector collector =
-                new ShapeCollector(model, includeCollections);
+    /**
+     * Return a Set of shapes used on input.
+     * @param model The smithy model.
+     * @param serviceShapeId The service shape id.
+     * @param includeCollections A boolean, to include collection shapes such as list, set, and maps.
+     * @return A set of input shapes.
+     */
+    public static Set<Shape> inputShapes(Model model, ShapeId serviceShapeId, boolean includeCollections) {
+        ShapeCollector collector = new ShapeCollector(model, includeCollections);
         TopDownIndex topDownIndex = TopDownIndex.of(model);
-        TreeSet<OperationShape> operations =
-                new TreeSet<>(topDownIndex.getContainedOperations(
-                        model.expectShape(serviceShapeId)));
+        Set<OperationShape> operations = topDownIndex.getContainedOperations(model.expectShape(serviceShapeId));
         for (OperationShape operation : operations) {
-            operation.getInput()
-                    .map(shapeId -> model.expectShape(shapeId)
-                            .accept(collector))
-                    .orElseGet(() -> null);
+            operation.getInput().ifPresent(shapeId -> model.expectShape(shapeId).accept(collector));
         }
         return collector.collectedShapes;
     }
 
-    public static Set<Shape> outputShapes(Model model, ShapeId serviceShapeId,
-                                          boolean includeCollections) {
-        ShapeCollector collector =
-                new ShapeCollector(model, includeCollections);
+    /**
+     * Return a Set of shapes used on output.
+     * @param model The smithy model.
+     * @param serviceShapeId The service shape id.
+     * @param includeCollections A boolean, to include collection shapes such as list, set, and maps.
+     * @return A set of output shapes.
+     */
+    public static Set<Shape> outputShapes(Model model, ShapeId serviceShapeId, boolean includeCollections) {
+        ShapeCollector collector = new ShapeCollector(model, includeCollections);
         TopDownIndex topDownIndex = TopDownIndex.of(model);
-        TreeSet<OperationShape> operations =
-                new TreeSet<>(topDownIndex.getContainedOperations(
-                        model.expectShape(serviceShapeId)));
+        Set<OperationShape> operations = topDownIndex.getContainedOperations(model.expectShape(serviceShapeId));
         for (OperationShape operation : operations) {
-            operation.getOutput()
-                    .map(shapeId -> model.expectShape(shapeId)
-                            .accept(collector))
-                    .orElseGet(() -> null);
+            operation.getOutput().ifPresent(shapeId -> model.expectShape(shapeId).accept(collector));
         }
         return collector.collectedShapes;
     }

@@ -78,7 +78,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         while (iterator.hasNext()) {
             Shape inputShape = iterator.next();
-            inputShape.accept(this);
+
+            writer
+                    .openBlock("class $L", inputShape.getId().getName())
+                    .openBlock("def self.validate!(input, context:)")
+                    .call(() -> inputShape.accept(this))
+                    .closeBlock("end")
+                    .closeBlock("end");
 
             // formatting
             if (iterator.hasNext()) {
@@ -91,13 +97,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape structureShape) {
         Collection<MemberShape> members = structureShape.members();
 
-        writer
-                .openBlock("class $L", structureShape.getId().getName())
-                .openBlock("def self.validate!(input, context:)")
-                .write("v = Seahorse::Validator.new(input, context: context)")
-                .call(() -> renderValidatorForMembers(members))
-                .closeBlock("end")
-                .closeBlock("end");
+        members.forEach(member -> {
+            Shape target = model.expectShape(member.getTarget());
+            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
+            target.accept(new MemberValidator(model, writer, symbolName));
+        });
 
         return null;
     }
@@ -107,14 +111,10 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
-                .openBlock("class $L", mapShape.getId().getName())
-                .openBlock("def self.validate!(input, context:)")
-                .write("v = Seahorse::Validator.new(input, context: context)")
+                .write("Seahorse::Validator.validate!(input, Hash, context: context)")
                 .openBlock("input.each do |key, value|")
-                .write("v.validate_type!(key, String, Symbol)")
-                .call(() -> valueTarget.accept(new MemberValidator(model, writer, "value", true)))
-                .closeBlock("end")
-                .closeBlock("end")
+                .write("Seahorse::Validator.validate!(key, String, Symbol, context: \"#{context}.keys\")")
+                .call(() -> valueTarget.accept(new MemberValidator(model, writer, "value")))
                 .closeBlock("end");
 
         return null;
@@ -125,25 +125,25 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Shape memberTarget = model.expectShape(listShape.getMember().getTarget());
 
         writer
-                .openBlock("class $L", listShape.getId().getName())
-                .openBlock("def self.validate!(input, context:)")
-                .write("v = Seahorse::Validator.new(input, context: context)")
-                .write("v.validate_type!(input, Array)")
+                .write("Seahorse::Validator.validate!(input, Array, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
-                .call(() -> memberTarget.accept(new MemberValidator(model, writer, "index", true)))
-                .closeBlock("end")
-                .closeBlock("end")
+                .call(() -> memberTarget.accept(new MemberValidator(model, writer, "element")))
                 .closeBlock("end");
 
         return null;
     }
 
-    private void renderValidatorForMembers(Collection<MemberShape> members) {
-        members.forEach(member -> {
-            Shape target = model.expectShape(member.getTarget());
-            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
-            target.accept(new MemberValidator(model, writer, symbolName, false));
-        });
+    @Override
+    public Void setShape(SetShape setShape) {
+        Shape memberTarget = model.expectShape(setShape.getMember().getTarget());
+
+        writer
+                .write("Seahorse::Validator.validate!(input, Set, context: context)")
+                .openBlock("input.each_with_index do |element, index|")
+                .call(() -> memberTarget.accept(new MemberValidator(model, writer, "element")))
+                .closeBlock("end");
+
+        return null;
     }
 
     @Override
@@ -155,13 +155,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         private final Model model;
         private final RubyCodeWriter writer;
         private final String symbolizedName;
-        private final boolean validatorIsKey;
 
-        MemberValidator(Model model, RubyCodeWriter writer, String symbolName, boolean validatorIsKey) {
+        MemberValidator(Model model, RubyCodeWriter writer, String symbolName) {
             this.model = model;
             this.writer = writer;
             this.symbolizedName = symbolName;
-            this.validatorIsKey = validatorIsKey;
         }
 
         @Override
@@ -171,13 +169,15 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("v.validate_type!($L, String)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], String, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("v.validate_type!($L, TrueClass, FalseClass)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], TrueClass, FalseClass, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
@@ -197,102 +197,92 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.write("v.validate_type!($L, Integer)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Integer, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.write("v.validate_type!($L, Integer)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Integer, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("v.validate_type!($L, Integer)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Integer, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.write("v.validate_type!($L, Integer)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Integer, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write("v.validate_type!($L, Float)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Float, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.write("v.validate_type!($L, Hash, String, Array, TrueClass, FalseClass, Numeric)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], "
+                    + "Hash, String, Array, TrueClass, FalseClass, Numeric, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.write("v.validate_type!($L, Float)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Float, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.write("v.validate_type!($L, BigDecimal)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], BigDecimal, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
             String name = shape.getId().getName();
-            String value;
-            String context;
-
-            if (validatorIsKey) {
-                value = "value";
-                context = "#{key}";
-            } else {
-                value = "input[" + symbolizedName + "]";
-                context = symbolizedName;
-            }
-
-            writer.write("$L.validate!($L, context: \"#{context}[$L]\")", name, value, context);
+            writer.write("$L.validate!(input[$L], context: \"#{context}[$L]\")", name, symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("v.validate_type!($L, String)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], String, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
             String name = shape.getId().getName();
-            String value;
-            String context;
-
-            if (validatorIsKey) {
-                value = "element";
-                context = "#{index}";
-            } else {
-                value = "input[" + symbolizedName + "]";
-                context = symbolizedName;
-            }
-            writer.write("$L.validate!($L, context: \"#{context}[$L]\")", name, value, context);
+            writer.write("$L.validate!(input[$L], context: \"#{context}[$L]\")", name, symbolizedName, symbolizedName);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            // TODO what do we do here
+            // TODO
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("v.validate_type!($L, Time)", symbolizedName);
+            writer.write("Seahorse::Validator.validate!(input[$L], Time, context: \"#{context}[$L]\")",
+                    symbolizedName, symbolizedName);
             return null;
         }
     }
