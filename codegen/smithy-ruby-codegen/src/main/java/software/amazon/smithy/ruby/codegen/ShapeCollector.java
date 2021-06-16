@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -55,7 +56,7 @@ public final class ShapeCollector extends ShapeVisitor.Default<Void> {
      * @param model The smithy model.
      * @param serviceShapeId The service shape id.
      * @param includeCollections A boolean, to include collection shapes such as list, set, and maps.
-     * @return A set of input shapes.
+     * @return A tree set of input shapes.
      */
     public static Set<Shape> inputShapes(Model model, ShapeId serviceShapeId, boolean includeCollections) {
         ShapeCollector collector = new ShapeCollector(model, includeCollections);
@@ -64,7 +65,7 @@ public final class ShapeCollector extends ShapeVisitor.Default<Void> {
         for (OperationShape operation : operations) {
             operation.getInput().ifPresent(shapeId -> model.expectShape(shapeId).accept(collector));
         }
-        return collector.collectedShapes;
+        return new TreeSet<>(collector.collectedShapes);
     }
 
     /**
@@ -72,7 +73,7 @@ public final class ShapeCollector extends ShapeVisitor.Default<Void> {
      * @param model The smithy model.
      * @param serviceShapeId The service shape id.
      * @param includeCollections A boolean, to include collection shapes such as list, set, and maps.
-     * @return A set of output shapes.
+     * @return A tree set of output shapes.
      */
     public static Set<Shape> outputShapes(Model model, ShapeId serviceShapeId, boolean includeCollections) {
         ShapeCollector collector = new ShapeCollector(model, includeCollections);
@@ -81,7 +82,7 @@ public final class ShapeCollector extends ShapeVisitor.Default<Void> {
         for (OperationShape operation : operations) {
             operation.getOutput().ifPresent(shapeId -> model.expectShape(shapeId).accept(collector));
         }
-        return collector.collectedShapes;
+        return new TreeSet<>(collector.collectedShapes);
     }
 
     @Override

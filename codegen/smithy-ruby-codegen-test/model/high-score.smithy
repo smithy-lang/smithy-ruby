@@ -48,7 +48,18 @@ structure HighScoreParams {
     simpleMap: SimpleMap,
     complexMap: ComplexMap,
     simpleSet: SimpleSet,
-    complexSet: ComplexSet
+    complexSet: ComplexSet,
+    eventStream: EventStream
+}
+
+union EventStream {
+    start: StructuredEvent,
+    end: StructuredEvent,
+    log: String,
+}
+
+structure StructuredEvent {
+    message: String
 }
 
 list SimpleList {
