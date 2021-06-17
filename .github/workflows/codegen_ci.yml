@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: generated_test_sdk
-        path: sample_service_real/
+        path: sample_service_real
 
   ruby-integegration-specs:
     needs: [generate-test-sdk]
@@ -71,8 +71,8 @@ jobs:
         run: |
           bundle config set --local without 'docs repl'
           bundle install
-        working-directory: ./generated_test_sdk
+        working-directory: ./sample_service_real
 
       - name: Tests
         run: bundle exec rspec
-        working-directory: ./generated_test_sdk
+        working-directory: ./sample_service_real
