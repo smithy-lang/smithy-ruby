@@ -261,14 +261,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void listShape(ListShape shape) {
             String name = shape.getId().getName();
-            writer.write("$L.validate!($L, context: $L)", name, input, context);
+            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
             String name = shape.getId().getName();
-            writer.write("$L.validate!($L, context: $L)", name, input, context);
+            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
@@ -324,7 +324,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void mapShape(MapShape shape) {
             String name = shape.getId().getName();
-            writer.write("$L.validate!($L, context: $L)", name, input, context);
+            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
@@ -337,14 +337,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void structureShape(StructureShape shape) {
             String name = shape.getId().getName();
-            writer.write("$L.validate!($L, context: $L)", name, input, context);
+            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
             String name = shape.getId().getName();
-            writer.write("$L.validate!($L, context: $L)", name, input, context);
+            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
