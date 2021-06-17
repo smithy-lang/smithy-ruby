@@ -166,9 +166,6 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
     private String typeFor(Shape m) {
         Symbol symbol = symbolProvider.toSymbol(m);
-        System.out.println(
-                "\t\tMapping to ruby type: " + m.getId() + " Smithy Type: "
-                        + m.getType() + " -> " + symbol);
         return symbol.getName();
     }
 }

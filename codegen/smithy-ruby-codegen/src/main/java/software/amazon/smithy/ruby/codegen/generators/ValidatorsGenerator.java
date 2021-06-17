@@ -16,11 +16,15 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
@@ -45,8 +49,8 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.ShapeCollector;
 import software.amazon.smithy.utils.CaseUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -77,19 +81,17 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderValidators() {
-        Set<Shape> inputShapes = ShapeCollector
-                .inputShapes(model, context.getService().toShapeId(), true);
-        Iterator<Shape> iterator = inputShapes.iterator();
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        OperationIndex operationIndex = OperationIndex.of(model);
+        Walker walker = new Walker(model);
+        Set<Shape> inputShapes = topDownIndex.getContainedOperations(context.getService()).stream()
+                .flatMap(operation -> OptionalUtils.stream(operationIndex.getInput(operation)))
+                .flatMap(input -> walker.walkShapes(input).stream())
+                .collect(Collectors.toSet());
 
-        while (iterator.hasNext()) {
-            Shape inputShape = iterator.next();
-            inputShape.accept(this);
-
-            // formatting
-            if (iterator.hasNext()) {
-                writer.write("");
-            }
-        }
+        inputShapes.stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(inputShape -> inputShape.accept(this));
     }
 
     @Override
@@ -97,6 +99,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Collection<MemberShape> members = structureShape.members();
 
         writer
+                .write("")
                 .openBlock("class $L", structureShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .call(() -> renderValidatorsForStructureMembers(members))
@@ -121,6 +124,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
+                .write("")
                 .openBlock("class $L", mapShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Hash, context: context)")
@@ -141,6 +145,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
+                .write("")
                 .openBlock("class $L", listShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Array, context: context)")
@@ -160,6 +165,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(setShape.getMember().getTarget());
 
         writer
+                .write("")
                 .openBlock("class $L", setShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Set, context: context)")
@@ -179,6 +185,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Collection<MemberShape> unionMemberShapes = unionShape.members();
 
         writer
+                .write("")
                 .openBlock("class $L", shapeName)
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")

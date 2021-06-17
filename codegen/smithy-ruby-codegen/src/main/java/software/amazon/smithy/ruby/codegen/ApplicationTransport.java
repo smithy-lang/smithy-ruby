@@ -137,7 +137,7 @@ public final class ApplicationTransport {
                                 "Seahorse::HTTP::ErrorParser.new("
                                 + "error_module: Errors, error_code_fn: "
                                 + "Errors.method(:error_code), "
-                                + "success_status_code: "
+                                + "success_status: "
                                 + successCode + ", errors: " + errors
                                 + ")"
                         );
