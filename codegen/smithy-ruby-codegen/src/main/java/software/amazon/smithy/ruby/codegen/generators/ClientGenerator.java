@@ -188,23 +188,25 @@ public class ClientGenerator {
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
+                .write("input = Types::$LInput.build(params)", operation.getId().getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("@middleware.apply(stack)")
                 .openBlock("resp = stack.run(")
+                .write("input: input,")
+                .openBlock("context: Seahorse::Context.new(")
                 .write("request: $L,",
                         context.getApplicationTransport().getRequest()
                                 .render(context))
                 .write("response: $L,",
                         context.getApplicationTransport().getResponse()
                                 .render(context))
-                .openBlock("context: {")
-                .write("api_method: :$L,", operationName)
-                .write("api_name: '$L',", operation.getId().getName())
-                .write("params: params")
-                .closeBlock("}")
+                .write("params: params,")
+                .write("logger: @logger,")
+                .write("operation_name: :$L", operationName)
                 .closeBlock(")")
-                .write("raise resp.error if resp.error && @raise_api_errors")
+                .closeBlock(")")
+                .write("raise resp.error if resp.error")
                 .write("resp")
                 .closeBlock("end");
     }

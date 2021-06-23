@@ -42,7 +42,50 @@ structure HighScoreParams {
     @length(min: 2)
     game: String,
     /// The high score for the game
-    score: Integer
+    score: Integer,
+    simpleList: SimpleList,
+    complexList: ComplexList,
+    simpleMap: SimpleMap,
+    complexMap: ComplexMap,
+    simpleSet: SimpleSet,
+    complexSet: ComplexSet,
+    eventStream: EventStream
+}
+
+union EventStream {
+    start: StructuredEvent,
+    end: StructuredEvent,
+    log: String,
+}
+
+structure StructuredEvent {
+    message: String
+}
+
+list SimpleList {
+    member: String
+}
+
+list ComplexList {
+    member: HighScoreAttributes
+}
+
+map SimpleMap {
+    key: String,
+    value: Integer
+}
+
+map ComplexMap {
+    key: String,
+    value: HighScoreAttributes
+}
+
+set SimpleSet {
+    member: String
+}
+
+set ComplexSet {
+    member: HighScoreAttributes
 }
 
 /// Get a high score
