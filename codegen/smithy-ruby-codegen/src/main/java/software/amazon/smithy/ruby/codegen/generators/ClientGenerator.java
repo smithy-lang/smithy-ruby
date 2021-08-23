@@ -188,7 +188,7 @@ public class ClientGenerator {
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
-                .write("input = Types::$LInput.build(params)", operation.getId().getName())
+                .write("input = Shapes::$LInput.build(params)", operation.getId().getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("@middleware.apply(stack)")
@@ -225,7 +225,7 @@ public class ClientGenerator {
                         operation.getId().getName());
             }
             writer.write("");
-            writer.write("@param [Hash] params - See also: {Types::$LInput}",
+            writer.write("@param [Hash] params - See also: {Shapes::$LInput}",
                     operation.getId().getName());
 
             ShapeId inputShapeId = operation.getInput().get();

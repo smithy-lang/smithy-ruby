@@ -103,7 +103,7 @@ public class MiddlewareBuilder {
                 .type("Boolean")
                 .defaultValue("true")
                 .documentation(
-                        "When `true`, request parameters are validated using the modeled types.")
+                        "When `true`, request parameters are validated using the modeled shapes.")
                 .build();
 
         Middleware validate = (new Middleware.Builder())

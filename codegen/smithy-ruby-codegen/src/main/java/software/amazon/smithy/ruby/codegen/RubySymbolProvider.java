@@ -53,7 +53,7 @@ public class RubySymbolProvider implements SymbolProvider,
     private final Model model;
     private final RubySettings settings;
     private final String rootModuleName;
-    private final String typesPackageName;
+    private final String shapesPackageName;
     private final ReservedWordSymbolProvider.Escaper escaper;
 
 
@@ -67,7 +67,7 @@ public class RubySymbolProvider implements SymbolProvider,
         this.model = model;
         this.settings = settings;
         this.rootModuleName = settings.getModule();
-        this.typesPackageName = this.rootModuleName + "::Types";
+        this.shapesPackageName = this.rootModuleName + "::Shapes";
 
         ReservedWords reservedWords = rubyReservedNames();
 
@@ -282,8 +282,8 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol structureShape(StructureShape shape) {
         String name = getDefaultShapeName(shape);
-        Symbol.Builder builder = createSymbolBuilder(shape, name, typesPackageName)
-                .definitionFile("types.rb");
+        Symbol.Builder builder = createSymbolBuilder(shape, name, shapesPackageName)
+                .definitionFile("shapes.rb");
         return builder.build();
     }
 
@@ -291,8 +291,8 @@ public class RubySymbolProvider implements SymbolProvider,
     public Symbol unionShape(UnionShape shape) {
         // TODO: Confirm this implementation is correct after impl of Unions
         String name = getDefaultShapeName(shape);
-        Symbol.Builder builder = createSymbolBuilder(shape, name, typesPackageName)
-                .definitionFile("types.rb");
+        Symbol.Builder builder = createSymbolBuilder(shape, name, shapesPackageName)
+                .definitionFile("shapes.rb");
         return builder.build();
     }
 
