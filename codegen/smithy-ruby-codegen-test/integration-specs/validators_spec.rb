@@ -22,7 +22,6 @@ module SampleService
         end
       end
     end
-
     describe UpdateHighScoreInput do
       let(:id) { 'string' }
       let(:high_score) { nil }
@@ -41,6 +40,43 @@ module SampleService
           expect(HighScoreParams).to receive(:validate!)
           UpdateHighScoreInput.validate!(input, context: 'input')
         end
+      end
+    end
+
+    describe SimpleList do
+      it 'raises when not an array' do
+        expect do
+          SimpleList.validate!({}, context: 'input')
+        end.to raise_error(ArgumentError, 'Expected input to be in [Array], got Hash.')
+      end
+
+      it 'validates all of the members' do
+        SimpleList.validate!(['a', 'b', 'c'], context: 'input')
+      end
+
+      it 'validates all of the members and raises when any are invalid' do
+        expect do
+          SimpleList.validate!(['a', 'b', 1], context: 'input')
+        end.to raise_error(ArgumentError, 'Expected input[2] to be in [String], got Integer.')
+      end
+    end
+
+    describe ComplexList do
+      let(:high_score) { Types::HighScoreAttributes.new }
+      it 'raises when not an array' do
+        expect do
+          ComplexList.validate!({}, context: 'input')
+        end.to raise_error(ArgumentError, 'Expected input to be in [Array], got Hash.')
+      end
+
+      it 'validates all of the members' do
+        ComplexList.validate!([high_score, high_score], context: 'input')
+      end
+
+      it 'validates all of the members and raises when any are invalid' do
+        #expect do
+        ComplexList.validate!([high_score, high_score, 1], context: 'input')
+          # end.to raise_error(ArgumentError, 'Expected input[2] to be in [SampleService::Types::HighScoreAttributes.], got Integer.')
       end
     end
   end
