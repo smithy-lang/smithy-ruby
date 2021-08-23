@@ -39,6 +39,6 @@ tasks.register<Copy>("copyGem") {
 }
 tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen/sample_service_real/spec")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen/sample_service/spec")
 }
 tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copyGem"])

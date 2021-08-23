@@ -34,53 +34,52 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubyTypesWriter;
 
-public class TypesGenerator extends ShapeVisitor.Default<Void> {
+public class ShapesGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
     private final RubySettings settings;
     private final RubyCodeWriter writer;
-    private final RubyTypesWriter typesWriter;
+    private final RubyCodeWriter shapesWriter;
     private final SymbolProvider symbolProvider;
 
-    public TypesGenerator(GenerationContext context) {
+    public ShapesGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.writer = new RubyCodeWriter();
-        this.typesWriter = new RubyTypesWriter();
+        this.shapesWriter = new RubyCodeWriter();
         this.symbolProvider = context.getSymbolProvider();
     }
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
         //TODO: We need some mechanism to do both at once.
-        typesWriter
+        shapesWriter
                 .openBlock("module $L", settings.getModule())
-                .openBlock("module Types");
+                .openBlock("module Shapes");
 
         writer
                 .openBlock("module $L", settings.getModule())
-                .openBlock("module Types")
-                .call(() -> renderTypes())
+                .openBlock("module Shapes")
+                .call(() -> renderShapes())
                 .closeBlock("end")
                 .closeBlock("end");
 
-        typesWriter
+        shapesWriter
                 .closeBlock("end")
                 .closeBlock("end");
 
         String fileName =
                 settings.getGemName() + "/lib/" + settings.getGemName()
-                        + "/types.rb";
+                        + "/shapes.rb";
         fileManifest.writeFile(fileName, writer.toString());
 
         String typesFile =
                 settings.getGemName() + "/sig/" + settings.getGemName()
-                        + "/types.rbs";
-        fileManifest.writeFile(typesFile, typesWriter.toString());
+                        + "/shapes.rbs";
+        fileManifest.writeFile(typesFile, shapesWriter.toString());
     }
 
-    private void renderTypes() {
+    private void renderShapes() {
 
         System.out.println(
                 "Walking shapes from " + context.getService().getId()
@@ -145,7 +144,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                         + typeFor(targetShape(m)))
                 .collect(Collectors.joining("\n"));
 
-        typesWriter
+        shapesWriter
                 .write("")
                 .openBlock("class " + shapeName + " < Struct[untyped]")
                 .write("def initialize: (" + initTypes + ") -> untyped")

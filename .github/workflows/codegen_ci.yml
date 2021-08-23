@@ -38,9 +38,9 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: generated_test_sdk
-        path: sample_service_real
+        path: sample_service
 
-  ruby-integegration-specs:
+  ruby-integration-specs:
     needs: [generate-test-sdk]
     runs-on: ubuntu-latest
     strategy:
@@ -61,11 +61,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated_test_sdk
-          path: sample_service_real
+          path: sample_service
 
       - name: Copy Gemfile
         run: |
-          cp seahorse/Gemfile sample_service_real/          
+          cp seahorse/Gemfile sample_service/
 
       - name: Inspect
         run: |
@@ -76,8 +76,8 @@ jobs:
         run: |
           bundle config set --local without 'docs repl'
           bundle install
-        working-directory: ./sample_service_real
+        working-directory: ./sample_service
 
       - name: Tests
         run: bundle exec rspec
-        working-directory: ./sample_service_real
+        working-directory: ./sample_service
