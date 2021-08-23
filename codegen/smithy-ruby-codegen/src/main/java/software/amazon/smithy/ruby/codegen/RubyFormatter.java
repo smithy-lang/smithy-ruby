@@ -17,7 +17,8 @@ package software.amazon.smithy.ruby.codegen;
 
 public final class RubyFormatter {
 
-    private RubyFormatter() {}
+    private RubyFormatter() {
+    }
 
     /**
      * Formats a string as a snake case symbol.

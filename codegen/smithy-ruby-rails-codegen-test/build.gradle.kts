@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-extra["displayName"] = "Smithy :: Ruby :: Codegen :: Test"
-extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test"
+extra["displayName"] = "Smithy :: Ruby :: Rails :: Codegen :: Test"
+extra["moduleName"] = "software.amazon.smithy.ruby.rails.codegen.test"
 
 tasks["jar"].enabled = false
 
@@ -30,6 +30,7 @@ repositories {
 dependencies {
     implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
     implementation(project(":smithy-ruby-codegen"))
+    implementation(project(":smithy-ruby-rails-codegen"))
 }
 
 tasks.register<Copy>("copyGem") {
@@ -38,6 +39,6 @@ tasks.register<Copy>("copyGem") {
 }
 tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen/test_sdk/spec")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen/sample_service/spec")
 }
 tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copyGem"])

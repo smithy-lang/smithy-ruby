@@ -113,7 +113,7 @@ public class MiddlewareBuilder {
                     Map<String, String> params = new HashMap<>();
                     params.put("validator",
                             "Validators::" + operation.getId().getName()
-                            + "Input");
+                                    + "Input");
                     return params;
                 })
                 .addConfig(validateInput)

@@ -110,7 +110,7 @@ public class CodegenOrchestrator {
         RubySymbolProvider symbolProvider = new RubySymbolProvider(
                 resolvedModel, rubySettings);
 
-        ShapeId protocol = rubySettings
+        Optional<ShapeId> protocol = rubySettings
                 .resolveServiceProtocol(service, resolvedModel,
                         supportedProtocols);
         Optional<ProtocolGenerator> protocolGenerator =
@@ -145,7 +145,11 @@ public class CodegenOrchestrator {
      * Return the first matching ProtocolGenerator (if any)
      */
     private Optional<ProtocolGenerator> resolveProtocolGenerator(
-            ShapeId protocol, List<RubyIntegration> integrations) {
+            Optional<ShapeId> maybeProtocol, List<RubyIntegration> integrations) {
+        if (!maybeProtocol.isPresent()) {
+            return Optional.empty();
+        }
+        ShapeId protocol = maybeProtocol.get();
         for (RubyIntegration integration : integrations) {
             Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
                     .stream().filter((p) -> p.getProtocol().equals(protocol))

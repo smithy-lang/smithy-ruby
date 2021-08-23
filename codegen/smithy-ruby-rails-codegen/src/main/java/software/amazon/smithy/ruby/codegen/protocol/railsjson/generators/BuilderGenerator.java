@@ -15,18 +15,33 @@
 
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -112,13 +127,15 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         generatedBuilders.add(inputShape.getId());
 
         //determine if there are any members of the input that need to be serialized to the body
-        boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
+        boolean serializeBody = inputShape.members().stream().anyMatch(
+                (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) &&
+                        !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
-                .write("")
-                .write("http_req.headers['Content-Type'] = 'application/json'")
-                .call(() -> renderMemberBuilders(writer, inputShape))
-                .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+                    .write("")
+                    .write("http_req.headers['Content-Type'] = 'application/json'")
+                    .call(() -> renderMemberBuilders(writer, inputShape))
+                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
     }
 
@@ -128,15 +145,17 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .stream()
                 .filter((m) -> m.hasTrait(HttpQueryTrait.class))
                 .collect(Collectors.toList());
-        System.out.println("\tQUERY BUILDER: " + operation.getId() + " has " + queryMembers.size() + " query params...");
+        System.out
+                .println("\tQUERY BUILDER: " + operation.getId() + " has " + queryMembers.size() + " query params...");
 
-        for(MemberShape m : queryMembers) {
+        for (MemberShape m : queryMembers) {
             HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
             Shape target = model.expectShape(m.getTarget());
             System.out.println("\t\tAdding query params for: " + queryTrait.getValue() + " -> " + target.getId());
-            String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
+            String symbolName = RubyFormatter.asSymbol(m.getMemberName());
             // TODO: Handle required
-            writer.write("http_req.append_query_param('$1L', params[$2L].to_str) if params.key?($2L)", queryTrait.getValue(), symbolName);
+            writer.write("http_req.append_query_param('$1L', params[$2L].to_str) if params.key?($2L)",
+                    queryTrait.getValue(), symbolName);
         }
     }
 
@@ -146,15 +165,17 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .stream()
                 .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
                 .collect(Collectors.toList());
-        System.out.println("\tHEADER BUILDER: " + operation.getId() + " has " + headerMembers.size() + " query params...");
+        System.out.println(
+                "\tHEADER BUILDER: " + operation.getId() + " has " + headerMembers.size() + " query params...");
 
-        for(MemberShape m : headerMembers) {
+        for (MemberShape m : headerMembers) {
             HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
             Shape target = model.expectShape(m.getTarget());
             System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
-            String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
+            String symbolName = RubyFormatter.asSymbol(m.getMemberName());
             // TODO: Handle required
-            writer.write("http_req.headers['$1L'] = params[$2L].to_str if params.key?($2L)", headerTrait.getValue(), symbolName);
+            writer.write("http_req.headers['$1L'] = params[$2L].to_str if params.key?($2L)", headerTrait.getValue(),
+                    symbolName);
         }
     }
 
@@ -173,12 +194,13 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             String formatArgs = ""; // use string builder instead?
             System.out.println("\t\tURI: " + httpTrait.getUri() + " -> " + formatUri);
 
-            for(MemberShape m : labelMembers) {
+            for (MemberShape m : labelMembers) {
                 HttpLabelTrait label = m.expectTrait(HttpLabelTrait.class);
                 Shape target = model.expectShape(m.getTarget());
                 System.out.println("\t\tAdding url subs for: " + target.getId());
-                String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
-                formatArgs += ",\n  " + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
+                String symbolName = RubyFormatter.asSymbol(m.getMemberName());
+                formatArgs +=
+                        ",\n  " + m.getMemberName() + ": Seahorse::HTTP.uri_escape(params[" + symbolName + "].to_str)";
             }
             writer.openBlock("http_req.append_path(format(");
             writer.write("  '$L'$L\n)", formatUri, formatArgs);
@@ -236,7 +258,9 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         writer.write("data = {}");
 
         //remove members w/ http traits or marked NoSerialize
-        Stream<MemberShape> serializeMembers = s.members().stream().filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
+        Stream<MemberShape> serializeMembers = s.members().stream()
+                .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) &&
+                        !m.hasTrait((HttpHeaderTrait.class)));
         serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         serializeMembers.forEach((member) -> {
@@ -309,10 +333,11 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         }
 
         /**
-         *  For complex shapes, simply delegate to their builder
+         * For complex shapes, simply delegate to their builder
          */
         private void defaultComplexSerializer(Shape shape) {
-            writer.write("data[$L] = Builders::$L.build(params[$L])$L", dataName, shape.getId().getName(), symbolName, checkRequired(shape));
+            writer.write("data[$L] = Builders::$L.build(params[$L])$L", dataName, shape.getId().getName(), symbolName,
+                    checkRequired(shape));
         }
 
         @Override

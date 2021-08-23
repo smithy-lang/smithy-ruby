@@ -2,12 +2,12 @@
   "version": "1.0",
   "plugins": {
     "ruby-codegen": {
-      "service": "example.rails#SampleService",
-      "module": "SampleService",
+      "service": "example.weather#Weather",
+      "module": "TestSdk",
       "gemspec": {
-        "gemName": "sample_service",
+        "gemName": "test_sdk",
         "gemVersion": "0.0.1",
-        "gemSummary": "Sample Rails Service"
+        "gemSummary": "Sample Smithy SDK"
       }
     }
   }

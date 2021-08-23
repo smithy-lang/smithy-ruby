@@ -1,20 +1,16 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson;
 
-import software.amazon.smithy.model.shapes.OperationShape;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
-import software.amazon.smithy.ruby.codegen.RubyCodegenPlugin;
-import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.BuilderGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ParserGenerator;
-
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 // Protocol Implementation for Rails-Json
 public class RailsJsonGenerator implements ProtocolGenerator {

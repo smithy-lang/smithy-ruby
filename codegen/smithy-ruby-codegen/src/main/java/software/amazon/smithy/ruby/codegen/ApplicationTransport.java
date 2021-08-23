@@ -42,10 +42,10 @@ public final class ApplicationTransport {
     /**
      * Creates a resolved application transport.
      *
-     * @param name - name of the transport (eg HTTP)
-     * @param request - code to use to create the ruby Request
-     * @param response - code to use to create the Ruby Response
-     * @param transportClient - code to use to create the Transport's client
+     * @param name              - name of the transport (eg HTTP)
+     * @param request           - code to use to create the ruby Request
+     * @param response          - code to use to create the Ruby Response
+     * @param transportClient   - code to use to create the Transport's client
      * @param defaultMiddleware - default middleware to add to client operations
      */
     public ApplicationTransport(
@@ -135,11 +135,11 @@ public final class ApplicationTransport {
                         String errors = "[]";
                         params.put("error_parser",
                                 "Seahorse::HTTP::ErrorParser.new("
-                                + "error_module: Errors, error_code_fn: "
-                                + "Errors.method(:error_code), "
-                                + "success_status: "
-                                + successCode + ", errors: " + errors
-                                + ")"
+                                        + "error_module: Errors, error_code_fn: "
+                                        + "Errors.method(:error_code), "
+                                        + "success_status: "
+                                        + successCode + ", errors: " + errors
+                                        + ")"
                         );
                         return params;
                     })
@@ -230,8 +230,7 @@ public final class ApplicationTransport {
          * Called to Render the addition of this middleware to the stack.
          *
          * @param transport - ApplicationTransport to generate list for
-         * @param context - additional context
-         *
+         * @param context   - additional context
          * @return List of middleware that should be applied to all client operations
          */
         List<Middleware> list(ApplicationTransport transport,

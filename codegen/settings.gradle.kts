@@ -24,3 +24,4 @@ pluginManagement {
     }
 }
 include("smithy-ruby-rails-codegen")
+include("smithy-ruby-rails-codegen-test")
