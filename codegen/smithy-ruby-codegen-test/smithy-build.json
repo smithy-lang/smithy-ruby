@@ -5,7 +5,7 @@
       "service": "example.rails#SampleService",
       "module": "SampleService",
       "gemspec": {
-        "gemName": "sample_service_real",
+        "gemName": "sample_service",
         "gemVersion": "0.0.1",
         "gemSummary": "Sample Rails Service"
       }

@@ -29,12 +29,12 @@ Seahorse has a full suite of rspec tests which can be run from the seahorse dire
 ### Manual Testing
 The `sample-service` directory defines a rails service that can be run with `rails s`.  You can then test manually by adding seahorse and the generated sdk client to your library path with:
 ```sh
-irb -I 'seahorse/lib' -I 'sample_service_real/lib'
+irb -I 'seahorse/lib' -I 'sample_service/lib'
 ```
 
 And test with:
 ```Ruby
-require 'sample_service_real'
+require 'sample_service'
 
 c = SampleService::Client.new(endpoint: 'http://127.0.0.1:3000')
 c.get_high_score(id: '1')
