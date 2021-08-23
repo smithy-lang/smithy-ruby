@@ -40,7 +40,7 @@ jobs:
         name: generated_test_sdk
         path: sample_service
 
-  ruby-integegration-specs:
+  ruby-integration-specs:
     needs: [generate-test-sdk]
     runs-on: ubuntu-latest
     strategy:
