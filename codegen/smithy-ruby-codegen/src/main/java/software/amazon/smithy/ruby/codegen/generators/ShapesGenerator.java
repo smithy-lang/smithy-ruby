@@ -24,23 +24,13 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.FloatShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -272,7 +262,6 @@ public class ShapesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\ndef self.build(params, context='')")
                 .write("Seahorse::Validator.validate!(params, Hash, context: context)")
                 .openBlock("\ntype = new\nparams.each do |key, value|")
-                .write("Seahorse::Validator.validate!(key, String, Symbol, context: \"#{context}.keys\")")
                 .call(() -> valueTarget
                         .accept(new MemberBuilder(writer, "type[key] = ", "value", "\"#{context}[#{key}]\"")))
                 .closeBlock("end")
@@ -319,22 +308,7 @@ public class ShapesGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, String, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
-        public Void booleanShape(BooleanShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, TrueClass, FalseClass, context: $L)", input, context)
-                    .write(memberSetter + input);
+            writer.write(memberSetter + input);
             return null;
         }
 
@@ -353,46 +327,6 @@ public class ShapesGenerator extends ShapeVisitor.Default<Void> {
         }
 
         @Override
-        public Void byteShape(ByteShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Integer, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
-        public Void shortShape(ShortShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Integer, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Integer, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
-        public Void longShape(LongShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Integer, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Float, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
         public Void documentShape(DocumentShape shape) {
             // TODO: Need to implement a builder?
 //            writer.write("Seahorse::Validator.validate!($L, "
@@ -401,33 +335,9 @@ public class ShapesGenerator extends ShapeVisitor.Default<Void> {
         }
 
         @Override
-        public Void doubleShape(DoubleShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Float, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
-        public Void bigDecimalShape(BigDecimalShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, BigDecimal, context: $L)", input, context)
-                    .write(memberSetter + input);
-            return null;
-        }
-
-        @Override
         public Void mapShape(MapShape shape) {
             String shapeName = shape.getId().getName();
             writer.write("$1L$2L.build($3L, $4L) if $3L", memberSetter, shapeName, input, context);
-            return null;
-        }
-
-        @Override
-        public Void stringShape(StringShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, String, context: $L)", input, context)
-                    .write(memberSetter + input);
             return null;
         }
 
@@ -447,11 +357,8 @@ public class ShapesGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer
-                    .write("Seahorse::Validator.validate!($L, Time, context: $L)", input, context)
-                    .write(memberSetter + input); //TODO: does this need a conversion?
+            writer.write(memberSetter + input); //TODO: does this need a conversion?
             return null;
         }
     }
-
 }

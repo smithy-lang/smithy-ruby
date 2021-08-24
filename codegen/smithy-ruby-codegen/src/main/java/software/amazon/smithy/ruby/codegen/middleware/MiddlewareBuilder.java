@@ -98,6 +98,26 @@ public class MiddlewareBuilder {
     public void addDefaultMiddleware(GenerationContext context) {
         ApplicationTransport transport = context.getApplicationTransport();
 
+        ClientConfig validateInput = (new ClientConfig.Builder())
+                .name("validate_input")
+                .type("Boolean")
+                .defaultValue("true")
+                .documentation(
+                        "When `true`, request parameters are validated using the modeled shapes.")
+                .build();
+
+        Middleware validate = (new Middleware.Builder())
+                .klass("Seahorse::Middleware::Validate")
+                .step(MiddlewareStackStep.INITIALIZE)
+                .operationParams((ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("validator",
+                            "Validators::" + operation.getId().getName()
+                            + "Input");
+                    return params;
+                })
+                .addConfig(validateInput)
+                .build();
 
         Middleware build = (new Middleware.Builder())
                 .klass("Seahorse::Middleware::Build")
@@ -140,6 +160,7 @@ public class MiddlewareBuilder {
                 .addConfig(stubs)
                 .build();
 
+        register(validate);
         register(build);
         register(send);
 

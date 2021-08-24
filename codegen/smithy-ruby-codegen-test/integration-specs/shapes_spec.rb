@@ -13,16 +13,6 @@ module SampleService
         expect(shape).to be_a(GetHighScoreInput)
         expect(shape.id).to eq(id)
       end
-
-      context 'id is not a string' do
-        let(:id) { 1 }
-
-        it 'raises an ArgumentError with the context' do
-          expect {
-            GetHighScoreInput.build(params, 'params')
-          }.to raise_error(ArgumentError, 'Expected params[:id] to be in [String], got Integer.')
-        end
-      end
     end
 
     describe UpdateHighScoreInput do
@@ -54,16 +44,10 @@ module SampleService
         end.to raise_error(ArgumentError, 'Expected input to be in [Array], got Hash.')
       end
 
-      it 'validates all of the members' do
+      it 'builds all of the members' do
         shape = SimpleList.build(['a', 'b', 'c'], 'input')
         expect(shape).to be_a(SimpleList)
         expect(shape).to eq ['a', 'b', 'c']
-      end
-
-      it 'validates all of the members and raises when any are invalid' do
-        expect do
-          SimpleList.build(['a', 'b', 1], 'input')
-        end.to raise_error(ArgumentError, 'Expected input[2] to be in [String], got Integer.')
       end
     end
 
@@ -75,13 +59,13 @@ module SampleService
         end.to raise_error(ArgumentError, 'Expected input to be in [Array], got Hash.')
       end
 
-      it 'validates all of the members' do
+      it 'builds all of the members' do
         shape = ComplexList.build([high_score, high_score], 'input')
         expect(shape).to be_a(ComplexList)
         expect(shape).to eq [high_score, high_score]
       end
 
-      it 'validates all of the members and raises when any are invalid' do
+      it 'builds all of the members and raises when any are invalid' do
         expect do
           ComplexList.build([high_score, high_score, 1], 'input')
         end.to raise_error(ArgumentError, 'Expected input[2] to be Hash like, got Integer.')
@@ -95,18 +79,11 @@ module SampleService
         end.to raise_error(ArgumentError, 'Expected input to be in [Hash], got Array.')
       end
 
-      it 'validates all of the members' do
+      it 'builds all of the members' do
         h = {'a' => 1, 'b' => 2}
         shape = SimpleMap.build(h, 'input')
         expect(shape).to be_a(SimpleMap)
         expect(shape).to eq h
-      end
-
-      it 'validates all of the members and raises when any are invalid' do
-        expect do
-          h = {'a' => 1, 'b' => "not a number"}
-          SimpleMap.build(h, 'input')
-        end.to raise_error(ArgumentError, 'Expected input[b] to be in [Integer], got String.')
       end
     end
   end
