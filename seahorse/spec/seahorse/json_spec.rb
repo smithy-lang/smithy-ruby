@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe JSON do
     subject { described_class }
     let(:hash) { { 'foo' => 'bar' } }
@@ -27,5 +26,4 @@ module Seahorse
       end
     end
   end
-
 end

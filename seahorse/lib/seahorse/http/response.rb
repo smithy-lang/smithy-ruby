@@ -5,6 +5,7 @@ require 'stringio'
 module Seahorse
   module HTTP
     # Represents an HTTP Response.
+    # @api private
     class Response
       # @param [Integer] status
       # @param [Headers] headers

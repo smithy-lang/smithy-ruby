@@ -3,15 +3,15 @@
 module Seahorse
   module XML
     describe Node do
-      context '#initialize' do
-        it 'accpets a name with text arguments' do
+      describe '#initialize' do
+        it 'accepts a name with text arguments' do
           node = Node.new('name', 'te', 'xt')
           expect(node.name).to eq('name')
           expect(node.text).to eq('text')
         end
 
-        it 'accpets a name with an array of text' do
-          node = Node.new('name', ['te', 'xt'])
+        it 'accepts a name with an array of text' do
+          node = Node.new('name', %w[te xt])
           expect(node.name).to eq('name')
           expect(node.text).to eq('text')
         end
@@ -50,13 +50,13 @@ module Seahorse
         end
       end
 
-      context '#name' do
+      describe '#name' do
         it 'returns the node name' do
           expect(Node.new('name').name).to eq('name')
         end
       end
 
-      context '#attributes' do
+      describe '#attributes' do
         it 'defaults to an empty hash' do
           expect(Node.new('name').attributes).to eq({})
         end
@@ -68,28 +68,7 @@ module Seahorse
         end
       end
 
-      context '#text' do
-        it 'returns nil for a new node' do
-          node = Node.new('name')
-          expect(node.text).to be(nil)
-        end
-
-        it 'returns the text of a node' do
-          node = Node.new('name')
-          node << 'abc'
-          expect(node.text).to eq('abc')
-        end
-
-        it 'joins multiple text nodes' do
-          node = Node.new('name')
-          node << 'abc'
-          node << 'mno'
-          node << 'xyz'
-          expect(node.text).to eq('abcmnoxyz')
-        end
-      end
-
-      context '#<<' do
+      describe '#<<' do
         it 'appends child text' do
           node = Node.new('name')
           node << 'abc'
@@ -112,9 +91,11 @@ module Seahorse
 
         it 'raises ArgumentError when appending non-text/non-node' do
           node = Node.new('name')
-          expect do
-            node << nil
-          end.to raise_error(ArgumentError, 'expected Seahorse::XML::Node or String, got NilClass')
+          expect { node << nil }
+            .to raise_error(
+              ArgumentError,
+              'expected Seahorse::XML::Node or String, got NilClass'
+            )
         end
 
         it 'raises when appending a child node to node with text' do
@@ -134,7 +115,28 @@ module Seahorse
         end
       end
 
-      context '#[]' do
+      describe '#text' do
+        it 'returns nil for a new node' do
+          node = Node.new('name')
+          expect(node.text).to be(nil)
+        end
+
+        it 'returns the text of a node' do
+          node = Node.new('name')
+          node << 'abc'
+          expect(node.text).to eq('abc')
+        end
+
+        it 'joins multiple text nodes' do
+          node = Node.new('name')
+          node << 'abc'
+          node << 'mno'
+          node << 'xyz'
+          expect(node.text).to eq('abcmnoxyz')
+        end
+      end
+
+      describe '#[]' do
         it 'returns an array of child-nodes with the given name' do
           node = Node.new('name')
           child1 = Node.new('child')
@@ -157,61 +159,52 @@ module Seahorse
         end
       end
 
-      context '#child_node_names' do
-        it 'returns an array of child node names' do
-          node = Node.new('name')
-          node << Node.new('child1')
-          node << Node.new('child2')
-          node << Node.new('child2')
-          expect(node.child_node_names).to eq(%w(child1 child2))
-        end
-
+      describe '#children' do
         it 'returns an empty array for an empty node' do
-          expect(Node.new('name').child_node_names).to eq([])
-        end
-      end
-
-      context '#child_node?' do
-        it 'returns false if there is no child-node with the given name' do
           node = Node.new('name')
-          expect(node.child_node?('child')).to be(false)
+          expect(node.children).to eq([])
         end
 
-        it 'returns false if the node does not have a child with the given name' do
-          node = Node.new('name')
-          node << Node.new('other-child')
-          expect(node.child_node?('child')).to be(false)
-        end
-
-        it 'returns true if the node has a child node with the given name' do
-          node = Node.new('name')
-          node << Node.new('child')
-          expect(node.child_node?('child')).to be(true)
-        end
-      end
-
-      context '#child_nodes' do
-        it 'returns an empty array for an empty node' do
+        it 'is aliased to #child_nodes' do
           node = Node.new('name')
           expect(node.child_nodes).to eq([])
         end
 
-        it 'returns an ordered array of child nodes' do
-          child1 = Node.new('name1')
-          child2 = Node.new('name2')
-          child3 = Node.new('name1')
-          node = Node.new('name')
-          node << child1
-          node << child2
-          node << child3
-          expect(node.child_nodes).to eq([child1, child2, child3])
-          node = Node.new('name')
-          node.append(child1, child2, child3)
-          expect(node.child_nodes).to eq([child1, child2, child3])
+        context 'no args' do
+          it 'returns an ordered array of child nodes' do
+            child1 = Node.new('name1')
+            child2 = Node.new('name2')
+            child3 = Node.new('name1')
+            node = Node.new('name')
+            node << child1
+            node << child2
+            node << child3
+            expect(node.children).to eq([child1, child2, child3])
+          end
+        end
+
+        context 'one arg' do
+          it 'returns an ordered array of child nodes with the given name' do
+            child1 = Node.new('name1')
+            child2 = Node.new('name2')
+            child3 = Node.new('name1')
+            node = Node.new('name')
+            node << child1
+            node << child2
+            node << child3
+            expect(node.children('name1')).to eq([child1, child3])
+          end
+        end
+
+        context 'two+ args' do
+          it 'raises an ArgumentError' do
+            node = Node.new('name')
+            expect { node.children('foo', 'bar') }.to raise_error(ArgumentError)
+          end
         end
       end
 
-      context '#empty?' do
+      describe '#empty?' do
         it 'returns true when the node has not text and no child nodes' do
           expect(Node.new('name').empty?).to be(true)
         end
@@ -229,7 +222,75 @@ module Seahorse
         end
       end
 
-      context '#to_xml' do
+      describe '#child_node_names' do
+        it 'returns an array of child node names' do
+          node = Node.new('name')
+          node << Node.new('child1')
+          node << Node.new('child2')
+          node << Node.new('child2')
+          expect(node.child_node_names).to eq(%w[child1 child2])
+        end
+
+        it 'returns an empty array for an empty node' do
+          expect(Node.new('name').child_node_names).to eq([])
+        end
+      end
+
+      describe '#child_node?' do
+        it 'returns false if there is no child-node with the given name' do
+          node = Node.new('name')
+          node << Node.new('other-child')
+          expect(node.child_node?('child')).to be(false)
+        end
+
+        it 'returns true if the node has a child node with the given name' do
+          node = Node.new('name')
+          node << Node.new('child')
+          expect(node.child_node?('child')).to be(true)
+        end
+      end
+
+      describe '#child' do
+        it 'returns the child' do
+          node = Node.new('name')
+          child = Node.new('child')
+          node << child
+          expect(node.child('child')).to eq child
+        end
+
+        it 'is aliased to #at' do
+          node = Node.new('name')
+          child = Node.new('child')
+          node << child
+          expect(node.at('child')).to eq child
+        end
+
+        it 'yields the child if given a block' do
+          node = Node.new('name')
+          child = Node.new('child')
+          node << child
+          expect { |c| node.child('child', &c) }.to yield_with_args(child)
+        end
+      end
+
+      describe '#text_at' do
+        it 'returns the text' do
+          node = Node.new('name')
+          child = Node.new('child', 'text')
+          node << child
+          expect(node.text_at('child')).to eq 'text'
+        end
+
+        it 'yields the text if given a block' do
+          node = Node.new('name')
+          text = 'text'
+          child = Node.new('child', text)
+          node << child
+          expect { |c| node.text_at('child', &c) }.to yield_with_args(text)
+        end
+      end
+
+      describe '#to_xml' do
         it 'returns the node as an XML string' do
           node = Node.new('name')
           expect(node.to_xml).to eq('<name/>')

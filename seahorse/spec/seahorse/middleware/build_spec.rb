@@ -2,7 +2,6 @@
 
 module Seahorse
   module Middleware
-
     describe Build do
       let(:app) { double('app', call: output) }
       let(:builder) { double('builder') }
@@ -28,7 +27,7 @@ module Seahorse
 
         it 'builds then calls the next middleware' do
           expect(builder).to receive(:build)
-            .with(request, input).ordered
+            .with(request, input: input).ordered
           expect(app).to receive(:call)
             .with(input, context).ordered
 
@@ -37,6 +36,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

@@ -2,8 +2,11 @@
 
 module Seahorse
   module Middleware
+    # A class used to register middleware before a request is sent.
+    # @api private
     class RequestHandler
-
+      # @param [Class] app The next middleware in the stack.
+      # @param [Proc] handler A proc object that is called before the request.
       def initialize(app, handler:)
         @app = app
         @handler = handler
@@ -16,7 +19,6 @@ module Seahorse
         @handler.call(input, context)
         @app.call(input, context)
       end
-
     end
   end
 end

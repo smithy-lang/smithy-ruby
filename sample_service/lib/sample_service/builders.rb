@@ -3,7 +3,7 @@ module SampleService
   module Builders
 
     class EventStream
-      def self.build(input = Types::EventStream.new)
+      def self.build(input: Types::EventStream.new)
         json = {}
         case input
         when Types::EventStream::Start
@@ -18,7 +18,7 @@ module SampleService
     end
 
     class StructuredEvent
-      def self.build(input = Types::StructuredEvent.new)
+      def self.build(input: Types::StructuredEvent.new)
         json = {}
         json[:message] = input[:message] unless input[:message].nil?
         json
@@ -26,7 +26,7 @@ module SampleService
     end
 
     class HighScoreParams
-      def self.build(input = Types::HighScoreParams.new)
+      def self.build(input: Types::HighScoreParams.new)
         json = {}
         json[:game] = input[:game] unless input[:game].nil?
         json[:score] = input[:score] unless input[:score].nil?
@@ -35,7 +35,7 @@ module SampleService
     end
 
     class GetHighScore
-      def self.build(http_req, input = Types::GetHighScoreInput.new)
+      def self.build(http_req, input: Types::GetHighScoreInput.new)
         raise ArgumentError if input[:id].nil? || input[:id].empty?
 
         http_req.http_method = 'GET'
@@ -46,7 +46,7 @@ module SampleService
     end
 
     class CreateHighScore
-      def self.build(http_req, input = Types::CreateHighScoreInput.new)
+      def self.build(http_req, input: Types::CreateHighScoreInput.new)
         http_req.http_method = 'POST'
         http_req.append_path('/high_scores')
         http_req.headers['Content-Type'] = 'application/json'
@@ -57,8 +57,11 @@ module SampleService
     end
 
     class UpdateHighScore
-      def self.build(http_req, input = Types::UpdateHighScoreInput.new)
-        raise ArgumentError if input[:id].nil? || input[:id].empty?
+      def self.build(http_req, input: Types::UpdateHighScoreInput.new)
+        if input[:id].nil? || input[:id].empty?
+          raise ArgumentError,
+                'input[:id] is nil or empty'
+        end
 
         http_req.http_method = 'PUT'
         http_req.append_path(format('/high_scores/%<id>s',
@@ -72,7 +75,7 @@ module SampleService
     end
 
     class DeleteHighScore
-      def self.build(http_req, input = Types::DeleteHighScoreInput.new)
+      def self.build(http_req, input: Types::DeleteHighScoreInput.new)
         raise ArgumentError if input[:id].nil? || input[:id].empty?
 
         http_req.http_method = 'DELETE'
@@ -83,7 +86,7 @@ module SampleService
     end
 
     class ListHighScores
-      def self.build(http_req, input = Types::ListHighScoresInput.new)
+      def self.build(http_req, input: Types::ListHighScoresInput.new)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
         http_req.append_query_param('maxResults', input[:max_results]) unless input[:max_results].nil?
@@ -92,7 +95,7 @@ module SampleService
     end
 
     class Stream
-      def self.build(http_req, input = Types::Stream.new)
+      def self.build(http_req, input: Types::Stream.new)
         http_req.http_method = 'POST'
         http_req.append_path('/stream')
         http_req.headers['Transfer-Encoding'] = 'chunked'

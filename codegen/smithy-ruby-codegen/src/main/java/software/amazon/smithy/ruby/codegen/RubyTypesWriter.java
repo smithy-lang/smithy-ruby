@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class RubyTypesWriter extends CodeWriter {

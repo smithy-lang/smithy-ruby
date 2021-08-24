@@ -5,6 +5,8 @@ module SampleService
       :message,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.message = params[:message]
@@ -56,6 +58,8 @@ module SampleService
       :score,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.game = params[:game]
@@ -94,6 +98,8 @@ module SampleService
       :updated_at,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.id = params[:id]
@@ -115,6 +121,8 @@ module SampleService
       :id,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.id = params[:id]
@@ -132,6 +140,8 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.high_score = HighScoreAttributes.new(params[:high_score]) if params[:high_score]
@@ -149,6 +159,8 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.high_score = HighScoreParams.build(params[:high_score]) if params[:high_score]
@@ -171,6 +183,8 @@ module SampleService
       :location,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.high_score = HighScoreAttributes.new(params[:high_score]) if params[:high_score]
@@ -194,6 +208,8 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.id = params[:id]
@@ -212,6 +228,8 @@ module SampleService
       :high_score,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.high_score = HighScoreAttributes.new(params[:high_score]) if params[:high_score]
@@ -229,6 +247,8 @@ module SampleService
       :id,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.id = params[:id]
@@ -241,6 +261,8 @@ module SampleService
       nil,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type
@@ -253,6 +275,8 @@ module SampleService
       :next_token,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.next_token = params[:next_token]
@@ -272,6 +296,8 @@ module SampleService
       :high_scores,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.next_token = params[:next_token]
@@ -287,6 +313,8 @@ module SampleService
       :stream_id,
       :blob
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.stream_id = params[:stream_id]
@@ -300,6 +328,8 @@ module SampleService
       :errors,
       keyword_init: true
     ) do
+      include Seahorse::Structure
+
       def self.build(params)
         type = new
         type.errors = Hash[params[:errors].map { |k, v| [k, v] }]

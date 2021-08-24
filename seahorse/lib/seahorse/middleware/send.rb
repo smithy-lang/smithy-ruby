@@ -2,8 +2,17 @@
 
 module Seahorse
   module Middleware
+    # A middleware used to send the request.
+    # @api private
     class Send
-
+      # @param [Class] _app The next middleware in the stack.
+      # @param [Boolean] stub_responses If true, a request is not sent and a
+      #   stubbed response is returned.
+      # @param [Class] stub_class A stub object that is responsible for creating
+      #   a stubbed response. It must respond to #stub and take the response
+      #   and stub data as arguments.
+      # @param [Stubs] stubs A {Seahorse::Stubbing:Stubs} object containing
+      #   stubbed data for any given operation.
       def initialize(_app, client:, stub_responses:, stub_class:, stubs:)
         @client = client
         @stub_responses = stub_responses
@@ -11,10 +20,10 @@ module Seahorse
         @stubs = stubs
       end
 
-      # @param input
+      # @param _input
       # @param context
       # @return [Output]
-      def call(input, context)
+      def call(_input, context)
         if @stub_responses
           stub = @stubs.next(context.operation_name)
           output = Output.new
@@ -41,7 +50,9 @@ module Seahorse
         when Class
           output.error = stub.new
         when Hash
-          @stub_class.stub(context.response, stub)
+          @stub_class.stub(context.response, stub: stub)
+        when NilClass
+          @stub_class.stub(context.response, stub: @stub_class.default)
         else
           raise ArgumentError, 'Unsupported stub type'
         end

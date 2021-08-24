@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Seahorse
-
   describe Output do
     let(:error) { StandardError.new }
     let(:data) { double('Struct') }
@@ -16,5 +15,4 @@ module Seahorse
       end
     end
   end
-
 end

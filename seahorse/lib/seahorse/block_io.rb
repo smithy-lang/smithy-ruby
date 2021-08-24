@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module Seahorse
+  # Given a block, BlockIO will call it with data to write and return the
+  # bytesize written. BlockIO keeps track of all bytes yielded.
   class BlockIO
-
     # @param [Proc] block
     def initialize(block)
       @block = block
@@ -19,6 +20,5 @@ module Seahorse
       @bytes_yielded += data.bytesize
       data.bytesize
     end
-
   end
 end

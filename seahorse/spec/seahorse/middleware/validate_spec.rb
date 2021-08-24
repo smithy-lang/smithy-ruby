@@ -2,11 +2,10 @@
 
 module Seahorse
   module Middleware
-
     describe Validate do
       let(:app) { double('app') }
       let(:validator) { double('validator') }
-      let(:data) { {foo: 'bar'} }
+      let(:data) { { foo: 'bar' } }
       let(:input) { double('Type::OperationInput') }
 
       subject do
@@ -26,7 +25,7 @@ module Seahorse
 
           it 'validates the request then calls the next middleware' do
             expect(validator).to receive(:validate!)
-              .with(input: input, context: 'input').ordered
+              .with(input, context: 'input').ordered
             expect(app).to receive(:call).with(input, context)
 
             subject.call(input, context)
@@ -45,6 +44,5 @@ module Seahorse
         end
       end
     end
-
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seahorse
   module HTTP
     # Uses HTTP specific logic + Protocol defined Errors and
@@ -6,7 +8,6 @@ module Seahorse
     # logic as well.
     # @api private
     class ErrorParser
-
       # @api private
       HTTP_3XX = 300..399
 
@@ -52,36 +53,50 @@ module Seahorse
       # Implements the following order of precedence
       # 1. Response has error_code -> error
       # 2. Response code == http trait status code? -> success
-      # 3. Response code matches any error status codes? -> error  [EXCLUDED, covered by error_code]
+      # 3. Response code matches any error status codes? -> error
+      #   [EXCLUDED, covered by error_code]
       # 4. Response code is 2xx? -> success
-      # 6. Response code 5xx -> unknown server error [MODIFIED, 3xx, 4xx, 5xx mapped, everything else is Generic ApiError]
+      # 6. Response code 5xx -> unknown server error
+      #   [MODIFIED, 3xx, 4xx, 5xx mapped, everything else is Generic ApiError]
       # 7. Everything else -> unknown client error
       def error?(http_resp)
         return true if @error_code_fn.call(http_resp)
         return false if http_resp.status == @success_status
 
-        return !(200..299).cover?(http_resp.status)
+        !(200..299).cover?(http_resp.status)
       end
 
       def extract_error(http_resp)
         error_code = @error_code_fn.call(http_resp)
-        error_class = @errors.find{ |e| e.name.include? error_code } if error_code
+        error_class = error_class(error_code) if error_code
 
         error_opts = {
           http_resp: http_resp,
           error_code: error_code,
-          message: nil, # must be set later
+          message: nil # must be set later
         }
 
         if error_class
           error_class.new(**error_opts)
         else
-          case http_resp.status
-          when HTTP_3XX then @error_module::ApiRedirectError.new(location: http_resp.headers['location'], **error_opts)
-          when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
-          when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
-          else @error_module::ApiError.new(http_resp: http_resp, **error_opts)
-          end
+          generic_error(http_resp, error_opts)
+        end
+      end
+
+      def error_class(error_code)
+        @errors.find do |e|
+          e.name.include? error_code
+        end
+      end
+
+      def generic_error(http_resp, error_opts)
+        case http_resp.status
+        when HTTP_3XX then @error_module::ApiRedirectError.new(
+          location: http_resp.headers['location'], **error_opts
+        )
+        when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
+        when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
+        else @error_module::ApiError.new(http_resp: http_resp, **error_opts)
         end
       end
     end

@@ -2,8 +2,7 @@
 
 module Seahorse
   module XML
-
-    # XML Parse Error
+    # An error class encountered when parsing XML.
     class ParseError < StandardError
       MSG = 'Encountered an error while parsing the response: %<message>s'
 
@@ -15,7 +14,5 @@ module Seahorse
       # @return [StandardError]
       attr_reader :original_error
     end
-
-
   end
 end

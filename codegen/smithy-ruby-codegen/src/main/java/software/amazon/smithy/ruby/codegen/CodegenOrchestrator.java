@@ -1,58 +1,94 @@
+/*
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.ruby.codegen.generators.*;
-
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
+import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
+import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
+import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 
 public class CodegenOrchestrator {
 
-    private static final Logger LOGGER = Logger.getLogger(CodegenOrchestrator.class.getName());
+    private static final Logger LOGGER =
+            Logger.getLogger(CodegenOrchestrator.class.getName());
 
     private final GenerationContext context;
 
     public CodegenOrchestrator(PluginContext pluginContext) {
 
-        RubySettings rubySettings = RubySettings.from(pluginContext.getSettings());
+        RubySettings rubySettings =
+                RubySettings.from(pluginContext.getSettings());
 
         // If this fails to load changes, run: ./gradlew --stop
         ServiceLoader<RubyIntegration> integrationServiceLoader = ServiceLoader
                 .load(RubyIntegration.class,
-                        pluginContext.getPluginClassLoader().orElse(this.getClass().getClassLoader())
+                        pluginContext.getPluginClassLoader()
+                                .orElse(this.getClass().getClassLoader())
                 );
 
         System.out.println("\n\n----------------------------------\n\n");
         System.out.println("Loading integrations....");
         List<RubyIntegration> integrations =
-                StreamSupport.stream(integrationServiceLoader.spliterator(), false)
-                        .peek((i) -> System.out.println("Loaded RubyIntegration: " + i.getClass().getName()))
-                    .sorted(Comparator.comparing(RubyIntegration::getOrder))
-                .collect(Collectors.toList());
+                StreamSupport
+                        .stream(integrationServiceLoader.spliterator(), false)
+                        .peek((i) -> System.out.println(
+                                "Loaded RubyIntegration: "
+                                        + i.getClass().getName()))
+                        .sorted(Comparator.comparing(RubyIntegration::getOrder))
+                        .collect(Collectors.toList());
         System.out.println("Loaded integrations: " + integrations.size());
 
         Model resolvedModel = pluginContext.getModel();
 
         for (RubyIntegration integration : integrations) {
-            resolvedModel = integration.preprocessModel(pluginContext, resolvedModel, rubySettings);
+            resolvedModel = integration
+                    .preprocessModel(pluginContext, resolvedModel,
+                            rubySettings);
         }
 
-        ServiceShape service = resolvedModel.expectShape(rubySettings.getService()).asServiceShape().orElseThrow(() -> new CodegenException("Shape is not a service"));
+        ServiceShape service =
+                resolvedModel.expectShape(rubySettings.getService())
+                        .asServiceShape().orElseThrow(
+                        () -> new CodegenException("Shape is not a service"));
 
         // Add unique operation input/output shapes
-        resolvedModel = AddOperationShapes.execute(resolvedModel, service.getId());
+        resolvedModel =
+                AddOperationShapes.execute(resolvedModel, service.getId());
 
         // Now that service and model are resolved, filter integrations for the service
         Model finalResolvedModel = resolvedModel;
         integrations = integrations.stream()
-                .filter((integration) -> integration.includeFor(service, finalResolvedModel))
+                .filter((integration) -> integration
+                        .includeFor(service, finalResolvedModel))
                 .collect(Collectors.toList());
 
         Set<ShapeId> supportedProtocols = new HashSet<>();
@@ -61,22 +97,37 @@ public class CodegenOrchestrator {
                     integration.getProtocolGenerators()
                             .stream()
                             .map((g) -> g.getProtocol())
-                            .peek((s) -> System.out.println(integration.getClass().getSimpleName() + " registered protocolGenerator for: " + s.getName() + " -> " + s.toString()))
+                            .peek((s) -> System.out.println(
+                                    integration.getClass().getSimpleName()
+                                            + " registered protocolGenerator "
+                                            + "for: "
+                                            + s.getName() + " -> "
+                                            + s.toString()))
                             .collect(Collectors.toSet())
             );
         }
 
-        ShapeId protocol = rubySettings.resolveServiceProtocol(service, resolvedModel, supportedProtocols);
-        Optional<ProtocolGenerator> protocolGenerator = resolveProtocolGenerator(protocol, integrations);
+        RubySymbolProvider symbolProvider = new RubySymbolProvider(
+                resolvedModel, rubySettings);
 
-        ApplicationTransport applicationTransport; // Java9+ replace with ifPresentOrElse
+        ShapeId protocol = rubySettings
+                .resolveServiceProtocol(service, resolvedModel,
+                        supportedProtocols);
+        Optional<ProtocolGenerator> protocolGenerator =
+                resolveProtocolGenerator(protocol, integrations);
+
+        ApplicationTransport
+                applicationTransport; // Java9+ replace with ifPresentOrElse
         if (protocolGenerator.isPresent()) {
-            applicationTransport = protocolGenerator.get().getApplicationTransport();
+            applicationTransport =
+                    protocolGenerator.get().getApplicationTransport();
         } else {
-            applicationTransport = ApplicationTransport.createDefaultHttpApplicationTransport();
+            applicationTransport = ApplicationTransport
+                    .createDefaultHttpApplicationTransport();
         }
 
-        System.out.println("Resolved ApplicationTransport: " + applicationTransport);
+        System.out.println(
+                "Resolved ApplicationTransport: " + applicationTransport);
 
         context = new GenerationContext(
                 rubySettings,
@@ -86,16 +137,19 @@ public class CodegenOrchestrator {
                 service,
                 protocol,
                 protocolGenerator,
-                applicationTransport);
+                applicationTransport,
+                symbolProvider);
     }
 
     /*
-    * Return the first matching ProtocolGenerator (if any)
+     * Return the first matching ProtocolGenerator (if any)
      */
-    private Optional<ProtocolGenerator> resolveProtocolGenerator(ShapeId protocol, List<RubyIntegration> integrations) {
-        for(RubyIntegration integration : integrations) {
+    private Optional<ProtocolGenerator> resolveProtocolGenerator(
+            ShapeId protocol, List<RubyIntegration> integrations) {
+        for (RubyIntegration integration : integrations) {
             Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
-                    .stream().filter((p) -> p.getProtocol().equals(protocol)).findFirst();
+                    .stream().filter((p) -> p.getProtocol().equals(protocol))
+                    .findFirst();
             if (pg.isPresent()) {
                 return pg;
             }
@@ -109,13 +163,15 @@ public class CodegenOrchestrator {
         System.out.println("Starting CodeGen execute");
 
         // Integration hook - processFinalizedModel
-        context.getIntegrations().forEach( (integration) -> integration.processFinalizedModel(context));
+        context.getIntegrations().forEach(
+                (integration) -> integration.processFinalizedModel(context));
 
         generateTypes();
         generateValidators();
 
         if (context.getProtocolGenerator().isPresent()) {
-            ProtocolGenerator protocolGenerator = context.getProtocolGenerator().get();
+            ProtocolGenerator protocolGenerator =
+                    context.getProtocolGenerator().get();
 
             protocolGenerator.generateBuilders(context);
             protocolGenerator.generateParsers(context);
@@ -138,7 +194,8 @@ public class CodegenOrchestrator {
     }
 
     private void generateValidators() {
-        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(context);
+        ValidatorsGenerator validatorsGenerator =
+                new ValidatorsGenerator(context);
         validatorsGenerator.render();
         LOGGER.info("created types");
     }
@@ -159,10 +216,12 @@ public class CodegenOrchestrator {
     }
 
     private void generateGemSpec() {
-        List<RubyDependency> additionalDependencies = context.getIntegrations().stream()
-                .map((integration) -> integration.additionalGemDependencies(context))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<RubyDependency> additionalDependencies =
+                context.getIntegrations().stream()
+                        .map((integration) -> integration
+                                .additionalGemDependencies(context))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList());
         GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
         gemspecGenerator.render(additionalDependencies);
         LOGGER.info("wrote .gemspec");
