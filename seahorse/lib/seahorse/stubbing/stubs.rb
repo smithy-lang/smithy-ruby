@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 module Seahorse
-  # @api private
   module Stubbing
-    # Provides a thread safe data structure for adding and getting stubs
-    # per operation.
+    # Provides a thread safe data structure for adding
+    # and getting stubs per operation
+    # @api private
     class Stubs
+
       def initialize
         @stubs = {}
         @stub_mutex = Mutex.new
@@ -21,12 +22,13 @@ module Seahorse
         @stub_mutex.synchronize do
           stubs = @stubs[operation_name] || []
           case stubs.length
-          when 0 then nil
+          when 0 then {}
           when 1 then stubs.first
           else stubs.shift
           end
         end
       end
+
     end
   end
 end

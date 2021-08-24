@@ -2,6 +2,7 @@
 
 module Seahorse
   module Middleware
+
     describe Retry do
       let(:app) { double('app') }
       let(:max_attempts) { 4 }
@@ -22,7 +23,7 @@ module Seahorse
         let(:context) do
           Seahorse::Context.new(
             request: request,
-            response: response
+            response: response,
           )
         end
         it 'calls the next middleware' do
@@ -77,5 +78,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

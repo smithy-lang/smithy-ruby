@@ -15,32 +15,29 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.*;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
-import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubyTypesWriter;
+import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.ruby.codegen.*;
 
-public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
+public class ValidatorsGenerator extends ShapeVisitor.Default<Void>  {
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyTypesWriter typesWriter;
-    private final SymbolProvider symbolProvider;
+    private final RubyTypeMapper typeMapper;
 
     public ValidatorsGenerator(GenerationContext context) {
         this.context = context;
@@ -48,7 +45,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
         this.typesWriter = new RubyTypesWriter();
-        this.symbolProvider = context.getSymbolProvider();
+        this.typeMapper = new RubyTypeMapper(context.getModel());
     }
 
     public void render() {
@@ -60,9 +57,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName()
-                        + "/params.rb";
+        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/params.rb";
         fileManifest.writeFile(fileName, writer.toString());
 
     }
@@ -72,10 +67,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         operations.forEach(o -> renderParamsForOperation(writer, o));
     }
 
-    private void renderParamsForOperation(RubyCodeWriter writer,
-                                          OperationShape operation) {
-        System.out.println(
-                "Generating builders for Operation: " + operation.getId());
+    private void renderParamsForOperation(RubyCodeWriter writer, OperationShape operation) {
+        System.out.println("Generating builders for Operation: " + operation.getId());
 
         //TODO: An optional check on the Output Type being present
         if (!operation.getInput().isPresent()) {
@@ -92,8 +85,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void structureShape(StructureShape shape) {
         if (shape.hasTrait(ErrorTrait.class)) {
-            System.out.println("Skipping " + shape.getId()
-                    + " because it is an error type.");
+            System.out.println("Skipping " + shape.getId() + " because it is an error type.");
             return null;
         }
         System.out.println("Visit Structure Shape: " + shape.getId());
@@ -106,8 +98,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
             membersBlock = shape
                     .members()
                     .stream()
-                    .map(memberShape -> RubyFormatter
-                            .asSymbol(memberShape.getMemberName()))
+                    .map(memberShape -> RubyFormatter.asSymbol(memberShape.getMemberName()))
                     .collect(Collectors.joining(",\n"));
         }
         membersBlock += ",";
@@ -120,14 +111,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .closeBlock(")");
 
         String initTypes = shape.members().stream()
-                .map(m -> "?" + RubyFormatter.toSnakeCase(m.getMemberName())
-                        + ": " + typeFor(targetShape(m)))
+                .map(m -> "?" + RubyFormatter.toSnakeCase(m.getMemberName()) + ": " + typeFor(targetShape(m)))
                 .collect(Collectors.joining(", "));
 
         String memberAttrTypes = shape.members().stream()
-                .map(m -> "attr_accessor "
-                        + RubyFormatter.toSnakeCase(m.getMemberName()) + "(): "
-                        + typeFor(targetShape(m)))
+                .map(m -> "attr_accessor " + RubyFormatter.toSnakeCase(m.getMemberName()) + "(): " + typeFor(targetShape(m)))
                 .collect(Collectors.joining("\n"));
 
         typesWriter
@@ -150,10 +138,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private String typeFor(Shape m) {
-        Symbol symbol = symbolProvider.toSymbol(m);
-        System.out.println(
-                "\t\tMapping to ruby type: " + m.getId() + " Smithy Type: "
-                        + m.getType() + " -> " + symbol);
-        return symbol.getName();
+        String rubyType = m.accept(typeMapper);
+        System.out.println("\t\tMapping to ruby type: " + m.getId() + " Smithy Type: " + m.getType() + " -> " + rubyType);
+        return rubyType;
     }
 }

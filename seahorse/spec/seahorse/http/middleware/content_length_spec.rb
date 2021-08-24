@@ -3,6 +3,7 @@
 module Seahorse
   module HTTP
     module Middleware
+
       describe ContentLength do
         let(:app) { double('app', call: output) }
 
@@ -68,6 +69,7 @@ module Seahorse
           end
         end
       end
+
     end
   end
 end

@@ -2,16 +2,8 @@
 
 module Seahorse
   module Middleware
-    # A middleware that parses a response object.
-    # @api private
     class Parse
-      # @param [Class] app The next middleware in the stack.
-      # @param [Class] error_parser A parser object responsible for parsing the
-      #  response if there is an error. It must respond to #parse and take the
-      #  response as an argument.
-      # @param [Class] data_parser A parser object responsible for parsing the
-      #  response if there is data. It must respond to #parse and take the
-      #  response as an argument.
+
       def initialize(app, error_parser:, data_parser:)
         @app = app
         @error_parser = error_parser

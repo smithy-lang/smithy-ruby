@@ -12,16 +12,17 @@ module Seahorse
   # parsing and serialization.
   # @api private
   module XML
+
     class << self
+
       # @param [String] xml
       # @return [Node]
       def parse(xml)
         doc = REXML::Document.new(xml.strip)
         raise "no XML element found: #{xml.inspect}" unless doc.root
-
         parse_node(doc.root)
-      rescue StandardError => e
-        raise ParseError, e
+      rescue StandardError => error
+        raise ParseError.new(error)
       end
 
       private
@@ -44,8 +45,7 @@ module Seahorse
         text = rexml_node.text
         return if text.nil?
         return if text.strip.empty? && !node.empty?
-
-        node.append(text)
+        node << text
       end
 
       def apply_child_nodes(node, rexml_node)
@@ -53,6 +53,8 @@ module Seahorse
           node.append(parse_node(value))
         end
       end
+
     end
+
   end
 end

@@ -3,7 +3,7 @@ module SampleService
   module Parsers
 
     class EventStream
-      def self.parse(json, data: Types::EventStream.new)
+      def self.parse(json, data = Types::EventStream.new)
         key, value = json.flatten
         case key
         when 'start'
@@ -24,14 +24,14 @@ module SampleService
     end
 
     class StructuredEvent
-      def self.parse(json, data: Types::StructuredEvent.new)
+      def self.parse(json, data = Types::StructuredEvent.new)
         data.message = json['message']
         data
       end
     end
 
     class HighScoreAttributes
-      def self.parse(json, data: Types::HighScoreAttributes.new)
+      def self.parse(json, data = Types::HighScoreAttributes.new)
         data.id = json['id']
         data.game = json['game']
         data.score = json['score']
@@ -42,7 +42,7 @@ module SampleService
     end
 
     class GetHighScore
-      def self.parse(http_resp, data: Types::GetHighScoreOutput.new)
+      def self.parse(http_resp, data = Types::GetHighScoreOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
         data.high_score = HighScoreAttributes.parse(json)
         data
@@ -50,7 +50,7 @@ module SampleService
     end
 
     class CreateHighScore
-      def self.parse(http_resp, data: Types::CreateHighScoreOutput.new)
+      def self.parse(http_resp, data = Types::CreateHighScoreOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
         data.location = http_resp.headers['location']
         data.high_score = HighScoreAttributes.parse(json)
@@ -59,7 +59,7 @@ module SampleService
     end
 
     class UpdateHighScore
-      def self.parse(http_resp, data: Types::UpdateHighScoreOutput.new)
+      def self.parse(http_resp, data = Types::UpdateHighScoreOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
         data.high_score = HighScoreAttributes.parse(json)
         data
@@ -67,13 +67,13 @@ module SampleService
     end
 
     class DeleteHighScore
-      def self.parse(http_resp, data: Types::DeleteHighScoreOutput.new)
+      def self.parse(http_resp, data = Types::DeleteHighScoreOutput.new)
         data
       end
     end
 
     class ListHighScores
-      def self.parse(http_resp, data: Types::ListHighScoresOutput.new)
+      def self.parse(http_resp, data = Types::ListHighScoresOutput.new)
         json = Seahorse::JSON.load(http_resp.body)
         data.next_token = json['next_token'] if json['next_token']
         data.high_scores = HighScores.parse(json['high_scores']) if json['high_scores']
@@ -82,7 +82,7 @@ module SampleService
     end
 
     class Stream
-      def self.parse(http_resp, data: Types::StreamInputOutput.new)
+      def self.parse(http_resp, data = Types::StreamInputOutput.new)
         data.stream_id = http_resp.headers['streamid']
         data.blob = http_resp.body
         data

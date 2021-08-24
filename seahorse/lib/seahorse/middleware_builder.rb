@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Seahorse
+
   # A utility class for registering middleware for a request.
   # You register middleware handlers to execute relative to
   # Middleware classes.  You can register middleware
@@ -75,6 +76,7 @@ module Seahorse
   #     end
   #
   class MiddlewareBuilder
+
     # @private
     BOTH = 'expected a handler or a Proc, got both'
 
@@ -96,7 +98,7 @@ module Seahorse
       @middleware = []
       case middleware
       when MiddlewareBuilder then @middleware.concat(middleware.to_a)
-      when nil then nil
+      when nil
       else
         raise ArgumentError, 'expected :middleware to be a' \
           "Seahorse::MiddlewareBuilder, got #{middleware.class}"
@@ -106,8 +108,8 @@ module Seahorse
     # @param [MiddlewareStack] middleware_stack
     def apply(middleware_stack)
       @middleware.each do |handler|
-        method, relation, middleware, kwargs = handler
-        middleware_stack.send(method, relation, middleware, **kwargs)
+        # TODO: There needs to be a better way to do this with Ruby 2.7/3 kwargs
+        middleware_stack.send(handler[0], handler[1], handler[2], **handler[3])
       end
     end
 
@@ -116,7 +118,7 @@ module Seahorse
         :use_before,
         klass,
         Middleware::RequestHandler,
-        { handler: handler_or_proc!(args, &block) }
+        handler: handler_or_proc!(args, &block)
       ]
       self
     end
@@ -126,7 +128,7 @@ module Seahorse
         :use_before,
         klass,
         Middleware::ResponseHandler,
-        { handler: handler_or_proc!(args, &block) }
+        handler: handler_or_proc!(args, &block)
       ]
       self
     end
@@ -136,7 +138,7 @@ module Seahorse
         :use_before,
         klass,
         Middleware::AroundHandler,
-        { handler: handler_or_proc!(args, &block) }
+        handler: handler_or_proc!(args, &block)
       ]
       self
     end
@@ -159,15 +161,12 @@ module Seahorse
     # define convenience methods for standard middleware classes
     # these define methods and class methods for before,after,around
     # eg: before_build, after_build, around_build.
-    STANDARD_MIDDLEWARE = [
-      Seahorse::Middleware::Validate,
-      Seahorse::Middleware::HostPrefix,
-      Seahorse::Middleware::Build,
-      Seahorse::Middleware::Send,
-      Seahorse::Middleware::Retry,
-      Seahorse::Middleware::Parse
-    ].freeze
-
+    STANDARD_MIDDLEWARE = [Seahorse::Middleware::Validate,
+                           Seahorse::Middleware::HostPrefix,
+                           Seahorse::Middleware::Build,
+                           Seahorse::Middleware::Send,
+                           Seahorse::Middleware::Retry,
+                           Seahorse::Middleware::Parse].freeze
     STANDARD_MIDDLEWARE.each do |klass|
       simple_step_name = klass.to_s.split('::').last.downcase
       %w[before after around].each do |method|
@@ -189,17 +188,13 @@ module Seahorse
     private
 
     def handler_or_proc!(args, &block)
-      validate_args!(args, &block)
+      raise ArgumentError, BOTH if args.size > 0 && block
+      raise ArgumentError, NEITHER if args.empty? && block.nil?
+      raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
       callable = args.first || Proc.new(&block)
       raise ArgumentError, CALLABLE unless callable.respond_to?(:call)
-
       callable
     end
 
-    def validate_args!(args, &block)
-      raise ArgumentError, BOTH if args.size.positive? && block
-      raise ArgumentError, NEITHER if args.empty? && block.nil?
-      raise ArgumentError, format(TOO_MANY, count: args.size) if args.size > 1
-    end
   end
 end

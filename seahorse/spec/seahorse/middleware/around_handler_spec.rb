@@ -2,6 +2,7 @@
 
 module Seahorse
   module Middleware
+
     describe AroundHandler do
       let(:app) { double('app', call: output) }
       let(:handler) { double('handler') }
@@ -33,5 +34,6 @@ module Seahorse
         end
       end
     end
+
   end
 end

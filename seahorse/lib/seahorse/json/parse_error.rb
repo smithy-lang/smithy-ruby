@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module Seahorse
+  # @api private
   module JSON
-    # An error class encountered when parsing JSON.
+
     class ParseError < StandardError
       MSG = 'Encountered an error while parsing the response: %<message>s'
 
@@ -14,5 +15,6 @@ module Seahorse
       # @return [StandardError]
       attr_reader :original_error
     end
+
   end
 end

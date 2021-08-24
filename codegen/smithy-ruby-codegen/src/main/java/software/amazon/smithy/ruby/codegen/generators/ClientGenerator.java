@@ -15,27 +15,15 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.ruby.codegen.ClientConfig;
-import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
-import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.*;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -52,14 +40,13 @@ public class ClientGenerator {
         this.middlewareBuilder = new MiddlewareBuilder();
         middlewareBuilder.addDefaultMiddleware(context);
 
-        context.getIntegrations().forEach((integration) -> {
+        context.getIntegrations().forEach( (integration) -> {
             middlewareBuilder.register(integration.getClientMiddleware());
         });
 
         // get all config
         Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig(context);
-        unorderedConfig
-                .addAll(context.getApplicationTransport().getClientConfig());
+        unorderedConfig.addAll(context.getApplicationTransport().getClientConfig());
         unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));
         unorderedConfig.addAll(context.getIntegrations()
                 .stream()
@@ -78,8 +65,7 @@ public class ClientGenerator {
         RubySettings settings = context.getRubySettings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
-        List<String> additionalFiles =
-                middlewareBuilder.writeAdditionalFiles(context);
+        List<String> additionalFiles = middlewareBuilder.writeAdditionalFiles(context);
         for (String require : additionalFiles) {
             writer.write("require_relative '$L'", removeRbExtension(require));
         }
@@ -90,8 +76,7 @@ public class ClientGenerator {
 
         writer
                 .openBlock("module $L", settings.getModule())
-                .write("# An API client for $L",
-                        settings.getService().getName())
+                .write("# An API client for $L", settings.getService().getName())
                 .write("# See {#initialize} for a full list of supported configuration options")
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs")
@@ -107,9 +92,7 @@ public class ClientGenerator {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName()
-                        + "/client.rb";
+        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/client.rb";
         fileManifest.writeFile(fileName, writer.toString());
     }
 
@@ -126,25 +109,20 @@ public class ClientGenerator {
                 .openBlock("def initialize(options = {})")
                 .call(() -> {
                     clientConfig.forEach((cfg) -> {
-                        if (StringUtils.isNotBlank(
-                                cfg.getInitializationCustomization())) {
-                            writer.writeWithNoFormatting(
-                                    cfg.getInitializationCustomization());
+                        if (StringUtils.isNotBlank(cfg.getInitializationCustomization())) {
+                            writer.writeWithNoFormatting(cfg.getInitializationCustomization());
                         } else if (StringUtils.isEmpty(cfg.getDefaultValue())) {
                             writer.write("@$1L = options[:$1L]", cfg.getName());
                         } else {
-                            writer.write("@$1L = options.fetch(:$1L, $2L)",
-                                    cfg.getName(), cfg.getDefaultValue());
+                            writer.write("@$1L = options.fetch(:$1L, $2L)", cfg.getName(), cfg.getDefaultValue());
                         }
                     });
                 })
                 .write("")
                 .call(() -> {
                     clientConfig.forEach((cfg) -> {
-                        if (StringUtils.isNotBlank(
-                                cfg.getPostInitializeCustomization())) {
-                            writer.writeWithNoFormatting(
-                                    cfg.getPostInitializeCustomization());
+                        if (StringUtils.isNotBlank(cfg.getPostInitializeCustomization())) {
+                            writer.writeWithNoFormatting(cfg.getPostInitializeCustomization());
                         }
                     });
                 })
@@ -156,12 +134,9 @@ public class ClientGenerator {
         writer.rdoc(() -> {
             writer.write("@overload initialize(options)");
             writer.write("@param [Hash] options");
-            clientConfig.forEach((cfg) -> {
+            clientConfig.forEach( (cfg) -> {
                 if (StringUtils.isNotBlank(cfg.getDocumentation())) {
-                    writer.write("@option options [$L] :$L $L", cfg.getType(),
-                            cfg.getName(),
-                            StringUtils.isNotBlank(cfg.getDefaultValue())
-                                    ? "(" + cfg.getDefaultValue() + ")" : "");
+                    writer.write("@option options [$L] :$L $L", cfg.getType(), cfg.getName(), StringUtils.isNotBlank(cfg.getDefaultValue()) ? "(" + cfg.getDefaultValue() + ")" : "");
                     writer.write("  $L", cfg.getDocumentation());
                     writer.write("");
                 }
@@ -173,31 +148,23 @@ public class ClientGenerator {
         // Generate each operation for the service. We do this here instead of via the operation visitor method to
         // limit it to the operations bound to the service.
         TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
-        Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.getService()));
+        Set<OperationShape> containedOperations = new TreeSet<>(topDownIndex.getContainedOperations(context.getService()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(o -> renderOperation(writer, o));
+                .forEach(o -> renderOperation(writer, o) );
     }
 
-    private void renderOperation(RubyCodeWriter writer,
-                                 OperationShape operation) {
-        String operationName =
-                RubyFormatter.toSnakeCase(operation.getId().getName());
+    private void renderOperation(RubyCodeWriter writer, OperationShape operation) {
+        String operationName = RubyFormatter.toSnakeCase(operation.getId().getName());
         writer
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
-                .call(() -> middlewareBuilder
-                        .render(writer, context, operation))
+                .call(() -> middlewareBuilder.render(writer, context, operation))
                 .write("@middleware.apply(stack)")
                 .openBlock("resp = stack.run(")
-                .write("request: $L,",
-                        context.getApplicationTransport().getRequest()
-                                .render(context))
-                .write("response: $L,",
-                        context.getApplicationTransport().getResponse()
-                                .render(context))
+                .write("request: $L,", context.getApplicationTransport().getRequest().render(context))
+                .write("response: $L,", context.getApplicationTransport().getResponse().render(context))
                 .openBlock("context: {")
                 .write("api_method: :$L,", operationName)
                 .write("api_name: '$L',", operation.getId().getName())
@@ -209,34 +176,26 @@ public class ClientGenerator {
                 .closeBlock("end");
     }
 
-    private void renderOperationDocumentation(RubyCodeWriter writer,
-                                              OperationShape operation) {
+    private void renderOperationDocumentation(RubyCodeWriter writer, OperationShape operation) {
         Model model = context.getModel();
         writer.write("");
         writer.rdoc(() -> {
-            Optional<DocumentationTrait> documentation =
-                    operation.getTrait(DocumentationTrait.class);
+            Optional<DocumentationTrait> documentation = operation.getTrait(DocumentationTrait.class);
             if (documentation.isPresent()) {
                 writer.write("$L", documentation.get().getValue());
             } else {
-                writer.write("UNDOCUMENTED: Service operation for $L",
-                        operation.getId().getName());
+                writer.write("UNDOCUMENTED: Service operation for $L", operation.getId().getName());
             }
             writer.write("");
-            writer.write("@param [Hash] params - See also: {Types::$LInput}",
-                    operation.getId().getName());
+            writer.write("@param [Hash] params - See also: {Types::$LInput}", operation.getId().getName());
 
             ShapeId inputShapeId = operation.getInput().get();
-            StructureShape input =
-                    model.expectShape(inputShapeId).asStructureShape().get();
-            for (MemberShape memberShape : input.members()) {
+            StructureShape input = model.expectShape(inputShapeId).asStructureShape().get();
+            for(MemberShape memberShape : input.members()) {
                 Shape target = model.expectShape(memberShape.getTarget());
-                String symbolName =
-                        RubyFormatter.asSymbol(memberShape.getMemberName());
-                writer.write("@options param[$L] $L", target.getType().name(),
-                        symbolName);
-                Optional<DocumentationTrait> memberDoc =
-                        memberShape.getTrait(DocumentationTrait.class);
+                String symbolName = RubyFormatter.asSymbol(memberShape.getMemberName());
+                writer.write("@options param[$L] $L", target.getType().name(), symbolName);
+                Optional<DocumentationTrait> memberDoc = memberShape.getTrait(DocumentationTrait.class);
                 if (memberDoc.isPresent()) {
                     writer.write("  $L", memberDoc.get().getValue());
                 }
@@ -247,8 +206,7 @@ public class ClientGenerator {
 
     private void renderApplyMiddlewareMethod(RubyCodeWriter writer) {
         writer
-                .openBlock(
-                        "\ndef apply_middleware(middleware_stack, middleware)")
+                .openBlock("\ndef apply_middleware(middleware_stack, middleware)")
                 .write("Client.middleware.apply(middleware_stack)")
                 .write("@middleware.apply(middleware_stack)")
                 .write("Seahorse::MiddlewareBuilder.new(middleware).apply(middleware_stack)")

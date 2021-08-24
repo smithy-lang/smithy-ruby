@@ -2,6 +2,7 @@
 
 module Seahorse
   module HTTP
+
     describe ApiError do
       let(:http_status) { 404 }
       let(:http_headers) do
@@ -36,5 +37,6 @@ module Seahorse
         expect { raise subject }.to raise_error(ApiError, message)
       end
     end
+
   end
 end

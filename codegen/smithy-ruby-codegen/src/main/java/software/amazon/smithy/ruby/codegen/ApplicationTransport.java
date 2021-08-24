@@ -12,16 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -41,12 +35,6 @@ public final class ApplicationTransport {
 
     /**
      * Creates a resolved application transport.
-     *
-     * @param name - name of the transport (eg HTTP)
-     * @param request - code to use to create the ruby Request
-     * @param response - code to use to create the Ruby Response
-     * @param transportClient - code to use to create the Transport's client
-     * @param defaultMiddleware - default middleware to add to client operations
      */
     public ApplicationTransport(
             String name,
@@ -64,6 +52,14 @@ public final class ApplicationTransport {
         this.defaultMiddleware = defaultMiddleware;
     }
 
+    @FunctionalInterface
+    public interface MiddlewareList {
+        /**
+         * Called to Render the addition of this middleware to the stack
+         */
+        List<Middleware> list(ApplicationTransport transport, GenerationContext context);
+    }
+
     /**
      * Creates a default HTTP application transport.
      *
@@ -78,11 +74,11 @@ public final class ApplicationTransport {
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
+                .render( (self, ctx) -> "Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
-                .render((self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream)")
+                .render( (self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream)")
                 .build();
 
         ClientConfig wireTrace = (new ClientConfig.Builder())
@@ -96,8 +92,7 @@ public final class ApplicationTransport {
                 .name("logger")
                 .type("Logger")
                 .defaultValue("stdout")
-                .initializationCustomization(
-                        "@logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))")
+                .initializationCustomization("@logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))")
                 .documentation("Logger to use for output")
                 .build();
 
@@ -112,7 +107,7 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace)")
+                .render( (self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace)")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
@@ -126,21 +121,13 @@ public final class ApplicationTransport {
             middleware.add((new Middleware.Builder())
                     .klass("Seahorse::Middleware::Parse")
                     .step(MiddlewareStackStep.DESERIALIZE)
-                    .operationParams((ctx, operation) -> {
+                    .operationParams( (ctx, operation) -> {
                         Map<String, String> params = new HashMap<>();
-                        params.put("data_parser",
-                                "Parsers::" + operation.getId().getName());
+                        params.put("data_parser", "Parsers::" + operation.getId().getName());
                         //TODO: Extract these from the operation, http trait.
                         String successCode = "200";
                         String errors = "[]";
-                        params.put("error_parser",
-                                "Seahorse::HTTP::ErrorParser.new("
-                                + "error_module: Errors, error_code_fn: "
-                                + "Errors.method(:error_code), "
-                                + "success_status_code: "
-                                + successCode + ", errors: " + errors
-                                + ")"
-                        );
+                        params.put("error_parser", "Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status_code: " + successCode + ", errors: " + errors + ")");
                         return params;
                     })
                     .build()
@@ -217,24 +204,5 @@ public final class ApplicationTransport {
 
         ApplicationTransport that = (ApplicationTransport) o;
         return name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
-
-    @FunctionalInterface
-    public interface MiddlewareList {
-        /**
-         * Called to Render the addition of this middleware to the stack.
-         *
-         * @param transport - ApplicationTransport to generate list for
-         * @param context - additional context
-         *
-         * @return List of middleware that should be applied to all client operations
-         */
-        List<Middleware> list(ApplicationTransport transport,
-                              GenerationContext context);
     }
 }

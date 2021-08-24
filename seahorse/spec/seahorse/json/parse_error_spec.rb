@@ -2,6 +2,7 @@
 
 module Seahorse
   module JSON
+
     describe ParseError do
       let(:original_message) { 'ORIG-MESSAGE' }
       let(:original_error) { StandardError.new(original_message) }
@@ -16,5 +17,6 @@ module Seahorse
         expect(subject.message).to include(original_message)
       end
     end
+
   end
 end

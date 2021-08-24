@@ -3,13 +3,16 @@
 require_relative 'stubs'
 
 module Seahorse
+
   # This module provides the ability to specify the data and/or errors to
   # return when a client is using stubbed responses.
   # This module should be included in generated service clients.
   #
   # Pass `stub_responses: true` to a client constructor to enable this
   # behavior.
+  #
   module ClientStubs
+
     # Configures what data / errors should be returned from the named operation
     # when response stubbing is enabled.
     #
@@ -55,8 +58,8 @@ module Seahorse
     # stubs dynamically based on the parameters with which operations were
     # called, by passing a `Proc` object:
     #
-    #     client.stub_responses(:operation, -> (context) {
-    #       if context.params[:param] == 'foo'
+    #     client.stub_responses(:operation, -> (req, res, ctx) {
+    #       if ctx.params[:param] == 'foo'
     #         # return a stub
     #         { param1: [{ name: 'value1'}]}
     #       else
@@ -65,14 +68,14 @@ module Seahorse
     #       end
     #     })
     #
-    # ## Stubbing Raw Protocol Responses
+    # ## Stubbing Raw Responses
     #
     # As an alternative to providing the response data, you can modify the
     # response object provided by the `Proc` object and then
     # return nil.
     #
-    #     client.stub_responses(:operation, -> (context) {
-    #       context.response.status = 404 # simulate an error
+    #     client.stub_responses(:operation, -> (req, res, ctx) {
+    #       res.status = 404 # simulate an error
     #       nil
     #     })
     #

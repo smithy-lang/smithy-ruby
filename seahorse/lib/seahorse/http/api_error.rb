@@ -2,8 +2,7 @@
 
 module Seahorse
   module HTTP
-    # Base class for HTTP errors returned from an API. Inherits from
-    # {Seahorse::ApiError}.
+    # Base class for HTTP errors returned from an API
     class ApiError < Seahorse::ApiError
       def initialize(http_resp:, **kwargs)
         @http_status = http_resp.status

@@ -16,12 +16,19 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.ruby.codegen.generators.*;
 
 public final class RubyCodegenPlugin implements SmithyBuildPlugin {
-    private static final Logger LOGGER =
-            Logger.getLogger(RubyCodegenPlugin.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RubyCodegenPlugin.class.getName());
 
     @Override
     public String getName() {

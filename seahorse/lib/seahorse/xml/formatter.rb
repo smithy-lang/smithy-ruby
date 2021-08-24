@@ -4,9 +4,8 @@ require 'stringio'
 
 module Seahorse
   module XML
-    # A class used for formatting XML strings.
-    # @api private
     class Formatter
+
       NEGATIVE_INDENT = 'indent must be greater than or equal to zero'
 
       # @param [String] indent
@@ -15,10 +14,9 @@ module Seahorse
       #   `indent`.
       # @raise [ArgumentError] when indent is not a String.
       def initialize(indent: '')
-        unless indent.is_a?(String)
+        if !indent.is_a?(String)
           raise ArgumentError, "expected a String, got #{indent.class}"
         end
-
         @indent = indent
         @eol = indent.empty? ? '' : "\n"
       end
@@ -36,7 +34,6 @@ module Seahorse
       def serialize(buffer, node, pad)
         return buffer.write(self_close_node(node, pad)) if node.empty?
         return buffer.write(text_node(node, pad)) if node.text
-
         serialize_nested(buffer, node, pad)
       end
 
@@ -45,8 +42,7 @@ module Seahorse
       end
 
       def text_node(node, pad)
-        text = node.text.encode(xml: :text)
-        "#{pad}<#{node.name}#{attrs(node)}>#{text}</#{node.name}>#{@eol}"
+        "#{pad}<#{node.name}#{attrs(node)}>#{node.text.encode(xml: :text)}</#{node.name}>#{@eol}"
       end
 
       def serialize_nested(buffer, node, pad)
@@ -63,6 +59,7 @@ module Seahorse
           " #{key}=#{value.to_s.encode(xml: :attr)}"
         end.join
       end
+
     end
   end
 end

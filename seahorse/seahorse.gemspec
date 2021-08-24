@@ -6,9 +6,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'A base library for Smithy generated SDKs'
   spec.authors       = ['Amazon Web Services']
   spec.require_paths = ['lib']
-  spec.files         = Dir['CHANGELOG.md', 'VERSION', 'lib/**/*.rb']
+  spec.files         = Dir['lib/**/*.rb']
 
   spec.add_runtime_dependency 'jmespath', '~> 1.4'
-
-  spec.required_ruby_version = '>= 3.0.0'
 end

@@ -2,9 +2,8 @@
 
 module Seahorse
   module XML
-    # A class used to represent an XML node.
-    # @api private
     class Node
+
       # @api private
       BOTH_TYPES = 'Nodes may not have both text and child nodes'
 
@@ -24,18 +23,19 @@ module Seahorse
       # @return [Hash<String, String>]
       attr_reader :attributes
 
-      def <<(*children)
+      # @return [Array<Node, String>]
+      attr_reader :children
+
+      def append(*children)
         children.flatten.each do |child|
           case child
           when Node
             raise ArgumentError, BOTH_TYPES unless @text.empty?
-
             @child_nodes << child
             @child_node_map[child.name] ||= []
             @child_node_map[child.name] << child
           when String
             raise ArgumentError, BOTH_TYPES unless @child_nodes.empty?
-
             @text << child
           else
             raise ArgumentError, 'expected Seahorse::XML::Node or String, ' \
@@ -43,11 +43,11 @@ module Seahorse
           end
         end
       end
-      alias append <<
+      alias << append
 
       # @return [String, nil]
       def text
-        @text.empty? ? nil : @text.join
+        @text.empty? ? nil : @text.join('')
       end
 
       # @param [String] node_name
@@ -60,14 +60,13 @@ module Seahorse
       #   @return [Array<Node>] Returns an array of all child nodes.
       # @overload children(child_name)
       #   @param [String] child_name
-      #   @return [Array<Node>] Returns an array of child nodes with the given
-      #     name.
+      #   @return [Array<Node>] Returns an array of child nodes with the given name.
       def children(*args)
         nodes =
           case args.count
           when 0 then @child_nodes
           when 1 then @child_node_map.fetch(args.first, [])
-          else raise ArgumentError, 'expected 0 or 1 arguments'
+          else raise ArgumentError, "expected 0 or 1 arguments"
           end
         yield(nodes) if block_given? && !nodes.empty?
         nodes
@@ -118,6 +117,7 @@ module Seahorse
       end
       alias to_str to_xml
       alias to_s to_xml
+
     end
   end
 end

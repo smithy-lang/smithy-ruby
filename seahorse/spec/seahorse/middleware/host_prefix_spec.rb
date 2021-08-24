@@ -2,6 +2,7 @@
 
 module Seahorse
   module Middleware
+
     describe HostPrefix do
       let(:app) { double('app', call: output) }
       let(:host_prefix) { 'foo.' }
@@ -89,5 +90,6 @@ module Seahorse
         end
       end
     end
+
   end
 end
