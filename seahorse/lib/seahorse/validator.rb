@@ -15,5 +15,14 @@ module Seahorse
       raise ArgumentError,
             "Expected #{context} to be in #{types}, got #{value.class}."
     end
+
+    # Validate the given values is hash like
+    # @raise [ArgumentError] Raises when the value is not hash like
+    def self.validate_hash_like(value, context:)
+      return if value.respond_to?(:each_pair)
+
+      raise ArgumentError,
+            "Expected #{context} to be Hash like, got #{value.class}."
+    end
   end
 end
