@@ -9,4 +9,6 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['CHANGELOG.md', 'VERSION', 'lib/**/*.rb']
 
   spec.required_ruby_version = '>= 3.0.0'
+
+  spec.add_runtime_dependency 'jmespath', '~> 1.4'
 end

@@ -14,6 +14,9 @@ require_relative 'seahorse/time_helper'
 require_relative 'seahorse/stubbing/client_stubs'
 require_relative 'seahorse/stubbing/stubs'
 require_relative 'seahorse/validator'
+require_relative 'seahorse/waiters/errors'
+require_relative 'seahorse/waiters/poller'
+require_relative 'seahorse/waiters/waiter'
 require_relative 'seahorse/xml'
 
 module Seahorse
