@@ -4,13 +4,15 @@ require 'jmespath'
 
 module Seahorse
   module Waiters
-
+    # Abstract Poller used by generated service Waiters. This class handles
+    # sending the request and matching input or output.
     class Poller
+
       # @api private
       def initialize(options = {})
         @operation_name = options[:operation_name]
         @acceptors = options[:acceptors]
-        # @input = nil
+        @input = nil
       end
 
       # Makes an API call, returning the resultant state and the response.
@@ -41,7 +43,7 @@ module Seahorse
       # @return [Array<Symbol,Response>]
       def call(client, params = {}, options = {})
         begin
-          # options = options.merge(input_output_middleware)
+          options = options.merge(input_output_middleware)
           response = client.send(@operation_name, params, options)
         rescue Seahorse::ApiError => e
           error = e
@@ -56,44 +58,68 @@ module Seahorse
 
       private
 
-      # def input_output_middleware
-      #   middleware = ->(app, input, context) do
-      #     @input = input # get internal details of middleware
-      #     app.call(input, context)
-      #   end
-      #   { middleware: MiddlewareBuilder.before_send(middleware) }
-      # end
+      def input_output_middleware
+        middleware = lambda do |app, input, context|
+          @input = input # get internal details of middleware
+          app.call(input, context)
+        end
+        { middleware: MiddlewareBuilder.before_send(middleware) }
+      end
 
-      # TODO - refactor big time
       def acceptor_matches?(matcher, response, error)
         if (m = matcher[:success])
-          if m == true && response
-            return true
-          elsif m == false && error
-            return true
-          end
-          return false
+          success_matcher?(m, response, error)
         elsif (m = matcher[:errorType])
-          if error.class.to_s.include?(m) || error.error_code == m
-            return true
-          else
-            return false
-          end
+          error_type_matcher?(m, error)
         elsif (m = matcher[:inputOutput])
-          # todo - how to handle jmespath for an expression with two data sets?
-          return false
+          input_output_matcher?(m, response, error)
         elsif (m = matcher[:output])
-          if error.nil?
-            return send("matches_#{m[:comparator]}?", search(m[:path], response), m[:expected])
-          end
-          return false
+          output_matcher?(m, response, error)
         end
       end
 
-      def search(path, data)
-        JMESPath.search(path, data)
+      def success_matcher?(matcher, response, error)
+        if matcher == true && response
+          true
+        elsif matcher == false && error
+          true
+        else
+          false
+        end
       end
 
+      def error_type_matcher?(matcher, error)
+        # handle shape ID cases
+        matcher = matcher.split('#').last.split('$').first
+        if error.class.to_s.include?(matcher) || error.error_code == m
+          true
+        else
+          false
+        end
+      end
+
+      def input_output_matcher?(matcher, response, error)
+        return false if error
+
+        data = { input: @input, output: response }
+        send(
+          "matches_#{matcher[:comparator]}",
+          JMESPath.search(matcher[:path], data),
+          matcher[:expected]
+        )
+      end
+
+      def output_matcher?(matcher, response, error)
+        return false if error
+
+        send(
+          "matches_#{matcher[:comparator]}?",
+          JMESPath.search(matcher[:path], response),
+          matcher[:expected]
+        )
+      end
+
+      # rubocop:disable Naming/MethodName
       def matches_stringEquals?(value, expected)
         value == expected
       end
@@ -111,6 +137,7 @@ module Seahorse
         values.is_a?(Array) && !values.empty? &&
           values.any? { |v| v == expected }
       end
+      # rubocop:enable Naming/MethodName
 
     end
   end

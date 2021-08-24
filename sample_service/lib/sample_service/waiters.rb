@@ -16,7 +16,8 @@ module SampleService
       #   before sleeping between attempts.
       def initialize(client, options = {})
         @client = client
-        @waiter = Seahorse::Waiters::Waiter.new(
+        @waiter = Seahorse::Waiters::Waiter.new({
+          max_wait_time: options[:max_wait_time], # required
           min_delay: 2 || options[:min_delay], # code gen from trait
           max_delay: 120 || options[:max_delay], # code gen from trait
           poller: Seahorse::Waiters::Poller.new(
@@ -36,11 +37,8 @@ module SampleService
               }
             ]
           )
-        ).merge(options)
-        @tags = ['tag', 'other-tag'] # code gen from trait
+        }.merge(options))
       end
-
-      attr_reader :tags
 
       # @param [Hash] params (see Client#create_high_score)
       # @param [Hash] options (see Client#create_high_score)

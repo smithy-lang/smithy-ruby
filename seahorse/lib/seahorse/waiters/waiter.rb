@@ -134,11 +134,11 @@ module Seahorse
           Math.log(max_delay.to_f / min_delay) / Math.log(2)
         ) + 1
 
-        if attempt > attempt_ceiling
-          max_delay
-        else
-          min_delay * 2**(attempt - 1)
-        end => delay
+        delay = if attempt > attempt_ceiling
+                  max_delay
+                else
+                  min_delay * 2**(attempt - 1)
+                end
 
         delay = rand(min_delay..delay)
 
