@@ -6,7 +6,7 @@ module SampleService
   module Validators
     describe GetHighScoreInput do
       let(:id) { 'string'}
-      let(:input) { Shapes::GetHighScoreInput.new(id: id) }
+      let(:input) { Types::GetHighScoreInput.new(id: id) }
 
       it 'accepts a string' do
         GetHighScoreInput.validate!(input, context: 'input')
@@ -25,7 +25,7 @@ module SampleService
     describe UpdateHighScoreInput do
       let(:id) { 'string' }
       let(:high_score) { nil }
-      let(:input) { Shapes::UpdateHighScoreInput.new(id: id, high_score: high_score) }
+      let(:input) { Types::UpdateHighScoreInput.new(id: id, high_score: high_score) }
 
       context ':high_score not set' do
         it 'does not validate :high_score' do
@@ -35,7 +35,7 @@ module SampleService
       end
 
       context ':high_score set' do
-        let(:high_score) { Shapes::HighScoreParams.new }
+        let(:high_score) { Types::HighScoreParams.new }
         it 'validates :high_score' do
           expect(HighScoreParams).to receive(:validate!)
           UpdateHighScoreInput.validate!(input, context: 'input')
@@ -62,7 +62,7 @@ module SampleService
     end
 
     describe ComplexList do
-      let(:high_score) { Shapes::HighScoreAttributes.new }
+      let(:high_score) { Types::HighScoreAttributes.new }
       it 'raises when not an array' do
         expect do
           ComplexList.validate!({}, context: 'input')
@@ -77,7 +77,7 @@ module SampleService
       # it 'validates all of the members and raises when any are invalid' do
       #   #expect do
       #   ComplexList.validate!([high_score, high_score, 1], context: 'input')
-      #     # end.to raise_error(ArgumentError, 'Expected input[2] to be in [SampleService::Shapes::HighScoreAttributes.], got Integer.')
+      #     # end.to raise_error(ArgumentError, 'Expected input[2] to be in [SampleService::Types::HighScoreAttributes.], got Integer.')
       # end
     end
   end
