@@ -1,5 +1,4 @@
 .byebug_history
 .yardoc
 doc
-
-./sample_service_real
+./sample_service
