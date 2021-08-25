@@ -38,7 +38,10 @@ module SampleService
             ]
           )
         }.merge(options))
+        @tags = %w[foo bar]
       end
+
+      attr_reader :tags
 
       # @param [Hash] params (see Client#create_high_score)
       # @param [Hash] options (see Client#create_high_score)

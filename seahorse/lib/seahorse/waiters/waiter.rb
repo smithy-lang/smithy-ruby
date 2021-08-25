@@ -2,7 +2,7 @@
 
 module Seahorse
   module Waiters
-
+    # Abstract waiter class with high level logic for polling and waiting.
     class Waiter
 
       # @api private
@@ -16,75 +16,12 @@ module Seahorse
         @min_delay = options[:min_delay]
         @max_delay = options[:max_delay]
         @poller = options[:poller]
-        @before_attempt = Array(options[:before_attempt])
-        @before_wait = Array(options[:before_wait])
 
         @remaining_time = @max_wait_time
-        @cumulative_time = 0
-
-        @attempt_ceiling = (
-          Math.log(max_delay.to_f / min_delay) / Math.log(2)
-        ) + 1
+        @one_more_retry = false
       end
 
       attr_reader :max_wait_time, :min_delay, :max_delay
-
-      # Register a callback that is invoked before every polling attempt.
-      # Yields the number of attempts made so far.
-      #
-      #     waiter.before_attempt do |attempts|
-      #       puts "#{attempts} made, about to make attempt #{attempts + 1}"
-      #     end
-      #
-      # Throwing `:success` or `:failure` from the given block will stop
-      # the waiter and return or raise. You can pass a custom message to the
-      # throw:
-      #
-      #     # raises Seahorse::Waiters::Errors::WaiterFailed
-      #     waiter.before_attempt do |attempts|
-      #       throw :failure, 'custom-error-message'
-      #     end
-      #
-      #     # cause the waiter to stop polling and return
-      #     waiter.before_attempt do |attempts|
-      #       throw :success
-      #     end
-      #
-      # @yieldparam [Integer] attempts The number of attempts made.
-      def before_attempt(&block)
-        @before_attempt << block if block_given?
-      end
-
-      # Register a callback that is invoked after an attempt but before
-      # sleeping. Yields the number of attempts made and the previous response
-      # or error that was raised.
-      #
-      #     waiter.before_wait do |attempts, resp_or_error|
-      #       puts "#{attempts} made"
-      #       puts response.inspect
-      #     end
-      #
-      # Throwing `:success` or `:failure` from the given block will stop
-      # the waiter and return or raise. You can pass a custom message to the
-      # throw:
-      #
-      #     # raises Seahorse::Waiters::Errors::WaiterFailed
-      #     waiter.before_wait do |attempts, resp_or_error|
-      #       throw :failure, 'custom-error-message'
-      #     end
-      #
-      #     # cause the waiter to stop polling and return
-      #     waiter.before_wait do |attempts, resp_or_error|
-      #       throw :success
-      #     end
-      #
-      #
-      # @yieldparam [Integer] attempts The number of attempts already made.
-      # @yieldparam [Struct] response The response struct from the previous
-      #   polling attempts.
-      def before_wait(&block)
-        @before_wait << block if block_given?
-      end
 
       # @param [Client] client The client to poll with.
       # @param [Hash] params The params for the operation.
@@ -103,13 +40,11 @@ module Seahorse
       def poll(client, params, options)
         n = 0
         loop do
-          trigger_before_attempt(n)
-
           state, resp_or_error = @poller.call(client, params, options)
           n += 1
 
           case state
-          when :retry
+          when :retry then nil
           when :success then return resp_or_error
           when :failure then raise Errors::FailureStateError, resp_or_error
           when :error   then raise Errors::UnexpectedError, resp_or_error
@@ -117,24 +52,14 @@ module Seahorse
 
           raise Errors::MaxWaitTimeExceeded if @one_more_retry
 
-          trigger_before_wait(n, resp_or_error)
           delay = delay(n)
-          @cumulative_time += delay
           @remaining_time -= delay
           Kernel.sleep(delay)
         end
       end
 
-      def trigger_before_attempt(attempts)
-        @before_attempt.each { |block| block.call(attempts) }
-      end
-
-      def trigger_before_wait(attempts, resp_or_error)
-        @before_wait.each { |block| block.call(attempts, resp_or_error) }
-      end
-
       def delay(attempt)
-        delay = if attempt > @attempt_ceiling
+        delay = if attempt > attempt_ceiling
                   max_delay
                 else
                   min_delay * 2**(attempt - 1)
@@ -148,6 +73,10 @@ module Seahorse
         end
 
         delay
+      end
+
+      def attempt_ceiling
+        (Math.log(max_delay.to_f / min_delay) / Math.log(2)) + 1
       end
 
     end
