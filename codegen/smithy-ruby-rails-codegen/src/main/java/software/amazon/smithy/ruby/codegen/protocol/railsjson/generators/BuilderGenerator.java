@@ -26,7 +26,6 @@ import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -85,7 +84,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
-                .call(() -> renderQueryinputBuilder(writer, operation, inputShape))
+                .call(() -> renderQueryInputBuilder(writer, operation, inputShape))
                 .call(() -> renderHeadersBuilder(writer, operation, inputShape))
                 .call(() -> renderOperationBodyBuilder(writer, operation, inputShape))
                 .closeBlock("end")
@@ -122,7 +121,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
-    private void renderQueryinputBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+    private void renderQueryInputBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> queryMembers = inputShape.members()
                 .stream()
@@ -206,13 +205,14 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void listShape(ListShape shape) {
         System.out.println("\tRENDER builder for LIST: " + shape.getId());
+        Shape memberTarget =
+                model.expectShape(shape.getMember().getTarget());
         writer
                 .write("\n# List Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
-                .write("data = []")
-                .openBlock("input.each do |p|")
-                .write("data << p") // TODO: This likely needs conversion here.  Another nested visitor?
+                .openBlock("input.map do |p|")
+                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "p")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -222,7 +222,39 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape shape) {
-        // TODO: Support map shape
+        System.out.println("\tRENDER builder for MAP: " + shape.getId());
+        Shape valueTarget = model.expectShape(shape.getValue().getTarget());
+
+        writer
+                .write("\n# Map Builder for $L", shape.getId().getName())
+                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .openBlock("input.each do |key, value|")
+                .call( () -> valueTarget.accept(new MemberSerializer(writer, "data[key] = ", "value")))
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        return null;
+    }
+
+    @Override
+    public Void setShape(SetShape shape) {
+        System.out.println("\tRENDER builder for LIST: " + shape.getId());
+        Shape memberTarget =
+                model.expectShape(shape.getMember().getTarget());
+        writer
+                .write("\n# Set Builder for $L", shape.getId().getName())
+                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("def self.build(input)")
+                .openBlock("input.map do |p|")
+                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "p")))
+                .closeBlock("end")
+                .closeBlock("end")
+                .closeBlock("end");
+
         return null;
     }
 
@@ -248,7 +280,9 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             if (member.hasTrait("smithy.railsjson#NestedAttributes")) {
                 dataName = symbolName + "_attributes";
             }
-            target.accept(new MemberSerializer(writer, dataName, symbolName));
+            String dataSetter = "data[" + dataName + "] = ";
+            String inputGetter = "input[" + symbolName + "]";
+            target.accept(new MemberSerializer(writer, dataSetter, inputGetter));
         });
     }
 
@@ -260,51 +294,28 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private static class MemberSerializer extends ShapeVisitor.Default<Void> {
 
         private final RubyCodeWriter writer;
-        private final String symbolName;
-        private final String dataName;
+        private final String inputGetter;
+        private final String dataSetter;
 
-        public MemberSerializer(RubyCodeWriter writer, String dataName, String symbolName) {
+        public MemberSerializer(RubyCodeWriter writer, String dataSetter, String inputGetter) {
             this.writer = writer;
-            this.symbolName = symbolName;
-            this.dataName = dataName;
+            this.inputGetter = inputGetter;
+            this.dataSetter = dataSetter;
         }
 
         public String checkRequired(Shape shape) {
-            return " unless input[" + symbolName + "].nil?";
+            return " unless " + inputGetter + ".nil?";
         }
 
         @Override
         protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void booleanShape(BooleanShape shape) {
-            writer.write("data[$L] = input[$L]$L", symbolName, symbolName, checkRequired(shape));
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            writer.write("data[$L] = input[$L]$L", symbolName, symbolName, checkRequired(shape));
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            writer.write("data[$L] = input[$L]$L", symbolName, symbolName, checkRequired(shape));
-            return null;
-        }
-
-        @Override
-        public Void stringShape(StringShape shape) {
-            writer.write("data[$L] = input[$L]$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired(shape));
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("data[$L] = input[$L].to_s$L", symbolName, symbolName, checkRequired(shape));
+            writer.write("$L$L.to_s$L", dataSetter, inputGetter, checkRequired(shape));
             return null;
         }
 
@@ -312,7 +323,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
          *  For complex shapes, simply delegate to their builder
          */
         private void defaultComplexSerializer(Shape shape) {
-            writer.write("data[$L] = Builders::$L.build(input[$L])$L", dataName, shape.getId().getName(), symbolName, checkRequired(shape));
+            writer.write("$LBuilders::$L.build($L)$L", dataSetter, shape.getId().getName(), inputGetter, checkRequired(shape));
         }
 
         @Override
@@ -338,7 +349,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             defaultComplexSerializer(shape);
             return null;
         }
-
     }
 }
 
