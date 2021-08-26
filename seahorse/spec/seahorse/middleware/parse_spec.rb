@@ -32,7 +32,7 @@ module Seahorse
             .with(input, context).ordered
 
           expect(error_parser).to receive(:parse).with(response).ordered
-          expect(data_parser).to receive(:parse).with(response).ordered
+          expect(data_parser).to receive(:parse).with(response, output: instance_of(Seahorse::Output)).ordered
 
           resp = subject.call(input, context)
           expect(resp).to be output
@@ -68,7 +68,7 @@ module Seahorse
               .with(input, context).ordered
             expect(error_parser).to receive(:parse).with(response).ordered
             expect(data_parser).to receive(:parse)
-              .with(response).and_return(data)
+              .with(response, output: instance_of(Seahorse::Output)).and_return(data)
 
             resp = subject.call(input, context)
             expect(resp).to be output
