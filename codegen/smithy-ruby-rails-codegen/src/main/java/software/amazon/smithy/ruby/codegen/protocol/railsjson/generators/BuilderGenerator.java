@@ -211,9 +211,11 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# List Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
-                .openBlock("input.map do |element|")
-                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "element")))
+                .write("data = []")
+                .openBlock("input.each do |element|")
+                .call( () -> memberTarget.accept(new MemberSerializer(writer, "data << ", "element")))
                 .closeBlock("end")
+                .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -242,16 +244,18 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape shape) {
-        System.out.println("\tRENDER builder for LIST: " + shape.getId());
+        System.out.println("\tRENDER builder for Set: " + shape.getId());
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
                 .write("\n# Set Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
-                .openBlock("input.map do |element|")
-                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "element")))
+                .write("data = Set.new")
+                .openBlock("input.each do |element|")
+                .call( () -> memberTarget.accept(new MemberSerializer(writer, "data << ", "element")))
                 .closeBlock("end")
+                .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
 
