@@ -10,15 +10,11 @@
 module SampleService
   module Builders
 
-    # Operation Builder for UpdateHighScore
-    class UpdateHighScore
+    # Operation Builder for CreateHighScore
+    class CreateHighScore
       def self.build(http_req, input:)
-        http_req.http_method = 'PUT'
-        http_req.append_path(format(
-            '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
-          )
-        )
+        http_req.http_method = 'POST'
+        http_req.append_path('/high_scores')
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -37,8 +33,8 @@ module SampleService
         data[:complex_list] = Builders::ComplexList.build(input[:complex_list]) unless input[:complex_list].nil?
         data[:simple_map] = Builders::SimpleMap.build(input[:simple_map]) unless input[:simple_map].nil?
         data[:complex_map] = Builders::ComplexMap.build(input[:complex_map]) unless input[:complex_map].nil?
-        data[:simple_set] = input[:simple_set] unless input[:simple_set].nil?
-        data[:complex_set] = input[:complex_set] unless input[:complex_set].nil?
+        data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]) unless input[:simple_set].nil?
+        data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]) unless input[:complex_set].nil?
         data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
         data
       end
@@ -57,8 +53,8 @@ module SampleService
 
     class ComplexSet
       def self.build(input)
-        input.map do |p|
-          Builders::HighScoreAttributes.build(p) unless p.nil?
+        input.map do |element|
+          Builders::HighScoreAttributes.build(element) unless element.nil?
         end
       end
     end
@@ -80,8 +76,8 @@ module SampleService
 
     class SimpleSet
       def self.build(input)
-        input.map do |p|
-          p unless p.nil?
+        input.map do |element|
+          element unless element.nil?
         end
       end
     end
@@ -114,8 +110,8 @@ module SampleService
 
     class ComplexList
       def self.build(input)
-        input.map do |p|
-          Builders::HighScoreAttributes.build(p) unless p.nil?
+        input.map do |element|
+          Builders::HighScoreAttributes.build(element) unless element.nil?
         end
       end
     end
@@ -124,21 +120,9 @@ module SampleService
 
     class SimpleList
       def self.build(input)
-        input.map do |p|
-          p unless p.nil?
+        input.map do |element|
+          element unless element.nil?
         end
-      end
-    end
-
-    # Operation Builder for GetHighScore
-    class GetHighScore
-      def self.build(http_req, input:)
-        http_req.http_method = 'GET'
-        http_req.append_path(format(
-            '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
-          )
-        )
       end
     end
 
@@ -156,6 +140,18 @@ module SampleService
       end
     end
 
+    # Operation Builder for GetHighScore
+    class GetHighScore
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path(format(
+            '/high_scores/%<id>s',
+            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
+          )
+        )
+      end
+    end
+
     # Operation Builder for DeleteHighScore
     class DeleteHighScore
       def self.build(http_req, input:)
@@ -168,11 +164,15 @@ module SampleService
       end
     end
 
-    # Operation Builder for CreateHighScore
-    class CreateHighScore
+    # Operation Builder for UpdateHighScore
+    class UpdateHighScore
       def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/high_scores')
+        http_req.http_method = 'PUT'
+        http_req.append_path(format(
+            '/high_scores/%<id>s',
+            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
+          )
+        )
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}

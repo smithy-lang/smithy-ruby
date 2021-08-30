@@ -72,6 +72,49 @@ module SampleService
       end
     end
 
+    describe SimpleSet do
+      it 'raises when not an array or set' do
+        expect do
+          SimpleSet.build({}, context: 'params')
+        end.to raise_error(ArgumentError, 'Expected params to be in [Set, Array], got Hash.')
+      end
+
+      it 'accepts a set and builds all of the members' do
+        shape = SimpleSet.build(Set.new(['a', 'b', 'c']), context: 'params')
+        expect(shape).to be_a(Set)
+        expect(shape).to include('a', 'b', 'c')
+      end
+
+      it 'accepts an array with duplicates and builds all of the members' do
+        shape = SimpleSet.build(['a', 'a', 'b'], context: 'params')
+        expect(shape).to be_a(Set)
+        expect(shape.size).to be 2
+        expect(shape).to include('a', 'b')
+      end
+    end
+
+    describe ComplexSet do
+      let(:high_score) { Types::HighScoreAttributes.new }
+      it 'raises when not an array or set' do
+        expect do
+          ComplexSet.build({}, context: 'params')
+        end.to raise_error(ArgumentError, 'Expected params to be in [Set, Array], got Hash.')
+      end
+
+      it 'builds all of the members' do
+        shape = ComplexSet.build([high_score, high_score], context: 'params')
+        expect(shape).to be_a(Set)
+        expect(shape).to include(high_score)
+      end
+
+      it 'builds all of the members and raises when any are invalid' do
+        expect do
+          ComplexSet.build([high_score, 1], context: 'params')
+        end.to raise_error(ArgumentError, 'Expected params[1] to be in [Hash, SampleService::Types::HighScoreAttributes(keyword_init: true)], got Integer.')
+      end
+    end
+
+
     describe SimpleMap do
       it 'raises when not a hash' do
         expect do

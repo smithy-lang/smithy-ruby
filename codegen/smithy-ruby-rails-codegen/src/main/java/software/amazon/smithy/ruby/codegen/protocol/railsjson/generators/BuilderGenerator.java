@@ -211,8 +211,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# List Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
-                .openBlock("input.map do |p|")
-                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "p")))
+                .openBlock("input.map do |element|")
+                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "element")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -249,8 +249,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# Set Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
-                .openBlock("input.map do |p|")
-                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "p")))
+                .openBlock("input.map do |element|")
+                .call( () -> memberTarget.accept(new MemberSerializer(writer, "", "element")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -315,7 +315,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("$L$L.to_s$L", dataSetter, inputGetter, checkRequired(shape));
+            //TODO: these may need to use different formats(
+            writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter, checkRequired(shape));
             return null;
         }
 
@@ -328,6 +329,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void setShape(SetShape shape) {
             defaultComplexSerializer(shape);
             return null;
         }
