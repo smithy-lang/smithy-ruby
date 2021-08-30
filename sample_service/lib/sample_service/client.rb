@@ -62,7 +62,7 @@ module SampleService
     #
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Types::CreateHighScoreInput.build(params)
+      input = Params::CreateHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -104,7 +104,7 @@ module SampleService
     #
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Types::DeleteHighScoreInput.build(params)
+      input = Params::DeleteHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -146,7 +146,7 @@ module SampleService
     #
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Types::GetHighScoreInput.build(params)
+      input = Params::GetHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -189,7 +189,7 @@ module SampleService
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Types::ListHighScoresInput.build(params)
+      input = Params::ListHighScoresInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -234,7 +234,7 @@ module SampleService
     #
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
-      input = Types::UpdateHighScoreInput.build(params)
+      input = Params::UpdateHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
