@@ -10,12 +10,11 @@
 module SampleService
   module Parsers
 
-    # Operation Parser for CreateHighScore
-    class CreateHighScore
+    # Operation Parser for GetHighScore
+    class GetHighScore
       def self.parse(http_resp)
         json = Seahorse::JSON.load(http_resp.body)
-        data = Types::CreateHighScoreOutput.new
-        resp.data.location = http_resp.headers['Location']
+        data = Types::GetHighScoreOutput.new
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -30,6 +29,36 @@ module SampleService
         data.created_at = json['created_at']
         data.updated_at = json['updated_at']
         return data
+      end
+    end
+
+    # Operation Parser for DeleteHighScore
+    class DeleteHighScore
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::DeleteHighScoreOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for Stream
+    class Stream
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::StreamInputOutput.new
+        resp.data.stream_id = http_resp.headers['StreamID']
+        data.blob = Parsers::StreamingBlob.parse(json)
+        data
+      end
+    end
+
+    # Operation Parser for UpdateHighScore
+    class UpdateHighScore
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::UpdateHighScoreOutput.new
+        data.high_score = Parsers::HighScoreAttributes.parse(json)
+        data
       end
     end
 
@@ -59,46 +88,6 @@ module SampleService
       end
     end
 
-    # Operation Parser for Stream
-    class Stream
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::StreamInputOutput.new
-        resp.data.stream_id = http_resp.headers['StreamID']
-        data.blob = Parsers::StreamingBlob.parse(json)
-        data
-      end
-    end
-
-    # Operation Parser for GetHighScore
-    class GetHighScore
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::GetHighScoreOutput.new
-        data.high_score = Parsers::HighScoreAttributes.parse(json)
-        data
-      end
-    end
-
-    # Operation Parser for DeleteHighScore
-    class DeleteHighScore
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::DeleteHighScoreOutput.new
-        data
-      end
-    end
-
-    # Operation Parser for UpdateHighScore
-    class UpdateHighScore
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::UpdateHighScoreOutput.new
-        data.high_score = Parsers::HighScoreAttributes.parse(json)
-        data
-      end
-    end
-
     # Operation Parser for ListHighScores
     class ListHighScores
       def self.parse(http_resp)
@@ -115,6 +104,17 @@ module SampleService
         json.map do |value|
           Parsers::HighScoreAttributes.parse(value) if value
         end
+      end
+    end
+
+    # Operation Parser for CreateHighScore
+    class CreateHighScore
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::CreateHighScoreOutput.new
+        resp.data.location = http_resp.headers['Location']
+        data.high_score = Parsers::HighScoreAttributes.parse(json)
+        data
       end
     end
   end

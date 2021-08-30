@@ -10,11 +10,53 @@
 module SampleService
   module Builders
 
-    # Operation Builder for CreateHighScore
-    class CreateHighScore
+    # Operation Builder for GetHighScore
+    class GetHighScore
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path(format(
+            '/high_scores/%<id>s',
+            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
+          )
+        )
+      end
+    end
+
+    # Operation Builder for DeleteHighScore
+    class DeleteHighScore
+      def self.build(http_req, input:)
+        http_req.http_method = 'DELETE'
+        http_req.append_path(format(
+            '/high_scores/%<id>s',
+            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
+          )
+        )
+      end
+    end
+
+    # Operation Builder for Stream
+    class Stream
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/high_scores')
+        http_req.append_path('/stream')
+        http_req.headers['StreamID'] = input[:stream_id].to_str if input.key?(:stream_id)
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:blob] = input[:blob] unless input[:blob].nil?
+        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+      end
+    end
+
+    # Operation Builder for UpdateHighScore
+    class UpdateHighScore
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path(format(
+            '/high_scores/%<id>s',
+            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
+          )
+        )
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -66,8 +108,8 @@ module SampleService
         data[:id] = input[:id] unless input[:id].nil?
         data[:game] = input[:game] unless input[:game].nil?
         data[:score] = input[:score] unless input[:score].nil?
-        data[:created_at] = input[:created_at].to_s unless input[:created_at].nil?
-        data[:updated_at] = input[:updated_at].to_s unless input[:updated_at].nil?
+        data[:created_at] = Seahorse::TimeHelper.to_date_time(input[:created_at]) unless input[:created_at].nil?
+        data[:updated_at] = Seahorse::TimeHelper.to_date_time(input[:updated_at]) unless input[:updated_at].nil?
         data
       end
     end
@@ -126,61 +168,6 @@ module SampleService
       end
     end
 
-    # Operation Builder for Stream
-    class Stream
-      def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/stream')
-        http_req.headers['StreamID'] = input[:stream_id].to_str if input.key?(:stream_id)
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:blob] = input[:blob] unless input[:blob].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Operation Builder for GetHighScore
-    class GetHighScore
-      def self.build(http_req, input:)
-        http_req.http_method = 'GET'
-        http_req.append_path(format(
-            '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
-          )
-        )
-      end
-    end
-
-    # Operation Builder for DeleteHighScore
-    class DeleteHighScore
-      def self.build(http_req, input:)
-        http_req.http_method = 'DELETE'
-        http_req.append_path(format(
-            '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
-          )
-        )
-      end
-    end
-
-    # Operation Builder for UpdateHighScore
-    class UpdateHighScore
-      def self.build(http_req, input:)
-        http_req.http_method = 'PUT'
-        http_req.append_path(format(
-            '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_str)
-          )
-        )
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
     # Operation Builder for ListHighScores
     class ListHighScores
       def self.build(http_req, input:)
@@ -188,6 +175,19 @@ module SampleService
         http_req.append_path('/high_scores')
         http_req.append_query_param('maxResults', input[:max_results].to_str) if input.key?(:max_results)
         http_req.append_query_param('nextToken', input[:next_token].to_str) if input.key?(:next_token)
+      end
+    end
+
+    # Operation Builder for CreateHighScore
+    class CreateHighScore
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/high_scores')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
+        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end
   end

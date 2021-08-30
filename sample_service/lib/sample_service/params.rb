@@ -38,11 +38,12 @@ module SampleService
 
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Set, Array, context: context)
+        data = Set.new
 
-        data = params.each_with_index.map do |element, index|
-          HighScoreAttributes.build(element, context: "#{context}[#{index}]") if element
+        params.each_with_index do |element, index|
+          data << HighScoreAttributes.build(element, context: "#{context}[#{index}]") if element
         end
-        Set.new(data)
+        data
       end
     end
 
@@ -147,11 +148,12 @@ module SampleService
 
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Set, Array, context: context)
+        data = Set.new
 
-        data = params.each_with_index.map do |element, index|
-          element
+        params.each_with_index do |element, index|
+          data << element
         end
-        Set.new(data)
+        data
       end
     end
 
