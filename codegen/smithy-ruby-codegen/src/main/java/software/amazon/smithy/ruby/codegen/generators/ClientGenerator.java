@@ -188,7 +188,7 @@ public class ClientGenerator {
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
-                .write("input = Types::$LInput.build(params)", operation.getId().getName())
+                .write("input = Params::$LInput.build(params)", operation.getId().getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("@middleware.apply(stack)")
