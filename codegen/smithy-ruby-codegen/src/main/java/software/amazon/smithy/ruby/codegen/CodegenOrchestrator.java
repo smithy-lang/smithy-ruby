@@ -209,7 +209,7 @@ public class CodegenOrchestrator {
     }
 
     private void generateProtocolTests() {
-        if (context.getApplicationTransport().getName().equals("http")) {
+        if (context.getApplicationTransport().isHttpTransport()) {
             HttpProtocolTestGenerator testGenerator =
                     new HttpProtocolTestGenerator(context);
             testGenerator.render();
