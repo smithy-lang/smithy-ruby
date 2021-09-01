@@ -4,6 +4,9 @@ namespace example.rails
 use smithy.rails#RailsJson
 use smithy.rails#errorOn
 
+use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
+
 /// Rails High Score example from their generator docs
 @RailsJson
 @errorOn(location: "header", name: "x-smithy-error")
@@ -91,6 +94,22 @@ set ComplexSet {
 /// Get a high score
 @http(method: "GET", uri: "/high_scores/{id}")
 @readonly
+@httpRequestTests([
+    {
+        id: "serializes_http_label",
+        protocol: RailsJson,
+        documentation: "Serializes http labels",
+        bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            id: "1",
+        },
+        method: "GET",
+        uri: "/high_scores/1",
+    }
+    ])
 operation GetHighScore {
     input: GetHighScoreInput,
     output: GetHighScoreOutput

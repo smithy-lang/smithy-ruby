@@ -56,9 +56,4 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     public void generateStubbers(GenerationContext context) {
         LOGGER.info("Implement me!");
     }
-
-    @Override
-    public void generateProtocolUnitTests(GenerationContext context) {
-        LOGGER.info("Implement me!");
-    }
 }
