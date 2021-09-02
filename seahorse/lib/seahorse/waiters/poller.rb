@@ -89,7 +89,7 @@ module Seahorse
       def error_type_matcher?(matcher, error)
         # handle shape ID cases
         matcher = matcher.split('#').last.split('$').first
-        error.class.to_s.include?(matcher) || error.error_code == m
+        error.class.to_s.include?(matcher) || error.error_code == matcher
       end
 
       def input_output_matcher?(matcher, response, error)
@@ -97,7 +97,7 @@ module Seahorse
 
         data = { input: @input, output: response }
         send(
-          "matches_#{matcher[:comparator]}",
+          "matches_#{matcher[:comparator]}?",
           JMESPath.search(matcher[:path], data),
           matcher[:expected]
         )

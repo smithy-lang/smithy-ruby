@@ -27,12 +27,8 @@ module Seahorse
       # @param [Hash] params The params for the operation.
       # @param [Hash] options Any operation options.
       def wait(client, params = {}, options = {})
-        catch(:success) do
-          failure_msg = catch(:failure) do
-            return poll(client, params, options)
-          end
-          raise Errors::WaiterFailed, failure_msg || 'waiter failed'
-        end || true
+        poll(client, params, options)
+        true
       end
 
       private
