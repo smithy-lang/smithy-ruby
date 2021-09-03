@@ -7,7 +7,6 @@ module Seahorse
     # Abstract Poller used by generated service Waiters. This class handles
     # sending the request and matching input or output.
     class Poller
-
       # @api private
       def initialize(options = {})
         @operation_name = options[:operation_name]
@@ -79,11 +78,7 @@ module Seahorse
       end
 
       def success_matcher?(matcher, response, error)
-        if (matcher == true && response) || (matcher == false && error)
-          true
-        else
-          false
-        end
+        (matcher == true && response) || (matcher == false && error)
       end
 
       def error_type_matcher?(matcher, error)
@@ -132,7 +127,6 @@ module Seahorse
           values.any? { |v| v == expected }
       end
       # rubocop:enable Naming/MethodName
-
     end
   end
 end

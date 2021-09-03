@@ -22,7 +22,7 @@ module Seahorse
           keyword_init: true
         )
       end
-      let(:response) do
+      let(:struct) do
         test_operation_struct.new(
           string: 'peccy',
           boolean: true,
@@ -40,7 +40,12 @@ module Seahorse
 
       before do
         expect(Seahorse::MiddlewareBuilder).to receive(:before_send)
-          .and_return(input_output_middleware)
+          .and_wrap_original do |_middleware, handler|
+            # middleware captures input for inputOutput matcher
+            handler.call(struct, {})
+            # return a mocked middleware
+            input_output_middleware
+          end
       end
 
       describe '#call' do
@@ -61,9 +66,9 @@ module Seahorse
             it 'returns retry state with response' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:retry, response]
+              expect(subject.call(client, {}, {})).to eq [:retry, struct]
             end
           end
         end
@@ -78,9 +83,9 @@ module Seahorse
           it 'can match success' do
             expect(client).to receive(:test_operation)
               .with({}, { middleware: input_output_middleware })
-              .and_return(response)
+              .and_return(struct)
 
-            expect(subject.call(client, {}, {})).to eq [:success, response]
+            expect(subject.call(client, {}, {})).to eq [:success, struct]
           end
         end
 
@@ -101,13 +106,6 @@ module Seahorse
         end
 
         context 'input output matchers' do
-          before do
-            # Normally, middleware would capture input and store it on @input.
-            # Since we are mocking middleware, pretend it was set to a structure
-            # similar to our response test struct.
-            subject.instance_variable_set(:@input, response)
-          end
-
           context 'string equals' do
             let(:acceptors) do
               [
@@ -127,9 +125,9 @@ module Seahorse
             it 'can match string equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
 
@@ -152,9 +150,9 @@ module Seahorse
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
 
@@ -177,9 +175,9 @@ module Seahorse
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
 
@@ -202,9 +200,9 @@ module Seahorse
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
         end
@@ -229,9 +227,9 @@ module Seahorse
             it 'can match string equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
 
@@ -254,9 +252,9 @@ module Seahorse
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
 
@@ -279,9 +277,9 @@ module Seahorse
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
 
@@ -304,9 +302,9 @@ module Seahorse
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { middleware: input_output_middleware })
-                .and_return(response)
+                .and_return(struct)
 
-              expect(subject.call(client, {}, {})).to eq [:success, response]
+              expect(subject.call(client, {}, {})).to eq [:success, struct]
             end
           end
         end
@@ -340,9 +338,9 @@ module Seahorse
           it 'iterates all matchers' do
             expect(client).to receive(:test_operation)
               .with({}, { middleware: input_output_middleware })
-              .and_return(response)
+              .and_return(struct)
 
-            expect(subject.call(client, {}, {})).to eq [:success, response]
+            expect(subject.call(client, {}, {})).to eq [:success, struct]
           end
         end
       end
