@@ -33,7 +33,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
-import software.amazon.smithy.ruby.codegen.generators.ShapesGenerator;
+import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
+import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 
 public class CodegenOrchestrator {
@@ -166,7 +167,8 @@ public class CodegenOrchestrator {
         context.getIntegrations().forEach(
                 (integration) -> integration.processFinalizedModel(context));
 
-        generateShapes();
+        generateTypes();
+        generateParams();
         generateValidators();
 
         if (context.getProtocolGenerator().isPresent()) {
@@ -187,10 +189,15 @@ public class CodegenOrchestrator {
         generateGemSpec();
     }
 
-    private void generateShapes() {
-        ShapesGenerator typesGenerator = new ShapesGenerator(context);
+    private void generateTypes() {
+        TypesGenerator typesGenerator = new TypesGenerator(context);
         typesGenerator.render();
-        LOGGER.info("created shapes");
+        LOGGER.info("created types");
+    }
+
+    private void generateParams() {
+        ParamsGenerator paramsGenerator = new ParamsGenerator(context);
+        paramsGenerator.render();
     }
 
     private void generateValidators() {

@@ -283,7 +283,7 @@ public class RubySymbolProvider implements SymbolProvider,
     public Symbol structureShape(StructureShape shape) {
         String name = getDefaultShapeName(shape);
         Symbol.Builder builder = createSymbolBuilder(shape, name, shapesPackageName)
-                .definitionFile("shapes.rb");
+                .definitionFile("types.rb");
         return builder.build();
     }
 
@@ -292,7 +292,7 @@ public class RubySymbolProvider implements SymbolProvider,
         // TODO: Confirm this implementation is correct after impl of Unions
         String name = getDefaultShapeName(shape);
         Symbol.Builder builder = createSymbolBuilder(shape, name, shapesPackageName)
-                .definitionFile("shapes.rb");
+                .definitionFile("types.rb");
         return builder.build();
     }
 

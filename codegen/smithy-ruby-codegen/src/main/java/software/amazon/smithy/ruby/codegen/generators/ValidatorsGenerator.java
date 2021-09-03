@@ -192,15 +192,15 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .call(() -> unionMemberShapes.forEach(unionMemberShape -> {
                     String unionMemberName = CaseUtils.toPascalCase(unionMemberShape.getMemberName());
                     writer
-                            .write("when Shapes::" + shapeName + "::" + unionMemberName)
+                            .write("when Types::" + shapeName + "::" + unionMemberName)
                             .write("  $L.validate!(input.__getobj__, context: context)", unionMemberName);
                 }))
-                .write("when Shapes::" + shapeName + "::Unknown")
+                .write("when Types::" + shapeName + "::Unknown")
                 .write("  nil")
                 .write("else")
                 .write("  raise ArgumentError,")
                 .write("        \"Expect #{context} to be a union member of \"\\")
-                .write("        \"Shapes::" + shapeName + ", got #{input.class}.\"")
+                .write("        \"Types::" + shapeName + ", got #{input.class}.\"")
                 .write("end") // end switch case
                 .closeBlock("end") // end validate method
                 .call(() -> renderValidatorsForUnionMembers(unionMemberShapes))
