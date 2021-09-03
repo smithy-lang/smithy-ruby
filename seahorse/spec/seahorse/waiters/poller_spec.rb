@@ -4,7 +4,7 @@ module Seahorse
   module Waiters
     describe Poller do
       subject do
-        Seahorse::Waiters::Poller.new(
+        Poller.new(
           operation_name: :test_operation,
           acceptors: acceptors
         )

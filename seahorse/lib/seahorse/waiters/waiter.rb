@@ -33,6 +33,7 @@ module Seahorse
 
       private
 
+      # https://awslabs.github.io/smithy/1.0/spec/waiters.html#waiter-workflow
       def poll(client, params, options)
         n = 0
         loop do
@@ -41,7 +42,7 @@ module Seahorse
 
           case state
           when :retry then nil
-          when :success then return resp_or_error
+          when :success then return
           when :failure then raise Errors::FailureStateError, resp_or_error
           when :error   then raise Errors::UnexpectedError, resp_or_error
           end
@@ -61,7 +62,7 @@ module Seahorse
                   min_delay * 2**(attempt - 1)
                 end
 
-        delay = rand(min_delay..delay)
+        delay = Kernel.rand(min_delay..delay)
 
         if @remaining_time - delay <= min_delay
           delay = @remaining_time - min_delay
