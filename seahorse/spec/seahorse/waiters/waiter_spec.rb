@@ -35,15 +35,6 @@ module Seahorse
 
       describe '#wait' do
         context 'poller returns retry' do
-          it 'retries until max wait time exceeded' do
-            allow(Kernel).to receive(:sleep)
-            allow(poller).to receive(:call)
-              .with(client, {}, {}).and_return([:retry, error])
-
-            expect { subject.wait(client) }
-              .to raise_error(Errors::MaxWaitTimeExceeded)
-          end
-
           it 'retries polling using delay and backoff specification' do
             delays = [2, 3, 6, 6, 22, 62, 43, 24, 71, 42, 9, 6, 2]
             delays.each do |delay|
@@ -58,7 +49,6 @@ module Seahorse
             expect { subject.wait(client) }
               .to raise_error(Errors::MaxWaitTimeExceeded)
           end
-
         end
 
         context 'poller returns success' do
