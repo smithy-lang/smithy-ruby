@@ -310,6 +310,41 @@ module Seahorse
             end
           end
         end
+
+        context 'multiple matchers' do
+          let(:acceptors) do
+            [
+              {
+                state: 'failure',
+                matcher: {
+                  output: {
+                    path: 'any_string',
+                    expected: 'should not match',
+                    comparator: 'anyStringEquals'
+                  }
+                }
+              },
+              {
+                state: 'success',
+                matcher: {
+                  output: {
+                    path: 'string',
+                    expected: 'peccy',
+                    comparator: 'stringEquals'
+                  }
+                }
+              }
+            ]
+          end
+
+          it 'iterates all matchers' do
+            expect(client).to receive(:test_operation)
+              .with({}, { middleware: input_output_middleware })
+              .and_return(response)
+
+            expect(subject.call(client, {}, {})).to eq [:success, response]
+          end
+        end
       end
     end
   end
