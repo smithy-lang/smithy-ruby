@@ -42,6 +42,20 @@ module Seahorse
 
       @middleware = new_middleware
     end
+    
+    def remove(remove)
+      new_middleware = []
+      @middleware.each do |klass, args|
+        new_middleware << [klass, args] unless klass == remove
+      end
+
+      unless new_middleware.size == @middleware.size - 1
+        raise ArgumentError,
+              "Failed to remove #{remove}"
+      end
+
+      @middleware = new_middleware
+    end
 
     # @param input
     # @param context

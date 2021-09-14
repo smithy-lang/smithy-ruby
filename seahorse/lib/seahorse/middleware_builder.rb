@@ -141,6 +141,16 @@ module Seahorse
       self
     end
 
+    def remove(klass)
+      @middleware << [
+        :remove,
+        klass,
+        nil,
+        nil
+      ]
+      self
+    end
+
     # Define convenience methods for chaining
     class << self
       def before(klass, *args, &block)
@@ -153,6 +163,10 @@ module Seahorse
 
       def around(klass, *args, &block)
         MiddlewareBuilder.new.around(klass, *args, &block)
+      end
+
+      def remove(klass)
+        MiddlewareBuilder.new.remove(klass)
       end
     end
 
@@ -180,6 +194,16 @@ module Seahorse
           return send(method, klass, *args, &block)
         end
       end
+
+      remove_method_name = "remove_#{simple_step_name}"
+      define_method(remove_method_name) do
+        return remove(klass)
+      end
+
+      define_singleton_method(remove_method_name) do
+        return remove(klass)
+      end
+
     end
 
     def to_a
