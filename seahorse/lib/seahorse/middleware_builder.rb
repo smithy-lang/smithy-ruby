@@ -107,7 +107,11 @@ module Seahorse
     def apply(middleware_stack)
       @middleware.each do |handler|
         method, relation, middleware, kwargs = handler
-        middleware_stack.send(method, relation, middleware, **kwargs)
+        if method == :remove
+          middleware_stack.remove(relation)
+        else
+          middleware_stack.send(method, relation, middleware, **kwargs)
+        end
       end
     end
 
