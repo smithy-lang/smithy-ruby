@@ -92,6 +92,25 @@ module Seahorse
       end
     end
 
+    describe '#remove' do
+      context 'remove middleware exists' do
+        it 'removes existing middleware' do
+          subject.use(build_middleware, **builder_params)
+          middleware = subject.remove(build_middleware)
+
+          expect(middleware).to eq([])
+        end
+      end
+
+      context 'remove middleware does not exist' do
+        it 'raises with a message' do
+          expect do
+            subject.remove(build_middleware)
+          end.to raise_error(ArgumentError)
+        end
+      end
+    end
+
     describe '#run' do
       let(:parser) { double('parser') }
       let(:builder) { double('builder') }

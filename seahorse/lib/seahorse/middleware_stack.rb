@@ -14,9 +14,7 @@ module Seahorse
     def use_before(before, middleware, **middleware_kwargs)
       new_middleware = []
       @middleware.each do |klass, args|
-        if before == klass
-          new_middleware << [middleware, middleware_kwargs]
-        end
+        new_middleware << [middleware, middleware_kwargs] if before == klass
         new_middleware << [klass, args]
       end
       unless new_middleware.size == @middleware.size + 1
@@ -31,13 +29,25 @@ module Seahorse
       new_middleware = []
       @middleware.each do |klass, args|
         new_middleware << [klass, args]
-        if after == klass
-          new_middleware << [middleware, middleware_kwargs]
-        end
+        new_middleware << [middleware, middleware_kwargs] if after == klass
       end
       unless new_middleware.size == @middleware.size + 1
         raise ArgumentError,
               "Failed to insert #{middleware} after #{after}"
+      end
+
+      @middleware = new_middleware
+    end
+
+    def remove(remove)
+      new_middleware = []
+      @middleware.each do |klass, args|
+        new_middleware << [klass, args] unless klass == remove
+      end
+
+      unless new_middleware.size == @middleware.size - 1
+        raise ArgumentError,
+              "Failed to remove #{remove}"
       end
 
       @middleware = new_middleware

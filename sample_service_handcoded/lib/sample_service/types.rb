@@ -1,3 +1,5 @@
+require 'delegate'
+
 module SampleService
   module Types
 

@@ -3,7 +3,6 @@
 module Seahorse
   module Waiters
     module Errors
-
       class WaiterFailed < StandardError; end
 
       class FailureStateError < StandardError; end
@@ -11,7 +10,6 @@ module Seahorse
       class UnexpectedError < StandardError; end
 
       class MaxWaitTimeExceeded < StandardError; end
-
     end
   end
 end

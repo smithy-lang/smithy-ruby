@@ -39,7 +39,7 @@ module Seahorse
             @text << child
           else
             raise ArgumentError, 'expected Seahorse::XML::Node or String, ' \
-              "got #{child.class}"
+                                 "got #{child.class}"
           end
         end
       end

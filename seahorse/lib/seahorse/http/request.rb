@@ -99,7 +99,7 @@ module Seahorse
           when 1 then escape(args[0])
           when 2 then "#{escape(args[0])}=#{escape(args[1])}"
           else raise ArgumentError, 'wrong number of arguments ' \
-            "(given #{args.size}, expected 1 or 2)"
+                                    "(given #{args.size}, expected 1 or 2)"
           end
         uri = URI.parse(@url)
         uri.query = uri.query ? "#{uri.query}&#{param}" : param
