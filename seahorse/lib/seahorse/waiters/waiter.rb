@@ -4,7 +4,6 @@ module Seahorse
   module Waiters
     # Abstract waiter class with high level logic for polling and waiting.
     class Waiter
-
       # @api private
       def initialize(options = {})
         unless options[:max_wait_time].is_a?(Integer)
@@ -75,7 +74,6 @@ module Seahorse
       def attempt_ceiling
         (Math.log(max_delay.to_f / min_delay) / Math.log(2)) + 1
       end
-
     end
   end
 end
