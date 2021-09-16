@@ -16,6 +16,10 @@ Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*.rb'
 
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/seahorse/middleware_builder.rb'
+
 Style/Documentation:
   Exclude:
     - 'spec/**/*.rb'

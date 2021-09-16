@@ -99,7 +99,8 @@ module Seahorse
       when nil then nil
       else
         raise ArgumentError, 'expected :middleware to be a' \
-                             "Seahorse::MiddlewareBuilder, got #{middleware.class}"
+                             'Seahorse::MiddlewareBuilder,' \
+                             " got #{middleware.class}"
       end
     end
 
