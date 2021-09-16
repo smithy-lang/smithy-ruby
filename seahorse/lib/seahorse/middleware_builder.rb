@@ -5,6 +5,7 @@ module Seahorse
   # You register middleware handlers to execute relative to
   # Middleware classes.  You can register middleware
   # before/after/around any middleware class in the stack.
+  # You may also remove middleware from the stack.
   # There are also convenience methods
   # (eg: before_build, after_parse, ect)
   # defined for all of the key request lifecycle events:
@@ -73,6 +74,18 @@ module Seahorse
   #       # around handlers must return the response down the stack
   #       output
   #     end
+  #
+  # ## Removing Middleware
+  # You may remove existing middleware from the stack using either the class
+  # or instance `remove` methods and providing the middleware class to
+  # be removed.  The remove methods are chainable and convenience methods are
+  # defined for the same set of lifecycle events as the `before`, `after`
+  # and `around` methods:
+  #
+  #   # create a middleware builder that removes send and build middlewares
+  #   MiddlewareBuilder
+  #     .remove_send
+  #     .remove_build
   #
   class MiddlewareBuilder
     # @private
