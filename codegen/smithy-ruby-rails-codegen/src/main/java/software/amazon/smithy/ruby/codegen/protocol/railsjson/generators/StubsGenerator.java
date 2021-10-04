@@ -15,15 +15,18 @@
 
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -77,11 +80,15 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderStubs() {
-        Stream<OperationShape> operations = model.shapes(OperationShape.class);
-        operations.forEach(o -> renderStubsForOperation(writer, o));
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<OperationShape> containedOperations = new TreeSet<>(
+                topDownIndex.getContainedOperations(context.getService()));
+        containedOperations.stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(o -> renderStubsForOperation(o));
     }
 
-    private void renderStubsForOperation(RubyCodeWriter writer, OperationShape operation) {
+    private void renderStubsForOperation(OperationShape operation) {
         System.out.println("Generating stubs for Operation: " + operation.getId());
 
         // Operations MUST have an Output type, even if it is empty

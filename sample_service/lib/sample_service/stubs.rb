@@ -10,15 +10,16 @@
 module SampleService
   module Stubs
 
-    # Operation Stubber for UpdateHighScore
-    class UpdateHighScore
+    # Operation Stubber for CreateHighScore
+    class CreateHighScore
 
       def self.default
         {}
       end
 
       def self.stub(http_resp, stub:)
-        http_resp.status = 200
+        http_resp.status = 201
+        http_resp.headers['Location'] = stub[:location].to_str if stub.key?(:location)
 
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
@@ -42,6 +43,35 @@ module SampleService
         data[:created_at] = Seahorse::TimeHelper.to_date_time(stub[:created_at]) unless stub[:created_at].nil?
         data[:updated_at] = Seahorse::TimeHelper.to_date_time(stub[:updated_at]) unless stub[:updated_at].nil?
         data
+      end
+    end
+
+    # Operation Stubber for DeleteHighScore
+    class DeleteHighScore
+
+      def self.default
+        {}
+      end
+
+      def self.stub(http_resp, stub:)
+        http_resp.status = 200
+      end
+    end
+
+    # Operation Stubber for GetHighScore
+    class GetHighScore
+
+      def self.default
+        {}
+      end
+
+      def self.stub(http_resp, stub:)
+        http_resp.status = 200
+
+        http_resp.headers['Content-Type'] = 'application/json'
+        data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
+        data ||= {}
+        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end
 
@@ -79,44 +109,8 @@ module SampleService
       end
     end
 
-    # Operation Stubber for CreateHighScore
-    class CreateHighScore
-
-      def self.default
-        {}
-      end
-
-      def self.stub(http_resp, stub:)
-        http_resp.status = 201
-        http_resp.headers['Location'] = stub[:location].to_str if stub.key?(:location)
-
-        http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
-        data ||= {}
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Operation Stubber for Stream
-    class Stream
-
-      def self.default
-        {}
-      end
-
-      def self.stub(http_resp, stub:)
-        http_resp.status = 200
-        http_resp.headers['StreamID'] = stub[:stream_id].to_str if stub.key?(:stream_id)
-
-        http_resp.headers['Content-Type'] = 'application/json'
-        data = stub[:blob] unless stub[:blob].nil?
-        data ||= {}
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Operation Stubber for GetHighScore
-    class GetHighScore
+    # Operation Stubber for UpdateHighScore
+    class UpdateHighScore
 
       def self.default
         {}
@@ -129,18 +123,6 @@ module SampleService
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Operation Stubber for DeleteHighScore
-    class DeleteHighScore
-
-      def self.default
-        {}
-      end
-
-      def self.stub(http_resp, stub:)
-        http_resp.status = 200
       end
     end
   end

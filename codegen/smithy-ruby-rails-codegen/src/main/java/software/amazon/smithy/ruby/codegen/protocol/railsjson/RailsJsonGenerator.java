@@ -40,7 +40,7 @@ public class RailsJsonGenerator implements ProtocolGenerator {
 
     @Override
     public void generateParsers(GenerationContext context) {
-        ParserGenerator parserGenerator = new ParserGenerator(context.getRubySettings(), context.getModel());
+        ParserGenerator parserGenerator = new ParserGenerator(context);
         parserGenerator.render(context.getFileManifest());
         LOGGER.info("created parsers");
     }
