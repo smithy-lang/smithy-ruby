@@ -152,8 +152,8 @@ public class MiddlewareBuilder {
                         transport.getTransportClient().render(context))
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
-                    params.put("stub_class", "Builders::" + operation.getId()
-                            .getName()); // TODO: Generate stubs....
+                    params.put("stub_class", "Stubs::" + operation.getId()
+                            .getName());
                     return params;
                 })
                 .addConfig(stubResponses)

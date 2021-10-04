@@ -15,6 +15,7 @@ import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ParserG
 
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.StubsGenerator;
 
 // Protocol Implementation for Rails-Json
 public class RailsJsonGenerator implements ProtocolGenerator {
@@ -53,8 +54,10 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     }
 
     @Override
-    public void generateStubbers(GenerationContext context) {
-        LOGGER.info("Implement me!");
+    public void generateStubs(GenerationContext context) {
+        StubsGenerator stubsGenerator = new StubsGenerator(context);
+        stubsGenerator.render(context.getFileManifest());
+        LOGGER.info("created stubs");
     }
 
     @Override
