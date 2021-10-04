@@ -6,7 +6,7 @@ module Seahorse
       # A middleware that sets Content-Length for any body that has a size.
       # @api private
       class ContentLength
-        def initialize(app, options={})
+        def initialize(app, _ = {})
           @app = app
         end
 
