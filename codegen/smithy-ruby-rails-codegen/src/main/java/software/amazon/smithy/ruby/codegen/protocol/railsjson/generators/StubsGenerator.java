@@ -28,7 +28,15 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -36,6 +44,8 @@ import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.ShortShape;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -104,12 +114,12 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# Operation Stubber for $L", operation.getId().getName())
                 .openBlock("class $L", operation.getId().getName())
                 .openBlock("\ndef self.default")
-                .write("{}") // TODO: render defaults
+                .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(http_resp, stub:)")
                 .write("http_resp.status = $1L", httpTrait.getCode())
-                .call(() -> renderHeaderStubbers(writer, operation, outputShape))
-                .call(() -> renderOperationBodyStubber(writer, operation, outputShape))
+                .call(() -> renderHeaderStubbers(operation, outputShape))
+                .call(() -> renderOperationBodyStubber(operation, outputShape))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -129,9 +139,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     // The Output shape is combined with the OperationStub
     // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
     // Also marks the OutputShape as generated
-    private void renderOperationBodyStubber(RubyCodeWriter writer, OperationShape operation, Shape outputShape) {
+    private void renderOperationBodyStubber(OperationShape operation, Shape outputShape) {
         generatedStubs.add(outputShape.getId());
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
 
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch(
@@ -141,12 +150,12 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             writer
                     .write("")
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
-                    .call(() -> renderMemberStubbers(writer, outputShape))
+                    .call(() -> renderMemberStubbers(outputShape))
                     .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
     }
 
-    private void renderHeaderStubbers(RubyCodeWriter writer, OperationShape operation, Shape outputShape) {
+    private void renderHeaderStubbers(OperationShape operation, Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -171,10 +180,10 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# Structure Stubber for $L", shape.getId().getName())
                 .openBlock("class $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
-                .write("{}") // TODO: render defaults
+                .call(() -> renderMemberDefaults(shape))
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
-                .call(() -> renderMemberStubbers(writer, shape))
+                .call(() -> renderMemberStubbers(shape))
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -191,7 +200,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# List Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
-                .write("[]") // TODO: render defaults
+                .openBlock("[")
+                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "")))
+                .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def self.stub(stub = [])")
                 .write("data = []")
@@ -214,7 +225,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# Map Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
-                .write("{}") // TODO: render defaults
+                .openBlock("{")
+                .call(() -> valueTarget.accept(new MemberDefaults(writer, "test_key: ", "")))
+                .closeBlock("}")
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
                 .write("data = {}")
@@ -237,7 +250,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("\n# Set Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
-                .write("{}") // TODO: render defaults
+                .openBlock("[")
+                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "")))
+                .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def \nself.stub(stub = [])")
                 .write("data = Set.new")
@@ -257,7 +272,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         return null;
     }
 
-    private void renderMemberStubbers(RubyCodeWriter writer, Shape s) {
+    private void renderMemberStubbers(Shape s) {
         Optional<MemberShape> payload = s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
 
         if (payload.isPresent()) {
@@ -287,7 +302,19 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 target.accept(new MemberSerializer(writer, dataSetter, inputGetter));
             });
         }
+    }
 
+    private void renderMemberDefaults(Shape s) {
+        writer.openBlock("{");
+        s.members().forEach((member) -> {
+            Shape target = model.expectShape(member.getTarget());
+            System.out.println("\t\tMEMBER default FOR: " + member.getId() + " target type: " + target.getType());
+
+            String symbolName = RubyFormatter.toSnakeCase(member.getMemberName());
+            String dataSetter = symbolName + ": ";
+            target.accept(new MemberDefaults(writer, dataSetter, ","));
+        });
+        writer.closeBlock("}");
     }
 
     @Override
@@ -359,6 +386,125 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void unionShape(UnionShape shape) {
             defaultComplexSerializer(shape);
+            return null;
+        }
+    }
+
+    private static class MemberDefaults extends ShapeVisitor.Default<Void> {
+
+        private final RubyCodeWriter writer;
+        private final String eol;
+        private final String dataSetter;
+
+        public MemberDefaults(RubyCodeWriter writer, String dataSetter, String eol) {
+            this.writer = writer;
+            this.eol = eol;
+            this.dataSetter = dataSetter;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write("$Lnil$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape blob) {
+            writer.write("$LStringIO.new('blob')$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void byteShape(ByteShape shape) {
+            writer.write("$L1$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void shortShape(ShortShape shape) {
+            writer.write("$L1$L", dataSetter, eol);
+            return null;        }
+
+        @Override
+        public Void integerShape(IntegerShape shape) {
+            writer.write("$L1$L", dataSetter, eol);
+            return null;        }
+
+        @Override
+        public Void longShape(LongShape shape) {
+            writer.write("$L1$L", dataSetter, eol);
+            return null;        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            writer.write("$L1.0$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            writer.write("$L1.0$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void bigIntegerShape(BigIntegerShape shape) {
+            writer.write("$L1$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void bigDecimalShape(BigDecimalShape shape) {
+            writer.write("$L1.0$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer.write("$L'string'$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            writer.write("$LTime.now$L", dataSetter, eol);
+            return null;
+        }
+
+        /**
+         * For complex shapes, simply delegate to their Stubber
+         */
+        private void complexShapeDefaults(Shape shape) {
+            writer.write("$LStubs::$L.default$L", dataSetter, shape.getId().getName(), eol);
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            complexShapeDefaults(shape);
+            return null;
+        }
+
+        @Override
+        public Void setShape(SetShape shape) {
+            complexShapeDefaults(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            complexShapeDefaults(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            complexShapeDefaults(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            complexShapeDefaults(shape);
             return null;
         }
     }

@@ -14,7 +14,10 @@ module SampleService
     class CreateHighScore
 
       def self.default
-        {}
+        {
+          high_score: Stubs::HighScoreAttributes.default,
+          location: 'string',
+        }
       end
 
       def self.stub(http_resp, stub:)
@@ -32,7 +35,13 @@ module SampleService
     class HighScoreAttributes
 
       def self.default
-        {}
+        {
+          id: 'string',
+          game: 'string',
+          score: 1,
+          created_at: Time.now,
+          updated_at: Time.now,
+        }
       end
 
       def self.stub(stub = {})
@@ -50,7 +59,8 @@ module SampleService
     class DeleteHighScore
 
       def self.default
-        {}
+        {
+        }
       end
 
       def self.stub(http_resp, stub:)
@@ -62,7 +72,9 @@ module SampleService
     class GetHighScore
 
       def self.default
-        {}
+        {
+          high_score: Stubs::HighScoreAttributes.default,
+        }
       end
 
       def self.stub(http_resp, stub:)
@@ -79,7 +91,10 @@ module SampleService
     class ListHighScores
 
       def self.default
-        {}
+        {
+          next_token: 'string',
+          high_scores: Stubs::HighScores.default,
+        }
       end
 
       def self.stub(http_resp, stub:)
@@ -98,7 +113,9 @@ module SampleService
     class HighScores
 
       def self.default
-        []
+        [
+          Stubs::HighScoreAttributes.default
+        ]
       end
       def self.stub(stub = [])
         data = []
@@ -113,7 +130,9 @@ module SampleService
     class UpdateHighScore
 
       def self.default
-        {}
+        {
+          high_score: Stubs::HighScoreAttributes.default,
+        }
       end
 
       def self.stub(http_resp, stub:)

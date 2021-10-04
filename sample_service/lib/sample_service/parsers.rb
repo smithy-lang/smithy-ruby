@@ -27,8 +27,8 @@ module SampleService
         data.id = json['id']
         data.game = json['game']
         data.score = json['score']
-        data.created_at = json['created_at']
-        data.updated_at = json['updated_at']
+        data.created_at = Time.parse(json['created_at']) if json['created_at']
+        data.updated_at = Time.parse(json['updated_at']) if json['updated_at']
         return data
       end
     end

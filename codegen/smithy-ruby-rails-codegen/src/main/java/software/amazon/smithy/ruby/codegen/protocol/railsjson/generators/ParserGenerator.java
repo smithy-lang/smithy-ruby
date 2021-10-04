@@ -275,6 +275,12 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             return null;
         }
 
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+            return null;
+        }
+
         /**
          *  For complex shapes, simply delegate to their builder
          */
