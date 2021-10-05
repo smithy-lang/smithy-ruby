@@ -16,13 +16,13 @@ module SampleService
       def self.default
         {
           high_score: Stubs::HighScoreAttributes.default,
-          location: 'string',
+          location: 'location',
         }
       end
 
       def self.stub(http_resp, stub:)
         http_resp.status = 201
-        http_resp.headers['Location'] = stub[:location].to_str if stub.key?(:location)
+        http_resp.headers['Location'] = stub[:location].to_s unless stub[:location].nil?
 
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
@@ -36,8 +36,8 @@ module SampleService
 
       def self.default
         {
-          id: 'string',
-          game: 'string',
+          id: 'id',
+          game: 'game',
           score: 1,
           created_at: Time.now,
           updated_at: Time.now,
@@ -92,7 +92,7 @@ module SampleService
 
       def self.default
         {
-          next_token: 'string',
+          next_token: 'next_token',
           high_scores: Stubs::HighScores.default,
         }
       end

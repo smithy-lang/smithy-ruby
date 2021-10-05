@@ -168,7 +168,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(m.getTarget());
             System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
             String symbolName = RubyFormatter.asSymbol(m.getMemberName());
-            writer.write("http_resp.headers['$1L'] = stub[$2L].to_str if stub.key?($2L)", headerTrait.getValue(),
+            writer.write("http_resp.headers['$1L'] = stub[$2L].to_s unless stub[$2L].nil?", headerTrait.getValue(),
                     symbolName);
         }
     }
@@ -201,7 +201,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
                 .openBlock("[")
-                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "")))
+                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
                 .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def self.stub(stub = [])")
@@ -226,7 +226,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
                 .openBlock("{")
-                .call(() -> valueTarget.accept(new MemberDefaults(writer, "test_key: ", "")))
+                .call(() -> valueTarget.accept(new MemberDefaults(writer, "test_key: ", "", valueTarget.getId().getName())))
                 .closeBlock("}")
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
@@ -251,7 +251,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
                 .openBlock("[")
-                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "")))
+                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
                 .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def \nself.stub(stub = [])")
@@ -312,7 +312,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
             String symbolName = RubyFormatter.toSnakeCase(member.getMemberName());
             String dataSetter = symbolName + ": ";
-            target.accept(new MemberDefaults(writer, dataSetter, ","));
+            target.accept(new MemberDefaults(writer, dataSetter, ",", symbolName));
         });
         writer.closeBlock("}");
     }
@@ -395,11 +395,13 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
         private final String eol;
         private final String dataSetter;
+        private final String memberName;
 
-        public MemberDefaults(RubyCodeWriter writer, String dataSetter, String eol) {
+        public MemberDefaults(RubyCodeWriter writer, String dataSetter, String eol, String memberName) {
             this.writer = writer;
             this.eol = eol;
             this.dataSetter = dataSetter;
+            this.memberName = memberName;
         }
 
         @Override
@@ -461,7 +463,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("$L'string'$L", dataSetter, eol);
+            writer.write("$L'$L'$L", dataSetter, memberName, eol);
             return null;
         }
 

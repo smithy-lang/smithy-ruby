@@ -140,7 +140,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             System.out.println("\t\tAdding query input for: " + queryTrait.getValue() + " -> " + target.getId());
             String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
             // TODO: Handle required
-            writer.write("http_req.append_query_param('$1L', input[$2L].to_str) if input.key?($2L)", queryTrait.getValue(), symbolName);
+            writer.write("http_req.append_query_param('$1L', input[$2L].to_str) unless input[$2L].nil?", queryTrait.getValue(), symbolName);
         }
     }
 
