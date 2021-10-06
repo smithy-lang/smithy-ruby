@@ -29,5 +29,5 @@ public interface ProtocolGenerator {
 
     void generateErrors(GenerationContext context);
 
-    void generateStubbers(GenerationContext context);
+    void generateStubs(GenerationContext context);
 }

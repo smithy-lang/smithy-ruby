@@ -117,6 +117,19 @@ module Seahorse
       end
     end
 
+    describe '#remove' do
+      it 'adds a remove to the middleware list' do
+        subject.remove(middleware_class)
+        middleware = subject.to_a
+        expect(middleware.size).to be 1
+        expect(middleware.first).to eq([:remove, middleware_class, nil, nil])
+      end
+
+      it 'is chainable (returns self)' do
+        expect(subject.remove(middleware_class)).to be subject
+      end
+    end
+
     describe '.before' do
       it 'adds the handler to the middleware list with a RequestHandler' do
         builder = MiddlewareBuilder.before(middleware_class, handler)
@@ -135,6 +148,15 @@ module Seahorse
       it 'adds the handler to the middleware list with an AroundHandler' do
         builder = MiddlewareBuilder.around(middleware_class, handler)
         expect_middleware(builder, middleware_class, :around, handler)
+      end
+    end
+
+    describe '.remove' do
+      it 'adds a remove to the middleware list' do
+        builder = MiddlewareBuilder.remove(middleware_class)
+        middleware = builder.to_a
+        expect(middleware.size).to be 1
+        expect(middleware.first).to eq([:remove, middleware_class, nil, nil])
       end
     end
 
@@ -158,6 +180,19 @@ module Seahorse
           builder = MiddlewareBuilder.send(method_name, handler)
           expect_middleware(builder, klass, type, handler)
         end
+      end
+
+      remove_method_name = "remove_#{simple_step_name}"
+      it "defines a #{remove_method_name} on the instance that calls remove" do
+        expect(subject.send(remove_method_name)).to eq(subject)
+        middleware = subject.to_a
+        expect(middleware.first).to eq([:remove, klass, nil, nil])
+      end
+
+      it "defines a #{remove_method_name} on the class that calls remove" do
+        builder = MiddlewareBuilder.send(remove_method_name)
+        middleware = builder.to_a
+        expect(middleware.first).to eq([:remove, klass, nil, nil])
       end
     end
   end

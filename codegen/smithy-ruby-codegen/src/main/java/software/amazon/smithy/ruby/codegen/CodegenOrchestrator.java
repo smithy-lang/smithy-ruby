@@ -180,7 +180,7 @@ public class CodegenOrchestrator {
             protocolGenerator.generateBuilders(context);
             protocolGenerator.generateParsers(context);
             protocolGenerator.generateErrors(context);
-            protocolGenerator.generateStubbers(context);
+            protocolGenerator.generateStubs(context);
         }
 
         generateClient();

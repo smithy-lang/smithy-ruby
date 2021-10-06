@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
@@ -62,11 +63,15 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderBuilders() {
-        Stream<OperationShape> operations = model.shapes(OperationShape.class);
-        operations.forEach(o -> renderBuildersForOperation(writer, o));
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<OperationShape> containedOperations = new TreeSet<>(
+                topDownIndex.getContainedOperations(context.getService()));
+        containedOperations.stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(o -> renderBuildersForOperation(o));
     }
 
-    private void renderBuildersForOperation(RubyCodeWriter writer, OperationShape operation) {
+    private void renderBuildersForOperation(OperationShape operation) {
         System.out.println("Generating builders for Operation: " + operation.getId());
 
         // Operations MUST have an Input type, even if it is empty
@@ -135,7 +140,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             System.out.println("\t\tAdding query input for: " + queryTrait.getValue() + " -> " + target.getId());
             String symbolName =  RubyFormatter.asSymbol(m.getMemberName());
             // TODO: Handle required
-            writer.write("http_req.append_query_param('$1L', input[$2L].to_str) if input.key?($2L)", queryTrait.getValue(), symbolName);
+            writer.write("http_req.append_query_param('$1L', input[$2L].to_str) unless input[$2L].nil?", queryTrait.getValue(), symbolName);
         }
     }
 

@@ -6,10 +6,10 @@ module SampleService
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input[:game], String, context: "#{context}[:game]")
         Seahorse::Validator.validate!(input[:score], Integer, context: "#{context}[:score]")
-        SimpleList.validate!(input[:simple_list], context: "#{context}[:simple_list]")
-        ComplexList.validate!(input[:complex_list], context: "#{context}[:complex_list]")
-        SimpleMap.validate!(input[:simple_map], context: "#{context}[:simple_map]")
-        ComplexMap.validate!(input[:complex_map], context: "#{context}[:complex_map]")
+        # SimpleList.validate!(input[:simple_list], context: "#{context}[:simple_list]")
+        # ComplexList.validate!(input[:complex_list], context: "#{context}[:complex_list]")
+        # SimpleMap.validate!(input[:simple_map], context: "#{context}[:simple_map]")
+        # ComplexMap.validate!(input[:complex_map], context: "#{context}[:complex_map]")
       end
     end
 

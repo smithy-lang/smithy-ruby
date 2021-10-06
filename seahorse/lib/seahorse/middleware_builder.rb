@@ -5,6 +5,7 @@ module Seahorse
   # You register middleware handlers to execute relative to
   # Middleware classes.  You can register middleware
   # before/after/around any middleware class in the stack.
+  # You may also remove middleware from the stack.
   # There are also convenience methods
   # (eg: before_build, after_parse, ect)
   # defined for all of the key request lifecycle events:
@@ -74,6 +75,18 @@ module Seahorse
   #       output
   #     end
   #
+  # ## Removing Middleware
+  # You may remove existing middleware from the stack using either the class
+  # or instance `remove` methods and providing the middleware class to
+  # be removed.  The remove methods are chainable and convenience methods are
+  # defined for the same set of lifecycle events as the `before`, `after`
+  # and `around` methods:
+  #
+  #   # create a middleware builder that removes send and build middlewares
+  #   MiddlewareBuilder
+  #     .remove_send
+  #     .remove_build
+  #
   class MiddlewareBuilder
     # @private
     BOTH = 'expected a handler or a Proc, got both'
@@ -99,7 +112,8 @@ module Seahorse
       when nil then nil
       else
         raise ArgumentError, 'expected :middleware to be a' \
-          "Seahorse::MiddlewareBuilder, got #{middleware.class}"
+                             'Seahorse::MiddlewareBuilder,' \
+                             " got #{middleware.class}"
       end
     end
 
@@ -107,7 +121,11 @@ module Seahorse
     def apply(middleware_stack)
       @middleware.each do |handler|
         method, relation, middleware, kwargs = handler
-        middleware_stack.send(method, relation, middleware, **kwargs)
+        if method == :remove
+          middleware_stack.remove(relation)
+        else
+          middleware_stack.send(method, relation, middleware, **kwargs)
+        end
       end
     end
 
@@ -141,6 +159,16 @@ module Seahorse
       self
     end
 
+    def remove(klass)
+      @middleware << [
+        :remove,
+        klass,
+        nil,
+        nil
+      ]
+      self
+    end
+
     # Define convenience methods for chaining
     class << self
       def before(klass, *args, &block)
@@ -153,6 +181,10 @@ module Seahorse
 
       def around(klass, *args, &block)
         MiddlewareBuilder.new.around(klass, *args, &block)
+      end
+
+      def remove(klass)
+        MiddlewareBuilder.new.remove(klass)
       end
     end
 
@@ -179,6 +211,15 @@ module Seahorse
         define_singleton_method(method_name) do |*args, &block|
           return send(method, klass, *args, &block)
         end
+      end
+
+      remove_method_name = "remove_#{simple_step_name}"
+      define_method(remove_method_name) do
+        return remove(klass)
+      end
+
+      define_singleton_method(remove_method_name) do
+        return remove(klass)
       end
     end
 

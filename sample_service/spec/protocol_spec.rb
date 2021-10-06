@@ -28,6 +28,8 @@ module SampleService
           client.get_high_score(id: '1')
         end
       end
+      describe 'responses' do
+      end
     end
     describe '#list_high_scores' do
     end

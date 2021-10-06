@@ -109,7 +109,23 @@ set ComplexSet {
         method: "GET",
         uri: "/high_scores/1",
     }
-    ])
+])
+@httpResponseTests([
+      {
+        id: "parses_string_shapes",
+        protocol: RailsJson,
+        documentation: "Parses string shapes",
+        body: "{\"id\":\"string-value\"}",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            highScore: {
+              id: "string-value"
+            }
+        },
+        code: 200,
+      }
+])
 operation GetHighScore {
     input: GetHighScoreInput,
     output: GetHighScoreOutput
