@@ -78,7 +78,7 @@ module SampleService
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
-        stub_class: Builders::CreateHighScore,
+        stub_class: Stubs::CreateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       @middleware.apply(stack)
@@ -120,7 +120,7 @@ module SampleService
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
-        stub_class: Builders::DeleteHighScore,
+        stub_class: Stubs::DeleteHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       @middleware.apply(stack)
@@ -162,7 +162,7 @@ module SampleService
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
-        stub_class: Builders::GetHighScore,
+        stub_class: Stubs::GetHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       @middleware.apply(stack)
@@ -205,7 +205,7 @@ module SampleService
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
-        stub_class: Builders::ListHighScores,
+        stub_class: Stubs::ListHighScores,
         stubs: options.fetch(:stubs, @stubs)
       )
       @middleware.apply(stack)
@@ -250,7 +250,7 @@ module SampleService
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
-        stub_class: Builders::UpdateHighScore,
+        stub_class: Stubs::UpdateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       @middleware.apply(stack)

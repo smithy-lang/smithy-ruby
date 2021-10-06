@@ -21,23 +21,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.*;
 import software.amazon.smithy.model.traits.*;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
 public class ParserGenerator extends ShapeVisitor.Default<Void> {
-
+    private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
     private final RubyCodeWriter writer;
 
-    public ParserGenerator(RubySettings settings, Model model) {
-        this.settings = settings;
-        this.model = model;
+    public ParserGenerator(GenerationContext context) {
+        this.context = context;
+        this.settings = context.getRubySettings();
+        this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
     }
@@ -55,8 +58,12 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderParsers() {
-        Stream<OperationShape> operations = model.shapes(OperationShape.class);
-        operations.forEach(o -> renderParsersForOperation(o));
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<OperationShape> containedOperations = new TreeSet<>(
+                topDownIndex.getContainedOperations(context.getService()));
+        containedOperations.stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(o -> renderParsersForOperation(o));
     }
 
     private void renderParsersForOperation(OperationShape operation) {
@@ -265,6 +272,12 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$L$L", dataSetter, jsonGetter);
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
             return null;
         }
 

@@ -27,8 +27,8 @@ module SampleService
         data.id = json['id']
         data.game = json['game']
         data.score = json['score']
-        data.created_at = json['created_at']
-        data.updated_at = json['updated_at']
+        data.created_at = Time.parse(json['created_at']) if json['created_at']
+        data.updated_at = Time.parse(json['updated_at']) if json['updated_at']
         return data
       end
     end
@@ -59,6 +59,25 @@ module SampleService
       end
     end
 
+    # Operation Parser for DeleteHighScore
+    class DeleteHighScore
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::DeleteHighScoreOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for GetHighScore
+    class GetHighScore
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::GetHighScoreOutput.new
+        data.high_score = Parsers::HighScoreAttributes.parse(json)
+        data
+      end
+    end
+
     # Operation Parser for ListHighScores
     class ListHighScores
       def self.parse(http_resp)
@@ -84,36 +103,6 @@ module SampleService
         json = Seahorse::JSON.load(http_resp.body)
         data = Types::UpdateHighScoreOutput.new
         data.high_score = Parsers::HighScoreAttributes.parse(json)
-        data
-      end
-    end
-
-    # Operation Parser for GetHighScore
-    class GetHighScore
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::GetHighScoreOutput.new
-        data.high_score = Parsers::HighScoreAttributes.parse(json)
-        data
-      end
-    end
-
-    # Operation Parser for DeleteHighScore
-    class DeleteHighScore
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::DeleteHighScoreOutput.new
-        data
-      end
-    end
-
-    # Operation Parser for Stream
-    class Stream
-      def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
-        data = Types::StreamInputOutput.new
-        resp.data.stream_id = http_resp.headers['StreamID']
-        data.blob = Parsers::StreamingBlob.parse(json)
         data
       end
     end
