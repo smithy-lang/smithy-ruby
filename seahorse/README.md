@@ -98,7 +98,7 @@ in a reverse order. An example code generated Client operation is as follows:
 def get_high_score(params = {}, options = {})
   # Creates the stack.
   stack = Seahorse::MiddlewareStack.new
-  input = Types::GetHighScoreInput.build(params)
+  input = Params::GetHighScoreInput.build(params)
   # This middleware will build a request.
   # Takes a builder object as an argument.
   stack.use(
@@ -166,7 +166,7 @@ Not yet supported.
 Seahorse includes request and response objects for protocols, such as
 `Seahorse::HTTP::Request` and `Seahorse::HTTP::Response`. These objects contain
 raw HTTP request and response information, such as a URL, headers, body, status,
-etc.
+etc. These values can only be accessed via `Seahorse::Context` in middleware.
 
 ### XML and JSON Protocols
 Seahorse includes serialization and deserialization helpers for JSON and XML
