@@ -29,10 +29,10 @@ module SampleService
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/high_scores/1')
-            expect(request_uri.headers.keys).to include(*['Content-Length'])
+            expect(request.headers.keys).to include(*['Content-Length'])
             Seahorse::Output.new
           end
-          client.get_high_score({}, middleware: middleware)
+          client.get_high_score({id: '1'}, middleware: middleware)
         end
       end
 
@@ -47,7 +47,7 @@ module SampleService
           end
           middleware.remove_send.remove_build
           output = client.get_high_score({}, middleware: middleware)
-          expect(output.data.to_h).to eq({})
+          expect(output.data.to_h).to eq({high_score: {id: 'string-value'}})
         end
       end
     end

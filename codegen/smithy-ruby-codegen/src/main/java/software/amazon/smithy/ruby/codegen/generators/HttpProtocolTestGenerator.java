@@ -19,11 +19,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeVisitor;
+import software.amazon.smithy.model.node.NullNode;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
@@ -118,8 +126,7 @@ public class HttpProtocolTestGenerator {
     }
 
     private String getRubyHashFromParams(ObjectNode params) {
-        // TODO - how?
-        return "{}";
+        return params.accept(new ParamsToHashVisitor());
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {
@@ -213,14 +220,14 @@ public class HttpProtocolTestGenerator {
 
     private void renderRequestMiddlewareForbiddenHeaders(List<String> forbiddenHeaders) {
         if (!forbiddenHeaders.isEmpty()) {
-            writer.write("expect(request_uri.headers.keys).to_not include(*$L)",
+            writer.write("expect(request.headers.keys).to_not include(*$L)",
                     getRubyArrayFromList(forbiddenHeaders));
         }
     }
 
     private void renderRequestMiddlewareRequiredHeaders(List<String> requiredHeaders) {
         if (!requiredHeaders.isEmpty()) {
-            writer.write("expect(request_uri.headers.keys).to include(*$L)", getRubyArrayFromList(requiredHeaders));
+            writer.write("expect(request.headers.keys).to include(*$L)", getRubyArrayFromList(requiredHeaders));
         }
     }
 
@@ -254,6 +261,48 @@ public class HttpProtocolTestGenerator {
                     .openBlock("require_query.each do |query|")
                     .write("expect(actual_query.key?(query)).to be true")
                     .closeBlock("end");
+        }
+    }
+
+    private static class ParamsToHashVisitor implements NodeVisitor<String> {
+
+        @Override
+        public String arrayNode(ArrayNode node) {
+            String elements = node.getElements().stream()
+                    .map((element) -> element.accept(this))
+                    .collect(Collectors.joining(", "));
+
+            return "[" + elements + "]";
+        }
+
+        @Override
+        public String booleanNode(BooleanNode node) {
+            return node.getValue() ? "true" : "false";
+        }
+
+        @Override
+        public String nullNode(NullNode node) {
+            return "nil";
+        }
+
+        @Override
+        public String numberNode(NumberNode node) {
+            return node.getValue().toString();
+        }
+
+        @Override
+        public String objectNode(ObjectNode node) {
+            Map<StringNode, Node> members = node.getMembers();
+            String memberStr = members.keySet().stream()
+                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": " + members.get(k).accept(this))
+                    .collect(Collectors.joining(", "));
+
+            return "{" + memberStr + "}";
+        }
+
+        @Override
+        public String stringNode(StringNode node) {
+            return "'" + node.getValue() + "'";
         }
     }
 }
