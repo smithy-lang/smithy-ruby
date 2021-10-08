@@ -250,7 +250,6 @@ list HighScores {
 
 /// A test for streaming operations
 @http(method: "POST", uri: "/stream")
-@readonly
 operation Stream {
     input: StreamInputOutput,
     output: StreamInputOutput
