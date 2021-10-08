@@ -41,13 +41,13 @@ module SampleService
           middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::Headers.new({ 'Content-Type' => 'application/json' })
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"id":"string-value"}')
             Seahorse::Output.new
           end
           middleware.remove_send.remove_build
           output = client.get_high_score({}, middleware: middleware)
-          expect(output.to_h).to eq({})
+          expect(output.data.to_h).to eq({})
         end
       end
     end

@@ -81,7 +81,8 @@ module SampleService
         stub_class: Stubs::CreateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
-      @middleware.apply(stack)
+      apply_middleware(stack, options[:middleware])
+
       resp = stack.run(
         input: input,
         context: Seahorse::Context.new(
@@ -123,7 +124,8 @@ module SampleService
         stub_class: Stubs::DeleteHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
-      @middleware.apply(stack)
+      apply_middleware(stack, options[:middleware])
+
       resp = stack.run(
         input: input,
         context: Seahorse::Context.new(
@@ -165,7 +167,8 @@ module SampleService
         stub_class: Stubs::GetHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
-      @middleware.apply(stack)
+      apply_middleware(stack, options[:middleware])
+
       resp = stack.run(
         input: input,
         context: Seahorse::Context.new(
@@ -208,7 +211,8 @@ module SampleService
         stub_class: Stubs::ListHighScores,
         stubs: options.fetch(:stubs, @stubs)
       )
-      @middleware.apply(stack)
+      apply_middleware(stack, options[:middleware])
+
       resp = stack.run(
         input: input,
         context: Seahorse::Context.new(
@@ -253,7 +257,8 @@ module SampleService
         stub_class: Stubs::UpdateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
-      @middleware.apply(stack)
+      apply_middleware(stack, options[:middleware])
+
       resp = stack.run(
         input: input,
         context: Seahorse::Context.new(

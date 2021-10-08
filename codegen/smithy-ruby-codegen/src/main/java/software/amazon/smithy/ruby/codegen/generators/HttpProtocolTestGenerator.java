@@ -97,7 +97,7 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .write("expect(output.to_h).to eq($L)", getRubyHashFromParams(testCase.getParams()))
+                    .write("expect(output.data.to_h).to eq($L)", getRubyHashFromParams(testCase.getParams()))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
@@ -176,7 +176,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
-            writer.write("response.headers = Seahorse::Headers.new($L)", getRubyHashFromMap(headers));
+            writer.write("response.headers = Seahorse::HTTP::Headers.new(headers: $L)", getRubyHashFromMap(headers));
         }
     }
 
@@ -199,6 +199,7 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderRequestMiddlewareBody(Optional<String> body) {
+        // TODO: check the testcases bodyMediaType and use appropriate equality tests.
         if (body.isPresent()) {
             writer.write("expect(request.body).to eq('$L')", body.get());
         }
