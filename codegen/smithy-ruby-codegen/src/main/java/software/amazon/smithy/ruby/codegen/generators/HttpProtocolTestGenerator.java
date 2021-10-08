@@ -15,13 +15,18 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Locale;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
+import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestsTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -49,12 +54,12 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
-                .write("require 'webmock/rspec'\n") // TODO: Add to test dependencies?
+                .write("require_relative './spec_helper'\n") // TODO: Add to test dependencies?
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
                 .write("let(:endpoint) { 'http://127.0.0.1' } ")
-                .write("let(:client) { Client.new(endpoint: endpoint) }")
+                .write("let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }")
                 .write("\n")
                 .call(() -> renderTests())
                 .closeBlock("end")
@@ -73,42 +78,181 @@ public class HttpProtocolTestGenerator {
                     RubyFormatter.toSnakeCase(operation.getId().getName());
             writer.openBlock("describe '#$L' do", operationName);
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
-                renderRequestTests(operation, requestTests);
+                renderRequestTests(operationName, requestTests);
             });
-
+            writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                renderResponseTests(operation, responseTests);
+                renderResponseTests(operationName, responseTests);
             });
             writer.closeBlock("end");
-
         });
     }
 
-    private void renderResponseTests(OperationShape operation, HttpResponseTestsTrait responseTests) {
+    private void renderResponseTests(String operationName, HttpResponseTestsTrait responseTests) {
         writer.openBlock("describe 'responses' do");
+        responseTests.getTestCases().forEach((testCase) -> {
+            writer
+                    // todo: support documentation
+                    .openBlock("it '$L' do", testCase.getId())
+                    .call(() -> renderResponseMiddleware(testCase))
+                    .write("middleware.remove_send.remove_build")
+                    .write("output = client.$L({}, middleware: middleware)", operationName)
+                    .write("expect(output.to_h).to eq($L)", getRubyHashFromParams(testCase.getParams()))
+                    .closeBlock("end");
+        });
         writer.closeBlock("end");
     }
 
-    private void renderRequestTests(OperationShape operation, HttpRequestTestsTrait requestTests) {
-        String operationName =
-                RubyFormatter.toSnakeCase(operation.getId().getName());
-
+    private void renderRequestTests(String operationName, HttpRequestTestsTrait requestTests) {
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
-            String responseBody = "{}";
-            writer.openBlock("\nit '$L' do", testCase.getId());
-            writer.write("stub_request(:$L, \"#{endpoint}$L\")", testCase.getMethod().toLowerCase(Locale.ROOT),
-                    testCase.getUri())
-                    .indent()
-                    // TODO: This is not protocol agnostic.
-                    // We need some way to skip any parsing and return from the stack.
-                    .write(".to_return(body: '$L')", responseBody)
-                    .dedent();
-            // TODO: convert the params
-            writer.write("client.$L($L)", operationName, "id: '1'");
-
-            writer.closeBlock("end");
+            writer
+                    // todo: support documentation
+                    .openBlock("it '$L' do", testCase.getId())
+                    .call(() -> renderRequestMiddleware(testCase))
+                    .write("client.$L($L, middleware: middleware)", operationName,
+                            getRubyHashFromParams(testCase.getParams()))
+                    .closeBlock("end");
         });
         writer.closeBlock("end");
+    }
+
+    private String getRubyHashFromParams(ObjectNode params) {
+        // TODO - how?
+        return "{}";
+    }
+
+    private String getRubyHashFromMap(Map<String, String> map) {
+        Iterator iterator = map.entrySet().iterator();
+        StringBuffer buffer = new StringBuffer("{ ");
+        while (iterator.hasNext()) {
+            Map.Entry header = (Map.Entry) iterator.next();
+            buffer.append("'");
+            buffer.append(header.getKey());
+            buffer.append("' => '");
+            buffer.append(header.getValue());
+            buffer.append("'");
+            if (iterator.hasNext()) {
+                buffer.append(", ");
+            }
+        }
+        buffer.append(" }");
+        return buffer.toString();
+    }
+
+    private String getRubyArrayFromList(List<String> list) {
+        Iterator iterator = list.iterator();
+        StringBuffer buffer = new StringBuffer("[");
+        while (iterator.hasNext()) {
+            String element = (String) iterator.next();
+            buffer.append("'");
+            buffer.append(element);
+            buffer.append("'");
+            if (iterator.hasNext()) {
+                buffer.append(", ");
+            }
+        }
+        buffer.append("]");
+        return buffer.toString();
+    }
+
+    private void renderResponseMiddleware(HttpResponseTestCase testCase) {
+        writer
+                .openBlock("middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|")
+                .write("response = context.response")
+                .write("response.status = $L", testCase.getCode())
+                .call(() -> renderResponseMiddlewareHeaders(testCase.getHeaders()))
+                .call(() -> renderResponseMiddlewareBody(testCase.getBody()))
+                .write("Seahorse::Output.new")
+                .closeBlock("end");
+    }
+
+    private void renderResponseMiddlewareBody(Optional<String> body) {
+        if (body.isPresent()) {
+            writer.write("response.body = StringIO.new('$L')", body.get());
+        }
+    }
+
+
+    private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
+        if (!headers.isEmpty()) {
+            writer.write("response.headers = Seahorse::Headers.new($L)", getRubyHashFromMap(headers));
+        }
+    }
+
+    private void renderRequestMiddleware(HttpRequestTestCase testCase) {
+        writer
+                .openBlock("middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|")
+                .write("request = context.request")
+                .write("request_uri = URI.parse(request.url)")
+                .write("expect(request.http_method).to eq('$L')", testCase.getMethod())
+                .write("expect(request_uri.path).to eq('$L')", testCase.getUri())
+                .call(() -> renderRequestMiddlewareQueryParams(testCase.getQueryParams()))
+                .call(() -> renderRequestMiddlewareForbidQueryParams(testCase.getForbidQueryParams()))
+                .call(() -> renderRequestMiddlewareRequireQueryParams(testCase.getRequireQueryParams()))
+                .call(() -> renderRequestMiddlewareHeaders(testCase.getHeaders()))
+                .call(() -> renderRequestMiddlewareForbiddenHeaders(testCase.getForbidHeaders()))
+                .call(() -> renderRequestMiddlewareRequiredHeaders(testCase.getRequireHeaders()))
+                .call(() -> renderRequestMiddlewareBody(testCase.getBody()))
+                .write("Seahorse::Output.new")
+                .closeBlock("end");
+    }
+
+    private void renderRequestMiddlewareBody(Optional<String> body) {
+        if (body.isPresent()) {
+            writer.write("expect(request.body).to eq('$L')", body.get());
+        }
+    }
+
+    private void renderRequestMiddlewareHeaders(Map<String, String> headers) {
+        if (!headers.isEmpty()) {
+            writer.write("expect(request.headers).to include($L)", getRubyHashFromMap(headers));
+        }
+    }
+
+    private void renderRequestMiddlewareForbiddenHeaders(List<String> forbiddenHeaders) {
+        if (!forbiddenHeaders.isEmpty()) {
+            writer.write("expect(request_uri.headers.keys).to_not include(*$L)",
+                    getRubyArrayFromList(forbiddenHeaders));
+        }
+    }
+
+    private void renderRequestMiddlewareRequiredHeaders(List<String> requiredHeaders) {
+        if (!requiredHeaders.isEmpty()) {
+            writer.write("expect(request_uri.headers.keys).to include(*$L)", getRubyArrayFromList(requiredHeaders));
+        }
+    }
+
+    private void renderRequestMiddlewareQueryParams(List<String> queryParams) {
+        if (!queryParams.isEmpty()) {
+            writer
+                    .write("expected_query = CGI.parse($L.join('&'))", getRubyArrayFromList(queryParams))
+                    .write("actual_query = CGI.parse(request_uri.query)")
+                    .openBlock("expected_query.each do |k, v|")
+                    .write("expect(v).to eq(actual_query[k])")
+                    .closeBlock("end");
+        }
+    }
+
+    private void renderRequestMiddlewareForbidQueryParams(List<String> forbidQueryParams) {
+        if (!forbidQueryParams.isEmpty()) {
+            writer
+                    .write("forbid_query = $L", getRubyArrayFromList(forbidQueryParams))
+                    .write("actual_query = CGI.parse(request_uri.query)")
+                    .openBlock("forbid_query.each do |query|")
+                    .write("expect(actual_query.key?(query)).to be false")
+                    .closeBlock("end");
+        }
+    }
+
+    private void renderRequestMiddlewareRequireQueryParams(List<String> requireQueryParams) {
+        if (!requireQueryParams.isEmpty()) {
+            writer
+                    .write("require_query = $L", getRubyArrayFromList(requireQueryParams))
+                    .write("actual_query = CGI.parse(request_uri.query)")
+                    .openBlock("require_query.each do |query|")
+                    .write("expect(actual_query.key?(query)).to be true")
+                    .closeBlock("end");
+        }
     }
 }
