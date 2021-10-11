@@ -17,7 +17,7 @@ module SampleService
       :created_at,
       :updated_at,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     HighScoreParams = Struct.new(
       :game,
@@ -30,65 +30,65 @@ module SampleService
       :complex_set,
       :event_stream,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     StructuredEvent = Struct.new(
       :message,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     CreateHighScoreInput = Struct.new(
       :high_score,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     CreateHighScoreOutput = Struct.new(
       :high_score,
       :location,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     DeleteHighScoreInput = Struct.new(
       :id,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     DeleteHighScoreOutput = Struct.new(
       nil,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     GetHighScoreInput = Struct.new(
       :id,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     GetHighScoreOutput = Struct.new(
       :high_score,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     ListHighScoresInput = Struct.new(
       :max_results,
       :next_token,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     ListHighScoresOutput = Struct.new(
       :next_token,
       :high_scores,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     UpdateHighScoreInput = Struct.new(
       :id,
       :high_score,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
 
     UpdateHighScoreOutput = Struct.new(
       :high_score,
       keyword_init: true
-    )
+    ) { include Seahorse::Structure }
   end
 end

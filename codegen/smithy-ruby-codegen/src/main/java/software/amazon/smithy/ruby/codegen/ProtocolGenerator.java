@@ -30,6 +30,4 @@ public interface ProtocolGenerator {
     void generateErrors(GenerationContext context);
 
     void generateStubs(GenerationContext context);
-
-    void generateProtocolUnitTests(GenerationContext context);
 }

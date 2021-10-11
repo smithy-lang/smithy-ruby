@@ -131,7 +131,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock(shapeName + " = Struct.new(")
                 .write(membersBlock)
                 .write("keyword_init: true")
-                .closeBlock(")");
+                .closeBlock(") { include Seahorse::Structure }");
 
         String initTypes = shape.members().stream()
                 .map(m -> "?" + symbolProvider.toMemberName(m)

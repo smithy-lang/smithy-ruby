@@ -59,9 +59,4 @@ public class RailsJsonGenerator implements ProtocolGenerator {
         stubsGenerator.render(context.getFileManifest());
         LOGGER.info("created stubs");
     }
-
-    @Override
-    public void generateProtocolUnitTests(GenerationContext context) {
-        LOGGER.info("Implement me!");
-    }
 }

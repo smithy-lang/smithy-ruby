@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
+import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
@@ -103,7 +104,7 @@ public class CodegenOrchestrator {
                                             + " registered protocolGenerator "
                                             + "for: "
                                             + s.getName() + " -> "
-                                            + s.toString()))
+                                            + s))
                             .collect(Collectors.toSet())
             );
         }
@@ -170,6 +171,7 @@ public class CodegenOrchestrator {
         generateTypes();
         generateParams();
         generateValidators();
+        generateProtocolTests();
 
         if (context.getProtocolGenerator().isPresent()) {
             ProtocolGenerator protocolGenerator =
@@ -179,7 +181,6 @@ public class CodegenOrchestrator {
             protocolGenerator.generateParsers(context);
             protocolGenerator.generateErrors(context);
             protocolGenerator.generateStubs(context);
-            protocolGenerator.generateProtocolUnitTests(context);
         }
 
         generateClient();
@@ -205,6 +206,14 @@ public class CodegenOrchestrator {
                 new ValidatorsGenerator(context);
         validatorsGenerator.render();
         LOGGER.info("created validators");
+    }
+
+    private void generateProtocolTests() {
+        if (context.getApplicationTransport().isHttpTransport()) {
+            HttpProtocolTestGenerator testGenerator =
+                    new HttpProtocolTestGenerator(context);
+            testGenerator.render();
+        }
     }
 
     private void generateClient() {

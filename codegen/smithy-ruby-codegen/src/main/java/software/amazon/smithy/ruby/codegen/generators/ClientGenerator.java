@@ -191,7 +191,7 @@ public class ClientGenerator {
                 .write("input = Params::$LInput.build(params)", operation.getId().getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
-                .write("@middleware.apply(stack)")
+                .write("apply_middleware(stack, options[:middleware])\n")
                 .openBlock("resp = stack.run(")
                 .write("input: input,")
                 .openBlock("context: Seahorse::Context.new(")
