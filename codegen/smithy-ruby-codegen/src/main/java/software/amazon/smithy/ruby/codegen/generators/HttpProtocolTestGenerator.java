@@ -68,7 +68,7 @@ public class HttpProtocolTestGenerator {
                 // TODO: Ability to inject additional required config, eg credentials
                 .write("let(:endpoint) { 'http://127.0.0.1' } ")
                 .write("let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }")
-                .write("\n")
+                .write("")
                 .call(() -> renderTests())
                 .closeBlock("end")
                 .closeBlock("end");
@@ -100,7 +100,7 @@ public class HttpProtocolTestGenerator {
         writer.openBlock("describe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
             writer
-                    // todo: support documentation
+                    .call(() -> renderTestDocumentation(testCase.getDocumentation()))
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
@@ -115,7 +115,7 @@ public class HttpProtocolTestGenerator {
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             writer
-                    // todo: support documentation
+                    .call(() -> renderTestDocumentation(testCase.getDocumentation()))
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))
                     .write("client.$L($L, middleware: middleware)", operationName,
@@ -123,6 +123,14 @@ public class HttpProtocolTestGenerator {
                     .closeBlock("end");
         });
         writer.closeBlock("end");
+    }
+
+    private void renderTestDocumentation(Optional<String> documentation) {
+        if (documentation.isPresent()) {
+            writer.rdoc(() -> {
+                writer.write(documentation.get());
+            });
+        }
     }
 
     private String getRubyHashFromParams(ObjectNode params) {
