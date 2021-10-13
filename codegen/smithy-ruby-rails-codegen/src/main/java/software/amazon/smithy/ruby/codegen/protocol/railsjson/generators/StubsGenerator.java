@@ -125,7 +125,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
         generatedStubs.add(operation.toShapeId());
 
-        for (Iterator<Shape> it = new Walker(model).iterateShapes(outputShape); it.hasNext(); ) {
+        Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
+        while (it.hasNext()) {
             Shape s = it.next();
             if (!generatedStubs.contains(s.getId())) {
                 generatedStubs.add(s.getId());
@@ -144,8 +145,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch(
-                (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) &&
-                        !m.hasTrait((HttpHeaderTrait.class)));
+                (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
+                        && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
                     .write("")
@@ -226,7 +227,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", shape.getId().getName())
                 .openBlock("\ndef self.default")
                 .openBlock("{")
-                .call(() -> valueTarget.accept(new MemberDefaults(writer, "test_key: ", "", valueTarget.getId().getName())))
+                .call(() -> valueTarget
+                        .accept(new MemberDefaults(writer, "test_key: ", "", valueTarget.getId().getName())))
                 .closeBlock("}")
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
@@ -273,7 +275,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderMemberStubbers(Shape s) {
-        Optional<MemberShape> payload = s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
+        Optional<MemberShape> payload =
+                s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
 
         if (payload.isPresent()) {
             MemberShape member = payload.get();
@@ -286,8 +289,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         } else {
             //remove members w/ http traits or marked NoSerialize
             Stream<MemberShape> serializeMembers = s.members().stream()
-                    .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class) &&
-                            !m.hasTrait((HttpHeaderTrait.class)));
+                    .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
+                            && !m.hasTrait((HttpHeaderTrait.class)));
             serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
             writer.write("data = {}");
@@ -328,7 +331,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         private final String inputGetter;
         private final String dataSetter;
 
-        public MemberSerializer(RubyCodeWriter writer, String dataSetter, String inputGetter) {
+        MemberSerializer(RubyCodeWriter writer, String dataSetter, String inputGetter) {
             this.writer = writer;
             this.inputGetter = inputGetter;
             this.dataSetter = dataSetter;
@@ -352,7 +355,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         }
 
         /**
-         * For complex shapes, simply delegate to their Stubber
+         * For complex shapes, simply delegate to their Stubber.
          */
         private void defaultComplexSerializer(Shape shape) {
             writer.write("$LStubs::$L.stub($L)$L", dataSetter, shape.getId().getName(), inputGetter,
@@ -397,7 +400,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         private final String dataSetter;
         private final String memberName;
 
-        public MemberDefaults(RubyCodeWriter writer, String dataSetter, String eol, String memberName) {
+        MemberDefaults(RubyCodeWriter writer, String dataSetter, String eol, String memberName) {
             this.writer = writer;
             this.eol = eol;
             this.dataSetter = dataSetter;
@@ -425,17 +428,20 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void shortShape(ShortShape shape) {
             writer.write("$L1$L", dataSetter, eol);
-            return null;        }
+            return null;
+        }
 
         @Override
         public Void integerShape(IntegerShape shape) {
             writer.write("$L1$L", dataSetter, eol);
-            return null;        }
+            return null;
+        }
 
         @Override
         public Void longShape(LongShape shape) {
             writer.write("$L1$L", dataSetter, eol);
-            return null;        }
+            return null;
+        }
 
         @Override
         public Void floatShape(FloatShape shape) {
@@ -474,7 +480,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         }
 
         /**
-         * For complex shapes, simply delegate to their Stubber
+         * For complex shapes, simply delegate to their Stubber.
          */
         private void complexShapeDefaults(Shape shape) {
             writer.write("$LStubs::$L.default$L", dataSetter, shape.getId().getName(), eol);

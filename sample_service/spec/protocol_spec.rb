@@ -14,7 +14,6 @@ module SampleService
     let(:endpoint) { 'http://127.0.0.1' }
     let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
 
-
     describe '#create_high_score' do
 
     end
