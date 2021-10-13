@@ -22,7 +22,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.utils.CodeWriter;
 
 public class ErrorsGenerator {
 
