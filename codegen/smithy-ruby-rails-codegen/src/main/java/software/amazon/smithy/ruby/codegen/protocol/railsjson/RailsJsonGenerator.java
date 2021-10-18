@@ -16,16 +16,13 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson;
 
 import java.util.logging.Logger;
-import java.util.stream.Stream;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
-import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.BuilderGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ParserGenerator;
+import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.BuilderGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.StubsGenerator;
 
 // Protocol Implementation for Rails-Json
@@ -58,8 +55,7 @@ public class RailsJsonGenerator implements ProtocolGenerator {
 
     @Override
     public void generateErrors(GenerationContext context) {
-        Stream<Shape> errorShapeStream = context.getModel().shapes().filter((s) -> s.hasTrait(ErrorTrait.class));
-        ErrorsGenerator errorsGenerator = new ErrorsGenerator(context.getRubySettings(), errorShapeStream);
+        ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
         errorsGenerator.render(context.getFileManifest());
         LOGGER.info("created errors");
     }

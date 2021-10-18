@@ -18,30 +18,34 @@ package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 import java.util.Comparator;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
 public class ErrorsGenerator {
 
+    private final GenerationContext context;
     private final RubySettings settings;
-    private final Stream<Shape> shapes;
+    private final Model model;
+    private final RubyCodeWriter writer;
 
-    public ErrorsGenerator(RubySettings settings, Stream<Shape> shapes) {
-        this.settings = settings;
-        this.shapes = shapes;
+    public ErrorsGenerator(GenerationContext context) {
+        this.settings = context.getRubySettings();
+        this.model = context.getModel();
+        this.context = context;
+        this.writer = new RubyCodeWriter();
     }
 
     public void render(FileManifest fileManifest) {
-        RubyCodeWriter writer = new RubyCodeWriter();
-
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
-                .call(() -> renderErrorCode(writer))
-                .call(() -> renderBaseErrors(writer))
-                .call(() -> renderServiceModelErrors(writer))
+                .call(() -> renderErrorCode())
+                .call(() -> renderBaseErrors())
+                .call(() -> renderServiceModelErrors())
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -49,8 +53,7 @@ public class ErrorsGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
-    private void renderBaseErrors(RubyCodeWriter writer) {
-
+    private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
                 .write("class ApiError < Seahorse::HTTP::ApiError; end");
@@ -76,31 +79,31 @@ public class ErrorsGenerator {
                 .write("# @return [String] location")
                 .write("attr_reader :location")
                 .closeBlock("end\n");
-
-
     }
 
-    private void renderErrorCode(RubyCodeWriter writer) {
+    private void renderErrorCode() {
         writer
                 .write("# Given an http_resp, return the error code")
                 .openBlock("def self.error_code(http_resp)")
-                .write("http_resp.headers['x-smithy-error']") // TODO: Generate based on the Service Definition trait
+                .write("http_resp.headers['x-smithy-error']")
                 .closeBlock("end");
     }
 
 
-    private void renderServiceModelErrors(RubyCodeWriter writer) {
+    private void renderServiceModelErrors() {
+        Stream<Shape> shapes = model.shapes().filter((s) -> s.hasTrait(ErrorTrait.class));
+
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(error -> {
             String errorName = error.getId().getName();
             // assumes shapes are all filtered by error traits already
             ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
             String apiErrorType = getApiErrorType(errorTrait);
 
-            renderServiceModelError(writer, errorName, apiErrorType);
+            renderServiceModelError(errorName, apiErrorType);
         });
     }
 
-    private void renderServiceModelError(RubyCodeWriter writer, String errorName, String apiErrorType) {
+    private void renderServiceModelError(String errorName, String apiErrorType) {
         writer
                 .openBlock("class $L < $L", errorName, apiErrorType)
                 .openBlock("def initialize(http_resp:, **kwargs)")

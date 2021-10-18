@@ -57,7 +57,6 @@ public class HttpProtocolTestGenerator {
     }
 
     public void render() {
-        //TODO: Skip writing of file if no tests defined
         //TODO: Support filtering of tests through config
         FileManifest fileManifest = context.getFileManifest();
 
@@ -187,7 +186,6 @@ public class HttpProtocolTestGenerator {
             writer.write("response.body = StringIO.new('$L')", body.get());
         }
     }
-
 
     private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
