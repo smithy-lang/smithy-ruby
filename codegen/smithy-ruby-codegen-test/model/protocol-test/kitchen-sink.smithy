@@ -12,7 +12,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_rails_json_serializes_string_shapes",
         protocol: RailsJson,
         documentation: "Serializes string shapes",
-        body: "{\"String\":\"abc xyz\"}",
+        body: "{\"string\":\"abc xyz\"}",
         headers: {"Content-Type": "application/json"},
         bodyMediaType: "application/json",
         requireHeaders: [
@@ -28,7 +28,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_string_shapes_with_jsonvalue_trait",
         protocol: RailsJson,
         documentation: "Serializes string shapes with jsonvalue trait",
-        body: "{\"JsonValue\":\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":1234.5,\\\"boolTrue\\\":true,\\\"boolFalse\\\":false,\\\"array\\\":[1,2,3,4],\\\"object\\\":{\\\"key\\\":\\\"value\\\"},\\\"null\\\":null}\"}",
+        body: "{\"json_value\":\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":1234.5,\\\"boolTrue\\\":true,\\\"boolFalse\\\":false,\\\"array\\\":[1,2,3,4],\\\"object\\\":{\\\"key\\\":\\\"value\\\"},\\\"null\\\":null}\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -44,7 +44,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_integer_shapes",
         protocol: RailsJson,
         documentation: "Serializes integer shapes",
-        body: "{\"Integer\":1234}",
+        body: "{\"integer\":1234}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -60,7 +60,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_long_shapes",
         protocol: RailsJson,
         documentation: "Serializes long shapes",
-        body: "{\"Long\":999999999999}",
+        body: "{\"long\":999999999999}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -76,7 +76,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_float_shapes",
         protocol: RailsJson,
         documentation: "Serializes float shapes",
-        body: "{\"Float\":1234.5}",
+        body: "{\"float\":1234.5}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -92,7 +92,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_double_shapes",
         protocol: RailsJson,
         documentation: "Serializes double shapes",
-        body: "{\"Double\":1234.5}",
+        body: "{\"double\":1234.5}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -108,7 +108,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_blob_shapes",
         protocol: RailsJson,
         documentation: "Serializes blob shapes",
-        body: "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
+        body: "{\"blob\":\"YmluYXJ5LXZhbHVl\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -124,7 +124,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_boolean_shapes_true",
         protocol: RailsJson,
         documentation: "Serializes boolean shapes (true)",
-        body: "{\"Boolean\":true}",
+        body: "{\"boolean\":true}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -140,7 +140,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_boolean_shapes_false",
         protocol: RailsJson,
         documentation: "Serializes boolean shapes (false)",
-        body: "{\"Boolean\":false}",
+        body: "{\"boolean\":false}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -156,7 +156,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_timestamp_shapes",
         protocol: RailsJson,
         documentation: "Serializes timestamp shapes",
-        body: "{\"Timestamp\":946845296}",
+        body: "{\"timestamp\":946845296}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -172,7 +172,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat",
         protocol: RailsJson,
         documentation: "Serializes timestamp shapes with iso8601 timestampFormat",
-        body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56Z\"}",
+        body: "{\"iso8601_timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -188,7 +188,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_timestamp_shapes_with_httpdate_timestampformat",
         protocol: RailsJson,
         documentation: "Serializes timestamp shapes with httpdate timestampFormat",
-        body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}",
+        body: "{\"httpdate_timestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -204,7 +204,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_timestamp_shapes_with_unixtimestamp_timestampformat",
         protocol: RailsJson,
         documentation: "Serializes timestamp shapes with unixTimestamp timestampFormat",
-        body: "{\"UnixTimestamp\":946845296}",
+        body: "{\"unix_timestamp\":946845296}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -220,7 +220,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_list_shapes",
         protocol: RailsJson,
         documentation: "Serializes list shapes",
-        body: "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}",
+        body: "{\"list_of_strings\":[\"abc\",\"mno\",\"xyz\"]}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -240,7 +240,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_empty_list_shapes",
         protocol: RailsJson,
         documentation: "Serializes empty list shapes",
-        body: "{\"ListOfStrings\":[]}",
+        body: "{\"list_of_strings\":[]}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -256,7 +256,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_list_of_map_shapes",
         protocol: RailsJson,
         documentation: "Serializes list of map shapes",
-        body: "{\"ListOfMapsOfStrings\":[{\"foo\":\"bar\"},{\"abc\":\"xyz\"},{\"red\":\"blue\"}]}",
+        body: "{\"list_of_maps_of_strings\":[{\"foo\":\"bar\"},{\"abc\":\"xyz\"},{\"red\":\"blue\"}]}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -282,7 +282,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_list_of_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes list of structure shapes",
-        body: "{\"ListOfStructs\":[{\"Value\":\"abc\"},{\"Value\":\"mno\"},{\"Value\":\"xyz\"}]}",
+        body: "{\"list_of_structs\":[{\"value\":\"abc\"},{\"value\":\"mno\"},{\"value\":\"xyz\"}]}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -308,7 +308,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_list_of_recursive_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes list of recursive structure shapes",
-        body: "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"Integer\":123}]}]}]}",
+        body: "{\"recursive_list\":[{\"recursive_list\":[{\"recursive_list\":[{\"integer\":123}]}]}]}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -336,7 +336,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_map_shapes",
         protocol: RailsJson,
         documentation: "Serializes map shapes",
-        body: "{\"MapOfStrings\":{\"abc\":\"xyz\",\"mno\":\"hjk\"}}",
+        body: "{\"map_of_strings\":{\"abc\":\"xyz\",\"mno\":\"hjk\"}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -355,7 +355,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_empty_map_shapes",
         protocol: RailsJson,
         documentation: "Serializes empty map shapes",
-        body: "{\"MapOfStrings\":{}}",
+        body: "{\"map_of_strings\":{}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -371,7 +371,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_map_of_list_shapes",
         protocol: RailsJson,
         documentation: "Serializes map of list shapes",
-        body: "{\"MapOfListsOfStrings\":{\"abc\":[\"abc\",\"xyz\"],\"mno\":[\"xyz\",\"abc\"]}}",
+        body: "{\"map_of_lists_of_strings\":{\"abc\":[\"abc\",\"xyz\"],\"mno\":[\"xyz\",\"abc\"]}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -396,7 +396,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_map_of_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes map of structure shapes",
-        body: "{\"MapOfStructs\":{\"key1\":{\"Value\":\"value-1\"},\"key2\":{\"Value\":\"value-2\"}}}",
+        body: "{\"map_of_structs\":{\"key1\":{\"value\":\"value-1\"},\"key2\":{\"value\":\"value-2\"}}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -419,7 +419,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_map_of_recursive_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes map of recursive structure shapes",
-        body: "{\"RecursiveMap\":{\"key1\":{\"RecursiveMap\":{\"key2\":{\"RecursiveMap\":{\"key3\":{\"Boolean\":false}}}}}}}",
+        body: "{\"recursive_map\":{\"key1\":{\"recursive_map\":{\"key2\":{\"recursive_map\":{\"key3\":{\"boolean\":false}}}}}}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -447,7 +447,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes structure shapes",
-        body: "{\"SimpleStruct\":{\"Value\":\"abc\"}}",
+        body: "{\"simple_struct\":{\"value\":\"abc\"}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -465,7 +465,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_structure_members_with_locationname_traits",
         protocol: RailsJson,
         documentation: "Serializes structure members with locationName traits",
-        body: "{\"StructWithLocationName\":{\"RenamedMember\":\"some-value\"}}",
+        body: "{\"struct_with_location_name\":{\"RenamedMember\":\"some-value\"}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -483,7 +483,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_empty_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes empty structure shapes",
-        body: "{\"SimpleStruct\":{}}",
+        body: "{\"simple_struct\":{}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -499,7 +499,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_structure_which_have_no_members",
         protocol: RailsJson,
         documentation: "Serializes structure which have no members",
-        body: "{\"EmptyStruct\":{}}",
+        body: "{\"empty_struct\":{}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -515,7 +515,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_recursive_structure_shapes",
         protocol: RailsJson,
         documentation: "Serializes recursive structure shapes",
-        body: "{\"String\":\"top-value\",\"Boolean\":false,\"RecursiveStruct\":{\"String\":\"nested-value\",\"Boolean\":true,\"RecursiveList\":[{\"String\":\"string-only\"},{\"RecursiveStruct\":{\"MapOfStrings\":{\"color\":\"red\",\"size\":\"large\"}}}]}}",
+        body: "{\"string\":\"top-value\",\"boolean\":false,\"recursive_struct\":{\"string\":\"nested-value\",\"boolean\":true,\"recursive_list\":[{\"string\":\"string-only\"},{\"recursive_struct\":{\"map_of_strings\":{\"color\":\"red\",\"size\":\"large\"}}}]}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -560,7 +560,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_parses_string_shapes",
         protocol: RailsJson,
         documentation: "Parses string shapes",
-        body: "{\"String\":\"string-value\"}",
+        body: "{\"string\":\"string-value\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
