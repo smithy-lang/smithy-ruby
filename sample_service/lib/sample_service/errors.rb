@@ -36,6 +36,28 @@ module SampleService
       attr_reader :location
     end
 
+    class ErrorWithMembers < ApiClientError
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::ErrorWithMembers.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      attr_reader :data
+    end
+
+    class ErrorWithoutMembers < ApiServerError
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::ErrorWithoutMembers.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      attr_reader :data
+    end
+
     class UnprocessableEntityError < ApiClientError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)

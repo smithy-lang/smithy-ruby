@@ -7,7 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require_relative './spec_helper'
+require 'sample_service'
 
 module SampleService
   describe Client do

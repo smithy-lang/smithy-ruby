@@ -61,7 +61,7 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
-                .write("require_relative './spec_helper'\n") // TODO: Add to test dependencies?
+                .write("require '$L'\n", settings.getGemName())
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
@@ -214,7 +214,7 @@ public class HttpProtocolTestGenerator {
     private void renderRequestMiddlewareBody(Optional<String> body) {
         // TODO: check the testcases bodyMediaType and use appropriate equality tests.
         if (body.isPresent()) {
-            writer.write("expect(request.body).to eq('$L')", body.get());
+            writer.write("expect(request.body.read).to eq('$L')", body.get());
         }
     }
 

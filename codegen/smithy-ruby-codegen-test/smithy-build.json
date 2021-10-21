@@ -1,13 +1,42 @@
 {
   "version": "1.0",
-  "plugins": {
-    "ruby-codegen": {
-      "service": "example.rails#SampleService",
-      "module": "SampleService",
-      "gemspec": {
-        "gemName": "sample_service",
-        "gemVersion": "0.0.1",
-        "gemSummary": "Sample Rails Service"
+  "projections": {
+    "sample-service": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["example.rails#SampleService"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "example.rails#SampleService",
+          "module": "SampleService",
+          "gemspec": {
+            "gemName": "sample_service",
+            "gemVersion": "0.0.1",
+            "gemSummary": "Sample Rails Service"
+          }
+        }
+      }
+    },
+    "restjson-protocol": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["protocoltests.RailsJson#RailsJsonProtocol"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "protocoltests.RailsJson#RailsJsonProtocol",
+          "module": "RailsJsonProtocol",
+          "gemspec": {
+            "gemName": "rails_json_protocol",
+            "gemVersion": "0.0.1",
+            "gemSummary": "Rails Json Protocol test service"
+          }
+        }
       }
     }
   }
