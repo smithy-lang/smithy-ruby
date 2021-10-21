@@ -126,5 +126,5 @@ jobs:
         working-directory: ./rails_json_protocol
 
       - name: Tests
-        run: bundle exec rspec -I seahorse/lib
+        run: bundle exec rspec -I ../seahorse/lib
         working-directory: ./rails_json_protocol
