@@ -808,7 +808,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_parses_map_of_list_shapes",
         protocol: RailsJson,
         documentation: "Parses map of list shapes",
-        body: "{\"map_ofLists_if_strings\":{\"sizes\":[\"large\",\"small\"],\"colors\":[\"red\",\"green\"]}}",
+        body: "{\"map_of_lists_of_strings\":{\"sizes\":[\"large\",\"small\"],\"colors\":[\"red\",\"green\"]}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {

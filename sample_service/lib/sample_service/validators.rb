@@ -24,7 +24,7 @@ module SampleService
         Seahorse::Validator.validate!(input, Hash, context: context)
         input.each do |key, value|
           Seahorse::Validator.validate!(key, String, Symbol, context: "#{context}.keys")
-          HighScoreAttributes.validate!(value, context: "#{context}[#{index}]") if value
+          HighScoreAttributes.validate!(value, context: "#{context}[#{key}]") if value
         end
       end
     end
@@ -138,7 +138,7 @@ module SampleService
         Seahorse::Validator.validate!(input, Hash, context: context)
         input.each do |key, value|
           Seahorse::Validator.validate!(key, String, Symbol, context: "#{context}.keys")
-          Seahorse::Validator.validate!(value, Integer, context: "#{context}[#{index}]")
+          Seahorse::Validator.validate!(value, Integer, context: "#{context}[#{key}]")
         end
       end
     end
