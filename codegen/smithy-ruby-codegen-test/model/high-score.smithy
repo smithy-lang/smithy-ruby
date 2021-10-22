@@ -96,7 +96,7 @@ set ComplexSet {
 @readonly
 @httpRequestTests([
     {
-        id: "serializes_http_label",
+        id: "sample_service_serializes_http_label",
         protocol: RailsJson,
         documentation: "Serializes http labels",
         bodyMediaType: "application/json",
@@ -112,7 +112,7 @@ set ComplexSet {
 ])
 @httpResponseTests([
       {
-        id: "parses_string_shapes",
+        id: "sample_service_parses_string_shapes",
         protocol: RailsJson,
         documentation: "Parses string shapes",
         body: "{\"id\":\"string-value\"}",

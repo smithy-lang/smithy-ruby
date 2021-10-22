@@ -16,9 +16,10 @@ service RailsJsonProtocol {
         KitchenSinkOperation,
         EndpointOperation,
         EndpointWithHostLabelOperation,
+        EmptyOperation,
+        JsonEnums
 
         // TODO:
-        // EmptyOperation,
         // GreetingWithErrors
         // JsonUnions
         // JsonEnums

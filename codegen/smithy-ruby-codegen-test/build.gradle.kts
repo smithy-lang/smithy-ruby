@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
+    implementation("software.amazon.smithy:smithy-aws-protocol-tests:[1.12.0, 1.13.0[")
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-rails-codegen"))
 }

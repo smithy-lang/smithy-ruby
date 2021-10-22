@@ -23,7 +23,7 @@ module SampleService
     describe '#get_high_score' do
       describe 'requests' do
         # Serializes http labels
-        it 'serializes_http_label' do
+        it 'sample_service_serializes_http_label' do
           middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
@@ -38,7 +38,7 @@ module SampleService
 
       describe 'responses' do
         # Parses string shapes
-        it 'parses_string_shapes' do
+        it 'sample_service_parses_string_shapes' do
           middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200

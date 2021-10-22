@@ -257,7 +257,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("\n# Set Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default(visited=[]")
+                .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", shape.getId().getName())
                 .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("[")
