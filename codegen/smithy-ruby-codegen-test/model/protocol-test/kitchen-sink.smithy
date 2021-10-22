@@ -850,7 +850,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_parses_map_of_structure_shapes",
         protocol: RailsJson,
         documentation: "Parses map of structure shapes",
-        body: "{\"map_of_structs\":{\"size\":{\"Value\":\"small\"},\"color\":{\"Value\":\"red\"}}}",
+        body: "{\"map_of_structs\":{\"size\":{\"value\":\"small\"},\"color\":{\"value\":\"red\"}}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
@@ -869,7 +869,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_parses_map_of_recursive_structure_shapes",
         protocol: RailsJson,
         documentation: "Parses map of recursive structure shapes",
-        body: "{\"recursive_map\":{\"key-1\":{\"recursive_map\":{\"key-2\":{\"recursive_map\":{\"key-3\":{\"String\":\"value\"}}}}}}}",
+        body: "{\"recursive_map\":{\"key-1\":{\"recursive_map\":{\"key-2\":{\"recursive_map\":{\"key-3\":{\"string\":\"value\"}}}}}}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {

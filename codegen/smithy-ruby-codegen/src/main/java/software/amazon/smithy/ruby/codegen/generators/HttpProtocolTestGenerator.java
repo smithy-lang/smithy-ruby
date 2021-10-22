@@ -27,8 +27,6 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeVisitor;
-import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -239,15 +237,26 @@ public class HttpProtocolTestGenerator {
                 .call(() -> renderRequestMiddlewareHeaders(testCase.getHeaders()))
                 .call(() -> renderRequestMiddlewareForbiddenHeaders(testCase.getForbidHeaders()))
                 .call(() -> renderRequestMiddlewareRequiredHeaders(testCase.getRequireHeaders()))
-                .call(() -> renderRequestMiddlewareBody(testCase.getBody()))
+                .call(() -> renderRequestMiddlewareBody(testCase.getBody(), testCase.getBodyMediaType()))
                 .write("Seahorse::Output.new")
                 .closeBlock("end");
     }
 
-    private void renderRequestMiddlewareBody(Optional<String> body) {
-        // TODO: check the testcases bodyMediaType and use appropriate equality tests.
+    private void renderRequestMiddlewareBody(Optional<String> body, Optional<String> bodyMediaType) {
+        // TODO: expand support for different body media types (eg xml).
         if (body.isPresent()) {
-            writer.write("expect(request.body.read).to eq('$L')", body.get());
+            if (bodyMediaType.isPresent()) {
+                switch (bodyMediaType.get()) {
+                    case "application/json":
+                        writer.write("expect(JSON.parse(request.body.read)).to eq(JSON.parse('$L'))", body.get());
+                        break;
+                    default:
+                        writer.write("expect(request.body.read).to eq('$L')", body.get());
+                        break;
+                }
+            } else {
+                writer.write("expect(request.body.read).to eq('$L')", body.get());
+            }
         }
     }
 

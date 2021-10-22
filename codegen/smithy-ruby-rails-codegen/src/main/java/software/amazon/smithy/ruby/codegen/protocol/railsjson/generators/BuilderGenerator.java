@@ -27,6 +27,7 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -42,6 +43,7 @@ import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -67,6 +69,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     public void render(FileManifest fileManifest) {
 
         writer
+                .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Builders")
                 .call(() -> renderBuilders())
@@ -310,9 +313,13 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
             String symbolName = RubyFormatter.asSymbol(member.getMemberName());
             String dataName = symbolName;
+            if (member.hasTrait(JsonNameTrait.class)) {
+                dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
+            }
             if (member.hasTrait("smithy.railsjson#NestedAttributes")) {
                 dataName = symbolName + "_attributes";
             }
+
             String dataSetter = "data[" + dataName + "] = ";
             String inputGetter = "input[" + symbolName + "]";
             target.accept(new MemberSerializer(writer, dataSetter, inputGetter));
@@ -343,6 +350,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$L$L$L", dataSetter, inputGetter, checkRequired(shape));
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer.write("$LBase64::encode64($L).strip$L", dataSetter, inputGetter, checkRequired(shape));
             return null;
         }
 

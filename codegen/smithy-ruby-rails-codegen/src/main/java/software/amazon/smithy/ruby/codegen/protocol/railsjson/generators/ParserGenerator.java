@@ -26,6 +26,7 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -62,6 +63,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     public void render(FileManifest fileManifest) {
         writer
+                .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Parsers")
                 .call(() -> renderParsers())
@@ -287,6 +289,12 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$L$L", dataSetter, jsonGetter);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer.write("$1LBase64::decode64($2L) if $2L", dataSetter, jsonGetter);
             return null;
         }
 
