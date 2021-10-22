@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -202,7 +204,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", s.getId().getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("json.map do |value|")
-                .call(() -> memberTarget.accept(new MemberDeserializer(writer, "", "value")))
+                .call(() -> memberTarget.accept(new MemberDeserializer(writer, s.getMember(), "", "value")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -219,7 +221,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", s.getId().getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("data = json.map do |value|")
-                .call(() -> memberTarget.accept(new MemberDeserializer(writer, "", "value")))
+                .call(() -> memberTarget.accept(new MemberDeserializer(writer, s.getMember(), "", "value")))
                 .closeBlock("end")
                 .write("Set.new(data)")
                 .closeBlock("end")
@@ -238,7 +240,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.parse(json)")
                 .write("data = {}")
                 .openBlock("json.map do |key, value|")
-                .call(() -> valueTarget.accept(new MemberDeserializer(writer, "data[key] = ", "value")))
+                .call(() -> valueTarget.accept(new MemberDeserializer(writer, s.getValue(), "data[key] = ", "value")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -266,7 +268,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
             String jsonGetter = "json['" + jsonName + "']";
             if (!target.hasTrait(HttpHeaderTrait.class)) {
-                target.accept(new MemberDeserializer(writer, dataSetter, jsonGetter));
+                target.accept(new MemberDeserializer(writer, member, dataSetter, jsonGetter));
             }
         }
     }
@@ -276,11 +278,13 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
         private final String jsonGetter;
         private final String dataSetter;
+        private final MemberShape memberShape;
 
-        MemberDeserializer(RubyCodeWriter writer, String dataSetter, String jsonGetter) {
+        MemberDeserializer(RubyCodeWriter writer, MemberShape memberShape, String dataSetter, String jsonGetter) {
             this.writer = writer;
             this.jsonGetter = jsonGetter;
             this.dataSetter = dataSetter;
+            this.memberShape = memberShape;
         }
 
         /**
@@ -300,7 +304,22 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+            // the default protocol format is date_time, which is parsed by Time.parse
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$1LTime.at($2L.to_i) if $2L", dataSetter, jsonGetter);
+                        break;
+                    case HTTP_DATE:
+                    case DATE_TIME:
+                    default:
+                        writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+                        break;
+                }
+            } else {
+                writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+            }
             return null;
         }
 

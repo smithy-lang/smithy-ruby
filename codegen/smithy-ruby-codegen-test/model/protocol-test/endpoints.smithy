@@ -17,7 +17,6 @@ use smithy.test#httpRequestTests
         protocol: RailsJson,
         method: "POST",
         uri: "/endpoint",
-        body: "{}",
         host: "example.com",
         resolvedHost: "foo.example.com",
     }

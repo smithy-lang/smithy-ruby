@@ -525,7 +525,10 @@ public class HttpProtocolTestGenerator {
             if (node.isNullNode()) {
                 return "";
             }
-            return node.toString();
+            if (node.isNumberNode()) {
+                return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
+            }
+            return "Time.parse('" + node.toString() + "')";
         }
     }
 }

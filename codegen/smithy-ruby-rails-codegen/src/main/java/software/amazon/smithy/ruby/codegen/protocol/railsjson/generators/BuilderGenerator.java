@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -243,7 +245,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(input)")
                 .write("data = []")
                 .openBlock("input.each do |element|")
-                .call(() -> memberTarget.accept(new MemberSerializer(writer, "data << ", "element")))
+                .call(() -> memberTarget.accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -263,7 +265,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(input)")
                 .write("data = {}")
                 .openBlock("input.each do |key, value|")
-                .call(() -> valueTarget.accept(new MemberSerializer(writer, "data[key] = ", "value")))
+                .call(() -> valueTarget.accept(new MemberSerializer(writer, shape.getValue(), "data[key] = ", "value")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -283,7 +285,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(input)")
                 .write("data = Set.new")
                 .openBlock("input.each do |element|")
-                .call(() -> memberTarget.accept(new MemberSerializer(writer, "data << ", "element")))
+                .call(() -> memberTarget.accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -322,7 +324,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
             String dataSetter = "data[" + dataName + "] = ";
             String inputGetter = "input[" + symbolName + "]";
-            target.accept(new MemberSerializer(writer, dataSetter, inputGetter));
+            target.accept(new MemberSerializer(writer, member, dataSetter, inputGetter));
         });
     }
 
@@ -336,11 +338,14 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
         private final String inputGetter;
         private final String dataSetter;
+        private final MemberShape memberShape;
 
-        MemberSerializer(RubyCodeWriter writer, String dataSetter, String inputGetter) {
+        MemberSerializer(RubyCodeWriter writer, MemberShape memberShape,
+                         String dataSetter, String inputGetter) {
             this.writer = writer;
             this.inputGetter = inputGetter;
             this.dataSetter = dataSetter;
+            this.memberShape = memberShape;
         }
 
         private String checkRequired(Shape shape) {
@@ -361,8 +366,28 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            //TODO: these may need to use different formats(
-            writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter, checkRequired(shape));
+            // the default protocol format is date_time
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
+                                checkRequired(shape));
+                        break;
+                    case HTTP_DATE:
+                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
+                                checkRequired(shape));
+                        break;
+                    case DATE_TIME:
+                    default:
+                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                                checkRequired(shape));
+                        break;
+                }
+            } else {
+                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                        checkRequired(shape));
+            }
             return null;
         }
 
