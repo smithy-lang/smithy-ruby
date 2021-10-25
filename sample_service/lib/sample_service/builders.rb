@@ -35,8 +35,8 @@ module SampleService
         data[:complex_list] = Builders::ComplexList.build(input[:complex_list]) unless input[:complex_list].nil?
         data[:simple_map] = Builders::SimpleMap.build(input[:simple_map]) unless input[:simple_map].nil?
         data[:complex_map] = Builders::ComplexMap.build(input[:complex_map]) unless input[:complex_map].nil?
-        data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]) unless input[:simple_set].nil?
-        data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]) unless input[:complex_set].nil?
+        data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]).to_a unless input[:simple_set].nil?
+        data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]).to_a unless input[:complex_set].nil?
         data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
         data
       end

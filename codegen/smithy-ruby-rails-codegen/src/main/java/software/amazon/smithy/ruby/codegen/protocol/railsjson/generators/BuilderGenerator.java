@@ -407,7 +407,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void setShape(SetShape shape) {
-            defaultComplexSerializer(shape);
+            writer.write("$LBuilders::$L.build($L).to_a$L", dataSetter, shape.getId().getName(), inputGetter,
+                    checkRequired(shape));
             return null;
         }
 
