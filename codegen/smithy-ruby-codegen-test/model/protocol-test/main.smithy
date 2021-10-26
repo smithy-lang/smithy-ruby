@@ -17,10 +17,10 @@ service RailsJsonProtocol {
         EndpointOperation,
         EndpointWithHostLabelOperation,
         EmptyOperation,
-        JsonEnums
+        JsonEnums,
+        GreetingWithErrors
 
         // TODO:
-        // GreetingWithErrors
         // JsonUnions
         // JsonEnums
         // NullOperation

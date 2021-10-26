@@ -16,6 +16,8 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
@@ -91,15 +93,22 @@ public class ErrorsGenerator {
 
 
     private void renderServiceModelErrors() {
+        // Error shapes returned from walking the model are operation#ErrorName
+        // we only want to generate 1 Error here per actual structure shape
+        Set<String> generatedErrors = new HashSet<>();
         Stream<Shape> shapes = model.shapes().filter((s) -> s.hasTrait(ErrorTrait.class));
 
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(error -> {
             String errorName = error.getId().getName();
-            // assumes shapes are all filtered by error traits already
-            ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
-            String apiErrorType = getApiErrorType(errorTrait);
+            System.out.println("Generating Error for: " + errorName + "\t" + error.getId());
+            if (!generatedErrors.contains(errorName)) {
+                generatedErrors.add(errorName);
+                // assumes shapes are all filtered by error traits already
+                ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
+                String apiErrorType = getApiErrorType(errorTrait);
 
-            renderServiceModelError(errorName, apiErrorType);
+                renderServiceModelError(errorName, apiErrorType);
+            }
         });
     }
 

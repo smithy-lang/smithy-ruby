@@ -35,11 +35,13 @@ module SampleService
       end
     end
 
+    # Error Parser for UnprocessableEntityError
     class UnprocessableEntityError
-      def self.parse(json)
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
         data = Types::UnprocessableEntityError.new
         data.errors = Parsers::AttributeErrors.parse(json['errors']) if json['errors']
-        return data
+        data
       end
     end
 

@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -104,11 +103,6 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void structureShape(StructureShape shape) {
-        if (shape.hasTrait(ErrorTrait.class)) {
-            System.out.println("Skipping " + shape.getId()
-                    + " because it is an error type.");
-            return null;
-        }
         Symbol symbol = symbolProvider.toSymbol(shape);
         System.out.println("Visit Structure Shape: " + shape.getId() + " Symbol: " + symbol);
         String shapeName = symbol.getName();

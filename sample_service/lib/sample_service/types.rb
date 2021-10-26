@@ -37,6 +37,11 @@ module SampleService
       keyword_init: true
     ) { include Seahorse::Structure }
 
+    UnprocessableEntityError = Struct.new(
+      :errors,
+      keyword_init: true
+    ) { include Seahorse::Structure }
+
     CreateHighScoreInput = Struct.new(
       :high_score,
       keyword_init: true

@@ -39,6 +39,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -53,6 +54,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
+    private final Set<String> generatedErrorParsers;
+
     private final RubyCodeWriter writer;
 
     public ParserGenerator(GenerationContext context) {
@@ -60,6 +63,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
+        this.generatedErrorParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
     }
 
@@ -102,8 +106,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.parse(http_resp)")
                 .write("json = Seahorse::JSON.load(http_resp.body)")
                 .write("data = Types::$L.new", outputShapeId.getName())
-                .call(() -> renderHeaderParsers(operation, outputShape))
-                .call(() -> renderOperationBodyParser(operation, outputShape))
+                .call(() -> renderHeaderParsers(outputShape))
+                .call(() -> renderOperationBodyParser(outputShape))
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -127,11 +131,23 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             Iterator<Shape> errIt = new Walker(model).iterateShapes(model.expectShape(errorShapeId));
             while (errIt.hasNext()) {
                 Shape s = errIt.next();
-                System.out.println("\t\tError shape: " + s);
                 if (!generatedParsers.contains(s.getId())) {
-                    System.out.println("\t\tGenerating for new error shape: " + s.getId());
                     generatedParsers.add(s.getId());
-                    s.accept(this);
+                    if (s.hasTrait(ErrorTrait.class)) {
+                        writer
+                                .write("\n# Error Parser for $L", s.getId().getName())
+                                .openBlock("class $L", s.getId().getName())
+                                .openBlock("def self.parse(http_resp)")
+                                .write("json = Seahorse::JSON.load(http_resp.body)")
+                                .write("data = Types::$L.new", s.getId().getName())
+                                .call(() -> renderHeaderParsers(s))
+                                .call(() -> renderOperationBodyParser(s))
+                                .write("data")
+                                .closeBlock("end")
+                                .closeBlock("end");
+                    } else {
+                        s.accept(this);
+                    }
                 } else {
                     System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
                 }
@@ -139,7 +155,24 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
-    private void renderHeaderParsers(OperationShape operation, Shape outputShape) {
+    private void renderErrorParser(Shape shape) {
+        System.out.println("\t\tGenerating for new error shape: " + shape.getId());
+        generatedErrorParsers.add(shape.getId().getName());
+
+        writer
+                .write("\n# Error Parser for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("def self.parse(http_resp)")
+                .write("json = Seahorse::JSON.load(http_resp.body)")
+                .write("data = Types::$L.new", shape.getId().getName())
+                .call(() -> renderHeaderParsers(shape))
+                .call(() -> renderOperationBodyParser(shape))
+                .write("data")
+                .closeBlock("end")
+                .closeBlock("end");
+    }
+
+    private void renderHeaderParsers(Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
@@ -156,7 +189,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     // The Output shape is combined with the Operation Parser
     // This generates the parsing of the body as if it was the Parser for the Out[put
-    private void renderOperationBodyParser(OperationShape operation, Shape outputShape) {
+    private void renderOperationBodyParser(Shape outputShape) {
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
                 .stream()
@@ -170,7 +203,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(payloadMember.getTarget());
             String dataName = RubyFormatter.toSnakeCase(payloadMember.getMemberName());
             writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, target.getId().getName());
-
         }
     }
 

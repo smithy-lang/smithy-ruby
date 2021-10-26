@@ -58,61 +58,6 @@ module SampleService
       attr_reader :data
     end
 
-    class ComplexError < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class ComplexError < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class ComplexError < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class ComplexError < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class ComplexError < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
     class CustomCodeError < ApiClientError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::CustomCodeError.parse(http_resp)
@@ -135,53 +80,9 @@ module SampleService
       attr_reader :data
     end
 
-    class ErrorWithMembers < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ErrorWithMembers.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
     class ErrorWithoutMembers < ApiServerError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ErrorWithoutMembers.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class ErrorWithoutMembers < ApiServerError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ErrorWithoutMembers.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class FooError < ApiServerError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::FooError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class FooError < ApiServerError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::FooError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
@@ -204,61 +105,6 @@ module SampleService
     class InternalServerException < ApiServerError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::InternalServerException.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class InvalidGreeting < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::InvalidGreeting.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class InvalidGreeting < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::InvalidGreeting.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class InvalidGreeting < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::InvalidGreeting.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class InvalidGreeting < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::InvalidGreeting.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class InvalidGreeting < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::InvalidGreeting.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
@@ -347,17 +193,6 @@ module SampleService
     class RequestTimeoutException < ApiClientError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::RequestTimeoutException.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      attr_reader :data
-    end
-
-    class ResourceNotFoundException < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ResourceNotFoundException.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)

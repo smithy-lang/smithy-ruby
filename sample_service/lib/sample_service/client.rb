@@ -72,7 +72,7 @@ module SampleService
       )
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
       stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 201, errors: [Errors::UnprocessableEntityError]),
         data_parser: Parsers::CreateHighScore
       )
       stack.use(Seahorse::Middleware::Send,
@@ -248,7 +248,7 @@ module SampleService
       )
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
       stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::UnprocessableEntityError]),
         data_parser: Parsers::UpdateHighScore
       )
       stack.use(Seahorse::Middleware::Send,

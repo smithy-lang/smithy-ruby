@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -114,6 +115,7 @@ public class HttpProtocolTestGenerator {
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
                 renderResponseTests(operationName, operation.getOutput(), responseTests);
             });
+            renderErrorTests(operation);
             writer.closeBlock("end");
         });
     }
@@ -153,6 +155,34 @@ public class HttpProtocolTestGenerator {
                     .closeBlock("end");
         });
         writer.closeBlock("end");
+    }
+
+    private void renderErrorTests(OperationShape operation) {
+        String operationName =
+                RubyFormatter.toSnakeCase(operation.getId().getName());
+
+        for (StructureShape error : OperationIndex.of(model).getErrors(operation)) {
+            error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
+                writer.openBlock("describe '$L Errors' do", error.getId().getName());
+                responseTests.getTestCases().forEach((testCase) -> {
+                    writer
+                            .call(() -> renderTestDocumentation(testCase.getDocumentation()))
+                            .openBlock("it '$L' do", testCase.getId())
+                            .call(() -> renderResponseMiddleware(testCase))
+                            .write("middleware.remove_send.remove_build")
+                            .openBlock("begin")
+                            .write("client.$L({}, middleware: middleware)", operationName)
+                            .dedent()
+                            .write("rescue Errors::$L => e", error.getId().getName())
+                            .indent()
+                            .write("expect(e.data.to_h).to eq($L)",
+                                    getRubyHashFromParams(error, testCase.getParams()))
+                            .closeBlock("end")
+                            .closeBlock("end");
+                });
+                writer.closeBlock("end");
+            });
+        }
     }
 
     private void renderTestDocumentation(Optional<String> documentation) {
@@ -528,7 +558,7 @@ public class HttpProtocolTestGenerator {
             if (node.isNumberNode()) {
                 return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
             }
-            return "Time.parse('" + node.toString() + "')";
+            return "Time.parse('" + node + "')";
         }
     }
 }
