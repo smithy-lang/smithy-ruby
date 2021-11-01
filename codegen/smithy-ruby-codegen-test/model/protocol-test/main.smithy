@@ -18,13 +18,13 @@ service RailsJsonProtocol {
         EndpointWithHostLabelOperation,
         EmptyOperation,
         JsonEnums,
-        GreetingWithErrors
+        GreetingWithErrors,
+        OperationWithOptionalInputOutput
 
         // TODO:
         // JsonUnions
         // JsonEnums
         // NullOperation
-        // OperationWithOptionalInputOutput
         // PutAndGetInlineDocuments
 
     ],
