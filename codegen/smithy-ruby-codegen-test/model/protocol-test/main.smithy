@@ -19,12 +19,12 @@ service RailsJsonProtocol {
         EmptyOperation,
         JsonEnums,
         GreetingWithErrors,
-        OperationWithOptionalInputOutput
+        OperationWithOptionalInputOutput,
+        NullOperation
 
         // TODO:
         // JsonUnions
         // JsonEnums
-        // NullOperation
         // PutAndGetInlineDocuments
 
     ],

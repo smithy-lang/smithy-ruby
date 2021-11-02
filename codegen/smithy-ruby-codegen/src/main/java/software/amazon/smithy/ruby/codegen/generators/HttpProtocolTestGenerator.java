@@ -356,7 +356,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String blobShape(BlobShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             StringNode stringNode = node.expectStringNode();
             return "'" + stringNode.getValue() + "'";
@@ -365,7 +365,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String booleanShape(BooleanShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             BooleanNode booleanNode = node.expectBooleanNode();
             return booleanNode.getValue() ? "true" : "false";
@@ -374,7 +374,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String listShape(ListShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             ArrayNode arrayNode = node.expectArrayNode();
             Shape target = model.expectShape(shape.getMember().getTarget());
@@ -389,7 +389,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String setShape(SetShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             ArrayNode arrayNode = node.expectArrayNode();
             Shape target = model.expectShape(shape.getMember().getTarget());
@@ -404,7 +404,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String mapShape(MapShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             ObjectNode objectNode = node.expectObjectNode();
             Shape target = model.expectShape(shape.getValue().getTarget());
@@ -421,7 +421,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String byteShape(ByteShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -430,7 +430,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String shortShape(ShortShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -439,7 +439,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String integerShape(IntegerShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -448,7 +448,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String longShape(LongShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -457,7 +457,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String floatShape(FloatShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -472,7 +472,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String doubleShape(DoubleShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -481,7 +481,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String bigIntegerShape(BigIntegerShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -490,7 +490,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String bigDecimalShape(BigDecimalShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             NumberNode numberNode = node.expectNumberNode();
             return numberNode.getValue().toString();
@@ -514,7 +514,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String stringShape(StringShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             StringNode stringNode = node.expectStringNode();
             return "'" + stringNode.getValue() + "'";
@@ -523,7 +523,7 @@ public class HttpProtocolTestGenerator {
         @Override
         public String structureShape(StructureShape shape) {
             if (node.isNullNode()) {
-                return "";
+                return "nil";
             }
             ObjectNode objectNode = node.expectObjectNode();
             Map<StringNode, Node> members = objectNode.getMembers();

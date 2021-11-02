@@ -89,48 +89,44 @@ module SampleService
     end
 
     # Map Builder for ComplexMap
-
     class ComplexMap
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::HighScoreAttributes.build(value) unless value.nil?
+          data[key] = Builders::HighScoreAttributes.build(value)
         end
         data
       end
     end
 
     # Map Builder for SimpleMap
-
     class SimpleMap
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = value unless value.nil?
+          data[key] = value
         end
         data
       end
     end
 
     # List Builder for ComplexList
-
     class ComplexList
       def self.build(input)
         data = []
         input.each do |element|
-          data << Builders::HighScoreAttributes.build(element) unless element.nil?
+          data << Builders::HighScoreAttributes.build(element)
         end
         data
       end
     end
 
     # List Builder for SimpleList
-
     class SimpleList
       def self.build(input)
         data = []
         input.each do |element|
-          data << element unless element.nil?
+          data << element
         end
         data
       end

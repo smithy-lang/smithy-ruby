@@ -241,11 +241,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(shape.getMember().getTarget());
         writer
                 .write("\n# List Builder for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
                 .write("data = []")
                 .openBlock("input.each do |element|")
-                .call(() -> memberTarget.accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element")))
+                .call(() -> memberTarget
+                        .accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element", false)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -261,11 +262,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("\n# Map Builder for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
                 .openBlock("def self.build(input)")
                 .write("data = {}")
                 .openBlock("input.each do |key, value|")
-                .call(() -> valueTarget.accept(new MemberSerializer(writer, shape.getValue(), "data[key] = ", "value")))
+                .call(() -> valueTarget
+                        .accept(new MemberSerializer(writer, shape.getValue(), "data[key] = ", "value", false)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -285,7 +287,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(input)")
                 .write("data = Set.new")
                 .openBlock("input.each do |element|")
-                .call(() -> memberTarget.accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element")))
+                .call(() -> memberTarget
+                        .accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -324,7 +327,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
             String dataSetter = "data[" + dataName + "] = ";
             String inputGetter = "input[" + symbolName + "]";
-            target.accept(new MemberSerializer(writer, member, dataSetter, inputGetter));
+            target.accept(new MemberSerializer(writer, member, dataSetter, inputGetter, true));
         });
     }
 
@@ -339,17 +342,23 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         private final String inputGetter;
         private final String dataSetter;
         private final MemberShape memberShape;
+        private final boolean checkRequired;
 
         MemberSerializer(RubyCodeWriter writer, MemberShape memberShape,
-                         String dataSetter, String inputGetter) {
+                         String dataSetter, String inputGetter, boolean checkRequired) {
             this.writer = writer;
             this.inputGetter = inputGetter;
             this.dataSetter = dataSetter;
             this.memberShape = memberShape;
+            this.checkRequired = checkRequired;
         }
 
         private String checkRequired(Shape shape) {
-            return " unless " + inputGetter + ".nil?";
+            if (this.checkRequired) {
+                return " unless " + inputGetter + ".nil?";
+            } else {
+                return "";
+            }
         }
 
         @Override
