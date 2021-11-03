@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -37,9 +39,11 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -50,6 +54,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
+    private final Set<String> generatedErrorParsers;
+
     private final RubyCodeWriter writer;
 
     public ParserGenerator(GenerationContext context) {
@@ -57,11 +63,13 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
+        this.generatedErrorParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
     }
 
     public void render(FileManifest fileManifest) {
         writer
+                .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Parsers")
                 .call(() -> renderParsers())
@@ -98,8 +106,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.parse(http_resp)")
                 .write("json = Seahorse::JSON.load(http_resp.body)")
                 .write("data = Types::$L.new", outputShapeId.getName())
-                .call(() -> renderHeaderParsers(operation, outputShape))
-                .call(() -> renderOperationBodyParser(operation, outputShape))
+                .call(() -> renderHeaderParsers(outputShape))
+                .call(() -> renderOperationBodyParser(outputShape))
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -123,11 +131,23 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             Iterator<Shape> errIt = new Walker(model).iterateShapes(model.expectShape(errorShapeId));
             while (errIt.hasNext()) {
                 Shape s = errIt.next();
-                System.out.println("\t\tError shape: " + s);
                 if (!generatedParsers.contains(s.getId())) {
-                    System.out.println("\t\tGenerating for new error shape: " + s.getId());
                     generatedParsers.add(s.getId());
-                    s.accept(this);
+                    if (s.hasTrait(ErrorTrait.class)) {
+                        writer
+                                .write("\n# Error Parser for $L", s.getId().getName())
+                                .openBlock("class $L", s.getId().getName())
+                                .openBlock("def self.parse(http_resp)")
+                                .write("json = Seahorse::JSON.load(http_resp.body)")
+                                .write("data = Types::$L.new", s.getId().getName())
+                                .call(() -> renderHeaderParsers(s))
+                                .call(() -> renderOperationBodyParser(s))
+                                .write("data")
+                                .closeBlock("end")
+                                .closeBlock("end");
+                    } else {
+                        s.accept(this);
+                    }
                 } else {
                     System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
                 }
@@ -135,7 +155,24 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
-    private void renderHeaderParsers(OperationShape operation, Shape outputShape) {
+    private void renderErrorParser(Shape shape) {
+        System.out.println("\t\tGenerating for new error shape: " + shape.getId());
+        generatedErrorParsers.add(shape.getId().getName());
+
+        writer
+                .write("\n# Error Parser for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("def self.parse(http_resp)")
+                .write("json = Seahorse::JSON.load(http_resp.body)")
+                .write("data = Types::$L.new", shape.getId().getName())
+                .call(() -> renderHeaderParsers(shape))
+                .call(() -> renderOperationBodyParser(shape))
+                .write("data")
+                .closeBlock("end")
+                .closeBlock("end");
+    }
+
+    private void renderHeaderParsers(Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
@@ -152,7 +189,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     // The Output shape is combined with the Operation Parser
     // This generates the parsing of the body as if it was the Parser for the Out[put
-    private void renderOperationBodyParser(OperationShape operation, Shape outputShape) {
+    private void renderOperationBodyParser(Shape outputShape) {
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
                 .stream()
@@ -166,7 +203,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(payloadMember.getTarget());
             String dataName = RubyFormatter.toSnakeCase(payloadMember.getMemberName());
             writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, target.getId().getName());
-
         }
     }
 
@@ -200,7 +236,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", s.getId().getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("json.map do |value|")
-                .call(() -> memberTarget.accept(new MemberDeserializer(writer, "", "value")))
+                .call(() -> memberTarget.accept(new MemberDeserializer(writer, s.getMember(), "", "value")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -217,7 +253,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\nclass $L", s.getId().getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("data = json.map do |value|")
-                .call(() -> memberTarget.accept(new MemberDeserializer(writer, "", "value")))
+                .call(() -> memberTarget.accept(new MemberDeserializer(writer, s.getMember(), "", "value")))
                 .closeBlock("end")
                 .write("Set.new(data)")
                 .closeBlock("end")
@@ -236,7 +272,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.parse(json)")
                 .write("data = {}")
                 .openBlock("json.map do |key, value|")
-                .call(() -> valueTarget.accept(new MemberDeserializer(writer, "data[key] = ", "value")))
+                .call(() -> valueTarget.accept(new MemberDeserializer(writer, s.getValue(), "data[key] = ", "value")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -264,7 +300,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
             String jsonGetter = "json['" + jsonName + "']";
             if (!target.hasTrait(HttpHeaderTrait.class)) {
-                target.accept(new MemberDeserializer(writer, dataSetter, jsonGetter));
+                target.accept(new MemberDeserializer(writer, member, dataSetter, jsonGetter));
             }
         }
     }
@@ -274,11 +310,13 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
         private final String jsonGetter;
         private final String dataSetter;
+        private final MemberShape memberShape;
 
-        MemberDeserializer(RubyCodeWriter writer, String dataSetter, String jsonGetter) {
+        MemberDeserializer(RubyCodeWriter writer, MemberShape memberShape, String dataSetter, String jsonGetter) {
             this.writer = writer;
             this.jsonGetter = jsonGetter;
             this.dataSetter = dataSetter;
+            this.memberShape = memberShape;
         }
 
         /**
@@ -291,8 +329,29 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         }
 
         @Override
+        public Void blobShape(BlobShape shape) {
+            writer.write("$1LBase64::decode64($2L) if $2L", dataSetter, jsonGetter);
+            return null;
+        }
+
+        @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+            // the default protocol format is date_time, which is parsed by Time.parse
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$1LTime.at($2L.to_i) if $2L", dataSetter, jsonGetter);
+                        break;
+                    case HTTP_DATE:
+                    case DATE_TIME:
+                    default:
+                        writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+                        break;
+                }
+            } else {
+                writer.write("$1LTime.parse($2L) if $2L", dataSetter, jsonGetter);
+            }
             return null;
         }
 

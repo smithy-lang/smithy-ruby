@@ -131,7 +131,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("input.each do |key, value|")
                 .write("Seahorse::Validator.validate!(key, String, Symbol, context: \"#{context}.keys\")")
                 .call(() -> valueTarget
-                        .accept(new MemberValidator(writer, "value", "\"#{context}[#{index}]\"")))
+                        .accept(new MemberValidator(writer, "value", "\"#{context}[#{key}]\"")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");

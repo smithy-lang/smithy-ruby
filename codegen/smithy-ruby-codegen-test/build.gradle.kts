@@ -28,17 +28,17 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
+    implementation("software.amazon.smithy:smithy-aws-protocol-tests:[1.12.0, 1.13.0[")
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-rails-codegen"))
 }
 
 tasks.register<Copy>("copyGem") {
-    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen")
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/sample-service/ruby-codegen")
     into("$buildDir/../../../")
 }
 tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen/sample_service/spec")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/sample-service/ruby-codegen/sample_service/spec")
 }
 tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copyGem"])

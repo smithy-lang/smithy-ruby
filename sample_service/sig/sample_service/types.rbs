@@ -37,6 +37,11 @@ module SampleService
       attr_accessor message(): String
     end
 
+    class UnprocessableEntityError < Struct[untyped]
+      def initialize: (?errors: Hash[String, Array[String]]) -> untyped
+      attr_accessor errors(): Hash[String, Array[String]]
+    end
+
     class CreateHighScoreInput < Struct[untyped]
       def initialize: (?high_score: HighScoreParams) -> untyped
       attr_accessor high_score(): HighScoreParams

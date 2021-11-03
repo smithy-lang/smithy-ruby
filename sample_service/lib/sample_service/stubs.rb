@@ -13,9 +13,9 @@ module SampleService
     # Operation Stubber for CreateHighScore
     class CreateHighScore
 
-      def self.default
+      def self.default(visited=[])
         {
-          high_score: Stubs::HighScoreAttributes.default,
+          high_score: Stubs::HighScoreAttributes.default(visited),
           location: 'location',
         }
       end
@@ -34,7 +34,9 @@ module SampleService
     # Structure Stubber for HighScoreAttributes
     class HighScoreAttributes
 
-      def self.default
+      def self.default(visited=[])
+        return nil if visited.include?('HighScoreAttributes')
+        visited = visited + ['HighScoreAttributes']
         {
           id: 'id',
           game: 'game',
@@ -58,7 +60,7 @@ module SampleService
     # Operation Stubber for DeleteHighScore
     class DeleteHighScore
 
-      def self.default
+      def self.default(visited=[])
         {
         }
       end
@@ -71,9 +73,9 @@ module SampleService
     # Operation Stubber for GetHighScore
     class GetHighScore
 
-      def self.default
+      def self.default(visited=[])
         {
-          high_score: Stubs::HighScoreAttributes.default,
+          high_score: Stubs::HighScoreAttributes.default(visited),
         }
       end
 
@@ -90,10 +92,10 @@ module SampleService
     # Operation Stubber for ListHighScores
     class ListHighScores
 
-      def self.default
+      def self.default(visited=[])
         {
           next_token: 'next_token',
-          high_scores: Stubs::HighScores.default,
+          high_scores: Stubs::HighScores.default(visited),
         }
       end
 
@@ -112,9 +114,11 @@ module SampleService
 
     class HighScores
 
-      def self.default
+      def self.default(visited=[])
+        return nil if visited.include?('HighScores')
+        visited = visited + ['HighScores']
         [
-          Stubs::HighScoreAttributes.default
+          Stubs::HighScoreAttributes.default(visited)
         ]
       end
       def self.stub(stub = [])
@@ -129,9 +133,9 @@ module SampleService
     # Operation Stubber for UpdateHighScore
     class UpdateHighScore
 
-      def self.default
+      def self.default(visited=[])
         {
-          high_score: Stubs::HighScoreAttributes.default,
+          high_score: Stubs::HighScoreAttributes.default(visited),
         }
       end
 

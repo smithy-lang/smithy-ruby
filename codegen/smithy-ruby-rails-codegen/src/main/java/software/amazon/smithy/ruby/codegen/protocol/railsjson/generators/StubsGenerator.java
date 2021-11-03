@@ -113,7 +113,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("\n# Operation Stubber for $L", operation.getId().getName())
                 .openBlock("class $L", operation.getId().getName())
-                .openBlock("\ndef self.default")
+                .openBlock("\ndef self.default(visited=[])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(http_resp, stub:)")
@@ -180,7 +180,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("\n# Structure Stubber for $L", shape.getId().getName())
                 .openBlock("class $L", shape.getId().getName())
-                .openBlock("\ndef self.default")
+                .openBlock("\ndef self.default(visited=[])")
+                .write("return nil if visited.include?('$L')", shape.getId().getName())
+                .write("visited = visited + ['$L']", shape.getId().getName())
                 .call(() -> renderMemberDefaults(shape))
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
@@ -200,7 +202,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("\n# List Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default")
+                .openBlock("\ndef self.default(visited=[])")
+                .write("return nil if visited.include?('$L')", shape.getId().getName())
+                .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("[")
                 .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
                 .closeBlock("]")
@@ -225,7 +229,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("\n# Map Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default")
+                .openBlock("\ndef self.default(visited=[])")
+                .write("return nil if visited.include?('$L')", shape.getId().getName())
+                .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("{")
                 .call(() -> valueTarget
                         .accept(new MemberDefaults(writer, "test_key: ", "", valueTarget.getId().getName())))
@@ -251,7 +257,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("\n# Set Stubber for $L", shape.getId().getName())
                 .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default")
+                .openBlock("\ndef self.default(visited=[])")
+                .write("return nil if visited.include?('$L')", shape.getId().getName())
+                .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("[")
                 .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
                 .closeBlock("]")
@@ -483,7 +491,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
          * For complex shapes, simply delegate to their Stubber.
          */
         private void complexShapeDefaults(Shape shape) {
-            writer.write("$LStubs::$L.default$L", dataSetter, shape.getId().getName(), eol);
+            writer.write("$LStubs::$L.default(visited)$L", dataSetter, shape.getId().getName(), eol);
         }
 
         @Override

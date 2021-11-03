@@ -269,7 +269,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write(memberSetter + input); //TODO: does this need a conversion?
+            writer.write(memberSetter + input);
             return null;
         }
     }

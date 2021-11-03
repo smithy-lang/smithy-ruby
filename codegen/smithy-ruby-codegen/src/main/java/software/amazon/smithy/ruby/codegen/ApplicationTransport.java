@@ -21,8 +21,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -42,10 +45,10 @@ public final class ApplicationTransport {
     /**
      * Creates a resolved application transport.
      *
-     * @param name - name of the transport (eg HTTP)
-     * @param request - code to use to create the ruby Request
-     * @param response - code to use to create the Ruby Response
-     * @param transportClient - code to use to create the Transport's client
+     * @param name              - name of the transport (eg HTTP)
+     * @param request           - code to use to create the ruby Request
+     * @param response          - code to use to create the Ruby Response
+     * @param transportClient   - code to use to create the Transport's client
      * @param defaultMiddleware - default middleware to add to client operations
      */
     public ApplicationTransport(
@@ -130,16 +133,21 @@ public final class ApplicationTransport {
                         Map<String, String> params = new HashMap<>();
                         params.put("data_parser",
                                 "Parsers::" + operation.getId().getName());
-                        //TODO: Extract these from the operation, http trait.
                         String successCode = "200";
-                        String errors = "[]";
+                        Optional<HttpTrait> httpTrait = operation.getTrait(HttpTrait.class);
+                        if (httpTrait.isPresent()) {
+                            successCode = "" + httpTrait.get().getCode();
+                        }
+                        String errors =
+                                operation.getErrors().stream().map((error) -> "Errors::" + error.getName()).collect(
+                                        Collectors.joining(", "));
                         params.put("error_parser",
                                 "Seahorse::HTTP::ErrorParser.new("
-                                + "error_module: Errors, error_code_fn: "
-                                + "Errors.method(:error_code), "
-                                + "success_status: "
-                                + successCode + ", errors: " + errors
-                                + ")"
+                                        + "error_module: Errors, error_code_fn: "
+                                        + "Errors.method(:error_code), "
+                                        + "success_status: "
+                                        + successCode + ", errors: [" + errors + "]"
+                                        + ")"
                         );
                         return params;
                     })
@@ -230,8 +238,7 @@ public final class ApplicationTransport {
          * Called to Render the addition of this middleware to the stack.
          *
          * @param transport - ApplicationTransport to generate list for
-         * @param context - additional context
-         *
+         * @param context   - additional context
          * @return List of middleware that should be applied to all client operations
          */
         List<Middleware> list(ApplicationTransport transport,

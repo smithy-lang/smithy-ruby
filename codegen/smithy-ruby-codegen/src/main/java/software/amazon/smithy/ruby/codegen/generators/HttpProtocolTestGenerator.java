@@ -23,15 +23,39 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeVisitor;
-import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
+import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.SetShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.ShortShape;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
@@ -61,7 +85,7 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
-                .write("require_relative './spec_helper'\n") // TODO: Add to test dependencies?
+                .write("require '$L'\n", settings.getGemName())
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
@@ -85,17 +109,22 @@ public class HttpProtocolTestGenerator {
                     RubyFormatter.toSnakeCase(operation.getId().getName());
             writer.openBlock("describe '#$L' do", operationName);
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
-                renderRequestTests(operationName, requestTests);
+                renderRequestTests(operationName, operation.getInput(), requestTests);
             });
             writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                renderResponseTests(operationName, responseTests);
+                renderResponseTests(operationName, operation.getOutput(), responseTests);
             });
+            renderErrorTests(operation);
             writer.closeBlock("end");
         });
     }
 
-    private void renderResponseTests(String operationName, HttpResponseTestsTrait responseTests) {
+    private void renderResponseTests(String operationName,
+                                     Optional<ShapeId> output,
+                                     HttpResponseTestsTrait responseTests) {
+        Shape outputShape = model.expectShape(output.orElseThrow(IllegalArgumentException::new));
+
         writer.openBlock("describe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
             writer
@@ -104,13 +133,17 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .write("expect(output.data.to_h).to eq($L)", getRubyHashFromParams(testCase.getParams()))
+                    .write("expect(output.data.to_h).to eq($L)",
+                            getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
     }
 
-    private void renderRequestTests(String operationName, HttpRequestTestsTrait requestTests) {
+    private void renderRequestTests(String operationName,
+                                    Optional<ShapeId> input,
+                                    HttpRequestTestsTrait requestTests) {
+        Shape inputShape = model.expectShape(input.orElseThrow(IllegalArgumentException::new));
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             writer
@@ -118,10 +151,38 @@ public class HttpProtocolTestGenerator {
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))
                     .write("client.$L($L, middleware: middleware)", operationName,
-                            getRubyHashFromParams(testCase.getParams()))
+                            getRubyHashFromParams(inputShape, testCase.getParams()))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
+    }
+
+    private void renderErrorTests(OperationShape operation) {
+        String operationName =
+                RubyFormatter.toSnakeCase(operation.getId().getName());
+
+        for (StructureShape error : OperationIndex.of(model).getErrors(operation)) {
+            error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
+                writer.openBlock("describe '$L Errors' do", error.getId().getName());
+                responseTests.getTestCases().forEach((testCase) -> {
+                    writer
+                            .call(() -> renderTestDocumentation(testCase.getDocumentation()))
+                            .openBlock("it '$L' do", testCase.getId())
+                            .call(() -> renderResponseMiddleware(testCase))
+                            .write("middleware.remove_send.remove_build")
+                            .openBlock("begin")
+                            .write("client.$L({}, middleware: middleware)", operationName)
+                            .dedent()
+                            .write("rescue Errors::$L => e", error.getId().getName())
+                            .indent()
+                            .write("expect(e.data.to_h).to eq($L)",
+                                    getRubyHashFromParams(error, testCase.getParams()))
+                            .closeBlock("end")
+                            .closeBlock("end");
+                });
+                writer.closeBlock("end");
+            });
+        }
     }
 
     private void renderTestDocumentation(Optional<String> documentation) {
@@ -132,8 +193,8 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private String getRubyHashFromParams(ObjectNode params) {
-        return params.accept(new ParamsToHashVisitor());
+    private String getRubyHashFromParams(Shape ioShape, ObjectNode params) {
+        return ioShape.accept(new ParamsToHashVisitor(model, params));
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {
@@ -206,15 +267,26 @@ public class HttpProtocolTestGenerator {
                 .call(() -> renderRequestMiddlewareHeaders(testCase.getHeaders()))
                 .call(() -> renderRequestMiddlewareForbiddenHeaders(testCase.getForbidHeaders()))
                 .call(() -> renderRequestMiddlewareRequiredHeaders(testCase.getRequireHeaders()))
-                .call(() -> renderRequestMiddlewareBody(testCase.getBody()))
+                .call(() -> renderRequestMiddlewareBody(testCase.getBody(), testCase.getBodyMediaType()))
                 .write("Seahorse::Output.new")
                 .closeBlock("end");
     }
 
-    private void renderRequestMiddlewareBody(Optional<String> body) {
-        // TODO: check the testcases bodyMediaType and use appropriate equality tests.
+    private void renderRequestMiddlewareBody(Optional<String> body, Optional<String> bodyMediaType) {
+        // TODO: expand support for different body media types (eg xml).
         if (body.isPresent()) {
-            writer.write("expect(request.body).to eq('$L')", body.get());
+            if (bodyMediaType.isPresent()) {
+                switch (bodyMediaType.get()) {
+                    case "application/json":
+                        writer.write("expect(JSON.parse(request.body.read)).to eq(JSON.parse('$L'))", body.get());
+                        break;
+                    default:
+                        writer.write("expect(request.body.read).to eq('$L')", body.get());
+                        break;
+                }
+            } else {
+                writer.write("expect(request.body.read).to eq('$L')", body.get());
+            }
         }
     }
 
@@ -270,45 +342,223 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private static class ParamsToHashVisitor implements NodeVisitor<String> {
+    private static class ParamsToHashVisitor implements ShapeVisitor<String> {
+
+        private final Node node;
+        private final Model model;
+
+
+        ParamsToHashVisitor(Model model, Node node) {
+            this.node = node;
+            this.model = model;
+        }
 
         @Override
-        public String arrayNode(ArrayNode node) {
-            String elements = node.getElements().stream()
-                    .map((element) -> element.accept(this))
+        public String blobShape(BlobShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            StringNode stringNode = node.expectStringNode();
+            return "'" + stringNode.getValue() + "'";
+        }
+
+        @Override
+        public String booleanShape(BooleanShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            BooleanNode booleanNode = node.expectBooleanNode();
+            return booleanNode.getValue() ? "true" : "false";
+        }
+
+        @Override
+        public String listShape(ListShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ArrayNode arrayNode = node.expectArrayNode();
+            Shape target = model.expectShape(shape.getMember().getTarget());
+
+            String elements = arrayNode.getElements().stream()
+                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element)))
                     .collect(Collectors.joining(", "));
 
             return "[" + elements + "]";
         }
 
         @Override
-        public String booleanNode(BooleanNode node) {
-            return node.getValue() ? "true" : "false";
+        public String setShape(SetShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ArrayNode arrayNode = node.expectArrayNode();
+            Shape target = model.expectShape(shape.getMember().getTarget());
+
+            String elements = arrayNode.getElements().stream()
+                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element)))
+                    .collect(Collectors.joining(", "));
+
+            return "[" + elements + "]";
         }
 
         @Override
-        public String nullNode(NullNode node) {
-            return "nil";
-        }
+        public String mapShape(MapShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ObjectNode objectNode = node.expectObjectNode();
+            Shape target = model.expectShape(shape.getValue().getTarget());
+            Map<StringNode, Node> members = objectNode.getMembers();
 
-        @Override
-        public String numberNode(NumberNode node) {
-            return node.getValue().toString();
-        }
-
-        @Override
-        public String objectNode(ObjectNode node) {
-            Map<StringNode, Node> members = node.getMembers();
             String memberStr = members.keySet().stream()
-                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": " + members.get(k).accept(this))
+                    .map((k) -> "'" + k.toString() + "' => "
+                            + target.accept(new ParamsToHashVisitor(model, members.get(k))))
                     .collect(Collectors.joining(", "));
 
             return "{" + memberStr + "}";
         }
 
         @Override
-        public String stringNode(StringNode node) {
-            return "'" + node.getValue() + "'";
+        public String byteShape(ByteShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String shortShape(ShortShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String integerShape(IntegerShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String longShape(LongShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String floatShape(FloatShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String documentShape(DocumentShape shape) {
+            // TODO
+            return null;
+        }
+
+        @Override
+        public String doubleShape(DoubleShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String bigIntegerShape(BigIntegerShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String bigDecimalShape(BigDecimalShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            NumberNode numberNode = node.expectNumberNode();
+            return numberNode.getValue().toString();
+        }
+
+        @Override
+        public String operationShape(OperationShape shape) {
+            return null;
+        }
+
+        @Override
+        public String resourceShape(ResourceShape shape) {
+            return null;
+        }
+
+        @Override
+        public String serviceShape(ServiceShape shape) {
+            return null;
+        }
+
+        @Override
+        public String stringShape(StringShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            StringNode stringNode = node.expectStringNode();
+            return "'" + stringNode.getValue() + "'";
+        }
+
+        @Override
+        public String structureShape(StructureShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ObjectNode objectNode = node.expectObjectNode();
+            Map<StringNode, Node> members = objectNode.getMembers();
+
+            Map<String, MemberShape> shapeMembers = shape.getAllMembers();
+
+            String memberStr = members.keySet().stream()
+                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
+                            + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
+                            .accept(new ParamsToHashVisitor(model, members.get(k))))
+                    .collect(Collectors.joining(", "));
+
+            return "{" + memberStr + "}";
+        }
+
+        @Override
+        public String unionShape(UnionShape shape) {
+            // TODO
+            return null;
+        }
+
+        @Override
+        public String memberShape(MemberShape shape) {
+            return null;
+        }
+
+        @Override
+        public String timestampShape(TimestampShape shape) {
+            if (node.isNullNode()) {
+                return "";
+            }
+            if (node.isNumberNode()) {
+                return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
+            }
+            return "Time.parse('" + node + "')";
         }
     }
 }
