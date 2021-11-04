@@ -137,7 +137,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "timestamp_value": 1398796238
+                    "timestamp_value": "2014-04-29T18:30:38.000Z"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -335,7 +335,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "timestamp_value": 1398796238
+                    "timestamp_value": "2014-04-29T18:30:38.000Z"
                 }
             }""",
         bodyMediaType: "application/json",

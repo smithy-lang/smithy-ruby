@@ -22,6 +22,7 @@ module SampleService
     end
     describe '#get_high_score' do
       describe 'requests' do
+
         # Serializes http labels
         it 'sample_service_serializes_http_label' do
           middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
