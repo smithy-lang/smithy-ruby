@@ -33,6 +33,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.StringUtils;
 
 public class TypesGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -57,6 +58,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module Types");
 
         writer
+                .write("require 'delegate'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .call(() -> renderTypes())
@@ -149,7 +151,34 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        // TODO: Generate a structure
+        Symbol symbol = symbolProvider.toSymbol(shape);
+        System.out.println("Visit Structure Shape: " + shape.getId() + " Symbol: " + symbol);
+        String shapeName = symbol.getName();
+
+        writer
+                .write("")
+                .openBlock("class $L < ::SimpleDelegator", shapeName);
+
+        for (MemberShape memberShape : shape.members()) {
+            writer.write("class $L < $L; end", StringUtils.capitalize(memberShape.getMemberName()), shapeName);
+        }
+
+        writer
+                .write("class Unknown < $L; end", shapeName)
+                .closeBlock("end");
+
+        // TODO: Type signatures for delegation are not well defined.
+        // See: https://github.com/ruby/rbs/pull/765
+        // For now just define the classes and ignore the actual member types
+        rbsWriter
+                .write("")
+                .openBlock("class $L", shapeName);
+
+        for (MemberShape memberShape : shape.members()) {
+            rbsWriter.write("class $L[$L]; end", StringUtils.capitalize(memberShape.getMemberName()), shapeName);
+        }
+
+        rbsWriter.closeBlock("end");
         return null;
     }
 

@@ -51,6 +51,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
+import software.amazon.smithy.utils.StringUtils;
 
 public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
@@ -299,7 +300,34 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        // TODO: Support union shape
+        System.out.println("\tRENDER builder for UNION: " + shape.getId());
+        writer
+                .write("\n# Structure Builder for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .write("case input");
+
+        shape.members().forEach((member) -> {
+            Shape target = model.expectShape(member.getTarget());
+            System.out.println("\t\tUNION MEMBER BUILDER FOR: " + member.getId() + " target type: " + target.getType());
+
+            writer.write("when Types::$L::$L", shape.getId().getName(), StringUtils.capitalize(member.getMemberName()))
+                    .indent();
+
+            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
+            String dataSetter = "data[" + symbolName + "] = ";
+            target.accept(new MemberSerializer(writer, member, dataSetter, "input", false));
+            writer.dedent();
+        });
+        writer.openBlock("else")
+                .write("raise ArgumentError,\n\"Expected input to be one of the subclasses of Types::$L\"",
+                        shape.getId().getName())
+                .closeBlock("end\n")
+                .write("data")
+                .closeBlock("end")
+                .closeBlock("end");
+
         return null;
     }
 

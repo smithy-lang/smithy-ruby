@@ -541,8 +541,21 @@ public class HttpProtocolTestGenerator {
 
         @Override
         public String unionShape(UnionShape shape) {
-            // TODO
-            return null;
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ObjectNode objectNode = node.expectObjectNode();
+            Map<StringNode, Node> members = objectNode.getMembers();
+
+            Map<String, MemberShape> shapeMembers = shape.getAllMembers();
+
+            String memberStr = members.keySet().stream()
+                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
+                            + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
+                            .accept(new ParamsToHashVisitor(model, members.get(k))))
+                    .collect(Collectors.joining(", "));
+
+            return "{" + memberStr + "}";
         }
 
         @Override

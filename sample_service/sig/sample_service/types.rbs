@@ -10,6 +10,12 @@
 module SampleService
   module Types
 
+    class EventStream
+      class Start[EventStream]; end
+      class End[EventStream]; end
+      class Log[EventStream]; end
+    end
+
     class HighScoreAttributes < Struct[untyped]
       def initialize: (?id: String, ?game: String, ?score: Integer, ?created_at: Time, ?updated_at: Time) -> untyped
       attr_accessor id(): String

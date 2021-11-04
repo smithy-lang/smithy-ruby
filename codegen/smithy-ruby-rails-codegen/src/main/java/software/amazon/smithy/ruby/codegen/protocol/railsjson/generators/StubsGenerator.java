@@ -278,7 +278,32 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        // TODO: Support union shape
+        System.out.println("\tRENDER stubber for UNION: " + shape.getId());
+        writer
+                .write("\n# Union Stubber for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("\ndef self.default(visited=[])")
+                .write("return nil if visited.include?('$L')", shape.getId().getName())
+                .write("visited = visited + ['$L']", shape.getId().getName())
+                .call(() -> {
+                    writer.openBlock("{");
+                    MemberShape defaultMember = shape.members().iterator().next();
+                    Shape target = model.expectShape(defaultMember.getTarget());
+                    System.out.println(
+                            "\t\tMEMBER default FOR: " + defaultMember.getId() + " target type: " + target.getType());
+
+                    String symbolName = RubyFormatter.toSnakeCase(defaultMember.getMemberName());
+                    String dataSetter = symbolName + ": ";
+                    target.accept(new MemberDefaults(writer, dataSetter, ",", symbolName));
+                    writer.closeBlock("}");
+                })
+                .closeBlock("end")
+                .openBlock("\ndef self.stub(stub = {})")
+                .call(() -> renderMemberStubbers(shape))
+                .write("data")
+                .closeBlock("end")
+                .closeBlock("end");
+
         return null;
     }
 

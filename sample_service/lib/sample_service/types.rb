@@ -7,8 +7,17 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'delegate'
+
 module SampleService
   module Types
+
+    class EventStream < ::SimpleDelegator
+      class Start < EventStream; end
+      class End < EventStream; end
+      class Log < EventStream; end
+      class Unknown < EventStream; end
+    end
 
     HighScoreAttributes = Struct.new(
       :id,

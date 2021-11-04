@@ -42,6 +42,26 @@ module SampleService
       end
     end
 
+    # Structure Builder for EventStream
+    class EventStream
+      def self.build(input)
+        data = {}
+        case input
+        when Types::EventStream::Start
+          data[:start] = Builders::StructuredEvent.build(input)
+        when Types::EventStream::End
+          data[:end] = Builders::StructuredEvent.build(input)
+        when Types::EventStream::Log
+          data[:log] = input
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::EventStream"
+        end
+
+        data
+      end
+    end
+
     # Structure Builder for StructuredEvent
     class StructuredEvent
       def self.build(input)

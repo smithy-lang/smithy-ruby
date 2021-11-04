@@ -49,8 +49,8 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -190,7 +190,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")
                 .call(() -> unionMemberShapes.forEach(unionMemberShape -> {
-                    String unionMemberName = CaseUtils.toPascalCase(unionMemberShape.getMemberName());
+                    String unionMemberName = StringUtils.capitalize(unionMemberShape.getMemberName());
                     writer
                             .write("when Types::" + shapeName + "::" + unionMemberName)
                             .write("  $L.validate!(input.__getobj__, context: context)", unionMemberName);
@@ -211,7 +211,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderValidatorsForUnionMembers(Collection<MemberShape> members) {
         members.forEach(member -> {
-            String name = CaseUtils.toPascalCase(member.getMemberName());
+            String name = StringUtils.capitalize(member.getMemberName());
             Shape target = model.expectShape(member.getTarget());
 
             writer
