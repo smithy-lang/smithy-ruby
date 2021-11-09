@@ -7,14 +7,10 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'delegate'
-
 module SampleService
   module Types
 
     class EventStream < Seahorse::Union
-      include Seahorse::Structure
-
       class Start < EventStream
         def to_h
           {start: super(__getobj__)}

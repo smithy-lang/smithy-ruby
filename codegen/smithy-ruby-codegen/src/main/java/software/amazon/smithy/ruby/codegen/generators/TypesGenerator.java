@@ -156,8 +156,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L < Seahorse::Union", shapeName)
-                .write("include Seahorse::Structure\n");
+                .openBlock("class $L < Seahorse::Union", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
             writer.openBlock("class $L < $L", StringUtils.capitalize(memberShape.getMemberName()), shapeName)
