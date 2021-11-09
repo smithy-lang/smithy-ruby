@@ -219,19 +219,19 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         for (MemberShape member : shape.members()) {
             Shape target = model.expectShape(member.getTarget());
-            String memberName = symbolProvider.toMemberName(member);
-            writer.write("when :$L", memberName)
+            String memberName = RubyFormatter.asSymbol(member.getMemberName());
+            writer.write("when $L", memberName)
                     .indent()
                     .openBlock("Types::$L::$L.new(", shapeName, StringUtils.capitalize(member.getMemberName()));
-            String memberSymbolName = RubyFormatter.asSymbol(memberName);
-            String input = "params[" + memberSymbolName + "]";
-            String context = "\"#{context}[" + memberSymbolName + "]\"";
+            String input = "params[" + memberName + "]";
+            String context = "\"#{context}[" + memberName + "]\"";
             target.accept(new MemberBuilder(writer, "", input, context, false));
             writer.closeBlock(")")
                     .dedent();
         }
-        String expectedMembers = shape.members().stream().map((member) -> symbolProvider.toMemberName(member))
-                .collect(Collectors.joining(", "));
+        String expectedMembers =
+                shape.members().stream().map((member) -> RubyFormatter.asSymbol(member.getMemberName()))
+                        .collect(Collectors.joining(", "));
         writer.write("else")
                 .indent()
                 .write("raise ArgumentError,\n\"Expected #{context} to have one of $L set\"", expectedMembers);

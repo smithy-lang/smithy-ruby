@@ -84,9 +84,9 @@ module SampleService
           Types::EventStream::Start.new(
             StructuredEvent.build(params[:start], context: "#{context}[:start]")
           )
-        when :_end
+        when :end
           Types::EventStream::End.new(
-            StructuredEvent.build(params[:_end], context: "#{context}[:_end]")
+            StructuredEvent.build(params[:end], context: "#{context}[:end]")
           )
         when :log
           Types::EventStream::Log.new(
@@ -94,7 +94,7 @@ module SampleService
           )
         else
           raise ArgumentError,
-          "Expected #{context} to have one of start, _end, log set"
+          "Expected #{context} to have one of :start, :end, :log set"
           end
         end
       end
