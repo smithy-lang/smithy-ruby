@@ -10,6 +10,7 @@ use smithy.test#httpResponseTests
 /// Rails High Score example from their generator docs
 @RailsJson
 @errorOn(location: "header", name: "x-smithy-error")
+@title("High Score Sample Rails Service")
 service SampleService {
     version: "2021-02-15",
     resources: [HighScore],

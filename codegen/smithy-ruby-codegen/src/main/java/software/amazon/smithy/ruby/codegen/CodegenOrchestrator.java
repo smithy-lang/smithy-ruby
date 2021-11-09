@@ -25,11 +25,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
@@ -37,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
+import software.amazon.smithy.utils.CodeWriter;
 
 public class CodegenOrchestrator {
 
@@ -188,6 +191,8 @@ public class CodegenOrchestrator {
         generateModule();
 
         generateGemSpec();
+
+        generateYardOpts();
     }
 
     private void generateTypes() {
@@ -241,5 +246,16 @@ public class CodegenOrchestrator {
         GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
         gemspecGenerator.render(additionalDependencies);
         LOGGER.info("wrote .gemspec");
+    }
+
+    private void generateYardOpts() {
+        Optional<TitleTrait> title = context.getService().getTrait(TitleTrait.class);
+        if (title.isPresent()) {
+            FileManifest fileManifest = context.getFileManifest();
+            CodeWriter writer = new CodeWriter();
+            writer.write("--title \"$L\"", title.get().getValue());
+            String fileName = context.getRubySettings().getGemName() + "/.yardopts";
+            fileManifest.writeFile(fileName, writer.toString());
+        }
     }
 }
