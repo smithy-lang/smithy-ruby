@@ -12,7 +12,7 @@ require 'delegate'
 module SampleService
   module Types
 
-    class EventStream < ::SimpleDelegator
+    class EventStream < Seahorse::Union
       include Seahorse::Structure
 
       class Start < EventStream

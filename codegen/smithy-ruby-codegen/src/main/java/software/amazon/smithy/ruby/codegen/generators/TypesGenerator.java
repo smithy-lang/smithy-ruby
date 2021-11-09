@@ -58,7 +58,6 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module Types");
 
         writer
-                .write("require 'delegate'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .call(() -> renderTypes())
@@ -157,7 +156,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L < ::SimpleDelegator", shapeName)
+                .openBlock("class $L < Seahorse::Union", shapeName)
                 .write("include Seahorse::Structure\n");
 
         for (MemberShape memberShape : shape.members()) {
