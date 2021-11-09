@@ -142,7 +142,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
-                    .write("")
+                    .newLine()
                     .write("http_req.headers['Content-Type'] = 'application/json'")
                     .call(() -> renderMemberBuilders(writer, inputShape))
                     .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");

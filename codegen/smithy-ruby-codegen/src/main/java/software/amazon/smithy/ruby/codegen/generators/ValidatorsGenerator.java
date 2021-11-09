@@ -99,7 +99,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Collection<MemberShape> members = structureShape.members();
 
         writer
-                .write("")
+                .newLine()
                 .openBlock("class $L", structureShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .call(() -> renderValidatorsForStructureMembers(members))
@@ -124,7 +124,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
-                .write("")
+                .newLine()
                 .openBlock("class $L", mapShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Hash, context: context)")
@@ -145,7 +145,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
-                .write("")
+                .newLine()
                 .openBlock("class $L", listShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Array, context: context)")
@@ -165,7 +165,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(setShape.getMember().getTarget());
 
         writer
-                .write("")
+                .newLine()
                 .openBlock("class $L", setShape.getId().getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Set, context: context)")
@@ -185,7 +185,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Collection<MemberShape> unionMemberShapes = unionShape.members();
 
         writer
-                .write("")
+                .newLine()
                 .openBlock("class $L", shapeName)
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")
@@ -215,7 +215,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(member.getTarget());
 
             writer
-                    .write("") // formatting
+                    .newLine() // formatting
                     .openBlock("class $L", name)
                     .openBlock("def self.validate!(input, context:)")
                     .call(() -> target.accept(new MemberValidator(writer, "input", "context")))

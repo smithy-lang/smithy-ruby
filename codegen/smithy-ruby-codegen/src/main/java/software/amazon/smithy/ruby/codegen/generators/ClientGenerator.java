@@ -85,7 +85,7 @@ public class ClientGenerator {
         }
 
         if (additionalFiles.size() > 0) {
-            writer.write("");
+            writer.newLine();
         }
 
         writer
@@ -152,7 +152,7 @@ public class ClientGenerator {
     }
 
     private void renderInitializeDocumentation(RubyCodeWriter writer) {
-        writer.write("");
+        writer.newLine();
         writer.rdoc(() -> {
             writer.write("@overload initialize(options)");
             writer.write("@param [Hash] options");
@@ -163,7 +163,7 @@ public class ClientGenerator {
                             StringUtils.isNotBlank(cfg.getDefaultValue())
                                     ? "(" + cfg.getDefaultValue() + ")" : "");
                     writer.write("  $L", cfg.getDocumentation());
-                    writer.write("");
+                    writer.newLine();
                 }
             });
         });
@@ -214,7 +214,7 @@ public class ClientGenerator {
     private void renderOperationDocumentation(RubyCodeWriter writer,
                                               OperationShape operation) {
         Model model = context.getModel();
-        writer.write("");
+        writer.newLine();
         writer.rdoc(() -> {
             Optional<DocumentationTrait> documentation =
                     operation.getTrait(DocumentationTrait.class);
@@ -224,7 +224,7 @@ public class ClientGenerator {
                 writer.write("UNDOCUMENTED: Service operation for $L",
                         operation.getId().getName());
             }
-            writer.write("");
+            writer.newLine();
             writer.write("@param [Hash] params - See also: {Types::$LInput}",
                     operation.getId().getName());
 
@@ -242,7 +242,7 @@ public class ClientGenerator {
                 if (memberDoc.isPresent()) {
                     writer.write("  $L", memberDoc.get().getValue());
                 }
-                writer.write("");
+                writer.newLine();
             }
         });
     }

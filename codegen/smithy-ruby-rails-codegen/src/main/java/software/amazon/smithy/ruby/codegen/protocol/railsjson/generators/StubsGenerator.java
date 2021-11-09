@@ -149,7 +149,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                         && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
             writer
-                    .write("")
+                    .newLine()
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
                     .call(() -> renderMemberStubbers(outputShape))
                     .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");

@@ -47,7 +47,7 @@ public class ModuleGenerator {
             writer.write("require_relative '$L'", require);
         }
 
-        writer.write("");
+        writer.newLine();
 
         writer.openBlock("module $L", settings.getModule())
                 .write("GEM_VERSION = '$L'", settings.getGemVersion())
