@@ -10,10 +10,6 @@ module SampleService
       #   delay polling attempts.
       # @option options [Integer] :max_delay (120) The maximum time in seconds
       #   to delay polling attempts.
-      # @option options [Array<Proc>] :before_attempt An array of callbacks to
-      #   call before polling.
-      # @option options [Array<Proc>] :before_wait An array of callbacks to call
-      #   before sleeping between attempts.
       def initialize(client, options = {})
         @client = client
         @waiter = Seahorse::Waiters::Waiter.new({
