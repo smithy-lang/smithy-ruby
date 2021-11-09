@@ -111,7 +111,7 @@ public class HttpProtocolTestGenerator {
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
                 renderRequestTests(operationName, operation.getInput(), requestTests);
             });
-            writer.newLine();
+            writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
                 renderResponseTests(operationName, operation.getOutput(), responseTests);
             });
@@ -148,7 +148,7 @@ public class HttpProtocolTestGenerator {
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             writer
-                    .newLine() //formatting
+                    .write("") //formatting
                     .call(() -> renderTestDocumentation(testCase.getDocumentation()))
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))

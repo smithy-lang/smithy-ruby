@@ -40,11 +40,6 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public RubyCodeWriter newLine() {
-        write("");
-        return this;
-    }
-
     public void writeWithNoFormatting(String s) {
         pushState();
         setExpressionStart('*');

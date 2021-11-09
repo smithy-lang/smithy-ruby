@@ -123,7 +123,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         membersBlock += ",";
 
         writer
-                .newLine()
+                .write("")
                 .openBlock(shapeName + " = Struct.new(")
                 .write(membersBlock)
                 .write("keyword_init: true")
@@ -141,7 +141,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .collect(Collectors.joining("\n"));
 
         rbsWriter
-                .newLine()
+                .write("")
                 .openBlock("class " + shapeName + " < Struct[untyped]")
                 .write("def initialize: (" + initTypes + ") -> untyped")
                 .write(memberAttrTypes)
@@ -156,7 +156,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
-                .newLine()
+                .write("")
                 .openBlock("class $L < ::SimpleDelegator", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
@@ -171,7 +171,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         // See: https://github.com/ruby/rbs/pull/765
         // For now just define the classes and ignore the actual member types
         rbsWriter
-                .newLine()
+                .write("")
                 .openBlock("class $L", shapeName);
 
         for (MemberShape memberShape : shape.members()) {

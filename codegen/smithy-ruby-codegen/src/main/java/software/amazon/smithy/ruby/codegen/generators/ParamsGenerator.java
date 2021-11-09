@@ -103,7 +103,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
-                .newLine()
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("\ndef self.build(params, context: '')")
                 .call(() -> renderBuilderForStructureMembers(shapeName, structureShape.members()))
@@ -139,7 +139,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
-                .newLine()
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("\ndef self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Array, context: context)")
@@ -161,7 +161,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(setShape.getMember().getTarget());
 
         writer
-                .newLine()
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("\ndef self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Set, Array, context: context)")
@@ -185,7 +185,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
 
         writer
-                .newLine()
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("\ndef self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Hash, context: context)")
@@ -205,7 +205,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
-                .newLine()
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("\ndef self.build(params, context: '')")
                 .write("return params if params.is_a?(Types::$L)", shapeName)
