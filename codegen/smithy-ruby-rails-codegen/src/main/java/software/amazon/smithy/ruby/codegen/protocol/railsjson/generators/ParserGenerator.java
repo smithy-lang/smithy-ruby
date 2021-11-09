@@ -48,6 +48,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.StringUtils;
 
 public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -301,8 +302,10 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                                 .write("when '$L'", jsonName)
                                 .indent()
                                 .call(() -> {
-                                    target.accept(new MemberDeserializer(writer, member, "", "value"));
+                                    target.accept(new MemberDeserializer(writer, member, "value = ", "value"));
                                 })
+                                .write("Types::$L::$L.new(value) if value", s.getId().getName(),
+                                        StringUtils.capitalize(member.getMemberName()))
                                 .dedent();
                     });
                 })

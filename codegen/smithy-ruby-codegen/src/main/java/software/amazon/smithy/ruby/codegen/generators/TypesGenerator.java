@@ -157,10 +157,15 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L < ::SimpleDelegator", shapeName);
+                .openBlock("class $L < ::SimpleDelegator", shapeName)
+                .write("include Seahorse::Structure\n");
 
         for (MemberShape memberShape : shape.members()) {
-            writer.write("class $L < $L; end", StringUtils.capitalize(memberShape.getMemberName()), shapeName);
+            writer.openBlock("class $L < $L", StringUtils.capitalize(memberShape.getMemberName()), shapeName)
+                    .openBlock("def to_h")
+                    .write("{$L: super(__getobj__)}",  RubyFormatter.toSnakeCase(memberShape.getMemberName()))
+                    .closeBlock("end")
+                    .closeBlock("end");
         }
 
         writer

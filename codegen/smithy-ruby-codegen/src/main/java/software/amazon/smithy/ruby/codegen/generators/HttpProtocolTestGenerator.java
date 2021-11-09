@@ -552,22 +552,13 @@ public class HttpProtocolTestGenerator {
             ObjectNode objectNode = node.expectObjectNode();
             Map<StringNode, Node> members = objectNode.getMembers();
             Map<String, MemberShape> shapeMembers = shape.getAllMembers();
-            switch (testType) {
-                case REQUEST:
-                    String memberStr = members.keySet().stream()
-                            .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
-                                    + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
-                                    .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
-                            .collect(Collectors.joining(", "));
-                    return "{" + memberStr + "}";
-                case RESPONSE:
-                    return members.keySet().stream()
-                            .map((k) -> (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
-                                    .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
-                            .collect(Collectors.joining(", "));
-                default:
-            }
-            return null;
+
+            String memberStr = members.keySet().stream()
+                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
+                            + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
+                            .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
+                    .collect(Collectors.joining(", "));
+            return "{" + memberStr + "}";
         }
 
         @Override

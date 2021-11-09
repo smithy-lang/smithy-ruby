@@ -13,9 +13,23 @@ module SampleService
   module Types
 
     class EventStream < ::SimpleDelegator
-      class Start < EventStream; end
-      class End < EventStream; end
-      class Log < EventStream; end
+      include Seahorse::Structure
+
+      class Start < EventStream
+        def to_h
+          {start: super(__getobj__)}
+        end
+      end
+      class End < EventStream
+        def to_h
+          {end: super(__getobj__)}
+        end
+      end
+      class Log < EventStream
+        def to_h
+          {log: super(__getobj__)}
+        end
+      end
       class Unknown < EventStream; end
     end
 

@@ -16,7 +16,7 @@ module Seahorse
       when Array
         obj.collect { |value| to_hash(value) }
       else
-        obj
+        !obj.nil? && obj.respond_to?(:to_h) ? obj.to_h : obj
       end
     end
     alias to_hash to_h
