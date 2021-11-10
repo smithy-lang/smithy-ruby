@@ -7,6 +7,8 @@ use smithy.rails#errorOn
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
+use smithy.waiters#waitable
+
 /// Rails High Score example from their generator docs
 @RailsJson
 @errorOn(location: "header", name: "x-smithy-error")
@@ -149,6 +151,26 @@ structure GetHighScoreOutput {
 
 /// Create a new high score
 @http(method: "POST", uri: "/high_scores", code: 201)
+@waitable(
+    HighScoreExists: {
+        documentation: "Wait until a high score exists",
+        acceptors: [
+            {
+                state: "success",
+                matcher: {
+                    success: true
+                }
+            },
+            {
+                state: "retry",
+                matcher: {
+                    errorType: "NotFound"
+                }
+            }
+        ],
+        tags: ["foo", "bar"]
+    }
+)
 operation CreateHighScore {
     input: CreateHighScoreInput,
     output: CreateHighScoreOutput,

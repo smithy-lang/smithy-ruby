@@ -39,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
+import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class CodegenOrchestrator {
@@ -188,6 +189,8 @@ public class CodegenOrchestrator {
 
         generateClient();
 
+        generateWaiters();
+
         generateModule();
 
         generateGemSpec();
@@ -257,5 +260,10 @@ public class CodegenOrchestrator {
             String fileName = context.getRubySettings().getGemName() + "/.yardopts";
             fileManifest.writeFile(fileName, writer.toString());
         }
+    }
+
+    private void generateWaiters() {
+        WaitersGenerator waitersGenerator = new WaitersGenerator(context);
+        waitersGenerator.render();
     }
 }
