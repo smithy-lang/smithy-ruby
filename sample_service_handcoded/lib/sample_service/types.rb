@@ -8,41 +8,26 @@ module SampleService
       keyword_init: true
     ) do
       include Seahorse::Structure
-
-      def self.build(params)
-        type = new
-        type.message = params[:message]
-        type
-      end
     end
 
-    class EventStream < SimpleDelegator
-      class Start < EventStream; end
-      class End < EventStream; end
-      class Log < EventStream; end
-      class Unknown < EventStream; end
+    class EventStream < Seahorse::Union
 
-      def self.build(params)
-        return params if params.is_a?(EventStream)
-
-        if params.compact.size > 1
-          raise ArgumentError,
-                "EventStream must have exactly one member, got: #{params}"
-        end
-        key, value = params.flatten
-        case key
-        when :start
-          Start.new(
-            StructuredEvent.build(params[:start])
-          )
-        when :end
-          End.new(
-            StructuredEvent.build(params[:end])
-          )
-        when :log
-          Log.new(value)
+      class Start < EventStream
+        def to_h
+          { start: super(__getobj__) }
         end
       end
+      class End < EventStream
+        def to_h
+          { end: super(__getobj__) }
+        end
+      end
+      class Log < EventStream
+        def to_h
+          { end: super(__getobj__) }
+        end
+      end
+      class Unknown < EventStream; end
     end
 
     # Permitted params for a High Score

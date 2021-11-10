@@ -41,6 +41,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -123,7 +124,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = RubyFormatter.asSymbol(memberName);
             String input = "params[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberBuilder(writer, memberSetter, input, context));
+            target.accept(new MemberBuilder(writer, memberSetter, input, context, true));
         });
 
         writer.write("type");
@@ -144,7 +145,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("Seahorse::Validator.validate!(params, Array, context: context)")
                 .openBlock("\nparams.each_with_index.map do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "", "element", "\"#{context}[#{index}]\"")))
+                        .accept(new MemberBuilder(writer, "", "element", "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -167,7 +168,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = Set.new")
                 .openBlock("\nparams.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "data << ", "element", "\"#{context}[#{index}]\"")))
+                        .accept(new MemberBuilder(writer, "data << ", "element", "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -190,7 +191,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("Seahorse::Validator.validate!(params, Hash, context: context)")
                 .openBlock("\ndata = {}\nparams.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[#{key}]\"")))
+                        .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[#{key}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -200,7 +201,43 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        // TODO: Generate a structure
+        Symbol symbol = symbolProvider.toSymbol(shape);
+        String shapeName = symbol.getName();
+
+        writer
+                .write("")
+                .openBlock("module $L", shapeName)
+                .openBlock("\ndef self.build(params, context: '')")
+                .write("return params if params.is_a?(Types::$L)", shapeName)
+                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)\n", shapeName)
+                .openBlock("unless params.size == 1")
+                .write("raise ArgumentError,\n\"Expected #{context} to have exactly one member, got: #{params}\"")
+                .closeBlock("end")
+                .write("\nkey, value = params.flatten")
+                .write("case key"); //start a case statement.  This does NOT indent
+
+
+        for (MemberShape member : shape.members()) {
+            Shape target = model.expectShape(member.getTarget());
+            String memberName = RubyFormatter.asSymbol(member.getMemberName());
+            writer.write("when $L", memberName)
+                    .indent()
+                    .openBlock("Types::$L::$L.new(", shapeName, StringUtils.capitalize(member.getMemberName()));
+            String input = "params[" + memberName + "]";
+            String context = "\"#{context}[" + memberName + "]\"";
+            target.accept(new MemberBuilder(writer, "", input, context, false));
+            writer.closeBlock(")")
+                    .dedent();
+        }
+        String expectedMembers =
+                shape.members().stream().map((member) -> RubyFormatter.asSymbol(member.getMemberName()))
+                        .collect(Collectors.joining(", "));
+        writer.write("else")
+                .indent()
+                .write("raise ArgumentError,\n\"Expected #{context} to have one of $L set\"", expectedMembers);
+        writer.write("end")  //end of case statement, NOT indented
+                .closeBlock("end")
+                .closeBlock("end");
         return null;
     }
 
@@ -209,13 +246,23 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         private final String memberSetter;
         private final String input;
         private final String context;
+        private final boolean checkRequired;
 
         MemberBuilder(RubyCodeWriter writer, String memberSetter, String input,
-                      String context) {
+                      String context, boolean checkRequired) {
             this.writer = writer;
             this.memberSetter = memberSetter;
             this.input = input;
             this.context = context;
+            this.checkRequired = checkRequired;
+        }
+
+        private String checkRequired() {
+            if (this.checkRequired) {
+                return " if " + input;
+            } else {
+                return "";
+            }
         }
 
         @Override
@@ -227,43 +274,48 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void listShape(ListShape shape) {
             String shapeName = shape.getId().getName();
-            writer.write("$1L$2L.build($3L, context: $4L) if $3L", memberSetter, shapeName, input, context);
+            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
+                    checkRequired());
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
             String shapeName = shape.getId().getName();
-            writer.write("$1L$2L.build($3L, context: $4L) if $3L", memberSetter, shapeName, input, context);
+            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
+                    checkRequired());
             return null;
         }
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            // TODO: Need to implement a builder?
-//            writer.write("Seahorse::Validator.validate!($L, "
-//                    + "Hash, String, Array, TrueClass, FalseClass, Numeric, context: $L)", input, context);
+            String shapeName = shape.getId().getName();
+            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
+                    checkRequired());
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
             String shapeName = shape.getId().getName();
-            writer.write("$1L$2L.build($3L, context: $4L) if $3L", memberSetter, shapeName, input, context);
+            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
+                    checkRequired());
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
             String shapeName = shape.getId().getName();
-            writer.write("$1L$2L.build($3L, context: $4L) if $3L", memberSetter, shapeName, input, context);
+            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
+                    checkRequired());
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
             String shapeName = shape.getId().getName();
-            writer.write("$1L$2L.build($3L, context: $4L) if $3L", memberSetter, shapeName, input, context);
+            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
+                    checkRequired());
             return null;
         }
 

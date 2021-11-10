@@ -134,7 +134,8 @@ public class HttpProtocolTestGenerator {
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     .write("expect(output.data.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                            getRubyHashFromParams(outputShape, testCase.getParams(),
+                                    ParamsToHashVisitor.TestType.RESPONSE))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
@@ -147,11 +148,13 @@ public class HttpProtocolTestGenerator {
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             writer
+                    .write("") //formatting
                     .call(() -> renderTestDocumentation(testCase.getDocumentation()))
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))
                     .write("client.$L($L, middleware: middleware)", operationName,
-                            getRubyHashFromParams(inputShape, testCase.getParams()))
+                            getRubyHashFromParams(inputShape, testCase.getParams(),
+                                    ParamsToHashVisitor.TestType.REQUEST))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
@@ -176,7 +179,8 @@ public class HttpProtocolTestGenerator {
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
                             .write("expect(e.data.to_h).to eq($L)",
-                                    getRubyHashFromParams(error, testCase.getParams()))
+                                    getRubyHashFromParams(error, testCase.getParams(),
+                                            ParamsToHashVisitor.TestType.RESPONSE))
                             .closeBlock("end")
                             .closeBlock("end");
                 });
@@ -193,15 +197,15 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private String getRubyHashFromParams(Shape ioShape, ObjectNode params) {
-        return ioShape.accept(new ParamsToHashVisitor(model, params));
+    private String getRubyHashFromParams(Shape ioShape, ObjectNode params, ParamsToHashVisitor.TestType testType) {
+        return ioShape.accept(new ParamsToHashVisitor(model, params, testType));
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {
-        Iterator iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
         StringBuffer buffer = new StringBuffer("{ ");
         while (iterator.hasNext()) {
-            Map.Entry header = (Map.Entry) iterator.next();
+            Map.Entry header =  iterator.next();
             buffer.append("'");
             buffer.append(header.getKey());
             buffer.append("' => '");
@@ -346,11 +350,12 @@ public class HttpProtocolTestGenerator {
 
         private final Node node;
         private final Model model;
+        private final TestType testType;
 
-
-        ParamsToHashVisitor(Model model, Node node) {
+        ParamsToHashVisitor(Model model, Node node, TestType testType) {
             this.node = node;
             this.model = model;
+            this.testType = testType;
         }
 
         @Override
@@ -380,7 +385,7 @@ public class HttpProtocolTestGenerator {
             Shape target = model.expectShape(shape.getMember().getTarget());
 
             String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element)))
+                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType)))
                     .collect(Collectors.joining(", "));
 
             return "[" + elements + "]";
@@ -395,7 +400,7 @@ public class HttpProtocolTestGenerator {
             Shape target = model.expectShape(shape.getMember().getTarget());
 
             String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element)))
+                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType)))
                     .collect(Collectors.joining(", "));
 
             return "[" + elements + "]";
@@ -412,7 +417,7 @@ public class HttpProtocolTestGenerator {
 
             String memberStr = members.keySet().stream()
                     .map((k) -> "'" + k.toString() + "' => "
-                            + target.accept(new ParamsToHashVisitor(model, members.get(k))))
+                            + target.accept(new ParamsToHashVisitor(model, members.get(k), testType)))
                     .collect(Collectors.joining(", "));
 
             return "{" + memberStr + "}";
@@ -533,7 +538,7 @@ public class HttpProtocolTestGenerator {
             String memberStr = members.keySet().stream()
                     .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
                             + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
-                            .accept(new ParamsToHashVisitor(model, members.get(k))))
+                            .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
                     .collect(Collectors.joining(", "));
 
             return "{" + memberStr + "}";
@@ -541,8 +546,19 @@ public class HttpProtocolTestGenerator {
 
         @Override
         public String unionShape(UnionShape shape) {
-            // TODO
-            return null;
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ObjectNode objectNode = node.expectObjectNode();
+            Map<StringNode, Node> members = objectNode.getMembers();
+            Map<String, MemberShape> shapeMembers = shape.getAllMembers();
+
+            String memberStr = members.keySet().stream()
+                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
+                            + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
+                            .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
+                    .collect(Collectors.joining(", "));
+            return "{" + memberStr + "}";
         }
 
         @Override
@@ -559,6 +575,11 @@ public class HttpProtocolTestGenerator {
                 return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
             }
             return "Time.parse('" + node + "')";
+        }
+
+        enum TestType {
+            REQUEST,
+            RESPONSE
         }
     }
 }

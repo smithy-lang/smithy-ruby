@@ -33,6 +33,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.StringUtils;
 
 public class TypesGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -149,7 +150,38 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        // TODO: Generate a structure
+        Symbol symbol = symbolProvider.toSymbol(shape);
+        System.out.println("Visit Structure Shape: " + shape.getId() + " Symbol: " + symbol);
+        String shapeName = symbol.getName();
+
+        writer
+                .write("")
+                .openBlock("class $L < Seahorse::Union", shapeName);
+
+        for (MemberShape memberShape : shape.members()) {
+            writer.openBlock("class $L < $L", StringUtils.capitalize(memberShape.getMemberName()), shapeName)
+                    .openBlock("def to_h")
+                    .write("{$L: super(__getobj__)}",  RubyFormatter.toSnakeCase(memberShape.getMemberName()))
+                    .closeBlock("end")
+                    .closeBlock("end");
+        }
+
+        writer
+                .write("class Unknown < $L; end", shapeName)
+                .closeBlock("end");
+
+        // TODO: Type signatures for delegation are not well defined.
+        // See: https://github.com/ruby/rbs/pull/765
+        // For now just define the classes and ignore the actual member types
+        rbsWriter
+                .write("")
+                .openBlock("class $L", shapeName);
+
+        for (MemberShape memberShape : shape.members()) {
+            rbsWriter.write("class $L[$L]; end", StringUtils.capitalize(memberShape.getMemberName()), shapeName);
+        }
+
+        rbsWriter.closeBlock("end");
         return null;
     }
 

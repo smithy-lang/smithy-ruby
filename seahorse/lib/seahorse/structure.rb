@@ -15,6 +15,8 @@ module Seahorse
         _to_h_hash(obj)
       when Array
         obj.collect { |value| to_hash(value) }
+      when Union
+        obj.to_h
       else
         obj
       end

@@ -59,6 +59,10 @@ module SampleService
           End.validate!(input.__getobj__, context: context)
         when Types::EventStream::Log
           Log.validate!(input.__getobj__, context: context)
+        when Types::EventStream::SimpleList
+          SimpleList.validate!(input.__getobj__, context: context)
+        when Types::EventStream::ComplexList
+          ComplexList.validate!(input.__getobj__, context: context)
         when Types::EventStream::Unknown
           nil
         else
@@ -85,6 +89,18 @@ module SampleService
           Seahorse::Validator.validate!(input, String, context: context)
         end
       end
+
+      class SimpleList
+        def self.validate!(input, context:)
+          SimpleList.validate!(input, context: context) if input
+        end
+      end
+
+      class ComplexList
+        def self.validate!(input, context:)
+          ComplexList.validate!(input, context: context) if input
+        end
+      end
     end
 
     class GetHighScoreInput
@@ -100,6 +116,13 @@ module SampleService
         Seahorse::Validator.validate!(input[:score], Integer, context: "#{context}[:score]")
         Seahorse::Validator.validate!(input[:created_at], Time, context: "#{context}[:created_at]")
         Seahorse::Validator.validate!(input[:updated_at], Time, context: "#{context}[:updated_at]")
+        SimpleList.validate!(input[:simple_list], context: "#{context}[:simple_list]") if input[:simple_list]
+        ComplexList.validate!(input[:complex_list], context: "#{context}[:complex_list]") if input[:complex_list]
+        SimpleMap.validate!(input[:simple_map], context: "#{context}[:simple_map]") if input[:simple_map]
+        ComplexMap.validate!(input[:complex_map], context: "#{context}[:complex_map]") if input[:complex_map]
+        SimpleSet.validate!(input[:simple_set], context: "#{context}[:simple_set]") if input[:simple_set]
+        ComplexSet.validate!(input[:complex_set], context: "#{context}[:complex_set]") if input[:complex_set]
+        EventStream.validate!(input[:event_stream], context: "#{context}[:event_stream]") if input[:event_stream]
       end
     end
 

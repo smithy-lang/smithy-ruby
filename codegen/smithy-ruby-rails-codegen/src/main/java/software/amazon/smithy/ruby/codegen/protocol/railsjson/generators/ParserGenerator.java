@@ -48,6 +48,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.StringUtils;
 
 public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -282,8 +283,38 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     }
 
     @Override
-    public Void unionShape(UnionShape shape) {
-        // TODO: Support union shape
+    public Void unionShape(UnionShape s) {
+        System.out.println("\tRENDER parser for UNION: " + s.getId());
+        writer
+                .openBlock("\nclass $L", s.getId().getName())
+                .openBlock("def self.parse(json)")
+                .write("key, value = json.flatten")
+                .write("case key")
+                .call(() -> {
+                    s.members().forEach((member) -> {
+                        Shape target = model.expectShape(member.getTarget());
+                        String dataName = RubyFormatter.toSnakeCase(member.getMemberName());
+                        String jsonName = dataName;
+                        if (member.hasTrait(JsonNameTrait.class)) {
+                            jsonName = member.getTrait(JsonNameTrait.class).get().getValue();
+                        }
+                        writer
+                                .write("when '$L'", jsonName)
+                                .indent()
+                                .call(() -> {
+                                    target.accept(new MemberDeserializer(writer, member, "value = ", "value"));
+                                })
+                                .write("Types::$L::$L.new(value) if value", s.getId().getName(),
+                                        StringUtils.capitalize(member.getMemberName()))
+                                .dedent();
+                    });
+                })
+                .openBlock("else")
+                .write("Types::$L::Unknown.new({name: key, value: value})", s.getId().getName())
+                .closeBlock("end") // end of case
+                .closeBlock("end")
+                .closeBlock("end");
+
         return null;
     }
 
