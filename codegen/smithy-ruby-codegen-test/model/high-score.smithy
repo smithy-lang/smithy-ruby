@@ -167,7 +167,8 @@ structure GetHighScoreOutput {
                     errorType: "NotFound"
                 }
             }
-        ]
+        ],
+        tags: ["foo", "bar"]
     }
 )
 operation CreateHighScore {
