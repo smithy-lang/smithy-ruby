@@ -92,9 +92,17 @@ module SampleService
           Types::EventStream::Log.new(
             params[:log]
           )
+        when :simple_list
+          Types::EventStream::SimpleList.new(
+            SimpleList.build(params[:simple_list], context: "#{context}[:simple_list]")
+          )
+        when :complex_list
+          Types::EventStream::ComplexList.new(
+            ComplexList.build(params[:complex_list], context: "#{context}[:complex_list]")
+          )
         else
           raise ArgumentError,
-          "Expected #{context} to have one of :start, :end, :log set"
+          "Expected #{context} to have one of :start, :end, :log, :simple_list, :complex_list set"
           end
         end
       end
@@ -119,6 +127,13 @@ module SampleService
           type.score = params[:score]
           type.created_at = params[:created_at]
           type.updated_at = params[:updated_at]
+          type.simple_list = SimpleList.build(params[:simple_list], context: "#{context}[:simple_list]") if params[:simple_list]
+          type.complex_list = ComplexList.build(params[:complex_list], context: "#{context}[:complex_list]") if params[:complex_list]
+          type.simple_map = SimpleMap.build(params[:simple_map], context: "#{context}[:simple_map]") if params[:simple_map]
+          type.complex_map = ComplexMap.build(params[:complex_map], context: "#{context}[:complex_map]") if params[:complex_map]
+          type.simple_set = SimpleSet.build(params[:simple_set], context: "#{context}[:simple_set]") if params[:simple_set]
+          type.complex_set = ComplexSet.build(params[:complex_set], context: "#{context}[:complex_set]") if params[:complex_set]
+          type.event_stream = EventStream.build(params[:event_stream], context: "#{context}[:event_stream]") if params[:event_stream]
           type
         end
       end

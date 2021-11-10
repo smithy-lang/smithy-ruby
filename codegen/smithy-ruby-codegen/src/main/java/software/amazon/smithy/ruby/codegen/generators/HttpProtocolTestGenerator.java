@@ -202,10 +202,10 @@ public class HttpProtocolTestGenerator {
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {
-        Iterator iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
         StringBuffer buffer = new StringBuffer("{ ");
         while (iterator.hasNext()) {
-            Map.Entry header = (Map.Entry) iterator.next();
+            Map.Entry header =  iterator.next();
             buffer.append("'");
             buffer.append(header.getKey());
             buffer.append("' => '");

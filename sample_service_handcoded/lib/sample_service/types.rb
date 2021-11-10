@@ -8,16 +8,9 @@ module SampleService
       keyword_init: true
     ) do
       include Seahorse::Structure
-
-      def self.build(params)
-        type = new
-        type.message = params[:message]
-        type
-      end
     end
 
-    class EventStream < SimpleDelegator
-      include Seahorse::Structure
+    class EventStream < Seahorse::Union
 
       class Start < EventStream
         def to_h

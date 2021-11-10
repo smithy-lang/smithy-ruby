@@ -36,7 +36,16 @@ structure HighScoreAttributes {
     // The time the high score was created at
     createdAt: Timestamp,
     // The time the high score was updated at
-    updatedAt: Timestamp
+    updatedAt: Timestamp,
+
+    // attributes used for testing only
+    simpleList: SimpleList,
+    complexList: ComplexList,
+    simpleMap: SimpleMap,
+    complexMap: ComplexMap,
+    simpleSet: SimpleSet,
+    complexSet: ComplexSet,
+    eventStream: EventStream
 }
 
 /// Permitted params for a High Score
@@ -59,6 +68,8 @@ union EventStream {
     start: StructuredEvent,
     end: StructuredEvent,
     log: String,
+    simpleList: SimpleList,
+    complexList: ComplexList
 }
 
 structure StructuredEvent {

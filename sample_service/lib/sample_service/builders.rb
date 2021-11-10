@@ -53,6 +53,10 @@ module SampleService
           data[:end] = Builders::StructuredEvent.build(input)
         when Types::EventStream::Log
           data[:log] = input
+        when Types::EventStream::SimpleList
+          data[:simple_list] = Builders::SimpleList.build(input)
+        when Types::EventStream::ComplexList
+          data[:complex_list] = Builders::ComplexList.build(input)
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::EventStream"
@@ -62,22 +66,12 @@ module SampleService
       end
     end
 
-    # Structure Builder for StructuredEvent
-    class StructuredEvent
+    # List Builder for ComplexList
+    class ComplexList
       def self.build(input)
-        data = {}
-        data[:message] = input[:message] unless input[:message].nil?
-        data
-      end
-    end
-
-    # Set Builder for ComplexSet
-
-    class ComplexSet
-      def self.build(input)
-        data = Set.new
+        data = []
         input.each do |element|
-          data << Builders::HighScoreAttributes.build(element) unless element.nil?
+          data << Builders::HighScoreAttributes.build(element)
         end
         data
       end
@@ -92,6 +86,25 @@ module SampleService
         data[:score] = input[:score] unless input[:score].nil?
         data[:created_at] = Seahorse::TimeHelper.to_date_time(input[:created_at]) unless input[:created_at].nil?
         data[:updated_at] = Seahorse::TimeHelper.to_date_time(input[:updated_at]) unless input[:updated_at].nil?
+        data[:simple_list] = Builders::SimpleList.build(input[:simple_list]) unless input[:simple_list].nil?
+        data[:complex_list] = Builders::ComplexList.build(input[:complex_list]) unless input[:complex_list].nil?
+        data[:simple_map] = Builders::SimpleMap.build(input[:simple_map]) unless input[:simple_map].nil?
+        data[:complex_map] = Builders::ComplexMap.build(input[:complex_map]) unless input[:complex_map].nil?
+        data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]).to_a unless input[:simple_set].nil?
+        data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]).to_a unless input[:complex_set].nil?
+        data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
+        data
+      end
+    end
+
+    # Set Builder for ComplexSet
+
+    class ComplexSet
+      def self.build(input)
+        data = Set.new
+        input.each do |element|
+          data << Builders::HighScoreAttributes.build(element) unless element.nil?
+        end
         data
       end
     end
@@ -130,17 +143,6 @@ module SampleService
       end
     end
 
-    # List Builder for ComplexList
-    class ComplexList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::HighScoreAttributes.build(element)
-        end
-        data
-      end
-    end
-
     # List Builder for SimpleList
     class SimpleList
       def self.build(input)
@@ -148,6 +150,15 @@ module SampleService
         input.each do |element|
           data << element
         end
+        data
+      end
+    end
+
+    # Structure Builder for StructuredEvent
+    class StructuredEvent
+      def self.build(input)
+        data = {}
+        data[:message] = input[:message] unless input[:message].nil?
         data
       end
     end

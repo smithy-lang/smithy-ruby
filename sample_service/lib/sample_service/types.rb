@@ -26,6 +26,16 @@ module SampleService
           {log: super(__getobj__)}
         end
       end
+      class SimpleList < EventStream
+        def to_h
+          {simple_list: super(__getobj__)}
+        end
+      end
+      class ComplexList < EventStream
+        def to_h
+          {complex_list: super(__getobj__)}
+        end
+      end
       class Unknown < EventStream; end
     end
 
@@ -35,6 +45,13 @@ module SampleService
       :score,
       :created_at,
       :updated_at,
+      :simple_list,
+      :complex_list,
+      :simple_map,
+      :complex_map,
+      :simple_set,
+      :complex_set,
+      :event_stream,
       keyword_init: true
     ) { include Seahorse::Structure }
 
