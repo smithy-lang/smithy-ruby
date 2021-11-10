@@ -65,12 +65,12 @@ public class WaitersGenerator {
         topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
             if (operation.hasTrait(WaitableTrait.class)) {
                 Map<String, Waiter> waiters = operation.getTrait(WaitableTrait.class).get().getWaiters();
-                Iterator iterator = waiters.entrySet().iterator();
+                Iterator<Map.Entry<String, Waiter>> iterator = waiters.entrySet().iterator();
 
                 while (iterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    String waiterName = (String) entry.getKey();
-                    Waiter waiter = (Waiter) entry.getValue();
+                    Map.Entry<String, Waiter> entry = iterator.next();
+                    String waiterName = entry.getKey();
+                    Waiter waiter = entry.getValue();
                     renderWaiter(waiterName, waiter, operation);
                     if (iterator.hasNext()) {
                         writer.write("");

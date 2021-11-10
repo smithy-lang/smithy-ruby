@@ -1,3 +1,12 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
 module SampleService
   module Waiters
     # Wait until a high score exists
@@ -34,7 +43,7 @@ module SampleService
             ]
           )
         }.merge(options))
-        @tags = %w[[foo, bar]]
+        @tags = %w[foo, bar]
       end
 
       attr_reader :tags
