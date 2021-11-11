@@ -5,8 +5,13 @@ require_relative 'spec_helper'
 module SampleService
   module Stubs
     describe GetHighScore do
-      let(:id) { 'string'}
-      let(:client) { SampleService::Client.new(stub_responses: true, endpoint: 'https://example.com')}
+      let(:id) { 'string' }
+      let(:client) do
+        SampleService::Client.new(
+          stub_responses: true,
+          endpoint: 'https://example.com'
+        )
+      end
 
       it 'returns a default' do
         resp = client.get_high_score(id: id)
@@ -19,7 +24,17 @@ module SampleService
 
       it 'returns the stubbed values' do
         t = Time.now.utc
-        client.stub_responses(:get_high_score, {high_score: {id: '1', game: 'pong', score: 42, created_at: Time.now}})
+        client.stub_responses(
+          :get_high_score,
+          {
+            high_score: {
+              id: '1',
+              game: 'pong',
+              score: 42,
+              created_at: Time.now
+            }
+          }
+        )
         resp = client.get_high_score(id: id)
         high_score = resp.data.high_score
         expect(high_score.id).to eq('1')
@@ -29,7 +44,7 @@ module SampleService
       end
 
       it 'stubs an empty body when given nil' do
-        client.stub_responses(:get_high_score, {high_score: nil})
+        client.stub_responses(:get_high_score, { high_score: nil })
         resp = client.get_high_score(id: id)
         high_score = resp.data.high_score
         expect(high_score.id).to be_nil
@@ -40,12 +55,17 @@ module SampleService
     end
 
     describe ListHighScores do
-      let(:id) { 'string'}
-      let(:client) { SampleService::Client.new(stub_responses: true, endpoint: 'https://example.com')}
+      let(:id) { 'string' }
+      let(:client) do
+        SampleService::Client.new(
+          stub_responses: true,
+          endpoint: 'https://example.com'
+        )
+      end
 
       it 'returns a default' do
         resp = client.list_high_scores
-        expect(resp.data.next_token).to eq("next_token")
+        expect(resp.data.next_token).to eq('next_token')
         expect(resp.data.high_scores.size).to eq(1)
 
         high_score = resp.data.high_scores.first
@@ -57,7 +77,14 @@ module SampleService
 
       it 'returns the stubbed values' do
         t = Time.now.utc
-        client.stub_responses(:list_high_scores, {high_scores: [{id: '1', game: 'pong', score: 42, created_at: Time.now}]})
+        client.stub_responses(
+          :list_high_scores,
+          {
+            high_scores: [
+              { id: '1', game: 'pong', score: 42, created_at: Time.now }
+            ]
+          }
+        )
         resp = client.list_high_scores
         expect(resp.data.next_token).to be_nil
         expect(resp.data.high_scores.size).to eq(1)

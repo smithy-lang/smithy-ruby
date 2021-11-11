@@ -21,28 +21,22 @@ module SampleService
       # to delay polling attempts.
       def initialize(client, options = {})
         @client = client
-        @waiter = Seahorse::Waiters::Waiter.new({
-          max_wait_time: options[:max_wait_time],
-          min_delay: 2 || options[:min_delay],
-          max_delay: 120 || options[:max_delay],
-          poller: Seahorse::Waiters::Poller.new(
-            operation_name: :create_high_score,
-            acceptors: [
-              {
-                state: 'success',
-                matcher: {
-                  success: true
-                }
-              },
-              {
-                state: 'retry',
-                matcher: {
-                  errorType: 'NotFound'
-                }
-              }
-            ]
+        @waiter =
+          Seahorse::Waiters::Waiter.new(
+            {
+              max_wait_time: options[:max_wait_time],
+              min_delay: 2 || options[:min_delay],
+              max_delay: 120 || options[:max_delay],
+              poller:
+                Seahorse::Waiters::Poller.new(
+                  operation_name: :create_high_score,
+                  acceptors: [
+                    { state: 'success', matcher: { success: true } },
+                    { state: 'retry', matcher: { errorType: 'NotFound' } }
+                  ]
+                )
+            }.merge(options)
           )
-        }.merge(options))
         @tags = %w[foo, bar]
       end
 

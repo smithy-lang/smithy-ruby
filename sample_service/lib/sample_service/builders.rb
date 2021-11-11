@@ -11,7 +11,6 @@ require 'base64'
 
 module SampleService
   module Builders
-
     # Operation Builder for CreateHighScore
     class CreateHighScore
       def self.build(http_req, input:)
@@ -20,7 +19,10 @@ module SampleService
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
+        data[:high_score] =
+          Builders::HighScoreParams.build(input[:high_score]) unless input[
+          :high_score
+        ].nil?
         http_req.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end
@@ -31,13 +33,34 @@ module SampleService
         data = {}
         data[:game] = input[:game] unless input[:game].nil?
         data[:score] = input[:score] unless input[:score].nil?
-        data[:simple_list] = Builders::SimpleList.build(input[:simple_list]) unless input[:simple_list].nil?
-        data[:complex_list] = Builders::ComplexList.build(input[:complex_list]) unless input[:complex_list].nil?
-        data[:simple_map] = Builders::SimpleMap.build(input[:simple_map]) unless input[:simple_map].nil?
-        data[:complex_map] = Builders::ComplexMap.build(input[:complex_map]) unless input[:complex_map].nil?
-        data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]).to_a unless input[:simple_set].nil?
-        data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]).to_a unless input[:complex_set].nil?
-        data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
+        data[:simple_list] =
+          Builders::SimpleList.build(input[:simple_list]) unless input[
+          :simple_list
+        ].nil?
+        data[:complex_list] =
+          Builders::ComplexList.build(input[:complex_list]) unless input[
+          :complex_list
+        ].nil?
+        data[:simple_map] =
+          Builders::SimpleMap.build(input[:simple_map]) unless input[
+          :simple_map
+        ].nil?
+        data[:complex_map] =
+          Builders::ComplexMap.build(input[:complex_map]) unless input[
+          :complex_map
+        ].nil?
+        data[:simple_set] =
+          Builders::SimpleSet.build(input[:simple_set]).to_a unless input[
+          :simple_set
+        ].nil?
+        data[:complex_set] =
+          Builders::ComplexSet.build(input[:complex_set]).to_a unless input[
+          :complex_set
+        ].nil?
+        data[:event_stream] =
+          Builders::EventStream.build(input[:event_stream]) unless input[
+          :event_stream
+        ].nil?
         data
       end
     end
@@ -59,7 +82,7 @@ module SampleService
           data[:complex_list] = Builders::ComplexList.build(input)
         else
           raise ArgumentError,
-          "Expected input to be one of the subclasses of Types::EventStream"
+                'Expected input to be one of the subclasses of Types::EventStream'
         end
 
         data
@@ -84,15 +107,42 @@ module SampleService
         data[:id] = input[:id] unless input[:id].nil?
         data[:game] = input[:game] unless input[:game].nil?
         data[:score] = input[:score] unless input[:score].nil?
-        data[:created_at] = Seahorse::TimeHelper.to_date_time(input[:created_at]) unless input[:created_at].nil?
-        data[:updated_at] = Seahorse::TimeHelper.to_date_time(input[:updated_at]) unless input[:updated_at].nil?
-        data[:simple_list] = Builders::SimpleList.build(input[:simple_list]) unless input[:simple_list].nil?
-        data[:complex_list] = Builders::ComplexList.build(input[:complex_list]) unless input[:complex_list].nil?
-        data[:simple_map] = Builders::SimpleMap.build(input[:simple_map]) unless input[:simple_map].nil?
-        data[:complex_map] = Builders::ComplexMap.build(input[:complex_map]) unless input[:complex_map].nil?
-        data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]).to_a unless input[:simple_set].nil?
-        data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]).to_a unless input[:complex_set].nil?
-        data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
+        data[:created_at] =
+          Seahorse::TimeHelper.to_date_time(input[:created_at]) unless input[
+          :created_at
+        ].nil?
+        data[:updated_at] =
+          Seahorse::TimeHelper.to_date_time(input[:updated_at]) unless input[
+          :updated_at
+        ].nil?
+        data[:simple_list] =
+          Builders::SimpleList.build(input[:simple_list]) unless input[
+          :simple_list
+        ].nil?
+        data[:complex_list] =
+          Builders::ComplexList.build(input[:complex_list]) unless input[
+          :complex_list
+        ].nil?
+        data[:simple_map] =
+          Builders::SimpleMap.build(input[:simple_map]) unless input[
+          :simple_map
+        ].nil?
+        data[:complex_map] =
+          Builders::ComplexMap.build(input[:complex_map]) unless input[
+          :complex_map
+        ].nil?
+        data[:simple_set] =
+          Builders::SimpleSet.build(input[:simple_set]).to_a unless input[
+          :simple_set
+        ].nil?
+        data[:complex_set] =
+          Builders::ComplexSet.build(input[:complex_set]).to_a unless input[
+          :complex_set
+        ].nil?
+        data[:event_stream] =
+          Builders::EventStream.build(input[:event_stream]) unless input[
+          :event_stream
+        ].nil?
         data
       end
     end
@@ -103,7 +153,9 @@ module SampleService
       def self.build(input)
         data = Set.new
         input.each do |element|
-          data << Builders::HighScoreAttributes.build(element) unless element.nil?
+          unless element.nil?
+            data << Builders::HighScoreAttributes.build(element)
+          end
         end
         data
       end
@@ -114,9 +166,7 @@ module SampleService
     class SimpleSet
       def self.build(input)
         data = Set.new
-        input.each do |element|
-          data << element unless element.nil?
-        end
+        input.each { |element| data << element unless element.nil? }
         data
       end
     end
@@ -136,9 +186,7 @@ module SampleService
     class SimpleMap
       def self.build(input)
         data = {}
-        input.each do |key, value|
-          data[key] = value
-        end
+        input.each { |key, value| data[key] = value }
         data
       end
     end
@@ -147,9 +195,7 @@ module SampleService
     class SimpleList
       def self.build(input)
         data = []
-        input.each do |element|
-          data << element
-        end
+        input.each { |element| data << element }
         data
       end
     end
@@ -167,7 +213,8 @@ module SampleService
     class DeleteHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'DELETE'
-        http_req.append_path(format(
+        http_req.append_path(
+          format(
             '/high_scores/%<id>s',
             id: Seahorse::HTTP.uri_escape(input[:id].to_str)
           )
@@ -179,7 +226,8 @@ module SampleService
     class GetHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
-        http_req.append_path(format(
+        http_req.append_path(
+          format(
             '/high_scores/%<id>s',
             id: Seahorse::HTTP.uri_escape(input[:id].to_str)
           )
@@ -192,8 +240,12 @@ module SampleService
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
-        http_req.append_query_param('maxResults', input[:max_results].to_str) unless input[:max_results].nil?
-        http_req.append_query_param('nextToken', input[:next_token].to_str) unless input[:next_token].nil?
+        unless input[:max_results].nil?
+          http_req.append_query_param('maxResults', input[:max_results].to_str)
+        end
+        unless input[:next_token].nil?
+          http_req.append_query_param('nextToken', input[:next_token].to_str)
+        end
       end
     end
 
@@ -201,7 +253,8 @@ module SampleService
     class UpdateHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
-        http_req.append_path(format(
+        http_req.append_path(
+          format(
             '/high_scores/%<id>s',
             id: Seahorse::HTTP.uri_escape(input[:id].to_str)
           )
@@ -209,7 +262,10 @@ module SampleService
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
+        data[:high_score] =
+          Builders::HighScoreParams.build(input[:high_score]) unless input[
+          :high_score
+        ].nil?
         http_req.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end

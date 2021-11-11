@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 module SampleService
   module Validators
     describe GetHighScoreInput do
-      let(:id) { 'string'}
+      let(:id) { 'string' }
       let(:input) { Types::GetHighScoreInput.new(id: id) }
 
       it 'accepts a string' do
@@ -18,14 +18,19 @@ module SampleService
         it 'raises an ArgumentError with the context' do
           expect {
             GetHighScoreInput.validate!(input, context: 'input')
-          }.to raise_error(ArgumentError, 'Expected input[:id] to be in [String], got Integer.')
+          }.to raise_error(
+            ArgumentError,
+            'Expected input[:id] to be in [String], got Integer.'
+          )
         end
       end
     end
     describe UpdateHighScoreInput do
       let(:id) { 'string' }
       let(:high_score) { nil }
-      let(:input) { Types::UpdateHighScoreInput.new(id: id, high_score: high_score) }
+      let(:input) do
+        Types::UpdateHighScoreInput.new(id: id, high_score: high_score)
+      end
 
       context ':high_score not set' do
         it 'does not validate :high_score' do
@@ -45,28 +50,33 @@ module SampleService
 
     describe SimpleList do
       it 'raises when not an array' do
-        expect do
-          SimpleList.validate!({}, context: 'input')
-        end.to raise_error(ArgumentError, 'Expected input to be in [Array], got Hash.')
+        expect { SimpleList.validate!({}, context: 'input') }.to raise_error(
+          ArgumentError,
+          'Expected input to be in [Array], got Hash.'
+        )
       end
 
       it 'validates all of the members' do
-        SimpleList.validate!(['a', 'b', 'c'], context: 'input')
+        SimpleList.validate!(%w[a b c], context: 'input')
       end
 
       it 'validates all of the members and raises when any are invalid' do
         expect do
           SimpleList.validate!(['a', 'b', 1], context: 'input')
-        end.to raise_error(ArgumentError, 'Expected input[2] to be in [String], got Integer.')
+        end.to raise_error(
+          ArgumentError,
+          'Expected input[2] to be in [String], got Integer.'
+        )
       end
     end
 
     describe ComplexList do
       let(:high_score) { Types::HighScoreAttributes.new }
       it 'raises when not an array' do
-        expect do
-          ComplexList.validate!({}, context: 'input')
-        end.to raise_error(ArgumentError, 'Expected input to be in [Array], got Hash.')
+        expect { ComplexList.validate!({}, context: 'input') }.to raise_error(
+          ArgumentError,
+          'Expected input to be in [Array], got Hash.'
+        )
       end
 
       it 'validates all of the members' do

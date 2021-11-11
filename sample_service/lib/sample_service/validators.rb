@@ -9,12 +9,16 @@
 
 module SampleService
   module Validators
-
     class ComplexList
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Array, context: context)
         input.each_with_index do |element, index|
-          HighScoreAttributes.validate!(element, context: "#{context}[#{index}]") if element
+          if element
+            HighScoreAttributes.validate!(
+              element,
+              context: "#{context}[#{index}]"
+            )
+          end
         end
       end
     end
@@ -23,8 +27,15 @@ module SampleService
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Hash, context: context)
         input.each do |key, value|
-          Seahorse::Validator.validate!(key, String, Symbol, context: "#{context}.keys")
-          HighScoreAttributes.validate!(value, context: "#{context}[#{key}]") if value
+          Seahorse::Validator.validate!(
+            key,
+            String,
+            Symbol,
+            context: "#{context}.keys"
+          )
+          if value
+            HighScoreAttributes.validate!(value, context: "#{context}[#{key}]")
+          end
         end
       end
     end
@@ -33,20 +44,34 @@ module SampleService
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Set, context: context)
         input.each_with_index do |element, index|
-          HighScoreAttributes.validate!(element, context: "#{context}[#{index}]") if element
+          if element
+            HighScoreAttributes.validate!(
+              element,
+              context: "#{context}[#{index}]"
+            )
+          end
         end
       end
     end
 
     class CreateHighScoreInput
       def self.validate!(input, context:)
-        HighScoreParams.validate!(input[:high_score], context: "#{context}[:high_score]") if input[:high_score]
+        if input[:high_score]
+          HighScoreParams.validate!(
+            input[:high_score],
+            context: "#{context}[:high_score]"
+          )
+        end
       end
     end
 
     class DeleteHighScoreInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:id], String, context: "#{context}[:id]")
+        Seahorse::Validator.validate!(
+          input[:id],
+          String,
+          context: "#{context}[:id]"
+        )
       end
     end
 
@@ -67,8 +92,8 @@ module SampleService
           nil
         else
           raise ArgumentError,
-                "Expect #{context} to be a union member of "\
-                "Types::EventStream, got #{input.class}."
+                "Expect #{context} to be a union member of " \
+                  "Types::EventStream, got #{input.class}."
         end
       end
 
@@ -105,45 +130,155 @@ module SampleService
 
     class GetHighScoreInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:id], String, context: "#{context}[:id]")
+        Seahorse::Validator.validate!(
+          input[:id],
+          String,
+          context: "#{context}[:id]"
+        )
       end
     end
 
     class HighScoreAttributes
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:id], String, context: "#{context}[:id]")
-        Seahorse::Validator.validate!(input[:game], String, context: "#{context}[:game]")
-        Seahorse::Validator.validate!(input[:score], Integer, context: "#{context}[:score]")
-        Seahorse::Validator.validate!(input[:created_at], Time, context: "#{context}[:created_at]")
-        Seahorse::Validator.validate!(input[:updated_at], Time, context: "#{context}[:updated_at]")
-        SimpleList.validate!(input[:simple_list], context: "#{context}[:simple_list]") if input[:simple_list]
-        ComplexList.validate!(input[:complex_list], context: "#{context}[:complex_list]") if input[:complex_list]
-        SimpleMap.validate!(input[:simple_map], context: "#{context}[:simple_map]") if input[:simple_map]
-        ComplexMap.validate!(input[:complex_map], context: "#{context}[:complex_map]") if input[:complex_map]
-        SimpleSet.validate!(input[:simple_set], context: "#{context}[:simple_set]") if input[:simple_set]
-        ComplexSet.validate!(input[:complex_set], context: "#{context}[:complex_set]") if input[:complex_set]
-        EventStream.validate!(input[:event_stream], context: "#{context}[:event_stream]") if input[:event_stream]
+        Seahorse::Validator.validate!(
+          input[:id],
+          String,
+          context: "#{context}[:id]"
+        )
+        Seahorse::Validator.validate!(
+          input[:game],
+          String,
+          context: "#{context}[:game]"
+        )
+        Seahorse::Validator.validate!(
+          input[:score],
+          Integer,
+          context: "#{context}[:score]"
+        )
+        Seahorse::Validator.validate!(
+          input[:created_at],
+          Time,
+          context: "#{context}[:created_at]"
+        )
+        Seahorse::Validator.validate!(
+          input[:updated_at],
+          Time,
+          context: "#{context}[:updated_at]"
+        )
+        if input[:simple_list]
+          SimpleList.validate!(
+            input[:simple_list],
+            context: "#{context}[:simple_list]"
+          )
+        end
+        if input[:complex_list]
+          ComplexList.validate!(
+            input[:complex_list],
+            context: "#{context}[:complex_list]"
+          )
+        end
+        if input[:simple_map]
+          SimpleMap.validate!(
+            input[:simple_map],
+            context: "#{context}[:simple_map]"
+          )
+        end
+        if input[:complex_map]
+          ComplexMap.validate!(
+            input[:complex_map],
+            context: "#{context}[:complex_map]"
+          )
+        end
+        if input[:simple_set]
+          SimpleSet.validate!(
+            input[:simple_set],
+            context: "#{context}[:simple_set]"
+          )
+        end
+        if input[:complex_set]
+          ComplexSet.validate!(
+            input[:complex_set],
+            context: "#{context}[:complex_set]"
+          )
+        end
+        if input[:event_stream]
+          EventStream.validate!(
+            input[:event_stream],
+            context: "#{context}[:event_stream]"
+          )
+        end
       end
     end
 
     class HighScoreParams
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:game], String, context: "#{context}[:game]")
-        Seahorse::Validator.validate!(input[:score], Integer, context: "#{context}[:score]")
-        SimpleList.validate!(input[:simple_list], context: "#{context}[:simple_list]") if input[:simple_list]
-        ComplexList.validate!(input[:complex_list], context: "#{context}[:complex_list]") if input[:complex_list]
-        SimpleMap.validate!(input[:simple_map], context: "#{context}[:simple_map]") if input[:simple_map]
-        ComplexMap.validate!(input[:complex_map], context: "#{context}[:complex_map]") if input[:complex_map]
-        SimpleSet.validate!(input[:simple_set], context: "#{context}[:simple_set]") if input[:simple_set]
-        ComplexSet.validate!(input[:complex_set], context: "#{context}[:complex_set]") if input[:complex_set]
-        EventStream.validate!(input[:event_stream], context: "#{context}[:event_stream]") if input[:event_stream]
+        Seahorse::Validator.validate!(
+          input[:game],
+          String,
+          context: "#{context}[:game]"
+        )
+        Seahorse::Validator.validate!(
+          input[:score],
+          Integer,
+          context: "#{context}[:score]"
+        )
+        if input[:simple_list]
+          SimpleList.validate!(
+            input[:simple_list],
+            context: "#{context}[:simple_list]"
+          )
+        end
+        if input[:complex_list]
+          ComplexList.validate!(
+            input[:complex_list],
+            context: "#{context}[:complex_list]"
+          )
+        end
+        if input[:simple_map]
+          SimpleMap.validate!(
+            input[:simple_map],
+            context: "#{context}[:simple_map]"
+          )
+        end
+        if input[:complex_map]
+          ComplexMap.validate!(
+            input[:complex_map],
+            context: "#{context}[:complex_map]"
+          )
+        end
+        if input[:simple_set]
+          SimpleSet.validate!(
+            input[:simple_set],
+            context: "#{context}[:simple_set]"
+          )
+        end
+        if input[:complex_set]
+          ComplexSet.validate!(
+            input[:complex_set],
+            context: "#{context}[:complex_set]"
+          )
+        end
+        if input[:event_stream]
+          EventStream.validate!(
+            input[:event_stream],
+            context: "#{context}[:event_stream]"
+          )
+        end
       end
     end
 
     class ListHighScoresInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:max_results], Integer, context: "#{context}[:max_results]")
-        Seahorse::Validator.validate!(input[:next_token], String, context: "#{context}[:next_token]")
+        Seahorse::Validator.validate!(
+          input[:max_results],
+          Integer,
+          context: "#{context}[:max_results]"
+        )
+        Seahorse::Validator.validate!(
+          input[:next_token],
+          String,
+          context: "#{context}[:next_token]"
+        )
       end
     end
 
@@ -151,7 +286,11 @@ module SampleService
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Array, context: context)
         input.each_with_index do |element, index|
-          Seahorse::Validator.validate!(element, String, context: "#{context}[#{index}]")
+          Seahorse::Validator.validate!(
+            element,
+            String,
+            context: "#{context}[#{index}]"
+          )
         end
       end
     end
@@ -160,8 +299,17 @@ module SampleService
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Hash, context: context)
         input.each do |key, value|
-          Seahorse::Validator.validate!(key, String, Symbol, context: "#{context}.keys")
-          Seahorse::Validator.validate!(value, Integer, context: "#{context}[#{key}]")
+          Seahorse::Validator.validate!(
+            key,
+            String,
+            Symbol,
+            context: "#{context}.keys"
+          )
+          Seahorse::Validator.validate!(
+            value,
+            Integer,
+            context: "#{context}[#{key}]"
+          )
         end
       end
     end
@@ -170,21 +318,38 @@ module SampleService
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Set, context: context)
         input.each_with_index do |element, index|
-          Seahorse::Validator.validate!(element, String, context: "#{context}[#{index}]")
+          Seahorse::Validator.validate!(
+            element,
+            String,
+            context: "#{context}[#{index}]"
+          )
         end
       end
     end
 
     class StructuredEvent
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:message], String, context: "#{context}[:message]")
+        Seahorse::Validator.validate!(
+          input[:message],
+          String,
+          context: "#{context}[:message]"
+        )
       end
     end
 
     class UpdateHighScoreInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input[:id], String, context: "#{context}[:id]")
-        HighScoreParams.validate!(input[:high_score], context: "#{context}[:high_score]") if input[:high_score]
+        Seahorse::Validator.validate!(
+          input[:id],
+          String,
+          context: "#{context}[:id]"
+        )
+        if input[:high_score]
+          HighScoreParams.validate!(
+            input[:high_score],
+            context: "#{context}[:high_score]"
+          )
+        end
       end
     end
   end

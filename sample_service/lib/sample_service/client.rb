@@ -51,7 +51,6 @@ module SampleService
       @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Seahorse::Stubbing::Stubs.new
       @validate_input = options.fetch(:validate_input, true)
-
     end
 
     # Create a new high score
@@ -63,36 +62,52 @@ module SampleService
     def create_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
-      stack.use(Seahorse::Middleware::Validate,
+      stack.use(
+        Seahorse::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Seahorse::Middleware::Build,
-        builder: Builders::CreateHighScore
-      )
+      stack.use(Seahorse::Middleware::Build, builder: Builders::CreateHighScore)
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
-      stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 201, errors: [Errors::UnprocessableEntityError]),
+      stack.use(
+        Seahorse::Middleware::Parse,
+        error_parser:
+          Seahorse::HTTP::ErrorParser.new(
+            error_module: Errors,
+            error_code_fn: Errors.method(:error_code),
+            success_status: 201,
+            errors: [Errors::UnprocessableEntityError]
+          ),
         data_parser: Parsers::CreateHighScore
       )
-      stack.use(Seahorse::Middleware::Send,
+      stack.use(
+        Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client:
+          Seahorse::HTTP::Client.new(
+            logger: @logger,
+            http_wire_trace: @http_wire_trace
+          ),
         stub_class: Stubs::CreateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
 
-      resp = stack.run(
-        input: input,
-        context: Seahorse::Context.new(
-          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
-          params: params,
-          logger: @logger,
-          operation_name: :create_high_score
+      resp =
+        stack.run(
+          input: input,
+          context:
+            Seahorse::Context.new(
+              request:
+                Seahorse::HTTP::Request.new(
+                  url: options.fetch(:endpoint, @endpoint)
+                ),
+              response: Seahorse::HTTP::Response.new(body: output_stream),
+              params: params,
+              logger: @logger,
+              operation_name: :create_high_score
+            )
         )
-      )
       raise resp.error if resp.error
       resp
     end
@@ -106,36 +121,52 @@ module SampleService
     def delete_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
-      stack.use(Seahorse::Middleware::Validate,
+      stack.use(
+        Seahorse::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Seahorse::Middleware::Build,
-        builder: Builders::DeleteHighScore
-      )
+      stack.use(Seahorse::Middleware::Build, builder: Builders::DeleteHighScore)
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
-      stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+      stack.use(
+        Seahorse::Middleware::Parse,
+        error_parser:
+          Seahorse::HTTP::ErrorParser.new(
+            error_module: Errors,
+            error_code_fn: Errors.method(:error_code),
+            success_status: 200,
+            errors: []
+          ),
         data_parser: Parsers::DeleteHighScore
       )
-      stack.use(Seahorse::Middleware::Send,
+      stack.use(
+        Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client:
+          Seahorse::HTTP::Client.new(
+            logger: @logger,
+            http_wire_trace: @http_wire_trace
+          ),
         stub_class: Stubs::DeleteHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
 
-      resp = stack.run(
-        input: input,
-        context: Seahorse::Context.new(
-          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
-          params: params,
-          logger: @logger,
-          operation_name: :delete_high_score
+      resp =
+        stack.run(
+          input: input,
+          context:
+            Seahorse::Context.new(
+              request:
+                Seahorse::HTTP::Request.new(
+                  url: options.fetch(:endpoint, @endpoint)
+                ),
+              response: Seahorse::HTTP::Response.new(body: output_stream),
+              params: params,
+              logger: @logger,
+              operation_name: :delete_high_score
+            )
         )
-      )
       raise resp.error if resp.error
       resp
     end
@@ -149,36 +180,52 @@ module SampleService
     def get_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
-      stack.use(Seahorse::Middleware::Validate,
+      stack.use(
+        Seahorse::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Seahorse::Middleware::Build,
-        builder: Builders::GetHighScore
-      )
+      stack.use(Seahorse::Middleware::Build, builder: Builders::GetHighScore)
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
-      stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+      stack.use(
+        Seahorse::Middleware::Parse,
+        error_parser:
+          Seahorse::HTTP::ErrorParser.new(
+            error_module: Errors,
+            error_code_fn: Errors.method(:error_code),
+            success_status: 200,
+            errors: []
+          ),
         data_parser: Parsers::GetHighScore
       )
-      stack.use(Seahorse::Middleware::Send,
+      stack.use(
+        Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client:
+          Seahorse::HTTP::Client.new(
+            logger: @logger,
+            http_wire_trace: @http_wire_trace
+          ),
         stub_class: Stubs::GetHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
 
-      resp = stack.run(
-        input: input,
-        context: Seahorse::Context.new(
-          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
-          params: params,
-          logger: @logger,
-          operation_name: :get_high_score
+      resp =
+        stack.run(
+          input: input,
+          context:
+            Seahorse::Context.new(
+              request:
+                Seahorse::HTTP::Request.new(
+                  url: options.fetch(:endpoint, @endpoint)
+                ),
+              response: Seahorse::HTTP::Response.new(body: output_stream),
+              params: params,
+              logger: @logger,
+              operation_name: :get_high_score
+            )
         )
-      )
       raise resp.error if resp.error
       resp
     end
@@ -193,36 +240,52 @@ module SampleService
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
-      stack.use(Seahorse::Middleware::Validate,
+      stack.use(
+        Seahorse::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Seahorse::Middleware::Build,
-        builder: Builders::ListHighScores
-      )
+      stack.use(Seahorse::Middleware::Build, builder: Builders::ListHighScores)
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
-      stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+      stack.use(
+        Seahorse::Middleware::Parse,
+        error_parser:
+          Seahorse::HTTP::ErrorParser.new(
+            error_module: Errors,
+            error_code_fn: Errors.method(:error_code),
+            success_status: 200,
+            errors: []
+          ),
         data_parser: Parsers::ListHighScores
       )
-      stack.use(Seahorse::Middleware::Send,
+      stack.use(
+        Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client:
+          Seahorse::HTTP::Client.new(
+            logger: @logger,
+            http_wire_trace: @http_wire_trace
+          ),
         stub_class: Stubs::ListHighScores,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
 
-      resp = stack.run(
-        input: input,
-        context: Seahorse::Context.new(
-          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
-          params: params,
-          logger: @logger,
-          operation_name: :list_high_scores
+      resp =
+        stack.run(
+          input: input,
+          context:
+            Seahorse::Context.new(
+              request:
+                Seahorse::HTTP::Request.new(
+                  url: options.fetch(:endpoint, @endpoint)
+                ),
+              response: Seahorse::HTTP::Response.new(body: output_stream),
+              params: params,
+              logger: @logger,
+              operation_name: :list_high_scores
+            )
         )
-      )
       raise resp.error if resp.error
       resp
     end
@@ -239,36 +302,52 @@ module SampleService
     def update_high_score(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
-      stack.use(Seahorse::Middleware::Validate,
+      stack.use(
+        Seahorse::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Seahorse::Middleware::Build,
-        builder: Builders::UpdateHighScore
-      )
+      stack.use(Seahorse::Middleware::Build, builder: Builders::UpdateHighScore)
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
-      stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::UnprocessableEntityError]),
+      stack.use(
+        Seahorse::Middleware::Parse,
+        error_parser:
+          Seahorse::HTTP::ErrorParser.new(
+            error_module: Errors,
+            error_code_fn: Errors.method(:error_code),
+            success_status: 200,
+            errors: [Errors::UnprocessableEntityError]
+          ),
         data_parser: Parsers::UpdateHighScore
       )
-      stack.use(Seahorse::Middleware::Send,
+      stack.use(
+        Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client:
+          Seahorse::HTTP::Client.new(
+            logger: @logger,
+            http_wire_trace: @http_wire_trace
+          ),
         stub_class: Stubs::UpdateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
 
-      resp = stack.run(
-        input: input,
-        context: Seahorse::Context.new(
-          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
-          params: params,
-          logger: @logger,
-          operation_name: :update_high_score
+      resp =
+        stack.run(
+          input: input,
+          context:
+            Seahorse::Context.new(
+              request:
+                Seahorse::HTTP::Request.new(
+                  url: options.fetch(:endpoint, @endpoint)
+                ),
+              response: Seahorse::HTTP::Response.new(body: output_stream),
+              params: params,
+              logger: @logger,
+              operation_name: :update_high_score
+            )
         )
-      )
       raise resp.error if resp.error
       resp
     end

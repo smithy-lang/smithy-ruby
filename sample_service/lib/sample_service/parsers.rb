@@ -11,7 +11,6 @@ require 'base64'
 
 module SampleService
   module Parsers
-
     # Operation Parser for CreateHighScore
     class CreateHighScore
       def self.parse(http_resp)
@@ -31,13 +30,23 @@ module SampleService
         data.score = json['score']
         data.created_at = Time.parse(json['created_at']) if json['created_at']
         data.updated_at = Time.parse(json['updated_at']) if json['updated_at']
-        data.simple_list = Parsers::SimpleList.parse(json['simple_list']) if json['simple_list']
-        data.complex_list = Parsers::ComplexList.parse(json['complex_list']) if json['complex_list']
-        data.simple_map = Parsers::SimpleMap.parse(json['simple_map']) if json['simple_map']
-        data.complex_map = Parsers::ComplexMap.parse(json['complex_map']) if json['complex_map']
+        data.simple_list =
+          Parsers::SimpleList.parse(json['simple_list']) if json['simple_list']
+        data.complex_list =
+          Parsers::ComplexList.parse(json['complex_list']) if json[
+          'complex_list'
+        ]
+        data.simple_map = Parsers::SimpleMap.parse(json['simple_map']) if json[
+          'simple_map'
+        ]
+        data.complex_map =
+          Parsers::ComplexMap.parse(json['complex_map']) if json['complex_map']
         data.simple_set = json['simple_set']
         data.complex_set = json['complex_set']
-        data.event_stream = Parsers::EventStream.parse(json['event_stream']) if json['event_stream']
+        data.event_stream =
+          Parsers::EventStream.parse(json['event_stream']) if json[
+          'event_stream'
+        ]
         return data
       end
     end
@@ -62,24 +71,20 @@ module SampleService
           value = Parsers::ComplexList.parse(value) if value
           Types::EventStream::ComplexList.new(value) if value
         else
-          Types::EventStream::Unknown.new({name: key, value: value})
+          Types::EventStream::Unknown.new({ name: key, value: value })
         end
       end
     end
 
     class ComplexList
       def self.parse(json)
-        json.map do |value|
-          Parsers::HighScoreAttributes.parse(value) if value
-        end
+        json.map { |value| Parsers::HighScoreAttributes.parse(value) if value }
       end
     end
 
     class SimpleList
       def self.parse(json)
-        json.map do |value|
-          value
-        end
+        json.map { |value| value }
       end
     end
 
@@ -93,18 +98,17 @@ module SampleService
 
     class ComplexSet
       def self.parse(json)
-        data = json.map do |value|
-          Parsers::HighScoreAttributes.parse(value) if value
-        end
+        data =
+          json.map do |value|
+            Parsers::HighScoreAttributes.parse(value) if value
+          end
         Set.new(data)
       end
     end
 
     class SimpleSet
       def self.parse(json)
-        data = json.map do |value|
-          value
-        end
+        data = json.map { |value| value }
         Set.new(data)
       end
     end
@@ -122,9 +126,7 @@ module SampleService
     class SimpleMap
       def self.parse(json)
         data = {}
-        json.map do |key, value|
-          data[key] = value
-        end
+        json.map { |key, value| data[key] = value }
         data
       end
     end
@@ -134,7 +136,9 @@ module SampleService
       def self.parse(http_resp)
         json = Seahorse::JSON.load(http_resp.body)
         data = Types::UnprocessableEntityError.new
-        data.errors = Parsers::AttributeErrors.parse(json['errors']) if json['errors']
+        data.errors = Parsers::AttributeErrors.parse(json['errors']) if json[
+          'errors'
+        ]
         data
       end
     end
@@ -151,9 +155,7 @@ module SampleService
 
     class ErrorMessages
       def self.parse(json)
-        json.map do |value|
-          value
-        end
+        json.map { |value| value }
       end
     end
 
@@ -182,16 +184,15 @@ module SampleService
         json = Seahorse::JSON.load(http_resp.body)
         data = Types::ListHighScoresOutput.new
         data.next_token = json['next_token']
-        data.high_scores = Parsers::HighScores.parse(json['high_scores']) if json['high_scores']
+        data.high_scores =
+          Parsers::HighScores.parse(json['high_scores']) if json['high_scores']
         data
       end
     end
 
     class HighScores
       def self.parse(json)
-        json.map do |value|
-          Parsers::HighScoreAttributes.parse(value) if value
-        end
+        json.map { |value| Parsers::HighScoreAttributes.parse(value) if value }
       end
     end
 

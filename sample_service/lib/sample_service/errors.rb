@@ -15,15 +15,19 @@ module SampleService
     end
 
     # Base class for all errors returned by this service
-    class ApiError < Seahorse::HTTP::ApiError; end
+    class ApiError < Seahorse::HTTP::ApiError
+    end
 
     # Base class for all errors returned where the client is at fault.
     # These are generally errors with 4XX HTTP status codes.
-    class ApiClientError < ApiError; end
+    class ApiClientError < ApiError
+    end
 
     # Base class for all errors returned where the server is at fault.
     # These are generally errors with 5XX HTTP status codes.
-    class ApiServerError < ApiError; end
+    class ApiServerError < ApiError
+    end
+
     # Base class for all errors returned where the service returned
     # a 3XX redirection.
     class ApiRedirectError < ApiError
@@ -266,6 +270,5 @@ module SampleService
 
       attr_reader :data
     end
-
   end
 end
