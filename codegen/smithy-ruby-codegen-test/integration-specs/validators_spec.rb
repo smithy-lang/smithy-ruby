@@ -102,6 +102,10 @@ module SampleService
         Document.validate!(true, context: 'input')
       end
 
+      it 'validates a top level nil' do
+        Document.validate!(nil, context: 'input')
+      end
+
       it 'validates a hash' do
         Document.validate!({'key' => 'string'}, context: 'input')
       end

@@ -28,6 +28,8 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeVisitor;
+import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -470,8 +472,7 @@ public class HttpProtocolTestGenerator {
 
         @Override
         public String documentShape(DocumentShape shape) {
-            // TODO
-            return null;
+            return node.accept(new NodeToHashVisitor());
         }
 
         @Override
@@ -580,6 +581,47 @@ public class HttpProtocolTestGenerator {
         enum TestType {
             REQUEST,
             RESPONSE
+        }
+    }
+
+    private static class NodeToHashVisitor implements NodeVisitor<String> {
+        @Override
+        public String arrayNode(ArrayNode node) {
+            String elements = node.getElements().stream()
+                    .map((element) -> element.accept(this))
+                    .collect(Collectors.joining(", "));
+
+            return "[" + elements + "]";
+        }
+
+        @Override
+        public String booleanNode(BooleanNode node) {
+            return node.getValue() ? "true" : "false";
+        }
+
+        @Override
+        public String nullNode(NullNode node) {
+            return "nil";
+        }
+
+        @Override
+        public String numberNode(NumberNode node) {
+            return node.getValue().toString();
+        }
+
+        @Override
+        public String objectNode(ObjectNode node) {
+            Map<StringNode, Node> members = node.getMembers();
+            String memberStr = members.keySet().stream()
+                    .map((k) -> "'" + RubyFormatter.toSnakeCase(k.toString()) + "' => " + members.get(k).accept(this))
+                    .collect(Collectors.joining(", "));
+
+            return "{" + memberStr + "}";
+        }
+
+        @Override
+        public String stringNode(StringNode node) {
+            return "'" + node.getValue() + "'";
         }
     }
 }
