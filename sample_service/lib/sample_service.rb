@@ -18,6 +18,7 @@ require_relative 'sample_service/params'
 require_relative 'sample_service/validators'
 require_relative 'sample_service/stubs'
 require_relative 'sample_service/waiters'
+require_relative 'sample_service/paginators'
 
 module SampleService
   GEM_VERSION = '0.0.1'

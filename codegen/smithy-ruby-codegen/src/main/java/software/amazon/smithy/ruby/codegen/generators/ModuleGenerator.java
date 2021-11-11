@@ -35,8 +35,10 @@ public class ModuleGenerator {
 
         writer.write("require 'seahorse'\n");
 
-        String[] requires =
-                {"builders", "client", "errors", "parsers", "types", "params", "validators", "stubs", "waiters"};
+        String[] requires = {
+                "builders", "client", "errors", "parsers", "types",
+                "params", "validators", "stubs", "waiters", "paginators"
+        };
 
         for (String require : requires) {
             writer.write("require_relative '$L/$L'", settings.getGemName(),

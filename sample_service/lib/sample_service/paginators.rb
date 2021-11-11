@@ -1,3 +1,12 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
 module SampleService
   module Paginators
     class ListHighScores
@@ -10,15 +19,15 @@ module SampleService
       def pages
         params = @params
         Enumerator.new do |e|
-          @prev_token = params[:next_token]  # codegen
-          response = @client.list_high_scores(params, @options) # codegen
+          @prev_token = params[:next_token]
+          response = @client.list_high_scores(params, @options)
           e.yield(response)
-          output_token = response.data.next_token # codegen
+          output_token = response.next_token
           until output_token.nil? || @prev_token == output_token
-            params = params.merge(next_token: output_token) # code gen
-            response = @client.list_high_scores(params, @options) # code gen
+            params = params.merge(next_token: output_token)
+            response = @client.list_high_scores(params, @options)
             e.yield(response)
-            output_token = response.data.next_token # codegen
+            output_token = response.next_token
           end
         end
       end
@@ -26,7 +35,7 @@ module SampleService
       def items
         Enumerator.new do |e|
           pages.each do |page|
-            page.data.high_scores.each do |item| # code gen
+            page.high_scores.each do |item|
               e.yield(item)
             end
           end
