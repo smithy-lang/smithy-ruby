@@ -38,6 +38,7 @@ module SampleService
         data.simple_set = json['simple_set']
         data.complex_set = json['complex_set']
         data.event_stream = Parsers::EventStream.parse(json['event_stream']) if json['event_stream']
+        data.inline_document = json['inline_document']
         return data
       end
     end

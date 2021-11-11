@@ -38,6 +38,7 @@ module SampleService
         data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]).to_a unless input[:simple_set].nil?
         data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]).to_a unless input[:complex_set].nil?
         data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
+        data[:inline_document] = input[:inline_document] unless input[:inline_document].nil?
         data
       end
     end
@@ -93,6 +94,7 @@ module SampleService
         data[:simple_set] = Builders::SimpleSet.build(input[:simple_set]).to_a unless input[:simple_set].nil?
         data[:complex_set] = Builders::ComplexSet.build(input[:complex_set]).to_a unless input[:complex_set].nil?
         data[:event_stream] = Builders::EventStream.build(input[:event_stream]) unless input[:event_stream].nil?
+        data[:inline_document] = input[:inline_document] unless input[:inline_document].nil?
         data
       end
     end

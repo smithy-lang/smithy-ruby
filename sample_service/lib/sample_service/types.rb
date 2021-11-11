@@ -52,6 +52,7 @@ module SampleService
       :simple_set,
       :complex_set,
       :event_stream,
+      :inline_document,
       keyword_init: true
     ) { include Seahorse::Structure }
 
@@ -65,6 +66,7 @@ module SampleService
       :simple_set,
       :complex_set,
       :event_stream,
+      :inline_document,
       keyword_init: true
     ) { include Seahorse::Structure }
 

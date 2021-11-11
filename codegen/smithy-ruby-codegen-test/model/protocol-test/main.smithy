@@ -21,11 +21,8 @@ service RailsJsonProtocol {
         GreetingWithErrors,
         OperationWithOptionalInputOutput,
         NullOperation,
-        JsonUnions
-
-        // TODO:
-        // PutAndGetInlineDocuments
-
+        JsonUnions,
+        PutAndGetInlineDocuments
     ],
 }
 

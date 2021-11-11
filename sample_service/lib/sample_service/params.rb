@@ -134,6 +134,7 @@ module SampleService
           type.simple_set = SimpleSet.build(params[:simple_set], context: "#{context}[:simple_set]") if params[:simple_set]
           type.complex_set = ComplexSet.build(params[:complex_set], context: "#{context}[:complex_set]") if params[:complex_set]
           type.event_stream = EventStream.build(params[:event_stream], context: "#{context}[:event_stream]") if params[:event_stream]
+          type.inline_document = params[:inline_document]
           type
         end
       end
@@ -152,6 +153,7 @@ module SampleService
           type.simple_set = SimpleSet.build(params[:simple_set], context: "#{context}[:simple_set]") if params[:simple_set]
           type.complex_set = ComplexSet.build(params[:complex_set], context: "#{context}[:complex_set]") if params[:complex_set]
           type.event_stream = EventStream.build(params[:event_stream], context: "#{context}[:event_stream]") if params[:event_stream]
+          type.inline_document = params[:inline_document]
           type
         end
       end

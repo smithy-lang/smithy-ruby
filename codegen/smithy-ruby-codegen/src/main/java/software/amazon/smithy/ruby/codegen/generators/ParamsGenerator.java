@@ -26,7 +26,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -281,14 +280,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void setShape(SetShape shape) {
-            String shapeName = shape.getId().getName();
-            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
-                    checkRequired());
-            return null;
-        }
-
-        @Override
-        public Void documentShape(DocumentShape shape) {
             String shapeName = shape.getId().getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());

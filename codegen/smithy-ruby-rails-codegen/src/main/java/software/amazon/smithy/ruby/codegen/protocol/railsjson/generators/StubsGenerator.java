@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -301,6 +302,26 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("\ndef self.stub(stub = {})")
                 .call(() -> renderMemberStubbers(shape))
                 .write("data")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        return null;
+    }
+
+    @Override
+    public Void documentShape(DocumentShape shape) {
+        System.out.println("\tRENDER stubber for Document: " + shape.getId());
+        String name = shape.getId().getName();
+        writer
+                .write("\n# Document Type Stubber for $L", name)
+                .openBlock("class $L", name)
+                .openBlock("\ndef self.default(visited=[])")
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
+                .write("{ '$L' => [0, 1, 2] }", name)
+                .closeBlock("end")
+                .openBlock("\ndef self.stub(stub = {})")
+                .write("stub")
                 .closeBlock("end")
                 .closeBlock("end");
 

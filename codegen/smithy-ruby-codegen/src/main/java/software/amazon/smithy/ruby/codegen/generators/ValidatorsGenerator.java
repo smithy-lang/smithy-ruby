@@ -209,6 +209,34 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         return null;
     }
 
+    @Override
+    public Void documentShape(DocumentShape documentShape) {
+        writer
+                .write("")
+                .openBlock("class $L", documentShape.getId().getName())
+                .openBlock("def self.validate!(input, context:)")
+                .write("Seahorse::Validator.validate!(input, "
+                        + "Hash, String, Array, TrueClass, FalseClass, Numeric, context: context)")
+                .write("case input")
+                .openBlock("when Hash")
+                .write("input.each do |k,v|")
+                .indent()
+                .write("validate!(v, context: context + \"[#{k}]\")")
+                .closeBlock("end")
+                .dedent()
+                .write("when Array")
+                .indent()
+                .openBlock("input.each_with_index do |v, i|")
+                .write("validate!(v, context: context + \"[#{i}]\")")
+                .closeBlock("end")
+                .dedent()
+                .write("end")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        return null;
+    }
+
     private void renderValidatorsForUnionMembers(Collection<MemberShape> members) {
         members.forEach(member -> {
             String name = StringUtils.capitalize(member.getMemberName());
@@ -304,8 +332,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, "
-                    + "Hash, String, Array, TrueClass, FalseClass, Numeric, context: $L)", input, context);
+            String name = shape.getId().getName();
+            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 

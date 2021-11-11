@@ -48,7 +48,8 @@ structure HighScoreAttributes {
     complexMap: ComplexMap,
     simpleSet: SimpleSet,
     complexSet: ComplexSet,
-    eventStream: EventStream
+    eventStream: EventStream,
+    inlineDocument: Document
 }
 
 /// Permitted params for a High Score
@@ -64,7 +65,8 @@ structure HighScoreParams {
     complexMap: ComplexMap,
     simpleSet: SimpleSet,
     complexSet: ComplexSet,
-    eventStream: EventStream
+    eventStream: EventStream,
+    inlineDocument: Document
 }
 
 union EventStream {
