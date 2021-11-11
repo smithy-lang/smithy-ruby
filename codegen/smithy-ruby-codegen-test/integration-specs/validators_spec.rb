@@ -80,5 +80,43 @@ module SampleService
       #     # end.to raise_error(ArgumentError, 'Expected input[2] to be in [SampleService::Types::HighScoreAttributes.], got Integer.')
       # end
     end
+
+    describe Document do
+      it 'validates an empty document' do
+        Document.validate!({}, context: 'input')
+      end
+
+      it 'validates a top level String' do
+        Document.validate!('string', context: 'input')
+      end
+
+      it 'validates a top level Numeric' do
+        Document.validate!(1.0, context: 'input')
+      end
+
+      it 'validates a top level Array' do
+        Document.validate!(['string'], context: 'input')
+      end
+
+      it 'validates a top level boolean' do
+        Document.validate!(true, context: 'input')
+      end
+
+      it 'validates a hash' do
+        Document.validate!({'key' => 'string'}, context: 'input')
+      end
+
+      it 'raises when given a top level non Document type' do
+        expect do
+          Document.validate!(Types::HighScoreAttributes.new, context: 'input')
+        end.to raise_error(ArgumentError, /Expected input to be in \[Hash, String, Array, TrueClass, FalseClass, Numeric\]/)
+      end
+
+      it 'raises when given a nested non Document type' do
+        expect do
+          Document.validate!({'key' => {'nestedKey' => [Types::HighScoreAttributes.new] } }, context: 'input')
+        end.to raise_error(ArgumentError, /Expected input\[key\]\[nestedKey\]\[0\] to be in \[Hash, String, Array, TrueClass, FalseClass, Numeric\]/)
+      end
+    end
   end
 end

@@ -50,6 +50,7 @@ module SampleService
           simple_set: Stubs::SimpleSet.default(visited),
           complex_set: Stubs::ComplexSet.default(visited),
           event_stream: Stubs::EventStream.default(visited),
+          inline_document: nil,
         }
       end
 
@@ -67,7 +68,22 @@ module SampleService
         data[:simple_set] = Stubs::SimpleSet.stub(stub[:simple_set]) unless stub[:simple_set].nil?
         data[:complex_set] = Stubs::ComplexSet.stub(stub[:complex_set]) unless stub[:complex_set].nil?
         data[:event_stream] = Stubs::EventStream.stub(stub[:event_stream]) unless stub[:event_stream].nil?
+        data[:inline_document] = stub[:inline_document] unless stub[:inline_document].nil?
         data
+      end
+    end
+
+    # Document Type Stubber for Document
+    class Document
+
+      def self.default(visited=[])
+        return nil if visited.include?('Document')
+        visited = visited + ['Document']
+        { 'Document' => [0, 1, 2] }
+      end
+
+      def self.stub(stub = {})
+        stub
       end
     end
 

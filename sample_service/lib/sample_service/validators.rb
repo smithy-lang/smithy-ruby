@@ -50,6 +50,22 @@ module SampleService
       end
     end
 
+    class Document
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Hash, String, Array, TrueClass, FalseClass, Numeric, context: context)
+        case input
+        when Hash
+          input.each do |k,v|
+            validate!(v, context: context + "[#{k}]")
+          end
+        when Array
+          input.each_with_index do |v, i|
+            validate!(v, context: context + "[#{i}]")
+          end
+        end
+      end
+    end
+
     class EventStream
       def self.validate!(input, context:)
         case input
@@ -123,6 +139,7 @@ module SampleService
         SimpleSet.validate!(input[:simple_set], context: "#{context}[:simple_set]") if input[:simple_set]
         ComplexSet.validate!(input[:complex_set], context: "#{context}[:complex_set]") if input[:complex_set]
         EventStream.validate!(input[:event_stream], context: "#{context}[:event_stream]") if input[:event_stream]
+        Document.validate!(input[:inline_document], context: "#{context}[:inline_document]") if input[:inline_document]
       end
     end
 
@@ -137,6 +154,7 @@ module SampleService
         SimpleSet.validate!(input[:simple_set], context: "#{context}[:simple_set]") if input[:simple_set]
         ComplexSet.validate!(input[:complex_set], context: "#{context}[:complex_set]") if input[:complex_set]
         EventStream.validate!(input[:event_stream], context: "#{context}[:event_stream]") if input[:event_stream]
+        Document.validate!(input[:inline_document], context: "#{context}[:inline_document]") if input[:inline_document]
       end
     end
 
