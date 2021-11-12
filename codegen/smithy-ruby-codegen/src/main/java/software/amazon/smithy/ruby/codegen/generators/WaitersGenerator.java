@@ -81,7 +81,7 @@ public class WaitersGenerator {
     }
 
     private void renderWaiter(String waiterName, Waiter waiter, OperationShape operation) {
-        String operationName = RubyFormatter.asSymbol(operation.getId().getName());
+        String operationName = RubyFormatter.toSnakeCase(operation.getId().getName());
         writer
                 .call(() -> renderWaiterDocumentation(waiter))
                 .openBlock("class $L", waiterName)
@@ -93,7 +93,7 @@ public class WaitersGenerator {
                 .write("min_delay: $L || options[:min_delay],", waiter.getMinDelay())
                 .write("max_delay: $L || options[:max_delay],", waiter.getMaxDelay())
                 .openBlock("poller: Seahorse::Waiters::Poller.new(")
-                .write("operation_name: $L,", operationName)
+                .write("operation_name: :$L,", operationName)
                 .call(() -> renderAcceptors(waiter))
                 .closeBlock(")")
                 .closeBlock("}.merge(options))")

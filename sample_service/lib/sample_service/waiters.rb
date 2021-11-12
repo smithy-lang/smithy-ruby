@@ -48,9 +48,9 @@ module SampleService
 
       attr_reader :tags
 
-      # @param [Hash] params (see Client#:create_high_score)
-      # @param [Hash] options (see Client#:create_high_score)
-      # @return (see Client#:create_high_score)
+      # @param [Hash] params (see Client#create_high_score)
+      # @param [Hash] options (see Client#create_high_score)
+      # @return (see Client#create_high_score)
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

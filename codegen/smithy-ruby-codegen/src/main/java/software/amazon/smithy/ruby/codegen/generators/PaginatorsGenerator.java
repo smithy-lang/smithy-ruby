@@ -15,10 +15,13 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.PaginatedIndex;
+import software.amazon.smithy.model.knowledge.PaginationInfo;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -52,41 +55,53 @@ public class PaginatorsGenerator {
 
     private void renderPaginators() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
+        PaginatedIndex paginatedIndex = PaginatedIndex.of(model);
 
         topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
-            // todo - i think we need to inherit from service shape too?
-            if (operation.hasTrait(PaginatedTrait.class)) {
-                PaginatedTrait paginatedTrait = operation.getTrait(PaginatedTrait.class).get();
+            Optional<PaginationInfo> paginationInfoOptional =
+                    paginatedIndex.getPaginationInfo(context.getService(), operation);
+            if (paginationInfoOptional.isPresent()) {
+                PaginationInfo paginationInfo = paginationInfoOptional.get();
                 String operationName = operation.getId().getName();
-                renderPaginator(operationName, paginatedTrait);
+                renderPaginator(operationName, paginationInfo);
             }
         });
     }
 
-    private void renderPaginator(String operationName, PaginatedTrait paginatedTrait) {
-        //todo needs documentation?
+    private void renderPaginator(String operationName, PaginationInfo paginationInfo) {
         writer
                 .openBlock("class $L", operationName)
+                .call(() -> renderPaginatorInitializeDocumentation(operationName))
                 .openBlock("def initialize(client, params = {}, options = {})")
                 .write("@params = params")
                 .write("@options = options")
                 .write("@client = client")
                 .closeBlock("end")
                 .write("")
-                .call(() -> renderPaginatorPages(operationName, paginatedTrait))
+                .call(() -> renderPaginatorPages(operationName, paginationInfo))
                 .write("")
                 .call(() -> {
-                    if (paginatedTrait.getItems().isPresent()) {
-                        renderPaginatorItems(paginatedTrait);
+                    if (!paginationInfo.getItemsMemberPath().isEmpty()) {
+                        renderPaginatorItems(paginationInfo);
                     }
                 })
                 .closeBlock("end");
     }
 
-    private void renderPaginatorPages(String operationName, PaginatedTrait paginatedTrait) {
-        // todo - we need to handle paths like results.nextToken
-        String inputToken = RubyFormatter.toSnakeCase(paginatedTrait.getInputToken().get());
-        String outputToken = RubyFormatter.toSnakeCase(paginatedTrait.getOutputToken().get());
+    private void renderPaginatorInitializeDocumentation(String operationName) {
+        String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
+
+        writer.rdoc(() -> writer
+                .write("@param [Client] client")
+                .write("@param [Hash] params (see Client#$L)", snakeOperationName)
+                .write("@param [Hash] options (see Client#$L)", snakeOperationName));
+    }
+
+    private void renderPaginatorPages(String operationName, PaginationInfo paginationInfo) {
+        String inputToken = RubyFormatter.toSnakeCase(paginationInfo.getInputTokenMember().getMemberName());
+        String outputToken = paginationInfo.getOutputTokenMemberPath().stream()
+                .map((member) -> RubyFormatter.toSnakeCase(member.getMemberName()))
+                .collect(Collectors.joining("."));
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
         writer
@@ -107,8 +122,10 @@ public class PaginatorsGenerator {
                 .closeBlock("end");
     }
 
-    private void renderPaginatorItems(PaginatedTrait paginatedTrait) {
-        String items = RubyFormatter.toSnakeCase(paginatedTrait.getItems().get());
+    private void renderPaginatorItems(PaginationInfo paginationInfo) {
+        String items = paginationInfo.getItemsMemberPath().stream()
+                .map((member) -> RubyFormatter.toSnakeCase(member.getMemberName()))
+                .collect(Collectors.joining("."));
 
         writer
                 .openBlock("def items")

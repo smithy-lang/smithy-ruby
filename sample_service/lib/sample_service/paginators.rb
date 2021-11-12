@@ -10,6 +10,9 @@
 module SampleService
   module Paginators
     class ListHighScores
+      # @param [Client] client
+      # @param [Hash] params (see Client#list_high_scores)
+      # @param [Hash] options (see Client#list_high_scores)
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
