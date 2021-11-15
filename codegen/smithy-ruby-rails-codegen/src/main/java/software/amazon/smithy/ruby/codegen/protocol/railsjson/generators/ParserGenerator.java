@@ -184,7 +184,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(m.getTarget());
             System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
             String symbolName = RubyFormatter.toSnakeCase(m.getMemberName());
-            writer.write("resp.data.$L = http_resp.headers['$L']", symbolName, headerTrait.getValue());
+            writer.write("data.$L = http_resp.headers['$L']", symbolName, headerTrait.getValue());
         }
     }
 

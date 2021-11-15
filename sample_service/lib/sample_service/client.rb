@@ -94,7 +94,7 @@ module SampleService
         )
       )
       raise resp.error if resp.error
-      resp
+      resp.data
     end
 
     # Delete a high score
@@ -137,7 +137,7 @@ module SampleService
         )
       )
       raise resp.error if resp.error
-      resp
+      resp.data
     end
 
     # Get a high score
@@ -180,7 +180,7 @@ module SampleService
         )
       )
       raise resp.error if resp.error
-      resp
+      resp.data
     end
 
     # List all high scores
@@ -224,7 +224,7 @@ module SampleService
         )
       )
       raise resp.error if resp.error
-      resp
+      resp.data
     end
 
     # Update a high score
@@ -270,7 +270,7 @@ module SampleService
         )
       )
       raise resp.error if resp.error
-      resp
+      resp.data
     end
 
     private

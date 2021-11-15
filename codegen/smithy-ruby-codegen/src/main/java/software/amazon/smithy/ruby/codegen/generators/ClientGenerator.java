@@ -207,7 +207,7 @@ public class ClientGenerator {
                 .closeBlock(")")
                 .closeBlock(")")
                 .write("raise resp.error if resp.error")
-                .write("resp")
+                .write("resp.data")
                 .closeBlock("end");
     }
 
