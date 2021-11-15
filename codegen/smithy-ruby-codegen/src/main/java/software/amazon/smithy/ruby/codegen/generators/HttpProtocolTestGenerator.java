@@ -178,7 +178,7 @@ public class HttpProtocolTestGenerator {
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
-                            .write("expect(e.to_h).to eq($L)",
+                            .write("expect(e.data.to_h).to eq($L)",
                                     getRubyHashFromParams(error, testCase.getParams(),
                                             ParamsToHashVisitor.TestType.RESPONSE))
                             .closeBlock("end")
