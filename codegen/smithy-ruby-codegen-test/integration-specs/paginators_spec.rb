@@ -27,15 +27,19 @@ module SampleService
       end
 
       describe '#pages' do
-        pages = subject.pages
-        expect(pages).to be_a(Enumerator)
-        expect(pages.to_a).to eq([response_1, response_2])
+        it 'returns response pages' do
+          pages = subject.pages
+          expect(pages).to be_a(Enumerator)
+          expect(pages.to_a).to eq([response_1, response_2])
+        end
       end
 
       describe '#items' do
-        items = subject.items
-        expect(items).to be_a(Enumerator)
-        expect(items.to_a).to eq([high_score_1, high_score_2])
+        it 'returns items from the response pages' do
+          items = subject.items
+          expect(items).to be_a(Enumerator)
+          expect(items.to_a).to eq([high_score_1, high_score_2])
+        end
       end
     end
   end
