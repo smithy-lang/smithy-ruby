@@ -36,6 +36,7 @@ import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.PaginatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
@@ -188,13 +189,11 @@ public class CodegenOrchestrator {
         }
 
         generateClient();
-
         generateWaiters();
+        generatePaginators();
 
         generateModule();
-
         generateGemSpec();
-
         generateYardOpts();
     }
 
@@ -265,5 +264,10 @@ public class CodegenOrchestrator {
     private void generateWaiters() {
         WaitersGenerator waitersGenerator = new WaitersGenerator(context);
         waitersGenerator.render();
+    }
+
+    private void generatePaginators() {
+        PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
+        paginatorsGenerator.render();
     }
 }

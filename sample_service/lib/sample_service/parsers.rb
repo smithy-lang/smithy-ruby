@@ -17,7 +17,7 @@ module SampleService
       def self.parse(http_resp)
         json = Seahorse::JSON.load(http_resp.body)
         data = Types::CreateHighScoreOutput.new
-        resp.data.location = http_resp.headers['Location']
+        data.location = http_resp.headers['Location']
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end

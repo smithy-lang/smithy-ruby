@@ -49,7 +49,7 @@ module SampleService
           end
           middleware.remove_send.remove_build
           output = client.get_high_score({}, middleware: middleware)
-          expect(output.data.to_h).to eq({high_score: {id: 'string-value'}})
+          expect(output.to_h).to eq({high_score: {id: 'string-value'}})
         end
       end
     end

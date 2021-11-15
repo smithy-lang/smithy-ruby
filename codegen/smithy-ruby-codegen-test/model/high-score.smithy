@@ -13,6 +13,7 @@ use smithy.waiters#waitable
 @RailsJson
 @errorOn(location: "header", name: "x-smithy-error")
 @title("High Score Sample Rails Service")
+@paginated(inputToken: "nextToken", outputToken: "nextToken")
 service SampleService {
     version: "2021-02-15",
     resources: [HighScore],
@@ -257,8 +258,7 @@ structure DeleteHighScoreOutput {}
 /// List all high scores
 @http(method: "GET", uri: "/high_scores")
 @readonly
-@paginated(inputToken: "nextToken", outputToken: "nextToken",
-           pageSize: "maxResults", items: "highScores")
+@paginated(items: "highScores")
 operation ListHighScores {
     input: ListHighScoresInput,
     output: ListHighScoresOutput

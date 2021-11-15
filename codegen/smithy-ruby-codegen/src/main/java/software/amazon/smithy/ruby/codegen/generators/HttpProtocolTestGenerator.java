@@ -135,7 +135,7 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .write("expect(output.data.to_h).to eq($L)",
+                    .write("expect(output.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams(),
                                     ParamsToHashVisitor.TestType.RESPONSE))
                     .closeBlock("end");
