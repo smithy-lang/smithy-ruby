@@ -133,7 +133,7 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .write("expect(output.data.to_h).to eq($L)",
+                    .write("expect(output.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams(),
                                     ParamsToHashVisitor.TestType.RESPONSE))
                     .closeBlock("end");
@@ -178,7 +178,7 @@ public class HttpProtocolTestGenerator {
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
-                            .write("expect(e.data.to_h).to eq($L)",
+                            .write("expect(e.to_h).to eq($L)",
                                     getRubyHashFromParams(error, testCase.getParams(),
                                             ParamsToHashVisitor.TestType.RESPONSE))
                             .closeBlock("end")
