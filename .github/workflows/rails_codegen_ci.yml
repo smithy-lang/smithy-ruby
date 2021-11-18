@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: generated_test_sdk
-        path: sample_service
+        path: high_score_service
     - name: Upload Generated Protocol Test SDK
       uses: actions/upload-artifact@v2
       with:
@@ -66,11 +66,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated_test_sdk
-          path: sample_service
+          path: high_score_service
 
       - name: Copy Gemfile
         run: |
-          cp seahorse/Gemfile sample_service/
+          cp seahorse/Gemfile high_score_service/
 
       - name: Inspect
         run: |
@@ -81,11 +81,11 @@ jobs:
         run: |
           bundle config set --local without 'docs repl'
           bundle install
-        working-directory: ./sample_service
+        working-directory: ./high_score_service
 
       - name: Tests
         run: bundle exec rspec
-        working-directory: ./sample_service
+        working-directory: ./high_score_service
 
   ruby-protocol-specs:
     needs: [generate-test-sdk]
