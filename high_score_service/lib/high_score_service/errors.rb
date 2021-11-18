@@ -7,7 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-module SampleService
+module HighScoreService
   module Errors
     # Given an http_resp, return the error code
     def self.error_code(http_resp)

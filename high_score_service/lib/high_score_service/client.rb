@@ -7,8 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-module SampleService
-  # An API client for SampleService
+module HighScoreService
+  # An API client for HighScoreService
   # See {#initialize} for a full list of supported configuration options
   class Client
     include Seahorse::ClientStubs

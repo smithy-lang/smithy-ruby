@@ -3,11 +3,6 @@ namespace example.railsjson
 
 use smithy.ruby.protocols#railsJson
 
-use smithy.test#httpRequestTests
-use smithy.test#httpResponseTests
-
-use smithy.waiters#waitable
-
 /// Rails High Score example from their generator docs
 @railsJson
 @title("High Score Sample Rails Service")

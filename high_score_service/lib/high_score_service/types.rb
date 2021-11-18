@@ -7,37 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-module SampleService
+module HighScoreService
   module Types
-
-    class EventStream < Seahorse::Union
-      class Start < EventStream
-        def to_h
-          {start: super(__getobj__)}
-        end
-      end
-      class End < EventStream
-        def to_h
-          {end: super(__getobj__)}
-        end
-      end
-      class Log < EventStream
-        def to_h
-          {log: super(__getobj__)}
-        end
-      end
-      class SimpleList < EventStream
-        def to_h
-          {simple_list: super(__getobj__)}
-        end
-      end
-      class ComplexList < EventStream
-        def to_h
-          {complex_list: super(__getobj__)}
-        end
-      end
-      class Unknown < EventStream; end
-    end
 
     HighScoreAttributes = Struct.new(
       :id,
@@ -45,33 +16,12 @@ module SampleService
       :score,
       :created_at,
       :updated_at,
-      :simple_list,
-      :complex_list,
-      :simple_map,
-      :complex_map,
-      :simple_set,
-      :complex_set,
-      :event_stream,
-      :inline_document,
       keyword_init: true
     ) { include Seahorse::Structure }
 
     HighScoreParams = Struct.new(
       :game,
       :score,
-      :simple_list,
-      :complex_list,
-      :simple_map,
-      :complex_map,
-      :simple_set,
-      :complex_set,
-      :event_stream,
-      :inline_document,
-      keyword_init: true
-    ) { include Seahorse::Structure }
-
-    StructuredEvent = Struct.new(
-      :message,
       keyword_init: true
     ) { include Seahorse::Structure }
 

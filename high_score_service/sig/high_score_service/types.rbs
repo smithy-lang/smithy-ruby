@@ -7,51 +7,22 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-module SampleService
+module HighScoreService
   module Types
 
-    class EventStream
-      class Start[EventStream]; end
-      class End[EventStream]; end
-      class Log[EventStream]; end
-      class SimpleList[EventStream]; end
-      class ComplexList[EventStream]; end
-    end
-
     class HighScoreAttributes < Struct[untyped]
-      def initialize: (?id: String, ?game: String, ?score: Integer, ?created_at: Time, ?updated_at: Time, ?simple_list: Array[String], ?complex_list: Array[HighScoreAttributes], ?simple_map: Hash[String, Integer], ?complex_map: Hash[String, HighScoreAttributes], ?simple_set: Set[String], ?complex_set: Set[HighScoreAttributes], ?event_stream: EventStream, ?inline_document: Document) -> untyped
+      def initialize: (?id: String, ?game: String, ?score: Integer, ?created_at: Time, ?updated_at: Time) -> untyped
       attr_accessor id(): String
       attr_accessor game(): String
       attr_accessor score(): Integer
       attr_accessor created_at(): Time
       attr_accessor updated_at(): Time
-      attr_accessor simple_list(): Array[String]
-      attr_accessor complex_list(): Array[HighScoreAttributes]
-      attr_accessor simple_map(): Hash[String, Integer]
-      attr_accessor complex_map(): Hash[String, HighScoreAttributes]
-      attr_accessor simple_set(): Set[String]
-      attr_accessor complex_set(): Set[HighScoreAttributes]
-      attr_accessor event_stream(): EventStream
-      attr_accessor inline_document(): Document
     end
 
     class HighScoreParams < Struct[untyped]
-      def initialize: (?game: String, ?score: Integer, ?simple_list: Array[String], ?complex_list: Array[HighScoreAttributes], ?simple_map: Hash[String, Integer], ?complex_map: Hash[String, HighScoreAttributes], ?simple_set: Set[String], ?complex_set: Set[HighScoreAttributes], ?event_stream: EventStream, ?inline_document: Document) -> untyped
+      def initialize: (?game: String, ?score: Integer) -> untyped
       attr_accessor game(): String
       attr_accessor score(): Integer
-      attr_accessor simple_list(): Array[String]
-      attr_accessor complex_list(): Array[HighScoreAttributes]
-      attr_accessor simple_map(): Hash[String, Integer]
-      attr_accessor complex_map(): Hash[String, HighScoreAttributes]
-      attr_accessor simple_set(): Set[String]
-      attr_accessor complex_set(): Set[HighScoreAttributes]
-      attr_accessor event_stream(): EventStream
-      attr_accessor inline_document(): Document
-    end
-
-    class StructuredEvent < Struct[untyped]
-      def initialize: (?message: String) -> untyped
-      attr_accessor message(): String
     end
 
     class UnprocessableEntityError < Struct[untyped]
