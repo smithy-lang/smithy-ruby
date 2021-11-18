@@ -19,7 +19,7 @@ extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test"
 tasks["jar"].enabled = false
 
 plugins {
-    id("software.amazon.smithy").version("0.5.0")
+    id("software.amazon.smithy").version("0.5.3")
 }
 
 repositories {
@@ -28,6 +28,5 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
     implementation(project(":smithy-ruby-codegen"))
 }

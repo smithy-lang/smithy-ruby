@@ -13,13 +13,13 @@
  * permissions and limitations under the License.
  */
 
-extra["displayName"] = "Smithy :: Ruby :: Codegen :: Test"
-extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test"
+extra["displayName"] = "Smithy :: Ruby :: Rails :: Codegen :: Test"
+extra["moduleName"] = "software.amazon.smithy.ruby.rails.codegen.test"
 
 tasks["jar"].enabled = false
 
 plugins {
-    id("software.amazon.smithy").version("0.5.0")
+    id("software.amazon.smithy").version("0.5.3")
 }
 
 repositories {
@@ -28,7 +28,8 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-aws-protocol-tests:[1.12.0, 1.13.0[")
+    implementation("software.amazon.smithy:smithy-aws-protocol-tests:[1.12.0, 1.20.0[")
     implementation(project(":smithy-ruby-codegen"))
+    implementation(project(":smithy-ruby-rails-codegen"))
 }
 
