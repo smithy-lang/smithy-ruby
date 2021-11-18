@@ -74,10 +74,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderParams() {
-        System.out.println(
-                "Walking shapes from " + context.getService().getId()
-                        + " to find shapes to generate");
-
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
         Walker walker = new Walker(model);
@@ -102,9 +98,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
-                .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .call(() -> renderBuilderForStructureMembers(shapeName, structureShape.members()))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -131,18 +126,15 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape listShape) {
-        Symbol symbol = symbolProvider.toSymbol(listShape);
-        System.out.println("Visit List Shape: " + listShape.getId() + " Symbol: " + symbol);
         String shapeName = listShape.getId().getName();
         Shape memberTarget =
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
-                .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Array, context: context)")
-                .openBlock("\nparams.each_with_index.map do |element, index|")
+                .openBlock("params.each_with_index.map do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberBuilder(writer, "", "element", "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
@@ -153,19 +145,16 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape setShape) {
-        Symbol symbol = symbolProvider.toSymbol(setShape);
-        System.out.println("Visit Set Shape: " + setShape.getId() + " Symbol: " + symbol);
         String shapeName = setShape.getId().getName();
         Shape memberTarget =
                 model.expectShape(setShape.getMember().getTarget());
 
         writer
-                .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Set, Array, context: context)")
                 .write("data = Set.new")
-                .openBlock("\nparams.each_with_index do |element, index|")
+                .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberBuilder(writer, "data << ", "element", "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
@@ -177,18 +166,15 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape mapShape) {
-        Symbol symbol = symbolProvider.toSymbol(mapShape);
-        System.out.println("Visit Map Shape: " + mapShape.getId() + " Symbol: " + symbol);
         String shapeName = mapShape.getId().getName();
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
-
         writer
-                .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Hash, context: context)")
-                .openBlock("\ndata = {}\nparams.each do |key, value|")
+                .write("data = {}")
+                .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
                         .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[#{key}]\"", true)))
                 .closeBlock("end")
@@ -204,17 +190,18 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
-                .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?(Types::$L)", shapeName)
-                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)\n", shapeName)
+                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)", shapeName)
                 .openBlock("unless params.size == 1")
-                .write("raise ArgumentError,\n\"Expected #{context} to have exactly one member, got: #{params}\"")
+                .write("raise ArgumentError,")
+                .indent(3)
+                .write("\"Expected #{context} to have exactly one member, got: #{params}\"")
+                .dedent(3)
                 .closeBlock("end")
-                .write("\nkey, value = params.flatten")
+                .write("key, value = params.flatten")
                 .write("case key"); //start a case statement.  This does NOT indent
-
 
         for (MemberShape member : shape.members()) {
             Shape target = model.expectShape(member.getTarget());
@@ -233,7 +220,10 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                         .collect(Collectors.joining(", "));
         writer.write("else")
                 .indent()
-                .write("raise ArgumentError,\n\"Expected #{context} to have one of $L set\"", expectedMembers);
+                .write("raise ArgumentError,")
+                .indent(3)
+                .write("\"Expected #{context} to have one of $L set\"", expectedMembers)
+                .dedent(4);
         writer.write("end")  //end of case statement, NOT indented
                 .closeBlock("end")
                 .closeBlock("end");
