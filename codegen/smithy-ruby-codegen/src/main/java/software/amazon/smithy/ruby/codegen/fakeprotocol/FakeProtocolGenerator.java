@@ -20,6 +20,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.BuilderGenerator;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.ParserGenerator;
 
 
 // Protocol Implementation for Rails-Json
@@ -38,12 +40,12 @@ public class FakeProtocolGenerator implements ProtocolGenerator {
 
     @Override
     public void generateBuilders(GenerationContext context) {
-
+        (new BuilderGenerator(context)).render(context.getFileManifest());
     }
 
     @Override
     public void generateParsers(GenerationContext context) {
-
+        (new ParserGenerator(context)).render(context.getFileManifest());
     }
 
     @Override
