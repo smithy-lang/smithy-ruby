@@ -33,7 +33,7 @@ jobs:
     - name: test
       working-directory: codegen
       run:
-        ./gradlew :smithy-ruby-codegen-test:build
+        ./gradlew :smithy-ruby-rails-codegen-test:build
     - name: Upload Generated Test SDK
       uses: actions/upload-artifact@v2
       with:
@@ -43,7 +43,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: generated_protocol_test_sdk
-        path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/restjson-protocol/ruby-codegen/rails_json_protocol
+        path: codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/restjson-protocol/ruby-codegen/rails_json_protocol
 
   ruby-integration-specs:
     needs: [generate-test-sdk]

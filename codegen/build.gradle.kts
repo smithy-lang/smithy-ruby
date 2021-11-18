@@ -68,7 +68,7 @@ subprojects {
      * Java
      * ====================================================
      */
-    if (subproject.name != "smithy-ruby-codegen-test") {
+    if (subproject.name != "smithy-ruby-rails-codegen-test") {
         apply(plugin = "java-library")
 
         java {
