@@ -21,10 +21,12 @@ import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.BuilderGenerator;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.ParserGenerator;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.StubsGenerator;
 
 
-// Protocol Implementation for Rails-Json
+// Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test
 public class FakeProtocolGenerator implements ProtocolGenerator {
     private static final Logger LOGGER = Logger.getLogger(FakeProtocolGenerator.class.getName());
 
@@ -50,10 +52,11 @@ public class FakeProtocolGenerator implements ProtocolGenerator {
 
     @Override
     public void generateErrors(GenerationContext context) {
-
+        (new ErrorsGenerator(context)).render(context.getFileManifest());
     }
 
     @Override
     public void generateStubs(GenerationContext context) {
+        (new StubsGenerator(context)).render(context.getFileManifest());
     }
 }
