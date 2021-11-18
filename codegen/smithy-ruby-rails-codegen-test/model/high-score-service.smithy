@@ -147,7 +147,6 @@ structure DeleteHighScoreOutput {}
 /// List all high scores
 @http(method: "GET", uri: "/high_scores")
 @readonly
-@paginated(items: "highScores")
 operation ListHighScores {
     input: ListHighScoresInput,
     output: ListHighScoresOutput
