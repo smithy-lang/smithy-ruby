@@ -38,7 +38,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
-    private final Set<String> generatedErrorParsers;
 
     private final RubyCodeWriter writer;
 
@@ -47,7 +46,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
-        this.generatedErrorParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
     }
 
