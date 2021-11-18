@@ -1,16 +1,15 @@
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
-use smithy.rails#errorOn
+use smithy.ruby.protocols#railsJson
+
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-
-@RailsJson
-@title("Sample RailsJson Protocol Service")
-service RailsJsonProtocol {
+@railsJson
+@title("RailsJson Protocol Test Service")
+service RailsJson {
     version: "2018-01-01",
     operations: [
         KitchenSinkOperation,

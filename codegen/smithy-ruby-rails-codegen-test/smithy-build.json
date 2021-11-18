@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "projections": {
+    "high-score-service": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["example.railsjson#HighScoreService"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "example.railsjson#HighScoreService",
+          "module": "HighScoreService",
+          "gemspec": {
+            "gemName": "high_score_service",
+            "gemVersion": "0.0.1",
+            "gemSummary": "Sample Rails JSON Service"
+          }
+        }
+      }
+    },
+    "railsjson": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["smithy.ruby.protocoltests.railsjson#RailsJson"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "smithy.ruby.protocoltests.railsjson#RailsJson",
+          "module": "RailsJson",
+          "gemspec": {
+            "gemName": "rails_json",
+            "gemVersion": "0.0.1",
+            "gemSummary": "RailsJson Protocol Test Service"
+          }
+        }
+      }
+    }
+  }
+}

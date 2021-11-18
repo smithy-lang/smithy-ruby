@@ -13,25 +13,24 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.protocol.railsjson;
+package software.amazon.smithy.ruby.codegen.fakeprotocol;
 
 import java.util.logging.Logger;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
-import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.BuilderGenerator;
-import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ErrorsGenerator;
-import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ParserGenerator;
-import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.StubsGenerator;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.BuilderGenerator;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.ParserGenerator;
+
 
 // Protocol Implementation for Rails-Json
-public class RailsJsonGenerator implements ProtocolGenerator {
-    private static final Logger LOGGER = Logger.getLogger(RailsJsonGenerator.class.getName());
+public class FakeProtocolGenerator implements ProtocolGenerator {
+    private static final Logger LOGGER = Logger.getLogger(FakeProtocolGenerator.class.getName());
 
     @Override
     public ShapeId getProtocol() {
-        return ShapeId.from("smithy.ruby.protocols#railsJson");
+        return ShapeId.from("example.weather#fakeProtocol");
     }
 
     @Override
@@ -41,29 +40,20 @@ public class RailsJsonGenerator implements ProtocolGenerator {
 
     @Override
     public void generateBuilders(GenerationContext context) {
-        BuilderGenerator builderGenerator = new BuilderGenerator(context);
-        builderGenerator.render(context.getFileManifest());
-        LOGGER.info("created builders");
+        (new BuilderGenerator(context)).render(context.getFileManifest());
     }
 
     @Override
     public void generateParsers(GenerationContext context) {
-        ParserGenerator parserGenerator = new ParserGenerator(context);
-        parserGenerator.render(context.getFileManifest());
-        LOGGER.info("created parsers");
+        (new ParserGenerator(context)).render(context.getFileManifest());
     }
 
     @Override
     public void generateErrors(GenerationContext context) {
-        ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
-        errorsGenerator.render(context.getFileManifest());
-        LOGGER.info("created errors");
+
     }
 
     @Override
     public void generateStubs(GenerationContext context) {
-        StubsGenerator stubsGenerator = new StubsGenerator(context);
-        stubsGenerator.render(context.getFileManifest());
-        LOGGER.info("created stubs");
     }
 }

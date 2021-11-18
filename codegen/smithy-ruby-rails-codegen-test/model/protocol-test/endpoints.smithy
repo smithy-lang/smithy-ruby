@@ -3,9 +3,9 @@
 
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 
 @httpRequestTests([
@@ -14,7 +14,7 @@ use smithy.test#httpRequestTests
         documentation: """
                 Operations can prepend to the given host if they define the
                 endpoint trait.""",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         uri: "/endpoint",
         host: "example.com",
@@ -33,7 +33,7 @@ operation EndpointOperation {}
                 Operations can prepend to the given host if they define the
                 endpoint trait, and can use the host label trait to define
                 further customization based on user input.""",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         uri: "/endpointwithhostlabel",
         body: "{\"label\": \"bar\"}",

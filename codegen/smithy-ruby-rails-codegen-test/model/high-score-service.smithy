@@ -1,13 +1,17 @@
 $version: "1.0"
-namespace example.rails
+namespace example.railsjson
 
-use smithy.rails#RailsJson
-use smithy.rails#errorOn
+use smithy.ruby.protocols#railsJson
+
+use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
+
+use smithy.waiters#waitable
 
 /// Rails High Score example from their generator docs
-@RailsJson
-@errorOn(location: "header", name: "x-smithy-error")
-service SampleService {
+@railsJson
+@title("High Score Sample Rails Service")
+service HighScoreService {
     version: "2021-02-15",
     resources: [HighScore],
 }
@@ -143,8 +147,6 @@ structure DeleteHighScoreOutput {}
 /// List all high scores
 @http(method: "GET", uri: "/high_scores")
 @readonly
-@paginated(inputToken: "nextToken", outputToken: "nextToken",
-           pageSize: "maxResults", items: "highScores")
 operation ListHighScores {
     input: ListHighScoresInput,
     output: ListHighScoresOutput
@@ -169,25 +171,6 @@ structure ListHighScoresOutput {
 list HighScores {
     member: HighScoreAttributes
 }
-
-/// A test for streaming operations
-@http(method: "POST", uri: "/stream")
-@readonly
-operation Stream {
-    input: StreamInputOutput,
-    output: StreamInputOutput
-}
-
-/// Input and Output structure for Stream
-structure StreamInputOutput {
-    @httpHeader("StreamID")
-    streamId: String,
-    @httpPayload
-    blob: StreamingBlob
-}
-
-@streaming
-blob StreamingBlob
 
 /// Raised when high score is invalid
 @error("client")

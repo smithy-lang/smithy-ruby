@@ -2,9 +2,9 @@
 
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -37,7 +37,7 @@ apply InvalidGreeting @httpResponseTests([
     {
         id: "RailsJsonInvalidGreetingError",
         documentation: "Parses simple JSON errors",
-        protocol: RailsJson,
+        protocol: railsJson,
         params: {
             Message: "Hi"
         },
@@ -70,7 +70,7 @@ apply ComplexError @httpResponseTests([
     {
         id: "RailsJsonComplexError",
         documentation: "Parses a complex error with no message member",
-        protocol: RailsJson,
+        protocol: railsJson,
         params: {
             TopLevel: "Top level",
             Nested: {
@@ -93,7 +93,7 @@ apply ComplexError @httpResponseTests([
     },
     {
         id: "RailsJsonEmptyComplexError",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 400,
         headers: {
             "Content-Type": "application/json",

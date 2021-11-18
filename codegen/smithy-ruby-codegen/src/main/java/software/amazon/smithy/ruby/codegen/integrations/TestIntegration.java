@@ -13,15 +13,19 @@
  * permissions and limitations under the License.
  */
 
-rootProject.name = "smithy-ruby"
-include(":smithy-ruby-codegen")
-include(":smithy-ruby-codegen-test")
-include(":smithy-ruby-rails-codegen")
-include(":smithy-ruby-rails-codegen-test")
+package software.amazon.smithy.ruby.codegen.integrations;
 
-pluginManagement {
-    repositories {
-        mavenLocal()
-        gradlePluginPortal()
+import java.util.Arrays;
+import java.util.List;
+import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.RubyIntegration;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.FakeProtocolGenerator;
+
+// Provide support for whitelabel testing (implements fakeProtocol)
+public class TestIntegration implements RubyIntegration {
+
+    @Override
+    public List<ProtocolGenerator> getProtocolGenerators() {
+        return Arrays.asList(new FakeProtocolGenerator());
     }
 }

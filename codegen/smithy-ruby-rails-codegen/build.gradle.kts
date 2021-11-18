@@ -13,9 +13,9 @@
  * permissions and limitations under the License.
  */
 
+description = "Generates Ruby code from Smithy models for Rails"
 extra["displayName"] = "Smithy :: Ruby :: Rails :: Codegen"
 extra["moduleName"] = "software.amazon.smithy.ruby.codegen.rails"
-
 
 plugins {
     `java-library`

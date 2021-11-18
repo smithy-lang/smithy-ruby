@@ -2,9 +2,9 @@
 
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 use aws.protocoltests.shared#StringList
@@ -43,7 +43,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeStringUnionValue",
         documentation: "Serializes a string union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -65,7 +65,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeBooleanUnionValue",
         documentation: "Serializes a boolean union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -87,7 +87,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeNumberUnionValue",
         documentation: "Serializes a number union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -109,7 +109,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeBlobUnionValue",
         documentation: "Serializes a blob union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -131,7 +131,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeTimestampUnionValue",
         documentation: "Serializes a timestamp union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -153,7 +153,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeEnumUnionValue",
         documentation: "Serializes an enum union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -175,7 +175,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeListUnionValue",
         documentation: "Serializes a list union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -197,7 +197,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeMapUnionValue",
         documentation: "Serializes a map union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -225,7 +225,7 @@ apply JsonUnions @httpRequestTests([
     {
         id: "RailsJsonSerializeStructureUnionValue",
         documentation: "Serializes a structure union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         "uri": "/jsonunions",
         body: """
@@ -254,7 +254,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeStringUnionValue",
         documentation: "Deserializes a string union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -273,7 +273,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeBooleanUnionValue",
         documentation: "Deserializes a boolean union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -292,7 +292,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeNumberUnionValue",
         documentation: "Deserializes a number union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -311,7 +311,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeBlobUnionValue",
         documentation: "Deserializes a blob union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -330,7 +330,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeTimestampUnionValue",
         documentation: "Deserializes a timestamp union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -349,7 +349,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeEnumUnionValue",
         documentation: "Deserializes an enum union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -368,7 +368,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeListUnionValue",
         documentation: "Deserializes a list union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -387,7 +387,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeMapUnionValue",
         documentation: "Deserializes a map union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -412,7 +412,7 @@ apply JsonUnions @httpResponseTests([
     {
         id: "RailsJsonDeserializeStructureUnionValue",
         documentation: "Deserializes a structure union value",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {

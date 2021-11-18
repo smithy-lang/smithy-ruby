@@ -1,8 +1,8 @@
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use aws.protocoltests.shared#SparseStringList
 use aws.protocoltests.shared#SparseStringMap
 use aws.protocoltests.shared#StringMap
@@ -13,7 +13,7 @@ use smithy.test#httpResponseTests
     {
         id: "RailsJsonStructuresDontSerializeNullValues",
         documentation: "Null structure values are dropped",
-        protocol: RailsJson,
+        protocol: railsJson,
         body: "{}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
@@ -28,7 +28,7 @@ use smithy.test#httpResponseTests
     {
         id: "RailsJsonMapsSerializeNullValues",
         documentation: "Serializes null values in maps",
-        protocol: RailsJson,
+        protocol: railsJson,
         body: """
             {
                 "sparse_string_map": {
@@ -49,7 +49,7 @@ use smithy.test#httpResponseTests
     {
         id: "RailsJsonListsSerializeNull",
         documentation: "Serializes null values in lists",
-        protocol: RailsJson,
+        protocol: railsJson,
         body: """
             {
                 "sparse_string_list": [
@@ -72,7 +72,7 @@ use smithy.test#httpResponseTests
     {
         id: "RailsJsonStructuresDontDeserializeNullValues",
         documentation: "Null structure values are dropped",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -86,7 +86,7 @@ use smithy.test#httpResponseTests
     {
         id: "RailsJsonMapsDeserializeNullValues",
         documentation: "Deserializes null values in maps",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
@@ -105,7 +105,7 @@ use smithy.test#httpResponseTests
     {
         id: "RailsJsonListsDeserializeNull",
         documentation: "Deserializes null values in lists",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {
