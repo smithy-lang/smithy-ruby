@@ -1,4 +1,4 @@
-name: Codegen CI
+name: Rails Codegen CI
 
 on:
   push:
