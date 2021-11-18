@@ -13,15 +13,21 @@
  * permissions and limitations under the License.
  */
 
-rootProject.name = "smithy-ruby"
-include(":smithy-ruby-codegen")
-include(":smithy-ruby-codegen-test")
-include(":smithy-ruby-rails-codegen-test")
+extra["displayName"] = "Smithy :: Ruby :: Codegen :: Test"
+extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test"
 
-pluginManagement {
-    repositories {
-        mavenLocal()
-        gradlePluginPortal()
-    }
+tasks["jar"].enabled = false
+
+plugins {
+    id("software.amazon.smithy").version("0.5.0")
 }
-include("smithy-ruby-rails-codegen")
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.0.10,1.1.0[")
+    implementation(project(":smithy-ruby-codegen"))
+}

@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "plugins": {
+    "ruby-codegen": {
+      "service": "example.weather#Weather",
+      "module": "Weather",
+      "gemspec": {
+        "gemName": "weather",
+        "gemVersion": "0.0.1",
+        "gemSummary": "Weather Service"
+      }
+    }
+  }
+}
