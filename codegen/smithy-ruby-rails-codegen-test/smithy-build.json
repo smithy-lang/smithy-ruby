@@ -1,40 +1,40 @@
 {
   "version": "1.0",
   "projections": {
-    "sample-service": {
+    "high-score-service": {
       "transforms": [
         {
           "name": "includeServices",
-          "args": { "services":  ["example.rails#SampleService"]}
+          "args": { "services":  ["example.railsjson#HighScoreService"]}
         }
       ],
       "plugins": {
         "ruby-codegen": {
-          "service": "example.rails#SampleService",
-          "module": "SampleService",
+          "service": "example.railsjson#HighScoreService",
+          "module": "HighScoreService",
           "gemspec": {
-            "gemName": "sample_service",
+            "gemName": "high_score_service",
             "gemVersion": "0.0.1",
-            "gemSummary": "Sample Rails Service"
+            "gemSummary": "Sample Rails JSON Service"
           }
         }
       }
     },
-    "restjson-protocol": {
+    "railsjson": {
       "transforms": [
         {
           "name": "includeServices",
-          "args": { "services":  ["protocoltests.RailsJson#RailsJsonProtocol"]}
+          "args": { "services":  ["smithy.ruby.protocoltests.railsjson#RailsJson"]}
         }
       ],
       "plugins": {
         "ruby-codegen": {
-          "service": "protocoltests.RailsJson#RailsJsonProtocol",
-          "module": "RailsJsonProtocol",
+          "service": "smithy.ruby.protocoltests.railsjson#RailsJson",
+          "module": "RailsJson",
           "gemspec": {
-            "gemName": "rails_json_protocol",
+            "gemName": "rails_json",
             "gemVersion": "0.0.1",
-            "gemSummary": "Rails Json Protocol test service"
+            "gemSummary": "RailsJson Protocol Test Service"
           }
         }
       }

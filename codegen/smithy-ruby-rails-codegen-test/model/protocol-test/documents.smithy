@@ -2,9 +2,9 @@
 
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -25,7 +25,7 @@ apply PutAndGetInlineDocuments @httpRequestTests([
     {
         id: "RailsJsonPutAndGetInlineDocumentsInput",
         documentation: "Serializes inline documents in a JSON request.",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         uri: "/putandgetinlinedocuments",
         body: """
@@ -49,7 +49,7 @@ apply PutAndGetInlineDocuments @httpResponseTests([
     {
         id: "RailsJsonPutAndGetInlineDocumentsInput",
         documentation: "Serializes inline documents in a JSON response.",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
             {

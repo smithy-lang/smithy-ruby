@@ -1,15 +1,15 @@
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 @httpRequestTests([
     {
         id: "rails_json_can_call_operation_with_no_input_or_output",
-        protocol: RailsJson,
+        protocol: railsJson,
         documentation: "Can call operations with no input or output",
         body: "{}",
         bodyMediaType: "application/json",
@@ -21,7 +21,7 @@ use smithy.test#httpResponseTests
     },
     {
         id: "rails_json_can_call_operation_with_optional_input",
-        protocol: RailsJson,
+        protocol: railsJson,
         documentation: "Can invoke operations with optional input",
         body: "{\"value\":\"Hi\"}",
         bodyMediaType: "application/json",

@@ -43,7 +43,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: generated_protocol_test_sdk
-        path: codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/restjson-protocol/ruby-codegen/rails_json_protocol
+        path: codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json
 
   ruby-integration-specs:
     needs: [generate-test-sdk]
@@ -108,11 +108,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated_protocol_test_sdk
-          path: rails_json_protocol
+          path: rails_json
 
       - name: Copy Gemfile
         run: |
-          cp seahorse/Gemfile rails_json_protocol/
+          cp seahorse/Gemfile rails_json/
 
       - name: Inspect
         run: |
@@ -123,8 +123,8 @@ jobs:
         run: |
           bundle config set --local without 'docs repl'
           bundle install
-        working-directory: ./rails_json_protocol
+        working-directory: ./rails_json
 
       - name: Tests
         run: bundle exec rspec -I ../seahorse/lib
-        working-directory: ./rails_json_protocol
+        working-directory: ./rails_json

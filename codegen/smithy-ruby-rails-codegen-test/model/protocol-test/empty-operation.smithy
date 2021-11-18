@@ -1,8 +1,8 @@
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -10,7 +10,7 @@ use smithy.test#httpResponseTests
 @httpResponseTests([
     {
         id: "rails_json_handles_empty_output_shape",
-        protocol: RailsJson,
+        protocol: railsJson,
         documentation: """
                 When no output is defined, the service is expected to return
                 an empty payload, however, client must ignore a JSON payload
@@ -27,7 +27,7 @@ use smithy.test#httpResponseTests
     },
     {
         id: "rails_json_handles_unexpected_json_output",
-        protocol: RailsJson,
+        protocol: railsJson,
         documentation: """
                 This client-only test builds on handles_empty_output_shape,
                 by including unexpected fields in the JSON. A client
@@ -47,7 +47,7 @@ use smithy.test#httpResponseTests
     },
     {
         id: "rails_json_service_responds_with_no_payload",
-        protocol: RailsJson,
+        protocol: railsJson,
         documentation: """
                 When no output is defined, the service is expected to return
                 an empty payload. Despite the lack of a payload, the service

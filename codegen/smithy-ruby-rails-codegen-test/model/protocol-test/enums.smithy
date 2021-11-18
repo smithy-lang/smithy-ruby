@@ -1,8 +1,8 @@
 $version: "1.0"
 
-namespace protocoltests.RailsJson
+namespace smithy.ruby.protocoltests.railsjson
 
-use smithy.rails#RailsJson
+use smithy.ruby.protocols#railsJson
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
@@ -22,7 +22,7 @@ apply JsonEnums @httpRequestTests([
     {
         id: "RailsJsonEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: RailsJson,
+        protocol: railsJson,
         method: "POST",
         uri: "/jsonenums",
         body: """
@@ -63,7 +63,7 @@ apply JsonEnums @httpResponseTests([
     {
         id: "RailsJsonEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: RailsJson,
+        protocol: railsJson,
         code: 200,
         body: """
               {

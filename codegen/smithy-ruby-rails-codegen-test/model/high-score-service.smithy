@@ -1,8 +1,7 @@
 $version: "1.0"
-namespace example.rails
+namespace example.railsjson
 
-use smithy.rails#RailsJson
-use smithy.rails#errorOn
+use smithy.ruby.protocols#railsJson
 
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
@@ -10,11 +9,9 @@ use smithy.test#httpResponseTests
 use smithy.waiters#waitable
 
 /// Rails High Score example from their generator docs
-@RailsJson
-@errorOn(location: "header", name: "x-smithy-error")
+@railsJson
 @title("High Score Sample Rails Service")
-@paginated(inputToken: "nextToken", outputToken: "nextToken")
-service SampleService {
+service HighScoreService {
     version: "2021-02-15",
     resources: [HighScore],
 }
@@ -40,17 +37,7 @@ structure HighScoreAttributes {
     // The time the high score was created at
     createdAt: Timestamp,
     // The time the high score was updated at
-    updatedAt: Timestamp,
-
-    // attributes used for testing only
-    simpleList: SimpleList,
-    complexList: ComplexList,
-    simpleMap: SimpleMap,
-    complexMap: ComplexMap,
-    simpleSet: SimpleSet,
-    complexSet: ComplexSet,
-    eventStream: EventStream,
-    inlineDocument: Document
+    updatedAt: Timestamp
 }
 
 /// Permitted params for a High Score
@@ -59,90 +46,12 @@ structure HighScoreParams {
     @length(min: 2)
     game: String,
     /// The high score for the game
-    score: Integer,
-    simpleList: SimpleList,
-    complexList: ComplexList,
-    simpleMap: SimpleMap,
-    complexMap: ComplexMap,
-    simpleSet: SimpleSet,
-    complexSet: ComplexSet,
-    eventStream: EventStream,
-    inlineDocument: Document
-}
-
-union EventStream {
-    start: StructuredEvent,
-    end: StructuredEvent,
-    log: String,
-    simpleList: SimpleList,
-    complexList: ComplexList
-}
-
-structure StructuredEvent {
-    message: String
-}
-
-list SimpleList {
-    member: String
-}
-
-list ComplexList {
-    member: HighScoreAttributes
-}
-
-map SimpleMap {
-    key: String,
-    value: Integer
-}
-
-map ComplexMap {
-    key: String,
-    value: HighScoreAttributes
-}
-
-set SimpleSet {
-    member: String
-}
-
-set ComplexSet {
-    member: HighScoreAttributes
+    score: Integer
 }
 
 /// Get a high score
 @http(method: "GET", uri: "/high_scores/{id}")
 @readonly
-@httpRequestTests([
-    {
-        id: "sample_service_serializes_http_label",
-        protocol: RailsJson,
-        documentation: "Serializes http labels",
-        bodyMediaType: "application/json",
-        requireHeaders: [
-            "Content-Length"
-        ],
-        params: {
-            id: "1",
-        },
-        method: "GET",
-        uri: "/high_scores/1",
-    }
-])
-@httpResponseTests([
-      {
-        id: "sample_service_parses_string_shapes",
-        protocol: RailsJson,
-        documentation: "Parses string shapes",
-        body: "{\"id\":\"string-value\"}",
-        bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/json"},
-        params: {
-            highScore: {
-              id: "string-value"
-            }
-        },
-        code: 200,
-      }
-])
 operation GetHighScore {
     input: GetHighScoreInput,
     output: GetHighScoreOutput
@@ -165,26 +74,6 @@ structure GetHighScoreOutput {
 
 /// Create a new high score
 @http(method: "POST", uri: "/high_scores", code: 201)
-@waitable(
-    HighScoreExists: {
-        documentation: "Wait until a high score exists",
-        acceptors: [
-            {
-                state: "success",
-                matcher: {
-                    success: true
-                }
-            },
-            {
-                state: "retry",
-                matcher: {
-                    errorType: "NotFound"
-                }
-            }
-        ],
-        tags: ["foo", "bar"]
-    }
-)
 operation CreateHighScore {
     input: CreateHighScoreInput,
     output: CreateHighScoreOutput,
@@ -283,24 +172,6 @@ structure ListHighScoresOutput {
 list HighScores {
     member: HighScoreAttributes
 }
-
-/// A test for streaming operations
-@http(method: "POST", uri: "/stream")
-operation Stream {
-    input: StreamInputOutput,
-    output: StreamInputOutput
-}
-
-/// Input and Output structure for Stream
-structure StreamInputOutput {
-    @httpHeader("StreamID")
-    streamId: String,
-    @httpPayload
-    blob: StreamingBlob
-}
-
-@streaming
-blob StreamingBlob
 
 /// Raised when high score is invalid
 @error("client")

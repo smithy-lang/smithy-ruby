@@ -3,6 +3,7 @@ namespace example.weather
 
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
+use smithy.waiters#waitable
 
 /// Provides weather forecasts.
 @fakeProtocol
@@ -10,7 +11,7 @@ use smithy.test#httpResponseTests
 service Weather {
     version: "2006-03-01",
     resources: [City],
-    operations: [GetCurrentTime]
+    operations: [GetCurrentTime, __789BadName]
 }
 
 resource City {
@@ -36,10 +37,67 @@ resource CityImage {
 string CityId
 
 @readonly
+@waitable(
+    CityExists: {
+        description: "Waits until a city has been created",
+        acceptors: [
+            // Fail-fast if the thing transitions to a "failed" state.
+            {
+                state: "failure",
+                matcher: {
+                    errorType: "NoSuchResource"
+                }
+            },
+            // Fail-fast if the thing transitions to a "failed" state.
+            {
+                state: "failure",
+                matcher: {
+                    errorType: "UnModeledError"
+                }
+            },
+            // Succeed when the city image value is not empty i.e. enters into a "success" state.
+            {
+                state: "success",
+                matcher: {
+                    success: true
+                }
+            },
+            // Retry if city id input is of same length as city name in output
+            {
+                state: "retry",
+                matcher: {
+                    inputOutput: {
+                        path: "length(input.cityId) == length(output.name)",
+                        comparator: "booleanEquals",
+                        expected: "true",
+                    }
+                }
+            },
+            // Success if city name in output is seattle
+            {
+                state: "success",
+                matcher: {
+                    output: {
+                        path: "name",
+                        comparator: "stringEquals",
+                        expected: "seattle",
+                    }
+                }
+            }
+        ]
+    }
+)
 @http(method: "GET", uri: "/cities/{cityId}")
 operation GetCity {
     input: GetCityInput,
     output: GetCityOutput,
+    errors: [NoSuchResource]
+}
+
+@http(method: "POST", uri: "/BadName/{__123abc}")
+operation __789BadName {
+    input: __BadNameCont,
+    output: __BadNameCont,
     errors: [NoSuchResource]
 }
 
@@ -101,7 +159,19 @@ structure GetCityInput {
     // has to be marked as required.
     @required
     @httpLabel
-    cityId: CityId
+    cityId: CityId,
+}
+
+structure __BadNameCont {
+    @required
+    @httpLabel
+    __123abc: String,
+
+    Member: __456efg,
+}
+
+structure __456efg {
+    __123foo: String,
 }
 
 structure GetCityOutput {
@@ -159,6 +229,35 @@ apply NoSuchResource @httpResponseTests([
 // return truncated results.
 @readonly
 @paginated(items: "items")
+@waitable(
+    "ListContainsCity": {
+        description: "Wait until ListCities operation response matches a given state",
+        acceptors: [
+            // failure in case all items returned match to seattle
+            {
+                state: "failure",
+                matcher: {
+                    output: {
+                        path: "items[].name",
+                        comparator: "allStringEquals",
+                        expected: "seattle",
+                    }
+                }
+            },
+            // success in case any items returned match to NewYork
+            {
+                state: "success",
+                matcher: {
+                    output: {
+                        path: "items[].name",
+                        comparator: "anyStringEquals",
+                        expected: "NewYork",
+                    }
+                }
+            }
+        ]
+    }
+)
 @http(method: "GET", uri: "/cities")
 operation ListCities {
     input: ListCitiesInput,
@@ -181,9 +280,30 @@ apply ListCities @httpRequestTests([
     }
 ])
 
+integer DefaultInteger
+boolean DefaultBool
+
 structure ListCitiesInput {
     @httpQuery("nextToken")
     nextToken: String,
+
+    @httpQuery("aString")
+    aString: String,
+
+    @httpQuery("defaultBool")
+    defaultBool: DefaultBool,
+
+    @httpQuery("boxedBool")
+    boxedBool: Boolean,
+
+    @httpQuery("defaultNumber")
+    defaultNumber: DefaultInteger,
+
+    @httpQuery("boxedNumber")
+    boxedNumber: Integer,
+
+    @httpQuery("someEnum")
+    someEnum: SimpleYesNo,
 
     @httpQuery("pageSize")
     pageSize: Integer
@@ -192,12 +312,26 @@ structure ListCitiesInput {
 structure ListCitiesOutput {
     nextToken: String,
 
+    someEnum: SimpleYesNo,
+    aString: String,
+    defaultBool: DefaultBool,
+    boxedBool: Boolean,
+    defaultNumber: DefaultInteger,
+    boxedNumber: Integer,
+
     @required
     items: CitySummaries,
+    sparseItems: SparseCitySummaries,
 }
 
 // CitySummaries is a list of CitySummary structures.
 list CitySummaries {
+    member: CitySummary
+}
+
+// CitySummaries is a sparse list of CitySummary structures.
+@sparse
+list SparseCitySummaries {
     member: CitySummary
 }
 
@@ -271,7 +405,7 @@ map StringMap {
 }
 
 @readonly
-@http(method: "GET", uri: "/cities/{cityId}/image")
+@http(method: "POST", uri: "/cities/{cityId}/image")
 operation GetCityImage {
     input: GetCityImageInput,
     output: GetCityImageOutput,
@@ -281,6 +415,22 @@ operation GetCityImage {
 structure GetCityImageInput {
     @required @httpLabel
     cityId: CityId,
+
+    @required
+    imageType: ImageType,
+}
+
+union ImageType {
+    raw: DefaultBool,
+    png: PNGImage,
+}
+
+structure PNGImage {
+    @required
+    height: Integer,
+
+    @required
+    width: Integer,
 }
 
 structure GetCityImageOutput {
