@@ -112,12 +112,15 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         Shape outputShape = model.expectShape(outputShapeId);
 
         writer
-                .write("\n# Operation Stubber for $L", operation.getId().getName())
+                .write("")
+                .write("# Operation Stubber for $L", operation.getId().getName())
                 .openBlock("class $L", operation.getId().getName())
-                .openBlock("\ndef self.default(visited=[])")
+                .write("")
+                .openBlock("def self.default(visited=[])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
-                .openBlock("\ndef self.stub(http_resp, stub:)")
+                .write("")
+                .openBlock("def self.stub(http_resp, stub:)")
                 .write("http_resp.status = $1L", httpTrait.getCode())
                 .call(() -> renderHeaderStubbers(operation, outputShape))
                 .call(() -> renderOperationBodyStubber(operation, outputShape))
@@ -179,14 +182,17 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape shape) {
         System.out.println("\tRENDER stubber for STRUCTURE: " + shape.getId());
         writer
-                .write("\n# Structure Stubber for $L", shape.getId().getName())
+                .write("")
+                .write("# Structure Stubber for $L", shape.getId().getName())
                 .openBlock("class $L", shape.getId().getName())
-                .openBlock("\ndef self.default(visited=[])")
+                .write("")
+                .openBlock("def self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", shape.getId().getName())
                 .write("visited = visited + ['$L']", shape.getId().getName())
                 .call(() -> renderMemberDefaults(shape))
                 .closeBlock("end")
-                .openBlock("\ndef self.stub(stub = {})")
+                .write("")
+                .openBlock("def self.stub(stub = {})")
                 .call(() -> renderMemberStubbers(shape))
                 .write("data")
                 .closeBlock("end")
@@ -201,9 +207,10 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
-                .write("\n# List Stubber for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default(visited=[])")
+                .write("")
+                .write("# List Stubber for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("def self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", shape.getId().getName())
                 .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("[")
@@ -228,9 +235,10 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
 
         writer
-                .write("\n# Map Stubber for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default(visited=[])")
+                .write("")
+                .write("# Map Stubber for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("def self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", shape.getId().getName())
                 .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("{")
@@ -238,7 +246,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                         .accept(new MemberDefaults(writer, "test_key: ", "", valueTarget.getId().getName())))
                 .closeBlock("}")
                 .closeBlock("end")
-                .openBlock("\ndef self.stub(stub = {})")
+                .write("")
+                .openBlock("def self.stub(stub = {})")
                 .write("data = {}")
                 .openBlock("stub.each do |key, value|")
                 .call(() -> valueTarget.accept(new MemberSerializer(writer, "data[key] = ", "value")))
@@ -256,16 +265,18 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
-                .write("\n# Set Stubber for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
-                .openBlock("\ndef self.default(visited=[])")
+                .write("")
+                .write("# Set Stubber for $L", shape.getId().getName())
+                .openBlock("class $L", shape.getId().getName())
+                .openBlock("def self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", shape.getId().getName())
                 .write("visited = visited + ['$L']", shape.getId().getName())
                 .openBlock("[")
                 .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
                 .closeBlock("]")
                 .closeBlock("end")
-                .openBlock("def \nself.stub(stub = [])")
+                .write("")
+                .openBlock("def self.stub(stub = [])")
                 .write("data = Set.new")
                 .openBlock("stub.each do |element|")
                 .call(() -> memberTarget.accept(new MemberSerializer(writer, "data << ", "element")))
@@ -281,9 +292,10 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     public Void unionShape(UnionShape shape) {
         System.out.println("\tRENDER stubber for UNION: " + shape.getId());
         writer
-                .write("\n# Union Stubber for $L", shape.getId().getName())
+                .write("")
+                .write("# Union Stubber for $L", shape.getId().getName())
                 .openBlock("class $L", shape.getId().getName())
-                .openBlock("\ndef self.default(visited=[])")
+                .openBlock("def self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", shape.getId().getName())
                 .write("visited = visited + ['$L']", shape.getId().getName())
                 .call(() -> {
@@ -299,7 +311,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                     writer.closeBlock("}");
                 })
                 .closeBlock("end")
-                .openBlock("\ndef self.stub(stub = {})")
+                .write("")
+                .openBlock("def self.stub(stub = {})")
                 .call(() -> renderMemberStubbers(shape))
                 .write("data")
                 .closeBlock("end")
@@ -313,14 +326,16 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         System.out.println("\tRENDER stubber for Document: " + shape.getId());
         String name = shape.getId().getName();
         writer
-                .write("\n# Document Type Stubber for $L", name)
+                .write("")
+                .write("# Document Type Stubber for $L", name)
                 .openBlock("class $L", name)
-                .openBlock("\ndef self.default(visited=[])")
+                .openBlock("def self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .write("{ '$L' => [0, 1, 2] }", name)
                 .closeBlock("end")
-                .openBlock("\ndef self.stub(stub = {})")
+                .write("")
+                .openBlock("def self.stub(stub = {})")
                 .write("stub")
                 .closeBlock("end")
                 .closeBlock("end");
