@@ -13,22 +13,19 @@
  * permissions and limitations under the License.
  */
 
-extra["displayName"] = "Smithy :: Ruby :: Codegen :: Test"
-extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test"
+package software.amazon.smithy.ruby.codegen.integrations;
 
-tasks["jar"].enabled = false
+import java.util.Arrays;
+import java.util.List;
+import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.RubyIntegration;
+import software.amazon.smithy.ruby.codegen.fakeprotocol.FakeProtocolGenerator;
 
-plugins {
-    id("software.amazon.smithy").version("0.5.0")
+// Provide support for whitelabel testing (implements fakeProtocol)
+public class TestIntegration implements RubyIntegration {
+
+    @Override
+    public List<ProtocolGenerator> getProtocolGenerators() {
+        return Arrays.asList(new FakeProtocolGenerator());
+    }
 }
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-dependencies {
-    implementation("software.amazon.smithy:smithy-aws-protocol-tests:[1.12.0, 1.13.0[")
-    implementation(project(":smithy-ruby-codegen"))
-}
-
