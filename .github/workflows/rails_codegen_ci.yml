@@ -34,15 +34,10 @@ jobs:
       working-directory: codegen
       run:
         ./gradlew :smithy-ruby-rails-codegen-test:build
-    - name: Upload Generated Test SDK
-      uses: actions/upload-artifact@v2
-      with:
-        name: generated_test_sdk
-        path: high_score_service
     - name: Upload Generated Protocol Test SDK
       uses: actions/upload-artifact@v2
       with:
-        name: generated_protocol_test_sdk
+        name: rails_json
         path: codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json
 
   ruby-protocol-specs:
@@ -64,7 +59,7 @@ jobs:
       - name: Download generated sdk
         uses: actions/download-artifact@v2
         with:
-          name: generated_protocol_test_sdk
+          name: rails_json
           path: rails_json
 
       - name: Copy Gemfile

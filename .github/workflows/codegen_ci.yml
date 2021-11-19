@@ -37,8 +37,8 @@ jobs:
     - name: Upload Generated Test SDK
       uses: actions/upload-artifact@v2
       with:
-        name: generated_test_sdk
-        path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/source/ruby-codegen/weather
+        name: white_label
+        path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/kitchen-sink/ruby-codegen/white_label
 
   ruby-integration-specs:
     needs: [generate-test-sdk]
@@ -60,7 +60,7 @@ jobs:
       - name: Download generated sdk
         uses: actions/download-artifact@v2
         with:
-          name: generated_test_sdk
+          name: white_label
           path: white_label
 
       - name: Copy Gemfile
