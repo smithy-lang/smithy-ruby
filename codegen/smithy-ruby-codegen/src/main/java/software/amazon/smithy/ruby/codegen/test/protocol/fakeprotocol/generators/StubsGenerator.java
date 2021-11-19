@@ -13,17 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.fakeprotocol.generators;
+package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -50,16 +46,10 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.HttpHeaderTrait;
-import software.amazon.smithy.model.traits.HttpLabelTrait;
-import software.amazon.smithy.model.traits.HttpPayloadTrait;
-import software.amazon.smithy.model.traits.HttpQueryTrait;
-import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
 public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
@@ -106,7 +96,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         }
         ShapeId outputShapeId = operation.getOutput().get();
 
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         Shape outputShape = model.expectShape(outputShapeId);
 
         writer

@@ -1,6 +1,8 @@
 $version: "1.0"
 namespace example.weather
 
+use smithy.ruby.tests.protocols#fakeProtocol
+
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 use smithy.waiters#waitable
@@ -106,7 +108,7 @@ apply GetCity @httpRequestTests([
     {
         id: "WriteGetCityAssertions",
         documentation: "Does something",
-        protocol: "example.weather#fakeProtocol",
+        protocol: "smithy.ruby.tests.protocols#fakeProtocol",
         method: "GET",
         uri: "/cities/123",
         body: "",
@@ -120,7 +122,7 @@ apply GetCity @httpResponseTests([
     {
         id: "WriteGetCityResponseAssertions",
         documentation: "Does something",
-        protocol: "example.weather#fakeProtocol",
+        protocol: "smithy.ruby.tests.protocols#fakeProtocol",
         code: 200,
         body: """
             {
@@ -210,7 +212,7 @@ apply NoSuchResource @httpResponseTests([
     {
         id: "WriteNoSuchResourceAssertions",
         documentation: "Does something",
-        protocol: "example.weather#fakeProtocol",
+        protocol: "smithy.ruby.tests.protocols#fakeProtocol",
         code: 404,
         body: """
             {
@@ -268,7 +270,7 @@ apply ListCities @httpRequestTests([
     {
         id: "WriteListCitiesAssertions",
         documentation: "Does something",
-        protocol: "example.weather#fakeProtocol",
+        protocol: "smithy.ruby.tests.protocols#fakeProtocol",
         method: "GET",
         uri: "/cities",
         body: "",
@@ -475,8 +477,3 @@ structure Message {
     message: String,
     author: String
 }
-
-// Define a fake protocol trait for use.
-@trait
-@protocolDefinition
-structure fakeProtocol {}

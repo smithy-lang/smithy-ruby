@@ -13,17 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.fakeprotocol;
+package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol;
 
 import java.util.logging.Logger;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
-import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.BuilderGenerator;
-import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.ErrorsGenerator;
-import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.ParserGenerator;
-import software.amazon.smithy.ruby.codegen.fakeprotocol.generators.StubsGenerator;
+import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.BuilderGenerator;
+import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.ErrorsGenerator;
+import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.ParserGenerator;
+import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.StubsGenerator;
 
 
 // Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test
@@ -32,7 +32,7 @@ public class FakeProtocolGenerator implements ProtocolGenerator {
 
     @Override
     public ShapeId getProtocol() {
-        return ShapeId.from("example.weather#fakeProtocol");
+        return ShapeId.from("smithy.ruby.tests.protocols#fakeProtocol");
     }
 
     @Override

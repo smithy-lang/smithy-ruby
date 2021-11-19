@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
-import software.amazon.smithy.ruby.codegen.fakeprotocol.FakeProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.FakeProtocolGenerator;
 
 // Provide support for whitelabel testing (implements fakeProtocol)
 public class TestIntegration implements RubyIntegration {

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.fakeprotocol.generators;
+package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
 
 import java.util.Comparator;
 import java.util.HashSet;
