@@ -7,7 +7,7 @@ RSpec.shared_examples "validates types" do |*types|
   it "validates input as #{types}" do
     expect do
       shape = Object.const_get(self.class.description)
-      shape.build({}, context: 'params')
+      shape.build(nil, context: 'params')
     end.to raise_error(ArgumentError, "Expected params to be in #{types}, got Hash.")
   end
 
@@ -16,7 +16,7 @@ end
 module WhiteLabel
   module Params
     describe EmptyStruct do
-      include_examples "validates types", [Hash, WhiteLabel::Types::EmptyStruct]
+      include_examples "validates types", Hash, WhiteLabel::Types::EmptyStruct
     end
   end
 end
