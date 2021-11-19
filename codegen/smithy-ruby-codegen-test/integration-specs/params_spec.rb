@@ -2,8 +2,21 @@
 
 require_relative 'spec_helper'
 
-module WeatherService
+RSpec.shared_examples "validates types" do |types|
+  let(:shape) { self.class.description }
+
+  it "validates #{shape} is a #{types}" do
+    expect do
+      shape.build({}, context: 'params')
+    end.to raise_error(ArgumentError, "Expected params to be in #{types}, got Hash.")
+  end
+
+end
+
+module WhiteLabel
   module Params
-    # TODO - Other "core" specs will live in this folder, coded against WeatherService?
+    describe EmptyStruct do
+      include_examples "validates types", [Hash, WhiteLabel::Types::EmptyStruct]
+    end
   end
 end
