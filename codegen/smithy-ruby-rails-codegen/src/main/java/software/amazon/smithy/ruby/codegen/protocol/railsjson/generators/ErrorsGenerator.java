@@ -16,8 +16,9 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
 
-public class ErrorsGenerator extends software.amazon.smithy.ruby.codegen.generators.ErrorsGenerator {
+public class ErrorsGenerator extends ErrorsGeneratorBase {
 
     public ErrorsGenerator(GenerationContext context) {
         super(context);

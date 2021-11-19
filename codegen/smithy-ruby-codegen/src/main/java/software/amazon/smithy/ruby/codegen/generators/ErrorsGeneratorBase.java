@@ -27,14 +27,14 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
-public abstract class ErrorsGenerator {
+public abstract class ErrorsGeneratorBase {
 
     protected final GenerationContext context;
     protected final RubySettings settings;
     protected final Model model;
     protected final RubyCodeWriter writer;
 
-    public ErrorsGenerator(GenerationContext context) {
+    public ErrorsGeneratorBase(GenerationContext context) {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.context = context;
