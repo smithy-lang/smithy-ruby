@@ -2,11 +2,11 @@
 
 require_relative 'spec_helper'
 
-RSpec.shared_examples "validates types" do |types|
+RSpec.shared_examples "validates types" do |*types|
 
   it "validates input as #{types}" do
     expect do
-      shape = self.class.description
+      shape = Object.const_get(self.class.description)
       shape.build({}, context: 'params')
     end.to raise_error(ArgumentError, "Expected params to be in #{types}, got Hash.")
   end
