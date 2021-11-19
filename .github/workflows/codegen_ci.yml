@@ -79,5 +79,5 @@ jobs:
         working-directory: ./white_label
 
       - name: Tests
-        run: bundle exec rspec
+        run: bundle exec rspec -I ../seahorse/lib
         working-directory: ./white_label
