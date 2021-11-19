@@ -30,3 +30,13 @@ repositories {
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
 }
+
+tasks.register<Copy>("copyGem") {
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/kitchen-sink/ruby-codegen")
+    into("$buildDir/../../../")
+}
+tasks.register<Copy>("copyIntegrationSpecs") {
+    from("./integration-specs")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/kitchen-sink/ruby-codegen/white_label/spec")
+}
+tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copyGem"])
