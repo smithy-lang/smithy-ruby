@@ -27,6 +27,7 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -300,7 +301,13 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         }
 
         @Override
-        public Void blobShape(BlobShape blob) {
+        public Void booleanShape(BooleanShape shape) {
+            writer.write("$Lfalse$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
             writer.write("$LStringIO.new('blob')$L", dataSetter, eol);
             return null;
         }
