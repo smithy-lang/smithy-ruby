@@ -7,7 +7,8 @@ RSpec.shared_examples "validates types" do |*types|
   it "validates input as #{types}" do
     expect do
       shape = Object.const_get(self.class.description)
-      shape.build(nil, context: 'params')
+      value = types.include?(Hash) ? [] : {}
+      shape.build(value, context: 'params')
     end.to raise_error(ArgumentError, "Expected params to be in #{types}, got Hash.")
   end
 
