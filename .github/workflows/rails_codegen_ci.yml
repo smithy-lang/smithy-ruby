@@ -66,11 +66,6 @@ jobs:
         run: |
           cp seahorse/Gemfile rails_json/
 
-      - name: Inspect
-        run: |
-          pwd
-          ls
-
       - name: Install gems
         run: |
           bundle config set --local without 'docs repl'

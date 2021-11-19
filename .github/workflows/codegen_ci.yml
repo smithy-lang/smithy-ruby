@@ -67,11 +67,6 @@ jobs:
         run: |
           cp seahorse/Gemfile white_label/
 
-      - name: Inspect
-        run: |
-          pwd
-          ls
-
       - name: Install gems
         run: |
           bundle config set --local without 'docs repl'
