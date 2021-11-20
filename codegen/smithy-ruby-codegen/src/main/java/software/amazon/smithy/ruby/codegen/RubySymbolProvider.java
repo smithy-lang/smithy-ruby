@@ -80,7 +80,7 @@ public class RubySymbolProvider implements SymbolProvider,
     private ReservedWords rubyReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
-                {"alias", "break", "begin", "case", "class", "def", "do", "else", "elsif", "end", "ensure", "for",
+                {"alias", "break", "BEGIN", "case", "class", "def", "do", "else", "elsif", "end", "ensure", "for",
                         "if", "in", "next", "nil", "module"};
 
         for (String w : reserved) {
@@ -122,7 +122,12 @@ public class RubySymbolProvider implements SymbolProvider,
     public String toMemberName(MemberShape shape) {
         Shape container = model.expectShape(shape.getContainer());
         if (container.isUnionShape()) {
-            return getDefaultShapeName(shape, "Member");
+            String memberName = getDefaultMemberName(shape);
+            if (memberName.equals("Unknown")) {
+                return "Member_Unknown";
+            } else {
+                return memberName;
+            }
         } else {
             // Note: we do not neeed to escape words that are only reserved for error members
             // error classes have parsed data accessible through a `data` member only so there are no conflicts.
@@ -142,10 +147,6 @@ public class RubySymbolProvider implements SymbolProvider,
     // they MUST start with a letter (no underscore or digit)
     // if they are a reserved word or start with an invalid character, they will be prefixed
     // the prefix should be based on the type (eg Struct or Union, ect).
-    private String getDefaultShapeName(Shape shape) {
-        return getDefaultShapeName(shape, "S");
-    }
-
     private String getDefaultShapeName(Shape shape, String prefix) {
         ServiceShape serviceShape =
                 model.expectShape(settings.getService(), ServiceShape.class);

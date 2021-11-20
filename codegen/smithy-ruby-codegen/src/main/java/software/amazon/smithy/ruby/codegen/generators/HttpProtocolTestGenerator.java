@@ -72,14 +72,12 @@ public class HttpProtocolTestGenerator {
     private final RubySettings settings;
     private final Model model;
     private final RubyCodeWriter writer;
-    private final SymbolProvider symbolProvider;
 
     public HttpProtocolTestGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = context.getSymbolProvider();
     }
 
     public void render() {

@@ -33,6 +33,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.StringUtils;
 
 public class TypesGenerator extends ShapeVisitor.Default<Void> {
@@ -47,7 +48,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
-        this.symbolProvider = context.getSymbolProvider();
+        this.symbolProvider = new RubySymbolProvider(context.getModel(), settings, "Types", false);
     }
 
     public void render() {
@@ -105,7 +106,6 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void structureShape(StructureShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
-        System.out.println("Visit Structure Shape: " + shape.getId() + " Symbol: " + symbol);
         String shapeName = symbol.getName();
         String membersBlock;
 
@@ -135,7 +135,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         String memberAttrTypes = shape.members().stream()
                 .map(m -> "attr_accessor "
-                        + RubyFormatter.toSnakeCase(m.getMemberName()) + "(): "
+                        + symbolProvider.toMemberName(m) + "(): "
                         + typeFor(targetShape(m)))
                 .collect(Collectors.joining("\n"));
 
@@ -151,7 +151,6 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void unionShape(UnionShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
-        System.out.println("Visit Structure Shape: " + shape.getId() + " Symbol: " + symbol);
         String shapeName = symbol.getName();
 
         writer
@@ -159,9 +158,9 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("class $L < Seahorse::Union", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
-            writer.openBlock("class $L < $L", StringUtils.capitalize(memberShape.getMemberName()), shapeName)
+            writer.openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                     .openBlock("def to_h")
-                    .write("{$L: super(__getobj__)}",  RubyFormatter.toSnakeCase(memberShape.getMemberName()))
+                    .write("{$L: super(__getobj__)}",  RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                     .closeBlock("end")
                     .closeBlock("end");
         }
@@ -178,7 +177,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("class $L", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
-            rbsWriter.write("class $L[$L]; end", StringUtils.capitalize(memberShape.getMemberName()), shapeName);
+            rbsWriter.write("class $L[$L]; end", symbolProvider.toMemberName(memberShape), shapeName);
         }
 
         rbsWriter.closeBlock("end");

@@ -49,6 +49,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -64,7 +65,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = context.getSymbolProvider();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Validators", true);
     }
 
     public void render() {
