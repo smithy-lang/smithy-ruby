@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -205,7 +204,7 @@ public class HttpProtocolTestGenerator {
         Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
         StringBuffer buffer = new StringBuffer("{ ");
         while (iterator.hasNext()) {
-            Map.Entry header =  iterator.next();
+            Map.Entry header = iterator.next();
             buffer.append("'");
             buffer.append(header.getKey());
             buffer.append("' => '");

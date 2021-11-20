@@ -84,7 +84,7 @@ public class RubySymbolProvider implements SymbolProvider,
                         "if", "in", "next", "nil", "module"};
 
         for (String w : reserved) {
-            reservedNames.put(w, reserved + "_");
+            reservedNames.put(w, w + "_");
         }
         return reservedNames.build();
     }
@@ -107,7 +107,7 @@ public class RubySymbolProvider implements SymbolProvider,
                         "clone", "dup", "itself", "yield_self", "then", "taint", "untaint", "untrust", "trust",
                         "methods", "singleton_methods", "instance_exec", "instance_eval", "__id__", "__send__"};
         for (String w : reserved) {
-            reservedNames.put(w, "member_" + reserved);
+            reservedNames.put(w, "member_" + w);
         }
         return reservedNames.build();
     }

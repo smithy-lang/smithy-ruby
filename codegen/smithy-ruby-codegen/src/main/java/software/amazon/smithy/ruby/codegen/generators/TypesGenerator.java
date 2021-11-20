@@ -34,7 +34,6 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.utils.StringUtils;
 
 public class TypesGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -160,7 +159,8 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         for (MemberShape memberShape : shape.members()) {
             writer.openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                     .openBlock("def to_h")
-                    .write("{$L: super(__getobj__)}",  RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
+                    .write("{$L: super(__getobj__)}",
+                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                     .closeBlock("end")
                     .closeBlock("end");
         }
