@@ -134,10 +134,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Array, context: context)")
-                .openBlock("params.each_with_index.map do |element, index|")
+                .write("data = []")
+                .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "", "element", "\"#{context}[#{index}]\"", true)))
+                        .accept(new MemberBuilder(writer, "data << ", "element", "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
+                .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
         return null;
@@ -176,7 +178,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[#{key}]\"", true)))
+                        .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[:#{key}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
