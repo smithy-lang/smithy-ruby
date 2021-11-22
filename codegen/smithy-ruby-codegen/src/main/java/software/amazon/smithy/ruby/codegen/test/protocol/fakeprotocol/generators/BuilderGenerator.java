@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -36,6 +37,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
@@ -44,6 +46,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private final Model model;
     private final Set<ShapeId> generatedBuilders;
     private final RubyCodeWriter writer;
+    private final SymbolProvider symbolProvider;
 
     public BuilderGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
@@ -51,6 +54,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         this.generatedBuilders = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 
     public void render(FileManifest fileManifest) {
