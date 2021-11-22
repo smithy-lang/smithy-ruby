@@ -20,12 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public abstract class ErrorsGeneratorBase {
 
@@ -33,12 +35,14 @@ public abstract class ErrorsGeneratorBase {
     protected final RubySettings settings;
     protected final Model model;
     protected final RubyCodeWriter writer;
+    protected final SymbolProvider symbolProvider;
 
     public ErrorsGeneratorBase(GenerationContext context) {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.context = context;
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -92,7 +96,7 @@ public abstract class ErrorsGeneratorBase {
         Stream<Shape> shapes = model.shapes().filter((s) -> s.hasTrait(ErrorTrait.class));
 
         shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(error -> {
-            String errorName = error.getId().getName();
+            String errorName = symbolProvider.toSymbol(error).getName();
             if (!generatedErrors.contains(errorName)) {
                 generatedErrors.add(errorName);
                 // assumes shapes are all filtered by error traits already
