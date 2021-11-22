@@ -41,7 +41,6 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.StringUtils;
 
 public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -119,7 +118,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = RubyFormatter.asSymbol(memberName);
             String input = "params[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberBuilder(writer, memberSetter, input, context, true));
+            target.accept(new MemberBuilder(writer, symbolProvider, memberSetter, input, context, true));
         });
 
         writer.write("type");
@@ -137,7 +136,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("Seahorse::Validator.validate!(params, Array, context: context)")
                 .openBlock("params.each_with_index.map do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "", "element", "\"#{context}[#{index}]\"", true)))
+                        .accept(new MemberBuilder(writer, symbolProvider, "", "element", "\"#{context}[#{index}]\"",
+                                true)))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -146,7 +146,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape setShape) {
-        String shapeName = setShape.getId().getName();
+        String shapeName = symbolProvider.toSymbol(setShape).getName();
         Shape memberTarget =
                 model.expectShape(setShape.getMember().getTarget());
 
@@ -157,7 +157,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = Set.new")
                 .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "data << ", "element", "\"#{context}[#{index}]\"", true)))
+                        .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
+                                "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -167,7 +168,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape mapShape) {
-        String shapeName = mapShape.getId().getName();
+        String shapeName = symbolProvider.toSymbol(mapShape).getName();
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
@@ -177,7 +178,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[#{key}]\"", true)))
+                        .accept(new MemberBuilder(writer, symbolProvider, "data[key] = ", "value",
+                                "\"#{context}[#{key}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -206,13 +208,14 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         for (MemberShape member : shape.members()) {
             Shape target = model.expectShape(member.getTarget());
-            String memberName = RubyFormatter.asSymbol(member.getMemberName());
+            String memberClassName = symbolProvider.toMemberName(member);
+            String memberName = RubyFormatter.asSymbol(memberClassName);
             writer.write("when $L", memberName)
                     .indent()
-                    .openBlock("Types::$L::$L.new(", shapeName, StringUtils.capitalize(member.getMemberName()));
+                    .openBlock("Types::$L::$L.new(", shapeName, memberClassName);
             String input = "params[" + memberName + "]";
             String context = "\"#{context}[" + memberName + "]\"";
-            target.accept(new MemberBuilder(writer, "", input, context, false));
+            target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, false));
             writer.closeBlock(")")
                     .dedent();
         }
@@ -233,14 +236,16 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private static class MemberBuilder extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
+        private final SymbolProvider symbolProvider;
         private final String memberSetter;
         private final String input;
         private final String context;
         private final boolean checkRequired;
 
-        MemberBuilder(RubyCodeWriter writer, String memberSetter, String input,
+        MemberBuilder(RubyCodeWriter writer, SymbolProvider symbolProvider, String memberSetter, String input,
                       String context, boolean checkRequired) {
             this.writer = writer;
+            this.symbolProvider = symbolProvider;
             this.memberSetter = memberSetter;
             this.input = input;
             this.context = context;
@@ -263,7 +268,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -271,7 +276,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void setShape(SetShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -279,7 +284,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void mapShape(MapShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -287,7 +292,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -295,7 +300,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
