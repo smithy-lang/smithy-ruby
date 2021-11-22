@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -48,13 +49,14 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
 
+    // TODO: PICK BACK UP WORK HERE!!!!! copy what was done in rails builder to here!
     public BuilderGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedBuilders = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -86,12 +88,14 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             throw new RuntimeException("Missing Input Shape for: " + operation.getId());
         }
         ShapeId inputShapeId = operation.getInput().get();
+        Symbol symbol = symbolProvider.toSymbol(operation);
 
         Shape inputShape = model.expectShape(inputShapeId);
 
         writer
-                .write("\n# Operation Builder for $L", operation.getId().getName())
-                .openBlock("class $L", operation.getId().getName())
+                .write("")
+                .write("# Operation Builder for $L", operation.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(http_req, input:)")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -104,17 +108,18 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             if (!generatedBuilders.contains(s.getId())) {
                 generatedBuilders.add(s.getId());
                 s.accept(this);
-            } else {
-                System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
         }
     }
 
     @Override
     public Void structureShape(StructureShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
+
         writer
-                .write("\n# Structure Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# Structure Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("{}")
                 .closeBlock("end")
@@ -125,9 +130,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
+
         writer
-                .write("\n# List Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# List Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("[]")
                 .closeBlock("end")
@@ -138,9 +146,10 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
         writer
-                .write("\n# Map Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("# Map Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("{}")
                 .closeBlock("end")
@@ -151,9 +160,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
+
         writer
-                .write("\n# Set Builder for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .write("")
+                .write("# Set Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("Set.new")
                 .closeBlock("end")
@@ -164,9 +176,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
+
         writer
-                .write("\n# Set Builder for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .write("")
+                .write("# Set Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("{}")
                 .closeBlock("end")

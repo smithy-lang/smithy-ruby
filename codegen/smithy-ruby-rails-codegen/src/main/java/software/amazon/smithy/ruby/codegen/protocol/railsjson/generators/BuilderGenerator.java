@@ -65,14 +65,13 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
 
-    // TODO: PICK BACK UP WORK HERE!!!!! copy what was done in rails builder to here!
     public BuilderGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedBuilders = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -110,7 +109,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         Symbol symbol = symbolProvider.toSymbol(operation);
 
         writer
-                .write("\n# Operation Builder for $L", symbol.getName())
+                .write("")
+                .write("# Operation Builder for $L", operation.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
@@ -214,7 +214,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
         writer
-                .write("\n# Structure Builder for $L", symbol.getName())
+                .write("")
+                .write("# Structure Builder for $L", shape.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .call(() -> renderMemberBuilders(writer, shape))
@@ -232,7 +233,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(shape.getMember().getTarget());
         writer
                 .write("")
-                .write("# List Builder for $L", symbol.getName())
+                .write("# List Builder for $L", shape.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = []")
@@ -255,7 +256,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .write("# Map Builder for $L", symbol.getName())
+                .write("# Map Builder for $L", shape.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = {}")
@@ -278,7 +279,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(shape.getMember().getTarget());
         writer
                 .write("")
-                .write("# Set Builder for $L", symbol.getName())
+                .write("# Set Builder for $L", shape.getId().getName())
                 .openBlock("\nclass $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = Set.new")
@@ -299,7 +300,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         Symbol symbol = symbolProvider.toSymbol(shape);
         writer
                 .write("")
-                .write("# Structure Builder for $L", symbol.getName())
+                .write("# Structure Builder for $L", shape.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = {}")

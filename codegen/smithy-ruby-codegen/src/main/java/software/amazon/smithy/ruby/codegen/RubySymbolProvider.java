@@ -46,6 +46,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 public class RubySymbolProvider implements SymbolProvider,
@@ -122,9 +123,9 @@ public class RubySymbolProvider implements SymbolProvider,
     public String toMemberName(MemberShape shape) {
         Shape container = model.expectShape(shape.getContainer());
         if (container.isUnionShape()) {
-            String memberName = getDefaultMemberName(shape);
+            String memberName = CaseUtils.toPascalCase(getDefaultMemberName(shape));
             if (memberName.equals("Unknown")) {
-                return "Member_Unknown";
+                return "MemberUnknown";
             } else {
                 return memberName;
             }
