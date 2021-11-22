@@ -49,7 +49,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
 
-    // TODO: PICK BACK UP WORK HERE!!!!! copy what was done in rails builder to here!
     public BuilderGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
         this.model = context.getModel();

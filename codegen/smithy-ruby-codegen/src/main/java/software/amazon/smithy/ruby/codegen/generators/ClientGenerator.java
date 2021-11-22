@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -36,6 +38,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -44,6 +47,7 @@ public class ClientGenerator {
 
     private final MiddlewareBuilder middlewareBuilder;
     private final List<ClientConfig> clientConfig;
+    private final SymbolProvider symbolProvider;
 
     public ClientGenerator(GenerationContext context) {
         this.context = context;
@@ -71,6 +75,8 @@ public class ClientGenerator {
         clientConfig = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());
+
+        this.symbolProvider = new RubySymbolProvider(context.getModel(), context.getRubySettings(), "Client", false);
     }
 
     public void render() {
@@ -182,13 +188,14 @@ public class ClientGenerator {
 
     private void renderOperation(RubyCodeWriter writer,
                                  OperationShape operation) {
+        Symbol symbol = symbolProvider.toSymbol(operation);
         String operationName =
-                RubyFormatter.toSnakeCase(operation.getId().getName());
+                RubyFormatter.toSnakeCase(symbol.getName());
         writer
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
-                .write("input = Params::$LInput.build(params)", operation.getId().getName())
+                .write("input = Params::$LInput.build(params)", symbol.getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("apply_middleware(stack, options[:middleware])\n")
@@ -233,9 +240,8 @@ public class ClientGenerator {
                     model.expectShape(inputShapeId).asStructureShape().get();
             for (MemberShape memberShape : input.members()) {
                 Shape target = model.expectShape(memberShape.getTarget());
-                String symbolName =
-                        RubyFormatter.asSymbol(memberShape.getMemberName());
-                writer.write("@options param[$L] $L", target.getType().name(),
+                String symbolName = ":" + symbolProvider.toMemberName(memberShape);
+                writer.write("@options param[$L] $L", symbolProvider.toSymbol(target).getName(),
                         symbolName);
                 Optional<DocumentationTrait> memberDoc =
                         memberShape.getTrait(DocumentationTrait.class);
