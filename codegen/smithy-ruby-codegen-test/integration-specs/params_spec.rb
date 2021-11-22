@@ -142,8 +142,8 @@ module WhiteLabel
           list_of_structs: [{ value: 'struct value' }],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: { value: 'struct value' } },
-          set_of_strings: Set.new(['dank', 'memes']),
-          set_of_structs: Set.new([struct]), # is this expected?
+          set_of_strings: ["dank", "memes"],
+          set_of_structs: [{:value=>"struct value"}],
           union: { string: 'simple string' }
         }
         expect(data.to_h).to eq(expected)
