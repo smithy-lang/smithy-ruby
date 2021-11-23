@@ -9,6 +9,7 @@
 
 module HighScoreService
   module Params
+
     module CreateHighScoreInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Hash, Types::CreateHighScoreInput, context: context)
@@ -17,6 +18,7 @@ module HighScoreService
         type
       end
     end
+
     module DeleteHighScoreInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Hash, Types::DeleteHighScoreInput, context: context)
@@ -25,6 +27,7 @@ module HighScoreService
         type
       end
     end
+
     module GetHighScoreInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Hash, Types::GetHighScoreInput, context: context)
@@ -33,6 +36,7 @@ module HighScoreService
         type
       end
     end
+
     module HighScoreParams
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Hash, Types::HighScoreParams, context: context)
@@ -42,6 +46,7 @@ module HighScoreService
         type
       end
     end
+
     module ListHighScoresInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Hash, Types::ListHighScoresInput, context: context)
@@ -51,6 +56,7 @@ module HighScoreService
         type
       end
     end
+
     module UpdateHighScoreInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, Hash, Types::UpdateHighScoreInput, context: context)
@@ -60,5 +66,6 @@ module HighScoreService
         type
       end
     end
+
   end
 end

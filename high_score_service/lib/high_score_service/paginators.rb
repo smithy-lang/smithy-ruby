@@ -9,5 +9,6 @@
 
 module HighScoreService
   module Paginators
+
   end
 end

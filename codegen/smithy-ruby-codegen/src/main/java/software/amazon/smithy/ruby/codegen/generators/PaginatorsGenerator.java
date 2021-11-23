@@ -50,6 +50,7 @@ public class PaginatorsGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderPaginators())
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -74,6 +75,7 @@ public class PaginatorsGenerator {
 
     private void renderPaginator(String operationName, PaginationInfo paginationInfo) {
         writer
+                .write("")
                 .openBlock("class $L", operationName)
                 .call(() -> renderPaginatorInitializeDocumentation(operationName))
                 .openBlock("def initialize(client, params = {}, options = {})")
@@ -81,12 +83,10 @@ public class PaginatorsGenerator {
                 .write("@options = options")
                 .write("@client = client")
                 .closeBlock("end")
-                .write("")
                 .call(() -> renderPaginatorPages(operationName, paginationInfo))
-                .write("")
                 .call(() -> {
                     if (!paginationInfo.getItemsMemberPath().isEmpty()) {
-                        renderPaginatorItems(paginationInfo);
+                        renderPaginatorItems(paginationInfo, operationName);
                     }
                 })
                 .closeBlock("end");
@@ -109,6 +109,7 @@ public class PaginatorsGenerator {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
         writer
+                .call(() -> renderPaginatorPagesDocumentation(snakeOperationName))
                 .openBlock("def pages")
                 .write("params = @params")
                 .openBlock("Enumerator.new do |e|")
@@ -116,6 +117,7 @@ public class PaginatorsGenerator {
                 .write("response = @client.$L(params, @options)", snakeOperationName)
                 .write("e.yield(response)")
                 .write("output_token = response.$L", outputToken)
+                .write("")
                 .openBlock("until output_token.nil? || @prev_token == output_token")
                 .write("params = params.merge($L: output_token)", inputToken)
                 .write("response = @client.$L(params, @options)", snakeOperationName)
@@ -126,12 +128,20 @@ public class PaginatorsGenerator {
                 .closeBlock("end");
     }
 
-    private void renderPaginatorItems(PaginationInfo paginationInfo) {
+    private void renderPaginatorPagesDocumentation(String snakeOperationName) {
+        writer.rdoc(() -> writer
+                .write("Iterate all response pages of the $L operation.", snakeOperationName)
+                .write("@return [Enumerator]"));
+    }
+
+    private void renderPaginatorItems(PaginationInfo paginationInfo, String operationName) {
         String items = paginationInfo.getItemsMemberPath().stream()
                 .map((member) -> RubyFormatter.toSnakeCase(member.getMemberName()))
                 .collect(Collectors.joining("."));
 
         writer
+                .write("")
+                .call(() -> renderPaginatorItemsDocumentation(operationName))
                 .openBlock("def items")
                 .openBlock("Enumerator.new do |e|")
                 .openBlock("pages.each do |page|")
@@ -141,5 +151,12 @@ public class PaginatorsGenerator {
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
+    }
+
+    private void renderPaginatorItemsDocumentation(String operationName) {
+        String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
+        writer.rdoc(() -> writer
+                .write("Iterate all items from pages in the $L operation.", snakeOperationName)
+                .write("@return [Enumerator]"));
     }
 }

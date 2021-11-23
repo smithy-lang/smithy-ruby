@@ -20,7 +20,7 @@
         }
       }
     },
-    "kitchen-sink": {
+    "white-label": {
       "transforms": [
         {
           "name": "includeServices",
