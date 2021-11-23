@@ -21,7 +21,8 @@ service RailsJson {
         OperationWithOptionalInputOutput,
         NullOperation,
         JsonUnions,
-        PutAndGetInlineDocuments
+        PutAndGetInlineDocuments,
+        __789BadName,
     ],
 }
 

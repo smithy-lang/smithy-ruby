@@ -57,7 +57,7 @@ module HighScoreService
     # Create a new high score
     #
     # @param [Hash] params - See also: {Types::CreateHighScoreInput}
-    # @options param[STRUCTURE] :high_score
+    # @options param[HighScoreParams] :high_score
     #   The high score params
     #
     def create_high_score(params = {}, options = {})
@@ -100,7 +100,7 @@ module HighScoreService
     # Delete a high score
     #
     # @param [Hash] params - See also: {Types::DeleteHighScoreInput}
-    # @options param[STRING] :id
+    # @options param[String] :id
     #   The high score id
     #
     def delete_high_score(params = {}, options = {})
@@ -143,7 +143,7 @@ module HighScoreService
     # Get a high score
     #
     # @param [Hash] params - See also: {Types::GetHighScoreInput}
-    # @options param[STRING] :id
+    # @options param[String] :id
     #   The high score id
     #
     def get_high_score(params = {}, options = {})
@@ -186,9 +186,9 @@ module HighScoreService
     # List all high scores
     #
     # @param [Hash] params - See also: {Types::ListHighScoresInput}
-    # @options param[INTEGER] :max_results
+    # @options param[Integer] :max_results
     #
-    # @options param[STRING] :next_token
+    # @options param[String] :next_token
     #
     def list_high_scores(params = {}, options = {})
       stack = Seahorse::MiddlewareStack.new
@@ -230,10 +230,10 @@ module HighScoreService
     # Update a high score
     #
     # @param [Hash] params - See also: {Types::UpdateHighScoreInput}
-    # @options param[STRING] :id
+    # @options param[String] :id
     #   The high score id
     #
-    # @options param[STRUCTURE] :high_score
+    # @options param[HighScoreParams] :high_score
     #   The high score params
     #
     def update_high_score(params = {}, options = {})

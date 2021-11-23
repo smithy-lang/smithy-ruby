@@ -25,6 +25,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -50,8 +52,9 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
-import software.amazon.smithy.utils.StringUtils;
+
 
 public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
@@ -60,6 +63,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private final Model model;
     private final Set<ShapeId> generatedBuilders;
     private final RubyCodeWriter writer;
+    private final SymbolProvider symbolProvider;
 
     public BuilderGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
@@ -67,6 +71,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         this.generatedBuilders = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -93,8 +98,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderBuildersForOperation(OperationShape operation) {
-        System.out.println("Generating builders for Operation: " + operation.getId());
-
         // Operations MUST have an Input type, even if it is empty
         if (!operation.getInput().isPresent()) {
             throw new RuntimeException("Missing Input Shape for: " + operation.getId());
@@ -103,10 +106,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         Shape inputShape = model.expectShape(inputShapeId);
+        Symbol symbol = symbolProvider.toSymbol(operation);
 
         writer
-                .write("\n# Operation Builder for $L", operation.getId().getName())
-                .openBlock("class $L", operation.getId().getName())
+                .write("")
+                .write("# Operation Builder for $L", operation.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", httpTrait.getMethod())
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
@@ -124,10 +129,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             if (!generatedBuilders.contains(s.getId())) {
                 generatedBuilders.add(s.getId());
                 s.accept(this);
-            } else {
-                System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
-
         }
     }
 
@@ -155,14 +157,10 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .stream()
                 .filter((m) -> m.hasTrait(HttpQueryTrait.class))
                 .collect(Collectors.toList());
-        System.out.println("\tQUERY BUILDER: " + operation.getId() + " has " + queryMembers.size() + " query input...");
 
         for (MemberShape m : queryMembers) {
             HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
-            Shape target = model.expectShape(m.getTarget());
-            System.out.println("\t\tAdding query input for: " + queryTrait.getValue() + " -> " + target.getId());
-            String symbolName = RubyFormatter.asSymbol(m.getMemberName());
-            // TODO: Handle required
+            String symbolName = ":" + symbolProvider.toMemberName(m);
             writer.write("http_req.append_query_param('$1L', input[$2L].to_str) unless input[$2L].nil?",
                     queryTrait.getValue(), symbolName);
         }
@@ -174,14 +172,10 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .stream()
                 .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
                 .collect(Collectors.toList());
-        System.out
-                .println("\tHEADER BUILDER: " + operation.getId() + " has " + headerMembers.size() + " query input...");
 
         for (MemberShape m : headerMembers) {
             HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
-            Shape target = model.expectShape(m.getTarget());
-            System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
-            String symbolName = RubyFormatter.asSymbol(m.getMemberName());
+            String symbolName = ":" + symbolProvider.toMemberName(m);
             // TODO: Handle required
             writer.write("http_req.headers['$1L'] = input[$2L].to_str if input.key?($2L)", headerTrait.getValue(),
                     symbolName);
@@ -195,19 +189,14 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .stream()
                 .filter((m) -> m.hasTrait(HttpLabelTrait.class))
                 .collect(Collectors.toList());
-        System.out.println("\tURI BUILDER: " + operation.getId() + " has " + labelMembers.size() + " labels...");
 
         if (labelMembers.size() > 0) {
             String formatUri = httpTrait.getUri().toString()
                     .replaceAll("[{]([a-zA-Z0-9_]+)[}]", "%<$1>s"); //TODO: Handle greedy labels?
             StringBuffer formatArgs = new StringBuffer();
-            System.out.println("\t\tURI: " + httpTrait.getUri() + " -> " + formatUri);
 
             for (MemberShape m : labelMembers) {
-                HttpLabelTrait label = m.expectTrait(HttpLabelTrait.class);
-                Shape target = model.expectShape(m.getTarget());
-                System.out.println("\t\tAdding url subs for: " + target.getId());
-                String symbolName = RubyFormatter.asSymbol(m.getMemberName());
+                String symbolName = ":" + symbolProvider.toMemberName(m);
                 formatArgs.append(
                         ",\n  " + m.getMemberName() + ": Seahorse::HTTP.uri_escape(input[" + symbolName + "].to_str)"
                 );
@@ -222,10 +211,11 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void structureShape(StructureShape shape) {
-        System.out.println("\tRENDER builder for STRUCTURE: " + shape.getId());
+        Symbol symbol = symbolProvider.toSymbol(shape);
         writer
-                .write("\n# Structure Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# Structure Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .call(() -> renderMemberBuilders(writer, shape))
                 .write("data")
@@ -237,17 +227,19 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape shape) {
-        System.out.println("\tRENDER builder for LIST: " + shape.getId());
+        Symbol symbol = symbolProvider.toSymbol(shape);
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
-                .write("\n# List Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# List Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = []")
                 .openBlock("input.each do |element|")
                 .call(() -> memberTarget
-                        .accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element", false)))
+                        .accept(new MemberSerializer(writer, symbolProvider, shape.getMember(), "data << ", "element",
+                                false)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -258,17 +250,19 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape shape) {
-        System.out.println("\tRENDER builder for MAP: " + shape.getId());
+        Symbol symbol = symbolProvider.toSymbol(shape);
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
 
         writer
-                .write("\n# Map Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# Map Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = {}")
                 .openBlock("input.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberSerializer(writer, shape.getValue(), "data[key] = ", "value", false)))
+                        .accept(new MemberSerializer(writer, symbolProvider, shape.getValue(), "data[key] = ", "value",
+                                false)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -279,17 +273,19 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape shape) {
-        System.out.println("\tRENDER builder for Set: " + shape.getId());
+        Symbol symbol = symbolProvider.toSymbol(shape);
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
-                .write("\n# Set Builder for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .write("")
+                .write("# Set Builder for $L", shape.getId().getName())
+                .openBlock("\nclass $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = Set.new")
                 .openBlock("input.each do |element|")
                 .call(() -> memberTarget
-                        .accept(new MemberSerializer(writer, shape.getMember(), "data << ", "element", true)))
+                        .accept(new MemberSerializer(writer, symbolProvider, shape.getMember(), "data << ", "element",
+                                true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -300,30 +296,31 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        System.out.println("\tRENDER builder for UNION: " + shape.getId());
+        Symbol symbol = symbolProvider.toSymbol(shape);
         writer
-                .write("\n# Structure Builder for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# Structure Builder for $L", shape.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(input)")
                 .write("data = {}")
                 .write("case input");
 
         shape.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tUNION MEMBER BUILDER FOR: " + member.getId() + " target type: " + target.getType());
 
-            writer.write("when Types::$L::$L", shape.getId().getName(), StringUtils.capitalize(member.getMemberName()))
+            writer.write("when Types::$L::$L", shape.getId().getName(), symbolProvider.toMemberName(member))
                     .indent();
 
-            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
+            String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
             String dataSetter = "data[" + symbolName + "] = ";
-            target.accept(new MemberSerializer(writer, member, dataSetter, "input", false));
+            target.accept(new MemberSerializer(writer, symbolProvider, member, dataSetter, "input", false));
             writer.dedent();
         });
         writer.openBlock("else")
                 .write("raise ArgumentError,\n\"Expected input to be one of the subclasses of Types::$L\"",
-                        shape.getId().getName())
-                .closeBlock("end\n")
+                        symbol.getName())
+                .closeBlock("end")
+                .write("")
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -342,20 +339,19 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tMEMBER BUILDER FOR: " + member.getId() + " target type: " + target.getType());
 
-            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
-            String dataName = symbolName;
+            String symbolName = ":" + symbolProvider.toMemberName(member);
+            String dataName = RubyFormatter.asSymbol(member.getMemberName());
             if (member.hasTrait(JsonNameTrait.class)) {
                 dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
             }
             if (member.hasTrait("smithy.railsjson#NestedAttributes")) {
-                dataName = symbolName + "_attributes";
+                dataName = dataName + "_attributes";
             }
 
             String dataSetter = "data[" + dataName + "] = ";
             String inputGetter = "input[" + symbolName + "]";
-            target.accept(new MemberSerializer(writer, member, dataSetter, inputGetter, true));
+            target.accept(new MemberSerializer(writer, symbolProvider, member, dataSetter, inputGetter, true));
         });
     }
 
@@ -367,14 +363,16 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private static class MemberSerializer extends ShapeVisitor.Default<Void> {
 
         private final RubyCodeWriter writer;
+        private final SymbolProvider symbolProvider;
         private final String inputGetter;
         private final String dataSetter;
         private final MemberShape memberShape;
         private final boolean checkRequired;
 
-        MemberSerializer(RubyCodeWriter writer, MemberShape memberShape,
+        MemberSerializer(RubyCodeWriter writer, SymbolProvider symbolProvider, MemberShape memberShape,
                          String dataSetter, String inputGetter, boolean checkRequired) {
             this.writer = writer;
+            this.symbolProvider = symbolProvider;
             this.inputGetter = inputGetter;
             this.dataSetter = dataSetter;
             this.memberShape = memberShape;
@@ -432,7 +430,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
          * For complex shapes, simply delegate to their builder.
          */
         private void defaultComplexSerializer(Shape shape) {
-            writer.write("$LBuilders::$L.build($L)$L", dataSetter, shape.getId().getName(), inputGetter,
+            writer.write("$LBuilders::$L.build($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(),
+                    inputGetter,
                     checkRequired(shape));
         }
 
@@ -444,7 +443,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void setShape(SetShape shape) {
-            writer.write("$LBuilders::$L.build($L).to_a$L", dataSetter, shape.getId().getName(), inputGetter,
+            writer.write("$LBuilders::$L.build($L).to_a$L", dataSetter, symbolProvider.toSymbol(shape).getName(),
+                    inputGetter,
                     checkRequired(shape));
             return null;
         }
