@@ -196,7 +196,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             StringBuffer formatArgs = new StringBuffer();
 
             for (MemberShape m : labelMembers) {
-                Shape target = model.expectShape(m.getTarget());
                 String symbolName = ":" + symbolProvider.toMemberName(m);
                 formatArgs.append(
                         ",\n  " + m.getMemberName() + ": Seahorse::HTTP.uri_escape(input[" + symbolName + "].to_str)"
@@ -342,12 +341,12 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(member.getTarget());
 
             String symbolName = ":" + symbolProvider.toMemberName(member);
-            String dataName = symbolName;
+            String dataName = RubyFormatter.asSymbol(member.getMemberName());
             if (member.hasTrait(JsonNameTrait.class)) {
                 dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
             }
             if (member.hasTrait("smithy.railsjson#NestedAttributes")) {
-                dataName = symbolName + "_attributes";
+                dataName = dataName + "_attributes";
             }
 
             String dataSetter = "data[" + dataName + "] = ";

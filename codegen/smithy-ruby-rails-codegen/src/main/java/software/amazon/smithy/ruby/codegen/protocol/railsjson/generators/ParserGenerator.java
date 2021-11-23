@@ -308,7 +308,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(member.getTarget());
             String dataName = symbolProvider.toMemberName(member);
             String dataSetter = "data." + dataName + " = ";
-            String jsonName = dataName;
+            String jsonName = RubyFormatter.toSnakeCase(member.getMemberName());
             if (member.hasTrait(JsonNameTrait.class)) {
                 jsonName = member.getTrait(JsonNameTrait.class).get().getValue();
             }

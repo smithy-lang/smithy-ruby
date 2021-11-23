@@ -29,6 +29,8 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -114,10 +116,14 @@ public class MiddlewareBuilder {
                 .klass("Seahorse::Middleware::Validate")
                 .step(MiddlewareStackStep.INITIALIZE)
                 .operationParams((ctx, operation) -> {
+                    if (!operation.getInput().isPresent()) {
+                        throw new RuntimeException("Missing Input Shape for: " + operation.getId());
+                    }
+                    ShapeId inputShapeId = operation.getInput().get();
+                    Shape inputShape = ctx.getModel().expectShape(inputShapeId);
                     Map<String, String> params = new HashMap<>();
                     params.put("validator",
-                            "Validators::" + symbolProvider.toSymbol(operation).getName()
-                                    + "Input");
+                            "Validators::" + symbolProvider.toSymbol(inputShape).getName());
                     return params;
                 })
                 .addConfig(validateInput)

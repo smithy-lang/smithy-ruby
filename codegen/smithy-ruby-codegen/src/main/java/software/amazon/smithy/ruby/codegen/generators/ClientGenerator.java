@@ -48,9 +48,12 @@ public class ClientGenerator {
     private final MiddlewareBuilder middlewareBuilder;
     private final List<ClientConfig> clientConfig;
     private final SymbolProvider symbolProvider;
+    private final Model model;
 
     public ClientGenerator(GenerationContext context) {
         this.context = context;
+        this.model = context.getModel();
+
 
         // Register all middleware
         this.middlewareBuilder = new MiddlewareBuilder();
@@ -76,7 +79,7 @@ public class ClientGenerator {
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());
 
-        this.symbolProvider = new RubySymbolProvider(context.getModel(), context.getRubySettings(), "Client", false);
+        this.symbolProvider = new RubySymbolProvider(model, context.getRubySettings(), "Client", false);
     }
 
     public void render() {
@@ -178,7 +181,7 @@ public class ClientGenerator {
     private void renderOperations(RubyCodeWriter writer) {
         // Generate each operation for the service. We do this here instead of via the operation visitor method to
         // limit it to the operations bound to the service.
-        TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.getService()));
         containedOperations.stream()
@@ -189,13 +192,18 @@ public class ClientGenerator {
     private void renderOperation(RubyCodeWriter writer,
                                  OperationShape operation) {
         Symbol symbol = symbolProvider.toSymbol(operation);
+        if (!operation.getInput().isPresent()) {
+            throw new RuntimeException("Missing Input Shape for: " + operation.getId());
+        }
+        ShapeId inputShapeId = operation.getInput().get();
+        Shape inputShape = model.expectShape(inputShapeId);
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
         writer
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
-                .write("input = Params::$LInput.build(params)", symbol.getName())
+                .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("apply_middleware(stack, options[:middleware])\n")
@@ -220,7 +228,6 @@ public class ClientGenerator {
 
     private void renderOperationDocumentation(RubyCodeWriter writer,
                                               OperationShape operation) {
-        Model model = context.getModel();
         writer.write("");
         writer.rdoc(() -> {
             Optional<DocumentationTrait> documentation =
