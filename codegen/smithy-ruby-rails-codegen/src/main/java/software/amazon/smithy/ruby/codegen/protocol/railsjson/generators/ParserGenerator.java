@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -48,7 +49,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.utils.StringUtils;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -56,6 +57,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final Model model;
     private final Set<ShapeId> generatedParsers;
     private final Set<String> generatedErrorParsers;
+    private final SymbolProvider symbolProvider;
 
     private final RubyCodeWriter writer;
 
@@ -66,6 +68,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.generatedParsers = new HashSet<>();
         this.generatedErrorParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -91,8 +94,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderParsersForOperation(OperationShape operation) {
-        System.out.println("Generating parsers for Operation: " + operation.getId());
-
         // Operations MUST have an Output type, even if it is empty
         if (!operation.getOutput().isPresent()) {
             throw new RuntimeException("Missing Output Shape for: " + operation.getId());
@@ -102,11 +103,12 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         Shape outputShape = model.expectShape(outputShapeId);
 
         writer
-                .write("\n# Operation Parser for $L", operation.getId().getName())
-                .openBlock("class $L", operation.getId().getName())
+                .write("")
+                .write("# Operation Parser for $L", operation.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .openBlock("def self.parse(http_resp)")
                 .write("json = Seahorse::JSON.load(http_resp.body)")
-                .write("data = Types::$L.new", outputShapeId.getName())
+                .write("data = Types::$L.new", symbolProvider.toSymbol(model.expectShape(outputShapeId)).getName())
                 .call(() -> renderHeaderParsers(outputShape))
                 .call(() -> renderOperationBodyParser(outputShape))
                 .write("data")
@@ -136,11 +138,12 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                     generatedParsers.add(s.getId());
                     if (s.hasTrait(ErrorTrait.class)) {
                         writer
-                                .write("\n# Error Parser for $L", s.getId().getName())
-                                .openBlock("class $L", s.getId().getName())
+                                .write("")
+                                .write("# Error Parser for $L", s.getId().getName())
+                                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                                 .openBlock("def self.parse(http_resp)")
                                 .write("json = Seahorse::JSON.load(http_resp.body)")
-                                .write("data = Types::$L.new", s.getId().getName())
+                                .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
                                 .call(() -> renderHeaderParsers(s))
                                 .call(() -> renderOperationBodyParser(s))
                                 .write("data")
@@ -149,28 +152,9 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                     } else {
                         s.accept(this);
                     }
-                } else {
-                    System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
                 }
             }
         }
-    }
-
-    private void renderErrorParser(Shape shape) {
-        System.out.println("\t\tGenerating for new error shape: " + shape.getId());
-        generatedErrorParsers.add(shape.getId().getName());
-
-        writer
-                .write("\n# Error Parser for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
-                .openBlock("def self.parse(http_resp)")
-                .write("json = Seahorse::JSON.load(http_resp.body)")
-                .write("data = Types::$L.new", shape.getId().getName())
-                .call(() -> renderHeaderParsers(shape))
-                .call(() -> renderOperationBodyParser(shape))
-                .write("data")
-                .closeBlock("end")
-                .closeBlock("end");
     }
 
     private void renderHeaderParsers(Shape outputShape) {
@@ -181,9 +165,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
         for (MemberShape m : headerMembers) {
             HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
-            Shape target = model.expectShape(m.getTarget());
-            System.out.println("\t\tAdding headers for: " + headerTrait.getValue() + " -> " + target.getId());
-            String symbolName = RubyFormatter.toSnakeCase(m.getMemberName());
+            String symbolName = symbolProvider.toMemberName(m);
             writer.write("data.$L = http_resp.headers['$L']", symbolName, headerTrait.getValue());
         }
     }
@@ -202,24 +184,23 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         } else if (httpPayloadMembers.size() == 1) {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
-            String dataName = RubyFormatter.toSnakeCase(payloadMember.getMemberName());
-            writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, target.getId().getName());
+            String dataName = symbolProvider.toMemberName(payloadMember);
+            writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, symbolProvider.toSymbol(target).getName());
         }
     }
 
     @Override
     protected Void getDefault(Shape shape) {
-        System.out.println("\tDefault VISIT for: " + shape.getId() + "\t" + shape.getClass().getSimpleName());
         return null;
     }
 
     @Override
     public Void structureShape(StructureShape s) {
-        System.out.println("\tRENDER parser for STRUCTURE: " + s.getId());
         writer
-                .openBlock("\nclass $L", s.getId().getName())
+                .write("")
+                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .openBlock("def self.parse(json)")
-                .write("data = Types::$L.new", s.getId().getName())
+                .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
                 .call(() -> renderMemberParsers(writer, s))
                 .write("return data")
                 .closeBlock("end")
@@ -230,14 +211,15 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape s) {
-        System.out.println("\tRENDER parser for LIST: " + s.getId());
         Shape memberTarget =
                 model.expectShape(s.getMember().getTarget());
         writer
-                .openBlock("\nclass $L", s.getId().getName())
+                .write("")
+                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("json.map do |value|")
-                .call(() -> memberTarget.accept(new MemberDeserializer(writer, s.getMember(), "", "value")))
+                .call(() -> memberTarget
+                        .accept(new MemberDeserializer(writer, symbolProvider, s.getMember(), "", "value")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -247,14 +229,15 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape s) {
-        System.out.println("\tRENDER parser for SET: " + s.getId());
         Shape memberTarget =
                 model.expectShape(s.getMember().getTarget());
         writer
-                .openBlock("\nclass $L", s.getId().getName())
+                .write("")
+                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .openBlock("def self.parse(json)")
                 .openBlock("data = json.map do |value|")
-                .call(() -> memberTarget.accept(new MemberDeserializer(writer, s.getMember(), "", "value")))
+                .call(() -> memberTarget
+                        .accept(new MemberDeserializer(writer, symbolProvider, s.getMember(), "", "value")))
                 .closeBlock("end")
                 .write("Set.new(data)")
                 .closeBlock("end")
@@ -265,15 +248,16 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape s) {
-        System.out.println("\tRENDER parser for MAP: " + s.getId());
         Shape valueTarget = model.expectShape(s.getValue().getTarget());
 
         writer
-                .openBlock("\nclass $L", s.getId().getName())
+                .write("")
+                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .openBlock("def self.parse(json)")
                 .write("data = {}")
                 .openBlock("json.map do |key, value|")
-                .call(() -> valueTarget.accept(new MemberDeserializer(writer, s.getValue(), "data[key] = ", "value")))
+                .call(() -> valueTarget
+                        .accept(new MemberDeserializer(writer, symbolProvider, s.getValue(), "data[key] = ", "value")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -284,16 +268,16 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape s) {
-        System.out.println("\tRENDER parser for UNION: " + s.getId());
         writer
-                .openBlock("\nclass $L", s.getId().getName())
+                .write("")
+                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .openBlock("def self.parse(json)")
                 .write("key, value = json.flatten")
                 .write("case key")
                 .call(() -> {
                     s.members().forEach((member) -> {
                         Shape target = model.expectShape(member.getTarget());
-                        String dataName = RubyFormatter.toSnakeCase(member.getMemberName());
+                        String dataName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member));
                         String jsonName = dataName;
                         if (member.hasTrait(JsonNameTrait.class)) {
                             jsonName = member.getTrait(JsonNameTrait.class).get().getValue();
@@ -302,10 +286,11 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                                 .write("when '$L'", jsonName)
                                 .indent()
                                 .call(() -> {
-                                    target.accept(new MemberDeserializer(writer, member, "value = ", "value"));
+                                    target.accept(new MemberDeserializer(writer, symbolProvider, member, "value = ",
+                                            "value"));
                                 })
-                                .write("Types::$L::$L.new(value) if value", s.getId().getName(),
-                                        StringUtils.capitalize(member.getMemberName()))
+                                .write("Types::$L::$L.new(value) if value", symbolProvider.toSymbol(s).getName(),
+                                        symbolProvider.toMemberName(member))
                                 .dedent();
                     });
                 })
@@ -321,8 +306,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
         for (MemberShape member : s.members()) {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tMEMBER PARSER FOR: " + member.getId() + " target type: " + target.getType());
-            String dataName = RubyFormatter.toSnakeCase(member.getMemberName());
+            String dataName = symbolProvider.toMemberName(member);
             String dataSetter = "data." + dataName + " = ";
             String jsonName = dataName;
             if (member.hasTrait(JsonNameTrait.class)) {
@@ -331,7 +315,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
             String jsonGetter = "json['" + jsonName + "']";
             if (!target.hasTrait(HttpHeaderTrait.class)) {
-                target.accept(new MemberDeserializer(writer, member, dataSetter, jsonGetter));
+                target.accept(new MemberDeserializer(writer, symbolProvider, member, dataSetter, jsonGetter));
             }
         }
     }
@@ -342,12 +326,15 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         private final String jsonGetter;
         private final String dataSetter;
         private final MemberShape memberShape;
+        private final SymbolProvider symbolProvider;
 
-        MemberDeserializer(RubyCodeWriter writer, MemberShape memberShape, String dataSetter, String jsonGetter) {
+        MemberDeserializer(RubyCodeWriter writer, SymbolProvider symbolProvider, MemberShape memberShape,
+                           String dataSetter, String jsonGetter) {
             this.writer = writer;
             this.jsonGetter = jsonGetter;
             this.dataSetter = dataSetter;
             this.memberShape = memberShape;
+            this.symbolProvider = symbolProvider;
         }
 
         /**
@@ -390,7 +377,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
          * For complex shapes, simply delegate to their builder.
          */
         private void defaultComplexDeserializer(Shape shape) {
-            writer.write("$1LParsers::$2L.parse($3L) if $3L", dataSetter, shape.getId().getName(),
+            writer.write("$1LParsers::$2L.parse($3L) if $3L", dataSetter, symbolProvider.toSymbol(shape).getName(),
                     jsonGetter);
         }
 

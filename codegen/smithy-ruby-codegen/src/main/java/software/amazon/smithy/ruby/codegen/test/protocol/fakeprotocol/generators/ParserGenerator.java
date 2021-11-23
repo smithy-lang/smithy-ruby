@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -32,12 +34,14 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
+    private final SymbolProvider symbolProvider;
 
     private final RubyCodeWriter writer;
 
@@ -47,6 +51,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -79,12 +84,14 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
         ShapeId outputShapeId = operation.getOutput().get();
         Shape outputShape = model.expectShape(outputShapeId);
+        Symbol symbol = symbolProvider.toSymbol(operation);
 
         writer
-                .write("\n# Operation Parser for $L", operation.getId().getName())
-                .openBlock("class $L", operation.getId().getName())
+                .write("")
+                .write("# Operation Parser for $L", operation.getId().getName())
+                .openBlock("class $L", symbol.getName())
                 .openBlock("def self.parse(http_resp)")
-                .write("data = Types::$L.new", outputShapeId.getName())
+                .write("data = Types::$L.new", symbolProvider.toSymbol(model.expectShape(outputShapeId)).getName())
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -111,8 +118,9 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                     generatedParsers.add(s.getId());
                     if (s.hasTrait(ErrorTrait.class)) {
                         writer
-                                .write("\n# Error Parser for $L", s.getId().getName())
-                                .openBlock("class $L", s.getId().getName())
+                                .write("")
+                                .write("# Error Parser for $L", s.getId().getName())
+                                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                                 .openBlock("def self.parse(http_resp)")
                                 .write("data = Types::$L.new", s.getId().getName())
                                 .write("data")
@@ -128,7 +136,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     protected Void getDefault(Shape shape) {
-        System.out.println("\tDefault VISIT for: " + shape.getId() + "\t" + shape.getClass().getSimpleName());
         return null;
     }
 }
