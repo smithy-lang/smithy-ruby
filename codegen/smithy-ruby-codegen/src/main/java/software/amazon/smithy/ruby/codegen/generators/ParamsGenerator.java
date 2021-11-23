@@ -64,6 +64,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -98,6 +99,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .call(() -> renderBuilderForStructureMembers(shapeName, structureShape.members()))
@@ -131,6 +133,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Array, context: context)")
@@ -152,6 +155,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 model.expectShape(setShape.getMember().getTarget());
 
         writer
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Set, Array, context: context)")
@@ -172,6 +176,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .write("Seahorse::Validator.validate!(params, Hash, context: context)")
@@ -192,6 +197,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         String shapeName = symbol.getName();
 
         writer
+                .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?(Types::$L)", shapeName)
