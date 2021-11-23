@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -50,6 +51,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
@@ -58,6 +60,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     private final Model model;
     private final Set<ShapeId> generatedStubs;
     private final RubyCodeWriter writer;
+    private final SymbolProvider symbolProvider;
 
     public StubsGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
@@ -65,6 +68,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         this.generatedStubs = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Stubs", true);
     }
 
     public void render(FileManifest fileManifest) {
@@ -99,8 +103,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         Shape outputShape = model.expectShape(outputShapeId);
 
         writer
-                .write("\n# Operation Stubber for $L", operation.getId().getName())
-                .openBlock("class $L", operation.getId().getName())
+                .write("")
+                .write("# Operation Stubber for $L", operation.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .openBlock("\ndef self.default(visited=[])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
@@ -124,13 +129,14 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void structureShape(StructureShape shape) {
-        System.out.println("\tRENDER stubber for STRUCTURE: " + shape.getId());
+        String name = symbolProvider.toSymbol(shape).getName();
         writer
-                .write("\n# Structure Stubber for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# Structure Stubber for $L", shape.getId().getName())
+                .openBlock("class $L", name)
                 .openBlock("\ndef self.default(visited=[])")
-                .write("return nil if visited.include?('$L')", shape.getId().getName())
-                .write("visited = visited + ['$L']", shape.getId().getName())
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
                 .call(() -> renderMemberDefaults(shape))
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
@@ -143,17 +149,19 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape shape) {
-        System.out.println("\tRENDER stubber for LIST: " + shape.getId());
+        String name = symbolProvider.toSymbol(shape).getName();
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
-                .write("\n# List Stubber for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .write("")
+                .write("# List Stubber for $L", shape.getId().getName())
+                .openBlock("\nclass $L", name)
                 .openBlock("\ndef self.default(visited=[])")
-                .write("return nil if visited.include?('$L')", shape.getId().getName())
-                .write("visited = visited + ['$L']", shape.getId().getName())
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
                 .openBlock("[")
-                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
+                .call(() -> memberTarget.accept(new MemberDefaults(writer, symbolProvider, "", "",
+                        symbolProvider.toMemberName(shape.getMember()))))
                 .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def self.stub(stub = [])")
@@ -166,18 +174,19 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape shape) {
-        System.out.println("\tRENDER stubber for MAP: " + shape.getId());
+        String name = symbolProvider.toSymbol(shape).getName();
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
 
         writer
                 .write("\n# Map Stubber for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("\nclass $L", name)
                 .openBlock("\ndef self.default(visited=[])")
-                .write("return nil if visited.include?('$L')", shape.getId().getName())
-                .write("visited = visited + ['$L']", shape.getId().getName())
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
                 .openBlock("{")
                 .call(() -> valueTarget
-                        .accept(new MemberDefaults(writer, "test_key: ", "", valueTarget.getId().getName())))
+                        .accept(new MemberDefaults(writer, symbolProvider, "test_key: ", "",
+                                symbolProvider.toMemberName(shape.getValue()))))
                 .closeBlock("}")
                 .closeBlock("end")
                 .openBlock("\ndef self.stub(stub = {})")
@@ -190,17 +199,18 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape shape) {
-        System.out.println("\tRENDER stubber for Set: " + shape.getId());
+        String name = symbolProvider.toSymbol(shape).getName();
         Shape memberTarget =
                 model.expectShape(shape.getMember().getTarget());
         writer
                 .write("\n# Set Stubber for $L", shape.getId().getName())
-                .openBlock("\nclass $L", shape.getId().getName())
+                .openBlock("\nclass $L", name)
                 .openBlock("\ndef self.default(visited=[])")
-                .write("return nil if visited.include?('$L')", shape.getId().getName())
-                .write("visited = visited + ['$L']", shape.getId().getName())
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
                 .openBlock("[")
-                .call(() -> memberTarget.accept(new MemberDefaults(writer, "", "", memberTarget.getId().getName())))
+                .call(() -> memberTarget.accept(new MemberDefaults(writer, symbolProvider, "", "",
+                        symbolProvider.toMemberName(shape.getMember()))))
                 .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def \nself.stub(stub = [])")
@@ -213,23 +223,21 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        System.out.println("\tRENDER stubber for UNION: " + shape.getId());
+        String name = symbolProvider.toSymbol(shape).getName();
         writer
-                .write("\n# Union Stubber for $L", shape.getId().getName())
-                .openBlock("class $L", shape.getId().getName())
+                .write("")
+                .write("# Union Stubber for $L", shape.getId().getName())
+                .openBlock("class $L", name)
                 .openBlock("\ndef self.default(visited=[])")
-                .write("return nil if visited.include?('$L')", shape.getId().getName())
-                .write("visited = visited + ['$L']", shape.getId().getName())
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
                 .call(() -> {
                     writer.openBlock("{");
                     MemberShape defaultMember = shape.members().iterator().next();
                     Shape target = model.expectShape(defaultMember.getTarget());
-                    System.out.println(
-                            "\t\tMEMBER default FOR: " + defaultMember.getId() + " target type: " + target.getType());
-
-                    String symbolName = RubyFormatter.toSnakeCase(defaultMember.getMemberName());
+                    String symbolName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(defaultMember));
                     String dataSetter = symbolName + ": ";
-                    target.accept(new MemberDefaults(writer, dataSetter, ",", symbolName));
+                    target.accept(new MemberDefaults(writer, symbolProvider, dataSetter, ",", symbolName));
                     writer.closeBlock("}");
                 })
                 .closeBlock("end")
@@ -244,9 +252,10 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void documentShape(DocumentShape shape) {
         System.out.println("\tRENDER stubber for Document: " + shape.getId());
-        String name = shape.getId().getName();
+        String name = symbolProvider.toSymbol(shape).getName();
         writer
-                .write("\n# Document Type Stubber for $L", name)
+                .write("")
+                .write("# Document Type Stubber for $L", name)
                 .openBlock("class $L", name)
                 .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
@@ -265,11 +274,10 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer.openBlock("{");
         s.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tMEMBER default FOR: " + member.getId() + " target type: " + target.getType());
 
-            String symbolName = RubyFormatter.toSnakeCase(member.getMemberName());
+            String symbolName = symbolProvider.toMemberName(member);
             String dataSetter = symbolName + ": ";
-            target.accept(new MemberDefaults(writer, dataSetter, ",", symbolName));
+            target.accept(new MemberDefaults(writer, symbolProvider, dataSetter, ",", symbolName));
         });
         writer.closeBlock("}");
     }
@@ -282,16 +290,20 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     private static class MemberDefaults extends ShapeVisitor.Default<Void> {
 
         private final RubyCodeWriter writer;
+        private final SymbolProvider symbolProvider;
         private final String eol;
         private final String dataSetter;
         private final String memberName;
 
-        MemberDefaults(RubyCodeWriter writer, String dataSetter, String eol, String memberName) {
+        MemberDefaults(RubyCodeWriter writer, SymbolProvider symbolProvider, String dataSetter, String eol,
+                       String memberName) {
             this.writer = writer;
+            this.symbolProvider = symbolProvider;
             this.eol = eol;
             this.dataSetter = dataSetter;
             this.memberName = memberName;
         }
+
 
         @Override
         protected Void getDefault(Shape shape) {
@@ -369,7 +381,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
          * For complex shapes, simply delegate to their Stubber.
          */
         private void complexShapeDefaults(Shape shape) {
-            writer.write("$LStubs::$L.default(visited)$L", dataSetter, shape.getId().getName(), eol);
+            writer.write("$LStubs::$L.default(visited)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), eol);
         }
 
         @Override
