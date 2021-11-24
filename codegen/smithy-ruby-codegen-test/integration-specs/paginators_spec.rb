@@ -4,22 +4,21 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   module Paginators
-    let(:client) { double('Client') }
-    let(:params) { { param: 'param' } }
-    let(:options) { { stub_responses: true } }
-
-    let(:response_1) do
-      Types::PaginatorsTestOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
-    end
-    let(:response_2) do
-      Types::PaginatorsTestOutput.new(next_token: 'bar', items: ['1', '2', '3'])
-    end
-    let(:response_3) do
-      Types::PaginatorsTestOutput.new(items: ['the end'])
-    end
-
     describe PaginatorsTest do
+      let(:client) { double('Client') }
+      let(:params) { { param: 'param' } }
+      let(:options) { { stub_responses: true } }
+
       subject { PaginatorsTest.new(client, params, options) }
+      let(:response_1) do
+        Types::PaginatorsTestOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
+      end
+      let(:response_2) do
+        Types::PaginatorsTestOutput.new(next_token: 'bar', items: ['1', '2', '3'])
+      end
+      let(:response_3) do
+        Types::PaginatorsTestOutput.new(items: ['the end'])
+      end
 
       describe '#pages' do
         it 'yields page responses' do
@@ -32,9 +31,12 @@ module WhiteLabel
 
           paginator = subject.pages
           expect(paginator).to be_a(Enumerator)
-          expect(paginator.next).to eq(response_1)
-          expect(paginator.next).to eq(response_2)
-          expect(paginator.next).to eq(response_3)
+          page = paginator.next
+          expect(page).to eq(response_1)
+          page = paginator.next
+          expect(page).to eq(response_2)
+          page = paginator.next
+          expect(page).to eq(response_3)
           expect { paginator.next }.to raise_error(StopIteration)
         end
 
@@ -58,7 +60,20 @@ module WhiteLabel
     end
 
     describe PaginatorsTestWithItems do
+      let(:client) { double('Client') }
+      let(:params) { { param: 'param' } }
+      let(:options) { { stub_responses: true } }
+
       subject { PaginatorsTestWithItems.new(client, params, options) }
+      let(:response_1) do
+        Types::PaginatorsTestOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
+      end
+      let(:response_2) do
+        Types::PaginatorsTestOutput.new(next_token: 'bar', items: ['1', '2', '3'])
+      end
+      let(:response_3) do
+        Types::PaginatorsTestOutput.new(items: ['the end'])
+      end
 
       describe '.pages' do
         # skip, already tested with PaginatorsTest.pages
