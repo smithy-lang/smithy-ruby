@@ -83,7 +83,7 @@ module WhiteLabel
       it 'raises when element is not an expected type' do
         input = [struct_1, struct_2, 'struct_3']
         expect { ListOfStructs.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input[2] to be in [Hash, Types::Struct], got String.")
+          .to raise_error(ArgumentError, "Expected input[2] to be in [WhiteLabel::Types::Struct], got String.")
       end
     end
 
@@ -134,7 +134,7 @@ module WhiteLabel
       it 'raises when value is not an expected type' do
         input = { key: struct_1, other_key: 'struct_2' }
         expect { MapOfStructs.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input[:other_key] to be in [Hash, Types::Struct], got String.")
+          .to raise_error(ArgumentError, "Expected input[:other_key] to be in [WhiteLabel::Types::Struct], got String.")
       end
     end
 
@@ -195,14 +195,15 @@ module WhiteLabel
 
       it 'raises when element is not an expected type' do
         input = Set.new([struct_1, struct_2, 'struct_3'])
+        puts input
         expect { SetOfStructs.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input[2] to be in [Hash, Types::Struct], got String.")
+          .to raise_error(ArgumentError, "Expected input[2] to be in [WhiteLabel::Types::Struct], got String.")
       end
     end
 
     describe Struct do
       it 'validates the members' do
-        input = { value: 'foo' }
+        input = Types::Struct.new({ value: 'foo' })
         Struct.validate!(input, context: 'input')
       end
     end
@@ -217,11 +218,12 @@ module WhiteLabel
 
       it 'validates complex members' do
         expect { Union.validate!(Types::Union::Struct.new('string'), context: 'input') }
-          .to raise_error(ArgumentError, "Expected input to be in [Types::Struct], got String")
+          .to raise_error(ArgumentError, "Expected input to be in [WhiteLabel::Types::Struct], got String.")
       end
 
-      it 'does not validate unknown type' do
-        Union.validate!(Types::Union::Unknown.new(['some data']), context: 'input')
+      it 'validates unknown type' do
+        expect { Union.validate!(Types::Union::Unknown.new(['some data']), context: 'input') }
+          .to raise_error(ArgumentError)
       end
 
       it 'raises when input is not of Types::Union' do

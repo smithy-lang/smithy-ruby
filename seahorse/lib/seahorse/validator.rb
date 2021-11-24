@@ -13,7 +13,7 @@ module Seahorse
       return if !value || types.any? { |type| value.is_a?(type) }
 
       raise ArgumentError,
-            "Expected #{context} to be in #{types}, got #{value.class}."
+            "Expected #{context} to be in [#{types.map(&:to_s).join(', ')}], got #{value.class}."
     end
   end
 end

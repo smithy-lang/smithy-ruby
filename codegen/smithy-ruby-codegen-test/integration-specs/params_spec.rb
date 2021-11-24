@@ -10,7 +10,7 @@ RSpec.shared_examples "validates params" do |*types|
     expect do
       shape = Object.const_get(self.class.description)
       shape.build(BadType.new, context: 'params')
-    end.to raise_error(ArgumentError, "Expected params to be in #{types}, got BadType.")
+    end.to raise_error(ArgumentError, "Expected params to be in [#{types.map(&:to_s).join(', ')}], got BadType.")
   end
 end
 

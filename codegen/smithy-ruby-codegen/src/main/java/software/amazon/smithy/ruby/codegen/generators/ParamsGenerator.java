@@ -110,7 +110,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderBuilderForStructureMembers(String shapeName, Collection<MemberShape> members) {
         writer
-                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)", shapeName)
+                .write("Seahorse::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
                 .write("type = Types::$L.new", shapeName);
 
         members.forEach(member -> {
@@ -136,7 +136,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
-                .write("Seahorse::Validator.validate!(params, Array, context: context)")
+                .write("Seahorse::Validator.validate!(params, ::Array, context: context)")
                 .write("data = []")
                 .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
@@ -160,7 +160,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
-                .write("Seahorse::Validator.validate!(params, Set, Array, context: context)")
+                .write("Seahorse::Validator.validate!(params, ::Set, ::Array, context: context)")
                 .write("data = Set.new")
                 .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
@@ -182,12 +182,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
-                .write("Seahorse::Validator.validate!(params, Hash, context: context)")
+                .write("Seahorse::Validator.validate!(params, ::Hash, context: context)")
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data[key] = ", "value",
-                                "\"#{context}[#{key}]\"", true)))
+                                "\"#{context}[:#{key}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -205,7 +205,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?(Types::$L)", shapeName)
-                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)", shapeName)
+                .write("Seahorse::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
                 .openBlock("unless params.size == 1")
                 .write("raise ArgumentError,")
                 .indent(3)
@@ -263,7 +263,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         private String checkRequired() {
             if (this.checkRequired) {
-                return " if " + input;
+                return " unless " + input + ".nil?";
             } else {
                 return "";
             }
