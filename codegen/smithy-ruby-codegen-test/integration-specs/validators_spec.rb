@@ -195,7 +195,6 @@ module WhiteLabel
 
       it 'raises when element is not an expected type' do
         input = Set.new([struct_1, struct_2, 'struct_3'])
-        puts input
         expect { SetOfStructs.validate!(input, context: 'input') }
           .to raise_error(ArgumentError, "Expected input[2] to be in [WhiteLabel::Types::Struct], got String.")
       end
