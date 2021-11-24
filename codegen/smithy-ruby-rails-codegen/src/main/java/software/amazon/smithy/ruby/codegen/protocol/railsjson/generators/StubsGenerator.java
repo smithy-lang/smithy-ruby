@@ -32,6 +32,7 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -56,6 +57,8 @@ import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -223,7 +226,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.stub(stub = [])")
                 .write("data = []")
                 .openBlock("stub.each do |element|")
-                .call(() -> memberTarget.accept(new MemberSerializer(writer, symbolProvider, "data << ", "element")))
+                .call(() -> memberTarget
+                        .accept(new MemberSerializer(writer, symbolProvider, shape.getMember(), "data << ", "element")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -254,7 +258,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.stub(stub = {})")
                 .write("data = {}")
                 .openBlock("stub.each do |key, value|")
-                .call(() -> valueTarget.accept(new MemberSerializer(writer, symbolProvider, "data[key] = ", "value")))
+                .call(() -> valueTarget
+                        .accept(new MemberSerializer(writer, symbolProvider, shape.getValue(), "data[key] = ",
+                                "value")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -266,8 +272,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void setShape(SetShape shape) {
         String name = symbolProvider.toSymbol(shape).getName();
+        MemberShape member = shape.getMember();
         Shape memberTarget =
-                model.expectShape(shape.getMember().getTarget());
+                model.expectShape(member.getTarget());
         writer
                 .write("")
                 .write("# Set Stubber for $L", shape.getId().getName())
@@ -284,7 +291,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.stub(stub = [])")
                 .write("data = Set.new")
                 .openBlock("stub.each do |element|")
-                .call(() -> memberTarget.accept(new MemberSerializer(writer, symbolProvider, "data << ", "element")))
+                .call(() -> memberTarget
+                        .accept(new MemberSerializer(writer, symbolProvider, member, "data << ", "element")))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -354,7 +362,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(member.getTarget());
             String symbolName = ":" + symbolProvider.toMemberName(member);
             String inputGetter = "stub[" + symbolName + "]";
-            target.accept(new MemberSerializer(writer, symbolProvider, "data = ", inputGetter));
+            target.accept(new MemberSerializer(writer, symbolProvider, member, "data = ", inputGetter));
             writer.write("data ||= {}");
         } else {
             //remove members w/ http traits or marked NoSerialize
@@ -369,9 +377,12 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
                 String symbolName = ":" + symbolProvider.toMemberName(member);
                 String dataName = symbolName;
+                if (member.hasTrait(JsonNameTrait.class)) {
+                    dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
+                }
                 String dataSetter = "data[" + dataName + "] = ";
                 String inputGetter = "stub[" + symbolName + "]";
-                target.accept(new MemberSerializer(writer, symbolProvider, dataSetter, inputGetter));
+                target.accept(new MemberSerializer(writer, symbolProvider, member, dataSetter, inputGetter));
             });
         }
     }
@@ -398,30 +409,59 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
         private final RubyCodeWriter writer;
         private final SymbolProvider symbolProvider;
+        private final MemberShape memberShape;
         private final String inputGetter;
         private final String dataSetter;
 
-        MemberSerializer(RubyCodeWriter writer, SymbolProvider symbolProvider, String dataSetter, String inputGetter) {
+        MemberSerializer(RubyCodeWriter writer, SymbolProvider symbolProvider, MemberShape memberShape,
+                         String dataSetter, String inputGetter) {
             this.writer = writer;
             this.symbolProvider = symbolProvider;
+            this.memberShape = memberShape;
             this.inputGetter = inputGetter;
             this.dataSetter = dataSetter;
         }
 
-        public String checkRequired(Shape shape) {
+        public String checkRequired() {
             return " unless " + inputGetter + ".nil?";
         }
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired(shape));
+            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired());
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer.write("$LBase64::encode64($L)$L", dataSetter, inputGetter, checkRequired());
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            //TODO: these may need to use different formats(
-            writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter, checkRequired(shape));
+            // the default protocol format is date_time
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
+                                checkRequired());
+                        break;
+                    case HTTP_DATE:
+                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
+                                checkRequired());
+                        break;
+                    case DATE_TIME:
+                    default:
+                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                                checkRequired());
+                        break;
+                }
+            } else {
+                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                        checkRequired());
+            }
             return null;
         }
 
@@ -430,7 +470,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
          */
         private void defaultComplexSerializer(Shape shape) {
             writer.write("$LStubs::$L.stub($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), inputGetter,
-                    checkRequired(shape));
+                    checkRequired());
         }
 
         @Override
@@ -489,7 +529,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void blobShape(BlobShape blob) {
-            writer.write("$LStringIO.new('blob')$L", dataSetter, eol);
+            writer.write("$L'$L'$L", dataSetter, memberName, eol);
             return null;
         }
 
@@ -550,6 +590,12 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void timestampShape(TimestampShape shape) {
             writer.write("$LTime.now$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape shape) {
+            writer.write("$Lfalse$L", dataSetter, eol);
             return null;
         }
 
