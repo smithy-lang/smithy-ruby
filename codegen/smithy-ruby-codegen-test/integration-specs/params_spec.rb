@@ -36,12 +36,6 @@ module WhiteLabel
       let(:params) { [struct_1, struct_2] }
 
       it 'builds an array of complex elements' do
-        expect(Struct).to receive(:build)
-          .with(struct_1, context: 'params[:list_of_structs][0]')
-          .and_call_original
-        expect(Struct).to receive(:build)
-          .with(struct_2, context: 'params[:list_of_structs][1]')
-          .and_call_original
         data = ListOfStructs.build(params, context: 'params[:list_of_structs]')
         expect(data).to be_a(Array)
         expect(data).to eq(params)
@@ -68,12 +62,6 @@ module WhiteLabel
       let(:params) { { key: struct_1, other_key: struct_2 } }
 
       it 'builds a map of complex values' do
-        expect(Struct).to receive(:build)
-          .with(struct_1, context: 'params[:map_of_structs][:key]')
-          .and_call_original
-        expect(Struct).to receive(:build)
-          .with(struct_2, context: 'params[:map_of_structs][:other_key]')
-          .and_call_original
         data = MapOfStructs.build(params, context: 'params[:map_of_structs]')
         expect(data).to be_a(Hash)
         expect(data).to eq(params)
@@ -100,40 +88,6 @@ module WhiteLabel
       let(:struct) { Types::Struct.new(value: 'struct value') }
 
       it 'builds all member input' do
-        expect(Struct).to receive(:build)
-          .with(params[:struct], context: 'params[:struct]')
-          .and_call_original
-        expect(ListOfStrings).to receive(:build)
-          .with(params[:list_of_strings], context: 'params[:list_of_strings]')
-          .and_call_original
-        expect(ListOfStructs).to receive(:build)
-          .with(params[:list_of_structs], context: 'params[:list_of_structs]')
-          .and_call_original
-        expect(Struct).to receive(:build)
-          .with(struct, context: 'params[:list_of_structs][0]')
-          .and_call_original
-        expect(MapOfStrings).to receive(:build)
-          .with(params[:map_of_strings], context: 'params[:map_of_strings]')
-          .and_call_original
-        expect(MapOfStructs).to receive(:build)
-          .with(params[:map_of_structs], context: 'params[:map_of_structs]')
-          .and_call_original
-        expect(Struct).to receive(:build)
-          .with(struct, context: 'params[:map_of_structs][:key]')
-          .and_call_original
-        expect(SetOfStrings).to receive(:build)
-          .with(params[:set_of_strings], context: 'params[:set_of_strings]')
-          .and_call_original
-        expect(SetOfStructs).to receive(:build)
-          .with(params[:set_of_structs], context: 'params[:set_of_structs]')
-          .and_call_original
-        expect(Struct).to receive(:build)
-          .with(struct, context: 'params[:set_of_structs][0]')
-          .and_call_original
-        expect(Union).to receive(:build)
-          .with(params[:union], context: 'params[:union]')
-          .and_call_original
-
         data = KitchenSinkInput.build(params, context: 'params')
         expect(data).to be_a(Types::KitchenSinkInput)
         expected = {
@@ -172,12 +126,6 @@ module WhiteLabel
       let(:params) { Set.new([struct_1, struct_2]) }
 
       it 'builds an array of complex elements' do
-        expect(Struct).to receive(:build)
-          .with(struct_1, context: 'params[:set_of_structs][0]')
-          .and_call_original
-        expect(Struct).to receive(:build)
-          .with(struct_2, context: 'params[:set_of_structs][1]')
-          .and_call_original
         data = SetOfStructs.build(params, context: 'params[:set_of_structs]')
         expect(data).to be_a(Set)
         expect(data).to eq(params)
@@ -209,9 +157,6 @@ module WhiteLabel
       it 'builds a union structure with complex data' do
         struct = Types::Struct.new(value: 'simple struct')
         params = { struct: struct }
-        expect(Struct).to receive(:build)
-          .with(struct, context: 'params[:union][:struct]')
-          .and_call_original
         data = Union.build(params, context: 'params[:union]')
         expect(data).to be_a(Types::Union)
         expect(data.to_h).to eq(struct: { value: 'simple struct' })
@@ -220,16 +165,14 @@ module WhiteLabel
       it 'validates exactly one member' do
         struct = Types::Struct.new
         params = { string: 'simple string', struct: struct }
-        expect do
-          Union.build(params, context: 'params')
-        end.to raise_error(ArgumentError, /exactly one member/)
+        expect { Union.build(params, context: 'params') }
+          .to raise_error(ArgumentError, /exactly one member/)
       end
 
       it 'validates against unknown members' do
         params = { unknown: 'poop emoji' }
-        expect do
-          Union.build(params, context: 'params')
-        end.to raise_error(ArgumentError, /Expected params to have one of/)
+        expect { Union.build(params, context: 'params') }
+          .to raise_error(ArgumentError, /Expected params to have one of/)
       end
     end
   end
