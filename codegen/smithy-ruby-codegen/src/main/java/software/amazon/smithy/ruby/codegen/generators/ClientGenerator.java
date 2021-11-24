@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -36,6 +38,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -44,9 +47,13 @@ public class ClientGenerator {
 
     private final MiddlewareBuilder middlewareBuilder;
     private final List<ClientConfig> clientConfig;
+    private final SymbolProvider symbolProvider;
+    private final Model model;
 
     public ClientGenerator(GenerationContext context) {
         this.context = context;
+        this.model = context.getModel();
+
 
         // Register all middleware
         this.middlewareBuilder = new MiddlewareBuilder();
@@ -71,6 +78,8 @@ public class ClientGenerator {
         clientConfig = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());
+
+        this.symbolProvider = new RubySymbolProvider(model, context.getRubySettings(), "Client", false);
     }
 
     public void render() {
@@ -172,7 +181,7 @@ public class ClientGenerator {
     private void renderOperations(RubyCodeWriter writer) {
         // Generate each operation for the service. We do this here instead of via the operation visitor method to
         // limit it to the operations bound to the service.
-        TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.getService()));
         containedOperations.stream()
@@ -182,13 +191,19 @@ public class ClientGenerator {
 
     private void renderOperation(RubyCodeWriter writer,
                                  OperationShape operation) {
+        Symbol symbol = symbolProvider.toSymbol(operation);
+        if (!operation.getInput().isPresent()) {
+            throw new RuntimeException("Missing Input Shape for: " + operation.getId());
+        }
+        ShapeId inputShapeId = operation.getInput().get();
+        Shape inputShape = model.expectShape(inputShapeId);
         String operationName =
-                RubyFormatter.toSnakeCase(operation.getId().getName());
+                RubyFormatter.toSnakeCase(symbol.getName());
         writer
                 .call(() -> renderOperationDocumentation(writer, operation))
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
-                .write("input = Params::$LInput.build(params)", operation.getId().getName())
+                .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("apply_middleware(stack, options[:middleware])\n")
@@ -213,7 +228,6 @@ public class ClientGenerator {
 
     private void renderOperationDocumentation(RubyCodeWriter writer,
                                               OperationShape operation) {
-        Model model = context.getModel();
         writer.write("");
         writer.rdoc(() -> {
             Optional<DocumentationTrait> documentation =
@@ -233,9 +247,8 @@ public class ClientGenerator {
                     model.expectShape(inputShapeId).asStructureShape().get();
             for (MemberShape memberShape : input.members()) {
                 Shape target = model.expectShape(memberShape.getTarget());
-                String symbolName =
-                        RubyFormatter.asSymbol(memberShape.getMemberName());
-                writer.write("@options param[$L] $L", target.getType().name(),
+                String symbolName = ":" + symbolProvider.toMemberName(memberShape);
+                writer.write("@options param[$L] $L", symbolProvider.toSymbol(target).getName(),
                         symbolName);
                 Optional<DocumentationTrait> memberDoc =
                         memberShape.getTrait(DocumentationTrait.class);

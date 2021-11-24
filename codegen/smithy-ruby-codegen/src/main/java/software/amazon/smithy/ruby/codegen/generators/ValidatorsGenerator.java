@@ -47,10 +47,9 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
-import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.StringUtils;
 
 public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -64,7 +63,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = context.getSymbolProvider();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Validators", true);
     }
 
     public void render() {
@@ -101,7 +100,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", structureShape.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(structureShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .call(() -> renderValidatorsForStructureMembers(members))
                 .closeBlock("end")
@@ -113,10 +112,10 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     private void renderValidatorsForStructureMembers(Collection<MemberShape> members) {
         members.forEach(member -> {
             Shape target = model.expectShape(member.getTarget());
-            String symbolName = RubyFormatter.asSymbol(member.getMemberName());
+            String symbolName = ":" + symbolProvider.toMemberName(member);
             String input = "input[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberValidator(writer, input, context));
+            target.accept(new MemberValidator(writer, symbolProvider, input, context));
         });
     }
 
@@ -126,13 +125,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", mapShape.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Hash, context: context)")
                 .openBlock("input.each do |key, value|")
                 .write("Seahorse::Validator.validate!(key, String, Symbol, context: \"#{context}.keys\")")
                 .call(() -> valueTarget
-                        .accept(new MemberValidator(writer, "value", "\"#{context}[:#{key}]\"")))
+                        .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -147,12 +146,12 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", listShape.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Array, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberValidator(writer, "element", "\"#{context}[#{index}]\"")))
+                        .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -167,12 +166,12 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", setShape.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(setShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, Set, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberValidator(writer, "element", "\"#{context}[#{index}]\"")))
+                        .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -182,7 +181,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape unionShape) {
-        String shapeName = unionShape.getId().getName();
+        String shapeName = symbolProvider.toSymbol(unionShape).getName();
         Collection<MemberShape> unionMemberShapes = unionShape.members();
 
         writer
@@ -191,7 +190,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")
                 .call(() -> unionMemberShapes.forEach(unionMemberShape -> {
-                    String unionMemberName = StringUtils.capitalize(unionMemberShape.getMemberName());
+                    String unionMemberName = symbolProvider.toMemberName(unionMemberShape);
                     writer
                             .write("when Types::" + shapeName + "::" + unionMemberName)
                             .write("  $L.validate!(input.__getobj__, context: context)", unionMemberName);
@@ -214,7 +213,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     public Void documentShape(DocumentShape documentShape) {
         writer
                 .write("")
-                .openBlock("class $L", documentShape.getId().getName())
+                .openBlock("class $L", symbolProvider.toSymbol(documentShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Seahorse::Validator.validate!(input, "
                         + "Hash, String, Array, TrueClass, FalseClass, Numeric, context: context)")
@@ -240,14 +239,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderValidatorsForUnionMembers(Collection<MemberShape> members) {
         members.forEach(member -> {
-            String name = StringUtils.capitalize(member.getMemberName());
+            String name = symbolProvider.toMemberName(member);
             Shape target = model.expectShape(member.getTarget());
 
             writer
                     .write("")
                     .openBlock("class $L", name)
                     .openBlock("def self.validate!(input, context:)")
-                    .call(() -> target.accept(new MemberValidator(writer, "input", "context")))
+                    .call(() -> target.accept(new MemberValidator(writer, symbolProvider, "input", "context")))
                     .closeBlock("end")
                     .closeBlock("end");
         });
@@ -260,12 +259,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     private static class MemberValidator extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
+        private final SymbolProvider symbolProvider;
         private final String input;
         private final String context;
 
-        MemberValidator(RubyCodeWriter writer, String input,
+        MemberValidator(RubyCodeWriter writer, SymbolProvider symbolProvider, String input,
                         String context) {
             this.writer = writer;
+            this.symbolProvider = symbolProvider;
             this.input = input;
             this.context = context;
         }
@@ -289,14 +290,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            String name = shape.getId().getName();
+            String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
-            String name = shape.getId().getName();
+            String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
@@ -333,7 +334,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            String name = shape.getId().getName();
+            String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
@@ -352,7 +353,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void mapShape(MapShape shape) {
-            String name = shape.getId().getName();
+            String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
@@ -365,14 +366,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String name = shape.getId().getName();
+            String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            String name = shape.getId().getName();
+            String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }

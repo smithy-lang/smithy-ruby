@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.PaginatedIndex;
 import software.amazon.smithy.model.knowledge.PaginationInfo;
@@ -26,18 +27,21 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class PaginatorsGenerator {
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
     private final RubyCodeWriter writer;
+    private final SymbolProvider symbolProvider;
 
     public PaginatorsGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Paginators", false);
     }
 
     public void render() {
@@ -63,7 +67,7 @@ public class PaginatorsGenerator {
                     paginatedIndex.getPaginationInfo(context.getService(), operation);
             if (paginationInfoOptional.isPresent()) {
                 PaginationInfo paginationInfo = paginationInfoOptional.get();
-                String operationName = operation.getId().getName();
+                String operationName = symbolProvider.toSymbol(operation).getName();
                 renderPaginator(operationName, paginationInfo);
             }
         });

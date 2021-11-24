@@ -25,13 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class MiddlewareBuilder {
     private final Map<MiddlewareStackStep, List<Middleware>> middlewares;
@@ -97,6 +101,8 @@ public class MiddlewareBuilder {
 
     public void addDefaultMiddleware(GenerationContext context) {
         ApplicationTransport transport = context.getApplicationTransport();
+        SymbolProvider symbolProvider =
+                new RubySymbolProvider(context.getModel(), context.getRubySettings(), "Client", false);
 
         ClientConfig validateInput = (new ClientConfig.Builder())
                 .name("validate_input")
@@ -110,10 +116,14 @@ public class MiddlewareBuilder {
                 .klass("Seahorse::Middleware::Validate")
                 .step(MiddlewareStackStep.INITIALIZE)
                 .operationParams((ctx, operation) -> {
+                    if (!operation.getInput().isPresent()) {
+                        throw new RuntimeException("Missing Input Shape for: " + operation.getId());
+                    }
+                    ShapeId inputShapeId = operation.getInput().get();
+                    Shape inputShape = ctx.getModel().expectShape(inputShapeId);
                     Map<String, String> params = new HashMap<>();
                     params.put("validator",
-                            "Validators::" + operation.getId().getName()
-                            + "Input");
+                            "Validators::" + symbolProvider.toSymbol(inputShape).getName());
                     return params;
                 })
                 .addConfig(validateInput)
@@ -125,7 +135,7 @@ public class MiddlewareBuilder {
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     params.put("builder",
-                            "Builders::" + operation.getId().getName());
+                            "Builders::" + symbolProvider.toSymbol(operation).getName());
                     return params;
                 })
                 .build();
@@ -152,8 +162,7 @@ public class MiddlewareBuilder {
                         transport.getTransportClient().render(context))
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
-                    params.put("stub_class", "Stubs::" + operation.getId()
-                            .getName());
+                    params.put("stub_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
                     return params;
                 })
                 .addConfig(stubResponses)

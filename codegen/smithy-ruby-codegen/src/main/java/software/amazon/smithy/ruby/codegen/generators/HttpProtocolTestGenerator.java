@@ -66,6 +66,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class HttpProtocolTestGenerator {
     private final GenerationContext context;
@@ -79,7 +80,7 @@ public class HttpProtocolTestGenerator {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = context.getSymbolProvider();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Protocol", true);
     }
 
     public void render() {
@@ -107,8 +108,7 @@ public class HttpProtocolTestGenerator {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
-            String operationName =
-                    RubyFormatter.toSnakeCase(operation.getId().getName());
+            String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
             writer.openBlock("describe '#$L' do", operationName);
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
                 renderRequestTests(operationName, operation.getInput(), requestTests);
@@ -200,14 +200,14 @@ public class HttpProtocolTestGenerator {
     }
 
     private String getRubyHashFromParams(Shape ioShape, ObjectNode params, ParamsToHashVisitor.TestType testType) {
-        return ioShape.accept(new ParamsToHashVisitor(model, params, testType));
+        return ioShape.accept(new ParamsToHashVisitor(model, params, testType, symbolProvider));
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {
         Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
         StringBuffer buffer = new StringBuffer("{ ");
         while (iterator.hasNext()) {
-            Map.Entry header =  iterator.next();
+            Map.Entry header = iterator.next();
             buffer.append("'");
             buffer.append(header.getKey());
             buffer.append("' => '");
@@ -353,11 +353,13 @@ public class HttpProtocolTestGenerator {
         private final Node node;
         private final Model model;
         private final TestType testType;
+        private final SymbolProvider symbolProvider;
 
-        ParamsToHashVisitor(Model model, Node node, TestType testType) {
+        ParamsToHashVisitor(Model model, Node node, TestType testType, SymbolProvider symbolProvider) {
             this.node = node;
             this.model = model;
             this.testType = testType;
+            this.symbolProvider = symbolProvider;
         }
 
         @Override
@@ -387,7 +389,7 @@ public class HttpProtocolTestGenerator {
             Shape target = model.expectShape(shape.getMember().getTarget());
 
             String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType)))
+                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType, symbolProvider)))
                     .collect(Collectors.joining(", "));
 
             return "[" + elements + "]";
@@ -402,7 +404,7 @@ public class HttpProtocolTestGenerator {
             Shape target = model.expectShape(shape.getMember().getTarget());
 
             String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType)))
+                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType, symbolProvider)))
                     .collect(Collectors.joining(", "));
 
             return "[" + elements + "]";
@@ -419,7 +421,7 @@ public class HttpProtocolTestGenerator {
 
             String memberStr = members.keySet().stream()
                     .map((k) -> "'" + k.toString() + "' => "
-                            + target.accept(new ParamsToHashVisitor(model, members.get(k), testType)))
+                            + target.accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider)))
                     .collect(Collectors.joining(", "));
 
             return "{" + memberStr + "}";
@@ -537,9 +539,12 @@ public class HttpProtocolTestGenerator {
             Map<String, MemberShape> shapeMembers = shape.getAllMembers();
 
             String memberStr = members.keySet().stream()
-                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
-                            + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
-                            .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
+                    .map((k) -> {
+                        MemberShape member = shapeMembers.get(k.toString());
+                        return symbolProvider.toMemberName(member) + ": "
+                                + (model.expectShape(member.getTarget()))
+                                .accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider));
+                    })
                     .collect(Collectors.joining(", "));
 
             return "{" + memberStr + "}";
@@ -555,9 +560,12 @@ public class HttpProtocolTestGenerator {
             Map<String, MemberShape> shapeMembers = shape.getAllMembers();
 
             String memberStr = members.keySet().stream()
-                    .map((k) -> RubyFormatter.toSnakeCase(k.toString()) + ": "
-                            + (model.expectShape(shapeMembers.get(k.toString()).getTarget()))
-                            .accept(new ParamsToHashVisitor(model, members.get(k), testType)))
+                    .map((k) -> {
+                        MemberShape member = shapeMembers.get(k.toString());
+                        return RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member)) + ": "
+                                + (model.expectShape(member.getTarget()))
+                                .accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider));
+                    })
                     .collect(Collectors.joining(", "));
             return "{" + memberStr + "}";
         }
