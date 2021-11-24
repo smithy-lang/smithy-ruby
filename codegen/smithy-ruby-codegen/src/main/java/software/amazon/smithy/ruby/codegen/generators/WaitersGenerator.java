@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -52,6 +53,7 @@ public class WaitersGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters())
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -83,6 +85,7 @@ public class WaitersGenerator {
     private void renderWaiter(String waiterName, Waiter waiter, OperationShape operation) {
         String operationName = RubyFormatter.toSnakeCase(operation.getId().getName());
         writer
+                .write("")
                 .call(() -> renderWaiterDocumentation(waiter))
                 .openBlock("class $L", waiterName)
                 .call(() -> renderWaiterInitializeDocumentation(waiter))
@@ -116,8 +119,10 @@ public class WaitersGenerator {
     }
 
     private void renderWaiterTags(Waiter waiter) {
-        List<String> tagsList = waiter.getTags();
-        writer.write("@tags = %w$L", tagsList);
+        String tags = waiter.getTags().stream()
+                .map((tag) -> "\"" + tag + "\"")
+                .collect(Collectors.joining(", "));
+        writer.write("@tags = [$L]", tags);
     }
 
     private void renderAcceptors(Waiter waiter) {
