@@ -23,6 +23,7 @@ service RailsJson {
         JsonUnions,
         PutAndGetInlineDocuments,
         __789BadName,
+        NestedAttributesOperation,
     ],
 }
 

@@ -345,7 +345,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             if (member.hasTrait(JsonNameTrait.class)) {
                 dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
             }
-            if (member.hasTrait("smithy.railsjson#NestedAttributes")) {
+            if (member.hasTrait("smithy.ruby.protocols#nestedAttributes")) {
                 dataName = dataName + "_attributes";
             }
 
