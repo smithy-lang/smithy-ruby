@@ -5,8 +5,8 @@ require_relative 'spec_helper'
 # guaranteed to trip validation
 class BadType; end
 
-RSpec.shared_examples "validates types" do |*types|
-  it "validates input as #{types}" do
+RSpec.shared_examples "validates params" do |*types|
+  it "validates params as #{types}" do
     expect do
       shape = Object.const_get(self.class.description)
       shape.build(BadType.new, context: 'params')
@@ -17,7 +17,7 @@ end
 module WhiteLabel
   module Params
     describe ListOfStrings do
-      include_examples "validates types", Array
+      include_examples "validates params", Array
 
       let(:params) { ['dank', 'memes'] }
 
@@ -29,7 +29,7 @@ module WhiteLabel
     end
 
     describe ListOfStructs do
-      include_examples "validates types", Array
+      include_examples "validates params", Array
 
       let(:struct_1) { Types::Struct.new }
       let(:struct_2) { Types::Struct.new }
@@ -49,7 +49,7 @@ module WhiteLabel
     end
 
     describe MapOfStrings do
-      include_examples "validates types", Hash
+      include_examples "validates params", Hash
 
       let(:params) { { key: 'value', other_key: 'other value' } }
 
@@ -61,7 +61,7 @@ module WhiteLabel
     end
 
     describe MapOfStructs do
-      include_examples "validates types", Hash
+      include_examples "validates params", Hash
 
       let(:struct_1) { Types::Struct.new }
       let(:struct_2) { Types::Struct.new }
@@ -80,13 +80,14 @@ module WhiteLabel
       end
     end
 
-    describe ParamsTestInput do
-      include_examples "validates types", Hash, Types::ParamsTestInput
+    describe KitchenSinkInput do
+      include_examples "validates params", Hash, Types::KitchenSinkInput
 
       let(:params) do
         {
           string: 'simple string',
           struct: struct,
+          document: { boolean: true },
           list_of_strings: ['dank', 'memes'],
           list_of_structs: [struct],
           map_of_strings: { key: 'value' },
@@ -133,11 +134,12 @@ module WhiteLabel
           .with(params[:union], context: 'params[:union]')
           .and_call_original
 
-        data = ParamsTestInput.build(params, context: 'params')
-        expect(data).to be_a(Types::ParamsTestInput)
+        data = KitchenSinkInput.build(params, context: 'params')
+        expect(data).to be_a(Types::KitchenSinkInput)
         expected = {
           string: 'simple string',
           struct: { value: 'struct value' },
+          document: { boolean: true },
           list_of_strings: ['dank', 'memes'],
           list_of_structs: [{ value: 'struct value' }],
           map_of_strings: { key: 'value' },
@@ -151,7 +153,7 @@ module WhiteLabel
     end
 
     describe SetOfStrings do
-      include_examples "validates types", Set, Array
+      include_examples "validates params", Set, Array
 
       let(:params) { Set.new(['dank', 'memes']) }
 
@@ -163,7 +165,7 @@ module WhiteLabel
     end
 
     describe SetOfStructs do
-      include_examples "validates types", Set, Array
+      include_examples "validates params", Set, Array
 
       let(:struct_1) { Types::Struct.new(value: 'one') }
       let(:struct_2) { Types::Struct.new(value: 'two') }
@@ -183,7 +185,7 @@ module WhiteLabel
     end
 
     describe Struct do
-      include_examples "validates types", Hash, Types::Struct
+      include_examples "validates params", Hash, Types::Struct
 
       let(:params) { { value: 'simple' } }
 
@@ -195,7 +197,7 @@ module WhiteLabel
     end
 
     describe Union do
-      include_examples "validates types", Hash, Types::Union
+      include_examples "validates params", Hash, Types::Union
 
       it 'builds a union structure with simple data' do
         params = { string: 'simple string' }

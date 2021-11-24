@@ -73,6 +73,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Validators")
                 .call(() -> renderValidators())
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -131,7 +132,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("input.each do |key, value|")
                 .write("Seahorse::Validator.validate!(key, String, Symbol, context: \"#{context}.keys\")")
                 .call(() -> valueTarget
-                        .accept(new MemberValidator(writer, "value", "\"#{context}[#{key}]\"")))
+                        .accept(new MemberValidator(writer, "value", "\"#{context}[:#{key}]\"")))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -199,7 +200,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("  nil")
                 .write("else")
                 .write("  raise ArgumentError,")
-                .write("        \"Expect #{context} to be a union member of \"\\")
+                .write("        \"Expected #{context} to be a union member of \"\\")
                 .write("        \"Types::" + shapeName + ", got #{input.class}.\"")
                 .write("end") // end switch case
                 .closeBlock("end") // end validate method
@@ -221,13 +222,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("when Hash")
                 .write("input.each do |k,v|")
                 .indent()
-                .write("validate!(v, context: context + \"[#{k}]\")")
+                .write("validate!(v, context: \"#{context}[:#{k}]\")")
                 .closeBlock("end")
                 .dedent()
                 .write("when Array")
                 .indent()
                 .openBlock("input.each_with_index do |v, i|")
-                .write("validate!(v, context: context + \"[#{i}]\")")
+                .write("validate!(v, context: \"#{context}[#{i}]\")")
                 .closeBlock("end")
                 .dedent()
                 .write("end")
@@ -243,7 +244,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(member.getTarget());
 
             writer
-                    .write("") // formatting
+                    .write("")
                     .openBlock("class $L", name)
                     .openBlock("def self.validate!(input, context:)")
                     .call(() -> target.accept(new MemberValidator(writer, "input", "context")))
@@ -289,14 +290,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void listShape(ListShape shape) {
             String name = shape.getId().getName();
-            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
+            writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
             String name = shape.getId().getName();
-            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
+            writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
@@ -333,7 +334,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void documentShape(DocumentShape shape) {
             String name = shape.getId().getName();
-            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
+            writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
@@ -352,27 +353,27 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void mapShape(MapShape shape) {
             String name = shape.getId().getName();
-            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
+            writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, String, context: $L)", input, context);
+            writer.write("Seahorse::Validator.validate!($L, ::String, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
             String name = shape.getId().getName();
-            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
+            writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
             String name = shape.getId().getName();
-            writer.write("$1L.validate!($2L, context: $3L) if $2L", name, input, context);
+            writer.write("Validators::$1L.validate!($2L, context: $3L) if $2L", name, input, context);
             return null;
         }
 
