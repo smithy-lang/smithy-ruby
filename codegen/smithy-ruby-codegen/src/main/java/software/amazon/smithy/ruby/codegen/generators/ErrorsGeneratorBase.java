@@ -15,13 +15,14 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -49,9 +50,11 @@ public abstract class ErrorsGeneratorBase {
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
+                .write("")
                 .call(() -> renderErrorCode())
                 .call(() -> renderBaseErrors())
                 .call(() -> renderServiceModelErrors())
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -75,51 +78,52 @@ public abstract class ErrorsGeneratorBase {
                 .write("class ApiServerError < ApiError; end");
 
         writer
-                .write("# Base class for all errors returned where the service returned")
+                .write("\n# Base class for all errors returned where the service returned")
                 .write("# a 3XX redirection.")
                 .openBlock("class ApiRedirectError < ApiError")
                 .openBlock("def initialize(location:, **kwargs)")
                 .write("@location = location")
-                .write("super(kwargs)")
-                .closeBlock("end\n")
+                .write("super(**kwargs)")
+                .closeBlock("end")
+                .write("")
                 .write("# @return [String] location")
                 .write("attr_reader :location")
-                .closeBlock("end\n");
+                .closeBlock("end");
     }
 
     public abstract void renderErrorCode();
 
     private void renderServiceModelErrors() {
-        // Error shapes returned from walking the model are operation#ErrorName
-        // we only want to generate 1 Error here per actual structure shape
-        Set<String> generatedErrors = new HashSet<>();
-        Stream<Shape> shapes = model.shapes().filter((s) -> s.hasTrait(ErrorTrait.class));
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        shapes.sorted(Comparator.comparing((o) -> o.getId().getName())).forEach(error -> {
+        Set<Shape> generatedErrors =
+                topDownIndex.getContainedOperations(context.getService()).stream()
+                        .map(OperationShape::getErrors)
+                        .flatMap(Collection::stream)
+                        .map(model::expectShape)
+                        .collect(Collectors.toSet());
+
+        generatedErrors.forEach(error -> {
             String errorName = symbolProvider.toSymbol(error).getName();
-            if (!generatedErrors.contains(errorName)) {
-                generatedErrors.add(errorName);
-                // assumes shapes are all filtered by error traits already
-                ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
-                String apiErrorType = getApiErrorType(errorTrait);
+            ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
+            String apiErrorType = getApiErrorType(errorTrait);
 
-                renderServiceModelError(errorName, apiErrorType);
-            }
+            renderServiceModelError(errorName, apiErrorType);
         });
     }
 
     private void renderServiceModelError(String errorName, String apiErrorType) {
         writer
+                .write("")
                 .openBlock("class $L < $L", errorName, apiErrorType)
                 .openBlock("def initialize(http_resp:, **kwargs)")
                 .write("@data = Parsers::$L.parse(http_resp)", errorName)
                 .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                 .write("super(http_resp: http_resp, **kwargs)")
-                .closeBlock("end\n");
-
-        writer.write("attr_reader :data");
-
-        writer.closeBlock("end\n");
+                .closeBlock("end")
+                .write("")
+                .write("attr_reader :data")
+                .closeBlock("end");
     }
 
     private String getApiErrorType(ErrorTrait errorTrait) {

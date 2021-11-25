@@ -8,6 +8,7 @@ use smithy.ruby.tests.protocols#fakeProtocol
 service WhiteLabel {
     version: "2018-01-01",
     operations: [
+        ErrorsTest,
         KitchenSink,
         PaginatorsTest,
         PaginatorsTestWithItems,

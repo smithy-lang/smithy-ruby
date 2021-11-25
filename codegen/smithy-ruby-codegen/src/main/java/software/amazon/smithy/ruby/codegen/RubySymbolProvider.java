@@ -64,6 +64,8 @@ public class RubySymbolProvider implements SymbolProvider,
      *
      * @param model    The smithy model to generate for
      * @param settings [RubySettings] settings associated with this codegen
+     * @param moduleName The module name
+     * @param complexTypes Boolean if type is complex
      */
     public RubySymbolProvider(Model model, RubySettings settings, String moduleName, boolean complexTypes) {
         this.model = model;
