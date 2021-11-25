@@ -60,7 +60,7 @@ module HighScoreService
     # @options param[HighScoreParams] :high_score
     #   The high score params
     #
-    def create_high_score(params = {}, options = {})
+    def create_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
@@ -77,7 +77,7 @@ module HighScoreService
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::CreateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
@@ -87,7 +87,7 @@ module HighScoreService
         input: input,
         context: Seahorse::Context.new(
           request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
           operation_name: :create_high_score
@@ -103,7 +103,7 @@ module HighScoreService
     # @options param[String] :id
     #   The high score id
     #
-    def delete_high_score(params = {}, options = {})
+    def delete_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
@@ -120,7 +120,7 @@ module HighScoreService
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::DeleteHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
@@ -130,7 +130,7 @@ module HighScoreService
         input: input,
         context: Seahorse::Context.new(
           request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
           operation_name: :delete_high_score
@@ -146,7 +146,7 @@ module HighScoreService
     # @options param[String] :id
     #   The high score id
     #
-    def get_high_score(params = {}, options = {})
+    def get_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
@@ -163,7 +163,7 @@ module HighScoreService
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
@@ -173,7 +173,7 @@ module HighScoreService
         input: input,
         context: Seahorse::Context.new(
           request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
           operation_name: :get_high_score
@@ -190,7 +190,7 @@ module HighScoreService
     #
     # @options param[String] :next_token
     #
-    def list_high_scores(params = {}, options = {})
+    def list_high_scores(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
@@ -207,7 +207,7 @@ module HighScoreService
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ListHighScores,
         stubs: options.fetch(:stubs, @stubs)
       )
@@ -217,7 +217,7 @@ module HighScoreService
         input: input,
         context: Seahorse::Context.new(
           request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
           operation_name: :list_high_scores
@@ -236,7 +236,7 @@ module HighScoreService
     # @options param[HighScoreParams] :high_score
     #   The high score params
     #
-    def update_high_score(params = {}, options = {})
+    def update_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
@@ -253,7 +253,7 @@ module HighScoreService
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::UpdateHighScore,
         stubs: options.fetch(:stubs, @stubs)
       )
@@ -263,7 +263,7 @@ module HighScoreService
         input: input,
         context: Seahorse::Context.new(
           request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Seahorse::HTTP::Response.new(body: output_stream),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
           operation_name: :update_high_score
@@ -281,7 +281,7 @@ module HighScoreService
       Seahorse::MiddlewareBuilder.new(middleware).apply(middleware_stack)
     end
 
-    def output_stream(options = {}, block = nil)
+    def output_stream(options = {}, &block)
       return options[:output_stream] if options[:output_stream]
       return Seahorse::BlockIO.new(block) if block
 

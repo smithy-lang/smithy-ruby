@@ -201,7 +201,7 @@ public class ClientGenerator {
                 RubyFormatter.toSnakeCase(symbol.getName());
         writer
                 .call(() -> renderOperationDocumentation(writer, operation))
-                .openBlock("def $L(params = {}, options = {})", operationName)
+                .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> middlewareBuilder
@@ -272,7 +272,7 @@ public class ClientGenerator {
 
     private void renderOutputStreamMethod(RubyCodeWriter writer) {
         writer
-                .openBlock("\ndef output_stream(options = {}, block = nil)")
+                .openBlock("\ndef output_stream(options = {}, &block)")
                 .write("return options[:output_stream] if options[:output_stream]")
                 .write("return Seahorse::BlockIO.new(block) if block")
                 .write("\nStringIO.new")

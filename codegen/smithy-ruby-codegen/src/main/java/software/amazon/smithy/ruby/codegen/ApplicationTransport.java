@@ -86,7 +86,7 @@ public final class ApplicationTransport {
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
-                .render((self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream)")
+                .render((self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream(options, &block))")
                 .build();
 
         ClientConfig wireTrace = (new ClientConfig.Builder())
@@ -116,7 +116,8 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace)")
+                .render((self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: "
+                        + "options.fetch(:http_wire_trace, @http_wire_trace))")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
