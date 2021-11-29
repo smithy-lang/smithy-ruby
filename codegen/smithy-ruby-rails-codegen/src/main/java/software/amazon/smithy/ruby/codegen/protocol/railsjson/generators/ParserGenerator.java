@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -50,6 +51,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
 public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -304,7 +306,11 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
-        for (MemberShape member : s.members()) {
+        Stream<MemberShape> parseMembers = s.members().stream()
+                .filter((m) -> !m.hasTrait((HttpHeaderTrait.class)));
+        parseMembers = parseMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
+
+        parseMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
             String dataName = symbolProvider.toMemberName(member);
             String dataSetter = "data." + dataName + " = ";
@@ -317,7 +323,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             if (!target.hasTrait(HttpHeaderTrait.class)) {
                 target.accept(new MemberDeserializer(writer, symbolProvider, member, dataSetter, jsonGetter));
             }
-        }
+        });
     }
 
     private static class MemberDeserializer extends ShapeVisitor.Default<Void> {

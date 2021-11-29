@@ -114,9 +114,9 @@ public class HttpProtocolTestGenerator {
                 renderRequestTests(operationName, operation.getInput(), requestTests);
             });
             writer.write("");
-            operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                renderResponseTests(operationName, operation.getOutput(), responseTests);
-            });
+//            operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
+//                renderResponseTests(operationName, operation.getOutput(), responseTests);
+//            });
             renderErrorTests(operation);
             writer.closeBlock("end");
         });
@@ -298,20 +298,21 @@ public class HttpProtocolTestGenerator {
 
     private void renderRequestMiddlewareHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
-            writer.write("expect(request.headers).to include($L)", getRubyHashFromMap(headers));
+            writer.write("$L.each { |k, v| expect(request.headers[k]).to eq(v) } ", getRubyHashFromMap(headers));
         }
     }
 
     private void renderRequestMiddlewareForbiddenHeaders(List<String> forbiddenHeaders) {
         if (!forbiddenHeaders.isEmpty()) {
-            writer.write("expect(request.headers.keys).to_not include(*$L)",
+            writer.write("$L.each { |k| expect(request.headers.key?(k)).to be(false) } ",
                     getRubyArrayFromList(forbiddenHeaders));
         }
     }
 
     private void renderRequestMiddlewareRequiredHeaders(List<String> requiredHeaders) {
         if (!requiredHeaders.isEmpty()) {
-            writer.write("expect(request.headers.keys).to include(*$L)", getRubyArrayFromList(requiredHeaders));
+            writer.write("$L.each { |k| expect(request.headers.key?(k)).to be(true) } ",
+                    getRubyArrayFromList(requiredHeaders));
         }
     }
 
