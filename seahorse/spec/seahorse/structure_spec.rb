@@ -6,6 +6,7 @@ module Seahorse
       Struct.new(
         :struct_value,
         :array_value,
+        :set_value,
         :hash_value,
         :value,
         keyword_init: true
@@ -21,6 +22,9 @@ module Seahorse
           struct.new(value: 'foo'),
           struct.new(value: 'bar')
         ],
+        set_value: Set.new(
+          [struct.new(value: 'foo'), struct.new(value: 'bar')]
+        ),
         hash_value: { key: struct.new(value: 'value') },
         value: 'value'
       )
@@ -31,6 +35,10 @@ module Seahorse
         expected = {
           struct_value: { value: 'foo' },
           array_value: [
+            { value: 'foo' },
+            { value: 'bar' }
+          ],
+          set_value: [
             { value: 'foo' },
             { value: 'bar' }
           ],

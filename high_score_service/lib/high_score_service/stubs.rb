@@ -111,9 +111,7 @@ module HighScoreService
     end
 
     # List Stubber for HighScores
-
     class HighScores
-
       def self.default(visited=[])
         return nil if visited.include?('HighScores')
         visited = visited + ['HighScores']

@@ -1,13 +1,42 @@
 {
   "version": "1.0",
-  "plugins": {
-    "ruby-codegen": {
-      "service": "example.weather#Weather",
-      "module": "Weather",
-      "gemspec": {
-        "gemName": "weather",
-        "gemVersion": "0.0.1",
-        "gemSummary": "Weather Service"
+  "projections": {
+    "weather-service": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["example.weather#Weather"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "example.weather#Weather",
+          "module": "Weather",
+          "gemspec": {
+            "gemName": "weather",
+            "gemVersion": "0.0.1",
+            "gemSummary": "Sample Smithy Weather Service"
+          }
+        }
+      }
+    },
+    "white-label": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["smithy.ruby.tests#WhiteLabel"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "smithy.ruby.tests#WhiteLabel",
+          "module": "WhiteLabel",
+          "gemspec": {
+            "gemName": "white_label",
+            "gemVersion": "0.0.1",
+            "gemSummary": "White Label Test Service"
+          }
+        }
       }
     }
   }

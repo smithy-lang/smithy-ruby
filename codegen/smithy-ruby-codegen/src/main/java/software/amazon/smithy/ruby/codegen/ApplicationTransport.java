@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -59,7 +60,6 @@ public final class ApplicationTransport {
             MiddlewareList defaultMiddleware
 
     ) {
-        //TODO: Create a builder for this
         this.name = name;
         this.request = request;
         this.response = response;
@@ -73,6 +73,7 @@ public final class ApplicationTransport {
      * @return Returns the created application Transport.
      */
     public static ApplicationTransport createDefaultHttpApplicationTransport() {
+
         ClientConfig endpoint = (new ClientConfig.Builder())
                 .name("endpoint")
                 .type("string")
@@ -85,7 +86,7 @@ public final class ApplicationTransport {
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
-                .render((self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream)")
+                .render((self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream(options, &block))")
                 .build();
 
         ClientConfig wireTrace = (new ClientConfig.Builder())
@@ -115,7 +116,8 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: @http_wire_trace)")
+                .render((self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: "
+                        + "options.fetch(:http_wire_trace, @http_wire_trace))")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
@@ -130,16 +132,20 @@ public final class ApplicationTransport {
                     .klass("Seahorse::Middleware::Parse")
                     .step(MiddlewareStackStep.DESERIALIZE)
                     .operationParams((ctx, operation) -> {
+                        SymbolProvider symbolProvider =
+                                new RubySymbolProvider(ctx.getModel(), ctx.getRubySettings(), "Client", false);
+
                         Map<String, String> params = new HashMap<>();
                         params.put("data_parser",
-                                "Parsers::" + operation.getId().getName());
+                                "Parsers::" + symbolProvider.toSymbol(operation).getName());
                         String successCode = "200";
                         Optional<HttpTrait> httpTrait = operation.getTrait(HttpTrait.class);
                         if (httpTrait.isPresent()) {
                             successCode = "" + httpTrait.get().getCode();
                         }
                         String errors =
-                                operation.getErrors().stream().map((error) -> "Errors::" + error.getName()).collect(
+                                operation.getErrors().stream().map((error) -> "Errors::"
+                                        + symbolProvider.toSymbol(ctx.getModel().expectShape(error)).getName()).collect(
                                         Collectors.joining(", "));
                         params.put("error_parser",
                                 "Seahorse::HTTP::ErrorParser.new("

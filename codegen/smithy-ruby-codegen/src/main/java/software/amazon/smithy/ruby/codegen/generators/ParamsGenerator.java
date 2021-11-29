@@ -39,8 +39,8 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.StringUtils;
 
 public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     private final GenerationContext context;
@@ -54,7 +54,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
-        this.symbolProvider = context.getSymbolProvider();
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 
     public void render() {
@@ -64,6 +64,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -74,10 +75,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderParams() {
-        System.out.println(
-                "Walking shapes from " + context.getService().getId()
-                        + " to find shapes to generate");
-
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex operationIndex = OperationIndex.of(model);
         Walker walker = new Walker(model);
@@ -104,7 +101,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .call(() -> renderBuilderForStructureMembers(shapeName, structureShape.members()))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -113,7 +110,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderBuilderForStructureMembers(String shapeName, Collection<MemberShape> members) {
         writer
-                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)", shapeName)
+                .write("Seahorse::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
                 .write("type = Types::$L.new", shapeName);
 
         members.forEach(member -> {
@@ -123,7 +120,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = RubyFormatter.asSymbol(memberName);
             String input = "params[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberBuilder(writer, memberSetter, input, context, true));
+            target.accept(new MemberBuilder(writer, symbolProvider, memberSetter, input, context, true));
         });
 
         writer.write("type");
@@ -131,8 +128,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape listShape) {
-        Symbol symbol = symbolProvider.toSymbol(listShape);
-        System.out.println("Visit List Shape: " + listShape.getId() + " Symbol: " + symbol);
         String shapeName = listShape.getId().getName();
         Shape memberTarget =
                 model.expectShape(listShape.getMember().getTarget());
@@ -140,12 +135,16 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
-                .write("Seahorse::Validator.validate!(params, Array, context: context)")
-                .openBlock("\nparams.each_with_index.map do |element, index|")
+                .openBlock("def self.build(params, context: '')")
+                .write("Seahorse::Validator.validate!(params, ::Array, context: context)")
+                .write("data = []")
+                .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "", "element", "\"#{context}[#{index}]\"", true)))
+                        .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
+                                "\"#{context}[#{index}]\"",
+                                true)))
                 .closeBlock("end")
+                .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
         return null;
@@ -153,21 +152,20 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void setShape(SetShape setShape) {
-        Symbol symbol = symbolProvider.toSymbol(setShape);
-        System.out.println("Visit Set Shape: " + setShape.getId() + " Symbol: " + symbol);
-        String shapeName = setShape.getId().getName();
+        String shapeName = symbolProvider.toSymbol(setShape).getName();
         Shape memberTarget =
                 model.expectShape(setShape.getMember().getTarget());
 
         writer
                 .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
-                .write("Seahorse::Validator.validate!(params, Set, Array, context: context)")
+                .openBlock("def self.build(params, context: '')")
+                .write("Seahorse::Validator.validate!(params, ::Set, ::Array, context: context)")
                 .write("data = Set.new")
-                .openBlock("\nparams.each_with_index do |element, index|")
+                .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, "data << ", "element", "\"#{context}[#{index}]\"", true)))
+                        .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
+                                "\"#{context}[#{index}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -177,20 +175,19 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape mapShape) {
-        Symbol symbol = symbolProvider.toSymbol(mapShape);
-        System.out.println("Visit Map Shape: " + mapShape.getId() + " Symbol: " + symbol);
-        String shapeName = mapShape.getId().getName();
+        String shapeName = symbolProvider.toSymbol(mapShape).getName();
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
-
 
         writer
                 .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
-                .write("Seahorse::Validator.validate!(params, Hash, context: context)")
-                .openBlock("\ndata = {}\nparams.each do |key, value|")
+                .openBlock("def self.build(params, context: '')")
+                .write("Seahorse::Validator.validate!(params, ::Hash, context: context)")
+                .write("data = {}")
+                .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberBuilder(writer, "data[key] = ", "value", "\"#{context}[#{key}]\"", true)))
+                        .accept(new MemberBuilder(writer, symbolProvider, "data[key] = ", "value",
+                                "\"#{context}[:#{key}]\"", true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -206,25 +203,28 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("")
                 .openBlock("module $L", shapeName)
-                .openBlock("\ndef self.build(params, context: '')")
+                .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?(Types::$L)", shapeName)
-                .write("Seahorse::Validator.validate!(params, Hash, Types::$L, context: context)\n", shapeName)
+                .write("Seahorse::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
                 .openBlock("unless params.size == 1")
-                .write("raise ArgumentError,\n\"Expected #{context} to have exactly one member, got: #{params}\"")
+                .write("raise ArgumentError,")
+                .indent(3)
+                .write("\"Expected #{context} to have exactly one member, got: #{params}\"")
+                .dedent(3)
                 .closeBlock("end")
-                .write("\nkey, value = params.flatten")
+                .write("key, value = params.flatten")
                 .write("case key"); //start a case statement.  This does NOT indent
-
 
         for (MemberShape member : shape.members()) {
             Shape target = model.expectShape(member.getTarget());
-            String memberName = RubyFormatter.asSymbol(member.getMemberName());
+            String memberClassName = symbolProvider.toMemberName(member);
+            String memberName = RubyFormatter.asSymbol(memberClassName);
             writer.write("when $L", memberName)
                     .indent()
-                    .openBlock("Types::$L::$L.new(", shapeName, StringUtils.capitalize(member.getMemberName()));
+                    .openBlock("Types::$L::$L.new(", shapeName, memberClassName);
             String input = "params[" + memberName + "]";
             String context = "\"#{context}[" + memberName + "]\"";
-            target.accept(new MemberBuilder(writer, "", input, context, false));
+            target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, false));
             writer.closeBlock(")")
                     .dedent();
         }
@@ -233,7 +233,10 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                         .collect(Collectors.joining(", "));
         writer.write("else")
                 .indent()
-                .write("raise ArgumentError,\n\"Expected #{context} to have one of $L set\"", expectedMembers);
+                .write("raise ArgumentError,")
+                .indent(3)
+                .write("\"Expected #{context} to have one of $L set\"", expectedMembers)
+                .dedent(4);
         writer.write("end")  //end of case statement, NOT indented
                 .closeBlock("end")
                 .closeBlock("end");
@@ -242,14 +245,16 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private static class MemberBuilder extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
+        private final SymbolProvider symbolProvider;
         private final String memberSetter;
         private final String input;
         private final String context;
         private final boolean checkRequired;
 
-        MemberBuilder(RubyCodeWriter writer, String memberSetter, String input,
+        MemberBuilder(RubyCodeWriter writer, SymbolProvider symbolProvider, String memberSetter, String input,
                       String context, boolean checkRequired) {
             this.writer = writer;
+            this.symbolProvider = symbolProvider;
             this.memberSetter = memberSetter;
             this.input = input;
             this.context = context;
@@ -258,7 +263,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         private String checkRequired() {
             if (this.checkRequired) {
-                return " if " + input;
+                return " unless " + input + ".nil?";
             } else {
                 return "";
             }
@@ -272,7 +277,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -280,7 +285,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void setShape(SetShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -288,7 +293,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void mapShape(MapShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -296,7 +301,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;
@@ -304,7 +309,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            String shapeName = shape.getId().getName();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
                     checkRequired());
             return null;

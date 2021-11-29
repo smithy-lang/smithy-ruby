@@ -13,7 +13,7 @@ module Seahorse
         _to_h_struct(obj)
       when Hash
         _to_h_hash(obj)
-      when Array
+      when Array, Set
         obj.collect { |value| to_hash(value) }
       when Union
         obj.to_h

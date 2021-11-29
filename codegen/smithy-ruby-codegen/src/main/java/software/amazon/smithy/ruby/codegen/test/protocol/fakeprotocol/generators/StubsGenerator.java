@@ -13,17 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
+package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -52,19 +48,11 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.HttpHeaderTrait;
-import software.amazon.smithy.model.traits.HttpLabelTrait;
-import software.amazon.smithy.model.traits.HttpPayloadTrait;
-import software.amazon.smithy.model.traits.HttpQueryTrait;
-import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.JsonNameTrait;
-import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
 public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
@@ -74,7 +62,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     private final Set<ShapeId> generatedStubs;
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
-
 
     public StubsGenerator(GenerationContext context) {
         this.settings = context.getRubySettings();
@@ -108,30 +95,22 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderStubsForOperation(OperationShape operation) {
-        System.out.println("Generating stubs for Operation: " + operation.getId());
-
         // Operations MUST have an Output type, even if it is empty
         if (!operation.getOutput().isPresent()) {
             throw new RuntimeException("Missing Output Shape for: " + operation.getId());
         }
         ShapeId outputShapeId = operation.getOutput().get();
 
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         Shape outputShape = model.expectShape(outputShapeId);
 
         writer
                 .write("")
                 .write("# Operation Stubber for $L", operation.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
-                .write("")
-                .openBlock("def self.default(visited=[])")
+                .openBlock("\ndef self.default(visited=[])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
-                .write("")
-                .openBlock("def self.stub(http_resp, stub:)")
-                .write("http_resp.status = $1L", httpTrait.getCode())
-                .call(() -> renderHeaderStubbers(operation, outputShape))
-                .call(() -> renderOperationBodyStubber(operation, outputShape))
+                .openBlock("\ndef self.stub(http_resp, stub:)")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -149,40 +128,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
-    // The Output shape is combined with the OperationStub
-    // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
-    // Also marks the OutputShape as generated
-    private void renderOperationBodyStubber(OperationShape operation, Shape outputShape) {
-        generatedStubs.add(outputShape.getId());
-
-        //determine if there are any members of the input that need to be serialized to the body
-        boolean serializeBody = outputShape.members().stream().anyMatch(
-                (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
-                        && !m.hasTrait((HttpHeaderTrait.class)));
-        if (serializeBody) {
-            writer
-                    .write("")
-                    .write("http_resp.headers['Content-Type'] = 'application/json'")
-                    .call(() -> renderMemberStubbers(outputShape))
-                    .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
-        }
-    }
-
-    private void renderHeaderStubbers(OperationShape operation, Shape outputShape) {
-        // get a list of all of HttpLabel members
-        List<MemberShape> headerMembers = outputShape.members()
-                .stream()
-                .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
-                .collect(Collectors.toList());
-
-        for (MemberShape m : headerMembers) {
-            HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
-            String symbolName = ":" + symbolProvider.toMemberName(m);
-            writer.write("http_resp.headers['$1L'] = stub[$2L].to_s unless stub[$2L].nil?", headerTrait.getValue(),
-                    symbolName);
-        }
-    }
-
     @Override
     public Void structureShape(StructureShape shape) {
         String name = symbolProvider.toSymbol(shape).getName();
@@ -190,16 +135,13 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .write("# Structure Stubber for $L", shape.getId().getName())
                 .openBlock("class $L", name)
-                .write("")
-                .openBlock("def self.default(visited=[])")
+                .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .call(() -> renderMemberDefaults(shape))
                 .closeBlock("end")
-                .write("")
-                .openBlock("def self.stub(stub = {})")
-                .call(() -> renderMemberStubbers(shape))
-                .write("data")
+                .openBlock("\ndef self.stub(stub = {})")
+                .write("{}")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -214,8 +156,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .write("")
                 .write("# List Stubber for $L", shape.getId().getName())
-                .openBlock("class $L", name)
-                .openBlock("def self.default(visited=[])")
+                .openBlock("\nclass $L", name)
+                .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .openBlock("[")
@@ -224,12 +166,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .closeBlock("]")
                 .closeBlock("end")
                 .openBlock("def self.stub(stub = [])")
-                .write("data = []")
-                .openBlock("stub.each do |element|")
-                .call(() -> memberTarget
-                        .accept(new MemberSerializer(writer, symbolProvider, shape.getMember(), "data << ", "element")))
-                .closeBlock("end")
-                .write("data")
+                .write("[]")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -242,10 +179,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
 
         writer
-                .write("")
-                .write("# Map Stubber for $L", shape.getId().getName())
-                .openBlock("class $L", name)
-                .openBlock("def self.default(visited=[])")
+                .write("\n# Map Stubber for $L", shape.getId().getName())
+                .openBlock("\nclass $L", name)
+                .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .openBlock("{")
@@ -254,15 +190,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                                 symbolProvider.toMemberName(shape.getValue()))))
                 .closeBlock("}")
                 .closeBlock("end")
-                .write("")
-                .openBlock("def self.stub(stub = {})")
-                .write("data = {}")
-                .openBlock("stub.each do |key, value|")
-                .call(() -> valueTarget
-                        .accept(new MemberSerializer(writer, symbolProvider, shape.getValue(), "data[key] = ",
-                                "value")))
-                .closeBlock("end")
-                .write("data")
+                .openBlock("\ndef self.stub(stub = {})")
+                .write("{}")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -272,14 +201,12 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void setShape(SetShape shape) {
         String name = symbolProvider.toSymbol(shape).getName();
-        MemberShape member = shape.getMember();
         Shape memberTarget =
-                model.expectShape(member.getTarget());
+                model.expectShape(shape.getMember().getTarget());
         writer
-                .write("")
-                .write("# Set Stubber for $L", shape.getId().getName())
-                .openBlock("class $L", name)
-                .openBlock("def self.default(visited=[])")
+                .write("\n# Set Stubber for $L", shape.getId().getName())
+                .openBlock("\nclass $L", name)
+                .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .openBlock("[")
@@ -287,14 +214,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                         symbolProvider.toMemberName(shape.getMember()))))
                 .closeBlock("]")
                 .closeBlock("end")
-                .write("")
-                .openBlock("def self.stub(stub = [])")
-                .write("data = Set.new")
-                .openBlock("stub.each do |element|")
-                .call(() -> memberTarget
-                        .accept(new MemberSerializer(writer, symbolProvider, member, "data << ", "element")))
-                .closeBlock("end")
-                .write("data")
+                .openBlock("def \nself.stub(stub = [])")
+                .write("Set.new")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -321,10 +242,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                     writer.closeBlock("}");
                 })
                 .closeBlock("end")
-                .write("")
-                .openBlock("def self.stub(stub = {})")
-                .call(() -> renderMemberStubbers(shape))
-                .write("data")
+                .openBlock("\ndef self.stub(stub = {})")
+                .write("{}")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -339,59 +258,23 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .write("# Document Type Stubber for $L", name)
                 .openBlock("class $L", name)
-                .openBlock("def self.default(visited=[])")
+                .openBlock("\ndef self.default(visited=[])")
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .write("{ '$L' => [0, 1, 2] }", name)
                 .closeBlock("end")
-                .write("")
-                .openBlock("def self.stub(stub = {})")
-                .write("stub")
+                .openBlock("\ndef self.stub(stub = {})")
+                .write("{}")
                 .closeBlock("end")
                 .closeBlock("end");
 
         return null;
     }
 
-    private void renderMemberStubbers(Shape s) {
-        Optional<MemberShape> payload =
-                s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
-
-        if (payload.isPresent()) {
-            MemberShape member = payload.get();
-            Shape target = model.expectShape(member.getTarget());
-            String symbolName = ":" + symbolProvider.toMemberName(member);
-            String inputGetter = "stub[" + symbolName + "]";
-            target.accept(new MemberSerializer(writer, symbolProvider, member, "data = ", inputGetter));
-            writer.write("data ||= {}");
-        } else {
-            //remove members w/ http traits or marked NoSerialize
-            Stream<MemberShape> serializeMembers = s.members().stream()
-                    .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
-                            && !m.hasTrait((HttpHeaderTrait.class)));
-            serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
-
-            writer.write("data = {}");
-            serializeMembers.forEach((member) -> {
-                Shape target = model.expectShape(member.getTarget());
-
-                String symbolName = ":" + symbolProvider.toMemberName(member);
-                String dataName = symbolName;
-                if (member.hasTrait(JsonNameTrait.class)) {
-                    dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
-                }
-                String dataSetter = "data[" + dataName + "] = ";
-                String inputGetter = "stub[" + symbolName + "]";
-                target.accept(new MemberSerializer(writer, symbolProvider, member, dataSetter, inputGetter));
-            });
-        }
-    }
-
     private void renderMemberDefaults(Shape s) {
         writer.openBlock("{");
         s.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tMEMBER default FOR: " + member.getId() + " target type: " + target.getType());
 
             String symbolName = symbolProvider.toMemberName(member);
             String dataSetter = symbolName + ": ";
@@ -403,105 +286,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     protected Void getDefault(Shape shape) {
         return null;
-    }
-
-    private static class MemberSerializer extends ShapeVisitor.Default<Void> {
-
-        private final RubyCodeWriter writer;
-        private final SymbolProvider symbolProvider;
-        private final MemberShape memberShape;
-        private final String inputGetter;
-        private final String dataSetter;
-
-        MemberSerializer(RubyCodeWriter writer, SymbolProvider symbolProvider, MemberShape memberShape,
-                         String dataSetter, String inputGetter) {
-            this.writer = writer;
-            this.symbolProvider = symbolProvider;
-            this.memberShape = memberShape;
-            this.inputGetter = inputGetter;
-            this.dataSetter = dataSetter;
-        }
-
-        public String checkRequired() {
-            return " unless " + inputGetter + ".nil?";
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired());
-            return null;
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            writer.write("$LBase64::encode64($L)$L", dataSetter, inputGetter, checkRequired());
-            return null;
-        }
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            // the default protocol format is date_time
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                    case HTTP_DATE:
-                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                    case DATE_TIME:
-                    default:
-                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                }
-            } else {
-                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                        checkRequired());
-            }
-            return null;
-        }
-
-        /**
-         * For complex shapes, simply delegate to their Stubber.
-         */
-        private void defaultComplexSerializer(Shape shape) {
-            writer.write("$LStubs::$L.stub($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), inputGetter,
-                    checkRequired());
-        }
-
-        @Override
-        public Void listShape(ListShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void mapShape(MapShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void unionShape(UnionShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
     }
 
     private static class MemberDefaults extends ShapeVisitor.Default<Void> {
@@ -521,6 +305,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             this.memberName = memberName;
         }
 
+
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$Lnil$L", dataSetter, eol);
@@ -528,8 +313,14 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         }
 
         @Override
-        public Void blobShape(BlobShape blob) {
-            writer.write("$L'$L'$L", dataSetter, memberName, eol);
+        public Void booleanShape(BooleanShape shape) {
+            writer.write("$Lfalse$L", dataSetter, eol);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer.write("$LStringIO.new('blob')$L", dataSetter, eol);
             return null;
         }
 
@@ -590,12 +381,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void timestampShape(TimestampShape shape) {
             writer.write("$LTime.now$L", dataSetter, eol);
-            return null;
-        }
-
-        @Override
-        public Void booleanShape(BooleanShape shape) {
-            writer.write("$Lfalse$L", dataSetter, eol);
             return null;
         }
 

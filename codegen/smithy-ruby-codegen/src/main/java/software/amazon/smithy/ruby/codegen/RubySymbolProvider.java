@@ -46,6 +46,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 public class RubySymbolProvider implements SymbolProvider,
@@ -53,7 +54,8 @@ public class RubySymbolProvider implements SymbolProvider,
     private final Model model;
     private final RubySettings settings;
     private final String rootModuleName;
-    private final String shapesPackageName;
+    private final String moduleName;
+    private final boolean complexTypes;
     private final ReservedWordSymbolProvider.Escaper escaper;
 
 
@@ -62,41 +64,54 @@ public class RubySymbolProvider implements SymbolProvider,
      *
      * @param model    The smithy model to generate for
      * @param settings [RubySettings] settings associated with this codegen
+     * @param moduleName The module name
+     * @param complexTypes Boolean if type is complex
      */
-    public RubySymbolProvider(Model model, RubySettings settings) {
+    public RubySymbolProvider(Model model, RubySettings settings, String moduleName, boolean complexTypes) {
         this.model = model;
         this.settings = settings;
         this.rootModuleName = settings.getModule();
-        this.shapesPackageName = this.rootModuleName + "::Shapes";
-
-        ReservedWords reservedWords = rubyReservedNames();
+        this.moduleName = this.rootModuleName + "::" + moduleName;
+        this.complexTypes = complexTypes;
 
         escaper = ReservedWordSymbolProvider.builder()
-                .nameReservedWords(reservedWords)
-                .memberReservedWords(reservedWords)
+                .nameReservedWords(rubyReservedNames())
+                .memberReservedWords(memberReservedNames())
                 .buildEscaper();
     }
 
     private ReservedWords rubyReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
-        reservedNames
-                .put("alias", "_alias")
-                .put("break", "_break")
-                .put("begin", "_begin")
-                .put("case", "_case")
-                .put("class", "_class")
-                .put("def", "_def")
-                .put("do", "_do")
-                .put("else", "_else")
-                .put("elsif", "_elsif")
-                .put("end", "_end")
-                .put("ensure", "_ensure")
-                .put("for", "_for")
-                .put("if", "_if")
-                .put("in", "_in")
-                .put("next", "_next")
-                .put("nil", "_nil")
-                .put("module", "_module");
+        String[] reserved =
+                {"alias", "break", "BEGIN", "case", "class", "def", "do", "else", "elsif", "end", "ensure", "for",
+                        "if", "in", "next", "nil", "module"};
+
+        for (String w : reserved) {
+            reservedNames.put(w, w + "_");
+        }
+        return reservedNames.build();
+    }
+
+    private ReservedWords memberReservedNames() {
+        ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
+        String[] reserved =
+                {"allocate", "superclass", "new", "included_modules", "name", "ancestors", "attr", "attr_reader",
+                        "attr_writer", "attr_accessor", "instance_methods", "public_instance_methods",
+                        "protected_instance_methods", "private_instance_methods", "constants", "const_get", "const_set",
+                        "class_variables", "remove_class_variable", "class_variable_get", "class_variable_set",
+                        "freeze", "inspect", "private_constant", "public_constant", "const_missing",
+                        "deprecate_constant", "include", "prepend", "module_exec", "module_eval", "class_eval",
+                        "remove_method", "undef_method", "class_exec", "alias_method", "to_s", "private_class_method",
+                        "public_class_method", "autoload", "instance_method", "public_instance_method", "define_method",
+                        "remove_instance_variable", "tap", "instance_variable_set", "protected_methods",
+                        "instance_variables", "instance_variable_get", "public_methods", "private_methods", "method",
+                        "public_method", "public_send", "singleton_method", "define_singleton_method", "extend",
+                        "to_enum", "enum_for", "object_id", "send", "display", "hash", "class", "singleton_class",
+                        "clone", "dup", "itself", "yield_self", "then", "taint", "untaint", "untrust", "trust",
+                        "methods", "singleton_methods", "instance_exec", "instance_eval", "__id__", "__send__"};
+        for (String w : reserved) {
+            reservedNames.put(w, "member_" + w);
+        }
         return reservedNames.build();
     }
 
@@ -108,50 +123,48 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public String toMemberName(MemberShape shape) {
-        // Shape container = model.expectShape(shape.getContainer());
-        // TODO: handle container.isUnionShape() if required
-
-        String memberName = getDefaultMemberName(shape);
-        memberName = escaper.escapeMemberName(memberName);
-
-        // TODO: Escape words reserved for the specific container.
-        // TODO: Escape words that are only reserved for error members.
-        return memberName;
+        Shape container = model.expectShape(shape.getContainer());
+        if (container.isUnionShape()) {
+            String memberName = CaseUtils.toPascalCase(getDefaultMemberName(shape));
+            if (memberName.equals("Unknown")) {
+                return "MemberUnknown";
+            } else {
+                return memberName;
+            }
+        } else {
+            // Note: we do not neeed to escape words that are only reserved for error members
+            // error classes have parsed data accessible through a `data` member only so there are no conflicts.
+            return getDefaultMemberName(shape);
+        }
     }
 
+    // Member names (Except for union members) are snake_case.
+    // The member names MAY start with underscores but MUST NOT start with a number.
+    // If they are a reserved word or start with a number they will be prefixed with “member_”.
     private String getDefaultMemberName(MemberShape shape) {
-        return RubyFormatter.toSnakeCase(
-                removeLeadingInvalidIdentCharacters(shape.getMemberName())
-        );
+        return prefixLeadingInvalidIdentCharacters(
+                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member_");
     }
 
-    private String getDefaultShapeName(Shape shape) {
+    // Shape Names (generated Class names) should be PascalCase
+    // they MUST start with a letter (no underscore or digit)
+    // if they are a reserved word or start with an invalid character, they will be prefixed
+    // the prefix should be based on the type (eg Struct or Union, ect).
+    private String getDefaultShapeName(Shape shape, String prefix) {
         ServiceShape serviceShape =
                 model.expectShape(settings.getService(), ServiceShape.class);
         return StringUtils.capitalize(
-                removeLeadingInvalidIdentCharacters(
-                        shape.getId().getName(serviceShape))
+                prefixLeadingInvalidIdentCharacters(
+                        shape.getId().getName(serviceShape), prefix)
         );
     }
 
-    private String removeLeadingInvalidIdentCharacters(String value) {
-        if (Character.isAlphabetic(value.charAt(0))) {
+    private String prefixLeadingInvalidIdentCharacters(String value, String prefix) {
+        if (!Character.isLetter(value.charAt(0))) {
+            return prefix + value;
+        } else {
             return value;
         }
-        int i;
-        for (i = 0; i < value.length(); i++) {
-            if (Character.isAlphabetic(value.charAt(i))) {
-                break;
-            }
-        }
-
-        String remaining = value.substring(i);
-        if (remaining.length() == 0) {
-            throw new CodegenException("tried to clean name " + value
-                    + ", but resulted in empty string");
-        }
-
-        return remaining;
     }
 
     /**
@@ -234,42 +247,59 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol timestampShape(TimestampShape shape) {
         RubyDependency d = RubyDependency.TIME;
-        System.out.println("TIME: " + d);
         return createSymbolBuilder(shape, "Time")
                 .addDependency(d).build();
     }
 
-
     @Override
     public Symbol listShape(ListShape shape) {
-        Symbol member = toSymbol(
-                model.expectShape(shape.getMember().getTarget()));
-        String type = "Array[" + member.getName() + "]";
-        return createSymbolBuilder(shape, type).build();
+        if (complexTypes) {
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "List"), moduleName)
+                    .definitionFile("types.rb").build();
+        } else {
+            Symbol member = toSymbol(
+                    model.expectShape(shape.getMember().getTarget()));
+            String type = "Array[" + member.getName() + "]";
+            return createSymbolBuilder(shape, type).build();
+        }
     }
 
     @Override
     public Symbol setShape(SetShape shape) {
-        Symbol member = toSymbol(
-                model.expectShape(shape.getMember().getTarget()));
-        String type = "Set[" + member.getName() + "]";
-        return createSymbolBuilder(shape, type).build();
+        if (complexTypes) {
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set"), moduleName)
+                    .definitionFile("types.rb").build();
+        } else {
+            Symbol member = toSymbol(
+                    model.expectShape(shape.getMember().getTarget()));
+            String type = "Set[" + member.getName() + "]";
+            return createSymbolBuilder(shape, type).build();
+        }
     }
 
     @Override
     public Symbol mapShape(MapShape shape) {
-        Symbol key = toSymbol(
-                model.expectShape(shape.getKey().getTarget()));
-        Symbol value = toSymbol(
-                model.expectShape(shape.getValue().getTarget()));
-        String type = "Hash[" + key.getName() + ", " + value.getName() + "]";
-        return createSymbolBuilder(shape, type).build();
+        if (complexTypes) {
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map"), moduleName)
+                    .definitionFile("types.rb").build();
+        } else {
+            Symbol key = toSymbol(
+                    model.expectShape(shape.getKey().getTarget()));
+            Symbol value = toSymbol(
+                    model.expectShape(shape.getValue().getTarget()));
+            String type = "Hash[" + key.getName() + ", " + value.getName() + "]";
+            return createSymbolBuilder(shape, type).build();
+        }
     }
 
     @Override
     public Symbol documentShape(DocumentShape shape) {
-        // TODO
-        return createSymbolBuilder(shape, "Document").build();
+        if (complexTypes) {
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document"), moduleName)
+                    .definitionFile("types.rb").build();
+        } else {
+            return createSymbolBuilder(shape, "Hash | Array | bool | Numeric").build();
+        }
     }
 
     @Override
@@ -281,19 +311,14 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol structureShape(StructureShape shape) {
-        String name = getDefaultShapeName(shape);
-        Symbol.Builder builder = createSymbolBuilder(shape, name, shapesPackageName)
-                .definitionFile("types.rb");
-        return builder.build();
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Struct"), moduleName)
+                .definitionFile("types.rb").build();
     }
 
     @Override
     public Symbol unionShape(UnionShape shape) {
-        // TODO: Confirm this implementation is correct after impl of Unions
-        String name = getDefaultShapeName(shape);
-        Symbol.Builder builder = createSymbolBuilder(shape, name, shapesPackageName)
-                .definitionFile("types.rb");
-        return builder.build();
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Union"), moduleName)
+                .definitionFile("types.rb").build();
     }
 
     @Override
@@ -304,8 +329,8 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol operationShape(OperationShape shape) {
-        // We do not currently generate shapes for operations
-        throw new CodegenException("Unexpected codegen path");
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Operation"), moduleName)
+                .definitionFile("types.rb").build();
     }
 
     @Override

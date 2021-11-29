@@ -72,8 +72,7 @@ module Seahorse
 
         error_opts = {
           http_resp: http_resp,
-          error_code: error_code,
-          message: nil # must be set later
+          error_code: error_code
         }
 
         if error_class
