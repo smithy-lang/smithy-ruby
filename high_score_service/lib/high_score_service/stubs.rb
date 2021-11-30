@@ -23,7 +23,6 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         http_resp.status = 201
         http_resp.headers['Location'] = stub[:location].to_s unless stub[:location].nil?
-
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}
@@ -81,7 +80,6 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 200
-
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}
@@ -101,7 +99,6 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 200
-
         http_resp.headers['Content-Type'] = 'application/json'
         data = {}
         data[:next_token] = stub[:next_token] unless stub[:next_token].nil?
@@ -139,7 +136,6 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 200
-
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}

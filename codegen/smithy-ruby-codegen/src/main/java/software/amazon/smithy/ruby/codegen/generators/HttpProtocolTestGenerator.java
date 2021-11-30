@@ -116,6 +116,7 @@ public class HttpProtocolTestGenerator {
             writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
                 renderResponseTests(operationName, operation.getOutput(), responseTests);
+                renderResponseStubberTests(operationName, operation.getOutput(), responseTests);
             });
             renderErrorTests(operation);
             writer.closeBlock("end");
@@ -135,6 +136,30 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
+                    .write("expect(output.to_h).to eq($L)",
+                            getRubyHashFromParams(outputShape, testCase.getParams(),
+                                    ParamsToHashVisitor.TestType.RESPONSE))
+                    .closeBlock("end");
+        });
+        writer.closeBlock("end");
+    }
+
+    private void renderResponseStubberTests(String operationName,
+                                            Optional<ShapeId> output,
+                                            HttpResponseTestsTrait responseTests) {
+        Shape outputShape = model.expectShape(output.orElseThrow(IllegalArgumentException::new));
+
+        writer.openBlock("describe 'response stubs' do");
+        responseTests.getTestCases().forEach((testCase) -> {
+            writer
+                    .openBlock("it 'stubs $L' do", testCase.getId())
+                    .call(() -> renderResponseStubMiddleware(testCase))
+                    .write("middleware.remove_build")
+                    .write("client.stub_responses(:$L, $L)", operationName,
+                            getRubyHashFromParams(outputShape, testCase.getParams(),
+                                    ParamsToHashVisitor.TestType.RESPONSE))
+                    .write("output = client.$L({}, middleware: middleware)", operationName)
+                    // Note: This part is not required, but its an additional check on parsers
                     .write("expect(output.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams(),
                                     ParamsToHashVisitor.TestType.RESPONSE))
@@ -293,6 +318,7 @@ public class HttpProtocolTestGenerator {
             } else {
                 writer.write("expect(request.body.read).to eq('$L')", body.get());
             }
+            writer.write("request.body.rewind");
         }
     }
 
@@ -347,6 +373,14 @@ public class HttpProtocolTestGenerator {
                     .write("expect(actual_query.key?(query)).to be true")
                     .closeBlock("end");
         }
+    }
+
+    private void renderResponseStubMiddleware(HttpResponseTestCase testCase) {
+        writer
+                .openBlock("middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|")
+                .write("response = context.response")
+                .write("expect(response.status).to eq($L)", testCase.getCode())
+                .closeBlock("end");
     }
 
     private static class ParamsToHashVisitor implements ShapeVisitor<String> {

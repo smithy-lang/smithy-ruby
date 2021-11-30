@@ -159,9 +159,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         boolean serializeBody = outputShape.members().stream().anyMatch(
                 (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
                         && !m.hasTrait((HttpHeaderTrait.class)));
+
         if (serializeBody) {
             writer
-                    .write("")
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
                     .call(() -> renderMemberStubbers(outputShape))
                     .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
@@ -376,7 +376,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 Shape target = model.expectShape(member.getTarget());
 
                 String symbolName = ":" + symbolProvider.toMemberName(member);
-                String dataName = symbolName;
+                String dataName = RubyFormatter.asSymbol(member.getMemberName());
                 if (member.hasTrait(JsonNameTrait.class)) {
                     dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
                 }
