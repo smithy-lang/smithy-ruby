@@ -527,7 +527,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            // TODO: Timestamp support
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$1L$2L", dataSetter, inputGetter)
                     .indent()

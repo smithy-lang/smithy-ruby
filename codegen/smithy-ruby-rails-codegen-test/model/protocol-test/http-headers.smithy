@@ -91,20 +91,6 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonInputAndOutputWithTimestampHeaders",
-        documentation: "Tests requests with timestamp header bindings",
-        protocol: railsJson,
-        method: "POST",
-        uri: "/InputAndOutputWithHeaders",
-        headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
-        },
-        body: "",
-        params: {
-            headerTimestampList: [1576540098, 1576540098]
-        }
-    },
-    {
         id: "RailsJsonInputAndOutputWithEnumHeaders",
         documentation: "Tests requests with enum header bindings",
         protocol: railsJson,
@@ -180,19 +166,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             headerTrueBool: true,
             headerFalseBool: false,
             headerBooleanList: [true, false, true]
-        }
-    },
-    {
-        id: "RailsJsonInputAndOutputWithTimestampHeaders",
-        documentation: "Tests responses with timestamp header bindings",
-        protocol: railsJson,
-        code: 200,
-        headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
-        },
-        body: "",
-        params: {
-            headerTimestampList: [1576540098, 1576540098]
         }
     },
     {

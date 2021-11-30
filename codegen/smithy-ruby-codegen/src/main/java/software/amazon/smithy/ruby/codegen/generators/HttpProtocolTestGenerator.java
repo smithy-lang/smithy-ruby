@@ -114,9 +114,9 @@ public class HttpProtocolTestGenerator {
                 renderRequestTests(operationName, operation.getInput(), requestTests);
             });
             writer.write("");
-//            operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-//                renderResponseTests(operationName, operation.getOutput(), responseTests);
-//            });
+            operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
+                renderResponseTests(operationName, operation.getOutput(), responseTests);
+            });
             renderErrorTests(operation);
             writer.closeBlock("end");
         });
