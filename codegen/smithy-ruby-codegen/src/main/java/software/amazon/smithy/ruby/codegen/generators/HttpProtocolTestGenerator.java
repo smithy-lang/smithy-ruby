@@ -318,7 +318,6 @@ public class HttpProtocolTestGenerator {
             } else {
                 writer.write("expect(request.body.read).to eq('$L')", body.get());
             }
-            writer.write("request.body.rewind");
         }
     }
 
