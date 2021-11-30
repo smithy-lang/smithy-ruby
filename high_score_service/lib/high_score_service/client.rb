@@ -186,10 +186,6 @@ module HighScoreService
     # List all high scores
     #
     # @param [Hash] params - See also: {Types::ListHighScoresInput}
-    # @options param[Integer] :max_results
-    #
-    # @options param[String] :next_token
-    #
     def list_high_scores(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)

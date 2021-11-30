@@ -51,8 +51,6 @@ module HighScoreService
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, ::Hash, Types::ListHighScoresInput, context: context)
         type = Types::ListHighScoresInput.new
-        type.max_results = params[:max_results]
-        type.next_token = params[:next_token]
         type
       end
     end

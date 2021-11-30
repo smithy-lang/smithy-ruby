@@ -42,8 +42,6 @@ module HighScoreService
     class ListHighScoresInput
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Types::ListHighScoresInput, context: context)
-        Seahorse::Validator.validate!(input[:max_results], ::Integer, context: "#{context}[:max_results]")
-        Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
       end
     end
 

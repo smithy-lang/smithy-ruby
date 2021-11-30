@@ -94,7 +94,6 @@ module HighScoreService
 
       def self.default(visited=[])
         {
-          next_token: 'next_token',
           high_scores: Stubs::HighScores.default(visited),
         }
       end
@@ -104,7 +103,6 @@ module HighScoreService
 
         http_resp.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:next_token] = stub[:next_token] unless stub[:next_token].nil?
         data[:high_scores] = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end

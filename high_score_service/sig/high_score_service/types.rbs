@@ -62,14 +62,12 @@ module HighScoreService
     end
 
     class ListHighScoresInput < Struct[untyped]
-      def initialize: (?max_results: Integer, ?next_token: String) -> untyped
-      attr_accessor max_results(): Integer
-      attr_accessor next_token(): String
+      def initialize: () -> untyped
+
     end
 
     class ListHighScoresOutput < Struct[untyped]
-      def initialize: (?next_token: String, ?high_scores: Array[HighScoreAttributes]) -> untyped
-      attr_accessor next_token(): String
+      def initialize: (?high_scores: Array[HighScoreAttributes]) -> untyped
       attr_accessor high_scores(): Array[HighScoreAttributes]
     end
 

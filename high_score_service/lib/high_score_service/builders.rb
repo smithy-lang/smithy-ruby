@@ -64,8 +64,6 @@ module HighScoreService
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
-        http_req.append_query_param('maxResults', input[:max_results].to_str) unless input[:max_results].nil?
-        http_req.append_query_param('nextToken', input[:next_token].to_str) unless input[:next_token].nil?
       end
     end
 

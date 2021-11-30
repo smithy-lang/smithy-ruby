@@ -62,13 +62,11 @@ module HighScoreService
     ) { include Seahorse::Structure }
 
     ListHighScoresInput = Struct.new(
-      :max_results,
-      :next_token,
+      nil,
       keyword_init: true
     ) { include Seahorse::Structure }
 
     ListHighScoresOutput = Struct.new(
-      :next_token,
       :high_scores,
       keyword_init: true
     ) { include Seahorse::Structure }

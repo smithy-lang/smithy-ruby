@@ -87,7 +87,6 @@ module HighScoreService
       def self.parse(http_resp)
         json = Seahorse::JSON.load(http_resp.body)
         data = Types::ListHighScoresOutput.new
-        data.next_token = json['next_token']
         data.high_scores = Parsers::HighScores.parse(json['high_scores']) if json['high_scores']
         data
       end
