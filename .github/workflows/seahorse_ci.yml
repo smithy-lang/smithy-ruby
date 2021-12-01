@@ -15,7 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.5, 2.6, 2.7, '3.0'] # TODO: jruby versions do not currently work because of spec's dependency on OJ
+        ruby: [2.6, 2.7, '3.0']
+        jruby: [9.3]
 
     steps:
       - name: Setup Ruby
