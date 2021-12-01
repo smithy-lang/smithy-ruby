@@ -6,7 +6,8 @@ Gem::Specification.new do |spec|
   spec.summary       = 'A base library for Smithy generated SDKs'
   spec.authors       = ['Amazon Web Services']
   spec.require_paths = ['lib']
-  spec.files         = Dir['CHANGELOG.md', 'VERSION', 'lib/**/*.rb']
+  spec.files         = Dir['CHANGELOG.md', 'VERSION',
+                           'lib/**/*.rb', 'sig/lib/**/*.rbs']
 
   spec.required_ruby_version = '>= 3.0.0'
 

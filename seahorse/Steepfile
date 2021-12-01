@@ -1,11 +1,10 @@
 D = Steep::Diagnostic
 
 target :app do
-  signature "sig"
+  signature 'sig'
 
-  check "lib/seahorse/structure"
-  check "lib/seahorse/union"
+  check 'lib/seahorse/structure'
+  check 'lib/seahorse/union'
 
-  # configure_code_diagnostics(D::Ruby.strict)       # `strict` diagnostics setting
-  # configure_code_diagnostics(D::Ruby.lenient)      # `lenient` diagnostics setting
+  configure_code_diagnostics(D::Ruby.strict)
 end
