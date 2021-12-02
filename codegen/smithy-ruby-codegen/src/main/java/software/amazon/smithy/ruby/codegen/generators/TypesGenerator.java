@@ -177,7 +177,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("class $L", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
-            rbsWriter.write("class $L[$L]; end", symbolProvider.toMemberName(memberShape), shapeName);
+            rbsWriter.write("class $L[$L]\nend", symbolProvider.toMemberName(memberShape), shapeName);
         }
 
         rbsWriter.closeBlock("end");
