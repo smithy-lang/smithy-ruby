@@ -118,7 +118,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .write("# Operation Parser for $L", operation.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .openBlock("def self.parse(http_resp)")
-                .write("json = Seahorse::JSON.load(http_resp.body)")
                 .write("data = Types::$L.new", symbolProvider.toSymbol(model.expectShape(outputShapeId)).getName())
                 .call(() -> renderHeaderParsers(outputShape))
                 .call(() -> renderOperationBodyParser(outputShape))
@@ -153,7 +152,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                                 .write("# Error Parser for $L", s.getId().getName())
                                 .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                                 .openBlock("def self.parse(http_resp)")
-                                .write("json = Seahorse::JSON.load(http_resp.body)")
                                 .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
                                 .call(() -> renderHeaderParsers(s))
                                 .call(() -> renderOperationBodyParser(s))
@@ -193,12 +191,14 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .collect(Collectors.toList());
 
         if (httpPayloadMembers.size() == 0) {
+            writer.write("json = Seahorse::JSON.load(http_resp.body)");
             renderMemberParsers(writer, outputShape);
         } else if (httpPayloadMembers.size() == 1) {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
             String dataName = symbolProvider.toMemberName(payloadMember);
-            writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, symbolProvider.toSymbol(target).getName());
+            String dataSetter = "data." + dataName + " = ";
+            target.accept(new PayloadMemberDeserializer(payloadMember, dataSetter));
         }
     }
 
@@ -601,5 +601,66 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
+    private class PayloadMemberDeserializer extends ShapeVisitor.Default<Void> {
 
+        private final MemberShape memberShape;
+        private final String dataSetter;
+
+        PayloadMemberDeserializer(MemberShape memberShape, String dataSetter) {
+            this.memberShape = memberShape;
+            this.dataSetter = dataSetter;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .write("payload = http_resp.body.read")
+                    .write("$Lpayload unless payload.empty?", dataSetter);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer
+                    .write("payload = http_resp.body.read")
+                    .write("$Lpayload unless payload.empty?", dataSetter);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        private void defaultComplexDeserializer(Shape shape) {
+            writer
+                    .write("json = Seahorse::JSON.load(http_resp.body)")
+                    .write("$LParsers::$L.parse(json)", dataSetter, symbolProvider.toSymbol(shape).getName());
+        }
+
+    }
 }

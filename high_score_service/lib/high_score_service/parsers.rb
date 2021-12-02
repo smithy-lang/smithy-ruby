@@ -15,9 +15,9 @@ module HighScoreService
     # Operation Parser for CreateHighScore
     class CreateHighScore
       def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
         data = Types::CreateHighScoreOutput.new
         data.location = http_resp.headers['Location']
+        json = Seahorse::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -38,8 +38,8 @@ module HighScoreService
     # Error Parser for UnprocessableEntityError
     class UnprocessableEntityError
       def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
         data = Types::UnprocessableEntityError.new
+        json = Seahorse::JSON.load(http_resp.body)
         data.errors = Parsers::AttributeErrors.parse(json['errors']) if json['errors']
         data
       end
@@ -66,8 +66,8 @@ module HighScoreService
     # Operation Parser for DeleteHighScore
     class DeleteHighScore
       def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
         data = Types::DeleteHighScoreOutput.new
+        json = Seahorse::JSON.load(http_resp.body)
         data
       end
     end
@@ -75,8 +75,8 @@ module HighScoreService
     # Operation Parser for GetHighScore
     class GetHighScore
       def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
         data = Types::GetHighScoreOutput.new
+        json = Seahorse::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -85,8 +85,8 @@ module HighScoreService
     # Operation Parser for ListHighScores
     class ListHighScores
       def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
         data = Types::ListHighScoresOutput.new
+        json = Seahorse::JSON.load(http_resp.body)
         data.high_scores = Parsers::HighScores.parse(json['high_scores']) if json['high_scores']
         data
       end
@@ -103,8 +103,8 @@ module HighScoreService
     # Operation Parser for UpdateHighScore
     class UpdateHighScore
       def self.parse(http_resp)
-        json = Seahorse::JSON.load(http_resp.body)
         data = Types::UpdateHighScoreOutput.new
+        json = Seahorse::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
