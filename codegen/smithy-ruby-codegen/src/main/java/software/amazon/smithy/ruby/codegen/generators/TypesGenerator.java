@@ -157,7 +157,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         rbsWriter
                 .openBlock("class Unknown < $L", shapeName)
-                .write("def to_h: () -> { unknown: Hash[Symbol,$L]", shapeName)
+                .write("def to_h: () -> { unknown: Hash[Symbol,$L] }", shapeName)
                 .closeBlock("end");
 
         rbsWriter.closeBlock("end\n");
