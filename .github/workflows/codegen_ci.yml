@@ -56,9 +56,12 @@ jobs:
         run: |
           gem build seahorse.gemspec
           gem install seahorse-$(<VERSION).gem
+        working-directory: ./seahorse
 
       - name: Type checks
-        run: bundle exec steep check
+        run: |
+          gem install steep
+          steep check
         working-directory: ./white_label
 
   ruby-integration-specs:
