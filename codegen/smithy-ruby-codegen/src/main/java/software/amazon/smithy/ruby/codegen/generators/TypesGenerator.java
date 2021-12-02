@@ -133,7 +133,8 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         writer.openBlock("class $L < Seahorse::Union", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
-            writer.openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
+            writer
+                    .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                     .openBlock("def to_h")
                     .write("{ $L: super(__getobj__) }",
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
@@ -142,9 +143,12 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         }
 
         writer
-                .write("class Unknown < $L; end", shapeName)
+                .openBlock("class Unknown < $L", shapeName)
+                .openBlock("def to_h")
+                .write("{ unknown: super(__getobj__) }")
                 .closeBlock("end")
-                .write("");
+                .closeBlock("end")
+                .closeBlock("end");
 
         rbsWriter.openBlock("class $L < Seahorse::Union", shapeName);
 
