@@ -166,7 +166,11 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         }
 
         writer
-                .write("class Unknown < $L; end", shapeName)
+                .openBlock("class Unknown < $L", shapeName)
+                .openBlock("def to_h")
+                .write("{unknown: super(__getobj__)}")
+                .closeBlock("end")
+                .closeBlock("end")
                 .closeBlock("end");
 
         // TODO: Type signatures for delegation are not well defined.

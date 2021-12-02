@@ -22,9 +22,9 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 201
-        http_resp.headers['Location'] = stub[:location].to_s unless stub[:location].nil?
-
+        http_resp.headers['Location'] = stub[:location] unless stub[:location].nil? || stub[:location].empty?
         http_resp.headers['Content-Type'] = 'application/json'
+        stub ||= {}
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -47,6 +47,7 @@ module HighScoreService
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         data[:id] = stub[:id] unless stub[:id].nil?
         data[:game] = stub[:game] unless stub[:game].nil?
@@ -81,8 +82,8 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 200
-
         http_resp.headers['Content-Type'] = 'application/json'
+        stub ||= {}
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -100,8 +101,8 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 200
-
         http_resp.headers['Content-Type'] = 'application/json'
+        stub ||= {}
         data = {}
         data[:high_scores] = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
@@ -120,7 +121,7 @@ module HighScoreService
       def self.stub(stub = [])
         data = []
         stub.each do |element|
-          data << Stubs::HighScoreAttributes.stub(element) unless element.nil?
+          data << Stubs::HighScoreAttributes.stub(element)
         end
         data
       end
@@ -137,8 +138,8 @@ module HighScoreService
 
       def self.stub(http_resp, stub:)
         http_resp.status = 200
-
         http_resp.headers['Content-Type'] = 'application/json'
+        stub ||= {}
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         data ||= {}
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))

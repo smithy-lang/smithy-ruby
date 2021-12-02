@@ -58,6 +58,7 @@ import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -159,9 +160,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         boolean serializeBody = outputShape.members().stream().anyMatch(
                 (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
                         && !m.hasTrait((HttpHeaderTrait.class)));
+
         if (serializeBody) {
             writer
-                    .write("")
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
                     .call(() -> renderMemberStubbers(outputShape))
                     .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
@@ -178,8 +179,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         for (MemberShape m : headerMembers) {
             HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
             String symbolName = ":" + symbolProvider.toMemberName(m);
-            writer.write("http_resp.headers['$1L'] = stub[$2L].to_s unless stub[$2L].nil?", headerTrait.getValue(),
-                    symbolName);
+            String headerSetter = "http_resp.headers['" + headerTrait.getValue() + "'] = ";
+            String valueGetter = "stub[" + symbolName + "]";
+            model.expectShape(m.getTarget()).accept(new HeaderSerializer(m, headerSetter, valueGetter));
         }
     }
 
@@ -219,7 +221,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .openBlock("[")
-                .call(() -> memberTarget.accept(new MemberDefaults(writer, symbolProvider, "", "",
+                .call(() -> memberTarget.accept(new MemberDefaults("", "",
                         symbolProvider.toMemberName(shape.getMember()))))
                 .closeBlock("]")
                 .closeBlock("end")
@@ -227,7 +229,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = []")
                 .openBlock("stub.each do |element|")
                 .call(() -> memberTarget
-                        .accept(new MemberSerializer(writer, symbolProvider, shape.getMember(), "data << ", "element")))
+                        .accept(new MemberSerializer(shape.getMember(), "data << ", "element", false)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -250,7 +252,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("visited = visited + ['$L']", name)
                 .openBlock("{")
                 .call(() -> valueTarget
-                        .accept(new MemberDefaults(writer, symbolProvider, "test_key: ", "",
+                        .accept(new MemberDefaults("test_key: ", "",
                                 symbolProvider.toMemberName(shape.getValue()))))
                 .closeBlock("}")
                 .closeBlock("end")
@@ -259,8 +261,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = {}")
                 .openBlock("stub.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberSerializer(writer, symbolProvider, shape.getValue(), "data[key] = ",
-                                "value")))
+                        .accept(new MemberSerializer(shape.getValue(), "data[key] = ",
+                                "value", false)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -283,7 +285,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("return nil if visited.include?('$L')", name)
                 .write("visited = visited + ['$L']", name)
                 .openBlock("[")
-                .call(() -> memberTarget.accept(new MemberDefaults(writer, symbolProvider, "", "",
+                .call(() -> memberTarget.accept(new MemberDefaults("", "",
                         symbolProvider.toMemberName(shape.getMember()))))
                 .closeBlock("]")
                 .closeBlock("end")
@@ -292,9 +294,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = Set.new")
                 .openBlock("stub.each do |element|")
                 .call(() -> memberTarget
-                        .accept(new MemberSerializer(writer, symbolProvider, member, "data << ", "element")))
+                        .accept(new MemberSerializer(member, "data << ", "element", true)))
                 .closeBlock("end")
-                .write("data")
+                .write("data.to_a")
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -317,13 +319,13 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                     Shape target = model.expectShape(defaultMember.getTarget());
                     String symbolName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(defaultMember));
                     String dataSetter = symbolName + ": ";
-                    target.accept(new MemberDefaults(writer, symbolProvider, dataSetter, ",", symbolName));
+                    target.accept(new MemberDefaults(dataSetter, ",", symbolName));
                     writer.closeBlock("}");
                 })
                 .closeBlock("end")
                 .write("")
                 .openBlock("def self.stub(stub = {})")
-                .call(() -> renderMemberStubbers(shape))
+                .call(() -> renderUnionMemberStubbers(shape))
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -354,6 +356,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderMemberStubbers(Shape s) {
+        writer.write("stub ||= {}");
         Optional<MemberShape> payload =
                 s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
 
@@ -362,7 +365,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             Shape target = model.expectShape(member.getTarget());
             String symbolName = ":" + symbolProvider.toMemberName(member);
             String inputGetter = "stub[" + symbolName + "]";
-            target.accept(new MemberSerializer(writer, symbolProvider, member, "data = ", inputGetter));
+            target.accept(new MemberSerializer(member, "data = ", inputGetter, true));
             writer.write("data ||= {}");
         } else {
             //remove members w/ http traits or marked NoSerialize
@@ -376,15 +379,33 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 Shape target = model.expectShape(member.getTarget());
 
                 String symbolName = ":" + symbolProvider.toMemberName(member);
-                String dataName = symbolName;
+                String dataName = RubyFormatter.asSymbol(member.getMemberName());
                 if (member.hasTrait(JsonNameTrait.class)) {
                     dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
                 }
                 String dataSetter = "data[" + dataName + "] = ";
                 String inputGetter = "stub[" + symbolName + "]";
-                target.accept(new MemberSerializer(writer, symbolProvider, member, dataSetter, inputGetter));
+                target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
             });
         }
+    }
+
+    private void renderUnionMemberStubbers(Shape s) {
+        writer.write("stub ||= {}");
+
+        writer.write("data = {}");
+        s.members().forEach((member) -> {
+            Shape target = model.expectShape(member.getTarget());
+
+            String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
+            String dataName = RubyFormatter.asSymbol(member.getMemberName());
+            if (member.hasTrait(JsonNameTrait.class)) {
+                dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
+            }
+            String dataSetter = "data[" + dataName + "] = ";
+            String inputGetter = "stub[" + symbolName + "]";
+            target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
+        });
     }
 
     private void renderMemberDefaults(Shape s) {
@@ -395,7 +416,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
             String symbolName = symbolProvider.toMemberName(member);
             String dataSetter = symbolName + ": ";
-            target.accept(new MemberDefaults(writer, symbolProvider, dataSetter, ",", symbolName));
+            target.accept(new MemberDefaults(dataSetter, ",", symbolName));
         });
         writer.closeBlock("}");
     }
@@ -405,117 +426,14 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         return null;
     }
 
-    private static class MemberSerializer extends ShapeVisitor.Default<Void> {
+    private class MemberDefaults extends ShapeVisitor.Default<Void> {
 
-        private final RubyCodeWriter writer;
-        private final SymbolProvider symbolProvider;
-        private final MemberShape memberShape;
-        private final String inputGetter;
-        private final String dataSetter;
-
-        MemberSerializer(RubyCodeWriter writer, SymbolProvider symbolProvider, MemberShape memberShape,
-                         String dataSetter, String inputGetter) {
-            this.writer = writer;
-            this.symbolProvider = symbolProvider;
-            this.memberShape = memberShape;
-            this.inputGetter = inputGetter;
-            this.dataSetter = dataSetter;
-        }
-
-        public String checkRequired() {
-            return " unless " + inputGetter + ".nil?";
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired());
-            return null;
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            writer.write("$LBase64::encode64($L)$L", dataSetter, inputGetter, checkRequired());
-            return null;
-        }
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            // the default protocol format is date_time
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                    case HTTP_DATE:
-                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                    case DATE_TIME:
-                    default:
-                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                }
-            } else {
-                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                        checkRequired());
-            }
-            return null;
-        }
-
-        /**
-         * For complex shapes, simply delegate to their Stubber.
-         */
-        private void defaultComplexSerializer(Shape shape) {
-            writer.write("$LStubs::$L.stub($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), inputGetter,
-                    checkRequired());
-        }
-
-        @Override
-        public Void listShape(ListShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void mapShape(MapShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void unionShape(UnionShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-    }
-
-    private static class MemberDefaults extends ShapeVisitor.Default<Void> {
-
-        private final RubyCodeWriter writer;
-        private final SymbolProvider symbolProvider;
         private final String eol;
         private final String dataSetter;
         private final String memberName;
 
-        MemberDefaults(RubyCodeWriter writer, SymbolProvider symbolProvider, String dataSetter, String eol,
+        MemberDefaults(String dataSetter, String eol,
                        String memberName) {
-            this.writer = writer;
-            this.symbolProvider = symbolProvider;
             this.eol = eol;
             this.dataSetter = dataSetter;
             this.memberName = memberName;
@@ -633,6 +551,263 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         public Void unionShape(UnionShape shape) {
             complexShapeDefaults(shape);
+            return null;
+        }
+    }
+
+    private class MemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final MemberShape memberShape;
+        private final String inputGetter;
+        private final String dataSetter;
+        private final boolean checkRequired;
+
+
+        MemberSerializer(MemberShape memberShape,
+                         String dataSetter, String inputGetter, boolean checkRequired) {
+            this.memberShape = memberShape;
+            this.inputGetter = inputGetter;
+            this.dataSetter = dataSetter;
+            this.checkRequired = checkRequired;
+        }
+
+        private String checkRequired() {
+            if (this.checkRequired) {
+                return " unless " + inputGetter + ".nil?";
+            } else {
+                return "";
+            }
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired());
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer.write("$LBase64::encode64($L)$L", dataSetter, inputGetter, checkRequired());
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            // the default protocol format is date_time
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
+                                checkRequired());
+                        break;
+                    case HTTP_DATE:
+                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
+                                checkRequired());
+                        break;
+                    case DATE_TIME:
+                    default:
+                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                                checkRequired());
+                        break;
+                }
+            } else {
+                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                        checkRequired());
+            }
+            return null;
+        }
+
+        /**
+         * For complex shapes, simply delegate to their Stubber.
+         */
+        private void defaultComplexSerializer(Shape shape) {
+            writer.write("$LStubs::$L.stub($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), inputGetter,
+                    checkRequired());
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void setShape(SetShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+    }
+
+    private class HeaderSerializer extends ShapeVisitor.Default<Void> {
+
+        private final String inputGetter;
+        private final String dataSetter;
+        private final MemberShape memberShape;
+
+        HeaderSerializer(MemberShape memberShape,
+                         String dataSetter, String inputGetter) {
+            this.inputGetter = inputGetter;
+            this.dataSetter = dataSetter;
+            this.memberShape = memberShape;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write("$1L$2L.to_s unless $2L.nil?", dataSetter, inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            // string values with a mediaType trait are always base64 encoded.
+            if (shape.hasTrait(MediaTypeTrait.class)) {
+                writer.write("$1LBase64::encode64($2L).strip unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            } else {
+                writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            }
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            // header values are serialized using the http-date format by default
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (!format.isPresent()) {
+                format = shape.getTrait(TimestampFormatTrait.class);
+            }
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write("$1LSeahorse::TimeHelper.to_epoch_seconds($2L).to_i unless $2L.nil?", dataSetter,
+                                inputGetter);
+                        break;
+                    case DATE_TIME:
+                        writer.write("$1LSeahorse::TimeHelper.to_date_time($2L) unless $2L.nil?", dataSetter,
+                                inputGetter);
+                        break;
+                    case HTTP_DATE:
+                    default:
+                        writer.write("$1LSeahorse::TimeHelper.to_http_date($2L) unless $2L.nil?", dataSetter,
+                                inputGetter);
+                        break;
+                }
+            } else {
+                writer.write("$1LSeahorse::TimeHelper.to_http_date($2L) unless $2L.nil?", dataSetter, inputGetter);
+            }
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .write("$1L$2L", dataSetter, inputGetter)
+                    .indent()
+                    .write(".compact")
+                    .call(() -> model.expectShape(shape.getMember().getTarget())
+                            .accept(new HeaderListMemberSerializer(shape.getMember())))
+                    .write(".join(', ')")
+                    .dedent()
+                    .closeBlock("end");
+            return null;
+        }
+
+        @Override
+        public Void setShape(SetShape shape) {
+            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .write("$1L$2L", dataSetter, inputGetter)
+                    .indent()
+                    .write(".to_a")
+                    .write(".compact")
+                    .call(() -> model.expectShape(shape.getMember().getTarget())
+                            .accept(new HeaderListMemberSerializer(shape.getMember())))
+                    .write(".join(', ')")
+                    .dedent()
+                    .closeBlock("end");
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            // Not supported in headers
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            // Not supported in headers
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            // Not supported in headers
+            return null;
+        }
+    }
+
+    private class HeaderListMemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final MemberShape memberShape;
+
+        HeaderListMemberSerializer(MemberShape memberShape) {
+            this.memberShape = memberShape;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write(".map { |s| s.to_s }");
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .write(".map { |s| (s.include?('\"') || s.include?(\",\"))"
+                            + " ? \"\\\"#{s.gsub('\"', '\\\"')}\\\"\" : s }");
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            // header values are serialized using the http-date format by default
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write(".map { |s| Seahorse::TimeHelper.to_epoch_seconds(s) }");
+                        break;
+                    case DATE_TIME:
+                        writer.write(".map { |s| Seahorse::TimeHelper.to_date_time(s) }");
+                        break;
+                    case HTTP_DATE:
+                    default:
+                        // TODO: Currently parsing of http_date in header lists is not supported
+                        writer.write(".map { |s| Seahorse::TimeHelper.to_date_time(s) }");
+                        break;
+                }
+            } else {
+                // TODO: Currently parsing of http_date in header lists is not supported
+                writer.write(".map { |s| Seahorse::TimeHelper.to_date_time(s) }");
+            }
             return null;
         }
     }
