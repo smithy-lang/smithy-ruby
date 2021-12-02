@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -67,6 +68,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.utils.StringUtils;
 
 public class HttpProtocolTestGenerator {
     private final GenerationContext context;
@@ -499,11 +501,7 @@ public class HttpProtocolTestGenerator {
 
         @Override
         public String floatShape(FloatShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
+            return rubyFloat();
         }
 
         @Override
@@ -513,11 +511,32 @@ public class HttpProtocolTestGenerator {
 
         @Override
         public String doubleShape(DoubleShape shape) {
+            return rubyFloat();
+        }
+
+        private String rubyFloat() {
             if (node.isNullNode()) {
                 return "nil";
             }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
+            if (node.isStringNode()) {
+                StringNode stringNode = node.expectStringNode();
+                switch (stringNode.getValue()) {
+                    case "NaN":
+                        return "Float::NAN";
+                    case "Infinity":
+                        return "Float::INFINITY";
+                    case "-Infinity":
+                        return "-Float::INFINITY";
+                    default:
+                        throw new CodegenException("Unexpected string value for Float shape: "
+                                + node
+                                + " from: "
+                                + node.getSourceLocation());
+                }
+            } else {
+                NumberNode numberNode = node.expectNumberNode();
+                return numberNode.getValue().toString();
+            }
         }
 
         @Override
@@ -559,7 +578,7 @@ public class HttpProtocolTestGenerator {
                 return "nil";
             }
             StringNode stringNode = node.expectStringNode();
-            return "'" + stringNode.getValue() + "'";
+            return StringUtils.escapeJavaString(stringNode.getValue(), "");
         }
 
         @Override
