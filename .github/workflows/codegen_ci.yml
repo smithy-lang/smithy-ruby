@@ -65,8 +65,7 @@ jobs:
           path: white_label
 
       - name: Copy Gemfile
-        run: |
-          cp seahorse/Gemfile white_label/
+        run: cp seahorse/Gemfile white_label/
 
       - name: Type checks
         run: |
@@ -103,8 +102,7 @@ jobs:
           path: white_label
 
       - name: Copy Gemfile
-        run: |
-          cp seahorse/Gemfile white_label/
+        run: cp seahorse/Gemfile white_label/
 
       - name: Integration specs
         run: |
