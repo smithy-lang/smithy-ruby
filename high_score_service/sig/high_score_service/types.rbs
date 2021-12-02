@@ -9,77 +9,31 @@
 
 module HighScoreService
   module Types
+    HighScoreAttributes: untyped
 
-    class HighScoreAttributes < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?id: String, ?game: String, ?score: Integer, ?created_at: Time, ?updated_at: Time) -> HighScoreAttributes
-      attr_accessor id(): String
-      attr_accessor game(): String
-      attr_accessor score(): Integer
-      attr_accessor created_at(): Time
-      attr_accessor updated_at(): Timeend
+    HighScoreParams: untyped
 
-    class HighScoreParams < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?game: String, ?score: Integer) -> HighScoreParams
-      attr_accessor game(): String
-      attr_accessor score(): Integerend
+    UnprocessableEntityError: untyped
 
-    class UnprocessableEntityError < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?errors: Hash[String, Array[String]]) -> UnprocessableEntityError
-      attr_accessor errors(): Hash[String, Array[String]]end
+    CreateHighScoreInput: untyped
 
-    class CreateHighScoreInput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?high_score: HighScoreParams) -> CreateHighScoreInput
-      attr_accessor high_score(): HighScoreParamsend
+    CreateHighScoreOutput: untyped
 
-    class CreateHighScoreOutput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?high_score: HighScoreAttributes, ?location: String) -> CreateHighScoreOutput
-      attr_accessor high_score(): HighScoreAttributes
-      attr_accessor location(): Stringend
+    DeleteHighScoreInput: untyped
 
-    class DeleteHighScoreInput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?id: String) -> DeleteHighScoreInput
-      attr_accessor id(): Stringend
+    DeleteHighScoreOutput: untyped
 
-    class DeleteHighScoreOutput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: () -> DeleteHighScoreOutput
-    end
+    GetHighScoreInput: untyped
 
-    class GetHighScoreInput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?id: String) -> GetHighScoreInput
-      attr_accessor id(): Stringend
+    GetHighScoreOutput: untyped
 
-    class GetHighScoreOutput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?high_score: HighScoreAttributes) -> GetHighScoreOutput
-      attr_accessor high_score(): HighScoreAttributesend
+    ListHighScoresInput: untyped
 
-    class ListHighScoresInput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: () -> ListHighScoresInput
-    end
+    ListHighScoresOutput: untyped
 
-    class ListHighScoresOutput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?high_scores: Array[HighScoreAttributes]) -> ListHighScoresOutput
-      attr_accessor high_scores(): Array[HighScoreAttributes]end
+    UpdateHighScoreInput: untyped
 
-    class UpdateHighScoreInput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?id: String, ?high_score: HighScoreParams) -> UpdateHighScoreInput
-      attr_accessor id(): String
-      attr_accessor high_score(): HighScoreParamsend
+    UpdateHighScoreOutput: untyped
 
-    class UpdateHighScoreOutput < ::Struct[::Object]
-      include Seahorse::Structure
-      def initialize: (?high_score: HighScoreAttributes) -> UpdateHighScoreOutput
-      attr_accessor high_score(): HighScoreAttributesend
   end
 end

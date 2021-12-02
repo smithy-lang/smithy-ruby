@@ -52,7 +52,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
-        //TODO: We need some mechanism to do both at once.
+
         rbsWriter
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types");
@@ -80,11 +80,6 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderTypes() {
-
-        System.out.println(
-                "Walking shapes from " + context.getService().getId()
-                        + " to find types to generate");
-
         Model modelWithoutTraitShapes = ModelTransformer.create()
                 .getModelWithoutTraitShapes(context.getModel());
 
@@ -106,16 +101,13 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
         String shapeName = symbol.getName();
-        String membersBlock;
+        String membersBlock = "nil";
 
-        if (shape.members().isEmpty()) {
-            membersBlock = "nil";
-        } else {
+        if (!shape.members().isEmpty()) {
             membersBlock = shape
                     .members()
                     .stream()
-                    .map(memberShape -> RubyFormatter.asSymbol(
-                            symbolProvider.toMemberName(memberShape)))
+                    .map(memberShape -> RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape)))
                     .collect(Collectors.joining(",\n"));
         }
         membersBlock += ",";
@@ -127,24 +119,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .write("keyword_init: true")
                 .closeBlock(") { include Seahorse::Structure }");
 
-        String initTypes = shape.members().stream()
-                .map(m -> "?" + symbolProvider.toMemberName(m)
-                        + ": " + typeFor(targetShape(m)))
-                .collect(Collectors.joining(", "));
-
-        String memberAttrTypes = shape.members().stream()
-                .map(m -> "attr_accessor "
-                        + symbolProvider.toMemberName(m) + "(): "
-                        + typeFor(targetShape(m)))
-                .collect(Collectors.joining("\n"));
-
-        rbsWriter
-                .write("")
-                .openBlock("class " + shapeName + " < ::Struct[::Object]")
-                .write("include Seahorse::Structure")
-                .write("def initialize: (" + initTypes + ") -> " + shapeName)
-                .writeInline(memberAttrTypes)
-                .closeBlock("\nend");
+        rbsWriter.write(shapeName + ": untyped\n");
         return null;
     }
 
@@ -160,7 +135,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         for (MemberShape memberShape : shape.members()) {
             writer.openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                     .openBlock("def to_h")
-                    .write("{$L: super(__getobj__)}",
+                    .write("{ $L: super(__getobj__) }",
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                     .closeBlock("end")
                     .closeBlock("end");
@@ -170,27 +145,22 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
                 .write("class Unknown < $L; end", shapeName)
                 .closeBlock("end");
 
-        // TODO: Type signatures for delegation are not well defined.
-        // See: https://github.com/ruby/rbs/pull/765
-        // For now just define the classes and ignore the actual member types
-        rbsWriter
-                .write("")
-                .openBlock("class $L", shapeName);
+        rbsWriter.openBlock("class $L < Seahorse::Union", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
-            rbsWriter.write("class $L[$L]\nend", symbolProvider.toMemberName(memberShape), shapeName);
+            rbsWriter
+                    .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
+                    .write("def to_h: () -> { $L: Hash[Symbol,$L]",
+                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)), shapeName)
+                    .closeBlock("end");
         }
 
-        rbsWriter.closeBlock("end");
+        rbsWriter
+                .openBlock("class Unknown < $L", shapeName)
+                .write("def to_h: () -> { unknown: Hash[Symbol,$L]", shapeName)
+                .closeBlock("end");
+
+        rbsWriter.closeBlock("end\n");
         return null;
-    }
-
-    private Shape targetShape(MemberShape m) {
-        return this.context.getModel().expectShape(m.getTarget());
-    }
-
-    private String typeFor(Shape m) {
-        Symbol symbol = symbolProvider.toSymbol(m);
-        return symbol.getName();
     }
 }
