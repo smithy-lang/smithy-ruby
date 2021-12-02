@@ -140,7 +140,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         rbsWriter
                 .write("")
-                .openBlock("class " + shapeName + " < ::Struct[Object]")
+                .openBlock("class " + shapeName + " < ::Struct[::Object]")
                 .write("def initialize: (" + initTypes + ") -> untyped")
                 .write(memberAttrTypes)
                 .closeBlock("end");
