@@ -78,6 +78,7 @@ module Seahorse
         if error_class
           error_class.new(**error_opts)
         else
+          # todo - http_resp already in error opts, refactor error objects?
           generic_error(http_resp, error_opts)
         end
       end
