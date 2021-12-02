@@ -9,6 +9,7 @@
 
 module HighScoreService
   module Types
+
     HighScoreAttributes: untyped
 
     HighScoreParams: untyped

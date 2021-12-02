@@ -55,11 +55,13 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         rbsWriter
                 .openBlock("module $L", settings.getModule())
-                .openBlock("module Types");
+                .openBlock("module Types")
+                .write("");
 
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
+                .write("")
                 .call(() -> renderTypes())
                 .closeBlock("end")
                 .closeBlock("end");
@@ -113,11 +115,11 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         membersBlock += ",";
 
         writer
-                .write("")
                 .openBlock(shapeName + " = Struct.new(")
                 .write(membersBlock)
                 .write("keyword_init: true")
-                .closeBlock(") { include Seahorse::Structure }");
+                .closeBlock(") { include Seahorse::Structure }")
+                .write("");
 
         rbsWriter.write(shapeName + ": untyped\n");
         return null;
@@ -128,9 +130,7 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
         Symbol symbol = symbolProvider.toSymbol(shape);
         String shapeName = symbol.getName();
 
-        writer
-                .write("")
-                .openBlock("class $L < Seahorse::Union", shapeName);
+        writer.openBlock("class $L < Seahorse::Union", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
             writer.openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
@@ -143,16 +143,17 @@ public class TypesGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("class Unknown < $L; end", shapeName)
-                .closeBlock("end");
+                .closeBlock("end")
+                .write("");
 
         rbsWriter.openBlock("class $L < Seahorse::Union", shapeName);
 
         for (MemberShape memberShape : shape.members()) {
             rbsWriter
                     .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
-                    .write("def to_h: () -> { $L: Hash[Symbol,$L]",
+                    .write("def to_h: () -> { $L: Hash[Symbol,$L] }",
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)), shapeName)
-                    .closeBlock("end");
+                    .closeBlock("end\n");
         }
 
         rbsWriter

@@ -36,17 +36,23 @@ public abstract class ErrorsGeneratorBase {
     protected final RubySettings settings;
     protected final Model model;
     protected final RubyCodeWriter writer;
+    protected final RubyCodeWriter rbsWriter;
     protected final SymbolProvider symbolProvider;
 
     public ErrorsGeneratorBase(GenerationContext context) {
+        this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();
-        this.context = context;
         this.writer = new RubyCodeWriter();
+        this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
     }
 
     public void render(FileManifest fileManifest) {
+        rbsWriter
+                .openBlock("module $L", settings.getModule())
+                .openBlock("module Errors");
+
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
@@ -58,8 +64,16 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end")
                 .closeBlock("end");
 
+        rbsWriter
+                .closeBlock("end")
+                .closeBlock("end");
+
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/errors.rb";
         fileManifest.writeFile(fileName, writer.toString());
+
+        String typesFile =
+                settings.getGemName() + "/sig/" + settings.getGemName() + "/errors.rbs";
+        fileManifest.writeFile(typesFile, rbsWriter.toString());
     }
 
     private void renderBaseErrors() {
@@ -67,15 +81,32 @@ public abstract class ErrorsGeneratorBase {
                 .write("\n# Base class for all errors returned by this service")
                 .write("class ApiError < Seahorse::HTTP::ApiError; end");
 
+        rbsWriter
+                .write("\n# Base class for all errors returned by this service")
+                .write("class ApiError < Seahorse::HTTP::ApiError")
+                .write("end");
+
         writer
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end");
 
+        rbsWriter
+                .write("\n# Base class for all errors returned where the client is at fault.")
+                .write("# These are generally errors with 4XX HTTP status codes.")
+                .write("class ApiClientError < ApiError")
+                .write("end");
+
         writer
                 .write("\n# Base class for all errors returned where the server is at fault.")
                 .write("# These are generally errors with 5XX HTTP status codes.")
                 .write("class ApiServerError < ApiError; end");
+
+        rbsWriter
+                .write("\n# Base class for all errors returned where the server is at fault.")
+                .write("# These are generally errors with 5XX HTTP status codes.")
+                .write("class ApiServerError < ApiError")
+                .write("end");
 
         writer
                 .write("\n# Base class for all errors returned where the service returned")
@@ -88,6 +119,16 @@ public abstract class ErrorsGeneratorBase {
                 .write("")
                 .write("# @return [String] location")
                 .write("attr_reader :location")
+                .closeBlock("end");
+
+        rbsWriter
+                .write("\n# Base class for all errors returned where the service returned")
+                .write("# a 3XX redirection.")
+                .openBlock("class ApiRedirectError < ApiError")
+                .openBlock("def initialize: (location: untyped location, **untyped kwargs) -> void")
+                .write("")
+                .write("# @return [String] location")
+                .write("attr_reader location: untyped")
                 .closeBlock("end");
     }
 
@@ -123,6 +164,14 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end")
                 .write("")
                 .write("attr_reader :data")
+                .closeBlock("end");
+
+        rbsWriter
+                .write("")
+                .openBlock("class $L < $L", errorName, apiErrorType)
+                .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
+                .write("")
+                .write("attr_reader data: untyped")
                 .closeBlock("end");
     }
 
