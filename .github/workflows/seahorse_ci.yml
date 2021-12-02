@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.3, 2.4, 2.5, 2.6, 2.7, '3.0', 'jruby-9.3']
+        ruby: [2.5, 2.6, 2.7, '3.0']
 
     steps:
       - name: Setup Ruby
@@ -44,10 +44,8 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Bundle install
-        run: |
-          gem install bundler
-          bundle install
+      - name: Install gems
+        run: bundle install
         working-directory: ./seahorse
 
       - name: Type checks
@@ -65,10 +63,8 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Bundle install
-        run: |
-          gem install bundler
-          bundle install
+      - name: Install gems
+        run: bundle install
         working-directory: ./seahorse
 
       - name: Rubocop
