@@ -1,4 +1,4 @@
-name: Codegen CI
+name: Smithy Ruby Codegen CI
 
 on:
   push:
@@ -40,14 +40,34 @@ jobs:
         name: white_label
         path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label
 
+  ruby-rbs-type-check:
+    needs: [generate-test-sdk]
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Set up Ruby 3.0
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+
+      - uses: actions/checkout@v2
+
+      - name: Build Seahorse
+        run: |
+          gem build seahorse.gemspec
+          gem install seahorse-$(<VERSION).gem
+
+      - name: Type checks
+        run: bundle exec steep check
+        working-directory: ./white_label
+
   ruby-integration-specs:
     needs: [generate-test-sdk]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.5, 2.6, 2.7, '3.0'] # TODO: jruby versions do not currently work because of spec's dependency on OJ
-
+        ruby: [2.5, 2.6, 2.7, '3.0']
 
     steps:
       - name: Setup Ruby
