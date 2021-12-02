@@ -100,6 +100,7 @@ jobs:
 
       - name: Integration specs
         run: |
+          gem install rexml
           gem install rspec
           rspec -I ../seahorse/lib
         working-directory: ./white_label
