@@ -224,6 +224,7 @@ public class CodegenOrchestrator {
     private void generateClient() {
         ClientGenerator clientGenerator = new ClientGenerator(context);
         clientGenerator.render();
+        clientGenerator.renderRbs();
     }
 
     private void generateModule() {
