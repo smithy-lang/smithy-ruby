@@ -176,6 +176,9 @@ public class HttpProtocolTestGenerator {
         Shape inputShape = model.expectShape(input.orElseThrow(IllegalArgumentException::new));
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
+            if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
+                return;
+            }
             writer
                     .write("") //formatting
                     .call(() -> renderTestDocumentation(testCase.getDocumentation()))

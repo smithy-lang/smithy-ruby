@@ -47,6 +47,7 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
+import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -147,11 +148,24 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
                 && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
         if (serializeBody) {
-            writer
-                    .write("")
-                    .write("http_req.headers['Content-Type'] = 'application/json'")
-                    .call(() -> renderMemberBuilders(writer, inputShape))
-                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+            //determine if there is an httpPayload member
+            List<MemberShape> httpPayloadMembers = inputShape.members()
+                    .stream()
+                    .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
+                    .collect(Collectors.toList());
+            if (httpPayloadMembers.size() == 0) {
+                writer
+                        .write("")
+                        .write("http_req.headers['Content-Type'] = 'application/json'")
+                        .call(() -> renderMemberBuilders(writer, inputShape))
+                        .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+            } else {
+                MemberShape payloadMember = httpPayloadMembers.get(0);
+                Shape target = model.expectShape(payloadMember.getTarget());
+                String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
+                String inputGetter = "input[" + symbolName + "]";
+                target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
+            }
         }
     }
 
@@ -674,6 +688,78 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             }
         }
     }
+
+    private class PayloadMemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final MemberShape memberShape;
+        private final String inputGetter;
+
+        PayloadMemberSerializer(MemberShape memberShape, String inputGetter) {
+            this.memberShape = memberShape;
+            this.inputGetter = inputGetter;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .write("http_req.headers['Content-Type'] = 'text/plain'")
+                    .write("http_req.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
+            String mediaType = "application/octet-stream";
+            if (mediaTypeTrait.isPresent()) {
+                mediaType = mediaTypeTrait.get().getValue();
+            }
+
+            writer
+                    .write("http_req.headers['Content-Type'] = '$L'", mediaType)
+                    .write("http_req.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        private void defaultComplexSerializer(Shape shape) {
+            writer
+                    .write("http_req.headers['Content-Type'] = 'application/json'")
+                    .write("data = Builders::$1L.build($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
+                            inputGetter)
+                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+        }
+
+    }
+
 
 }
 
