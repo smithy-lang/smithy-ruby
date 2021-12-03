@@ -267,5 +267,6 @@ public class CodegenOrchestrator {
     private void generatePaginators() {
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
         paginatorsGenerator.render();
+        paginatorsGenerator.renderRbs();
     }
 }

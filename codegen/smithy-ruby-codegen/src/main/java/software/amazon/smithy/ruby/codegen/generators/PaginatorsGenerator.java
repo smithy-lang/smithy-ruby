@@ -34,6 +34,7 @@ public class PaginatorsGenerator {
     private final RubySettings settings;
     private final Model model;
     private final RubyCodeWriter writer;
+    private final RubyCodeWriter rbsWriter;
     private final SymbolProvider symbolProvider;
 
     public PaginatorsGenerator(GenerationContext context) {
@@ -41,11 +42,13 @@ public class PaginatorsGenerator {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
+        this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Paginators", false);
     }
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
+
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
@@ -56,6 +59,23 @@ public class PaginatorsGenerator {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/paginators.rb";
         fileManifest.writeFile(fileName, writer.toString());
+    }
+
+    public void renderRbs() {
+        FileManifest fileManifest = context.getFileManifest();
+
+        rbsWriter
+                .openBlock("module $L", settings.getModule())
+                .openBlock("module Paginators")
+                .call(() -> renderRbsPaginators())
+                .write("")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        String typesFile =
+                settings.getGemName() + "/sig/" + settings.getGemName()
+                        + "/paginators.rbs";
+        fileManifest.writeFile(typesFile, rbsWriter.toString());
     }
 
     private void renderPaginators() {
@@ -69,6 +89,21 @@ public class PaginatorsGenerator {
                 PaginationInfo paginationInfo = paginationInfoOptional.get();
                 String operationName = symbolProvider.toSymbol(operation).getName();
                 renderPaginator(operationName, paginationInfo);
+            }
+        });
+    }
+
+    private void renderRbsPaginators() {
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        PaginatedIndex paginatedIndex = PaginatedIndex.of(model);
+
+        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
+            Optional<PaginationInfo> paginationInfoOptional =
+                    paginatedIndex.getPaginationInfo(context.getService(), operation);
+            if (paginationInfoOptional.isPresent()) {
+                PaginationInfo paginationInfo = paginationInfoOptional.get();
+                String operationName = symbolProvider.toSymbol(operation).getName();
+                renderRbsPaginator(operationName, paginationInfo);
             }
         });
     }
@@ -87,6 +122,21 @@ public class PaginatorsGenerator {
                 .call(() -> {
                     if (!paginationInfo.getItemsMemberPath().isEmpty()) {
                         renderPaginatorItems(paginationInfo, operationName);
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    private void renderRbsPaginator(String operationName, PaginationInfo paginationInfo) {
+        rbsWriter
+                .write("")
+                .openBlock("class $L", operationName)
+                .write("def initialize: (untyped client, ?::Hash[untyped, untyped] params, "
+                        + "?::Hash[untyped, untyped] options) -> void\n")
+                .write("def pages: () -> untyped")
+                .call(() -> {
+                    if (!paginationInfo.getItemsMemberPath().isEmpty()) {
+                        rbsWriter.write("def items: () -> untyped");
                     }
                 })
                 .closeBlock("end");
