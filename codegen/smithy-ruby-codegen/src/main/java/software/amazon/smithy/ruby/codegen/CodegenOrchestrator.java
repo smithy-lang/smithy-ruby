@@ -197,6 +197,7 @@ public class CodegenOrchestrator {
     private void generateTypes() {
         TypesGenerator typesGenerator = new TypesGenerator(context);
         typesGenerator.render();
+        typesGenerator.renderRbs();
         LOGGER.info("created types");
     }
 
