@@ -31,4 +31,6 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
                 .write("http_resp.headers['x-smithy-error']")
                 .closeBlock("end");
     }
+
+    public void renderRbsErrorCode() {}
 }

@@ -25,13 +25,13 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
     }
 
     public void renderErrorCode() {
-        rbsWriter
-                .write("# Given an http_resp, return the error code")
-                .write("def self.error_code: (untyped http_resp) -> untyped");
         writer
-                .write("# Given an http_resp, return the error code")
                 .openBlock("def self.error_code(http_resp)")
                 .write("http_resp.headers['x-smithy-error']")
                 .closeBlock("end");
+    }
+
+    public void renderRbsErrorCode() {
+        rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
     }
 }

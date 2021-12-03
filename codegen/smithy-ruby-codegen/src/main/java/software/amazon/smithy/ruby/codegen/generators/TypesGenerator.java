@@ -57,7 +57,7 @@ public class TypesGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
-                .call(() -> renderTypes(new TypesVisitor(writer, symbolProvider)))
+                .call(() -> renderTypes(new TypesVisitor()))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -74,7 +74,7 @@ public class TypesGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
-                .call(() -> renderTypes(new TypesRbsVisitor(rbsWriter, symbolProvider)))
+                .call(() -> renderTypes(new TypesRbsVisitor()))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -97,15 +97,7 @@ public class TypesGenerator {
         }
     }
 
-    private static class TypesVisitor extends ShapeVisitor.Default<Void> {
-        private final RubyCodeWriter writer;
-        private final SymbolProvider symbolProvider;
-
-        TypesVisitor(RubyCodeWriter writer, SymbolProvider symbolProvider) {
-            this.writer = writer;
-            this.symbolProvider = symbolProvider;
-        }
-
+    private class TypesVisitor extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             return null;
@@ -165,15 +157,7 @@ public class TypesGenerator {
         }
     }
 
-    private static class TypesRbsVisitor extends ShapeVisitor.Default<Void> {
-        private final RubyCodeWriter rbsWriter;
-        private final SymbolProvider symbolProvider;
-
-        TypesRbsVisitor(RubyCodeWriter rbsWriter, SymbolProvider symbolProvider) {
-            this.rbsWriter = rbsWriter;
-            this.symbolProvider = symbolProvider;
-        }
-
+    private class TypesRbsVisitor extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             return null;
