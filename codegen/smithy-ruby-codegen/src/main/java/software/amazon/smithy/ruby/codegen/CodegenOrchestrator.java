@@ -262,6 +262,7 @@ public class CodegenOrchestrator {
     private void generateWaiters() {
         WaitersGenerator waitersGenerator = new WaitersGenerator(context);
         waitersGenerator.render();
+        waitersGenerator.renderRbs();
     }
 
     private void generatePaginators() {
