@@ -33,6 +33,8 @@ service RailsJson {
         HttpPayloadTraits,
         HttpPayloadTraitsWithMediaType,
         HttpPayloadWithStructure,
+        HttpPrefixHeaders,
+        HttpPrefixHeadersInResponse,
         __789BadName,
         NestedAttributesOperation,
     ],

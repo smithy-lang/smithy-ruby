@@ -52,6 +52,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -120,6 +121,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.parse(http_resp)")
                 .write("data = Types::$L.new", symbolProvider.toSymbol(model.expectShape(outputShapeId)).getName())
                 .call(() -> renderHeaderParsers(outputShape))
+                .call(() -> renderPrefixHeaderParsers(outputShape))
                 .call(() -> renderOperationBodyParser(outputShape))
                 .write("data")
                 .closeBlock("end")
@@ -154,6 +156,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                                 .openBlock("def self.parse(http_resp)")
                                 .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
                                 .call(() -> renderHeaderParsers(s))
+                                .call(() -> renderPrefixHeaderParsers(s))
                                 .call(() -> renderOperationBodyParser(s))
                                 .write("data")
                                 .closeBlock("end")
@@ -178,6 +181,33 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
             String dataSetter = "data." + symbolName + " = ";
             String jsonGetter = "http_resp.headers['" + headerTrait.getValue() + "']";
             model.expectShape(m.getTarget()).accept(new HeaderDeserializer(m, dataSetter, jsonGetter));
+        }
+    }
+
+    private void renderPrefixHeaderParsers(Shape outputShape) {
+        List<MemberShape> headerMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : headerMembers) {
+            HttpPrefixHeadersTrait headerTrait = m.expectTrait(HttpPrefixHeadersTrait.class);
+            String prefix = headerTrait.getValue();
+            // httpPrefixHeaders may only target map shapes
+            MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
+            Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
+            String symbolName = symbolProvider.toMemberName(m);
+            String headerSetter = "http_req.headers[\"" + prefix + "#{key.delete_prefix('" + prefix + "')}\"] = ";
+
+            String dataSetter = "data." + symbolName + "[key.delete_prefix('" + prefix + "')] = ";
+            writer
+                    .write("data.$L = {}", symbolName)
+                    .openBlock("http_resp.headers.each do |key, value|")
+                    .openBlock("if key.start_with?('$L')", prefix)
+                    .call(() -> valueShape.accept(new HeaderDeserializer(m, dataSetter, "value")))
+                    .closeBlock("end")
+                    .closeBlock("end");
+
         }
     }
 
@@ -318,7 +348,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
         Stream<MemberShape> parseMembers = s.members().stream()
-                .filter((m) -> !m.hasTrait((HttpHeaderTrait.class)));
+                .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class));
         parseMembers = parseMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         parseMembers.forEach((member) -> {

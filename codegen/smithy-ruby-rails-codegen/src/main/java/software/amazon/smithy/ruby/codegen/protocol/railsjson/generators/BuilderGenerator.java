@@ -48,6 +48,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -122,6 +123,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
                 .call(() -> renderQueryInputBuilder(writer, operation, inputShape))
                 .call(() -> renderHeadersBuilder(writer, operation, inputShape))
+                .call(() -> renderPrefixHeadersBuilder(writer, operation, inputShape))
                 .call(() -> renderOperationBodyBuilder(writer, operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -146,7 +148,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
-                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(
+                HttpPrefixHeadersTrait.class));
         if (serializeBody) {
             //determine if there is an httpPayload member
             List<MemberShape> httpPayloadMembers = inputShape.members()
@@ -197,6 +200,29 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             String headerSetter = "http_req.headers['" + headerTrait.getValue() + "'] = ";
             String valueGetter = "input[" + symbolName + "]";
             model.expectShape(m.getTarget()).accept(new HeaderSerializer(m, headerSetter, valueGetter));
+        }
+    }
+
+    private void renderPrefixHeadersBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        // get a list of all of HttpLabel members
+        List<MemberShape> headerMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : headerMembers) {
+            HttpPrefixHeadersTrait headerTrait = m.expectTrait(HttpPrefixHeadersTrait.class);
+            String prefix = headerTrait.getValue();
+            // httpPrefixHeaders may only target map shapes
+            MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
+            Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
+
+            String symbolName = ":" + symbolProvider.toMemberName(m);
+            String headerSetter = "http_req.headers[\"" + prefix + "#{key}\"] = ";
+            writer
+                    .openBlock("input[$L].each do |key, value|", symbolName)
+                    .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
+                    .closeBlock("end");
         }
     }
 
@@ -368,7 +394,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
-                        && !m.hasTrait((HttpHeaderTrait.class)));
+                        && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class));
         serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         serializeMembers.forEach((member) -> {
