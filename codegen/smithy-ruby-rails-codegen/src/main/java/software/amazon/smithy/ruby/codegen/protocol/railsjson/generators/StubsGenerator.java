@@ -56,6 +56,7 @@ import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -160,8 +161,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
-                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(
-                HttpPrefixHeadersTrait.class));
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class)
+                && !m.hasTrait(HttpPrefixHeadersTrait.class)
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
                 .stream()

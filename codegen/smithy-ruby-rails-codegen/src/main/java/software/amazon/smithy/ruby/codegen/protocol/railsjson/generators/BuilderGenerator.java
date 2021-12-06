@@ -247,13 +247,24 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     private void renderUriBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
         // get a list of all of HttpLabel members
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+
+        String uri = httpTrait.getUri().toString();
+        // need to ensure that static query params in the uri are handled first
+        String[] uriParts = uri.split("[?]");
+        if (uriParts.length > 1) {
+            uri = uriParts[0];
+            writer
+                    .openBlock("CGI.parse('$L').each do |k,v|", uriParts[1])
+                    .write("v.each { |q_v| http_req.append_query_param(k, q_v) }")
+                    .closeBlock("end");
+        }
+
         List<MemberShape> labelMembers = inputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpLabelTrait.class))
                 .collect(Collectors.toList());
 
         if (labelMembers.size() > 0) {
-            String uri = httpTrait.getUri().toString();
             Optional<String> greedyLabel = Optional.empty();
             Matcher greedyMatch = Pattern.compile("[{]([a-zA-Z0-9_]+)[+][}]").matcher(uri);
             if (greedyMatch.find()) {
@@ -283,7 +294,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             writer.write("  '$L'$L\n)", formatUri, formatArgs.toString());
             writer.closeBlock(")");
         } else {
-            writer.write("http_req.append_path('$L')", httpTrait.getUri());
+            writer.write("http_req.append_path('$L')", uri);
         }
     }
 

@@ -53,6 +53,8 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
+import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -348,7 +350,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
         Stream<MemberShape> parseMembers = s.members().stream()
-                .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class));
+                .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
+                        && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
         parseMembers = parseMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         parseMembers.forEach((member) -> {
