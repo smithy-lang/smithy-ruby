@@ -785,8 +785,6 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         }
 
     }
-
-
 }
 
 

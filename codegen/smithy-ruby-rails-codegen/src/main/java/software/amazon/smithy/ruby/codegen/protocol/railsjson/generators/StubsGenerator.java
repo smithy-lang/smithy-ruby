@@ -55,6 +55,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -132,6 +133,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("http_resp.status = $1L", httpTrait.getCode())
                 .call(() -> renderHeaderStubbers(operation, outputShape))
+                .call(() -> renderPrefixHeadersStubbers(operation, outputShape))
                 .call(() -> renderOperationBodyStubber(operation, outputShape))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -157,9 +159,9 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         generatedStubs.add(outputShape.getId());
 
         //determine if there are any members of the input that need to be serialized to the body
-        boolean serializeBody = outputShape.members().stream().anyMatch(
-                (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
-                        && !m.hasTrait((HttpHeaderTrait.class)));
+        boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(
+                HttpPrefixHeadersTrait.class));
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
                 .stream()
@@ -194,6 +196,29 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             String headerSetter = "http_resp.headers['" + headerTrait.getValue() + "'] = ";
             String valueGetter = "stub[" + symbolName + "]";
             model.expectShape(m.getTarget()).accept(new HeaderSerializer(m, headerSetter, valueGetter));
+        }
+    }
+
+    private void renderPrefixHeadersStubbers(OperationShape operation, Shape outputShape) {
+        // get a list of all of HttpLabel members
+        List<MemberShape> headerMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : headerMembers) {
+            HttpPrefixHeadersTrait headerTrait = m.expectTrait(HttpPrefixHeadersTrait.class);
+            String prefix = headerTrait.getValue();
+            // httpPrefixHeaders may only target map shapes
+            MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
+            Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
+
+            String symbolName = ":" + symbolProvider.toMemberName(m);
+            String headerSetter = "http_resp.headers[\"" + prefix + "#{key}\"] = ";
+            writer
+                    .openBlock("stub[$L].each do |key, value|", symbolName)
+                    .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
+                    .closeBlock("end");
         }
     }
 
