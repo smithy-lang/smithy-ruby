@@ -352,7 +352,7 @@ public class HttpProtocolTestGenerator {
                     .write("expected_query = CGI.parse($L.join('&'))", getRubyArrayFromList(queryParams))
                     .write("actual_query = CGI.parse(request_uri.query)")
                     .openBlock("expected_query.each do |k, v|")
-                    .write("expect(v).to eq(actual_query[k])")
+                    .write("expect(actual_query[k]).to eq(v)")
                     .closeBlock("end");
         }
     }

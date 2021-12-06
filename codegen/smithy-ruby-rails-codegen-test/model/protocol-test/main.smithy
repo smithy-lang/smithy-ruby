@@ -35,7 +35,7 @@ service RailsJson {
         HttpPayloadWithStructure,
         HttpPrefixHeaders,
         HttpPrefixHeadersInResponse,
-        //AllQueryStringTypes,
+        AllQueryStringTypes,
         //ConstantQueryString,
         //ConstantAndVariableQueryString,
         //IgnoreQueryParamsInResponse,

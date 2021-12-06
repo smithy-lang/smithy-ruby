@@ -913,7 +913,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         private void defaultComplexSerializer(Shape shape) {
             writer
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
-                    .write("data = Builders::$1L.build($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
+                    .write("data = Stubs::$1L.stub($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
                             inputGetter)
                     .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
