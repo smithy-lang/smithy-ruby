@@ -9,13 +9,13 @@ module Seahorse
     # @api private
     class ErrorParser
       # @api private
-      HTTP_3XX = 300..399
+      HTTP_3XX = (300..399).freeze
 
       # @api private
-      HTTP_4XX = 400..499
+      HTTP_4XX = (400..499).freeze
 
       # @api private
-      HTTP_5XX = 500..599
+      HTTP_5XX = (500..599).freeze
 
       # @param [Module] error_module The code generated Errors module.
       #   Must contain service specific implementations of
@@ -78,6 +78,7 @@ module Seahorse
         if error_class
           error_class.new(**error_opts)
         else
+          # TODO: http_resp already in error opts, refactor error objects?
           generic_error(http_resp, error_opts)
         end
       end

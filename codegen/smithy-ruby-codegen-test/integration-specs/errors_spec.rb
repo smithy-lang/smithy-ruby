@@ -69,7 +69,7 @@ module WhiteLabel
         error = ServerError.new(http_resp: http_resp, error_code: 'error')
         expect(error.data).to eq(data)
         expect(error).to be_a(ApiServerError)
-        expect(error.message).to be_empty
+        expect(error.message).to eq("WhiteLabel::Errors::ServerError")
       end
     end
   end

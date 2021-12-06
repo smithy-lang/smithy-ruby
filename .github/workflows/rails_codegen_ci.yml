@@ -56,7 +56,13 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Download generated sdk
+      - name: Build and install Seahorse
+        run: |
+          gem build seahorse.gemspec
+          gem install seahorse-$(<VERSION).gem
+        working-directory: ./seahorse
+
+      - name: Download generated test sdk
         uses: actions/download-artifact@v2
         with:
           name: rails_json

@@ -10,76 +10,31 @@
 module HighScoreService
   module Types
 
-    class HighScoreAttributes < Struct[untyped]
-      def initialize: (?id: String, ?game: String, ?score: Integer, ?created_at: Time, ?updated_at: Time) -> untyped
-      attr_accessor id(): String
-      attr_accessor game(): String
-      attr_accessor score(): Integer
-      attr_accessor created_at(): Time
-      attr_accessor updated_at(): Time
-    end
+    HighScoreAttributes: untyped
 
-    class HighScoreParams < Struct[untyped]
-      def initialize: (?game: String, ?score: Integer) -> untyped
-      attr_accessor game(): String
-      attr_accessor score(): Integer
-    end
+    HighScoreParams: untyped
 
-    class UnprocessableEntityError < Struct[untyped]
-      def initialize: (?errors: Hash[String, Array[String]]) -> untyped
-      attr_accessor errors(): Hash[String, Array[String]]
-    end
+    UnprocessableEntityError: untyped
 
-    class CreateHighScoreInput < Struct[untyped]
-      def initialize: (?high_score: HighScoreParams) -> untyped
-      attr_accessor high_score(): HighScoreParams
-    end
+    CreateHighScoreInput: untyped
 
-    class CreateHighScoreOutput < Struct[untyped]
-      def initialize: (?high_score: HighScoreAttributes, ?location: String) -> untyped
-      attr_accessor high_score(): HighScoreAttributes
-      attr_accessor location(): String
-    end
+    CreateHighScoreOutput: untyped
 
-    class DeleteHighScoreInput < Struct[untyped]
-      def initialize: (?id: String) -> untyped
-      attr_accessor id(): String
-    end
+    DeleteHighScoreInput: untyped
 
-    class DeleteHighScoreOutput < Struct[untyped]
-      def initialize: () -> untyped
+    DeleteHighScoreOutput: untyped
 
-    end
+    GetHighScoreInput: untyped
 
-    class GetHighScoreInput < Struct[untyped]
-      def initialize: (?id: String) -> untyped
-      attr_accessor id(): String
-    end
+    GetHighScoreOutput: untyped
 
-    class GetHighScoreOutput < Struct[untyped]
-      def initialize: (?high_score: HighScoreAttributes) -> untyped
-      attr_accessor high_score(): HighScoreAttributes
-    end
+    ListHighScoresInput: untyped
 
-    class ListHighScoresInput < Struct[untyped]
-      def initialize: () -> untyped
+    ListHighScoresOutput: untyped
 
-    end
+    UpdateHighScoreInput: untyped
 
-    class ListHighScoresOutput < Struct[untyped]
-      def initialize: (?high_scores: Array[HighScoreAttributes]) -> untyped
-      attr_accessor high_scores(): Array[HighScoreAttributes]
-    end
+    UpdateHighScoreOutput: untyped
 
-    class UpdateHighScoreInput < Struct[untyped]
-      def initialize: (?id: String, ?high_score: HighScoreParams) -> untyped
-      attr_accessor id(): String
-      attr_accessor high_score(): HighScoreParams
-    end
-
-    class UpdateHighScoreOutput < Struct[untyped]
-      def initialize: (?high_score: HighScoreAttributes) -> untyped
-      attr_accessor high_score(): HighScoreAttributes
-    end
   end
 end

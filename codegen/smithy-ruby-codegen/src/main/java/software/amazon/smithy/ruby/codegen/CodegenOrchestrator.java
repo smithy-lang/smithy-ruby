@@ -197,6 +197,7 @@ public class CodegenOrchestrator {
     private void generateTypes() {
         TypesGenerator typesGenerator = new TypesGenerator(context);
         typesGenerator.render();
+        typesGenerator.renderRbs();
         LOGGER.info("created types");
     }
 
@@ -223,6 +224,7 @@ public class CodegenOrchestrator {
     private void generateClient() {
         ClientGenerator clientGenerator = new ClientGenerator(context);
         clientGenerator.render();
+        clientGenerator.renderRbs();
     }
 
     private void generateModule() {
@@ -261,10 +263,12 @@ public class CodegenOrchestrator {
     private void generateWaiters() {
         WaitersGenerator waitersGenerator = new WaitersGenerator(context);
         waitersGenerator.render();
+        waitersGenerator.renderRbs();
     }
 
     private void generatePaginators() {
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
         paginatorsGenerator.render();
+        paginatorsGenerator.renderRbs();
     }
 }

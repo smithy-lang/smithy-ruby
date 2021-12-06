@@ -298,7 +298,7 @@ public class RubySymbolProvider implements SymbolProvider,
             return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document"), moduleName)
                     .definitionFile("types.rb").build();
         } else {
-            return createSymbolBuilder(shape, "Hash | Array | bool | Numeric").build();
+            return createSymbolBuilder(shape, "document").build();
         }
     }
 

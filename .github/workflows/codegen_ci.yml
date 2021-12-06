@@ -1,4 +1,4 @@
-name: Codegen CI
+name: Smithy Ruby Codegen CI
 
 on:
   push:
@@ -14,7 +14,7 @@ env:
 
 jobs:
   generate-test-sdk:
-    name: Generate the test sdk
+    name: Generate the test SDK
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -30,15 +30,50 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ env.java_version }}
-    - name: test
+    - name: Build test SDK
       working-directory: codegen
       run:
         ./gradlew :smithy-ruby-codegen-test:build
-    - name: Upload Generated Test SDK
+    - name: Upload generated test SDK
       uses: actions/upload-artifact@v2
       with:
         name: white_label
         path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label
+
+  ruby-rbs-type-check:
+    needs: [generate-test-sdk]
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Set up Ruby 3.0
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+
+      - uses: actions/checkout@v2
+
+      - name: Build and install Seahorse
+        run: |
+          gem build seahorse.gemspec
+          gem install seahorse-$(<VERSION).gem
+        working-directory: ./seahorse
+
+      - name: Download generated test SDK
+        uses: actions/download-artifact@v2
+        with:
+          name: white_label
+          path: white_label
+
+      - name: Copy Gemfile
+        run: cp seahorse/Gemfile white_label/
+
+      - name: Install gems
+        run: bundle install
+        working-directory: ./white_label
+
+      - name: Type checks
+        run: steep check
+        working-directory: ./white_label
 
   ruby-integration-specs:
     needs: [generate-test-sdk]
@@ -46,8 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.5, 2.6, 2.7, '3.0'] # TODO: jruby versions do not currently work because of spec's dependency on OJ
-
+        ruby: [2.5, 2.6, 2.7, '3.0']
 
     steps:
       - name: Setup Ruby
@@ -57,22 +91,25 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Download generated sdk
+      - name: Build and install Seahorse
+        run: |
+          gem build seahorse.gemspec
+          gem install seahorse-$(<VERSION).gem
+        working-directory: ./seahorse
+
+      - name: Download generated test SDK
         uses: actions/download-artifact@v2
         with:
           name: white_label
           path: white_label
 
       - name: Copy Gemfile
-        run: |
-          cp seahorse/Gemfile white_label/
+        run: cp seahorse/Gemfile white_label/
 
       - name: Install gems
-        run: |
-          bundle config set --local without 'docs repl'
-          bundle install
+        run: bundle install
         working-directory: ./white_label
 
-      - name: Tests
-        run: bundle exec rspec -I ../seahorse/lib
+      - name: Integration specs
+        run: rspec
         working-directory: ./white_label

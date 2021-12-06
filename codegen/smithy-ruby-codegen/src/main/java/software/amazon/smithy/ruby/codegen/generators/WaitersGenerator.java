@@ -27,6 +27,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.waiters.Acceptor;
 import software.amazon.smithy.waiters.AcceptorState;
@@ -39,16 +40,21 @@ public class WaitersGenerator {
     private final RubySettings settings;
     private final Model model;
     private final RubyCodeWriter writer;
+    private final RubyCodeWriter rbsWriter;
+    private final RubySymbolProvider symbolProvider;
 
     public WaitersGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.writer = new RubyCodeWriter();
+        this.rbsWriter = new RubyCodeWriter();
+        this.symbolProvider = new RubySymbolProvider(context.getModel(), settings, "Waiters", false);
     }
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
+
         writer
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
@@ -59,6 +65,23 @@ public class WaitersGenerator {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/waiters.rb";
         fileManifest.writeFile(fileName, writer.toString());
+    }
+
+    public void renderRbs() {
+        FileManifest fileManifest = context.getFileManifest();
+
+        rbsWriter
+                .openBlock("module $L", settings.getModule())
+                .openBlock("module Waiters")
+                .call(() -> renderRbsWaiters())
+                .write("")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        String typesFile =
+                settings.getGemName() + "/sig/" + settings.getGemName()
+                        + "/waiters.rbs";
+        fileManifest.writeFile(typesFile, rbsWriter.toString());
     }
 
     private void renderWaiters() {
@@ -82,8 +105,30 @@ public class WaitersGenerator {
         });
     }
 
+    private void renderRbsWaiters() {
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+
+        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
+            if (operation.hasTrait(WaitableTrait.class)) {
+                Map<String, Waiter> waiters = operation.getTrait(WaitableTrait.class).get().getWaiters();
+                Iterator<Map.Entry<String, Waiter>> iterator = waiters.entrySet().iterator();
+
+                while (iterator.hasNext()) {
+                    Map.Entry<String, Waiter> entry = iterator.next();
+                    String waiterName = entry.getKey();
+                    Waiter waiter = entry.getValue();
+                    renderRbsWaiter(waiterName, waiter, operation);
+                    if (iterator.hasNext()) {
+                        rbsWriter.write("");
+                    }
+                }
+            }
+        });
+    }
+
     private void renderWaiter(String waiterName, Waiter waiter, OperationShape operation) {
-        String operationName = RubyFormatter.toSnakeCase(operation.getId().getName());
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
         writer
                 .write("")
                 .call(() -> renderWaiterDocumentation(waiter))
@@ -109,6 +154,16 @@ public class WaitersGenerator {
                 .openBlock("def wait(params = {}, options = {})")
                 .write("@waiter.wait(@client, params, options)")
                 .closeBlock("end")
+                .closeBlock("end");
+    }
+
+    private void renderRbsWaiter(String waiterName, Waiter waiter, OperationShape operation) {
+        rbsWriter
+                .write("")
+                .openBlock("class $L", waiterName)
+                .write("def initialize: (untyped client, ?::Hash[untyped, untyped] options) -> void\n")
+                .write("attr_reader tags: untyped\n")
+                .write("def wait: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> untyped")
                 .closeBlock("end");
     }
 
