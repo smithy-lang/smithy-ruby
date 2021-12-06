@@ -98,6 +98,6 @@ module Seahorse
     # @raise [RuntimeError] Raises a runtime error when called
     #   on a client that has not enabled response stubbing via
     #   `:stub_responses => true`.
-    def stub_responses: (untyped operation_name, *untyped stubs) -> untyped
+    def stub_responses: (Symbol operation_name, *Seahorse::Stubbing::Stubs stubs) -> void
   end
 end
