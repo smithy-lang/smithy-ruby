@@ -122,7 +122,9 @@ public abstract class ErrorsGeneratorBase {
 
     public abstract void renderErrorCode();
 
-    public abstract void renderRbsErrorCode();
+    public void renderRbsErrorCode() {
+        rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
+    }
 
     private Set<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);

@@ -134,9 +134,7 @@ public class ClientGenerator {
                 .write("def self.middleware: () -> untyped\n")
                 .write("def initialize: (?::Hash[untyped, untyped] options) -> void")
                 .call(() -> renderRbsOperations())
-                .write("\nprivate\n")
-                .write("def apply_middleware: (untyped middleware_stack, untyped middleware) -> untyped\n")
-                .write("def output_stream: (?::Hash[untyped, untyped] options) { () -> untyped } -> untyped")
+                .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 

@@ -67,10 +67,12 @@ jobs:
       - name: Copy Gemfile
         run: cp seahorse/Gemfile white_label/
 
+      - name: Install gems
+        run: bundle install
+        working-directory: ./white_label
+
       - name: Type checks
-        run: |
-          bundle install
-          steep check
+        run: steep check
         working-directory: ./white_label
 
   ruby-integration-specs:
@@ -104,8 +106,10 @@ jobs:
       - name: Copy Gemfile
         run: cp seahorse/Gemfile white_label/
 
+      - name: Install gems
+        run: bundle install
+        working-directory: ./white_label
+
       - name: Integration specs
-        run: |
-          bundle install
-          rspec
+        run: rspec
         working-directory: ./white_label

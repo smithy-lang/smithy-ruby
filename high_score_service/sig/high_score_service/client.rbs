@@ -19,10 +19,6 @@ module HighScoreService
     def get_high_score: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def list_high_scores: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def update_high_score: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    private
 
-    def apply_middleware: (untyped middleware_stack, untyped middleware) -> untyped
-
-    def output_stream: (?::Hash[untyped, untyped] options) { () -> untyped } -> untyped
   end
 end
