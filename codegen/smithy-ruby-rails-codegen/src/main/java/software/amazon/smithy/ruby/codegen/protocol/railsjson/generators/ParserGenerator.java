@@ -55,6 +55,7 @@ import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
+import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -70,7 +71,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
-    private final Set<String> generatedErrorParsers;
     private final SymbolProvider symbolProvider;
 
     private final RubyCodeWriter writer;
@@ -80,7 +80,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
-        this.generatedErrorParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
@@ -124,6 +123,7 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .write("data = Types::$L.new", symbolProvider.toSymbol(model.expectShape(outputShapeId)).getName())
                 .call(() -> renderHeaderParsers(outputShape))
                 .call(() -> renderPrefixHeaderParsers(outputShape))
+                .call(() -> renderResponseCodeParser(outputShape))
                 .call(() -> renderOperationBodyParser(outputShape))
                 .write("data")
                 .closeBlock("end")
@@ -210,6 +210,18 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                     .closeBlock("end")
                     .closeBlock("end");
 
+        }
+    }
+
+    private void renderResponseCodeParser(Shape outputShape) {
+        List<MemberShape> responseCodeMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpResponseCodeTrait.class))
+                .collect(Collectors.toList());
+
+        if (responseCodeMembers.size() == 1) {
+            MemberShape responseCodeMember = responseCodeMembers.get(0);
+            writer.write("data.$L = http_resp.status", symbolProvider.toMemberName(responseCodeMember));
         }
     }
 
@@ -351,7 +363,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
         Stream<MemberShape> parseMembers = s.members().stream()
                 .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                        && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
+                        && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
+                        && !m.hasTrait(HttpResponseCodeTrait.class));
         parseMembers = parseMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         parseMembers.forEach((member) -> {

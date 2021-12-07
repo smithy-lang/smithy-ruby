@@ -58,6 +58,7 @@ import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
+import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
@@ -135,6 +136,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .write("http_resp.status = $1L", httpTrait.getCode())
                 .call(() -> renderHeaderStubbers(operation, outputShape))
                 .call(() -> renderPrefixHeadersStubbers(operation, outputShape))
+                .call(() -> renderResponseCodeStubber(operation, outputShape))
                 .call(() -> renderOperationBodyStubber(operation, outputShape))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -163,7 +165,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
                 && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class)
                 && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
+                && !m.hasTrait(HttpResponseCodeTrait.class));
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
                 .stream()
@@ -221,6 +224,18 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                     .openBlock("stub[$L].each do |key, value|", symbolName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
                     .closeBlock("end");
+        }
+    }
+
+    private void renderResponseCodeStubber(OperationShape operation, Shape outputShape) {
+        List<MemberShape> responseCodeMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpResponseCodeTrait.class))
+                .collect(Collectors.toList());
+
+        if (responseCodeMembers.size() == 1) {
+            MemberShape responseCodeMember = responseCodeMembers.get(0);
+            writer.write("http_resp.status = stub[:$L]", symbolProvider.toMemberName(responseCodeMember));
         }
     }
 
