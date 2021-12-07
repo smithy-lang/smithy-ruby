@@ -82,6 +82,15 @@ module HighScoreService
       end
     end
 
+    # Error Parser for NotFoundError
+    class NotFoundError
+      def self.parse(http_resp)
+        json = Seahorse::JSON.load(http_resp.body)
+        data = Types::NotFoundError.new
+        data
+      end
+    end
+
     # Operation Parser for ListHighScores
     class ListHighScores
       def self.parse(http_resp)

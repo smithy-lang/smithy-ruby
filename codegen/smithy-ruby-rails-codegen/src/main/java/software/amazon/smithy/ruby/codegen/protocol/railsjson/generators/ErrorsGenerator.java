@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
+import software.amazon.smithy.ruby.codegen.traits.RailsJsonTrait;
 
 public class ErrorsGenerator extends ErrorsGeneratorBase {
 
@@ -25,10 +26,31 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
     }
 
     public void renderErrorCode() {
+        RailsJsonTrait railsJsonTrait = context.getService().getTrait(RailsJsonTrait.class).get();
+        String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
+
         writer
                 .write("# Given an http_resp, return the error code")
-                .openBlock("def self.error_code(http_resp)")
-                .write("http_resp.headers['x-smithy-error']")
-                .closeBlock("end");
+                .openBlock("def self.error_code(http_resp)");
+
+        if (errorLocation.equals("header")) {
+            renderErrorCodeFromHeader();
+        } else if (errorLocation.equals("status_code")) {
+            renderErrorCodeFromStatusCode();
+        }
+
+        writer.closeBlock("end");
+    }
+
+    private void renderErrorCodeFromHeader() {
+        writer.write("http_resp.headers['x-smithy-rails-error']");
+    }
+
+    private void renderErrorCodeFromStatusCode() {
+        writer
+                .write("case http_resp.status")
+                .write("when 404 then 'NotFoundError'")
+                .write("when 422 then 'UnprocessableEntityError'")
+                .write("end");
     }
 }

@@ -3,6 +3,9 @@ namespace example.railsjson
 
 use smithy.ruby.protocols#railsJson
 
+use smithy.ruby.protocols#NotFoundError
+use smithy.ruby.protocols#UnprocessableEntityError
+
 /// Rails High Score example from their generator docs
 @railsJson
 @title("High Score Sample Rails Service")
@@ -49,7 +52,8 @@ structure HighScoreParams {
 @readonly
 operation GetHighScore {
     input: GetHighScoreInput,
-    output: GetHighScoreOutput
+    output: GetHighScoreOutput,
+    errors: [NotFoundError]
 }
 
 /// Input structure for GetHighScore
@@ -155,21 +159,4 @@ structure ListHighScoresOutput {
 
 list HighScores {
     member: HighScoreAttributes
-}
-
-/// Raised when high score is invalid
-@error("client")
-@httpError(422)
-structure UnprocessableEntityError {
-    @httpPayload
-    errors: AttributeErrors
-}
-
-map AttributeErrors {
-    key: String,
-    value: ErrorMessages
-}
-
-list ErrorMessages {
-    member: String
 }

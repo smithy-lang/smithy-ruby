@@ -12,7 +12,10 @@ module HighScoreService
 
     # Given an http_resp, return the error code
     def self.error_code(http_resp)
-      http_resp.headers['x-smithy-error']
+      case http_resp.status
+      when 404 then 'NotFoundError'
+      when 422 then 'UnprocessableEntityError'
+      end
     end
 
     # Base class for all errors returned by this service
@@ -41,6 +44,17 @@ module HighScoreService
     class UnprocessableEntityError < ApiClientError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      attr_reader :data
+    end
+
+    class NotFoundError < ApiClientError
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::NotFoundError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)

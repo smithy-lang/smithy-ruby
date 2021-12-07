@@ -25,6 +25,11 @@ module HighScoreService
       keyword_init: true
     ) { include Seahorse::Structure }
 
+    NotFoundError = Struct.new(
+      nil,
+      keyword_init: true
+    ) { include Seahorse::Structure }
+
     UnprocessableEntityError = Struct.new(
       :errors,
       keyword_init: true
