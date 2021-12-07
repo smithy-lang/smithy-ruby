@@ -149,6 +149,7 @@ operation ListHighScores {
 /// Output structure for ListHighScores
 structure ListHighScoresOutput {
     /// A list of high scores
+    @httpPayload
     highScores: HighScores
 }
 
@@ -160,6 +161,7 @@ list HighScores {
 @error("client")
 @httpError(422)
 structure UnprocessableEntityError {
+    @httpPayload
     errors: AttributeErrors
 }
 

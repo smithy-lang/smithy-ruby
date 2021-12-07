@@ -14,5 +14,5 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Sample Rails JSON Service'
   spec.files         = Dir['lib/**/*.rb']
 
-  spec.add_runtime_dependency 'seahorse', '~> 1'
+  spec.add_runtime_dependency 'seahorse', '~> 1.0.0.pre1'
 end
