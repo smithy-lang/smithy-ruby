@@ -5,7 +5,7 @@ module Seahorse
     # are `nil` are omitted from the resultant hash.
     #
     # @return [Hash]
-    def to_h: (?untyped obj) -> untyped
+    def to_h: (?untyped obj) -> Hash[Symbol,untyped]
 
     alias to_hash to_h
 

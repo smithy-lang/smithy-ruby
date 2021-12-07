@@ -98,9 +98,7 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
-        data[:high_scores] = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
+        data = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end

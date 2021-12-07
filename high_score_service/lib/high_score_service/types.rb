@@ -81,5 +81,6 @@ module HighScoreService
       :high_score,
       keyword_init: true
     ) { include Seahorse::Structure }
+
   end
 end

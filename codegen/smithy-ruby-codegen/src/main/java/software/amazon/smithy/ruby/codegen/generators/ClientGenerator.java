@@ -44,16 +44,20 @@ import software.amazon.smithy.utils.StringUtils;
 
 public class ClientGenerator {
     private final GenerationContext context;
-
+    private final RubySettings settings;
     private final MiddlewareBuilder middlewareBuilder;
     private final List<ClientConfig> clientConfig;
     private final SymbolProvider symbolProvider;
     private final Model model;
+    private final RubyCodeWriter writer;
+    private final RubyCodeWriter rbsWriter;
 
     public ClientGenerator(GenerationContext context) {
         this.context = context;
+        this.settings = context.getRubySettings();
         this.model = context.getModel();
-
+        this.writer = new RubyCodeWriter();
+        this.rbsWriter = new RubyCodeWriter();
 
         // Register all middleware
         this.middlewareBuilder = new MiddlewareBuilder();
@@ -84,8 +88,6 @@ public class ClientGenerator {
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
-        RubySettings settings = context.getRubySettings();
-        RubyCodeWriter writer = new RubyCodeWriter();
 
         List<String> additionalFiles =
                 middlewareBuilder.writeAdditionalFiles(context);
@@ -108,11 +110,11 @@ public class ClientGenerator {
                 .openBlock("\ndef self.middleware")
                 .write("@middleware")
                 .closeBlock("end")
-                .call(() -> renderInitializeMethod(writer))
-                .call(() -> renderOperations(writer))
+                .call(() -> renderInitializeMethod())
+                .call(() -> renderOperations())
                 .write("\nprivate")
-                .call(() -> renderApplyMiddlewareMethod(writer))
-                .call(() -> renderOutputStreamMethod(writer))
+                .call(() -> renderApplyMiddlewareMethod())
+                .call(() -> renderOutputStreamMethod())
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -122,6 +124,26 @@ public class ClientGenerator {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
+    public void renderRbs() {
+        FileManifest fileManifest = context.getFileManifest();
+
+        rbsWriter
+                .openBlock("module $L", settings.getModule())
+                .openBlock("class Client")
+                .write("include Seahorse::ClientStubs\n")
+                .write("def self.middleware: () -> untyped\n")
+                .write("def initialize: (?::Hash[untyped, untyped] options) -> void")
+                .call(() -> renderRbsOperations())
+                .write("")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        String typesFile =
+                settings.getGemName() + "/sig/" + settings.getGemName()
+                        + "/client.rbs";
+        fileManifest.writeFile(typesFile, rbsWriter.toString());
+    }
+
     private Object removeRbExtension(String s) {
         if (s != null && s.endsWith(".rb")) {
             return s.split(".rb")[0];
@@ -129,9 +151,9 @@ public class ClientGenerator {
         return s;
     }
 
-    private void renderInitializeMethod(RubyCodeWriter writer) {
+    private void renderInitializeMethod() {
         writer
-                .call(() -> renderInitializeDocumentation(writer))
+                .call(() -> renderInitializeDocumentation())
                 .openBlock("def initialize(options = {})")
                 .call(() -> {
                     clientConfig.forEach((cfg) -> {
@@ -160,7 +182,7 @@ public class ClientGenerator {
                 .closeBlock("end");
     }
 
-    private void renderInitializeDocumentation(RubyCodeWriter writer) {
+    private void renderInitializeDocumentation() {
         writer.write("");
         writer.rdoc(() -> {
             writer.write("@overload initialize(options)");
@@ -178,7 +200,7 @@ public class ClientGenerator {
         });
     }
 
-    private void renderOperations(RubyCodeWriter writer) {
+    private void renderOperations() {
         // Generate each operation for the service. We do this here instead of via the operation visitor method to
         // limit it to the operations bound to the service.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
@@ -186,11 +208,21 @@ public class ClientGenerator {
                 topDownIndex.getContainedOperations(context.getService()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(o -> renderOperation(writer, o));
+                .forEach(o -> renderOperation(o));
     }
 
-    private void renderOperation(RubyCodeWriter writer,
-                                 OperationShape operation) {
+    private void renderRbsOperations() {
+        // Generate each operation for the service. We do this here instead of via the operation visitor method to
+        // limit it to the operations bound to the service.
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<OperationShape> containedOperations = new TreeSet<>(
+                topDownIndex.getContainedOperations(context.getService()));
+        containedOperations.stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(o -> renderRbsOperation(o));
+    }
+
+    private void renderOperation(OperationShape operation) {
         Symbol symbol = symbolProvider.toSymbol(operation);
         if (!operation.getInput().isPresent()) {
             throw new RuntimeException("Missing Input Shape for: " + operation.getId());
@@ -200,7 +232,7 @@ public class ClientGenerator {
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
         writer
-                .call(() -> renderOperationDocumentation(writer, operation))
+                .call(() -> renderOperationDocumentation(operation))
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
@@ -226,8 +258,16 @@ public class ClientGenerator {
                 .closeBlock("end");
     }
 
-    private void renderOperationDocumentation(RubyCodeWriter writer,
-                                              OperationShape operation) {
+    private void renderRbsOperation(OperationShape operation) {
+        Symbol symbol = symbolProvider.toSymbol(operation);
+        String operationName =
+                RubyFormatter.toSnakeCase(symbol.getName());
+
+        rbsWriter.write("def $L: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options)"
+                + "{ () -> untyped } -> untyped", operationName);
+    }
+
+    private void renderOperationDocumentation(OperationShape operation) {
         writer.write("");
         writer.rdoc(() -> {
             Optional<DocumentationTrait> documentation =
@@ -260,7 +300,7 @@ public class ClientGenerator {
         });
     }
 
-    private void renderApplyMiddlewareMethod(RubyCodeWriter writer) {
+    private void renderApplyMiddlewareMethod() {
         writer
                 .openBlock(
                         "\ndef apply_middleware(middleware_stack, middleware)")
@@ -270,7 +310,7 @@ public class ClientGenerator {
                 .closeBlock("end");
     }
 
-    private void renderOutputStreamMethod(RubyCodeWriter writer) {
+    private void renderOutputStreamMethod() {
         writer
                 .openBlock("\ndef output_stream(options = {}, &block)")
                 .write("return options[:output_stream] if options[:output_stream]")

@@ -36,14 +36,18 @@ public abstract class ErrorsGeneratorBase {
     protected final RubySettings settings;
     protected final Model model;
     protected final RubyCodeWriter writer;
+    protected final RubyCodeWriter rbsWriter;
     protected final SymbolProvider symbolProvider;
+    protected final Set<Shape> errorShapes;
 
     public ErrorsGeneratorBase(GenerationContext context) {
+        this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();
-        this.context = context;
         this.writer = new RubyCodeWriter();
+        this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
+        this.errorShapes = getErrorShapes();
     }
 
     public void render(FileManifest fileManifest) {
@@ -62,22 +66,33 @@ public abstract class ErrorsGeneratorBase {
         fileManifest.writeFile(fileName, writer.toString());
     }
 
+    public void renderRbs(FileManifest fileManifest) {
+        rbsWriter
+                .openBlock("module $L", settings.getModule())
+                .openBlock("module Errors")
+                .write("")
+                .call(() -> renderRbsErrorCode())
+                .call(() -> renderRbsBaseErrors())
+                .call(() -> renderRbsServiceModelErrors())
+                .write("")
+                .closeBlock("end")
+                .closeBlock("end");
+
+        String typesFile =
+                settings.getGemName() + "/sig/" + settings.getGemName() + "/errors.rbs";
+        fileManifest.writeFile(typesFile, rbsWriter.toString());
+    }
+
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < Seahorse::HTTP::ApiError; end");
-
-        writer
+                .write("class ApiError < Seahorse::HTTP::ApiError; end")
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
-                .write("class ApiClientError < ApiError; end");
-
-        writer
+                .write("class ApiClientError < ApiError; end")
                 .write("\n# Base class for all errors returned where the server is at fault.")
                 .write("# These are generally errors with 5XX HTTP status codes.")
-                .write("class ApiServerError < ApiError; end");
-
-        writer
+                .write("class ApiServerError < ApiError; end")
                 .write("\n# Base class for all errors returned where the service returned")
                 .write("# a 3XX redirection.")
                 .openBlock("class ApiRedirectError < ApiError")
@@ -91,24 +106,53 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end");
     }
 
+    private void renderRbsBaseErrors() {
+        rbsWriter
+                .write("\nclass ApiError < Seahorse::HTTP::ApiError")
+                .write("end")
+                .write("\nclass ApiClientError < ApiError")
+                .write("end")
+                .write("\nclass ApiServerError < ApiError")
+                .write("end")
+                .openBlock("\nclass ApiRedirectError < ApiError")
+                .write("def initialize: (location: untyped location, **untyped kwargs) -> void\n")
+                .write("attr_reader location: untyped")
+                .closeBlock("end");
+    }
+
     public abstract void renderErrorCode();
 
-    private void renderServiceModelErrors() {
+    public void renderRbsErrorCode() {
+        rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
+    }
+
+    private Set<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        Set<Shape> generatedErrors =
-                topDownIndex.getContainedOperations(context.getService()).stream()
+        return topDownIndex.getContainedOperations(context.getService()).stream()
                         .map(OperationShape::getErrors)
                         .flatMap(Collection::stream)
                         .map(model::expectShape)
                         .collect(Collectors.toSet());
+    }
 
-        generatedErrors.forEach(error -> {
+    private void renderServiceModelErrors() {
+        errorShapes.forEach(error -> {
             String errorName = symbolProvider.toSymbol(error).getName();
             ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
             String apiErrorType = getApiErrorType(errorTrait);
 
             renderServiceModelError(errorName, apiErrorType);
+        });
+    }
+
+    private void renderRbsServiceModelErrors() {
+        errorShapes.forEach(error -> {
+            String errorName = symbolProvider.toSymbol(error).getName();
+            ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
+            String apiErrorType = getApiErrorType(errorTrait);
+
+            renderRbsServiceModelError(errorName, apiErrorType);
         });
     }
 
@@ -123,6 +167,15 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end")
                 .write("")
                 .write("attr_reader :data")
+                .closeBlock("end");
+    }
+
+    private void renderRbsServiceModelError(String errorName, String apiErrorType) {
+        rbsWriter
+                .write("")
+                .openBlock("class $L < $L", errorName, apiErrorType)
+                .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
+                .write("attr_reader data: untyped")
                 .closeBlock("end");
     }
 

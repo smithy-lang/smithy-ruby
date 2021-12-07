@@ -35,4 +35,8 @@ tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label/spec")
 }
-tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"])
+tasks.register<Copy>("copySteepfile") {
+    from("./Steepfile")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
+}
+tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copySteepfile"])

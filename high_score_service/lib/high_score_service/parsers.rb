@@ -40,7 +40,7 @@ module HighScoreService
       def self.parse(http_resp)
         data = Types::UnprocessableEntityError.new
         json = Seahorse::JSON.load(http_resp.body)
-        data.errors = Parsers::AttributeErrors.parse(json['errors']) if json['errors']
+        data.errors = Parsers::AttributeErrors.parse(json)
         data
       end
     end
@@ -87,7 +87,7 @@ module HighScoreService
       def self.parse(http_resp)
         data = Types::ListHighScoresOutput.new
         json = Seahorse::JSON.load(http_resp.body)
-        data.high_scores = Parsers::HighScores.parse(json['high_scores']) if json['high_scores']
+        data.high_scores = Parsers::HighScores.parse(json)
         data
       end
     end

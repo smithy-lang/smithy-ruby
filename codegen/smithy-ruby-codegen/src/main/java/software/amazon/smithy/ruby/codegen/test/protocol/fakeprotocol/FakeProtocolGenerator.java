@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol;
 
 import java.util.logging.Logger;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -52,7 +53,10 @@ public class FakeProtocolGenerator implements ProtocolGenerator {
 
     @Override
     public void generateErrors(GenerationContext context) {
-        (new ErrorsGenerator(context)).render(context.getFileManifest());
+        ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
+        FileManifest fileManifest = context.getFileManifest();
+        errorsGenerator.render(fileManifest);
+        errorsGenerator.renderRbs(fileManifest);
     }
 
     @Override

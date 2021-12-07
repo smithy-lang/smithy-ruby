@@ -57,7 +57,7 @@ public class GemspecGenerator {
                 .write("spec.summary       = '$L'", settings.getGemSummary())
                 .write("spec.files         = Dir['lib/**/*.rb']")
                 .write("")
-                .write("spec.add_runtime_dependency 'seahorse', '~> 1'")
+                .write("spec.add_runtime_dependency 'seahorse', '~> 1.0.0.pre1'")
                 // TODO: Add additionalDependencies!
                 .closeBlock("end");
 
