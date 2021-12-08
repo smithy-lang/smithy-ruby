@@ -14,8 +14,6 @@ module HighScoreService
 
     HighScoreParams: untyped
 
-    NotFoundError: untyped
-
     UnprocessableEntityError: untyped
 
     CreateHighScoreInput: untyped

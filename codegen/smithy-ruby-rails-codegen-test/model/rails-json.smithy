@@ -29,12 +29,8 @@ structure nestedAttributes {}
 ])
 string ErrorLocation
 
-// Soft mapping of possible rails status codes to error shapes
-// https://github.com/rails/rails/blob/2dfd4fcd73ae7c4b40114f2447c7ef9d4c0790b4/guides/source/layouts_and_rendering.md?plain=1#L337-L411
-
-@error("client")
-@httpError(404)
-structure NotFoundError {}
+// Soft mapping of possible rails status codes to error shapes.
+// Modeled errors exist to parse information from the body or headers.
 
 @error("client")
 @httpError(422)

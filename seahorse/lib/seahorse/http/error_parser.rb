@@ -72,7 +72,8 @@ module Seahorse
 
         error_opts = {
           http_resp: http_resp,
-          error_code: error_code
+          error_code: error_code,
+          message: error_code # default message
         }
 
         if error_class

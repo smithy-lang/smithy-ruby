@@ -158,7 +158,7 @@ module HighScoreService
       )
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
       stack.use(Seahorse::Middleware::Parse,
-        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::NotFoundError]),
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
         data_parser: Parsers::GetHighScore
       )
       stack.use(Seahorse::Middleware::Send,
