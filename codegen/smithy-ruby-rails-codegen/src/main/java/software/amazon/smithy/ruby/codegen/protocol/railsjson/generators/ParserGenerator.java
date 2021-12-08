@@ -52,6 +52,10 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
+import software.amazon.smithy.model.traits.HttpQueryTrait;
+import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -67,7 +71,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
     private final RubySettings settings;
     private final Model model;
     private final Set<ShapeId> generatedParsers;
-    private final Set<String> generatedErrorParsers;
     private final SymbolProvider symbolProvider;
 
     private final RubyCodeWriter writer;
@@ -77,7 +80,6 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.getRubySettings();
         this.model = context.getModel();
         this.generatedParsers = new HashSet<>();
-        this.generatedErrorParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
@@ -118,9 +120,10 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .write("# Operation Parser for $L", operation.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .openBlock("def self.parse(http_resp)")
-                .write("json = Seahorse::JSON.load(http_resp.body)")
                 .write("data = Types::$L.new", symbolProvider.toSymbol(model.expectShape(outputShapeId)).getName())
                 .call(() -> renderHeaderParsers(outputShape))
+                .call(() -> renderPrefixHeaderParsers(outputShape))
+                .call(() -> renderResponseCodeParser(outputShape))
                 .call(() -> renderOperationBodyParser(outputShape))
                 .write("data")
                 .closeBlock("end")
@@ -153,9 +156,9 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                                 .write("# Error Parser for $L", s.getId().getName())
                                 .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                                 .openBlock("def self.parse(http_resp)")
-                                .write("json = Seahorse::JSON.load(http_resp.body)")
                                 .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
                                 .call(() -> renderHeaderParsers(s))
+                                .call(() -> renderPrefixHeaderParsers(s))
                                 .call(() -> renderOperationBodyParser(s))
                                 .write("data")
                                 .closeBlock("end")
@@ -183,6 +186,45 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
+    private void renderPrefixHeaderParsers(Shape outputShape) {
+        List<MemberShape> headerMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : headerMembers) {
+            HttpPrefixHeadersTrait headerTrait = m.expectTrait(HttpPrefixHeadersTrait.class);
+            String prefix = headerTrait.getValue();
+            // httpPrefixHeaders may only target map shapes
+            MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
+            Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
+            String symbolName = symbolProvider.toMemberName(m);
+            String headerSetter = "http_req.headers[\"" + prefix + "#{key.delete_prefix('" + prefix + "')}\"] = ";
+
+            String dataSetter = "data." + symbolName + "[key.delete_prefix('" + prefix + "')] = ";
+            writer
+                    .write("data.$L = {}", symbolName)
+                    .openBlock("http_resp.headers.each do |key, value|")
+                    .openBlock("if key.start_with?('$L')", prefix)
+                    .call(() -> valueShape.accept(new HeaderDeserializer(m, dataSetter, "value")))
+                    .closeBlock("end")
+                    .closeBlock("end");
+
+        }
+    }
+
+    private void renderResponseCodeParser(Shape outputShape) {
+        List<MemberShape> responseCodeMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpResponseCodeTrait.class))
+                .collect(Collectors.toList());
+
+        if (responseCodeMembers.size() == 1) {
+            MemberShape responseCodeMember = responseCodeMembers.get(0);
+            writer.write("data.$L = http_resp.status", symbolProvider.toMemberName(responseCodeMember));
+        }
+    }
+
     // The Output shape is combined with the Operation Parser
     // This generates the parsing of the body as if it was the Parser for the Out[put
     private void renderOperationBodyParser(Shape outputShape) {
@@ -193,12 +235,14 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
                 .collect(Collectors.toList());
 
         if (httpPayloadMembers.size() == 0) {
+            writer.write("json = Seahorse::JSON.load(http_resp.body)");
             renderMemberParsers(writer, outputShape);
         } else if (httpPayloadMembers.size() == 1) {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
             String dataName = symbolProvider.toMemberName(payloadMember);
-            writer.write("data.$1L = Parsers::$2L.parse(json)", dataName, symbolProvider.toSymbol(target).getName());
+            String dataSetter = "data." + dataName + " = ";
+            target.accept(new PayloadMemberDeserializer(payloadMember, dataSetter));
         }
     }
 
@@ -318,7 +362,9 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderMemberParsers(RubyCodeWriter writer, Shape s) {
         Stream<MemberShape> parseMembers = s.members().stream()
-                .filter((m) -> !m.hasTrait((HttpHeaderTrait.class)));
+                .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
+                        && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
+                        && !m.hasTrait(HttpResponseCodeTrait.class));
         parseMembers = parseMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         parseMembers.forEach((member) -> {
@@ -601,5 +647,66 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
+    private class PayloadMemberDeserializer extends ShapeVisitor.Default<Void> {
 
+        private final MemberShape memberShape;
+        private final String dataSetter;
+
+        PayloadMemberDeserializer(MemberShape memberShape, String dataSetter) {
+            this.memberShape = memberShape;
+            this.dataSetter = dataSetter;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .write("payload = http_resp.body.read")
+                    .write("$Lpayload unless payload.empty?", dataSetter);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            writer
+                    .write("payload = http_resp.body.read")
+                    .write("$Lpayload unless payload.empty?", dataSetter);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexDeserializer(shape);
+            return null;
+        }
+
+        private void defaultComplexDeserializer(Shape shape) {
+            writer
+                    .write("json = Seahorse::JSON.load(http_resp.body)")
+                    .write("$LParsers::$L.parse(json)", dataSetter, symbolProvider.toSymbol(shape).getName());
+        }
+
+    }
 }

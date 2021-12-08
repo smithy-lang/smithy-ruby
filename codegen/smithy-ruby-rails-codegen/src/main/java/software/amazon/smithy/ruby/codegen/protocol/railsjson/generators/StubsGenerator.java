@@ -55,7 +55,10 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
+import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
@@ -132,6 +135,8 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("http_resp.status = $1L", httpTrait.getCode())
                 .call(() -> renderHeaderStubbers(operation, outputShape))
+                .call(() -> renderPrefixHeadersStubbers(operation, outputShape))
+                .call(() -> renderResponseCodeStubber(operation, outputShape))
                 .call(() -> renderOperationBodyStubber(operation, outputShape))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -157,15 +162,29 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         generatedStubs.add(outputShape.getId());
 
         //determine if there are any members of the input that need to be serialized to the body
-        boolean serializeBody = outputShape.members().stream().anyMatch(
-                (m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
-                        && !m.hasTrait((HttpHeaderTrait.class)));
-
-        if (serializeBody) {
-            writer
-                    .write("http_resp.headers['Content-Type'] = 'application/json'")
-                    .call(() -> renderMemberStubbers(outputShape))
-                    .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
+        boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class)
+                && !m.hasTrait(HttpPrefixHeadersTrait.class)
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
+                && !m.hasTrait(HttpResponseCodeTrait.class));
+        //determine if there is an httpPayload member
+        List<MemberShape> httpPayloadMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
+                .collect(Collectors.toList());
+        if (httpPayloadMembers.size() == 0) {
+            if (serializeBody) {
+                writer
+                        .write("http_resp.headers['Content-Type'] = 'application/json'")
+                        .call(() -> renderMemberStubbers(outputShape))
+                        .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
+            }
+        } else {
+            MemberShape payloadMember = httpPayloadMembers.get(0);
+            Shape target = model.expectShape(payloadMember.getTarget());
+            String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
+            String inputGetter = "stub[" + symbolName + "]";
+            target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
         }
     }
 
@@ -182,6 +201,41 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             String headerSetter = "http_resp.headers['" + headerTrait.getValue() + "'] = ";
             String valueGetter = "stub[" + symbolName + "]";
             model.expectShape(m.getTarget()).accept(new HeaderSerializer(m, headerSetter, valueGetter));
+        }
+    }
+
+    private void renderPrefixHeadersStubbers(OperationShape operation, Shape outputShape) {
+        // get a list of all of HttpLabel members
+        List<MemberShape> headerMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : headerMembers) {
+            HttpPrefixHeadersTrait headerTrait = m.expectTrait(HttpPrefixHeadersTrait.class);
+            String prefix = headerTrait.getValue();
+            // httpPrefixHeaders may only target map shapes
+            MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
+            Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
+
+            String symbolName = ":" + symbolProvider.toMemberName(m);
+            String headerSetter = "http_resp.headers[\"" + prefix + "#{key}\"] = ";
+            writer
+                    .openBlock("stub[$L].each do |key, value|", symbolName)
+                    .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
+                    .closeBlock("end");
+        }
+    }
+
+    private void renderResponseCodeStubber(OperationShape operation, Shape outputShape) {
+        List<MemberShape> responseCodeMembers = outputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpResponseCodeTrait.class))
+                .collect(Collectors.toList());
+
+        if (responseCodeMembers.size() == 1) {
+            MemberShape responseCodeMember = responseCodeMembers.get(0);
+            writer.write("http_resp.status = stub[:$L]", symbolProvider.toMemberName(responseCodeMember));
         }
     }
 
@@ -811,6 +865,78 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             return null;
         }
     }
+
+    private class PayloadMemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final MemberShape memberShape;
+        private final String inputGetter;
+
+        PayloadMemberSerializer(MemberShape memberShape, String inputGetter) {
+            this.memberShape = memberShape;
+            this.inputGetter = inputGetter;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .write("http_resp.headers['Content-Type'] = 'text/plain'")
+                    .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
+            String mediaType = "application/octet-stream";
+            if (mediaTypeTrait.isPresent()) {
+                mediaType = mediaTypeTrait.get().getValue();
+            }
+
+            writer
+                    .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
+                    .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        private void defaultComplexSerializer(Shape shape) {
+            writer
+                    .write("http_resp.headers['Content-Type'] = 'application/json'")
+                    .write("data = Stubs::$1L.stub($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
+                            inputGetter)
+                    .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
+        }
+
+    }
+
 }
 
 

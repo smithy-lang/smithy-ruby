@@ -47,6 +47,9 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
+import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -121,6 +124,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 .call(() -> renderUriBuilder(writer, operation, inputShape))
                 .call(() -> renderQueryInputBuilder(writer, operation, inputShape))
                 .call(() -> renderHeadersBuilder(writer, operation, inputShape))
+                .call(() -> renderPrefixHeadersBuilder(writer, operation, inputShape))
                 .call(() -> renderOperationBodyBuilder(writer, operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -145,18 +149,32 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = inputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
-                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait((HttpHeaderTrait.class)));
+                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(
+                HttpPrefixHeadersTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
         if (serializeBody) {
-            writer
-                    .write("")
-                    .write("http_req.headers['Content-Type'] = 'application/json'")
-                    .call(() -> renderMemberBuilders(writer, inputShape))
-                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+            //determine if there is an httpPayload member
+            List<MemberShape> httpPayloadMembers = inputShape.members()
+                    .stream()
+                    .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
+                    .collect(Collectors.toList());
+            if (httpPayloadMembers.size() == 0) {
+                writer
+                        .write("")
+                        .write("http_req.headers['Content-Type'] = 'application/json'")
+                        .call(() -> renderMemberBuilders(writer, inputShape))
+                        .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+            } else {
+                MemberShape payloadMember = httpPayloadMembers.get(0);
+                Shape target = model.expectShape(payloadMember.getTarget());
+                String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
+                String inputGetter = "input[" + symbolName + "]";
+                target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
+            }
         }
     }
 
     private void renderQueryInputBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
-        // get a list of all of HttpLabel members
+        // get a list of all of HttpQuery members
         List<MemberShape> queryMembers = inputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpQueryTrait.class))
@@ -164,9 +182,26 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
 
         for (MemberShape m : queryMembers) {
             HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
-            String symbolName = ":" + symbolProvider.toMemberName(m);
-            writer.write("http_req.append_query_param('$1L', input[$2L].to_s) unless input[$2L].nil?",
-                    queryTrait.getValue(), symbolName);
+            String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
+            Shape target = model.expectShape(m.getTarget());
+            target.accept(new QueryMemberSerializer(m, "'" + queryTrait.getValue() + "'", inputGetter));
+        }
+
+        // get a list of all HttpQueryParams members - these must be map shapes
+        List<MemberShape> queryParamsMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpQueryParamsTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : queryParamsMembers) {
+            String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
+            MapShape queryParamMap = model.expectShape(m.getTarget(), MapShape.class);
+            Shape target = model.expectShape(queryParamMap.getValue().getTarget());
+            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .openBlock("$1L.each do |k, v|", inputGetter)
+                    .call(() -> target.accept(new QueryMemberSerializer(queryParamMap.getValue(), "k", "v")))
+                    .closeBlock("end")
+                    .closeBlock("end");
         }
     }
 
@@ -186,16 +221,50 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         }
     }
 
+    private void renderPrefixHeadersBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
+        // get a list of all of HttpLabel members
+        List<MemberShape> headerMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : headerMembers) {
+            HttpPrefixHeadersTrait headerTrait = m.expectTrait(HttpPrefixHeadersTrait.class);
+            String prefix = headerTrait.getValue();
+            // httpPrefixHeaders may only target map shapes
+            MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
+            Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
+
+            String symbolName = ":" + symbolProvider.toMemberName(m);
+            String headerSetter = "http_req.headers[\"" + prefix + "#{key}\"] = ";
+            writer
+                    .openBlock("input[$L].each do |key, value|", symbolName)
+                    .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
+                    .closeBlock("end");
+        }
+    }
+
     private void renderUriBuilder(RubyCodeWriter writer, OperationShape operation, Shape inputShape) {
         // get a list of all of HttpLabel members
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+
+        String uri = httpTrait.getUri().toString();
+        // need to ensure that static query params in the uri are handled first
+        String[] uriParts = uri.split("[?]");
+        if (uriParts.length > 1) {
+            uri = uriParts[0];
+            writer
+                    .openBlock("CGI.parse('$L').each do |k,v|", uriParts[1])
+                    .write("v.each { |q_v| http_req.append_query_param(k, q_v) }")
+                    .closeBlock("end");
+        }
+
         List<MemberShape> labelMembers = inputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpLabelTrait.class))
                 .collect(Collectors.toList());
 
         if (labelMembers.size() > 0) {
-            String uri = httpTrait.getUri().toString();
             Optional<String> greedyLabel = Optional.empty();
             Matcher greedyMatch = Pattern.compile("[{]([a-zA-Z0-9_]+)[+][}]").matcher(uri);
             if (greedyMatch.find()) {
@@ -225,7 +294,7 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
             writer.write("  '$L'$L\n)", formatUri, formatArgs.toString());
             writer.closeBlock(")");
         } else {
-            writer.write("http_req.append_path('$L')", httpTrait.getUri());
+            writer.write("http_req.append_path('$L')", uri);
         }
     }
 
@@ -354,7 +423,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
-                        && !m.hasTrait((HttpHeaderTrait.class)));
+                        && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
+                        && !m.hasTrait(HttpQueryParamsTrait.class));
         serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
         serializeMembers.forEach((member) -> {
@@ -672,6 +742,179 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
                 default:
                     return "Seahorse::TimeHelper.to_date_time(input[" + symbolName + "])";
             }
+        }
+    }
+
+    private class PayloadMemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final MemberShape memberShape;
+        private final String inputGetter;
+
+        PayloadMemberSerializer(MemberShape memberShape, String inputGetter) {
+            this.memberShape = memberShape;
+            this.inputGetter = inputGetter;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .write("http_req.headers['Content-Type'] = 'text/plain'")
+                    .write("http_req.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
+            String mediaType = "application/octet-stream";
+            if (mediaTypeTrait.isPresent()) {
+                mediaType = mediaTypeTrait.get().getValue();
+            }
+
+            writer
+                    .write("http_req.headers['Content-Type'] = '$L'", mediaType)
+                    .write("http_req.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            defaultComplexSerializer(shape);
+            return null;
+        }
+
+        private void defaultComplexSerializer(Shape shape) {
+            writer
+                    .write("http_req.headers['Content-Type'] = 'application/json'")
+                    .write("data = Builders::$1L.build($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
+                            inputGetter)
+                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+        }
+
+    }
+
+    private class QueryMemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final String inputGetter;
+        private final String headerName;
+        private final MemberShape memberShape;
+
+        QueryMemberSerializer(MemberShape memberShape, String headerName, String inputGetter) {
+            this.inputGetter = inputGetter;
+            this.headerName = headerName;
+            this.memberShape = memberShape;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write("http_req.append_query_param($1L, $2L.to_s) unless $2L.nil?",
+                    headerName, inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            // header values are serialized using the date-time format by default
+            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
+            if (!format.isPresent()) {
+                format = shape.getTrait(TimestampFormatTrait.class);
+            }
+            if (format.isPresent()) {
+                switch (format.get().getFormat()) {
+                    case EPOCH_SECONDS:
+                        writer.write(
+                                "http_req.append_query_param($1L, "
+                                        + "Seahorse::TimeHelper.to_epoch_seconds($2L).to_i) unless $2L.nil?",
+                                headerName,
+                                inputGetter);
+                        break;
+                    case HTTP_DATE:
+                        writer.write(
+                                "http_req.append_query_param($1L, "
+                                        + "Seahorse::TimeHelper.to_http_date($2L)) unless $2L.nil?",
+                                headerName,
+                                inputGetter);
+                        break;
+                    case DATE_TIME:
+                    default:
+                        writer.write(
+                                "http_req.append_query_param($1L, "
+                                        + "Seahorse::TimeHelper.to_date_time($2L)) unless $2L.nil?",
+                                headerName,
+                                inputGetter);
+                        break;
+                }
+            } else {
+                writer.write(
+                        "http_req.append_query_param($1L, "
+                                + "Seahorse::TimeHelper.to_date_time($2L)) unless $2L.nil?",
+                        headerName,
+                        inputGetter);
+            }
+            return null;
+        }
+
+        @Override
+        public Void listShape(ListShape shape) {
+            Shape target = model.expectShape(shape.getMember().getTarget());
+            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .openBlock("$1L.each do |value|", inputGetter)
+                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), headerName, "value")))
+                    .closeBlock("end")
+                    .closeBlock("end");
+            return null;
+        }
+
+        @Override
+        public Void setShape(SetShape shape) {
+            Shape target = model.expectShape(shape.getMember().getTarget());
+            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .openBlock("$1L.each do |value|", inputGetter)
+                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), headerName, "value")))
+                    .closeBlock("end")
+                    .closeBlock("end");
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            // Not supported in query
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            // Not supported in query
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
+            // Not supported in query
+            return null;
         }
     }
 
