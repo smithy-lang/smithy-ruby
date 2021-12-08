@@ -10,7 +10,6 @@
 module HighScoreService
   module Errors
 
-    # Given an http_resp, return the error code
     def self.error_code(http_resp)
       case http_resp.status
       when 404 then 'NotFoundError'
@@ -41,9 +40,9 @@ module HighScoreService
       attr_reader :location
     end
 
-    class UnprocessableEntityError < ApiClientError
+    class NotFoundError < ApiClientError
       def initialize(http_resp:, **kwargs)
-        @data = Parsers::UnprocessableEntityError.parse(http_resp)
+        @data = Parsers::NotFoundError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
@@ -52,9 +51,9 @@ module HighScoreService
       attr_reader :data
     end
 
-    class NotFoundError < ApiClientError
+    class UnprocessableEntityError < ApiClientError
       def initialize(http_resp:, **kwargs)
-        @data = Parsers::NotFoundError.parse(http_resp)
+        @data = Parsers::UnprocessableEntityError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)

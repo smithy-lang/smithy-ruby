@@ -7,7 +7,7 @@ use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-@railsJson
+@railsJson(errorLocation: "header")
 @title("RailsJson Protocol Test Service")
 service RailsJson {
     version: "2018-01-01",
