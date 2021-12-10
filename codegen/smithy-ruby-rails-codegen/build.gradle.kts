@@ -15,15 +15,13 @@
 
 description = "Generates Ruby code from Smithy models for Rails"
 extra["displayName"] = "Smithy :: Ruby :: Rails :: Codegen"
-extra["moduleName"] = "software.amazon.smithy.ruby.codegen.rails"
+extra["moduleName"] = "software.amazon.smithy.ruby.rails.codegen"
 
 plugins {
     `java-library`
     jacoco
+    id("software.amazon.smithy").version("0.5.3")
 }
-
-group = "software.amazon.smithy"
-version = "0.1.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -35,8 +33,6 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    api("software.amazon.smithy:smithy-aws-traits:[1.5.1,2.0.0[")
-    api("software.amazon.smithy:smithy-aws-iam-traits:[1.6.1,2.0.0[")
     implementation(project(":smithy-ruby-codegen"))
     testCompile("org.junit.jupiter:junit-jupiter-api:5.4.0")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.0")

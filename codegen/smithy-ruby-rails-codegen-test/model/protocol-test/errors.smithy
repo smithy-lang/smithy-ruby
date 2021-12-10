@@ -44,7 +44,7 @@ apply InvalidGreeting @httpResponseTests([
         code: 400,
         headers: {
             "Content-Type": "application/json",
-            "x-smithy-error": "InvalidGreeting"
+            "x-smithy-rails-error": "InvalidGreeting"
         },
         body: """
               {
@@ -80,7 +80,7 @@ apply ComplexError @httpResponseTests([
         code: 400,
         headers: {
             "Content-Type": "application/json",
-            "x-smithy-error": "ComplexError"
+            "x-smithy-rails-error": "ComplexError"
         },
         body: """
               {
@@ -97,7 +97,7 @@ apply ComplexError @httpResponseTests([
         code: 400,
         headers: {
             "Content-Type": "application/json",
-            "x-smithy-error": "ComplexError"
+            "x-smithy-rails-error": "ComplexError"
         },
         body: """
               {

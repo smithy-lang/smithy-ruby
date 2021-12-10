@@ -72,14 +72,14 @@ module Seahorse
 
         error_opts = {
           http_resp: http_resp,
-          error_code: error_code
+          error_code: error_code,
+          message: error_code # default message
         }
 
         if error_class
           error_class.new(**error_opts)
         else
-          # TODO: http_resp already in error opts, refactor error objects?
-          generic_error(http_resp, error_opts)
+          generic_error(error_opts)
         end
       end
 
@@ -89,14 +89,15 @@ module Seahorse
         end
       end
 
-      def generic_error(http_resp, error_opts)
+      def generic_error(error_opts)
+        http_resp = error_opts[:http_resp]
         case http_resp.status
         when HTTP_3XX then @error_module::ApiRedirectError.new(
           location: http_resp.headers['location'], **error_opts
         )
         when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
         when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)
-        else @error_module::ApiError.new(http_resp: http_resp, **error_opts)
+        else @error_module::ApiError.new(**error_opts)
         end
       end
     end

@@ -40,7 +40,7 @@ jobs:
         name: rails_json
         path: codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json
 
-  ruby-protocol-specs:
+  rails-json-protocol-specs:
     needs: [generate-test-sdk]
     runs-on: ubuntu-latest
     strategy:
