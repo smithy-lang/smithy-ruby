@@ -29,7 +29,7 @@ structure nestedAttributes {}
 ])
 string ErrorLocation
 
-// Soft mapping of possible rails status codes to error shapes.
+// Soft mapping of possible rails status codes to structured error shapes.
 // Modeled errors exist to parse information from the body or headers.
 
 @error("client")
