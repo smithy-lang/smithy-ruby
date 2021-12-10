@@ -23,9 +23,6 @@ plugins {
     id("software.amazon.smithy").version("0.5.3")
 }
 
-group = "software.amazon.smithy"
-version = "0.1.0"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
