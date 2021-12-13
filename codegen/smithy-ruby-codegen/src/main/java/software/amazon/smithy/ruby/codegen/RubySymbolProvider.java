@@ -58,7 +58,6 @@ public class RubySymbolProvider implements SymbolProvider,
     private final boolean complexTypes;
     private final ReservedWordSymbolProvider.Escaper escaper;
 
-
     /**
      * Create a new RubySymbolProvider.
      *

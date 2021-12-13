@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -38,6 +41,7 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 public class TypesGenerator {
     private final GenerationContext context;
     private final RubySettings settings;
+    private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
     private final SymbolProvider symbolProvider;
@@ -45,9 +49,10 @@ public class TypesGenerator {
     public TypesGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
+        this.model = context.getModel();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
-        this.symbolProvider = new RubySymbolProvider(context.getModel(), settings, "Types", false);
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Types", false);
     }
 
     public void render() {
@@ -86,7 +91,7 @@ public class TypesGenerator {
 
     private void renderTypes(ShapeVisitor visitor) {
         Model modelWithoutTraitShapes = ModelTransformer.create()
-                .getModelWithoutTraitShapes(context.getModel());
+                .getModelWithoutTraitShapes(model);
 
         Set<Shape> serviceShapes = new TreeSet<>(
                 new Walker(modelWithoutTraitShapes)
@@ -119,6 +124,8 @@ public class TypesGenerator {
             membersBlock += ",";
 
             writer
+                    .call(() -> renderStructureDocumentation(shape))
+                    .call(() -> renderStructureMemberDocumentation(shape.members()))
                     .openBlock(shapeName + " = Struct.new(")
                     .write(membersBlock)
                     .write("keyword_init: true")
@@ -126,6 +133,38 @@ public class TypesGenerator {
                     .write("");
 
             return null;
+        }
+
+        private void renderStructureDocumentation(StructureShape shape) {
+            Optional<DocumentationTrait> documentationTraitOptional =
+                    shape.getMemberTrait(model, DocumentationTrait.class);
+            if (documentationTraitOptional.isPresent()) {
+                writer.rdoc(() -> writer.write(documentationTraitOptional.get().getValue()).write(""));
+            }
+        }
+
+        private void renderStructureMemberDocumentation(Collection<MemberShape> members) {
+            members.forEach(memberShape -> {
+                String documentation;
+                Optional<DocumentationTrait> documentationTraitOptional =
+                        memberShape.getMemberTrait(model, DocumentationTrait.class);
+                if (documentationTraitOptional.isPresent()) {
+                    documentation = "  " + documentationTraitOptional.get().getValue();
+                } else {
+                    documentation = "";
+                }
+
+                Shape target = model.expectShape(memberShape.getTarget());
+
+                writer
+                        .rdoc(() -> {
+                            writer
+                                    .write("@!attribute [rw] $L", symbolProvider.toMemberName(memberShape))
+                                    .writeOptional(documentation)
+                                    .write("  @return [$L]", symbolProvider.toSymbol(target).getName())
+                                    .write("");
+                        });
+            });
         }
 
         @Override
@@ -151,7 +190,7 @@ public class TypesGenerator {
                     .write("{ unknown: super(__getobj__) }")
                     .closeBlock("end")
                     .closeBlock("end")
-                    .closeBlock("end");
+                    .closeBlock("end\n");
 
             return null;
         }
