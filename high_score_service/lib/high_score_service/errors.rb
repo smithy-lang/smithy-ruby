@@ -8,6 +8,18 @@
 # WARNING ABOUT GENERATED CODE
 
 module HighScoreService
+  # When HighScoreService returns an error response, the SDK constructs and raises an error.
+  # These errors all extend HighScoreService::ApiError.
+  #
+  # You can rescue all HighScoreService errors using ApiError:
+  #
+  #     begin
+  #       # do stuff
+  #     rescue HighScoreService::ApiError
+  #       # rescues all possible API errors
+  #     end
+  #
+  # ApiError objects have a #data method that returns any accommodating data.
   module Errors
 
     def self.error_code(http_resp)
@@ -84,6 +96,9 @@ module HighScoreService
       attr_reader :location
     end
 
+    # @param http_resp [Seahorse::HTTP::Response]
+    # @param error_code [String]
+    # @param message [String]
     class UnprocessableEntityError < ApiClientError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
@@ -92,6 +107,7 @@ module HighScoreService
         super(http_resp: http_resp, **kwargs)
       end
 
+      # @return [Types::UnprocessableEntityError]
       attr_reader :data
     end
 
