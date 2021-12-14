@@ -56,7 +56,7 @@ module HighScoreService
     ) { include Seahorse::Structure }
 
     # @!attribute [rw] errors
-    #   @return [Hash[String, Array[String]]]
+    #   @return [Hash<String, Array[String]>]
     #
     UnprocessableEntityError = Struct.new(
       :errors,
@@ -67,7 +67,7 @@ module HighScoreService
     #
     # @!attribute [rw] high_score
     #   The high score params
-    #   @return [HighScoreParams]
+    #   @return []
     #
     CreateHighScoreInput = Struct.new(
       :high_score,
@@ -78,7 +78,7 @@ module HighScoreService
     #
     # @!attribute [rw] high_score
     #   The high score attributes
-    #   @return [HighScoreAttributes]
+    #   @return []
     #
     # @!attribute [rw] location
     #   The location of the high score
@@ -123,7 +123,7 @@ module HighScoreService
     #
     # @!attribute [rw] high_score
     #   The high score attributes
-    #   @return [HighScoreAttributes]
+    #   @return []
     #
     GetHighScoreOutput = Struct.new(
       :high_score,
@@ -139,7 +139,7 @@ module HighScoreService
     #
     # @!attribute [rw] high_scores
     #   A list of high scores
-    #   @return [Array[HighScoreAttributes]]
+    #   @return [Array<HighScoreAttributes>]
     #
     ListHighScoresOutput = Struct.new(
       :high_scores,
@@ -154,7 +154,7 @@ module HighScoreService
     #
     # @!attribute [rw] high_score
     #   The high score params
-    #   @return [HighScoreParams]
+    #   @return []
     #
     UpdateHighScoreInput = Struct.new(
       :id,
@@ -166,7 +166,7 @@ module HighScoreService
     #
     # @!attribute [rw] high_score
     #   The high score attributes
-    #   @return [HighScoreAttributes]
+    #   @return []
     #
     UpdateHighScoreOutput = Struct.new(
       :high_score,

@@ -20,6 +20,7 @@ module HighScoreService
   #     end
   #
   # ApiError objects have a #data method that returns any accommodating data.
+  #
   module Errors
 
     def self.error_code(http_resp)
