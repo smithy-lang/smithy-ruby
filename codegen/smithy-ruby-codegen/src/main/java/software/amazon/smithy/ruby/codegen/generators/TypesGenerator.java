@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,6 +36,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.YardDocumentationBuilder;
 
 public class TypesGenerator {
     private final GenerationContext context;
@@ -125,7 +125,6 @@ public class TypesGenerator {
 
             writer
                     .call(() -> renderStructureDocumentation(shape))
-                    .call(() -> renderStructureMemberDocumentation(shape.members()))
                     .openBlock(shapeName + " = Struct.new(")
                     .write(membersBlock)
                     .write("keyword_init: true")
@@ -136,36 +135,31 @@ public class TypesGenerator {
         }
 
         private void renderStructureDocumentation(StructureShape shape) {
+            YardDocumentationBuilder yardDocumentationBuilder = new YardDocumentationBuilder();
+
             Optional<DocumentationTrait> documentationTraitOptional =
                     shape.getMemberTrait(model, DocumentationTrait.class);
             if (documentationTraitOptional.isPresent()) {
-                writer.rdoc(() -> writer.write(documentationTraitOptional.get().getValue()).write(""));
+                yardDocumentationBuilder.withDocstring(documentationTraitOptional.get().getValue());
             }
-        }
 
-        private void renderStructureMemberDocumentation(Collection<MemberShape> members) {
-            members.forEach(memberShape -> {
-                String documentation;
-                Optional<DocumentationTrait> documentationTraitOptional =
+            shape.members().forEach(memberShape -> {
+                Optional<DocumentationTrait> memberDocstringOptional =
                         memberShape.getMemberTrait(model, DocumentationTrait.class);
-                if (documentationTraitOptional.isPresent()) {
-                    documentation = "  " + documentationTraitOptional.get().getValue();
-                } else {
-                    documentation = "";
-                }
 
+                String attribute = symbolProvider.toMemberName(memberShape);
                 Shape target = model.expectShape(memberShape.getTarget());
+                String returnValue = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
 
-                writer
-                        .rdoc(() -> {
-                            writer
-                                    .write("@!attribute [rw] $L", symbolProvider.toMemberName(memberShape))
-                                    .writeOptional(documentation)
-                                    .write("  @return [$L]",
-                                            symbolProvider.toSymbol(target).getProperty("yardType").get())
-                                    .write("");
-                        });
+                String memberDocstring = "";
+                if (memberDocstringOptional.isPresent()) {
+                    memberDocstring = memberDocstringOptional.get().getValue();
+                }
+                yardDocumentationBuilder.withAttribute(attribute, memberDocstring, returnValue);
             });
+
+            String documentation = yardDocumentationBuilder.build();
+            writer.write(documentation);
         }
 
         @Override

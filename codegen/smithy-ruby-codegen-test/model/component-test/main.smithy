@@ -38,7 +38,11 @@ structure KitchenSinkInput {
     Union: Union,
 }
 
+/// This is a very long string that I want to test with wrapping. There is a lot of typing to do
+/// if I want to support long doc strings. Why is documentation so hard to generate? It is very
+/// annoying.
 structure Struct {
+    /// this documents value
     value: String,
 }
 
