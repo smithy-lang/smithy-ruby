@@ -161,7 +161,8 @@ public class TypesGenerator {
                             writer
                                     .write("@!attribute [rw] $L", symbolProvider.toMemberName(memberShape))
                                     .writeOptional(documentation)
-                                    .write("  @return [$L]", symbolProvider.toSymbol(target).getProperty("docTypeName"))
+                                    .write("  @return [$L]",
+                                            symbolProvider.toSymbol(target).getProperty("yardType").get())
                                     .write("");
                         });
             });

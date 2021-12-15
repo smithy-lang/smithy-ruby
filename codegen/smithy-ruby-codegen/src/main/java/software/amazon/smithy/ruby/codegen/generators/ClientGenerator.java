@@ -288,7 +288,7 @@ public class ClientGenerator {
             for (MemberShape memberShape : input.members()) {
                 Shape target = model.expectShape(memberShape.getTarget());
                 String symbolName = ":" + symbolProvider.toMemberName(memberShape);
-                writer.write("@options param[$L] $L", symbolProvider.toSymbol(target).getName(),
+                writer.write("@options param[$L] $L", symbolProvider.toSymbol(target).getProperty("yardType").get(),
                         symbolName);
                 Optional<DocumentationTrait> memberDoc =
                         memberShape.getTrait(DocumentationTrait.class);

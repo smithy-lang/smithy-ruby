@@ -169,11 +169,12 @@ public class RubySymbolProvider implements SymbolProvider,
     /**
      * Creates a symbol builder for the shape with the given type name in the root namespace.
      */
-    private Symbol.Builder createSymbolBuilder(Shape shape, String typeName, String docTypeName) {
+    private Symbol.Builder createSymbolBuilder(Shape shape, String type, String rbsType, String yardType) {
         return Symbol.builder()
                 .putProperty("shape", shape)
-                .putProperty("docTypeName", docTypeName)
-                .name(typeName);
+                .putProperty("rbsType", rbsType)
+                .putProperty("yardType", yardType)
+                .name(type);
     }
 
     /**
@@ -181,147 +182,146 @@ public class RubySymbolProvider implements SymbolProvider,
      * to the root namespace e.g. `relativeNamespace = bar` with a root namespace of `foo` would set
      * the namespace (and ultimately the package name) to `foo.bar` for the symbol.
      */
-    private Symbol.Builder createSymbolBuilder(
-            Shape shape,
-            String typeName,
-            String docTypeName,
-            String namespace) {
-        return createSymbolBuilder(shape, typeName, docTypeName).namespace(namespace, "::");
+    private Symbol.Builder createSymbolBuilder(Shape shape, String type, String rbsType,
+                                               String yardType, String namespace) {
+        return createSymbolBuilder(shape, type, rbsType, yardType).namespace(namespace, "::");
     }
 
     @Override
     public Symbol stringShape(StringShape shape) {
-        return createSymbolBuilder(shape, "String", "String").build();
+        return createSymbolBuilder(shape, "", "String", "String").build();
     }
 
     @Override
     public Symbol blobShape(BlobShape shape) {
-        return createSymbolBuilder(shape, "String", "String").build();
+        return createSymbolBuilder(shape, "", "String", "String").build();
     }
 
     @Override
     public Symbol booleanShape(BooleanShape shape) {
-        return createSymbolBuilder(shape, "bool", "Boolean").build();
+        return createSymbolBuilder(shape, "", "bool", "Boolean").build();
     }
 
     @Override
     public Symbol byteShape(ByteShape shape) {
-        return createSymbolBuilder(shape, "Integer", "Integer").build();
+        return createSymbolBuilder(shape, "", "Integer", "Integer").build();
     }
 
     @Override
     public Symbol shortShape(ShortShape shape) {
-        return createSymbolBuilder(shape, "Integer", "Integer").build();
+        return createSymbolBuilder(shape, "", "Integer", "Integer").build();
     }
 
     @Override
     public Symbol integerShape(IntegerShape shape) {
-        return createSymbolBuilder(shape, "Integer", "Integer").build();
+        return createSymbolBuilder(shape, "", "Integer", "Integer").build();
     }
 
     @Override
     public Symbol longShape(LongShape shape) {
-        return createSymbolBuilder(shape, "Integer", "Integer").build();
+        return createSymbolBuilder(shape, "", "Integer", "Integer").build();
     }
 
     @Override
     public Symbol floatShape(FloatShape shape) {
-        return createSymbolBuilder(shape, "Float", "Float").build();
+        return createSymbolBuilder(shape, "", "Float", "Float").build();
     }
 
     @Override
     public Symbol doubleShape(DoubleShape shape) {
-        return createSymbolBuilder(shape, "Float", "Float").build();
+        return createSymbolBuilder(shape, "", "Float", "Float").build();
     }
 
     @Override
     public Symbol bigIntegerShape(BigIntegerShape shape) {
-        return createSymbolBuilder(shape, "Integer", "Integer").build();
+        return createSymbolBuilder(shape, "", "Integer", "Integer").build();
     }
 
     @Override
     public Symbol bigDecimalShape(BigDecimalShape shape) {
-        return createSymbolBuilder(shape, "BigDecimal", "BigDecimal")
+        return createSymbolBuilder(shape, "", "BigDecimal", "BigDecimal")
                 .addDependency(RubyDependency.BIG_DECIMAL).build();
     }
 
     @Override
     public Symbol timestampShape(TimestampShape shape) {
         RubyDependency d = RubyDependency.TIME;
-        return createSymbolBuilder(shape, "Time", "Time")
+        return createSymbolBuilder(shape, "", "Time", "Time")
                 .addDependency(d).build();
     }
 
     @Override
     public Symbol listShape(ListShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "List"), moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "List"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
-            Symbol member = toSymbol(
-                    model.expectShape(shape.getMember().getTarget()));
-            String type = "Array[" + member.getName() + "]";
-            String docType = "Array<" + member.getName() + ">";
-            return createSymbolBuilder(shape, type, docType).build();
+            Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
+            String rbsType = "Array[" + member.getProperty("rbsType").get() + "]";
+            String yardType = "Array<" + member.getProperty("yardType").get() + ">";
+            return createSymbolBuilder(shape, "", rbsType, yardType).build();
         }
     }
 
     @Override
     public Symbol setShape(SetShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set"), moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
-            Symbol member = toSymbol(
-                    model.expectShape(shape.getMember().getTarget()));
-            String type = "Set[" + member.getName() + "]";
-            String docType = "Set<" + member.getName() + ">";
-            return createSymbolBuilder(shape, type, docType).build();
+            Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
+            String rbsType = "Set[" + member.getProperty("rbsType").get() + "]";
+            String yardType = "Set<" + member.getProperty("yardType").get() + ">";
+            return createSymbolBuilder(shape, "", rbsType, yardType).build();
         }
     }
 
     @Override
     public Symbol mapShape(MapShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map"), moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
-            Symbol key = toSymbol(
-                    model.expectShape(shape.getKey().getTarget()));
-            Symbol value = toSymbol(
-                    model.expectShape(shape.getValue().getTarget()));
-            String type = "Hash[" + key.getName() + ", " + value.getName() + "]";
-            String docType = "Hash<" + key.getName() + ", " + value.getName() + ">";
-            return createSymbolBuilder(shape, type, docType).build();
+            Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
+            Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
+            String rbsType
+                    = "Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
+            String yardType
+                    = "Hash<" + key.getProperty("yardType").get() + ", " + value.getProperty("yardType").get() + ">";
+            return createSymbolBuilder(shape, "", rbsType, yardType).build();
         }
     }
 
     @Override
     public Symbol documentShape(DocumentShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document"), moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
-            String docType = "Hash,Array,String,Boolean,Numeric";
-            return createSymbolBuilder(shape, "document", docType).build();
+            String rbsType = "document"; // alias defined in Seahorse
+            String yardType = "Hash,Array,String,Boolean,Numeric";
+            return createSymbolBuilder(shape, "", rbsType, yardType).build();
         }
     }
 
     @Override
     public Symbol serviceShape(ServiceShape shape) {
-        return createSymbolBuilder(shape, "Client", "", rootModuleName)
+        return createSymbolBuilder(shape, "Client", "", "")
+                .namespace(rootModuleName, "::")
                 .definitionFile("client.rb").build();
     }
 
     @Override
     public Symbol structureShape(StructureShape shape) {
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Struct"), "", moduleName)
+        String name = getDefaultShapeName(shape, "Struct");
+        return createSymbolBuilder(shape, name, name, name, moduleName)
                 .definitionFile("types.rb").build();
     }
 
     @Override
     public Symbol unionShape(UnionShape shape) {
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Union"), "", moduleName)
+        String name = getDefaultShapeName(shape, "Union");
+        return createSymbolBuilder(shape, name, name, name, moduleName)
                 .definitionFile("types.rb").build();
     }
 
@@ -333,7 +333,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol operationShape(OperationShape shape) {
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Operation"), "", moduleName)
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Operation"), "", "", moduleName)
                 .definitionFile("types.rb").build();
     }
 
