@@ -15,15 +15,17 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.Optional;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter() {
         trimTrailingSpaces();
+        trimBlankLines();
         setIndentText("  ");
 
         write("# frozen_string_literal: true\n");
-
         write("# WARNING ABOUT GENERATED CODE");
         write("#");
         write("# This file was code generated using smithy-ruby.");
@@ -45,5 +47,52 @@ public class RubyCodeWriter extends CodeWriter {
         setExpressionStart('*');
         write(s);
         popState();
+    }
+
+
+    /*
+     * YARD
+     */
+
+    public RubyCodeWriter writeYardDocstring(String docstring) {
+        if (!docstring.isEmpty()) {
+            rdoc(() -> {
+                write(docstring);
+                write("");
+            });
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeYardDocstring(Optional<DocumentationTrait> optionalDocumentationTrait) {
+        if (optionalDocumentationTrait.isPresent()) {
+            String docstring = optionalDocumentationTrait.get().getValue();
+            writeYardDocstring(docstring);
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeYardAttribute(String attribute, String attributeDocumentation, String returnType) {
+        rdoc(() -> {
+            write("@!attribute $L", attribute);
+            if (!attributeDocumentation.isEmpty()) {
+                String[] docstringParts = attributeDocumentation.split("\n");
+                for (int i = 0; i < docstringParts.length; i++) {
+                    write("  $L", docstringParts[i]);
+                }
+            }
+            write("  @return [$L]", returnType);
+            write("");
+        });
+        return this;
+    }
+
+    public RubyCodeWriter writeYardAttribute(String attribute, Optional<DocumentationTrait> optionalDocumentationTrait,
+                                     String returnType) {
+        if (optionalDocumentationTrait.isPresent()) {
+            String docstring = optionalDocumentationTrait.get().getValue();
+            writeYardAttribute(attribute, docstring, returnType);
+        }
+        return this;
     }
 }

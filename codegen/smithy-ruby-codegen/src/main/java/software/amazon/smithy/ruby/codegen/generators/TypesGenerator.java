@@ -36,7 +36,6 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.ruby.codegen.YardDocumentationBuilder;
 
 public class TypesGenerator {
     private final GenerationContext context;
@@ -110,10 +109,9 @@ public class TypesGenerator {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            Symbol symbol = symbolProvider.toSymbol(shape);
-            String shapeName = symbol.getName();
-            String membersBlock = "nil";
+            String shapeName = symbolProvider.toSymbol(shape).getName();
 
+            String membersBlock = "nil";
             if (!shape.members().isEmpty()) {
                 membersBlock = shape
                         .members()
@@ -135,13 +133,9 @@ public class TypesGenerator {
         }
 
         private void renderStructureDocumentation(StructureShape shape) {
-            YardDocumentationBuilder yardDocumentationBuilder = new YardDocumentationBuilder();
-
             Optional<DocumentationTrait> documentationTraitOptional =
                     shape.getMemberTrait(model, DocumentationTrait.class);
-            if (documentationTraitOptional.isPresent()) {
-                yardDocumentationBuilder.withDocstring(documentationTraitOptional.get().getValue());
-            }
+            writer.writeYardDocstring(documentationTraitOptional);
 
             shape.members().forEach(memberShape -> {
                 Optional<DocumentationTrait> memberDocstringOptional =
@@ -150,27 +144,25 @@ public class TypesGenerator {
                 String attribute = symbolProvider.toMemberName(memberShape);
                 Shape target = model.expectShape(memberShape.getTarget());
                 String returnValue = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
-
-                String memberDocstring = "";
-                if (memberDocstringOptional.isPresent()) {
-                    memberDocstring = memberDocstringOptional.get().getValue();
-                }
-                yardDocumentationBuilder.withAttribute(attribute, memberDocstring, returnValue);
+                writer.writeYardAttribute(attribute, memberDocstringOptional, returnValue);
             });
-
-            String documentation = yardDocumentationBuilder.build();
-            writer.write(documentation);
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            Symbol symbol = symbolProvider.toSymbol(shape);
-            String shapeName = symbol.getName();
+            Optional<DocumentationTrait> documentationTraitOptional =
+                    shape.getMemberTrait(model, DocumentationTrait.class);
+            writer.writeYardDocstring(documentationTraitOptional);
+
+            String shapeName = symbolProvider.toSymbol(shape).getName();
 
             writer.openBlock("class $L < Seahorse::Union", shapeName);
 
             for (MemberShape memberShape : shape.members()) {
+                Optional<DocumentationTrait> memberDocstringOptional =
+                        memberShape.getMemberTrait(model, DocumentationTrait.class);
                 writer
+                        .writeYardDocstring(memberDocstringOptional)
                         .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                         .openBlock("def to_h")
                         .write("{ $L: super(__getobj__) }",
@@ -180,6 +172,7 @@ public class TypesGenerator {
             }
 
             writer
+                    .writeYardDocstring("Handles unknown future members")
                     .openBlock("class Unknown < $L", shapeName)
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
