@@ -33,6 +33,8 @@ public class ModuleGenerator {
         RubySettings settings = context.getRubySettings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
+        writer.writePreamble();
+
         writer.write("require 'seahorse'\n");
 
         String[] requires = {

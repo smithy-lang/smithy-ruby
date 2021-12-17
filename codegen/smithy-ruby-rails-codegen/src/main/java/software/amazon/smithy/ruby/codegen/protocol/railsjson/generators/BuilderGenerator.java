@@ -84,7 +84,8 @@ public class BuilderGenerator extends ShapeVisitor.Default<Void> {
     public void render(FileManifest fileManifest) {
 
         writer
-                .write("require 'base64'\n")
+                .writePreamble()
+                .write("require 'base64'\n")// TODO - should be based on symbol provider?
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Builders")
                 .call(() -> renderBuilders())

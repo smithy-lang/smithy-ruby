@@ -92,6 +92,7 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     public void render(FileManifest fileManifest) {
 
         writer
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Stubs")
                 .call(() -> renderStubs())

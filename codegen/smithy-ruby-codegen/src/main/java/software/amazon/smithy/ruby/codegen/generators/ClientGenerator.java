@@ -33,6 +33,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -40,6 +41,7 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.PlaceholderExampleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.docs.TraitExampleGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -90,6 +92,8 @@ public class ClientGenerator {
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
 
+        writer.writePreamble();
+
         List<String> additionalFiles =
                 middlewareBuilder.writeAdditionalFiles(context);
         for (String require : additionalFiles) {
@@ -129,6 +133,7 @@ public class ClientGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         rbsWriter
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs\n")
@@ -303,6 +308,18 @@ public class ClientGenerator {
                         "Request syntax with placeholder values",
                         new PlaceholderExampleGenerator(operation, symbolProvider, model).generate()
                 );
+
+        Optional<ExamplesTrait> examplesTraitOptional = operation.getTrait(ExamplesTrait.class);
+        if (examplesTraitOptional.isPresent()) {
+            List<ExamplesTrait.Example> examples = examplesTraitOptional.get().getExamples();
+            examples.forEach((example) -> {
+                String title = example.getTitle();
+                writer.writeYardExample(
+                        title,
+                        new TraitExampleGenerator(operation, symbolProvider, example).generate()
+                );
+            });
+        }
     }
 
     private void renderApplyMiddlewareMethod() {

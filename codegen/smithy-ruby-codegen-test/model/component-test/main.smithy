@@ -5,32 +5,27 @@ use smithy.ruby.tests.protocols#fakeProtocol
 
 @fakeProtocol
 @title("FakeProtocol Test Service")
-/// The test SDK.
-/// This service should pass the tests.
 service WhiteLabel {
     version: "2018-01-01",
     operations: [
-        ErrorsTest,
-        KitchenSink,
+        KitchenSinkOperation,
         PaginatorsTest,
         PaginatorsTestWithItems,
         WaitersTest
     ]
 }
 
-/// The kitchen sink operation
-operation KitchenSink {
-    /// The kitchen sink input
-    input: KitchenSinkInput
+operation KitchenSinkOperation {
+    input: KitchenSink,
+    output: KitchenSink,
+    errors: [ClientError, ServerError],
 }
 
-structure KitchenSinkInput {
+structure KitchenSink {
     // simple member
     String: String,
 
     // complex member
-    /// This is some member documentation of Struct.
-    /// It should override Struct's documentation.
     Struct: Struct,
 
     // document member
@@ -48,7 +43,6 @@ structure KitchenSinkInput {
     Union: Union,
 }
 
-/// This docstring should be different than KitchenSinkInput struct member.
 structure Struct {
     value: String,
 }
@@ -79,11 +73,15 @@ set SetOfStructs {
     member: Struct,
 }
 
-/// This is some union documentation.
-/// It has some union members.
 union Union {
-    /// This is a String member.
-    /// Struct should also be documented too because the structure is.
     String: String,
     Struct: Struct,
 }
+
+@error("client")
+structure ClientError {
+  Message: String
+}
+
+@error("server")
+structure ServerError {}

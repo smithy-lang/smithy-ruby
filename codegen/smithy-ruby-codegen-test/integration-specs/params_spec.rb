@@ -68,8 +68,8 @@ module WhiteLabel
       end
     end
 
-    describe KitchenSinkInput do
-      include_examples "validates params", Hash, Types::KitchenSinkInput
+    describe KitchenSink do
+      include_examples "validates params", Hash, Types::KitchenSink
 
       let(:params) do
         {
@@ -88,8 +88,8 @@ module WhiteLabel
       let(:struct) { Types::Struct.new(value: 'struct value') }
 
       it 'builds all member input' do
-        data = KitchenSinkInput.build(params, context: 'params')
-        expect(data).to be_a(Types::KitchenSinkInput)
+        data = KitchenSink.build(params, context: 'params')
+        expect(data).to be_a(Types::KitchenSink)
         expected = {
           string: 'simple string',
           struct: { value: 'struct value' },

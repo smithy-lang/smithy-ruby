@@ -86,8 +86,11 @@ module HighScoreService
 
     class UnprocessableEntityError < ApiClientError
       # @param [Seahorse::HTTP::Response] http_resp
+      #
       # @param [String] error_code
+      #
       # @param [String] message
+      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
@@ -96,6 +99,7 @@ module HighScoreService
       end
 
       # @return [Types::UnprocessableEntityError]
+      #
       attr_reader :data
     end
 

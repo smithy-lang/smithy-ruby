@@ -61,6 +61,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())

@@ -58,10 +58,12 @@ module HighScoreService
     #
     # @param [Hash] params
     #   See {Types::CreateHighScoreInput}.
-    # @option params [HighScoreParams] :high_score
     #
+    # @option params [HighScoreParams] :high_score
     #   The high score params
+    #
     # @return [Types::CreateHighScoreOutput]
+    #
     # @example Request syntax with placeholder values
     #
     #   resp = client.create_high_score(
@@ -70,6 +72,7 @@ module HighScoreService
     #       score: 1
     #     } # required
     #   )
+    #
     def create_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
@@ -111,15 +114,18 @@ module HighScoreService
     #
     # @param [Hash] params
     #   See {Types::DeleteHighScoreInput}.
-    # @option params [String] :id
     #
+    # @option params [String] :id
     #   The high score id
+    #
     # @return [Types::DeleteHighScoreOutput]
+    #
     # @example Request syntax with placeholder values
     #
     #   resp = client.delete_high_score(
     #     id: 'id' # required
     #   )
+    #
     def delete_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
@@ -161,15 +167,18 @@ module HighScoreService
     #
     # @param [Hash] params
     #   See {Types::GetHighScoreInput}.
-    # @option params [String] :id
     #
+    # @option params [String] :id
     #   The high score id
+    #
     # @return [Types::GetHighScoreOutput]
+    #
     # @example Request syntax with placeholder values
     #
     #   resp = client.get_high_score(
     #     id: 'id' # required
     #   )
+    #
     def get_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
@@ -211,10 +220,13 @@ module HighScoreService
     #
     # @param [Hash] params
     #   See {Types::ListHighScoresInput}.
+    #
     # @return [Types::ListHighScoresOutput]
+    #
     # @example Request syntax with placeholder values
     #
     #   resp = client.list_high_scores()
+    #
     def list_high_scores(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
@@ -256,13 +268,15 @@ module HighScoreService
     #
     # @param [Hash] params
     #   See {Types::UpdateHighScoreInput}.
+    #
     # @option params [String] :id
-    #
     #   The high score id
-    # @option params [HighScoreParams] :high_score
     #
+    # @option params [HighScoreParams] :high_score
     #   The high score params
+    #
     # @return [Types::UpdateHighScoreOutput]
+    #
     # @example Request syntax with placeholder values
     #
     #   resp = client.update_high_score(
@@ -272,6 +286,7 @@ module HighScoreService
     #       score: 1
     #     }
     #   )
+    #
     def update_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)

@@ -86,7 +86,8 @@ public class ParserGenerator extends ShapeVisitor.Default<Void> {
 
     public void render(FileManifest fileManifest) {
         writer
-                .write("require 'base64'\n")
+                .writePreamble()
+                .write("require 'base64'\n") // TODO should be symbol provider imported?
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Parsers")
                 .call(() -> renderParsers())

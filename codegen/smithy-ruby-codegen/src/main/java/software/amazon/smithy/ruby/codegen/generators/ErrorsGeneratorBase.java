@@ -52,6 +52,7 @@ public abstract class ErrorsGeneratorBase {
 
     public void render(FileManifest fileManifest) {
         writer
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")
@@ -68,6 +69,7 @@ public abstract class ErrorsGeneratorBase {
 
     public void renderRbs(FileManifest fileManifest) {
         rbsWriter
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")

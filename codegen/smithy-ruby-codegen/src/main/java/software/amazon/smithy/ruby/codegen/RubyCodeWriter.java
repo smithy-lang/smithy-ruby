@@ -24,7 +24,9 @@ public class RubyCodeWriter extends CodeWriter {
         trimTrailingSpaces();
         trimBlankLines();
         setIndentText("  ");
+    }
 
+    public RubyCodeWriter writePreamble() {
         write("# frozen_string_literal: true\n");
         write("# WARNING ABOUT GENERATED CODE");
         write("#");
@@ -32,6 +34,7 @@ public class RubyCodeWriter extends CodeWriter {
         write("# https://github.com/awslabs/smithy-ruby");
         write("#");
         write("# WARNING ABOUT GENERATED CODE\n");
+        return this;
     }
 
     public RubyCodeWriter rdoc(Runnable task) {
@@ -75,12 +78,7 @@ public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter writeYardAttribute(String attribute, String documentation, String returnType) {
         rdoc(() -> {
             write("@!attribute $L", attribute);
-            if (!documentation.isEmpty()) {
-                String[] docstringParts = documentation.split("\n");
-                for (int i = 0; i < docstringParts.length; i++) {
-                    write("  $L", docstringParts[i]);
-                }
-            }
+            writeIndentedParts(documentation);
             write("  @return [$L]", returnType);
             write("");
         });
@@ -100,12 +98,8 @@ public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter writeYardParam(String returnType, String param, String documentation) {
         rdoc(() -> {
             write("@param [$L] $L", returnType, param);
-            if (!documentation.isEmpty()) {
-                String[] docstringParts = documentation.split("\n");
-                for (int i = 0; i < docstringParts.length; i++) {
-                    write("  $L", docstringParts[i]);
-                }
-            }
+            writeIndentedParts(documentation);
+            write("");
         });
         return this;
     }
@@ -113,11 +107,14 @@ public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter writeYardOption(String param, String type, String option, String defaultValue,
                                           String documentation) {
         rdoc(() -> {
-            write("@option $L [$L] $L", param, type, option);
+            writeInline("@option $L [$L] $L", param, type, option);
             if (!defaultValue.isEmpty()) {
-                writeInline("($S)", defaultValue);
+                write("($S)", defaultValue);
+            } else {
+                write("");
             }
             writeIndentedParts(documentation);
+            write("");
         });
         return this;
     }
@@ -135,12 +132,8 @@ public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter writeYardReturn(String returnType, String documentation) {
         rdoc(() -> {
             write("@return [$L]", returnType);
-            if (!documentation.isEmpty()) {
-                String[] docstringParts = documentation.split("\n");
-                for (int i = 0; i < docstringParts.length; i++) {
-                    write("  $L", docstringParts[i]);
-                }
-            }
+            writeIndentedParts(documentation);
+            write("");
         });
         return this;
     }
@@ -148,7 +141,9 @@ public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter writeYardExample(String title, String block) {
         rdoc(() -> {
             write("@example $L", title);
+            write("");
             writeIndentedParts(block);
+            write("");
         });
         return this;
     }
@@ -156,7 +151,6 @@ public class RubyCodeWriter extends CodeWriter {
     // Writes a documentation indented newline separated string
     private void writeIndentedParts(String documentation) {
         if (!documentation.isEmpty()) {
-            write("");
             String[] docstringParts = documentation.split("\n");
             for (int i = 0; i < docstringParts.length; i++) {
                 write("  $L", docstringParts[i]);

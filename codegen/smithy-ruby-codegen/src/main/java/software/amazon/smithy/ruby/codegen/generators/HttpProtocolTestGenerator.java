@@ -90,6 +90,7 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
+                .writePreamble()
                 .write("require '$L'\n", settings.getGemName())
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
@@ -132,8 +133,9 @@ public class HttpProtocolTestGenerator {
 
         writer.openBlock("describe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
+            String documentation = testCase.getDocumentation().orElseGet(String::new);
             writer
-                    .call(() -> renderTestDocumentation(testCase.getDocumentation()))
+                    .writeYardDocstring(documentation)
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
@@ -153,7 +155,9 @@ public class HttpProtocolTestGenerator {
 
         writer.openBlock("describe 'response stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
+            String documentation = testCase.getDocumentation().orElseGet(String::new);
             writer
+                    .writeYardDocstring(documentation)
                     .openBlock("it 'stubs $L' do", testCase.getId())
                     .call(() -> renderResponseStubMiddleware(testCase))
                     .write("middleware.remove_build")
@@ -179,9 +183,9 @@ public class HttpProtocolTestGenerator {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
                 return;
             }
+            String documentation = testCase.getDocumentation().orElseGet(String::new);
             writer
-                    .write("") //formatting
-                    .call(() -> renderTestDocumentation(testCase.getDocumentation()))
+                    .writeYardDocstring(documentation)
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))
                     .write("client.$L($L, middleware: middleware)", operationName,
@@ -200,8 +204,10 @@ public class HttpProtocolTestGenerator {
             error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
                 writer.openBlock("describe '$L Errors' do", error.getId().getName());
                 responseTests.getTestCases().forEach((testCase) -> {
+                    String documentation = testCase.getDocumentation().orElseGet(String::new);
+
                     writer
-                            .call(() -> renderTestDocumentation(testCase.getDocumentation()))
+                            .writeYardDocstring(documentation)
                             .openBlock("it '$L' do", testCase.getId())
                             .call(() -> renderResponseMiddleware(testCase))
                             .write("middleware.remove_send.remove_build")
@@ -217,14 +223,6 @@ public class HttpProtocolTestGenerator {
                             .closeBlock("end");
                 });
                 writer.closeBlock("end");
-            });
-        }
-    }
-
-    private void renderTestDocumentation(Optional<String> documentation) {
-        if (documentation.isPresent()) {
-            writer.rdoc(() -> {
-                writer.write(documentation.get());
             });
         }
     }
