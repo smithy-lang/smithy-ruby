@@ -232,6 +232,7 @@ public class ClientGenerator {
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
         writer
+                .write("")
                 .call(() -> renderOperationDocumentation(operation))
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
@@ -268,36 +269,38 @@ public class ClientGenerator {
     }
 
     private void renderOperationDocumentation(OperationShape operation) {
-        writer.write("");
-        writer.rdoc(() -> {
-            Optional<DocumentationTrait> documentation =
-                    operation.getTrait(DocumentationTrait.class);
-            if (documentation.isPresent()) {
-                writer.write("$L", documentation.get().getValue());
-            } else {
-                writer.write("UNDOCUMENTED: Service operation for $L",
-                        operation.getId().getName());
-            }
-            writer.write("");
-            writer.write("@param [Hash] params - See also: {Types::$LInput}",
-                    operation.getId().getName());
+        Shape inputShape = model.expectShape(operation.getInput().get());
+        String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
+        String inputShapeDocumentation = "See {Types::" + inputShapeName + "}.";
 
-            ShapeId inputShapeId = operation.getInput().get();
-            StructureShape input =
-                    model.expectShape(inputShapeId).asStructureShape().get();
-            for (MemberShape memberShape : input.members()) {
-                Shape target = model.expectShape(memberShape.getTarget());
-                String symbolName = ":" + symbolProvider.toMemberName(memberShape);
-                writer.write("@options param[$L] $L", symbolProvider.toSymbol(target).getProperty("yardType").get(),
-                        symbolName);
-                Optional<DocumentationTrait> memberDoc =
-                        memberShape.getTrait(DocumentationTrait.class);
-                if (memberDoc.isPresent()) {
-                    writer.write("  $L", memberDoc.get().getValue());
-                }
-                writer.write("");
-            }
-        });
+        Optional<DocumentationTrait> optionalDocumentationTrait =
+                operation.getTrait(DocumentationTrait.class);
+
+        writer
+                .writeYardDocstring(optionalDocumentationTrait)
+                .writeYardParam("Hash", "params", inputShapeDocumentation);
+
+        ShapeId inputShapeId = operation.getInput().get();
+        StructureShape input =
+                model.expectShape(inputShapeId).asStructureShape().get();
+        for (MemberShape memberShape : input.members()) {
+            Shape target = model.expectShape(memberShape.getTarget());
+            String param = ":" + symbolProvider.toMemberName(memberShape);
+            Optional<DocumentationTrait> memberDoc = memberShape.getTrait(DocumentationTrait.class);
+            String type = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
+
+            writer.writeYardOption("params", type, param, "", memberDoc);
+        }
+
+        Shape outputShape = model.expectShape(operation.getOutput().get());
+        String outputShapeName = symbolProvider.toSymbol(outputShape).getName();
+        String outputShapeType = "Types::" + outputShapeName;
+
+        writer
+                .writeYardReturn(outputShapeType, "")
+                // .writeYardExample("", "")
+                // TODO should come from examples
+                .writeYardExample("", "");
     }
 
     private void renderApplyMiddlewareMethod() {
