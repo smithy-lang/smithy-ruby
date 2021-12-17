@@ -156,6 +156,7 @@ public class RubyCodeWriter extends CodeWriter {
     // Writes a documentation indented newline separated string
     private void writeIndentedParts(String documentation) {
         if (!documentation.isEmpty()) {
+            write("");
             String[] docstringParts = documentation.split("\n");
             for (int i = 0; i < docstringParts.length; i++) {
                 write("  $L", docstringParts[i]);
