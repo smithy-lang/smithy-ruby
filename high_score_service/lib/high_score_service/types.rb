@@ -24,6 +24,12 @@ module HighScoreService
     #   The high score for the game
     #   @return [Integer]
     #
+    # @!attribute created_at
+    #   @return [Time]
+    #
+    # @!attribute updated_at
+    #   @return [Time]
+    #
     HighScoreAttributes = Struct.new(
       :id,
       :game,
@@ -49,6 +55,9 @@ module HighScoreService
       keyword_init: true
     ) { include Seahorse::Structure }
 
+    # @!attribute errors
+    #   @return [Hash<String, Array<String>>]
+    #
     UnprocessableEntityError = Struct.new(
       :errors,
       keyword_init: true

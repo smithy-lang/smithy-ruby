@@ -51,7 +51,7 @@ public class RubyCodeWriter extends CodeWriter {
 
 
     /*
-     * YARD
+     * YARD convenience methods
      */
 
     public RubyCodeWriter writeYardDocstring(String docstring) {
@@ -72,11 +72,11 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public RubyCodeWriter writeYardAttribute(String attribute, String attributeDocumentation, String returnType) {
+    public RubyCodeWriter writeYardAttribute(String attribute, String documentation, String returnType) {
         rdoc(() -> {
             write("@!attribute $L", attribute);
-            if (!attributeDocumentation.isEmpty()) {
-                String[] docstringParts = attributeDocumentation.split("\n");
+            if (!documentation.isEmpty()) {
+                String[] docstringParts = documentation.split("\n");
                 for (int i = 0; i < docstringParts.length; i++) {
                     write("  $L", docstringParts[i]);
                 }
@@ -89,10 +89,37 @@ public class RubyCodeWriter extends CodeWriter {
 
     public RubyCodeWriter writeYardAttribute(String attribute, Optional<DocumentationTrait> optionalDocumentationTrait,
                                      String returnType) {
+        String docstring = "";
         if (optionalDocumentationTrait.isPresent()) {
-            String docstring = optionalDocumentationTrait.get().getValue();
-            writeYardAttribute(attribute, docstring, returnType);
+            docstring = optionalDocumentationTrait.get().getValue();
         }
+        writeYardAttribute(attribute, docstring, returnType);
+        return this;
+    }
+
+    public RubyCodeWriter writeYardParam(String returnType, String param, String documentation) {
+        rdoc(() -> {
+            write("@param [$L] $L", returnType, param);
+            if (!documentation.isEmpty()) {
+                String[] docstringParts = documentation.split("\n");
+                for (int i = 0; i < docstringParts.length; i++) {
+                    write("  $L", docstringParts[i]);
+                }
+            }
+        });
+        return this;
+    }
+
+    public RubyCodeWriter writeYardReturn(String returnType, String documentation) {
+        rdoc(() -> {
+            write("@return [$L]", returnType);
+            if (!documentation.isEmpty()) {
+                String[] docstringParts = documentation.split("\n");
+                for (int i = 0; i < docstringParts.length; i++) {
+                    write("  $L", docstringParts[i]);
+                }
+            }
+        });
         return this;
     }
 }

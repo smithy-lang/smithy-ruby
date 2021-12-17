@@ -53,7 +53,6 @@ public abstract class ErrorsGeneratorBase {
     public void render(FileManifest fileManifest) {
         writer
                 .openBlock("module $L", settings.getModule())
-                .call(() -> renderModuleDocumentation())
                 .openBlock("module Errors")
                 .write("")
                 .call(() -> renderErrorCode())
@@ -65,24 +64,6 @@ public abstract class ErrorsGeneratorBase {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/errors.rb";
         fileManifest.writeFile(fileName, writer.toString());
-    }
-
-    private void renderModuleDocumentation() {
-        String module = settings.getModule();
-        writer
-                .write("# When $L returns an error response, the SDK constructs and raises an error.", module)
-                .write("# These errors all extend $L::ApiError.", module)
-                .write("#")
-                .write("# You can rescue all $L errors using ApiError:", module)
-                .write("#")
-                .write("#     begin")
-                .write("#       # do stuff")
-                .write("#     rescue $L::ApiError", module)
-                .write("#       # rescues all possible API errors")
-                .write("#     end")
-                .write("#")
-                .write("# ApiError objects have a #data method that returns any accommodating data.")
-                .write("#");
     }
 
     public void renderRbs(FileManifest fileManifest) {
@@ -178,17 +159,23 @@ public abstract class ErrorsGeneratorBase {
     private void renderServiceModelError(String errorName, String apiErrorType) {
         writer
                 .write("")
-                .write("# @param http_resp [Seahorse::HTTP::Response]")
-                .write("# @param error_code [String]")
-                .write("# @param message [String]")
-                .openBlock("class $L < $L", errorName, apiErrorType)
+                .openBlock("class $L < $L", errorName, apiErrorType);
+
+        writer
+                .writeYardParam("Seahorse::HTTP::Response", "http_resp", "")
+                .writeYardParam("String", "error_code", "")
+                .writeYardParam("String", "message", "");
+
+        writer
                 .openBlock("def initialize(http_resp:, **kwargs)")
                 .write("@data = Parsers::$L.parse(http_resp)", errorName)
                 .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                 .write("super(http_resp: http_resp, **kwargs)")
                 .closeBlock("end")
-                .write("")
-                .write("# @return [Types::$L]", errorName)
+                .write("");
+
+        writer
+                .writeYardReturn("Types::" + errorName, "")
                 .write("attr_reader :data")
                 .closeBlock("end");
     }
