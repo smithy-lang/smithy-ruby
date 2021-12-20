@@ -93,9 +93,9 @@ public class TraitExampleGenerator {
             writer.write("resp = client.$L()", operationName);
         } else {
             writer
-                    .openBlock("resp = client.$L(", operationName)
-                    .write(operationInput.accept(new ParamsToHashVisitor(model, input, symbolProvider)))
-                    .closeBlock(")")
+                    .writeInline("resp = client.$L(", operationName)
+                    .writeInline(operationInput.accept(new ParamsToHashVisitor(model, input, symbolProvider)))
+                    .write(")")
                     .write("")
                     .write("resp.to_h outputs the following:")
                     .write(operationOutput.accept(new ParamsToHashVisitor(model, output, symbolProvider)));
