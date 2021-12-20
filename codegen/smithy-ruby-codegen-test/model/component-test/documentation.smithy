@@ -33,7 +33,7 @@ apply KitchenSink @examples([
             Union: { String: "union string" }
         },
         output: {
-            String: "Test",
+            String: "Test output",
             Struct: { value: "struct" },
             Document: { thing: true, string: "hello" },
             ListOfStrings: ["foo", "bar"],

@@ -316,7 +316,7 @@ public class ClientGenerator {
                 String title = example.getTitle();
                 writer.writeYardExample(
                         title,
-                        new TraitExampleGenerator(operation, symbolProvider, example).generate()
+                        new TraitExampleGenerator(operation, symbolProvider, model, example).generate()
                 );
             });
         }

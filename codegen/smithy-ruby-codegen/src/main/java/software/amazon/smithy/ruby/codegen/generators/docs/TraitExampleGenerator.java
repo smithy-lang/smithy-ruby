@@ -15,10 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen.generators.docs;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -43,8 +45,6 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.ResourceShape;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -62,6 +62,7 @@ public class TraitExampleGenerator {
 
     private final OperationShape operation;
     private final SymbolProvider symbolProvider;
+    private final Model model;
     private final RubyCodeWriter writer;
     private final Optional<String> documentation;
     private final ObjectNode input;
@@ -69,9 +70,10 @@ public class TraitExampleGenerator {
     private final Optional<ExamplesTrait.ErrorExample> error;
 
     public TraitExampleGenerator(OperationShape operation, SymbolProvider symbolProvider,
-                                 ExamplesTrait.Example example) {
+                                 Model model, ExamplesTrait.Example example) {
         this.operation = operation;
         this.symbolProvider = symbolProvider;
+        this.model = model;
         this.writer = new RubyCodeWriter();
         this.documentation = example.getDocumentation();
         this.input = example.getInput();
@@ -80,41 +82,52 @@ public class TraitExampleGenerator {
     }
 
     public String generate() {
-        // Symbol symbol = symbolProvider.toSymbol(operation);
-        //String operationName =
-        //        RubyFormatter.toSnakeCase(symbol.getName());
+        Symbol symbol = symbolProvider.toSymbol(operation);
+        String operationName =
+                RubyFormatter.toSnakeCase(symbol.getName());
 
-//        writer
-//                .writeYardDocstring(documentation.orElseGet(String::new))
-//                .openBlock("resp = client.$L(", operationName)
-//                    .call(() -> {
-//                        Iterator<MemberShape> itr = inputShape.members().iterator();
-//                        while (itr.hasNext()) {
-//                            MemberShape member = itr.next();
-//                            Shape target = model.expectShape(member.getTarget());
-//                            String dataSetter = symbolProvider.toMemberName(member) + ": ";
-//                            String eol = itr.hasNext() ? "," : "";
-//                            target.accept(new PlaceholderMember(dataSetter, member, eol, visited));
-//                        }
-//                    })
-//                    .closeBlock(")");
+        Shape operationInput = model.expectShape(operation.getInput().orElseThrow(IllegalArgumentException::new));
+        Shape operationOutput = model.expectShape(operation.getOutput().orElseThrow(IllegalArgumentException::new));
 
+        if (input.isEmpty()) {
+            writer.write("resp = client.$L()", operationName);
+        } else {
+            writer
+                    .openBlock("resp = client.$L(", operationName)
+                    .write(operationInput.accept(new ParamsToHashVisitor(model, input, symbolProvider)))
+                    .closeBlock(")")
+                    .write("")
+                    .write("resp.to_h outputs the following:")
+                    .write(operationOutput.accept(new ParamsToHashVisitor(model, output, symbolProvider)));
+        }
         return writer.toString();
     }
 
-    private static class ParamsToHashVisitor implements ShapeVisitor<String> {
+    private static class ParamsToHashVisitor extends ShapeVisitor.Default<String> {
 
         private final Node node;
         private final Model model;
-        private final ParamsToHashVisitor.TestType testType;
         private final SymbolProvider symbolProvider;
 
-        ParamsToHashVisitor(Model model, Node node, ParamsToHashVisitor.TestType testType,
+        ParamsToHashVisitor(Model model, Node node,
                             SymbolProvider symbolProvider) {
             this.node = node;
             this.model = model;
-            this.testType = testType;
             this.symbolProvider = symbolProvider;
+        }
+
+        @Override
+        protected String getDefault(Shape shape) {
+            return "";
+        }
+
+        @Override
+        public String stringShape(StringShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            StringNode stringNode = node.expectStringNode();
+            return StringUtils.escapeJavaString(stringNode.getValue(), "");
         }
 
         @Override
@@ -133,53 +146,6 @@ public class TraitExampleGenerator {
             }
             BooleanNode booleanNode = node.expectBooleanNode();
             return booleanNode.getValue() ? "true" : "false";
-        }
-
-        @Override
-        public String listShape(ListShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ArrayNode arrayNode = node.expectArrayNode();
-            Shape target = model.expectShape(shape.getMember().getTarget());
-
-            String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType, symbolProvider)))
-                    .collect(Collectors.joining(", "));
-
-            return "[" + elements + "]";
-        }
-
-        @Override
-        public String setShape(SetShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ArrayNode arrayNode = node.expectArrayNode();
-            Shape target = model.expectShape(shape.getMember().getTarget());
-
-            String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType, symbolProvider)))
-                    .collect(Collectors.joining(", "));
-
-            return "[" + elements + "]";
-        }
-
-        @Override
-        public String mapShape(MapShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ObjectNode objectNode = node.expectObjectNode();
-            Shape target = model.expectShape(shape.getValue().getTarget());
-            Map<StringNode, Node> members = objectNode.getMembers();
-
-            String memberStr = members.keySet().stream()
-                    .map((k) -> "'" + k.toString() + "' => "
-                            + target.accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider)))
-                    .collect(Collectors.joining(", "));
-
-            return "{" + memberStr + "}";
         }
 
         @Override
@@ -221,11 +187,6 @@ public class TraitExampleGenerator {
         @Override
         public String floatShape(FloatShape shape) {
             return rubyFloat();
-        }
-
-        @Override
-        public String documentShape(DocumentShape shape) {
-            return node.accept(new NodeToHashVisitor());
         }
 
         @Override
@@ -277,27 +238,65 @@ public class TraitExampleGenerator {
         }
 
         @Override
-        public String operationShape(OperationShape shape) {
-            return null;
+        public String timestampShape(TimestampShape shape) {
+            if (node.isNullNode()) {
+                return "";
+            }
+            if (node.isNumberNode()) {
+                return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
+            }
+            return "Time.parse('" + node + "')";
         }
 
         @Override
-        public String resourceShape(ResourceShape shape) {
-            return null;
-        }
-
-        @Override
-        public String serviceShape(ServiceShape shape) {
-            return null;
-        }
-
-        @Override
-        public String stringShape(StringShape shape) {
+        public String listShape(ListShape shape) {
             if (node.isNullNode()) {
                 return "nil";
             }
-            StringNode stringNode = node.expectStringNode();
-            return StringUtils.escapeJavaString(stringNode.getValue(), "");
+            ArrayNode arrayNode = node.expectArrayNode();
+            Shape target = model.expectShape(shape.getMember().getTarget());
+
+            String elements = arrayNode.getElements().stream()
+                    .map((element) -> target
+                            .accept(new ParamsToHashVisitor(model, element, symbolProvider)))
+                    .collect(Collectors.joining(",\n"));
+
+            return "[\n" + indent(elements) + "\n]";
+        }
+
+        @Override
+        public String setShape(SetShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ArrayNode arrayNode = node.expectArrayNode();
+            Shape target = model.expectShape(shape.getMember().getTarget());
+
+            String elements = arrayNode.getElements().stream()
+                    .map((element) -> target
+                            .accept(new ParamsToHashVisitor(model, element, symbolProvider)))
+                    .collect(Collectors.joining(",\n"));
+
+            return "[\n" + indent(elements) + "\n]";
+        }
+
+        @Override
+        public String mapShape(MapShape shape) {
+            if (node.isNullNode()) {
+                return "nil";
+            }
+            ObjectNode objectNode = node.expectObjectNode();
+            Shape target = model.expectShape(shape.getValue().getTarget());
+            Map<StringNode, Node> members = objectNode.getMembers();
+
+            String memberStr = members.keySet().stream()
+                    .map((k) -> "'" + k.toString() + "' => "
+                            +
+                            target.accept(
+                                    new ParamsToHashVisitor(model, members.get(k), symbolProvider)))
+                    .collect(Collectors.joining(",\n"));
+
+            return "{\n" + indent(memberStr) + "\n}";
         }
 
         @Override
@@ -315,11 +314,11 @@ public class TraitExampleGenerator {
                         MemberShape member = shapeMembers.get(k.toString());
                         return symbolProvider.toMemberName(member) + ": "
                                 + (model.expectShape(member.getTarget()))
-                                .accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider));
+                                .accept(new ParamsToHashVisitor(model, members.get(k), symbolProvider));
                     })
-                    .collect(Collectors.joining(", "));
+                    .collect(Collectors.joining(",\n"));
 
-            return "{" + memberStr + "}";
+            return "{\n" + indent(memberStr) + "\n}";
         }
 
         @Override
@@ -336,31 +335,21 @@ public class TraitExampleGenerator {
                         MemberShape member = shapeMembers.get(k.toString());
                         return RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member)) + ": "
                                 + (model.expectShape(member.getTarget()))
-                                .accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider));
+                                .accept(new ParamsToHashVisitor(model, members.get(k), symbolProvider));
                     })
                     .collect(Collectors.joining(", "));
-            return "{" + memberStr + "}";
+            return "{\n" + indent(memberStr) + "\n}";
+        }
+
+        private String indent(String s) {
+            return Arrays.stream(s.split("\n"))
+                    .map((l) -> "  " + l)
+                    .collect(Collectors.joining("\n"));
         }
 
         @Override
-        public String memberShape(MemberShape shape) {
-            return null;
-        }
-
-        @Override
-        public String timestampShape(TimestampShape shape) {
-            if (node.isNullNode()) {
-                return "";
-            }
-            if (node.isNumberNode()) {
-                return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
-            }
-            return "Time.parse('" + node + "')";
-        }
-
-        enum TestType {
-            REQUEST,
-            RESPONSE
+        public String documentShape(DocumentShape shape) {
+            return node.accept(new NodeToHashVisitor());
         }
     }
 
