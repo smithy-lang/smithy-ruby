@@ -25,24 +25,24 @@ apply KitchenSink @examples([
             Struct: { value: "struct" },
             Document: { thing: true, string: "hello" },
             ListOfStrings: ["foo", "bar"],
-            ListOfStructs: [],
-            MapOfStrings: {},
-            MapOfStructs: {},
-            SetOfStrings: [],
-            SetOfStructs: [],
-            Union: {}
+            ListOfStructs: [ { value: "struct1" }, { value: "struct2" } ],
+            MapOfStrings: { key1: "value1", key2: "value2" },
+            MapOfStructs: { key1: { value: "struct1" }, key2: { value: "struct2" } },
+            SetOfStrings: ["set", "of", "strings"],
+            SetOfStructs: [ { value: "struct1" }, { value: "struct2" } ],
+            Union: { String: "union string" }
         },
         output: {
             String: "Test",
             Struct: { value: "struct" },
             Document: { thing: true, string: "hello" },
             ListOfStrings: ["foo", "bar"],
-            ListOfStructs: [],
-            MapOfStrings: {},
-            MapOfStructs: {},
-            SetOfStrings: [],
-            SetOfStructs: [],
-            Union: {}
+            ListOfStructs: [ { value: "struct1" }, { value: "struct2" } ],
+            MapOfStrings: { key1: "value1", key2: "value2" },
+            MapOfStructs: { key1: { value: "struct1" }, key2: { value: "struct2" } },
+            SetOfStrings: ["set", "of", "strings"],
+            SetOfStructs: [ { value: "struct1" }, { value: "struct2" } ],
+            Union: { Struct: { value: "union struct" } }
         }
     },
     {
