@@ -8,20 +8,20 @@ use smithy.ruby.tests.protocols#fakeProtocol
 service WhiteLabel {
     version: "2018-01-01",
     operations: [
-        KitchenSinkOperation,
+        KitchenSink,
         PaginatorsTest,
         PaginatorsTestWithItems,
         WaitersTest
     ]
 }
 
-operation KitchenSinkOperation {
-    input: KitchenSink,
-    output: KitchenSink,
+operation KitchenSink {
+    input: KitchenSinkInputOutput,
+    output: KitchenSinkInputOutput,
     errors: [ClientError, ServerError],
 }
 
-structure KitchenSink {
+structure KitchenSinkInputOutput {
     // simple member
     String: String,
 

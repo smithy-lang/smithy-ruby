@@ -138,7 +138,7 @@ module WhiteLabel
       end
     end
 
-    describe KitchenSink do
+    describe KitchenSinkInput do
       let(:params) do
         {
           string: 'simple string',
@@ -153,11 +153,11 @@ module WhiteLabel
           union: { string: 'simple string' }
         }
       end
-      let(:input) { Params::KitchenSink.build(params, context: 'params') }
+      let(:input) { Params::KitchenSinkInput.build(params, context: 'params') }
       let(:struct) { Types::Struct.new(value: 'struct value') }
 
       it 'validates all member input' do
-        KitchenSink.validate!(input, context: 'input')
+        KitchenSinkInput.validate!(input, context: 'input')
       end
     end
 

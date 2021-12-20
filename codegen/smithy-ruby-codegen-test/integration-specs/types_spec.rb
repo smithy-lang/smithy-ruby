@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   module Types
-    describe KitchenSink do
+    describe KitchenSinkInput do
       let(:params) do
         {
           string: 'simple string',
@@ -20,7 +20,7 @@ module WhiteLabel
         }
       end
       let(:struct) { Types::Struct.new(value: 'struct value') }
-      subject { KitchenSink.new(**params) }
+      subject { KitchenSinkInput.new(**params) }
 
       it 'is a Ruby struct' do
         expect(subject).to be_a(::Struct)

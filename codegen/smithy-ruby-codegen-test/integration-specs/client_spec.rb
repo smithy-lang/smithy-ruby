@@ -32,7 +32,7 @@ module WhiteLabel
         client = Client.new(validate_input: false, stub_responses: true)
         expect(Seahorse::Middleware::Validate)
           .to receive(:new)
-                .with(anything, validator: Validators::KitchenSink, validate_input: false)
+                .with(anything, validator: Validators::KitchenSinkInput, validate_input: false)
                 .and_call_original
 
         client.kitchen_sink
@@ -42,7 +42,7 @@ module WhiteLabel
         client = Client.new(stub_responses: true)
         expect(Seahorse::Middleware::Validate)
           .to receive(:new)
-                .with(anything, validator: Validators::KitchenSink, validate_input: false)
+                .with(anything, validator: Validators::KitchenSinkInput, validate_input: false)
                 .and_call_original
 
         client.kitchen_sink({}, validate_input: false)

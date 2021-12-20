@@ -5,10 +5,10 @@ namespace smithy.ruby.tests
 apply WhiteLabel @documentation("The test SDK.\nThis service should pass the tests.")
 
 // test operation documentation
-apply KitchenSinkOperation @documentation("The kitchen sink operation.\nIt is kinda useless.")
+apply KitchenSink @documentation("The kitchen sink operation.\nIt is kinda useless.")
 
 // test member/shape documentation resolution
-apply KitchenSink$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
+apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
 apply Struct @documentation("This docstring should be different than KitchenSink struct member.")
 
 // test union documentation
@@ -17,7 +17,7 @@ apply Union$String @documentation("This is a String member.\nStruct should also 
 
 // test examples trait
 // full request syntax should be rendered too
-apply KitchenSinkOperation @examples([
+apply KitchenSink @examples([
     {
         title: "Test input and output",
         input: {
