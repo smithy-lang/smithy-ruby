@@ -20,6 +20,7 @@ apply Union$String @documentation("This is a String member.\nStruct should also 
 apply KitchenSink @examples([
     {
         title: "Test input and output",
+        documentation: "Demonstrates setting a range of input values and getting different types of outputs.",
         input: {
             String: "Test",
             Struct: { value: "struct" },

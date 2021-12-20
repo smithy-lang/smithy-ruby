@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.CodegenException;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -68,6 +67,9 @@ public class TraitExampleGenerator {
     private final ObjectNode input;
     private final ObjectNode output;
     private final Optional<ExamplesTrait.ErrorExample> error;
+    private final String operationName;
+    private final Shape operationInput;
+    private final Shape operationOutput;
 
     public TraitExampleGenerator(OperationShape operation, SymbolProvider symbolProvider,
                                  Model model, ExamplesTrait.Example example) {
@@ -79,28 +81,60 @@ public class TraitExampleGenerator {
         this.input = example.getInput();
         this.output = example.getOutput();
         this.error = example.getError();
+
+        this.operationName =
+                RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        this.operationInput = model.expectShape(operation.getInput().orElseThrow(IllegalArgumentException::new));
+        this.operationOutput = model.expectShape(operation.getOutput().orElseThrow(IllegalArgumentException::new));
     }
 
     public String generate() {
-        Symbol symbol = symbolProvider.toSymbol(operation);
-        String operationName =
-                RubyFormatter.toSnakeCase(symbol.getName());
+        if (error.isPresent()) {
+            generateExampleWithError(error.get());
+        } else {
+            generateExample();
+        }
 
-        Shape operationInput = model.expectShape(operation.getInput().orElseThrow(IllegalArgumentException::new));
-        Shape operationOutput = model.expectShape(operation.getOutput().orElseThrow(IllegalArgumentException::new));
+        return writer.toString();
+    }
 
+    private void generateExample() {
+        generateExampleInput();
+        writer
+                .write("")
+                .write("resp.to_h outputs the following:")
+                .write(operationOutput.accept(new ParamsToHashVisitor(model, output, symbolProvider)));
+    }
+
+    private void generateExampleWithError(ExamplesTrait.ErrorExample errorExample) {
+
+        Shape errorShape = model.expectShape(errorExample.getShapeId());
+        writer.openBlock("begin");
+        generateExampleInput();
+
+        writer
+                .dedent()
+                .write("rescue ApiError => e")
+                .indent()
+                .write("puts e.class # $L", symbolProvider.toSymbol(errorShape).getName())
+                .write("puts e.data.to_h")
+                .closeBlock("end")
+                .write("")
+                .write("e.data.to_h outputs the following:")
+                .write(errorShape
+                        .accept(new ParamsToHashVisitor(model, errorExample.getContent(), symbolProvider)));
+    }
+
+    private void generateExampleInput() {
         if (input.isEmpty()) {
             writer.write("resp = client.$L()", operationName);
         } else {
             writer
+                    .writeYardDocstring(documentation.orElse(""))
                     .writeInline("resp = client.$L(", operationName)
                     .writeInline(operationInput.accept(new ParamsToHashVisitor(model, input, symbolProvider)))
-                    .write(")")
-                    .write("")
-                    .write("resp.to_h outputs the following:")
-                    .write(operationOutput.accept(new ParamsToHashVisitor(model, output, symbolProvider)));
+                    .write(")");
         }
-        return writer.toString();
     }
 
     private static class ParamsToHashVisitor extends ShapeVisitor.Default<String> {
