@@ -19,46 +19,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.BooleanNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeVisitor;
-import software.amazon.smithy.model.node.NullNode;
-import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
-import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
-import software.amazon.smithy.model.shapes.DocumentShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.FloatShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
-import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
-import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.ResourceShape;
-import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
@@ -68,7 +38,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.utils.StringUtils;
+import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
 
 public class HttpProtocolTestGenerator {
     private final GenerationContext context;
@@ -141,8 +111,7 @@ public class HttpProtocolTestGenerator {
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     .write("expect(output.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams(),
-                                    ParamsToHashVisitor.TestType.RESPONSE))
+                            getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
@@ -162,13 +131,11 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseStubMiddleware(testCase))
                     .write("middleware.remove_build")
                     .write("client.stub_responses(:$L, $L)", operationName,
-                            getRubyHashFromParams(outputShape, testCase.getParams(),
-                                    ParamsToHashVisitor.TestType.RESPONSE))
+                            getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     // Note: This part is not required, but its an additional check on parsers
                     .write("expect(output.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams(),
-                                    ParamsToHashVisitor.TestType.RESPONSE))
+                            getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
@@ -189,8 +156,7 @@ public class HttpProtocolTestGenerator {
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))
                     .write("client.$L($L, middleware: middleware)", operationName,
-                            getRubyHashFromParams(inputShape, testCase.getParams(),
-                                    ParamsToHashVisitor.TestType.REQUEST))
+                            getRubyHashFromParams(inputShape, testCase.getParams()))
                     .closeBlock("end");
         });
         writer.closeBlock("end");
@@ -217,8 +183,7 @@ public class HttpProtocolTestGenerator {
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
                             .write("expect(e.data.to_h).to eq($L)",
-                                    getRubyHashFromParams(error, testCase.getParams(),
-                                            ParamsToHashVisitor.TestType.RESPONSE))
+                                    getRubyHashFromParams(error, testCase.getParams()))
                             .closeBlock("end")
                             .closeBlock("end");
                 });
@@ -227,8 +192,8 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private String getRubyHashFromParams(Shape ioShape, ObjectNode params, ParamsToHashVisitor.TestType testType) {
-        return ioShape.accept(new ParamsToHashVisitor(model, params, testType, symbolProvider));
+    private String getRubyHashFromParams(Shape ioShape, ObjectNode params) {
+        return ioShape.accept(new ParamsToHash(model, params, symbolProvider));
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {
@@ -383,307 +348,5 @@ public class HttpProtocolTestGenerator {
                 .write("response = context.response")
                 .write("expect(response.status).to eq($L)", testCase.getCode())
                 .closeBlock("end");
-    }
-
-    private static class ParamsToHashVisitor implements ShapeVisitor<String> {
-
-        private final Node node;
-        private final Model model;
-        private final TestType testType;
-        private final SymbolProvider symbolProvider;
-
-        ParamsToHashVisitor(Model model, Node node, TestType testType, SymbolProvider symbolProvider) {
-            this.node = node;
-            this.model = model;
-            this.testType = testType;
-            this.symbolProvider = symbolProvider;
-        }
-
-        @Override
-        public String blobShape(BlobShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            StringNode stringNode = node.expectStringNode();
-            return "'" + stringNode.getValue() + "'";
-        }
-
-        @Override
-        public String booleanShape(BooleanShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            BooleanNode booleanNode = node.expectBooleanNode();
-            return booleanNode.getValue() ? "true" : "false";
-        }
-
-        @Override
-        public String listShape(ListShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ArrayNode arrayNode = node.expectArrayNode();
-            Shape target = model.expectShape(shape.getMember().getTarget());
-
-            String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType, symbolProvider)))
-                    .collect(Collectors.joining(", "));
-
-            return "[" + elements + "]";
-        }
-
-        @Override
-        public String setShape(SetShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ArrayNode arrayNode = node.expectArrayNode();
-            Shape target = model.expectShape(shape.getMember().getTarget());
-
-            String elements = arrayNode.getElements().stream()
-                    .map((element) -> target.accept(new ParamsToHashVisitor(model, element, testType, symbolProvider)))
-                    .collect(Collectors.joining(", "));
-
-            return "[" + elements + "]";
-        }
-
-        @Override
-        public String mapShape(MapShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ObjectNode objectNode = node.expectObjectNode();
-            Shape target = model.expectShape(shape.getValue().getTarget());
-            Map<StringNode, Node> members = objectNode.getMembers();
-
-            String memberStr = members.keySet().stream()
-                    .map((k) -> "'" + k.toString() + "' => "
-                            + target.accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider)))
-                    .collect(Collectors.joining(", "));
-
-            return "{" + memberStr + "}";
-        }
-
-        @Override
-        public String byteShape(ByteShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
-        }
-
-        @Override
-        public String shortShape(ShortShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
-        }
-
-        @Override
-        public String integerShape(IntegerShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
-        }
-
-        @Override
-        public String longShape(LongShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
-        }
-
-        @Override
-        public String floatShape(FloatShape shape) {
-            return rubyFloat();
-        }
-
-        @Override
-        public String documentShape(DocumentShape shape) {
-            return node.accept(new NodeToHashVisitor());
-        }
-
-        @Override
-        public String doubleShape(DoubleShape shape) {
-            return rubyFloat();
-        }
-
-        private String rubyFloat() {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            if (node.isStringNode()) {
-                StringNode stringNode = node.expectStringNode();
-                switch (stringNode.getValue()) {
-                    case "NaN":
-                        return "Float::NAN";
-                    case "Infinity":
-                        return "Float::INFINITY";
-                    case "-Infinity":
-                        return "-Float::INFINITY";
-                    default:
-                        throw new CodegenException("Unexpected string value for Float shape: "
-                                + node
-                                + " from: "
-                                + node.getSourceLocation());
-                }
-            } else {
-                NumberNode numberNode = node.expectNumberNode();
-                return numberNode.getValue().toString();
-            }
-        }
-
-        @Override
-        public String bigIntegerShape(BigIntegerShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
-        }
-
-        @Override
-        public String bigDecimalShape(BigDecimalShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            NumberNode numberNode = node.expectNumberNode();
-            return numberNode.getValue().toString();
-        }
-
-        @Override
-        public String operationShape(OperationShape shape) {
-            return null;
-        }
-
-        @Override
-        public String resourceShape(ResourceShape shape) {
-            return null;
-        }
-
-        @Override
-        public String serviceShape(ServiceShape shape) {
-            return null;
-        }
-
-        @Override
-        public String stringShape(StringShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            StringNode stringNode = node.expectStringNode();
-            return StringUtils.escapeJavaString(stringNode.getValue(), "");
-        }
-
-        @Override
-        public String structureShape(StructureShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ObjectNode objectNode = node.expectObjectNode();
-            Map<StringNode, Node> members = objectNode.getMembers();
-
-            Map<String, MemberShape> shapeMembers = shape.getAllMembers();
-
-            String memberStr = members.keySet().stream()
-                    .map((k) -> {
-                        MemberShape member = shapeMembers.get(k.toString());
-                        return symbolProvider.toMemberName(member) + ": "
-                                + (model.expectShape(member.getTarget()))
-                                .accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider));
-                    })
-                    .collect(Collectors.joining(", "));
-
-            return "{" + memberStr + "}";
-        }
-
-        @Override
-        public String unionShape(UnionShape shape) {
-            if (node.isNullNode()) {
-                return "nil";
-            }
-            ObjectNode objectNode = node.expectObjectNode();
-            Map<StringNode, Node> members = objectNode.getMembers();
-            Map<String, MemberShape> shapeMembers = shape.getAllMembers();
-
-            String memberStr = members.keySet().stream()
-                    .map((k) -> {
-                        MemberShape member = shapeMembers.get(k.toString());
-                        return RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member)) + ": "
-                                + (model.expectShape(member.getTarget()))
-                                .accept(new ParamsToHashVisitor(model, members.get(k), testType, symbolProvider));
-                    })
-                    .collect(Collectors.joining(", "));
-            return "{" + memberStr + "}";
-        }
-
-        @Override
-        public String memberShape(MemberShape shape) {
-            return null;
-        }
-
-        @Override
-        public String timestampShape(TimestampShape shape) {
-            if (node.isNullNode()) {
-                return "";
-            }
-            if (node.isNumberNode()) {
-                return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
-            }
-            return "Time.parse('" + node + "')";
-        }
-
-        enum TestType {
-            REQUEST,
-            RESPONSE
-        }
-    }
-
-    private static class NodeToHashVisitor implements NodeVisitor<String> {
-        @Override
-        public String arrayNode(ArrayNode node) {
-            String elements = node.getElements().stream()
-                    .map((element) -> element.accept(this))
-                    .collect(Collectors.joining(", "));
-
-            return "[" + elements + "]";
-        }
-
-        @Override
-        public String booleanNode(BooleanNode node) {
-            return node.getValue() ? "true" : "false";
-        }
-
-        @Override
-        public String nullNode(NullNode node) {
-            return "nil";
-        }
-
-        @Override
-        public String numberNode(NumberNode node) {
-            return node.getValue().toString();
-        }
-
-        @Override
-        public String objectNode(ObjectNode node) {
-            Map<StringNode, Node> members = node.getMembers();
-            String memberStr = members.keySet().stream()
-                    .map((k) -> "'" + RubyFormatter.toSnakeCase(k.toString()) + "' => " + members.get(k).accept(this))
-                    .collect(Collectors.joining(", "));
-
-            return "{" + memberStr + "}";
-        }
-
-        @Override
-        public String stringNode(StringNode node) {
-            return "'" + node.getValue() + "'";
-        }
     }
 }
