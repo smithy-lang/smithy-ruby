@@ -1,11 +1,13 @@
 $version: "1.0"
 namespace smithy.ruby.tests
 
-// test service is documented
+// test service documentation
 apply WhiteLabel @documentation("The test SDK.\nThis service should pass the tests.")
+apply WhiteLabel @deprecated(message: "This test SDK is not suitable\nfor production use.", since: "today")
 
 // test operation documentation
 apply KitchenSink @documentation("The kitchen sink operation.\nIt is kinda useless.")
+apply KitchenSink @deprecated(message: "This operation is not suitable\nfor production use.", since: "today")
 
 // test member/shape documentation resolution
 apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
@@ -14,6 +16,8 @@ apply Struct @documentation("This docstring should be different than KitchenSink
 // test union documentation
 apply Union @documentation("This is some union documentation.\nIt has some union members")
 apply Union$String @documentation("This is a String member.\nStruct should also be documented too because the structure is.")
+apply Union @deprecated(message: "This union is\ndeprecated.", since: "today")
+apply Union$Struct @deprecated(message: "This union structure is\ndeprecated.", since: "today")
 
 // test examples trait
 // full request syntax should be rendered too

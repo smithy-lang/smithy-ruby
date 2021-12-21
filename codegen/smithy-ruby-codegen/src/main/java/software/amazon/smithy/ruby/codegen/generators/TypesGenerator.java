@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -139,14 +140,21 @@ public class TypesGenerator {
                     shape.getMemberTrait(model, DocumentationTrait.class);
             writer.writeYardDocstring(documentationTraitOptional);
 
+            Optional<DeprecatedTrait> optionalDeprecatedTrait =
+                    shape.getTrait(DeprecatedTrait.class);
+            writer.writeYardDeprecated(optionalDeprecatedTrait);
+
             shape.members().forEach(memberShape -> {
                 Optional<DocumentationTrait> memberDocstringOptional =
                         memberShape.getMemberTrait(model, DocumentationTrait.class);
 
+                Optional<DeprecatedTrait> memberDeprecatedOptional =
+                        shape.getTrait(DeprecatedTrait.class);
+
                 String attribute = symbolProvider.toMemberName(memberShape);
                 Shape target = model.expectShape(memberShape.getTarget());
                 String returnValue = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
-                writer.writeYardAttribute(attribute, memberDocstringOptional, returnValue);
+                writer.writeYardAttribute(attribute, memberDocstringOptional, memberDeprecatedOptional, returnValue);
             });
         }
 
@@ -156,6 +164,10 @@ public class TypesGenerator {
                     shape.getMemberTrait(model, DocumentationTrait.class);
             writer.writeYardDocstring(documentationTraitOptional);
 
+            Optional<DeprecatedTrait> optionalDeprecatedTrait =
+                    shape.getTrait(DeprecatedTrait.class);
+            writer.writeYardDeprecated(optionalDeprecatedTrait);
+
             String shapeName = symbolProvider.toSymbol(shape).getName();
 
             writer.openBlock("class $L < Seahorse::Union", shapeName);
@@ -163,8 +175,13 @@ public class TypesGenerator {
             for (MemberShape memberShape : shape.members()) {
                 Optional<DocumentationTrait> memberDocstringOptional =
                         memberShape.getMemberTrait(model, DocumentationTrait.class);
+
+                Optional<DeprecatedTrait> memberDeprecatedOptional =
+                        memberShape.getTrait(DeprecatedTrait.class);
+
                 writer
                         .writeYardDocstring(memberDocstringOptional)
+                        .writeYardDeprecated(memberDeprecatedOptional)
                         .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                         .openBlock("def to_h")
                         .write("{ $L: super(__getobj__) }",

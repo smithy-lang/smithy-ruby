@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Optional;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.utils.CodeWriter;
 
@@ -75,10 +76,12 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public RubyCodeWriter writeYardAttribute(String attribute, String documentation, String returnType) {
+    public RubyCodeWriter writeYardAttribute(String attribute, String documentation, Boolean deprecated,
+                                             String deprecatedMessage, String deprecatedSince, String returnType) {
         rdoc(() -> {
             write("@!attribute $L", attribute);
             writeIndentedParts(documentation);
+            writeYardDeprecated(deprecated, deprecatedMessage, deprecatedSince);
             write("  @return [$L]", returnType);
             write("");
         });
@@ -86,12 +89,20 @@ public class RubyCodeWriter extends CodeWriter {
     }
 
     public RubyCodeWriter writeYardAttribute(String attribute, Optional<DocumentationTrait> optionalDocumentationTrait,
-                                     String returnType) {
+                                             Optional<DeprecatedTrait> optionalDeprecatedTrait, String returnType) {
         String docstring = "";
         if (optionalDocumentationTrait.isPresent()) {
             docstring = optionalDocumentationTrait.get().getValue();
         }
-        writeYardAttribute(attribute, docstring, returnType);
+        String deprecatedMessage = "";
+        String deprecatedSince = "";
+        Boolean deprecated = false;
+        if (optionalDeprecatedTrait.isPresent()) {
+            deprecated = true;
+            deprecatedMessage = optionalDeprecatedTrait.get().getMessage().orElse("");
+            deprecatedSince = optionalDeprecatedTrait.get().getSince().orElse("");
+        }
+        writeYardAttribute(attribute, docstring, deprecated, deprecatedMessage, deprecatedSince, returnType);
         return this;
     }
 
@@ -145,6 +156,30 @@ public class RubyCodeWriter extends CodeWriter {
             writeIndentedParts(block);
             write("");
         });
+        return this;
+    }
+
+    public RubyCodeWriter writeYardDeprecated(Optional<DeprecatedTrait> optionalDeprecatedTrait) {
+        if (optionalDeprecatedTrait.isPresent()) {
+            DeprecatedTrait deprecatedTrait = optionalDeprecatedTrait.get();
+            String message = deprecatedTrait.getMessage().orElse("");
+            String since = deprecatedTrait.getSince().orElse("");
+            writeYardDeprecated(true, message, since);
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeYardDeprecated(Boolean deprecated, String message, String since) {
+        if (deprecated) {
+            rdoc(() -> {
+                write("@deprecated");
+                writeIndentedParts(message);
+                if (!since.isEmpty()) {
+                    write("  Since: $L", since);
+                }
+                write("");
+            });
+        }
         return this;
     }
 

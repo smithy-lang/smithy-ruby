@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
@@ -108,7 +109,14 @@ public class ClientGenerator {
                 .openBlock("module $L", settings.getModule())
                 .write("# An API client for $L",
                         settings.getService().getName())
-                .write("# See {#initialize} for a full list of supported configuration options")
+                .write("# See {#initialize} for a full list of supported configuration options");
+
+
+        Optional<DeprecatedTrait> optionalDeprecatedTrait =
+                context.getService().getTrait(DeprecatedTrait.class);
+
+        writer
+                .writeYardDeprecated(optionalDeprecatedTrait)
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs")
                 .write("\n@middleware = Seahorse::MiddlewareBuilder.new")
@@ -320,6 +328,10 @@ public class ClientGenerator {
                 );
             });
         }
+
+        Optional<DeprecatedTrait> optionalDeprecatedTrait =
+                operation.getTrait(DeprecatedTrait.class);
+        writer.writeYardDeprecated(optionalDeprecatedTrait);
     }
 
     private void renderApplyMiddlewareMethod() {
