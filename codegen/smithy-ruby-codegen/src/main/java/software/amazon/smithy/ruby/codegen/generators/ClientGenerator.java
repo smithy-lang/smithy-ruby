@@ -42,6 +42,7 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.PlaceholderExampleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.docs.ResponseExampleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.docs.TraitExampleGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
@@ -315,6 +316,10 @@ public class ClientGenerator {
                 .writeYardExample(
                         "Request syntax with placeholder values",
                         new PlaceholderExampleGenerator(operation, symbolProvider, model).generate()
+                )
+                .writeYardExample(
+                        "Response structure",
+                        new ResponseExampleGenerator(operation, symbolProvider, model).generate()
                 );
 
         Optional<ExamplesTrait> examplesTraitOptional = operation.getTrait(ExamplesTrait.class);

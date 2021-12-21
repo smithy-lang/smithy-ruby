@@ -47,13 +47,13 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.utils.CodeWriter;
 
 public class PlaceholderExampleGenerator {
 
     private final OperationShape operation;
-    private final CodeWriter writer;
+    private final RubyCodeWriter writer;
     private final Set<ShapeId> visited;
     private final SymbolProvider symbolProvider;
     private final Model model;
@@ -63,7 +63,7 @@ public class PlaceholderExampleGenerator {
         this.operation = operation;
         this.symbolProvider = symbolProvider;
         this.model = model;
-        this.writer = CodeWriter.createDefault().setIndentText("  ");
+        this.writer = new RubyCodeWriter();
         this.visited = new HashSet<>();
     }
 

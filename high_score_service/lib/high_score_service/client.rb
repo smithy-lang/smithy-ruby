@@ -73,6 +73,17 @@ module HighScoreService
     #     } # required
     #   )
     #
+    # @example Response structure
+    #
+    #   resp #=> Types::CreateHighScoreOutput
+    #   resp.high_score #=> Types::HighScoreAttributes
+    #   resp.high_score.id #=> String
+    #   resp.high_score.game #=> String
+    #   resp.high_score.score #=> Integer
+    #   resp.high_score.created_at #=> Time
+    #   resp.high_score.updated_at #=> Time
+    #   resp.location #=> String
+    #
     def create_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
@@ -125,6 +136,10 @@ module HighScoreService
     #   resp = client.delete_high_score(
     #     id: 'id' # required
     #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::DeleteHighScoreOutput
     #
     def delete_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
@@ -179,6 +194,16 @@ module HighScoreService
     #     id: 'id' # required
     #   )
     #
+    # @example Response structure
+    #
+    #   resp #=> Types::GetHighScoreOutput
+    #   resp.high_score #=> Types::HighScoreAttributes
+    #   resp.high_score.id #=> String
+    #   resp.high_score.game #=> String
+    #   resp.high_score.score #=> Integer
+    #   resp.high_score.created_at #=> Time
+    #   resp.high_score.updated_at #=> Time
+    #
     def get_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
@@ -226,6 +251,17 @@ module HighScoreService
     # @example Request syntax with placeholder values
     #
     #   resp = client.list_high_scores()
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::ListHighScoresOutput
+    #   resp.high_scores #=> Array<HighScoreAttributes>
+    #   resp.high_scores[0] #=> Types::HighScoreAttributes
+    #   resp.high_scores[0].id #=> String
+    #   resp.high_scores[0].game #=> String
+    #   resp.high_scores[0].score #=> Integer
+    #   resp.high_scores[0].created_at #=> Time
+    #   resp.high_scores[0].updated_at #=> Time
     #
     def list_high_scores(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
@@ -286,6 +322,16 @@ module HighScoreService
     #       score: 1
     #     }
     #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::UpdateHighScoreOutput
+    #   resp.high_score #=> Types::HighScoreAttributes
+    #   resp.high_score.id #=> String
+    #   resp.high_score.game #=> String
+    #   resp.high_score.score #=> Integer
+    #   resp.high_score.created_at #=> Time
+    #   resp.high_score.updated_at #=> Time
     #
     def update_high_score(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
