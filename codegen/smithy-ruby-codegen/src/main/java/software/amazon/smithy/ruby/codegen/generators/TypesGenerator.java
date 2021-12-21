@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -143,6 +144,10 @@ public class TypesGenerator {
             Optional<DeprecatedTrait> optionalDeprecatedTrait =
                     shape.getTrait(DeprecatedTrait.class);
             writer.writeYardDeprecated(optionalDeprecatedTrait);
+
+            Optional<ExternalDocumentationTrait> optionalExternalDocumentationTrait =
+                    shape.getTrait(ExternalDocumentationTrait.class);
+            writer.writeYardSee(optionalExternalDocumentationTrait);
 
             shape.members().forEach(memberShape -> {
                 Optional<DocumentationTrait> memberDocstringOptional =

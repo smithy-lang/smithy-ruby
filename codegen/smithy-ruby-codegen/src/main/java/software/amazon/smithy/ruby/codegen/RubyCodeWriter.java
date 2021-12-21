@@ -15,9 +15,16 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.Map;
 import java.util.Optional;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
+import software.amazon.smithy.model.traits.RecommendedTrait;
+import software.amazon.smithy.model.traits.SinceTrait;
+import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class RubyCodeWriter extends CodeWriter {
@@ -179,6 +186,81 @@ public class RubyCodeWriter extends CodeWriter {
                 }
                 write("");
             });
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeYardSee(Optional<ExternalDocumentationTrait> optionalExternalDocumentationTrait) {
+        if (optionalExternalDocumentationTrait.isPresent()) {
+            ExternalDocumentationTrait externalDocumentationTrait = optionalExternalDocumentationTrait.get();
+            Map<String, String> urls = externalDocumentationTrait.getUrls();
+            writeYardSee(urls);
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeYardSee(Map<String, String> urls) {
+        if (!urls.isEmpty()) {
+            rdoc(() -> {
+                for (Map.Entry<String, String> entry : urls.entrySet()) {
+                    write("@see $L $L", entry.getValue(), entry.getKey());
+                }
+                write("");
+            });
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeYardNote(String note) {
+        if (!note.isEmpty()) {
+            rdoc(() -> {
+                write("@note");
+                writeIndentedParts(note);
+                write("");
+            });
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeInternalTrait(Optional<InternalTrait> optionalInternalTrait) {
+        if (optionalInternalTrait.isPresent()) {
+            writeYardNote("This shape is meant for internal use only.");
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeRecommendedTrait(Optional<RecommendedTrait> optionalRecommendedTrait) {
+        if (optionalRecommendedTrait.isPresent()) {
+            Optional<String> optionalReason = optionalRecommendedTrait.get().getReason();
+            if (optionalReason.isPresent()) {
+                String documentation = "This shape is recommended.\nReason: " + optionalReason.get();
+                writeYardNote(documentation);
+            }
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeSinceTrait(String since) {
+        if (!since.isEmpty()) {
+            rdoc(() -> {
+                write("@since $L", since);
+                write("");
+            });
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeSinceTrait(Optional<SinceTrait> optionalSinceTrait) {
+        if (optionalSinceTrait.isPresent()) {
+            String since = optionalSinceTrait.get().getValue();
+            writeSinceTrait(since);
+        }
+        return this;
+    }
+
+    public RubyCodeWriter writeUnstableTrait(Optional<UnstableTrait> optionalUnstableTrait) {
+        if (optionalUnstableTrait.isPresent()) {
+            writeYardNote("This shape is unstable and may change in the future.");
         }
         return this;
     }
