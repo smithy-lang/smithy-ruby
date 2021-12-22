@@ -95,7 +95,20 @@ public abstract class HttpBuilderGeneratorBase {
                 topDownIndex.getContainedOperations(context.getService()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(o -> renderBuildersForOperation(o));
+                .forEach(o -> {
+                    Shape inputShape = model.expectShape(o.getInput().orElseThrow(IllegalArgumentException::new));
+                    renderBuildersForOperation(o);
+                    generatedBuilders.add(o.toShapeId());
+
+                    Iterator<Shape> it = new Walker(model).iterateShapes(inputShape);
+                    while (it.hasNext()) {
+                        Shape s = it.next();
+                        if (!generatedBuilders.contains(s.getId())) {
+                            generatedBuilders.add(s.getId());
+                            s.accept(new BuilderClassGenerator());
+                        }
+                    }
+                });
     }
 
     protected void renderBuildersForOperation(OperationShape operation) {
@@ -122,17 +135,6 @@ public abstract class HttpBuilderGeneratorBase {
                 .call(() -> renderOperationBodyBuilder(operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
-
-        generatedBuilders.add(operation.toShapeId());
-
-        Iterator<Shape> it = new Walker(model).iterateShapes(inputShape);
-        while (it.hasNext()) {
-            Shape s = it.next();
-            if (!generatedBuilders.contains(s.getId())) {
-                generatedBuilders.add(s.getId());
-                s.accept(new BuilderClassGenerator());
-            }
-        }
     }
 
 
