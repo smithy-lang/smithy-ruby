@@ -78,6 +78,7 @@ public abstract class HttpBuilderGeneratorBase {
     public void render(FileManifest fileManifest) {
 
         writer
+                .writePreamble()
                 .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Builders")
@@ -113,7 +114,6 @@ public abstract class HttpBuilderGeneratorBase {
     }
 
     protected void renderBuildersForOperation(OperationShape operation, Shape inputShape) {
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         Symbol symbol = symbolProvider.toSymbol(operation);
 
         writer
@@ -121,7 +121,11 @@ public abstract class HttpBuilderGeneratorBase {
                 .write("# Operation Builder for $L", operation.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(http_req, input:)")
-                .write("http_req.http_method = '$L'", httpTrait.getMethod())
+                .call(() -> {
+                    operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
+                        writer.write("http_req.http_method = '$L'", httpTrait.getMethod());
+                    });
+                })
                 .call(() -> renderUriBuilder(operation, inputShape))
                 .call(() -> renderQueryInputBuilder(operation, inputShape))
                 .call(() -> renderHeadersBuilder(operation, inputShape))
