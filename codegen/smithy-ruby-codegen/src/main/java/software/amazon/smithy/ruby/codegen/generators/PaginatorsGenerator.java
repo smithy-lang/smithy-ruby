@@ -147,7 +147,7 @@ public class PaginatorsGenerator {
     private void renderPaginatorInitializeDocumentation(String operationName) {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
-        writer.rdoc(() -> writer
+        writer.doc(() -> writer
                 .write("@param [Client] client")
                 .write("@param [Hash] params (see Client#$L)", snakeOperationName)
                 .write("@param [Hash] options (see Client#$L)", snakeOperationName));
@@ -181,7 +181,7 @@ public class PaginatorsGenerator {
     }
 
     private void renderPaginatorPagesDocumentation(String snakeOperationName) {
-        writer.rdoc(() -> writer
+        writer.doc(() -> writer
                 .write("Iterate all response pages of the $L operation.", snakeOperationName)
                 .write("@return [Enumerator]"));
     }
@@ -207,7 +207,7 @@ public class PaginatorsGenerator {
 
     private void renderPaginatorItemsDocumentation(String operationName) {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
-        writer.rdoc(() -> writer
+        writer.doc(() -> writer
                 .write("Iterate all items from pages in the $L operation.", snakeOperationName)
                 .write("@return [Enumerator]"));
     }

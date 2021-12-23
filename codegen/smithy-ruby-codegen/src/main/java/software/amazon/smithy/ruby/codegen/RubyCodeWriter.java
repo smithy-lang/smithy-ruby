@@ -15,16 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.Map;
-import java.util.Optional;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.traits.DeprecatedTrait;
-import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
-import software.amazon.smithy.model.traits.InternalTrait;
-import software.amazon.smithy.model.traits.RecommendedTrait;
-import software.amazon.smithy.model.traits.SinceTrait;
-import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.utils.CodeWriter;
 
 public class RubyCodeWriter extends CodeWriter {
@@ -45,7 +35,7 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public RubyCodeWriter rdoc(Runnable task) {
+    public RubyCodeWriter doc(Runnable task) {
         pushState();
         setNewlinePrefix("# ");
         task.run();
@@ -60,61 +50,29 @@ public class RubyCodeWriter extends CodeWriter {
         popState();
     }
 
-
     /*
      * YARD convenience methods
      */
-
-    public RubyCodeWriter writeYardDocstring(String docstring) {
-        if (!docstring.isEmpty()) {
-            rdoc(() -> {
-                write(docstring);
-                write("");
-            });
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeYardDocstring(Optional<DocumentationTrait> optionalDocumentationTrait) {
-        if (optionalDocumentationTrait.isPresent()) {
-            String docstring = optionalDocumentationTrait.get().getValue();
-            writeYardDocstring(docstring);
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeYardAttribute(String attribute, String documentation, Boolean deprecated,
-                                             String deprecatedMessage, String deprecatedSince, String returnType) {
-        rdoc(() -> {
+    public RubyCodeWriter writeYardAttribute(String attribute, Runnable task) {
+        doc(() -> {
             write("@!attribute $L", attribute);
-            writeIndentedParts(documentation);
-            writeYardDeprecated(deprecated, deprecatedMessage, deprecatedSince);
-            write("  @return [$L]", returnType);
+            pushFilteredState(s -> s.replace("#", " "));
+            task.run();
+            popState();
+        });
+        return this;
+    }
+
+    public RubyCodeWriter writeDocstring(String docstring) {
+        doc(() -> {
+            write(docstring);
             write("");
         });
         return this;
     }
 
-    public RubyCodeWriter writeYardAttribute(String attribute, Optional<DocumentationTrait> optionalDocumentationTrait,
-                                             Optional<DeprecatedTrait> optionalDeprecatedTrait, String returnType) {
-        String docstring = "";
-        if (optionalDocumentationTrait.isPresent()) {
-            docstring = optionalDocumentationTrait.get().getValue();
-        }
-        String deprecatedMessage = "";
-        String deprecatedSince = "";
-        Boolean deprecated = false;
-        if (optionalDeprecatedTrait.isPresent()) {
-            deprecated = true;
-            deprecatedMessage = optionalDeprecatedTrait.get().getMessage().orElse("");
-            deprecatedSince = optionalDeprecatedTrait.get().getSince().orElse("");
-        }
-        writeYardAttribute(attribute, docstring, deprecated, deprecatedMessage, deprecatedSince, returnType);
-        return this;
-    }
-
     public RubyCodeWriter writeYardParam(String returnType, String param, String documentation) {
-        rdoc(() -> {
+        doc(() -> {
             write("@param [$L] $L", returnType, param);
             writeIndentedParts(documentation);
             write("");
@@ -124,7 +82,7 @@ public class RubyCodeWriter extends CodeWriter {
 
     public RubyCodeWriter writeYardOption(String param, String type, String option, String defaultValue,
                                           String documentation) {
-        rdoc(() -> {
+        doc(() -> {
             writeInline("@option $L [$L] $L", param, type, option);
             if (!defaultValue.isEmpty()) {
                 write("($S)", defaultValue);
@@ -137,18 +95,8 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public RubyCodeWriter writeYardOption(String param, String type, String option, String defaultValue,
-                                          Optional<DocumentationTrait> optionalDocumentationTrait) {
-        String docstring = "";
-        if (optionalDocumentationTrait.isPresent()) {
-            docstring = optionalDocumentationTrait.get().getValue();
-        }
-        writeYardOption(param, type, option, defaultValue, docstring);
-        return this;
-    }
-
     public RubyCodeWriter writeYardReturn(String returnType, String documentation) {
-        rdoc(() -> {
+        doc(() -> {
             write("@return [$L]", returnType);
             writeIndentedParts(documentation);
             write("");
@@ -157,7 +105,7 @@ public class RubyCodeWriter extends CodeWriter {
     }
 
     public RubyCodeWriter writeYardExample(String title, String block) {
-        rdoc(() -> {
+        doc(() -> {
             write("@example $L", title);
             write("");
             writeIndentedParts(block);
@@ -166,102 +114,40 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public RubyCodeWriter writeYardDeprecated(Optional<DeprecatedTrait> optionalDeprecatedTrait) {
-        if (optionalDeprecatedTrait.isPresent()) {
-            DeprecatedTrait deprecatedTrait = optionalDeprecatedTrait.get();
-            String message = deprecatedTrait.getMessage().orElse("");
-            String since = deprecatedTrait.getSince().orElse("");
-            writeYardDeprecated(true, message, since);
-        }
+    public RubyCodeWriter writeYardDeprecated(String message, String since) {
+        doc(() -> {
+            write("@deprecated");
+            writeIndentedParts(message);
+            if (!since.isEmpty()) {
+                write("  Since: $L", since);
+            }
+            write("");
+        });
         return this;
     }
 
-    public RubyCodeWriter writeYardDeprecated(Boolean deprecated, String message, String since) {
-        if (deprecated) {
-            rdoc(() -> {
-                write("@deprecated");
-                writeIndentedParts(message);
-                if (!since.isEmpty()) {
-                    write("  Since: $L", since);
-                }
-                write("");
-            });
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeYardSee(Optional<ExternalDocumentationTrait> optionalExternalDocumentationTrait) {
-        if (optionalExternalDocumentationTrait.isPresent()) {
-            ExternalDocumentationTrait externalDocumentationTrait = optionalExternalDocumentationTrait.get();
-            Map<String, String> urls = externalDocumentationTrait.getUrls();
-            writeYardSee(urls);
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeYardSee(Map<String, String> urls) {
-        if (!urls.isEmpty()) {
-            rdoc(() -> {
-                for (Map.Entry<String, String> entry : urls.entrySet()) {
-                    write("@see $L $L", entry.getValue(), entry.getKey());
-                }
-                write("");
-            });
-        }
+    public RubyCodeWriter writeYardSee(String url, String description) {
+        doc(() -> {
+            write("@see $L $L", url, description);
+            write("");
+        });
         return this;
     }
 
     public RubyCodeWriter writeYardNote(String note) {
-        if (!note.isEmpty()) {
-            rdoc(() -> {
-                write("@note");
-                writeIndentedParts(note);
-                write("");
-            });
-        }
+        doc(() -> {
+            write("@note");
+            writeIndentedParts(note);
+            write("");
+        });
         return this;
     }
 
-    public RubyCodeWriter writeInternalTrait(Optional<InternalTrait> optionalInternalTrait) {
-        if (optionalInternalTrait.isPresent()) {
-            writeYardNote("This shape is meant for internal use only.");
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeRecommendedTrait(Optional<RecommendedTrait> optionalRecommendedTrait) {
-        if (optionalRecommendedTrait.isPresent()) {
-            Optional<String> optionalReason = optionalRecommendedTrait.get().getReason();
-            if (optionalReason.isPresent()) {
-                String documentation = "This shape is recommended.\nReason: " + optionalReason.get();
-                writeYardNote(documentation);
-            }
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeSinceTrait(String since) {
-        if (!since.isEmpty()) {
-            rdoc(() -> {
-                write("@since $L", since);
-                write("");
-            });
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeSinceTrait(Optional<SinceTrait> optionalSinceTrait) {
-        if (optionalSinceTrait.isPresent()) {
-            String since = optionalSinceTrait.get().getValue();
-            writeSinceTrait(since);
-        }
-        return this;
-    }
-
-    public RubyCodeWriter writeUnstableTrait(Optional<UnstableTrait> optionalUnstableTrait) {
-        if (optionalUnstableTrait.isPresent()) {
-            writeYardNote("This shape is unstable and may change in the future.");
-        }
+    public RubyCodeWriter writeYardSince(String since) {
+        doc(() -> {
+            write("@since $L", since);
+            write("");
+        });
         return this;
     }
 

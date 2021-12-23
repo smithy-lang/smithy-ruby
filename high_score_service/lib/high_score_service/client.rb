@@ -10,6 +10,8 @@
 module HighScoreService
   # An API client for HighScoreService
   # See {#initialize} for a full list of supported configuration options
+  # Rails High Score example from their generator docs
+  #
   class Client
     include Seahorse::ClientStubs
 

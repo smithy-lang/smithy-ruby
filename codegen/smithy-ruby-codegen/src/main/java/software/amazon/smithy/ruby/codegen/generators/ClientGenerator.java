@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -27,23 +26,16 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.DeprecatedTrait;
-import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.ruby.codegen.generators.docs.PlaceholderExampleGenerator;
-import software.amazon.smithy.ruby.codegen.generators.docs.ResponseExampleGenerator;
-import software.amazon.smithy.ruby.codegen.generators.docs.TraitExampleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -112,12 +104,10 @@ public class ClientGenerator {
                         settings.getService().getName())
                 .write("# See {#initialize} for a full list of supported configuration options");
 
-
-        Optional<DeprecatedTrait> optionalDeprecatedTrait =
-                context.getService().getTrait(DeprecatedTrait.class);
+        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.getService()).render();
 
         writer
-                .writeYardDeprecated(optionalDeprecatedTrait)
+                .writeInline(documentation)
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs")
                 .write("\n@middleware = Seahorse::MiddlewareBuilder.new")
@@ -199,7 +189,7 @@ public class ClientGenerator {
 
     private void renderInitializeDocumentation() {
         writer.write("");
-        writer.rdoc(() -> {
+        writer.doc(() -> {
             writer.write("@overload initialize(options)");
             writer.write("@param [Hash] options");
             clientConfig.forEach((cfg) -> {
@@ -246,9 +236,12 @@ public class ClientGenerator {
         Shape inputShape = model.expectShape(inputShapeId);
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
+
+        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, operation).render();
+
         writer
                 .write("")
-                .call(() -> renderOperationDocumentation(operation))
+                .writeInline(documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
@@ -281,62 +274,6 @@ public class ClientGenerator {
 
         rbsWriter.write("def $L: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options)"
                 + "{ () -> untyped } -> untyped", operationName);
-    }
-
-    private void renderOperationDocumentation(OperationShape operation) {
-        Shape inputShape = model.expectShape(operation.getInput().get());
-        String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
-        String inputShapeDocumentation = "See {Types::" + inputShapeName + "}.";
-
-        Optional<DocumentationTrait> optionalDocumentationTrait =
-                operation.getTrait(DocumentationTrait.class);
-
-        writer
-                .writeYardDocstring(optionalDocumentationTrait)
-                .writeYardParam("Hash", "params", inputShapeDocumentation);
-
-        ShapeId inputShapeId = operation.getInput().get();
-        StructureShape input =
-                model.expectShape(inputShapeId).asStructureShape().get();
-        for (MemberShape memberShape : input.members()) {
-            Shape target = model.expectShape(memberShape.getTarget());
-            String param = ":" + symbolProvider.toMemberName(memberShape);
-            Optional<DocumentationTrait> memberDoc = memberShape.getTrait(DocumentationTrait.class);
-            String type = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
-
-            writer.writeYardOption("params", type, param, "", memberDoc);
-        }
-
-        Shape outputShape = model.expectShape(operation.getOutput().get());
-        String outputShapeName = symbolProvider.toSymbol(outputShape).getName();
-        String outputShapeType = "Types::" + outputShapeName;
-
-        writer
-                .writeYardReturn(outputShapeType, "")
-                .writeYardExample(
-                        "Request syntax with placeholder values",
-                        new PlaceholderExampleGenerator(operation, symbolProvider, model).generate()
-                )
-                .writeYardExample(
-                        "Response structure",
-                        new ResponseExampleGenerator(operation, symbolProvider, model).generate()
-                );
-
-        Optional<ExamplesTrait> examplesTraitOptional = operation.getTrait(ExamplesTrait.class);
-        if (examplesTraitOptional.isPresent()) {
-            List<ExamplesTrait.Example> examples = examplesTraitOptional.get().getExamples();
-            examples.forEach((example) -> {
-                String title = example.getTitle();
-                writer.writeYardExample(
-                        title,
-                        new TraitExampleGenerator(operation, symbolProvider, model, example).generate()
-                );
-            });
-        }
-
-        Optional<DeprecatedTrait> optionalDeprecatedTrait =
-                operation.getTrait(DeprecatedTrait.class);
-        writer.writeYardDeprecated(optionalDeprecatedTrait);
     }
 
     private void renderApplyMiddlewareMethod() {

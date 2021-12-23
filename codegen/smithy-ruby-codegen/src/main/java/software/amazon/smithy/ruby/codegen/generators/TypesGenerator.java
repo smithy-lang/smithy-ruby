@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -29,15 +28,13 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.DeprecatedTrait;
-import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 
 public class TypesGenerator {
     private final GenerationContext context;
@@ -96,11 +93,11 @@ public class TypesGenerator {
         Model modelWithoutTraitShapes = ModelTransformer.create()
                 .getModelWithoutTraitShapes(model);
 
-        Set<Shape> serviceShapes = new TreeSet<>(
+        Set<Shape> shapes = new TreeSet<>(
                 new Walker(modelWithoutTraitShapes)
                         .walkShapes(context.getService()));
 
-        for (Shape shape : serviceShapes) {
+        for (Shape shape : shapes) {
             shape.accept(visitor);
         }
     }
@@ -125,8 +122,26 @@ public class TypesGenerator {
             }
             membersBlock += ",";
 
+            String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
+
+            writer.writeInline(documentation);
+
+            shape.members().forEach(memberShape -> {
+                String attribute = symbolProvider.toMemberName(memberShape);
+                Shape target = model.expectShape(memberShape.getTarget());
+                String returnType = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
+
+                String memberDocumentation =
+                        new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
+
+                writer.writeYardAttribute(attribute, () -> {
+                    // delegate to member shape in this visitor
+                    writer.writeInline(memberDocumentation);
+                    writer.writeYardReturn(returnType, "");
+                });
+            });
+
             writer
-                    .call(() -> renderStructureDocumentation(shape))
                     .openBlock(shapeName + " = Struct.new(")
                     .write(membersBlock)
                     .write("keyword_init: true")
@@ -136,57 +151,20 @@ public class TypesGenerator {
             return null;
         }
 
-        private void renderStructureDocumentation(StructureShape shape) {
-            Optional<DocumentationTrait> documentationTraitOptional =
-                    shape.getMemberTrait(model, DocumentationTrait.class);
-            writer.writeYardDocstring(documentationTraitOptional);
-
-            Optional<DeprecatedTrait> optionalDeprecatedTrait =
-                    shape.getTrait(DeprecatedTrait.class);
-            writer.writeYardDeprecated(optionalDeprecatedTrait);
-
-            Optional<ExternalDocumentationTrait> optionalExternalDocumentationTrait =
-                    shape.getTrait(ExternalDocumentationTrait.class);
-            writer.writeYardSee(optionalExternalDocumentationTrait);
-
-            shape.members().forEach(memberShape -> {
-                Optional<DocumentationTrait> memberDocstringOptional =
-                        memberShape.getMemberTrait(model, DocumentationTrait.class);
-
-                Optional<DeprecatedTrait> memberDeprecatedOptional =
-                        shape.getTrait(DeprecatedTrait.class);
-
-                String attribute = symbolProvider.toMemberName(memberShape);
-                Shape target = model.expectShape(memberShape.getTarget());
-                String returnValue = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
-                writer.writeYardAttribute(attribute, memberDocstringOptional, memberDeprecatedOptional, returnValue);
-            });
-        }
-
         @Override
         public Void unionShape(UnionShape shape) {
-            Optional<DocumentationTrait> documentationTraitOptional =
-                    shape.getMemberTrait(model, DocumentationTrait.class);
-            writer.writeYardDocstring(documentationTraitOptional);
-
-            Optional<DeprecatedTrait> optionalDeprecatedTrait =
-                    shape.getTrait(DeprecatedTrait.class);
-            writer.writeYardDeprecated(optionalDeprecatedTrait);
-
+            String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
             String shapeName = symbolProvider.toSymbol(shape).getName();
 
+            writer.writeInline(documentation);
             writer.openBlock("class $L < Seahorse::Union", shapeName);
 
             for (MemberShape memberShape : shape.members()) {
-                Optional<DocumentationTrait> memberDocstringOptional =
-                        memberShape.getMemberTrait(model, DocumentationTrait.class);
-
-                Optional<DeprecatedTrait> memberDeprecatedOptional =
-                        memberShape.getTrait(DeprecatedTrait.class);
+                String memberDocumentation =
+                        new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
 
                 writer
-                        .writeYardDocstring(memberDocstringOptional)
-                        .writeYardDeprecated(memberDeprecatedOptional)
+                        .writeInline(memberDocumentation)
                         .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                         .openBlock("def to_h")
                         .write("{ $L: super(__getobj__) }",
@@ -196,7 +174,7 @@ public class TypesGenerator {
             }
 
             writer
-                    .writeYardDocstring("Handles unknown future members")
+                    .writeDocstring("Handles unknown future members")
                     .openBlock("class Unknown < $L", shapeName)
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")

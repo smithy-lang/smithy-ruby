@@ -14,20 +14,25 @@ module HighScoreService
     #
     # @!attribute id
     #   The high score id
+    #
     #   @return [String]
     #
     # @!attribute game
     #   The game for the high score
+    #
     #   @return [String]
     #
     # @!attribute score
     #   The high score for the game
+    #
     #   @return [Integer]
     #
     # @!attribute created_at
+    #
     #   @return [Time]
     #
     # @!attribute updated_at
+    #
     #   @return [Time]
     #
     HighScoreAttributes = Struct.new(
@@ -43,10 +48,12 @@ module HighScoreService
     #
     # @!attribute game
     #   The game for the high score
+    #
     #   @return [String]
     #
     # @!attribute score
     #   The high score for the game
+    #
     #   @return [Integer]
     #
     HighScoreParams = Struct.new(
@@ -56,6 +63,7 @@ module HighScoreService
     ) { include Seahorse::Structure }
 
     # @!attribute errors
+    #
     #   @return [Hash<String, Array<String>>]
     #
     UnprocessableEntityError = Struct.new(
@@ -67,6 +75,7 @@ module HighScoreService
     #
     # @!attribute high_score
     #   The high score params
+    #
     #   @return [HighScoreParams]
     #
     CreateHighScoreInput = Struct.new(
@@ -78,10 +87,12 @@ module HighScoreService
     #
     # @!attribute high_score
     #   The high score attributes
+    #
     #   @return [HighScoreAttributes]
     #
     # @!attribute location
     #   The location of the high score
+    #
     #   @return [String]
     #
     CreateHighScoreOutput = Struct.new(
@@ -94,6 +105,7 @@ module HighScoreService
     #
     # @!attribute id
     #   The high score id
+    #
     #   @return [String]
     #
     DeleteHighScoreInput = Struct.new(
@@ -112,6 +124,7 @@ module HighScoreService
     #
     # @!attribute id
     #   The high score id
+    #
     #   @return [String]
     #
     GetHighScoreInput = Struct.new(
@@ -123,6 +136,7 @@ module HighScoreService
     #
     # @!attribute high_score
     #   The high score attributes
+    #
     #   @return [HighScoreAttributes]
     #
     GetHighScoreOutput = Struct.new(
@@ -139,6 +153,7 @@ module HighScoreService
     #
     # @!attribute high_scores
     #   A list of high scores
+    #
     #   @return [Array<HighScoreAttributes>]
     #
     ListHighScoresOutput = Struct.new(
@@ -150,10 +165,12 @@ module HighScoreService
     #
     # @!attribute id
     #   The high score id
+    #
     #   @return [String]
     #
     # @!attribute high_score
     #   The high score params
+    #
     #   @return [HighScoreParams]
     #
     UpdateHighScoreInput = Struct.new(
@@ -166,6 +183,7 @@ module HighScoreService
     #
     # @!attribute high_score
     #   The high score attributes
+    #
     #   @return [HighScoreAttributes]
     #
     UpdateHighScoreOutput = Struct.new(

@@ -99,7 +99,7 @@ public class TraitExampleGenerator {
             writer.write("resp = client.$L()", operationName);
         } else {
             writer
-                    .writeYardDocstring(documentation.orElse(""))
+                    .writeDocstring(documentation.orElse(""))
                     .writeInline("resp = client.$L(", operationName)
                     .writeInline(operationInput.accept(new ParamsToHash(model, input, symbolProvider)))
                     .write(")");

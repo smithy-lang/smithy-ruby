@@ -105,7 +105,7 @@ public class HttpProtocolTestGenerator {
         responseTests.getTestCases().forEach((testCase) -> {
             String documentation = testCase.getDocumentation().orElse("");
             writer
-                    .writeYardDocstring(documentation)
+                    .writeDocstring(documentation)
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
@@ -126,7 +126,7 @@ public class HttpProtocolTestGenerator {
         responseTests.getTestCases().forEach((testCase) -> {
             String documentation = testCase.getDocumentation().orElse("");
             writer
-                    .writeYardDocstring(documentation)
+                    .writeDocstring(documentation)
                     .openBlock("it 'stubs $L' do", testCase.getId())
                     .call(() -> renderResponseStubMiddleware(testCase))
                     .write("middleware.remove_build")
@@ -152,7 +152,7 @@ public class HttpProtocolTestGenerator {
             }
             String documentation = testCase.getDocumentation().orElse("");
             writer
-                    .writeYardDocstring(documentation)
+                    .writeDocstring(documentation)
                     .openBlock("it '$L' do", testCase.getId())
                     .call(() -> renderRequestMiddleware(testCase))
                     .write("client.$L($L, middleware: middleware)", operationName,
@@ -173,7 +173,7 @@ public class HttpProtocolTestGenerator {
                     String documentation = testCase.getDocumentation().orElse("");
 
                     writer
-                            .writeYardDocstring(documentation)
+                            .writeDocstring(documentation)
                             .openBlock("it '$L' do", testCase.getId())
                             .call(() -> renderResponseMiddleware(testCase))
                             .write("middleware.remove_send.remove_build")
