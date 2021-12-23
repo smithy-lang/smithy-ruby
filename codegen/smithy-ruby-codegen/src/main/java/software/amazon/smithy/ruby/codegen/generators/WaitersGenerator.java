@@ -56,6 +56,7 @@ public class WaitersGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters())
@@ -71,6 +72,7 @@ public class WaitersGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         rbsWriter
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderRbsWaiters())
@@ -169,7 +171,7 @@ public class WaitersGenerator {
 
     private void renderWaiterDocumentation(Waiter waiter) {
         if (waiter.getDocumentation().isPresent()) {
-            writer.rdoc(() -> writer.write(StringUtils.wrap(waiter.getDocumentation().get(), 74)));
+            writer.doc(() -> writer.write(StringUtils.wrap(waiter.getDocumentation().get(), 74)));
         }
     }
 
@@ -219,7 +221,7 @@ public class WaitersGenerator {
 
     private void renderWaiterWaitDocumentation(String operationName) {
         writer
-                .rdoc(() -> writer
+                .doc(() -> writer
                         .write("@param [Hash] params (see Client#$L)", operationName)
                         .write("@param [Hash] options (see Client#$L)", operationName)
                         .write("@return (see Client#$L)", operationName));
@@ -233,7 +235,7 @@ public class WaitersGenerator {
         String maxDelay = "@option options [Integer] :max_delay (" + waiter.getMaxDelay() + ") The maximum time in "
                 + "seconds to delay polling attempts.";
 
-        writer.rdoc(() -> writer
+        writer.doc(() -> writer
                 .write("@param [Client] client")
                 .write("@param [Hash] options")
                 .write(StringUtils.wrap(maxWaitTime, 72))

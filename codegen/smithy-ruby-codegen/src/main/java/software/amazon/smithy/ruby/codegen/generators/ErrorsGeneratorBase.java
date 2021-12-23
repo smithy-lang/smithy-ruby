@@ -52,6 +52,7 @@ public abstract class ErrorsGeneratorBase {
 
     public void render(FileManifest fileManifest) {
         writer
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")
@@ -68,6 +69,7 @@ public abstract class ErrorsGeneratorBase {
 
     public void renderRbs(FileManifest fileManifest) {
         rbsWriter
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")
@@ -159,13 +161,23 @@ public abstract class ErrorsGeneratorBase {
     private void renderServiceModelError(String errorName, String apiErrorType) {
         writer
                 .write("")
-                .openBlock("class $L < $L", errorName, apiErrorType)
+                .openBlock("class $L < $L", errorName, apiErrorType);
+
+        writer
+                .writeYardParam("Seahorse::HTTP::Response", "http_resp", "")
+                .writeYardParam("String", "error_code", "")
+                .writeYardParam("String", "message", "");
+
+        writer
                 .openBlock("def initialize(http_resp:, **kwargs)")
                 .write("@data = Parsers::$L.parse(http_resp)", errorName)
                 .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                 .write("super(http_resp: http_resp, **kwargs)")
                 .closeBlock("end")
-                .write("")
+                .write("");
+
+        writer
+                .writeYardReturn("Types::" + errorName, "")
                 .write("attr_reader :data")
                 .closeBlock("end");
     }

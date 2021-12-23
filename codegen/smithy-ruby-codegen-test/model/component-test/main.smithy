@@ -8,7 +8,6 @@ use smithy.ruby.tests.protocols#fakeProtocol
 service WhiteLabel {
     version: "2018-01-01",
     operations: [
-        ErrorsTest,
         KitchenSink,
         PaginatorsTest,
         PaginatorsTestWithItems,
@@ -17,16 +16,21 @@ service WhiteLabel {
 }
 
 operation KitchenSink {
-    input: KitchenSinkInput
+    input: KitchenSinkInputOutput,
+    output: KitchenSinkInputOutput,
+    errors: [ClientError, ServerError],
 }
 
-structure KitchenSinkInput {
+structure KitchenSinkInputOutput {
     // simple member
     String: String,
+
     // complex member
     Struct: Struct,
+
     // document member
     Document: Document,
+
     // collections (simple + complex)
     ListOfStrings: ListOfStrings,
     ListOfStructs: ListOfStructs,
@@ -34,6 +38,7 @@ structure KitchenSinkInput {
     MapOfStructs: MapOfStructs,
     SetOfStrings: SetOfStrings,
     SetOfStructs: SetOfStructs,
+
     // union member
     Union: Union,
 }
@@ -72,3 +77,11 @@ union Union {
     String: String,
     Struct: Struct,
 }
+
+@error("client")
+structure ClientError {
+  Message: String
+}
+
+@error("server")
+structure ServerError {}

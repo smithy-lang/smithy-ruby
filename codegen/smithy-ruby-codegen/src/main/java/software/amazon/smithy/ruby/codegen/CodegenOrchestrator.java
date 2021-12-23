@@ -255,6 +255,7 @@ public class CodegenOrchestrator {
             FileManifest fileManifest = context.getFileManifest();
             CodeWriter writer = new CodeWriter();
             writer.write("--title \"$L\"", title.get().getValue());
+            writer.write("--hide-api private");
             String fileName = context.getRubySettings().getGemName() + "/.yardopts";
             fileManifest.writeFile(fileName, writer.toString());
         }
