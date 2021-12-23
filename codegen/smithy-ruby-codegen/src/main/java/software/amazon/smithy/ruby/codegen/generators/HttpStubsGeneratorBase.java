@@ -239,7 +239,8 @@ public abstract class HttpStubsGeneratorBase {
         writer.closeBlock("}");
     }
 
-    protected abstract void renderPayloadBodyStub(OperationShape operation, Shape outputShape, MemberShape payloadMember, Shape target);
+    protected abstract void renderPayloadBodyStub(OperationShape operation, Shape outputShape,
+                                                  MemberShape payloadMember, Shape target);
 
     protected abstract void renderNoPayloadBodyStub(OperationShape operation, Shape outputShape);
 
@@ -254,7 +255,7 @@ public abstract class HttpStubsGeneratorBase {
     protected abstract void renderStructureMemberStubbers(StructureShape shape);
 
     private class StubClassGenerator extends ShapeVisitor.Default<Void> {
-        
+
         @Override
         protected Void getDefault(Shape shape) {
             return null;
