@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -27,18 +26,16 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -89,6 +86,8 @@ public class ClientGenerator {
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
 
+        writer.writePreamble();
+
         List<String> additionalFiles =
                 middlewareBuilder.writeAdditionalFiles(context);
         for (String require : additionalFiles) {
@@ -103,7 +102,12 @@ public class ClientGenerator {
                 .openBlock("module $L", settings.getModule())
                 .write("# An API client for $L",
                         settings.getService().getName())
-                .write("# See {#initialize} for a full list of supported configuration options")
+                .write("# See {#initialize} for a full list of supported configuration options");
+
+        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.getService()).render();
+
+        writer
+                .writeInline(documentation)
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs")
                 .write("\n@middleware = Seahorse::MiddlewareBuilder.new")
@@ -128,6 +132,7 @@ public class ClientGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         rbsWriter
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs\n")
@@ -184,7 +189,7 @@ public class ClientGenerator {
 
     private void renderInitializeDocumentation() {
         writer.write("");
-        writer.rdoc(() -> {
+        writer.doc(() -> {
             writer.write("@overload initialize(options)");
             writer.write("@param [Hash] options");
             clientConfig.forEach((cfg) -> {
@@ -231,8 +236,12 @@ public class ClientGenerator {
         Shape inputShape = model.expectShape(inputShapeId);
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
+
+        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, operation).render();
+
         writer
-                .call(() -> renderOperationDocumentation(operation))
+                .write("")
+                .writeInline(documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
@@ -265,39 +274,6 @@ public class ClientGenerator {
 
         rbsWriter.write("def $L: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options)"
                 + "{ () -> untyped } -> untyped", operationName);
-    }
-
-    private void renderOperationDocumentation(OperationShape operation) {
-        writer.write("");
-        writer.rdoc(() -> {
-            Optional<DocumentationTrait> documentation =
-                    operation.getTrait(DocumentationTrait.class);
-            if (documentation.isPresent()) {
-                writer.write("$L", documentation.get().getValue());
-            } else {
-                writer.write("UNDOCUMENTED: Service operation for $L",
-                        operation.getId().getName());
-            }
-            writer.write("");
-            writer.write("@param [Hash] params - See also: {Types::$LInput}",
-                    operation.getId().getName());
-
-            ShapeId inputShapeId = operation.getInput().get();
-            StructureShape input =
-                    model.expectShape(inputShapeId).asStructureShape().get();
-            for (MemberShape memberShape : input.members()) {
-                Shape target = model.expectShape(memberShape.getTarget());
-                String symbolName = ":" + symbolProvider.toMemberName(memberShape);
-                writer.write("@options param[$L] $L", symbolProvider.toSymbol(target).getName(),
-                        symbolName);
-                Optional<DocumentationTrait> memberDoc =
-                        memberShape.getTrait(DocumentationTrait.class);
-                if (memberDoc.isPresent()) {
-                    writer.write("  $L", memberDoc.get().getValue());
-                }
-                writer.write("");
-            }
-        });
     }
 
     private void renderApplyMiddlewareMethod() {

@@ -34,10 +34,12 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 
 public class TypesGenerator {
     private final GenerationContext context;
     private final RubySettings settings;
+    private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
     private final SymbolProvider symbolProvider;
@@ -45,15 +47,17 @@ public class TypesGenerator {
     public TypesGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
+        this.model = context.getModel();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
-        this.symbolProvider = new RubySymbolProvider(context.getModel(), settings, "Types", false);
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Types", false);
     }
 
     public void render() {
         FileManifest fileManifest = context.getFileManifest();
 
         writer
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
@@ -71,6 +75,7 @@ public class TypesGenerator {
         FileManifest fileManifest = context.getFileManifest();
 
         rbsWriter
+                .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
@@ -86,13 +91,13 @@ public class TypesGenerator {
 
     private void renderTypes(ShapeVisitor visitor) {
         Model modelWithoutTraitShapes = ModelTransformer.create()
-                .getModelWithoutTraitShapes(context.getModel());
+                .getModelWithoutTraitShapes(model);
 
-        Set<Shape> serviceShapes = new TreeSet<>(
+        Set<Shape> shapes = new TreeSet<>(
                 new Walker(modelWithoutTraitShapes)
                         .walkShapes(context.getService()));
 
-        for (Shape shape : serviceShapes) {
+        for (Shape shape : shapes) {
             shape.accept(visitor);
         }
     }
@@ -105,10 +110,9 @@ public class TypesGenerator {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            Symbol symbol = symbolProvider.toSymbol(shape);
-            String shapeName = symbol.getName();
-            String membersBlock = "nil";
+            String shapeName = symbolProvider.toSymbol(shape).getName();
 
+            String membersBlock = "nil";
             if (!shape.members().isEmpty()) {
                 membersBlock = shape
                         .members()
@@ -117,6 +121,25 @@ public class TypesGenerator {
                         .collect(Collectors.joining(",\n"));
             }
             membersBlock += ",";
+
+            String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
+
+            writer.writeInline(documentation);
+
+            shape.members().forEach(memberShape -> {
+                String attribute = symbolProvider.toMemberName(memberShape);
+                Shape target = model.expectShape(memberShape.getTarget());
+                String returnType = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
+
+                String memberDocumentation =
+                        new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
+
+                writer.writeYardAttribute(attribute, () -> {
+                    // delegate to member shape in this visitor
+                    writer.writeInline(memberDocumentation);
+                    writer.writeYardReturn(returnType, "");
+                });
+            });
 
             writer
                     .openBlock(shapeName + " = Struct.new(")
@@ -130,28 +153,34 @@ public class TypesGenerator {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            Symbol symbol = symbolProvider.toSymbol(shape);
-            String shapeName = symbol.getName();
+            String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
+            String shapeName = symbolProvider.toSymbol(shape).getName();
 
+            writer.writeInline(documentation);
             writer.openBlock("class $L < Seahorse::Union", shapeName);
 
             for (MemberShape memberShape : shape.members()) {
+                String memberDocumentation =
+                        new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
+
                 writer
+                        .writeInline(memberDocumentation)
                         .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                         .openBlock("def to_h")
                         .write("{ $L: super(__getobj__) }",
                                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                         .closeBlock("end")
-                        .closeBlock("end");
+                        .closeBlock("end\n");
             }
 
             writer
+                    .writeDocstring("Handles unknown future members")
                     .openBlock("class Unknown < $L", shapeName)
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
                     .closeBlock("end")
                     .closeBlock("end")
-                    .closeBlock("end");
+                    .closeBlock("end\n");
 
             return null;
         }
