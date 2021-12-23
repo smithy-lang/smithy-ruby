@@ -126,8 +126,6 @@ public abstract class HttpStubsGeneratorBase {
     private void renderStubsForOperation(OperationShape operation, Shape outputShape) {
         System.out.println("Generating stubs for Operation: " + operation.getId());
 
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
-
         writer
                 .write("")
                 .write("# Operation Stubber for $L", operation.getId().getName())
@@ -138,7 +136,11 @@ public abstract class HttpStubsGeneratorBase {
                 .closeBlock("end")
                 .write("")
                 .openBlock("def self.stub(http_resp, stub:)")
-                .write("http_resp.status = $1L", httpTrait.getCode())
+                .call(() -> {
+                    operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
+                        writer.write("http_resp.status = $1L", httpTrait.getCode());
+                    });
+                })
                 .call(() -> renderHeaderStubbers(operation, outputShape))
                 .call(() -> renderPrefixHeadersStubbers(operation, outputShape))
                 .call(() -> renderResponseCodeStubber(operation, outputShape))
