@@ -170,7 +170,7 @@ public class TypesGenerator {
                         .write("{ $L: super(__getobj__) }",
                                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                         .closeBlock("end")
-                        .closeBlock("end");
+                        .closeBlock("end\n");
             }
 
             writer

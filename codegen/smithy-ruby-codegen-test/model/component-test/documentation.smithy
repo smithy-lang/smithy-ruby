@@ -1,26 +1,29 @@
 $version: "1.0"
 namespace smithy.ruby.tests
 
-// test service documentation
+// test service shape documentation
 apply WhiteLabel @documentation("The test SDK.\nThis service should pass the tests.")
 apply WhiteLabel @deprecated(message: "This test SDK is not suitable\nfor production use.", since: "today")
+apply WhiteLabel @externalDocumentation(
+    "Homepage": "https://www.ruby-lang.org/en/",
+    "Ruby Branches": "https://www.ruby-lang.org/en/downloads/branches/",
+)
+apply WhiteLabel @internal
+apply WhiteLabel @since("today")
+apply WhiteLabel @unstable
 
-// test operation documentation
+// test operation shape documentation
 apply KitchenSink @documentation("The kitchen sink operation.\nIt is kinda useless.")
 apply KitchenSink @deprecated(message: "This operation is not suitable\nfor production use.", since: "today")
+apply KitchenSink @externalDocumentation(
+    "Homepage": "https://www.ruby-lang.org/en/",
+    "Ruby Branches": "https://www.ruby-lang.org/en/downloads/branches/",
+)
+apply KitchenSink @internal
+apply KitchenSink @since("today")
+apply KitchenSink @unstable
 
-// test member/shape documentation resolution
-apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
-apply Struct @documentation("This docstring should be different than KitchenSink struct member.")
-
-// test union documentation
-apply Union @documentation("This is some union documentation.\nIt has some union members")
-apply Union$String @documentation("This is a String member.\nStruct should also be documented too because the structure is.")
-apply Union @deprecated(message: "This union is\ndeprecated.", since: "today")
-apply Union$Struct @deprecated(message: "This union structure is\ndeprecated.", since: "today")
-
-// test examples trait
-// full request syntax should be rendered too
+// full request/response syntax should be rendered too
 apply KitchenSink @examples([
     {
         title: "Test input and output",
@@ -52,6 +55,7 @@ apply KitchenSink @examples([
     },
     {
         title: "Test errors",
+        documentation: "Demonstrates an error example.",
         input: {
             String: "error",
         },
@@ -63,3 +67,51 @@ apply KitchenSink @examples([
         }
     },
 ])
+
+// test structure documentation
+apply Struct @documentation("This docstring should be different than KitchenSink struct member.")
+apply Struct @deprecated(message: "This structure is\ndeprecated.", since: "today")
+apply Struct @externalDocumentation(
+    "Homepage": "https://www.ruby-lang.org/en/",
+    "Ruby Branches": "https://www.ruby-lang.org/en/downloads/branches/",
+)
+apply Struct @internal
+apply Struct @since("today")
+apply Struct @unstable
+
+// test structure member documentation
+apply KitchenSinkInputOutput$String @documentation("This is some member\ndocumentation of String.")
+apply KitchenSinkInputOutput$String @deprecated(message: "This structure member is\ndeprecated.", since: "today")
+apply KitchenSinkInputOutput$String @externalDocumentation(
+    "Homepage": "https://www.ruby-lang.org/en/",
+    "Ruby Branches": "https://www.ruby-lang.org/en/downloads/branches/",
+)
+apply KitchenSinkInputOutput$String @internal
+apply KitchenSinkInputOutput$String @since("today")
+apply KitchenSinkInputOutput$String @unstable
+apply KitchenSinkInputOutput$String @recommended(reason: "This structure member is\ncool AF.")
+
+// test structure member documentation resolution
+apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
+
+// test union documentation
+apply Union @documentation("This is some union documentation.\nIt has some union members")
+apply Union @deprecated(message: "This union is\ndeprecated.", since: "today")
+apply Union @externalDocumentation(
+    "Homepage": "https://www.ruby-lang.org/en/",
+    "Ruby Branches": "https://www.ruby-lang.org/en/downloads/branches/",
+)
+apply Union @internal
+apply Union @since("today")
+apply Union @unstable
+
+// test union member documentation
+apply Union$String @documentation("This is a String member.\nStruct should also be documented too because the structure is.")
+apply Union$String @deprecated(message: "This union member is\ndeprecated.", since: "today")
+apply Union$String @externalDocumentation(
+    "Homepage": "https://www.ruby-lang.org/en/",
+    "Ruby Branches": "https://www.ruby-lang.org/en/downloads/branches/",
+)
+apply Union$String @internal
+apply Union$String @since("today")
+apply Union$String @unstable

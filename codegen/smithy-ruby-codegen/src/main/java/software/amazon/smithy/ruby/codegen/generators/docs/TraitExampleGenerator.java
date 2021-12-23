@@ -71,7 +71,7 @@ public class TraitExampleGenerator {
         generateExampleInput();
         writer
                 .write("")
-                .write("resp.to_h outputs the following:")
+                .write("# resp.to_h outputs the following:")
                 .write(operationOutput.accept(new ParamsToHash(model, output, symbolProvider)));
     }
 
@@ -89,7 +89,7 @@ public class TraitExampleGenerator {
                 .write("puts e.data.to_h")
                 .closeBlock("end")
                 .write("")
-                .write("e.data.to_h outputs the following:")
+                .write("# e.data.to_h outputs the following:")
                 .write(errorShape
                         .accept(new ParamsToHash(model, errorExample.getContent(), symbolProvider)));
     }
@@ -98,8 +98,10 @@ public class TraitExampleGenerator {
         if (input.isEmpty()) {
             writer.write("resp = client.$L()", operationName);
         } else {
+            if (documentation.isPresent()) {
+                writer.writeDocstring(documentation.get());
+            }
             writer
-                    .writeDocstring(documentation.orElse(""))
                     .writeInline("resp = client.$L(", operationName)
                     .writeInline(operationInput.accept(new ParamsToHash(model, input, symbolProvider)))
                     .write(")");
