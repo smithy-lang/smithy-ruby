@@ -97,8 +97,9 @@ public abstract class HttpBuilderGeneratorBase {
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape inputShape = model.expectShape(o.getInput().orElseThrow(IllegalArgumentException::new));
-                    renderBuildersForOperation(o);
+                    renderBuildersForOperation(o, inputShape);
                     generatedBuilders.add(o.toShapeId());
+                    generatedBuilders.add(inputShape.toShapeId());
 
                     Iterator<Shape> it = new Walker(model).iterateShapes(inputShape);
                     while (it.hasNext()) {
@@ -111,15 +112,8 @@ public abstract class HttpBuilderGeneratorBase {
                 });
     }
 
-    protected void renderBuildersForOperation(OperationShape operation) {
-        // Operations MUST have an Input type, even if it is empty
-        if (!operation.getInput().isPresent()) {
-            throw new RuntimeException("Missing Input Shape for: " + operation.getId());
-        }
-        ShapeId inputShapeId = operation.getInput().get();
-
+    protected void renderBuildersForOperation(OperationShape operation, Shape inputShape) {
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
-        Shape inputShape = model.expectShape(inputShapeId);
         Symbol symbol = symbolProvider.toSymbol(operation);
 
         writer
@@ -710,3 +704,4 @@ public abstract class HttpBuilderGeneratorBase {
         }
     }
 }
+

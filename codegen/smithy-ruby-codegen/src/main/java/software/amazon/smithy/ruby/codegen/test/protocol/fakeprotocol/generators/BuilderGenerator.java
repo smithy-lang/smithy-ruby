@@ -33,7 +33,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderBuildersForOperation(OperationShape operation) {
+    protected void renderBuildersForOperation(OperationShape operation, Shape inputShape) {
         Symbol symbol = symbolProvider.toSymbol(operation);
         writer
                 .write("")
