@@ -24,13 +24,13 @@ module HighScoreService
     end
 
     class HighScoreAttributes
-      def self.parse(json)
+      def self.parse(map)
         data = Types::HighScoreAttributes.new
-        data.id = json['id']
-        data.game = json['game']
-        data.score = json['score']
-        data.created_at = Time.parse(json['created_at']) if json['created_at']
-        data.updated_at = Time.parse(json['updated_at']) if json['updated_at']
+        data.id = map['id']
+        data.game = map['game']
+        data.score = map['score']
+        data.created_at = Time.parse(map['created_at']) if map['created_at']
+        data.updated_at = Time.parse(map['updated_at']) if map['updated_at']
         return data
       end
     end
@@ -46,9 +46,9 @@ module HighScoreService
     end
 
     class AttributeErrors
-      def self.parse(json)
+      def self.parse(map)
         data = {}
-        json.map do |key, value|
+        map.map do |key, value|
           data[key] = Parsers::ErrorMessages.parse(value) if value
         end
         data
@@ -56,8 +56,8 @@ module HighScoreService
     end
 
     class ErrorMessages
-      def self.parse(json)
-        json.map do |value|
+      def self.parse(list)
+        list.map do |value|
           value
         end
       end
@@ -67,7 +67,7 @@ module HighScoreService
     class DeleteHighScore
       def self.parse(http_resp)
         data = Types::DeleteHighScoreOutput.new
-        json = Seahorse::JSON.load(http_resp.body)
+        map = Seahorse::JSON.load(http_resp.body)
         data
       end
     end
@@ -93,8 +93,8 @@ module HighScoreService
     end
 
     class HighScores
-      def self.parse(json)
-        json.map do |value|
+      def self.parse(list)
+        list.map do |value|
           Parsers::HighScoreAttributes.parse(value) if value
         end
       end
