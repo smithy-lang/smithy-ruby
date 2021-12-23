@@ -704,3 +704,4 @@ public abstract class HttpBuilderGeneratorBase {
         }
     }
 }
+
