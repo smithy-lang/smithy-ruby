@@ -84,6 +84,7 @@ public abstract class HttpParserGeneratorBase {
 
     public void render(FileManifest fileManifest) {
         writer
+                .writePreamble()
                 .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Parsers")
