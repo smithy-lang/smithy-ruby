@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -30,6 +31,10 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public class PaginatorsGenerator {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(PaginatorsGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -60,6 +65,7 @@ public class PaginatorsGenerator {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/paginators.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote paginators to " + fileName);
     }
 
     public void renderRbs() {
@@ -78,6 +84,7 @@ public class PaginatorsGenerator {
                 settings.getGemName() + "/sig/" + settings.getGemName()
                         + "/paginators.rbs";
         fileManifest.writeFile(typesFile, rbsWriter.toString());
+        LOGGER.fine("Wrote paginators types to " + typesFile);
     }
 
     private void renderPaginators() {
@@ -127,6 +134,7 @@ public class PaginatorsGenerator {
                     }
                 })
                 .closeBlock("end");
+        LOGGER.finer("Generated paginator for " + operationName);
     }
 
     private void renderRbsPaginator(String operationName, PaginationInfo paginationInfo) {

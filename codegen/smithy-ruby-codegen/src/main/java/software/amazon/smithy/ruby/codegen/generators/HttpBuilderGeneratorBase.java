@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,6 +60,9 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public abstract class HttpBuilderGeneratorBase {
 
+    private static final Logger LOGGER =
+            Logger.getLogger(HttpBuilderGeneratorBase.class.getName());
+
     protected final GenerationContext context;
     protected final RubySettings settings;
     protected final Model model;
@@ -87,6 +91,7 @@ public abstract class HttpBuilderGeneratorBase {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/builders.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote builders to " + fileName);
     }
 
     protected void renderBuilders() {
@@ -129,6 +134,8 @@ public abstract class HttpBuilderGeneratorBase {
                 .call(() -> renderOperationBodyBuilder(operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
+
+        LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
     }
 
 
@@ -144,6 +151,7 @@ public abstract class HttpBuilderGeneratorBase {
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
             Shape target = model.expectShape(m.getTarget());
             target.accept(new QueryMemberSerializer(m, "'" + queryTrait.getValue() + "'", inputGetter));
+            LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
 
         // get a list of all HttpQueryParams members - these must be map shapes
@@ -161,6 +169,7 @@ public abstract class HttpBuilderGeneratorBase {
                     .call(() -> target.accept(new QueryMemberSerializer(queryParamMap.getValue(), "k", "v")))
                     .closeBlock("end")
                     .closeBlock("end");
+            LOGGER.finest("Generated query params builder for " + m.getMemberName());
         }
     }
 
@@ -177,6 +186,7 @@ public abstract class HttpBuilderGeneratorBase {
             String headerSetter = "http_req.headers['" + headerTrait.getValue() + "'] = ";
             String valueGetter = "input[" + symbolName + "]";
             model.expectShape(m.getTarget()).accept(new HeaderSerializer(m, headerSetter, valueGetter));
+            LOGGER.finest("Generated header builder for " + m.getMemberName());
         }
     }
 
@@ -200,6 +210,7 @@ public abstract class HttpBuilderGeneratorBase {
                     .openBlock("input[$L].each do |key, value|", symbolName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
                     .closeBlock("end");
+            LOGGER.finest("Generated prefix header builder for " + m.getMemberName());
         }
     }
 
@@ -248,6 +259,7 @@ public abstract class HttpBuilderGeneratorBase {
                                     + target.accept(new LabelMemberSerializer(m)) + ")"
                     );
                 }
+                LOGGER.finest("Generated label for " + m.getMemberName());
             }
             writer.openBlock("http_req.append_path(format(");
             writer.write("  '$L'$L\n)", formatUri, formatArgs.toString());

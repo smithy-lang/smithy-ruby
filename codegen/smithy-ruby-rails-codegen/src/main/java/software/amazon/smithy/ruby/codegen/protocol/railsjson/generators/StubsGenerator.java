@@ -113,8 +113,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderStubsForOperation(OperationShape operation) {
-        System.out.println("Generating stubs for Operation: " + operation.getId());
-
         // Operations MUST have an Output type, even if it is empty
         if (!operation.getOutput().isPresent()) {
             throw new RuntimeException("Missing Output Shape for: " + operation.getId());
@@ -150,8 +148,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             if (!generatedStubs.contains(s.getId())) {
                 generatedStubs.add(s.getId());
                 s.accept(this);
-            } else {
-                System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
         }
     }
@@ -390,7 +386,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void documentShape(DocumentShape shape) {
-        System.out.println("\tRENDER stubber for Document: " + shape.getId());
         String name = symbolProvider.toSymbol(shape).getName();
         writer
                 .write("")
@@ -467,7 +462,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
         writer.openBlock("{");
         s.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tMEMBER default FOR: " + member.getId() + " target type: " + target.getType());
 
             String symbolName = symbolProvider.toMemberName(member);
             String dataSetter = symbolName + ": ";

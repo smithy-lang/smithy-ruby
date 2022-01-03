@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -61,6 +62,9 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public abstract class HttpParserGeneratorBase {
 
+    private static final Logger LOGGER =
+            Logger.getLogger(HttpParserGeneratorBase.class.getName());
+
     protected final GenerationContext context;
     protected final RubySettings settings;
     protected final Model model;
@@ -89,6 +93,7 @@ public abstract class HttpParserGeneratorBase {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/parsers.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote parsers to " + fileName);
     }
 
     protected void renderParsers() {
@@ -109,13 +114,10 @@ public abstract class HttpParserGeneratorBase {
                         if (!generatedParsers.contains(s.getId())) {
                             generatedParsers.add(s.getId());
                             s.accept(new ParserClassGenerator());
-                        } else {
-                            System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
                         }
                     }
 
                     for (ShapeId errorShapeId : o.getErrors()) {
-                        System.out.println("\tGenerating Error parsers connected to: " + errorShapeId);
                         Iterator<Shape> errIt = new Walker(model).iterateShapes(model.expectShape(errorShapeId));
                         while (errIt.hasNext()) {
                             Shape s = errIt.next();
@@ -147,6 +149,7 @@ public abstract class HttpParserGeneratorBase {
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
+        LOGGER.finer("Generated parser class for " + operation.getId().getName());
     }
 
     protected void renderErrorParser(Shape s) {
@@ -162,6 +165,7 @@ public abstract class HttpParserGeneratorBase {
                 .write("data")
                 .closeBlock("end")
                 .closeBlock("end");
+        LOGGER.finer("Generated Error parser for " + s.getId().getName());
     }
 
     protected void renderHeaderParsers(Shape outputShape) {
@@ -176,6 +180,7 @@ public abstract class HttpParserGeneratorBase {
             String dataSetter = "data." + symbolName + " = ";
             String valueGetter = "http_resp.headers['" + headerTrait.getValue() + "']";
             model.expectShape(m.getTarget()).accept(new HeaderDeserializer(m, dataSetter, valueGetter));
+            LOGGER.finest("Generated header parser for " + m.getMemberName());
         }
     }
 
@@ -192,7 +197,6 @@ public abstract class HttpParserGeneratorBase {
             MapShape targetShape = model.expectShape(m.getTarget(), MapShape.class);
             Shape valueShape = model.expectShape(targetShape.getValue().getTarget());
             String symbolName = symbolProvider.toMemberName(m);
-            String headerSetter = "http_req.headers[\"" + prefix + "#{key.delete_prefix('" + prefix + "')}\"] = ";
 
             String dataSetter = "data." + symbolName + "[key.delete_prefix('" + prefix + "')] = ";
             writer
@@ -202,6 +206,7 @@ public abstract class HttpParserGeneratorBase {
                     .call(() -> valueShape.accept(new HeaderDeserializer(m, dataSetter, "value")))
                     .closeBlock("end")
                     .closeBlock("end");
+            LOGGER.finest("Generated prefix header parser for " + m.getMemberName());
 
         }
     }
@@ -215,6 +220,7 @@ public abstract class HttpParserGeneratorBase {
         if (responseCodeMembers.size() == 1) {
             MemberShape responseCodeMember = responseCodeMembers.get(0);
             writer.write("data.$L = http_resp.status", symbolProvider.toMemberName(responseCodeMember));
+            LOGGER.finest("Generated response code parser for " + responseCodeMember.getMemberName());
         }
     }
 

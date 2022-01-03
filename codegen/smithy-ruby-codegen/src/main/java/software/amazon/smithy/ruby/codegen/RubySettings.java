@@ -115,7 +115,7 @@ public final class RubySettings {
     public ShapeId resolveServiceProtocol(ServiceShape service, Model model, Set<ShapeId> supportedProtocolTraits) {
         Map<ShapeId, Trait> resolvedProtocols = ServiceIndex.of(model).getProtocols(service);
         for (ShapeId p : resolvedProtocols.keySet()) {
-            System.out.println("Service Protocol: " + p.getName() + " -> " + p.toString());
+            LOGGER.fine("Service Protocol: " + p.getName() + " -> " + p.toString());
         }
 
         ShapeId protocol = resolvedProtocols.keySet()
@@ -123,7 +123,7 @@ public final class RubySettings {
                 .filter((p) -> supportedProtocolTraits.contains(p))
                 .findFirst()
                 .orElseThrow(() -> new UnresolvableProtocolException("No protocol generators were found "));
-        System.out.println("Resolved protocol: " + protocol.getName());
+        LOGGER.info("Resolved protocol: " + protocol.getName());
         return protocol;
     }
 }

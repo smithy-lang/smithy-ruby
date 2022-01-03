@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -37,6 +38,10 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 
 public class TypesGenerator {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(TypesGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -69,6 +74,7 @@ public class TypesGenerator {
                 settings.getGemName() + "/lib/" + settings.getGemName()
                         + "/types.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote types to " + fileName);
     }
 
     public void renderRbs() {
@@ -87,6 +93,7 @@ public class TypesGenerator {
                 settings.getGemName() + "/sig/" + settings.getGemName()
                         + "/types.rbs";
         fileManifest.writeFile(typesFile, rbsWriter.toString());
+        LOGGER.fine("Wrote types rbs to " + typesFile);
     }
 
     private void renderTypes(ShapeVisitor visitor) {

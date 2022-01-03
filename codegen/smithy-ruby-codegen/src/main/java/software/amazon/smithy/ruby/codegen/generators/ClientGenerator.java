@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -40,6 +41,9 @@ import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
 public class ClientGenerator {
+    private static final Logger LOGGER =
+            Logger.getLogger(ClientGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final MiddlewareBuilder middlewareBuilder;
@@ -62,6 +66,9 @@ public class ClientGenerator {
 
         context.getIntegrations().forEach((integration) -> {
             middlewareBuilder.register(integration.getClientMiddleware());
+            LOGGER.fine("Integration " + integration + " registered middleware: "
+                    + integration.getClientMiddleware().stream()
+                    .map((m) -> m.toString()).collect(Collectors.joining(",")));
         });
 
         // get all config
@@ -80,6 +87,9 @@ public class ClientGenerator {
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());
 
+        LOGGER.fine("Client config: "
+                + clientConfig.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
+
         this.symbolProvider = new RubySymbolProvider(model, context.getRubySettings(), "Client", false);
     }
 
@@ -92,6 +102,7 @@ public class ClientGenerator {
                 middlewareBuilder.writeAdditionalFiles(context);
         for (String require : additionalFiles) {
             writer.write("require_relative '$L'", removeRbExtension(require));
+            LOGGER.finer("Adding client require: " + require);
         }
 
         if (additionalFiles.size() > 0) {
@@ -126,6 +137,7 @@ public class ClientGenerator {
                 settings.getGemName() + "/lib/" + settings.getGemName()
                         + "/client.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote client to " + fileName);
     }
 
     public void renderRbs() {
@@ -147,6 +159,7 @@ public class ClientGenerator {
                 settings.getGemName() + "/sig/" + settings.getGemName()
                         + "/client.rbs";
         fileManifest.writeFile(typesFile, rbsWriter.toString());
+        LOGGER.fine("Wrote client rbs to " + typesFile);
     }
 
     private Object removeRbExtension(String s) {
@@ -265,6 +278,7 @@ public class ClientGenerator {
                 .write("raise resp.error if resp.error")
                 .write("resp.data")
                 .closeBlock("end");
+        LOGGER.finer("Generated client operation method " + operationName);
     }
 
     private void renderRbsOperation(OperationShape operation) {

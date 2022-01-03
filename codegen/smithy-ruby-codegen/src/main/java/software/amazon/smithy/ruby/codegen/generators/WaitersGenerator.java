@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
@@ -36,6 +37,10 @@ import software.amazon.smithy.waiters.WaitableTrait;
 import software.amazon.smithy.waiters.Waiter;
 
 public class WaitersGenerator {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(WaitersGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -66,6 +71,7 @@ public class WaitersGenerator {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/waiters.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote waiters to " + fileName);
     }
 
     public void renderRbs() {
@@ -84,6 +90,7 @@ public class WaitersGenerator {
                 settings.getGemName() + "/sig/" + settings.getGemName()
                         + "/waiters.rbs";
         fileManifest.writeFile(typesFile, rbsWriter.toString());
+        LOGGER.fine("Wrote waiters rbs to " + typesFile);
     }
 
     private void renderWaiters() {
@@ -157,6 +164,8 @@ public class WaitersGenerator {
                 .write("@waiter.wait(@client, params, options)")
                 .closeBlock("end")
                 .closeBlock("end");
+
+        LOGGER.finer("Generated waiter " + waiterName + " for operation: " + operationName);
     }
 
     private void renderRbsWaiter(String waiterName, Waiter waiter, OperationShape operation) {

@@ -122,8 +122,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
             if (!generatedStubs.contains(s.getId())) {
                 generatedStubs.add(s.getId());
                 s.accept(this);
-            } else {
-                System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
             }
         }
     }
@@ -252,7 +250,6 @@ public class StubsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void documentShape(DocumentShape shape) {
-        System.out.println("\tRENDER stubber for Document: " + shape.getId());
         String name = symbolProvider.toSymbol(shape).getName();
         writer
                 .write("")

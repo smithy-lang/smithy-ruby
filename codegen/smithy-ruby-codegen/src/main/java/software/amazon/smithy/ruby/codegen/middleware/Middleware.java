@@ -50,6 +50,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * must provide the ClientConfig required for its params.
  */
 public class Middleware {
+
     private final String klass;
     private final MiddlewareStackStep step;
     private final byte order;
@@ -296,7 +297,6 @@ public class Middleware {
                     Reader fileReader =
                             new InputStreamReader(inputStream,
                                     StandardCharsets.UTF_8);
-                    System.out.println("Basename: " + f.getName());
                     String relativeName = "middleware/" + f.getName();
                     String fileName =
                             context.getRubySettings().getGemName() + "/lib/"

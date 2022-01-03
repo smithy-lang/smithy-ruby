@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -41,6 +42,10 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
 
 public class HttpProtocolTestGenerator {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(HttpProtocolTestGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -75,6 +80,7 @@ public class HttpProtocolTestGenerator {
         String fileName =
                 settings.getGemName() + "/spec/protocol_spec.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote protocol tests to " + fileName);
     }
 
     private void renderTests() {
@@ -113,6 +119,9 @@ public class HttpProtocolTestGenerator {
                     .write("expect(output.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
+            LOGGER.finer(
+                    "Generated protocol response test for operation " + operationName + " test: " + testCase.getId());
+
         });
         writer.closeBlock("end");
     }
@@ -137,6 +146,9 @@ public class HttpProtocolTestGenerator {
                     .write("expect(output.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
+            LOGGER.finer("Generated protocol response stubber test for operation " + operationName + " test: "
+                    + testCase.getId());
+
         });
         writer.closeBlock("end");
     }
@@ -158,6 +170,9 @@ public class HttpProtocolTestGenerator {
                     .write("client.$L($L, middleware: middleware)", operationName,
                             getRubyHashFromParams(inputShape, testCase.getParams()))
                     .closeBlock("end");
+            LOGGER.finer(
+                    "Generated protocol request test for operation " + operationName + " test: " + testCase.getId());
+
         });
         writer.closeBlock("end");
     }
@@ -186,6 +201,10 @@ public class HttpProtocolTestGenerator {
                                     getRubyHashFromParams(error, testCase.getParams()))
                             .closeBlock("end")
                             .closeBlock("end");
+
+                    LOGGER.finer("Generated protocol error test for operation " + operationName + " test: "
+                            + testCase.getId());
+
                 });
                 writer.closeBlock("end");
             });

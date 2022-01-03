@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -43,6 +44,9 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.OptionalUtils;
 
 public class ParamsGenerator extends ShapeVisitor.Default<Void> {
+    private static final Logger LOGGER =
+            Logger.getLogger(ParamsGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -73,6 +77,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 settings.getGemName() + "/lib/" + settings.getGemName()
                         + "/params.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote params to " + fileName);
     }
 
     private void renderParams() {
