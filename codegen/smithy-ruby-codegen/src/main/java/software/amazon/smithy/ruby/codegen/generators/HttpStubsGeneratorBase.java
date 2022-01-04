@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -68,6 +69,10 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public abstract class HttpStubsGeneratorBase {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(HttpStubsGeneratorBase.class.getName());
+
     protected final GenerationContext context;
     protected final RubySettings settings;
     protected final Model model;
@@ -98,6 +103,8 @@ public abstract class HttpStubsGeneratorBase {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/stubs.rb";
         fileManifest.writeFile(fileName, writer.toString());
+
+        LOGGER.fine("Wrote stubs to " + fileName);
     }
 
     private void renderStubs() {
@@ -117,16 +124,12 @@ public abstract class HttpStubsGeneratorBase {
                         if (!generatedStubs.contains(s.getId())) {
                             generatedStubs.add(s.getId());
                             s.accept(new StubClassGenerator());
-                        } else {
-                            System.out.println("\tSkipping " + s.getId() + " because it has already been generated.");
                         }
                     }
                 });
     }
 
     private void renderStubsForOperation(OperationShape operation, Shape outputShape) {
-        System.out.println("Generating stubs for Operation: " + operation.getId());
-
         writer
                 .write("")
                 .write("# Operation Stubber for $L", operation.getId().getName())
@@ -148,6 +151,7 @@ public abstract class HttpStubsGeneratorBase {
                 .call(() -> renderOperationBodyStubber(operation, outputShape))
                 .closeBlock("end")
                 .closeBlock("end");
+        LOGGER.finer("Generated stuber for operation " + operation.getId().getName());
     }
 
     // The Output shape is combined with the OperationStub
@@ -233,7 +237,6 @@ public abstract class HttpStubsGeneratorBase {
         writer.openBlock("{");
         s.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-            System.out.println("\t\tMEMBER default FOR: " + member.getId() + " target type: " + target.getType());
 
             String symbolName = symbolProvider.toMemberName(member);
             String dataSetter = symbolName + ": ";
@@ -410,7 +413,6 @@ public abstract class HttpStubsGeneratorBase {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            System.out.println("\tRENDER stubber for Document: " + shape.getId());
             String name = symbolProvider.toSymbol(shape).getName();
             writer
                     .write("")

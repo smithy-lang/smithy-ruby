@@ -62,17 +62,16 @@ public class CodegenOrchestrator {
                                 .orElse(this.getClass().getClassLoader())
                 );
 
-        System.out.println("\n\n----------------------------------\n\n");
-        System.out.println("Loading integrations....");
+        LOGGER.info("Loading integrations");
         List<RubyIntegration> integrations =
                 StreamSupport
                         .stream(integrationServiceLoader.spliterator(), false)
-                        .peek((i) -> System.out.println(
+                        .peek((i) -> LOGGER.info(
                                 "Loaded RubyIntegration: "
                                         + i.getClass().getName()))
                         .sorted(Comparator.comparing(RubyIntegration::getOrder))
                         .collect(Collectors.toList());
-        System.out.println("Loaded integrations: " + integrations.size());
+        LOGGER.info("Loaded integrations: " + integrations.size());
 
         Model resolvedModel = pluginContext.getModel();
 
@@ -104,7 +103,7 @@ public class CodegenOrchestrator {
                     integration.getProtocolGenerators()
                             .stream()
                             .map((g) -> g.getProtocol())
-                            .peek((s) -> System.out.println(
+                            .peek((s) -> LOGGER.info(
                                     integration.getClass().getSimpleName()
                                             + " registered protocolGenerator "
                                             + "for: "
@@ -130,7 +129,7 @@ public class CodegenOrchestrator {
                     .createDefaultHttpApplicationTransport();
         }
 
-        System.out.println(
+        LOGGER.info(
                 "Resolved ApplicationTransport: " + applicationTransport);
 
         context = new GenerationContext(
@@ -162,9 +161,6 @@ public class CodegenOrchestrator {
     }
 
     public void execute() {
-
-        System.out.println("\n\n----------------------------------\n\n");
-        System.out.println("Starting CodeGen execute");
 
         // Integration hook - processFinalizedModel
         context.getIntegrations().forEach(
@@ -198,19 +194,20 @@ public class CodegenOrchestrator {
         TypesGenerator typesGenerator = new TypesGenerator(context);
         typesGenerator.render();
         typesGenerator.renderRbs();
-        LOGGER.info("created types");
+        LOGGER.info("generated types");
     }
 
     private void generateParams() {
         ParamsGenerator paramsGenerator = new ParamsGenerator(context);
         paramsGenerator.render();
+        LOGGER.info("generated params");
     }
 
     private void generateValidators() {
         ValidatorsGenerator validatorsGenerator =
                 new ValidatorsGenerator(context);
         validatorsGenerator.render();
-        LOGGER.info("created validators");
+        LOGGER.info("generated validators");
     }
 
     private void generateProtocolTests() {
@@ -218,6 +215,7 @@ public class CodegenOrchestrator {
             HttpProtocolTestGenerator testGenerator =
                     new HttpProtocolTestGenerator(context);
             testGenerator.render();
+            LOGGER.info("generated protocol tests");
         }
     }
 
@@ -225,6 +223,7 @@ public class CodegenOrchestrator {
         ClientGenerator clientGenerator = new ClientGenerator(context);
         clientGenerator.render();
         clientGenerator.renderRbs();
+        LOGGER.info("generated client");
     }
 
     private void generateModule() {
@@ -234,7 +233,7 @@ public class CodegenOrchestrator {
                 .collect(Collectors.toList());
         ModuleGenerator moduleGenerator = new ModuleGenerator(context);
         moduleGenerator.render(additionalFiles);
-        LOGGER.info("created module");
+        LOGGER.info("generated module");
     }
 
     private void generateGemSpec() {
@@ -246,7 +245,7 @@ public class CodegenOrchestrator {
                         .collect(Collectors.toList());
         GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
         gemspecGenerator.render(additionalDependencies);
-        LOGGER.info("wrote .gemspec");
+        LOGGER.info("generated .gemspec");
     }
 
     private void generateYardOpts() {
@@ -265,11 +264,13 @@ public class CodegenOrchestrator {
         WaitersGenerator waitersGenerator = new WaitersGenerator(context);
         waitersGenerator.render();
         waitersGenerator.renderRbs();
+        LOGGER.info("generated waiters");
     }
 
     private void generatePaginators() {
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
+        LOGGER.info("generated paginators");
     }
 }

@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -31,6 +32,9 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 public abstract class ErrorsGeneratorBase {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(ErrorsGeneratorBase.class.getName());
 
     protected final GenerationContext context;
     protected final RubySettings settings;
@@ -65,6 +69,7 @@ public abstract class ErrorsGeneratorBase {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/errors.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.info("Wrote errors to " + fileName);
     }
 
     public void renderRbs(FileManifest fileManifest) {
@@ -83,6 +88,7 @@ public abstract class ErrorsGeneratorBase {
         String typesFile =
                 settings.getGemName() + "/sig/" + settings.getGemName() + "/errors.rbs";
         fileManifest.writeFile(typesFile, rbsWriter.toString());
+        LOGGER.info("Wrote errors rbs to " + typesFile);
     }
 
     private void renderBaseErrors() {
@@ -106,6 +112,7 @@ public abstract class ErrorsGeneratorBase {
                 .write("# @return [String] location")
                 .write("attr_reader :location")
                 .closeBlock("end");
+        LOGGER.fine("Generated base errors");
     }
 
     private void renderRbsBaseErrors() {
@@ -132,10 +139,10 @@ public abstract class ErrorsGeneratorBase {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         return topDownIndex.getContainedOperations(context.getService()).stream()
-                        .map(OperationShape::getErrors)
-                        .flatMap(Collection::stream)
-                        .map(model::expectShape)
-                        .collect(Collectors.toSet());
+                .map(OperationShape::getErrors)
+                .flatMap(Collection::stream)
+                .map(model::expectShape)
+                .collect(Collectors.toSet());
     }
 
     private void renderServiceModelErrors() {
@@ -180,6 +187,8 @@ public abstract class ErrorsGeneratorBase {
                 .writeYardReturn("Types::" + errorName, "")
                 .write("attr_reader :data")
                 .closeBlock("end");
+
+        LOGGER.finest("Generated service model error: " + errorName + " type: " + apiErrorType);
     }
 
     private void renderRbsServiceModelError(String errorName, String apiErrorType) {

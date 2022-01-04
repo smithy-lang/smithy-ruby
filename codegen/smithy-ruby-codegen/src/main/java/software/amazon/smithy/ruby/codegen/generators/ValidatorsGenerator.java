@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -52,6 +53,9 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.OptionalUtils;
 
 public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
+    private static final Logger LOGGER =
+            Logger.getLogger(ValidatorsGenerator.class.getName());
+
     private final GenerationContext context;
     private final RubySettings settings;
     private final Model model;
@@ -79,6 +83,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/validators.rb";
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote validators to " + fileName);
     }
 
     private void renderValidators() {

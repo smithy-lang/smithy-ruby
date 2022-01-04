@@ -16,12 +16,16 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
 public class ModuleGenerator {
+    private static final Logger LOGGER =
+            Logger.getLogger(ModuleGenerator.class.getName());
+
     private final GenerationContext context;
 
     public ModuleGenerator(GenerationContext context) {
@@ -49,6 +53,7 @@ public class ModuleGenerator {
 
         for (String require : additionalFiles) {
             writer.write("require_relative '$L'", require);
+            LOGGER.finer("Adding additional module require: " + require);
         }
 
         writer.write("");
@@ -61,5 +66,6 @@ public class ModuleGenerator {
                 settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
 
         fileManifest.writeFile(fileName, writer.toString());
+        LOGGER.fine("Wrote module file to " + fileName);
     }
 }
