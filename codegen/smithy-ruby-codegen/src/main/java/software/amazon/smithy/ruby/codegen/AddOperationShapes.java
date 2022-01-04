@@ -25,10 +25,12 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Ensures that each operation has a unique input and output shape.
  */
+@SmithyInternalApi
 public final class AddOperationShapes {
     private static final Logger LOGGER = Logger.getLogger(AddOperationShapes.class.getName());
 

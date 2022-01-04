@@ -20,11 +20,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Represents a fragment to be rendered in the generated client.
  * Exposes ClientConfig that is required for rendering the client.
  */
+@SmithyInternalApi
 public class ClientFragment {
     private final Set<ClientConfig> clientConfig;
     private final RenderOperation render;

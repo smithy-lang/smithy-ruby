@@ -26,10 +26,12 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Settings used by {@link RubyCodegenPlugin}.
  */
+@SmithyUnstableApi
 public final class RubySettings {
     private static final Logger LOGGER = Logger.getLogger(RubySettings.class.getName());
 

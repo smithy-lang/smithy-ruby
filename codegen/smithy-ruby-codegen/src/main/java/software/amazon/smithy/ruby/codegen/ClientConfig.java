@@ -19,7 +19,12 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Describes config values to be added to generated Client classes.
+ */
+@SmithyUnstableApi
 public class ClientConfig {
 
     private final String name;
@@ -38,7 +43,12 @@ public class ClientConfig {
         this.postInitializeCustomization = builder.postInitializeCustomization;
     }
 
-    public static Set<ClientConfig> defaultConfig(GenerationContext context) {
+    /**
+     * Get a set of default configs. These should be added to every generated client.
+     *
+     * @return Set of default configs to be applied to generated clients
+     */
+    public static Set<ClientConfig> defaultConfig() {
         Set<ClientConfig> configs = new HashSet();
 
         ClientConfig middleware = (new Builder())
@@ -55,26 +65,49 @@ public class ClientConfig {
         return configs;
     }
 
+    /**
+     * @return The name of the config - this will be the initialization parameter name as well
+     * as the member variable name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return The Ruby type of the config (eg String, Number, ect).
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * @return Documentation string to be added to the initialize method.
+     */
     public String getDocumentation() {
         return documentation;
     }
 
+    /**
+     * @return Ruby code (as a String) that is used to set the default value.
+     */
     public String getDefaultValue() {
         return defaultValue;
     }
 
+    /**
+     * Allows customization of initialization.
+     * If set, this is used instead of the defaultValue.
+     * @return initialization customization
+     */
     public String getInitializationCustomization() {
         return initializationCustomization;
     }
 
+    /**
+     * Allows post initialization customization.
+     * Added after all config is initialized.
+     * @return post initialize customization
+     */
     public String getPostInitializeCustomization() {
         return postInitializeCustomization;
     }

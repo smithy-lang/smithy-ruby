@@ -47,8 +47,10 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.utils.CaseUtils;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
+@SmithyUnstableApi
 public class RubySymbolProvider implements SymbolProvider,
         ShapeVisitor<Symbol> {
     private final Model model;

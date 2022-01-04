@@ -15,6 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+/**
+ * Utilities for formatting strings for Ruby.
+ */
+@SmithyUnstableApi
 public final class RubyFormatter {
 
     private RubyFormatter() {}

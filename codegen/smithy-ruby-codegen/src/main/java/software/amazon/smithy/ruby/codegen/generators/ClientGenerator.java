@@ -72,7 +72,7 @@ public class ClientGenerator {
         });
 
         // get all config
-        Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig(context);
+        Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig();
         unorderedConfig
                 .addAll(context.getApplicationTransport().getClientConfig());
         unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));

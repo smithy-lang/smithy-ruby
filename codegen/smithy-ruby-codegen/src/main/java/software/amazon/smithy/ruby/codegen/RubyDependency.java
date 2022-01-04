@@ -25,10 +25,12 @@ import software.amazon.smithy.codegen.core.SymbolDependency;
 import software.amazon.smithy.codegen.core.SymbolDependencyContainer;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- *
+ * Describes a dependency in Ruby
  */
+@SmithyUnstableApi
 public final class RubyDependency
         implements SymbolDependencyContainer, Comparable<RubyDependency> {
 

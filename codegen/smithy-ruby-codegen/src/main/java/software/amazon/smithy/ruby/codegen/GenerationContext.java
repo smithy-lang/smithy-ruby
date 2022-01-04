@@ -21,7 +21,15 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * The context for code generation.
+ * Includes all objects required for generators
+ * to render code including the transformed model,
+ * loaded integrations, service, ect.
+ */
+@SmithyUnstableApi
 public class GenerationContext {
 
     private final RubySettings rubySettings;

@@ -16,18 +16,63 @@
 package software.amazon.smithy.ruby.codegen;
 
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Interface that all ProtocolGenerators must implement.
+ *
+ * Each generate method will be called by the CodegenOrchestrator
+ * and should generate and write out the appropriate file.
+ */
+@SmithyUnstableApi
 public interface ProtocolGenerator {
 
+    /**
+     * @return The ShapeId of the protocol that this generator applies to.
+     * This is used to match loaded ProtocolGenerators to the
+     * services protocols.
+     */
     ShapeId getProtocol();
 
+    /**
+     * @return The ApplicationTransport that should be used for this protocol.
+     */
     ApplicationTransport getApplicationTransport();
 
+    /**
+     * Called to generate builders (data serializers).
+     * Builders must be written to builders.rb and
+     * each operation must have a class that implements the
+     * `build(req, input:)` method.
+     * @param context context to use for generation
+     */
     void generateBuilders(GenerationContext context);
 
+    /**
+     * Called to generate parsers (data deserializers).
+     * Parsers must be written to parsers.rb and
+     * each operation must have a class that implements the
+     * `parse(resp)` method.
+     * @param context context to use for generation
+     */
     void generateParsers(GenerationContext context);
 
+    /**
+     * Called to generate errors.
+     * Errors must be written to errors.rb and
+     * should define a class for each modeled error
+     * as well as classes for ApiError, ApiServiceError,
+     * and ApiClientError.
+     * @param context context to use for generation
+     */
     void generateErrors(GenerationContext context);
 
+    /**
+     * Called to generate stubs.
+     * Stubs must be written to stubs.rb and
+     * should define a class for each operation
+     * that implements the `default` and `stub(resp, stub:)` method.
+     * @param context context to use for generation
+     */
     void generateStubs(GenerationContext context);
 }

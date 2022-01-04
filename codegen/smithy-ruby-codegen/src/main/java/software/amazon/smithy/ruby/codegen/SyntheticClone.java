@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -29,6 +30,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * <p>
  * Must only be used as a runtime trait-only applied to shapes based on model processing
  */
+@SmithyInternalApi
 public final class SyntheticClone extends AbstractTrait implements ToSmithyBuilder<SyntheticClone> {
     public static final ShapeId ID = ShapeId.from("smithy.ruby.traits#SyntheticClone");
 

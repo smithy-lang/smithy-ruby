@@ -16,7 +16,12 @@
 package software.amazon.smithy.ruby.codegen;
 
 import software.amazon.smithy.utils.CodeWriter;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A helper class for generating well formatted Ruby code.
+ */
+@SmithyUnstableApi
 public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter() {
         trimTrailingSpaces();
@@ -24,6 +29,13 @@ public class RubyCodeWriter extends CodeWriter {
         setIndentText("  ");
     }
 
+    /**
+     * Writes preamble comments.
+     * For writers that are used to generate full files, this should
+     * be called before any other write methods.
+     *
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writePreamble() {
         write("# frozen_string_literal: true\n");
         write("# WARNING ABOUT GENERATED CODE");
@@ -35,6 +47,12 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Sets formatting for writing Rdoc doc comments.
+     *
+     * @param task All lines written by the task will be prefixed with the comment string.
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter doc(Runnable task) {
         pushState();
         setNewlinePrefix("# ");
@@ -43,15 +61,16 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
-    public void writeWithNoFormatting(String s) {
-        pushState();
-        setExpressionStart('*');
-        write(s);
-        popState();
-    }
-
     /*
      * YARD convenience methods
+     */
+
+    /**
+     * Writes a yard attribute tag.
+     *
+     * @param attribute name of the attribute
+     * @param task      lines written by the task are properly indented
+     * @return Returns the CodeWriter
      */
     public RubyCodeWriter writeYardAttribute(String attribute, Runnable task) {
         doc(() -> {
@@ -63,6 +82,12 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Write a docstring.
+     *
+     * @param docstring the docstring to write.
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeDocstring(String docstring) {
         doc(() -> {
             write(docstring);
@@ -71,6 +96,14 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a yard param.
+     *
+     * @param returnType    the Ruby Type
+     * @param param         name of the parameter
+     * @param documentation documentation to write
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardParam(String returnType, String param, String documentation) {
         doc(() -> {
             write("@param [$L] $L", returnType, param);
@@ -80,6 +113,16 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a Yard option.
+     *
+     * @param param         the name of the param
+     * @param type          the Ruby type of the param
+     * @param option        name of the option
+     * @param defaultValue  default value for the param
+     * @param documentation documentation to write
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardOption(String param, String type, String option, String defaultValue,
                                           String documentation) {
         doc(() -> {
@@ -95,6 +138,13 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a Yard return.
+     *
+     * @param returnType    the Ruby type
+     * @param documentation documentation to write
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardReturn(String returnType, String documentation) {
         doc(() -> {
             write("@return [$L]", returnType);
@@ -104,6 +154,13 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a Yard example.
+     *
+     * @param title title for the example
+     * @param block lines in the block will be properly indented
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardExample(String title, String block) {
         doc(() -> {
             write("@example $L", title);
@@ -114,6 +171,13 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a yard deprecated tag.
+     *
+     * @param message deprecation message
+     * @param since   deprecated since
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardDeprecated(String message, String since) {
         doc(() -> {
             write("@deprecated");
@@ -126,6 +190,13 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a yard see tag.
+     *
+     * @param url         url to see
+     * @param description description of the url
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardSee(String url, String description) {
         doc(() -> {
             write("@see $L $L", url, description);
@@ -134,6 +205,12 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a yard note.
+     *
+     * @param note the note to write
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardNote(String note) {
         doc(() -> {
             write("@note");
@@ -143,6 +220,12 @@ public class RubyCodeWriter extends CodeWriter {
         return this;
     }
 
+    /**
+     * Writes a yard since tag.
+     *
+     * @param since since to write
+     * @return Returns the CodeWriter
+     */
     public RubyCodeWriter writeYardSince(String since) {
         doc(() -> {
             write("@since $L", since);
