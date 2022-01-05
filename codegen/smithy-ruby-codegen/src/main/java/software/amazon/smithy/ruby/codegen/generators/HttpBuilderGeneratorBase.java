@@ -57,7 +57,16 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Base class for Builders for HTTP based protocols.
+ *
+ * Protocols should extend this class to get common functionality -
+ * generates the framework and non-protocol specific parts of
+ * builders.rb.
+ */
+@SmithyUnstableApi
 public abstract class HttpBuilderGeneratorBase {
 
     private static final Logger LOGGER =
@@ -78,6 +87,81 @@ public abstract class HttpBuilderGeneratorBase {
         this.writer = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
     }
+
+    /**
+     * Called to render an operation's body builder when it has a Payload member.
+     * The generated code should serialize the payloadMember to the requests body.
+     * The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write the build method body.
+     *
+     * @param operation operation to generate body for
+     * @param inputShape the operation's input shape
+     * @param payloadMember the input shape's member marked with Payload to be serialized to the body
+     * @param target target shape of the payloadMember
+     */
+    protected abstract void renderPayloadBodyBuilder(OperationShape operation, Shape inputShape,
+                                                     MemberShape payloadMember, Shape target);
+
+    /**
+     * Called to render an operation's body builder when it does not have a payload member.
+     * The generated code should serialize all of the appropriate inputShape's members
+     * to the requests body (http_req.body).  This method may also need to set headers
+     * such as content type.  The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write the build method body.
+     *
+     * @param operation operation to generate body for
+     * @param inputShape operation's input shape.
+     */
+    protected abstract void renderNoPayloadBodyBuilder(OperationShape operation, Shape inputShape);
+
+    /**
+     * Called to render builders for Structure memeber shapes.
+     * The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write the serialization of input to data.  The rendered
+     * code should set values on the data hash.
+     * @param shape shape to generate for
+     */
+    protected abstract void renderStructureMemberBuilders(StructureShape shape);
+
+    /**
+     * Called to render builders for list member shapes.
+     * The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write serialization of element to data.
+     * The skeleton code iterates the input as element.
+     * The rendered code should set values on the data array using element.
+     * @param shape shape to generate for
+     */
+    protected abstract void renderListMemberBuilder(ListShape shape);
+
+    /**
+     * Called to render builders for Union member shapes.
+     * The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write the case statement body for the pased member.
+     * The rendered code should set values on the data hash from the input.
+     * @param shape union shape to genreate for
+     * @param member the member to generate for
+     */
+    protected abstract void renderUnionMemberBuilder(UnionShape shape, MemberShape member);
+
+    /**
+     * Called to render builders for map member shapes.
+     * The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write serialization of key,value to data.
+     * The skeleton code iterates the input as key,value.
+     * The rendered code should set values on the data array using key,value.
+     * @param shape shape to generate for
+     */
+    protected abstract void renderMapMemberBuilder(MapShape shape);
+
+    /**
+     * Called to render builders for set member shapes.
+     * The class and build method skeleton is rendered outside of this method
+     * and implementations only need to write serialization of element to data.
+     * The skeleton code iterates the input as element.
+     * The rendered code should set values on the data array using element.
+     * @param shape shape to generate for
+     */
+    protected abstract void renderSetMemberBuilder(SetShape shape);
 
     public void render(FileManifest fileManifest) {
 
@@ -298,22 +382,6 @@ public abstract class HttpBuilderGeneratorBase {
             }
         }
     }
-
-    protected abstract void renderPayloadBodyBuilder(OperationShape operation, Shape inputShape,
-                                                     MemberShape payloadMember, Shape target);
-
-    protected abstract void renderNoPayloadBodyBuilder(OperationShape operation, Shape inputShape);
-
-    protected abstract void renderStructureMemberBuilders(StructureShape shape);
-
-    protected abstract void renderListMemberBuilder(ListShape shape);
-
-    protected abstract void renderUnionMemberBuilder(UnionShape shape, MemberShape member);
-
-    protected abstract void renderMapMemberBuilder(MapShape shape);
-
-    protected abstract void renderSetMemberBuilder(SetShape shape);
-
 
     protected class HeaderSerializer extends ShapeVisitor.Default<Void> {
 
@@ -623,6 +691,7 @@ public abstract class HttpBuilderGeneratorBase {
                     .write("# Structure Builder for $L", shape.getId().getName())
                     .openBlock("class $L", symbol.getName())
                     .openBlock("def self.build(input)")
+                    .write("data = {}")
                     .call(() -> renderStructureMemberBuilders(shape))
                     .write("data")
                     .closeBlock("end")
