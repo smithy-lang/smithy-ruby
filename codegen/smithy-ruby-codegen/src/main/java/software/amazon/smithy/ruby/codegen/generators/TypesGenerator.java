@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -152,8 +154,11 @@ public class TypesGenerator {
                     .openBlock(shapeName + " = Struct.new(")
                     .write(membersBlock)
                     .write("keyword_init: true")
-                    .closeBlock(") { include Seahorse::Structure }")
-                    .write("");
+                    .closeBlock(") do")
+                    .indent()
+                    .write("include Seahorse::Structure")
+                    .call(() -> renderStructureToSMethod(shape))
+                    .closeBlock("end\n");
 
             return null;
         }
@@ -177,6 +182,7 @@ public class TypesGenerator {
                         .write("{ $L: super(__getobj__) }",
                                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                         .closeBlock("end")
+                        .call(() -> renderUnionToSMethod(memberShape))
                         .closeBlock("end\n");
             }
 
@@ -190,6 +196,61 @@ public class TypesGenerator {
                     .closeBlock("end\n");
 
             return null;
+        }
+
+        private void renderStructureToSMethod(Shape shape) {
+            Boolean hasSensitiveShape = shape.members().stream()
+                    .anyMatch(memberShape -> memberShape.hasTrait(SensitiveTrait.class));
+
+            // writes method only when there are sensitive members
+            if (hasSensitiveShape) {
+                writer
+                        .write("")
+                        .openBlock("def to_s")
+                        .call(() -> renderStructureToSMethodBody(shape))
+                        .closeBlock("end");
+            }
+        }
+
+        private void renderStructureToSMethodBody(Shape shape) {
+            String fullQualifiedShapeName = settings.getModule() + "::Types::"
+                    + symbolProvider.toSymbol(shape).getName();
+
+            Iterator<MemberShape> iterator = shape.members().iterator();
+
+            writer
+                    .write("\"#<struct $L \"\\", fullQualifiedShapeName)
+                    .indent();
+
+            while (iterator.hasNext()) {
+                MemberShape memberShape = iterator.next();
+                String key = symbolProvider.toMemberName(memberShape);
+                String value = "#{" + key + " || 'nil'}";
+
+                if (memberShape.isBlobShape() || memberShape.isStringShape()) {
+                    // Strings are wrapped in quotes
+                    value = "\"" + value + "\"";
+                } else if (memberShape.hasTrait(SensitiveTrait.class)) {
+                    value = "\\\"[SENSITIVE]\\\"";
+                }
+
+                if (iterator.hasNext()) {
+                    writer.write("\"$L=$L, \"\\", key, value);
+                } else {
+                    writer.write("\"$L=$L>\"", key, value);
+                }
+            }
+            writer.dedent();
+        }
+
+        private void renderUnionToSMethod(Shape shape) {
+            if (shape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
+                writer
+                        .write("")
+                        .openBlock("def to_s")
+                        .write("\"[SENSITIVE]\"")
+                        .closeBlock("end");
+            }
         }
     }
 

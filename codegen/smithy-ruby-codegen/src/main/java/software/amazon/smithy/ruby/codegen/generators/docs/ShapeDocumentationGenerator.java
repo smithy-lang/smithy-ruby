@@ -27,12 +27,14 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.RecommendedTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SinceTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
@@ -128,6 +130,12 @@ public class ShapeDocumentationGenerator {
         }
     }
 
+    private void writeSensitiveTrait(Optional<SensitiveTrait> optionalSensitiveTrait) {
+        if (optionalSensitiveTrait.isPresent()) {
+            writer.writeYardNote("This shape is sensitive and must be handled with care.");
+        }
+    }
+
     private void writeAllShapeTraits() {
         Optional<DocumentationTrait> optionalDocumentationTrait =
                 shape.getTrait(DocumentationTrait.class);
@@ -144,6 +152,8 @@ public class ShapeDocumentationGenerator {
         //         shape.getTrait(TagsTrait.class);
         Optional<UnstableTrait> optionalUnstableTrait =
                 shape.getTrait(UnstableTrait.class);
+        Optional<SensitiveTrait> optionalSensitiveTrait =
+                shape.getTrait(SensitiveTrait.class);
 
         writeDocumentationTrait(optionalDocumentationTrait);
         writeDeprecatedTrait(optionalDeprecatedTrait);
@@ -151,6 +161,7 @@ public class ShapeDocumentationGenerator {
         writeExternalDocumentationTrait(optionalExternalDocumentationTrait);
         writeInternalTrait(optionalInternalTrait);
         writeSinceTrait(optionalSinceTrait);
+        writeSensitiveTrait(optionalSensitiveTrait);
     }
 
     private class ShapeDocumentationVisitor extends ShapeVisitor.Default<Void> {
@@ -161,6 +172,12 @@ public class ShapeDocumentationGenerator {
 
         @Override
         public Void structureShape(StructureShape shape) {
+            writeAllShapeTraits();
+            return null;
+        }
+
+        @Override
+        public Void unionShape(UnionShape shape) {
             writeAllShapeTraits();
             return null;
         }
@@ -184,6 +201,8 @@ public class ShapeDocumentationGenerator {
             //        memberShape.getMemberTrait(model, TagsTrait.class);
             Optional<UnstableTrait> optionalMemberUnstableTrait =
                     shape.getMemberTrait(model, UnstableTrait.class);
+            Optional<SensitiveTrait> optionalMemberSensitiveTrait =
+                    shape.getMemberTrait(model, SensitiveTrait.class);
 
             writeDocumentationTrait(optionalMemberDocumentationTrait);
             writeDeprecatedTrait(optionalMemberDeprecatedTrait);
@@ -192,6 +211,7 @@ public class ShapeDocumentationGenerator {
             writeInternalTrait(optionalMemberInternalTrait);
             writeRecommendedTrait(optionalMemberRecommendedTrait);
             writeSinceTrait(optionalMemberSinceTrait);
+            writeSensitiveTrait(optionalMemberSensitiveTrait);
 
             return null;
         }
