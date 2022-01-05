@@ -195,7 +195,9 @@ public class TypesGenerator {
                     .openBlock("def to_s")
                     .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", settings.getModule())
                     .closeBlock("end")
-                    .closeBlock("end\n");
+                    .closeBlock("end");
+
+            writer.closeBlock("end\n");
 
             return null;
         }
