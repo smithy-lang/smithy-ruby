@@ -21,7 +21,9 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class ModuleGenerator {
     private static final Logger LOGGER =
             Logger.getLogger(ModuleGenerator.class.getName());

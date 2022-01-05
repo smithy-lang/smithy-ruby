@@ -37,7 +37,9 @@ import software.amazon.smithy.model.traits.SinceTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class ShapeDocumentationGenerator {
     private final Model model;
     private final RubyCodeWriter writer;

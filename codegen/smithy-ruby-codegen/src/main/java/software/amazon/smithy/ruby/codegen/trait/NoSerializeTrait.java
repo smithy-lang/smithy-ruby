@@ -24,11 +24,13 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Provides a custom trait for labeling structure members as not serialized. Used to decorate custom API input
  * parameters that should not be serialized, but are needed for the SDK's customizations.
  */
+@SmithyUnstableApi
 public class NoSerializeTrait extends AnnotationTrait {
     public static final ShapeId ID =
             ShapeId.from("smithy.ruby.trait#NoSerialize");

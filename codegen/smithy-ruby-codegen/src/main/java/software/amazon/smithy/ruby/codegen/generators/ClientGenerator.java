@@ -38,8 +38,10 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
+@SmithyInternalApi
 public class ClientGenerator {
     private static final Logger LOGGER =
             Logger.getLogger(ClientGenerator.class.getName());

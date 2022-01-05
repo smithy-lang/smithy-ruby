@@ -42,6 +42,7 @@ import software.amazon.smithy.ruby.codegen.OperationPredicate;
 import software.amazon.smithy.ruby.codegen.ServicePredicate;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Class representing Middleware to be added during codegeneration
@@ -49,6 +50,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * and knows its position in the middleware stack.  It also
  * must provide the ClientConfig required for its params.
  */
+@SmithyUnstableApi
 public class Middleware {
 
     private final String klass;
@@ -64,7 +66,7 @@ public class Middleware {
 
 
     // params could include any Ruby code
-    public Middleware(Builder builder) {
+    private Middleware(Builder builder) {
         this.klass = builder.klass;
         this.step = builder.step;
         this.order = builder.order;
@@ -153,6 +155,9 @@ public class Middleware {
                                    OperationShape operation);
     }
 
+    /**
+     * Builder for {@link Middleware}
+     */
     public static class Builder implements SmithyBuilder<Middleware> {
 
         private static final RenderAdd DEFAULT_RENDER_ADD =
@@ -201,36 +206,73 @@ public class Middleware {
         private WriteAdditionalFiles writeAdditionalFiles =
                 (context) -> Collections.emptyList();
 
+        /**
+         *
+         * @param klass the Ruby class of the Middleware
+         * @return Returns the builder
+         */
         public Builder klass(String klass) {
             this.klass = klass;
             return this;
         }
 
+        /**
+         *
+         * @param order the order within the step. Smaller values are used earlier in the stack.
+         * @return Returns the builder
+         */
         public Builder order(byte order) {
             this.order = order;
             return this;
         }
 
+        /**
+         * @param step The step to apply the middleware to.
+         * @return Returns the builder
+         */
         public Builder step(MiddlewareStackStep step) {
             this.step = step;
             return this;
         }
 
+        /**
+         *
+         * @param config ClientConfig to be added to the Client and passed to this middleware.
+         * @return Returns the builder
+         */
         public Builder addConfig(ClientConfig config) {
             this.clientConfig.add(Objects.requireNonNull(config));
             return this;
         }
 
+        /**
+         *
+         * @param config All of the client config options.
+         * @return Returns the builder
+         */
         public Builder config(Collection<ClientConfig> config) {
             this.clientConfig = new HashSet<>(config);
             return this;
         }
 
+        /**
+         * Used to pass additional parameters (not defined by ClientConfig) to the middleware.
+         *
+         * @param name the name of the parameter.
+         * @param value the value (can be ruby code that uses values defined in the client or operation).
+         * @return Returns the builder
+         */
         public Builder addParam(String name, String value) {
             this.additionalParams.put(name, value);
             return this;
         }
 
+        /**
+         * Used to pass additional parameters (not defined by ClientConfig) to the middleware.
+         *
+         * @param newParams Map of params/values
+         * @return Returns the builder
+         */
         public Builder params(Map<String, String> newParams) {
             this.additionalParams = new HashMap<>(newParams);
             return this;
@@ -252,42 +294,99 @@ public class Middleware {
                     new HashSet(Arrays.asList(operationNames)));
         }
 
+        /**
+         * Configures a predicate that makes a plugin only apply to a set of
+         * operations that match one or more of the set of given shape names,
+         * and ensures that the plugin is not applied globally to services.
+         *
+         * <p>By default, a middleware applies globally to a service, which thereby
+         * applies to every operation when the middleware stack is copied.
+         *
+         * @param operationNames apply this middleware only to the given operations.
+         * @return Returns the builder
+         */
         public Builder appliesOnlyToOperations(Set<String> operationNames) {
             return operationPredicate(
                     (model, service, operation) -> operationNames
                             .contains(operation.getId().getName()));
         }
 
+        /**
+         * Configures a predicate that makes a plugin only apply to a set of
+         * operations that match one or more of the set of given shape names,
+         * and ensures that the plugin is not applied globally to services.
+         *
+         * <p>By default, a middleware applies globally to a service, which thereby
+         * applies to every operation when the middleware stack is copied.
+         * @param p predicate to be used to test operations.
+         * @return
+         */
         public Builder operationPredicate(OperationPredicate p) {
             this.operationPredicate = Objects.requireNonNull(p);
             return this;
         }
 
+        /**
+         * Configure a predicate that makes this plugin only apply to
+         * a set of services.
+         * @param serviceNames services to apply this middleware to.
+         * @return
+         */
         public Builder appliesOnlyToServices(Set<String> serviceNames) {
             return servicePredicate((model, service) -> serviceNames
                     .contains(service.getId().getName()));
         }
 
+        /**
+         * Configure a predicate that makes this plugin only apply to
+         * a set of services.
+         * @param p predicate to test a service for inclusion.
+         * @return Returns the Builder
+         */
         public Builder servicePredicate(ServicePredicate p) {
             this.servicePredicate = Objects.requireNonNull(p);
             return this;
         }
 
+        /**
+         * Used to add additional parameters to the middleware
+         * that require information about the operation (eg, the input/output shapes).
+         * @param p Called with the operation to return a map of params/values.
+         * @return Returns the Builder
+         */
         public Builder operationParams(OperationParams p) {
             this.operationParams = p;
             return this;
         }
 
+        /**
+         * Used to completely override and fully customize the rendering of
+         * adding this middleware to the stack.
+         * @param r Called to render code to add this middleware to the stack in the client operation.
+         * @return Returns the Builder.
+         */
         public Builder renderAdd(RenderAdd r) {
             this.renderAdd = Objects.requireNonNull(r);
             return this;
         }
 
+        /**
+         * Used to write additional files required by this middleware
+         * @param w called to write additional files.
+         * @return Returns the Builder.
+         */
         public Builder writeAdditionalFiles(WriteAdditionalFiles w) {
             this.writeAdditionalFiles = Objects.requireNonNull(w);
             return this;
         }
 
+        /**
+         * Used to copy a given ruby file (often the middleware class definition)
+         * into the generated SDK.
+         *
+         * @param rubyFileName the name of the ruby file to copy.
+         * @return
+         */
         public Builder rubySource(String rubyFileName) {
             this.writeAdditionalFiles = (context) -> {
                 try {

@@ -30,7 +30,16 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * ErrorGeneratorBase that protocol generators can extend to get
+ * common functionality.
+ *
+ * Generates the framework and non-protocol specific parts of the
+ * errors.rb.
+ */
+@SmithyUnstableApi
 public abstract class ErrorsGeneratorBase {
 
     private static final Logger LOGGER =
@@ -129,6 +138,13 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end");
     }
 
+    /**
+     * Called to render the error_code method.
+     *
+     * errors.rb must define a self.error_code(resp) method which will
+     * return the protocol specific error code from the response or nil
+     * if no error code is found.
+     */
     public abstract void renderErrorCode();
 
     public void renderRbsErrorCode() {
