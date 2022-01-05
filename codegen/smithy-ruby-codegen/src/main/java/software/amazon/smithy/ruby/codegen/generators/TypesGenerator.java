@@ -191,66 +191,77 @@ public class TypesGenerator {
                     .openBlock("class Unknown < $L", shapeName)
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
-                    .closeBlock("end")
+                    .closeBlock("end\n")
+                    .openBlock("def to_s")
+                    .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", settings.getModule())
                     .closeBlock("end")
                     .closeBlock("end\n");
 
             return null;
         }
 
-        private void renderStructureToSMethod(Shape shape) {
-            Boolean hasSensitiveShape = shape.members().stream()
-                    .anyMatch(memberShape -> memberShape.hasTrait(SensitiveTrait.class));
-
-            // writes method only when there are sensitive members
-            if (hasSensitiveShape) {
-                writer
-                        .write("")
-                        .openBlock("def to_s")
-                        .call(() -> renderStructureToSMethodBody(shape))
-                        .closeBlock("end");
-            }
-        }
-
-        private void renderStructureToSMethodBody(Shape shape) {
+        private void renderStructureToSMethod(StructureShape structureShape) {
             String fullQualifiedShapeName = settings.getModule() + "::Types::"
-                    + symbolProvider.toSymbol(shape).getName();
+                    + symbolProvider.toSymbol(structureShape).getName();
 
-            Iterator<MemberShape> iterator = shape.members().iterator();
+            Boolean hasSensitiveMember = structureShape.members().stream()
+                    .anyMatch(memberShape -> memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent());
 
-            writer
-                    .write("\"#<struct $L \"\\", fullQualifiedShapeName)
-                    .indent();
-
-            while (iterator.hasNext()) {
-                MemberShape memberShape = iterator.next();
-                String key = symbolProvider.toMemberName(memberShape);
-                String value = "#{" + key + " || 'nil'}";
-
-                if (memberShape.isBlobShape() || memberShape.isStringShape()) {
-                    // Strings are wrapped in quotes
-                    value = "\"" + value + "\"";
-                } else if (memberShape.hasTrait(SensitiveTrait.class)) {
-                    value = "\\\"[SENSITIVE]\\\"";
-                }
-
-                if (iterator.hasNext()) {
-                    writer.write("\"$L=$L, \"\\", key, value);
-                } else {
-                    writer.write("\"$L=$L>\"", key, value);
-                }
-            }
-            writer.dedent();
-        }
-
-        private void renderUnionToSMethod(Shape shape) {
-            if (shape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
+            if (structureShape.hasTrait(SensitiveTrait.class)) {
+                // structure is itself sensitive
                 writer
                         .write("")
                         .openBlock("def to_s")
-                        .write("\"[SENSITIVE]\"")
+                        .write("\"#<struct $L [SENSITIVE]>\"", fullQualifiedShapeName)
+                        .closeBlock("end");
+            } else if (hasSensitiveMember) {
+                // at least one member is sensitive
+                Iterator<MemberShape> iterator = structureShape.members().iterator();
+
+                writer
+                        .write("")
+                        .openBlock("def to_s")
+                        .write("\"#<struct $L \"\\", fullQualifiedShapeName)
+                        .indent();
+
+                while (iterator.hasNext()) {
+                    MemberShape memberShape = iterator.next();
+                    String key = symbolProvider.toMemberName(memberShape);
+                    String value = "#{" + key + " || 'nil'}";
+
+                    if (memberShape.isBlobShape() || memberShape.isStringShape()) {
+                        // Strings are wrapped in quotes
+                        value = "\"" + value + "\"";
+                    } else if (memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
+                        value = "\\\"[SENSITIVE]\\\"";
+                    }
+
+                    if (iterator.hasNext()) {
+                        writer.write("\"$L=$L, \"\\", key, value);
+                    } else {
+                        writer.write("\"$L=$L>\"", key, value);
+                    }
+                }
+                writer
+                        .dedent()
                         .closeBlock("end");
             }
+        }
+
+        private void renderUnionToSMethod(MemberShape memberShape) {
+            String fullQualifiedShapeName = settings.getModule() + "::Types::"
+                    + symbolProvider.toMemberName(memberShape);
+
+            writer.write("")
+                    .openBlock("def to_s");
+
+            if (memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
+                writer.write("\"#<$L [SENSITIVE]>\"", fullQualifiedShapeName);
+            } else {
+                writer.write("\"#<$L #{__getobj__ || 'nil'}>\"", fullQualifiedShapeName);
+            }
+
+            writer.closeBlock("end");
         }
     }
 
