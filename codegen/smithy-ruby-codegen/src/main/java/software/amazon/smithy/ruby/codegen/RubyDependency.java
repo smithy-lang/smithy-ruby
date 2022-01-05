@@ -28,7 +28,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Describes a dependency in Ruby
+ * Describes a dependency in Ruby.
  */
 @SmithyUnstableApi
 public final class RubyDependency

@@ -50,7 +50,6 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.utils.SmithyInternalApi;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi

@@ -51,7 +51,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * must provide the ClientConfig required for its params.
  */
 @SmithyUnstableApi
-public class Middleware {
+public final class Middleware {
 
     private final String klass;
     private final MiddlewareStackStep step;
@@ -156,7 +156,7 @@ public class Middleware {
     }
 
     /**
-     * Builder for {@link Middleware}
+     * Builder for {@link Middleware}.
      */
     public static class Builder implements SmithyBuilder<Middleware> {
 
@@ -371,7 +371,7 @@ public class Middleware {
         }
 
         /**
-         * Used to write additional files required by this middleware
+         * Used to write additional files required by this middleware.
          * @param w called to write additional files.
          * @return Returns the Builder.
          */

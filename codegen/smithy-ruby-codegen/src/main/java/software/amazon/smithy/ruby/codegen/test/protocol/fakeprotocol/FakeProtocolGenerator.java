@@ -29,7 +29,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 
 
 /**
- * Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test
+ * Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test.
  */
 @SmithyInternalApi
 public class FakeProtocolGenerator implements ProtocolGenerator {

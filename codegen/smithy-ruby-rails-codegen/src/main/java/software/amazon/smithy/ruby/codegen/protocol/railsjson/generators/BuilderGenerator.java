@@ -88,6 +88,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
         writer
                 .write("")
                 .write("http_req.headers['Content-Type'] = 'application/json'")
+                .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
                 .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
     }

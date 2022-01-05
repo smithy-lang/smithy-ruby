@@ -23,7 +23,7 @@ import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.FakeProtoc
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Provide support for whitelabel testing (implements fakeProtocol)
+ * Provide support for whitelabel testing (implements fakeProtocol).
  */
 @SmithyInternalApi
 public class TestIntegration implements RubyIntegration {
