@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module WhiteLabel
+  module Paginators
+
+    class PaginatorsTest
+      def initialize: (untyped client, ?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> void
+
+      def pages: () -> untyped
+    end
+
+    class PaginatorsTestWithItems
+      def initialize: (untyped client, ?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> void
+
+      def pages: () -> untyped
+      def items: () -> untyped
+    end
+
+  end
+end

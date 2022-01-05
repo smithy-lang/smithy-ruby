@@ -31,6 +31,10 @@ dependencies {
     implementation(project(":smithy-ruby-codegen"))
 }
 
+tasks.register<Copy>("copyGem") {
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen")
+    into("$buildDir/../../../")
+}
 tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label/spec")
@@ -39,4 +43,4 @@ tasks.register<Copy>("copySteepfile") {
     from("./Steepfile")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
 }
-tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copySteepfile"])
+tasks["build"].finalizedBy(tasks["copyIntegrationSpecs"], tasks["copySteepfile"], tasks["copyGem"])
