@@ -78,6 +78,7 @@ apply Struct @externalDocumentation(
 apply Struct @internal
 apply Struct @since("today")
 apply Struct @unstable
+apply Struct @sensitive
 
 // test structure member documentation
 apply KitchenSinkInputOutput$String @documentation("This is some member\ndocumentation of String.")
@@ -90,6 +91,7 @@ apply KitchenSinkInputOutput$String @internal
 apply KitchenSinkInputOutput$String @since("today")
 apply KitchenSinkInputOutput$String @unstable
 apply KitchenSinkInputOutput$String @recommended(reason: "This structure member is\ncool AF.")
+apply KitchenSinkInputOutput$String @sensitive
 
 // test structure member documentation resolution
 apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
@@ -104,6 +106,7 @@ apply Union @externalDocumentation(
 apply Union @internal
 apply Union @since("today")
 apply Union @unstable
+apply Union @sensitive
 
 // test union member documentation
 apply Union$String @documentation("This is a String member.\nStruct should also be documented too because the structure is.")
@@ -115,3 +118,4 @@ apply Union$String @externalDocumentation(
 apply Union$String @internal
 apply Union$String @since("today")
 apply Union$String @unstable
+apply Union$String @sensitive

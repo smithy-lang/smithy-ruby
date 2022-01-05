@@ -42,7 +42,9 @@ module HighScoreService
       :created_at,
       :updated_at,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Permitted params for a High Score
     #
@@ -60,7 +62,9 @@ module HighScoreService
       :game,
       :score,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # @!attribute errors
     #
@@ -69,7 +73,9 @@ module HighScoreService
     UnprocessableEntityError = Struct.new(
       :errors,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Input structure for CreateHighScore
     #
@@ -81,7 +87,9 @@ module HighScoreService
     CreateHighScoreInput = Struct.new(
       :high_score,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Output structure for CreateHighScore
     #
@@ -99,7 +107,9 @@ module HighScoreService
       :high_score,
       :location,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Input structure for DeleteHighScore
     #
@@ -111,14 +121,18 @@ module HighScoreService
     DeleteHighScoreInput = Struct.new(
       :id,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Output structure for DeleteHighScore
     #
     DeleteHighScoreOutput = Struct.new(
       nil,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Input structure for GetHighScore
     #
@@ -130,7 +144,9 @@ module HighScoreService
     GetHighScoreInput = Struct.new(
       :id,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Output structure for GetHighScore
     #
@@ -142,12 +158,16 @@ module HighScoreService
     GetHighScoreOutput = Struct.new(
       :high_score,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     ListHighScoresInput = Struct.new(
       nil,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Output structure for ListHighScores
     #
@@ -159,7 +179,9 @@ module HighScoreService
     ListHighScoresOutput = Struct.new(
       :high_scores,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Input structure for UpdateHighScore
     #
@@ -177,7 +199,9 @@ module HighScoreService
       :id,
       :high_score,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
     # Output structure for UpdateHighScore
     #
@@ -189,7 +213,9 @@ module HighScoreService
     UpdateHighScoreOutput = Struct.new(
       :high_score,
       keyword_init: true
-    ) { include Seahorse::Structure }
+    ) do
+      include Seahorse::Structure
+    end
 
   end
 end
