@@ -47,10 +47,10 @@ module HighScoreService
       end
     end
 
-    module Unit
+    module ListHighScoresInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::Unit, context: context)
-        type = Types::Unit.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::ListHighScoresInput, context: context)
+        type = Types::ListHighScoresInput.new
         type
       end
     end

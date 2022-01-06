@@ -10,10 +10,10 @@
 module WhiteLabel
   module Params
 
-    module KitchenSinkInputOutput
+    module KitchenSinkInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::KitchenSinkInputOutput, context: context)
-        type = Types::KitchenSinkInputOutput.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::KitchenSinkInput, context: context)
+        type = Types::KitchenSinkInput.new
         type.string = params[:string]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
@@ -72,10 +72,19 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestInput
+    module PaginatorsTestOperationInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestInput, context: context)
-        type = Types::PaginatorsTestInput.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
+        type = Types::PaginatorsTestOperationInput.new
+        type.next_token = params[:next_token]
+        type
+      end
+    end
+
+    module PaginatorsTestWithItemsInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
+        type = Types::PaginatorsTestWithItemsInput.new
         type.next_token = params[:next_token]
         type
       end
@@ -137,10 +146,10 @@ module WhiteLabel
       end
     end
 
-    module WaitersTestInputOutput
+    module WaitersTestInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::WaitersTestInputOutput, context: context)
-        type = Types::WaitersTestInputOutput.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::WaitersTestInput, context: context)
+        type = Types::WaitersTestInput.new
         type.status = params[:status]
         type
       end

@@ -12,11 +12,17 @@ module WhiteLabel
 
     ClientError: untyped
 
-    KitchenSinkInputOutput: untyped
+    KitchenSinkInput: untyped
 
-    PaginatorsTestInput: untyped
+    KitchenSinkOutput: untyped
 
-    PaginatorsTestOutput: untyped
+    PaginatorsTestOperationInput: untyped
+
+    PaginatorsTestOperationOutput: untyped
+
+    PaginatorsTestWithItemsInput: untyped
+
+    PaginatorsTestWithItemsOutput: untyped
 
     ServerError: untyped
 
@@ -36,7 +42,9 @@ module WhiteLabel
       end
     end
 
-    WaitersTestInputOutput: untyped
+    WaitersTestInput: untyped
+
+    WaitersTestOutput: untyped
 
   end
 end

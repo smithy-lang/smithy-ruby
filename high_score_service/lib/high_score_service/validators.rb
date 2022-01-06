@@ -39,9 +39,9 @@ module HighScoreService
       end
     end
 
-    class Unit
+    class ListHighScoresInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Unit, context: context)
+        Seahorse::Validator.validate!(input, Types::ListHighScoresInput, context: context)
       end
     end
 

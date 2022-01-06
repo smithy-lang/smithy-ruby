@@ -26,13 +26,13 @@ module HighScoreService
 
     HighScoreParams: untyped
 
+    ListHighScoresInput: untyped
+
     ListHighScoresOutput: untyped
 
     UpdateHighScoreInput: untyped
 
     UpdateHighScoreOutput: untyped
-
-    Unit: untyped
 
     UnprocessableEntityError: untyped
 

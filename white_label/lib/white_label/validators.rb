@@ -26,9 +26,9 @@ module WhiteLabel
       end
     end
 
-    class KitchenSinkInputOutput
+    class KitchenSinkInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::KitchenSinkInputOutput, context: context)
+        Seahorse::Validator.validate!(input, Types::KitchenSinkInput, context: context)
         Seahorse::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
         Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
@@ -80,9 +80,16 @@ module WhiteLabel
       end
     end
 
-    class PaginatorsTestInput
+    class PaginatorsTestOperationInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PaginatorsTestInput, context: context)
+        Seahorse::Validator.validate!(input, Types::PaginatorsTestOperationInput, context: context)
+        Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+      end
+    end
+
+    class PaginatorsTestWithItemsInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::PaginatorsTestWithItemsInput, context: context)
         Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
       end
     end
@@ -139,9 +146,9 @@ module WhiteLabel
       end
     end
 
-    class WaitersTestInputOutput
+    class WaitersTestInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::WaitersTestInputOutput, context: context)
+        Seahorse::Validator.validate!(input, Types::WaitersTestInput, context: context)
         Seahorse::Validator.validate!(input[:status], ::String, context: "#{context}[:status]")
       end
     end

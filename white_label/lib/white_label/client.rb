@@ -95,7 +95,7 @@ module WhiteLabel
     # @since today
     #
     # @param [Hash] params
-    #   See {Types::KitchenSinkInputOutput}.
+    #   See {Types::KitchenSinkInput}.
     #
     # @option params [String] :string
     #   This is some member
@@ -109,7 +109,7 @@ module WhiteLabel
     #   This is some union documentation.
     #   It has some union members
     #
-    # @return [Types::KitchenSinkInputOutput]
+    # @return [Types::KitchenSinkOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -143,7 +143,7 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::KitchenSinkInputOutput
+    #   resp #=> Types::KitchenSinkOutput
     #   resp.string #=> String
     #   resp.struct #=> Types::Struct
     #   resp.struct.value #=> String
@@ -282,9 +282,9 @@ module WhiteLabel
     #
     def kitchen_sink(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::KitchenSinkInputOutput.build(params)
+      input = Params::KitchenSinkInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::KitchenSinkInputOutput,
+        validator: Validators::KitchenSinkInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
@@ -318,9 +318,9 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestInput}.
+    #   See {Types::PaginatorsTestOperationInput}.
     #
-    # @return [Types::PaginatorsTestOutput]
+    # @return [Types::PaginatorsTestOperationOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -330,16 +330,16 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::PaginatorsTestOutput
+    #   resp #=> Types::PaginatorsTestOperationOutput
     #   resp.next_token #=> String
     #   resp.items #=> Array<String>
     #   resp.items[0] #=> String
     #
     def paginators_test(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::PaginatorsTestInput.build(params)
+      input = Params::PaginatorsTestOperationInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::PaginatorsTestInput,
+        validator: Validators::PaginatorsTestOperationInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
@@ -373,9 +373,9 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestInput}.
+    #   See {Types::PaginatorsTestWithItemsInput}.
     #
-    # @return [Types::PaginatorsTestOutput]
+    # @return [Types::PaginatorsTestWithItemsOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -385,16 +385,16 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::PaginatorsTestOutput
+    #   resp #=> Types::PaginatorsTestWithItemsOutput
     #   resp.next_token #=> String
     #   resp.items #=> Array<String>
     #   resp.items[0] #=> String
     #
     def paginators_test_with_items(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::PaginatorsTestInput.build(params)
+      input = Params::PaginatorsTestWithItemsInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::PaginatorsTestInput,
+        validator: Validators::PaginatorsTestWithItemsInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
@@ -428,9 +428,9 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::WaitersTestInputOutput}.
+    #   See {Types::WaitersTestInput}.
     #
-    # @return [Types::WaitersTestInputOutput]
+    # @return [Types::WaitersTestOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -440,14 +440,14 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::WaitersTestInputOutput
+    #   resp #=> Types::WaitersTestOutput
     #   resp.status #=> String
     #
     def waiters_test(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::WaitersTestInputOutput.build(params)
+      input = Params::WaitersTestInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::WaitersTestInputOutput,
+        validator: Validators::WaitersTestInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,

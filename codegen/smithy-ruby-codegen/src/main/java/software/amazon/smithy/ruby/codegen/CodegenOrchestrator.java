@@ -32,6 +32,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TitleTrait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
@@ -89,8 +90,8 @@ public class CodegenOrchestrator {
                         () -> new CodegenException("Shape is not a service"));
 
         // Add unique operation input/output shapes
-//        resolvedModel =
-//                AddOperationShapes.execute(resolvedModel, service.getId());
+        resolvedModel = ModelTransformer.create()
+                .createDedicatedInputAndOutput(resolvedModel, "Input", "Output");
 
         // Now that service and model are resolved, filter integrations for the service
         Model finalResolvedModel = resolvedModel;

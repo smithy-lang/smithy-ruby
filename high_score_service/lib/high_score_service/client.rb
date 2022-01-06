@@ -246,7 +246,7 @@ module HighScoreService
     # List all high scores
     #
     # @param [Hash] params
-    #   See {Types::Unit}.
+    #   See {Types::ListHighScoresInput}.
     #
     # @return [Types::ListHighScoresOutput]
     #
@@ -267,9 +267,9 @@ module HighScoreService
     #
     def list_high_scores(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::Unit.build(params)
+      input = Params::ListHighScoresInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::Unit,
+        validator: Validators::ListHighScoresInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,

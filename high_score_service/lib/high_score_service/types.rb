@@ -151,6 +151,13 @@ module HighScoreService
       include Seahorse::Structure
     end
 
+    ListHighScoresInput = Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # Output structure for ListHighScores
     #
     # @!attribute high_scores
@@ -194,13 +201,6 @@ module HighScoreService
     #
     UpdateHighScoreOutput = Struct.new(
       :high_score,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    Unit = Struct.new(
-      nil,
       keyword_init: true
     ) do
       include Seahorse::Structure
