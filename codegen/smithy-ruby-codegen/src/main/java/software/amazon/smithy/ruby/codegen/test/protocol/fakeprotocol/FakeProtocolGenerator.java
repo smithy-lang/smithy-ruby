@@ -25,9 +25,13 @@ import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators
 import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.ParserGenerator;
 import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.StubsGenerator;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 
-// Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test
+/**
+ * Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test.
+ */
+@SmithyInternalApi
 public class FakeProtocolGenerator implements ProtocolGenerator {
     private static final Logger LOGGER = Logger.getLogger(FakeProtocolGenerator.class.getName());
 

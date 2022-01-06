@@ -16,7 +16,9 @@
 package software.amazon.smithy.ruby.codegen;
 
 import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 class UnresolvableProtocolException extends CodegenException {
 
     UnresolvableProtocolException(String message) {

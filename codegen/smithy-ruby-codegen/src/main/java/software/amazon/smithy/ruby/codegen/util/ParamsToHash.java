@@ -49,8 +49,10 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
+@SmithyInternalApi
 public class ParamsToHash extends ShapeVisitor.Default<String> {
 
     private final Node node;

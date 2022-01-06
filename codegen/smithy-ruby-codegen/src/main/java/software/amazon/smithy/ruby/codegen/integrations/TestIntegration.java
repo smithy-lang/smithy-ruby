@@ -20,8 +20,12 @@ import java.util.List;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.FakeProtocolGenerator;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-// Provide support for whitelabel testing (implements fakeProtocol)
+/**
+ * Provide support for whitelabel testing (implements fakeProtocol).
+ */
+@SmithyInternalApi
 public class TestIntegration implements RubyIntegration {
 
     @Override

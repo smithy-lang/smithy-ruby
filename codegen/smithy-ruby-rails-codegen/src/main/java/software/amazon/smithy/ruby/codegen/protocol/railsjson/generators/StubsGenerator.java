@@ -70,9 +70,6 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
 
     @Override
     protected void renderUnionMemberStubbers(UnionShape shape) {
-        writer.write("stub ||= {}");
-
-        writer.write("data = {}");
         shape.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
 
@@ -114,7 +111,6 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
     }
 
     private void renderMemberStubbers(Shape s) {
-        writer.write("stub ||= {}");
         Optional<MemberShape> payload =
                 s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
 
@@ -132,7 +128,6 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
                             && !m.hasTrait((HttpHeaderTrait.class)));
             serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
 
-            writer.write("data = {}");
             serializeMembers.forEach((member) -> {
                 Shape target = model.expectShape(member.getTarget());
 

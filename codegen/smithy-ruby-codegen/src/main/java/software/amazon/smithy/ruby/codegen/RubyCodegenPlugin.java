@@ -18,7 +18,9 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public final class RubyCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER =
             Logger.getLogger(RubyCodegenPlugin.class.getName());

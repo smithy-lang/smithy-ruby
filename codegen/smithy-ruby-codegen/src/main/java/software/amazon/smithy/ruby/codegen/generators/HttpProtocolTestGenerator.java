@@ -40,7 +40,9 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class HttpProtocolTestGenerator {
 
     private static final Logger LOGGER =

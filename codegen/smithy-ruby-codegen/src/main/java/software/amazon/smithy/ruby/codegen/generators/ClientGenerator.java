@@ -38,8 +38,10 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
+@SmithyInternalApi
 public class ClientGenerator {
     private static final Logger LOGGER =
             Logger.getLogger(ClientGenerator.class.getName());
@@ -72,7 +74,7 @@ public class ClientGenerator {
         });
 
         // get all config
-        Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig(context);
+        Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig();
         unorderedConfig
                 .addAll(context.getApplicationTransport().getClientConfig());
         unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));

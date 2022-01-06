@@ -49,7 +49,9 @@ import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class PlaceholderExampleGenerator {
 
     private final OperationShape operation;

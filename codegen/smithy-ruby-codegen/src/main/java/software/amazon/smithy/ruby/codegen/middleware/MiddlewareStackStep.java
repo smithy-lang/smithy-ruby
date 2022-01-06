@@ -15,9 +15,15 @@
 
 package software.amazon.smithy.ruby.codegen.middleware;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
 /**
  * Represents the middleware stack step.
+ *
+ * Steps represent the conceptual boundaries in the middleware stack
+ * and are used to organize different middleware components based on their intent.
  */
+@SmithyUnstableApi
 public enum MiddlewareStackStep {
     INITIALIZE,
     SERIALIZE,

@@ -26,7 +26,9 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class NodeToHash implements NodeVisitor<String> {
 
     @Override

@@ -25,7 +25,9 @@ import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class TraitExampleGenerator {
 
     private final OperationShape operation;

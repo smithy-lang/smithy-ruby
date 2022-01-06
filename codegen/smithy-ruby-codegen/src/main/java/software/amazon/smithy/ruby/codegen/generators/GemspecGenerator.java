@@ -35,7 +35,9 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyDependency;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class GemspecGenerator {
 
     private final GenerationContext context;

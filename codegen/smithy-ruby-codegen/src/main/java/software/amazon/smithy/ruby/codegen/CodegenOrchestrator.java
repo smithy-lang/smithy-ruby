@@ -42,7 +42,9 @@ import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.utils.CodeWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class CodegenOrchestrator {
 
     private static final Logger LOGGER =

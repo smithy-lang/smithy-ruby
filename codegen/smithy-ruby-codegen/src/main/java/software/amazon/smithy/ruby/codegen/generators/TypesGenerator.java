@@ -38,7 +38,9 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public class TypesGenerator {
 
     private static final Logger LOGGER =
@@ -98,7 +100,7 @@ public class TypesGenerator {
         LOGGER.fine("Wrote types rbs to " + typesFile);
     }
 
-    private void renderTypes(ShapeVisitor visitor) {
+    private void renderTypes(ShapeVisitor<Void> visitor) {
         Model modelWithoutTraitShapes = ModelTransformer.create()
                 .getModelWithoutTraitShapes(model);
 
@@ -138,7 +140,8 @@ public class TypesGenerator {
             shape.members().forEach(memberShape -> {
                 String attribute = symbolProvider.toMemberName(memberShape);
                 Shape target = model.expectShape(memberShape.getTarget());
-                String returnType = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
+                String returnType = (String) symbolProvider.toSymbol(target)
+                        .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
 
                 String memberDocumentation =
                         new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();

@@ -50,8 +50,6 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     private void renderMemberBuilders(Shape s) {
-        writer.write("data = {}");
-
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
@@ -90,6 +88,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
         writer
                 .write("")
                 .write("http_req.headers['Content-Type'] = 'application/json'")
+                .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
                 .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
     }

@@ -22,11 +22,13 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * JVM SPI for customizing Ruby code generation, registering new protocol
  * generators, renaming shapes, modifying the model, adding custom code, etc.
  */
+@SmithyUnstableApi
 public interface RubyIntegration {
 
     /**

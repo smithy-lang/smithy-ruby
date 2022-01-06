@@ -18,8 +18,10 @@ package software.amazon.smithy.ruby.codegen;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @FunctionalInterface
+@SmithyUnstableApi
 public interface OperationPredicate {
     /**
      * Tests this should be applied to an individual operation.

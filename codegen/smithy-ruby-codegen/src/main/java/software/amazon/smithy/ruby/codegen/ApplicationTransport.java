@@ -24,17 +24,19 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 
 /**
- * Represents the resolves {@link Symbol}s and references for an
- * application Transport (aka Application Protocol) (e.g., "http", "mqtt", etc).
+ * Represents an application Transport (aka Application Protocol) (e.g., "http", "mqtt", etc).
+ * Describes the low level transport client, request and responses classes as well as the
+ * default middleware.
  */
+@SmithyUnstableApi
 public final class ApplicationTransport {
 
     private final String name;
