@@ -14,7 +14,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    ClientError = Struct.new(
+    ClientError = ::Struct.new(
       :message,
       keyword_init: true
     ) do
@@ -132,7 +132,7 @@ module WhiteLabel
     #
     #   @return [Union]
     #
-    KitchenSinkInput = Struct.new(
+    KitchenSinkInput = ::Struct.new(
       :string,
       :struct,
       :document,
@@ -273,7 +273,7 @@ module WhiteLabel
     #
     #   @return [Union]
     #
-    KitchenSinkOutput = Struct.new(
+    KitchenSinkOutput = ::Struct.new(
       :string,
       :struct,
       :document,
@@ -307,7 +307,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    PaginatorsTestOperationInput = Struct.new(
+    PaginatorsTestOperationInput = ::Struct.new(
       :next_token,
       keyword_init: true
     ) do
@@ -322,7 +322,7 @@ module WhiteLabel
     #
     #   @return [Array<String>]
     #
-    PaginatorsTestOperationOutput = Struct.new(
+    PaginatorsTestOperationOutput = ::Struct.new(
       :next_token,
       :items,
       keyword_init: true
@@ -334,7 +334,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    PaginatorsTestWithItemsInput = Struct.new(
+    PaginatorsTestWithItemsInput = ::Struct.new(
       :next_token,
       keyword_init: true
     ) do
@@ -349,7 +349,7 @@ module WhiteLabel
     #
     #   @return [Array<String>]
     #
-    PaginatorsTestWithItemsOutput = Struct.new(
+    PaginatorsTestWithItemsOutput = ::Struct.new(
       :next_token,
       :items,
       keyword_init: true
@@ -357,7 +357,7 @@ module WhiteLabel
       include Seahorse::Structure
     end
 
-    ServerError = Struct.new(
+    ServerError = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -390,7 +390,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    Struct = Struct.new(
+    Struct = ::Struct.new(
       :value,
       keyword_init: true
     ) do
@@ -507,7 +507,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    WaitersTestInput = Struct.new(
+    WaitersTestInput = ::Struct.new(
       :status,
       keyword_init: true
     ) do
@@ -518,7 +518,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    WaitersTestOutput = Struct.new(
+    WaitersTestOutput = ::Struct.new(
       :status,
       keyword_init: true
     ) do

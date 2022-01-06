@@ -154,7 +154,7 @@ public class TypesGenerator {
             });
 
             writer
-                    .openBlock(shapeName + " = Struct.new(")
+                    .openBlock(shapeName + " = ::Struct.new(")
                     .write(membersBlock)
                     .write("keyword_init: true")
                     .closeBlock(") do")

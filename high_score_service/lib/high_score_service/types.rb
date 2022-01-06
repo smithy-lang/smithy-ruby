@@ -17,7 +17,7 @@ module HighScoreService
     #
     #   @return [HighScoreParams]
     #
-    CreateHighScoreInput = Struct.new(
+    CreateHighScoreInput = ::Struct.new(
       :high_score,
       keyword_init: true
     ) do
@@ -36,7 +36,7 @@ module HighScoreService
     #
     #   @return [String]
     #
-    CreateHighScoreOutput = Struct.new(
+    CreateHighScoreOutput = ::Struct.new(
       :high_score,
       :location,
       keyword_init: true
@@ -51,7 +51,7 @@ module HighScoreService
     #
     #   @return [String]
     #
-    DeleteHighScoreInput = Struct.new(
+    DeleteHighScoreInput = ::Struct.new(
       :id,
       keyword_init: true
     ) do
@@ -60,7 +60,7 @@ module HighScoreService
 
     # Output structure for DeleteHighScore
     #
-    DeleteHighScoreOutput = Struct.new(
+    DeleteHighScoreOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -74,7 +74,7 @@ module HighScoreService
     #
     #   @return [String]
     #
-    GetHighScoreInput = Struct.new(
+    GetHighScoreInput = ::Struct.new(
       :id,
       keyword_init: true
     ) do
@@ -88,7 +88,7 @@ module HighScoreService
     #
     #   @return [HighScoreAttributes]
     #
-    GetHighScoreOutput = Struct.new(
+    GetHighScoreOutput = ::Struct.new(
       :high_score,
       keyword_init: true
     ) do
@@ -120,7 +120,7 @@ module HighScoreService
     #
     #   @return [Time]
     #
-    HighScoreAttributes = Struct.new(
+    HighScoreAttributes = ::Struct.new(
       :id,
       :game,
       :score,
@@ -143,7 +143,7 @@ module HighScoreService
     #
     #   @return [Integer]
     #
-    HighScoreParams = Struct.new(
+    HighScoreParams = ::Struct.new(
       :game,
       :score,
       keyword_init: true
@@ -151,7 +151,7 @@ module HighScoreService
       include Seahorse::Structure
     end
 
-    ListHighScoresInput = Struct.new(
+    ListHighScoresInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -165,7 +165,7 @@ module HighScoreService
     #
     #   @return [Array<HighScoreAttributes>]
     #
-    ListHighScoresOutput = Struct.new(
+    ListHighScoresOutput = ::Struct.new(
       :high_scores,
       keyword_init: true
     ) do
@@ -184,7 +184,7 @@ module HighScoreService
     #
     #   @return [HighScoreParams]
     #
-    UpdateHighScoreInput = Struct.new(
+    UpdateHighScoreInput = ::Struct.new(
       :id,
       :high_score,
       keyword_init: true
@@ -199,7 +199,7 @@ module HighScoreService
     #
     #   @return [HighScoreAttributes]
     #
-    UpdateHighScoreOutput = Struct.new(
+    UpdateHighScoreOutput = ::Struct.new(
       :high_score,
       keyword_init: true
     ) do
@@ -210,7 +210,7 @@ module HighScoreService
     #
     #   @return [Hash<String, Array<String>>]
     #
-    UnprocessableEntityError = Struct.new(
+    UnprocessableEntityError = ::Struct.new(
       :errors,
       keyword_init: true
     ) do
