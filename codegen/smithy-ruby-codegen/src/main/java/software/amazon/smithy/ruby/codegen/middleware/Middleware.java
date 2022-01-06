@@ -319,7 +319,7 @@ public final class Middleware {
          * <p>By default, a middleware applies globally to a service, which thereby
          * applies to every operation when the middleware stack is copied.
          * @param p predicate to be used to test operations.
-         * @return
+         * @return Return the Builder
          */
         public Builder operationPredicate(OperationPredicate p) {
             this.operationPredicate = Objects.requireNonNull(p);
@@ -330,7 +330,7 @@ public final class Middleware {
          * Configure a predicate that makes this plugin only apply to
          * a set of services.
          * @param serviceNames services to apply this middleware to.
-         * @return
+         * @return Return the Builder
          */
         public Builder appliesOnlyToServices(Set<String> serviceNames) {
             return servicePredicate((model, service) -> serviceNames
@@ -385,7 +385,7 @@ public final class Middleware {
          * into the generated SDK.
          *
          * @param rubyFileName the name of the ruby file to copy.
-         * @return
+         * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
             this.writeAdditionalFiles = (context) -> {

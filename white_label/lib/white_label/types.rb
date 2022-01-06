@@ -10,145 +10,15 @@
 module WhiteLabel
   module Types
 
-    # @!attribute string
-    #   This is some member
-    #   documentation of String.
-    #
-    #   @deprecated
-    #     This structure member is
-    #     deprecated.
-    #     Since: today
-    #
-    #   @note
-    #     This shape is unstable and may change in the future.
-    #
-    #   @see https://www.ruby-lang.org/en/ Homepage
-    #
-    #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-    #
-    #   @note
-    #     This shape is meant for internal use only.
-    #
-    #   @note
-    #     This shape is recommended.
-    #     Reason: This structure member is
-    #     cool AF.
-    #
-    #   @since today
-    #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
+    # @!attribute message
     #
     #   @return [String]
     #
-    # @!attribute struct
-    #   This is some member documentation of Struct.
-    #   It should override Struct's documentation.
-    #
-    #   @deprecated
-    #     This structure is
-    #     deprecated.
-    #     Since: today
-    #
-    #   @note
-    #     This shape is unstable and may change in the future.
-    #
-    #   @see https://www.ruby-lang.org/en/ Homepage
-    #
-    #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-    #
-    #   @note
-    #     This shape is meant for internal use only.
-    #
-    #   @since today
-    #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
-    #
-    #   @return [Struct]
-    #
-    # @!attribute document
-    #
-    #   @return [Hash,Array,String,Boolean,Numeric]
-    #
-    # @!attribute list_of_strings
-    #
-    #   @return [Array<String>]
-    #
-    # @!attribute list_of_structs
-    #
-    #   @return [Array<Struct>]
-    #
-    # @!attribute map_of_strings
-    #
-    #   @return [Hash<String, String>]
-    #
-    # @!attribute map_of_structs
-    #
-    #   @return [Hash<String, Struct>]
-    #
-    # @!attribute set_of_strings
-    #
-    #   @return [Set<String>]
-    #
-    # @!attribute set_of_structs
-    #
-    #   @return [Set<Struct>]
-    #
-    # @!attribute union
-    #   This is some union documentation.
-    #   It has some union members
-    #
-    #   @deprecated
-    #     This union is
-    #     deprecated.
-    #     Since: today
-    #
-    #   @note
-    #     This shape is unstable and may change in the future.
-    #
-    #   @see https://www.ruby-lang.org/en/ Homepage
-    #
-    #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-    #
-    #   @note
-    #     This shape is meant for internal use only.
-    #
-    #   @since today
-    #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
-    #
-    #   @return [Union]
-    #
-    KitchenSinkInput = Struct.new(
-      :string,
-      :struct,
-      :document,
-      :list_of_strings,
-      :list_of_structs,
-      :map_of_strings,
-      :map_of_structs,
-      :set_of_strings,
-      :set_of_structs,
-      :union,
+    ClientError = Struct.new(
+      :message,
       keyword_init: true
     ) do
       include Seahorse::Structure
-
-      def to_s
-        "#<struct WhiteLabel::Types::KitchenSinkInput "\
-          "string=\"[SENSITIVE]\", "\
-          "struct=\"[SENSITIVE]\", "\
-          "document=#{document || 'nil'}, "\
-          "list_of_strings=#{list_of_strings || 'nil'}, "\
-          "list_of_structs=#{list_of_structs || 'nil'}, "\
-          "map_of_strings=#{map_of_strings || 'nil'}, "\
-          "map_of_structs=#{map_of_structs || 'nil'}, "\
-          "set_of_strings=#{set_of_strings || 'nil'}, "\
-          "set_of_structs=#{set_of_structs || 'nil'}, "\
-          "union=\"[SENSITIVE]\">"
-      end
     end
 
     # @!attribute string
@@ -262,7 +132,7 @@ module WhiteLabel
     #
     #   @return [Union]
     #
-    KitchenSinkOutput = Struct.new(
+    KitchenSinkInputOutput = Struct.new(
       :string,
       :struct,
       :document,
@@ -278,7 +148,7 @@ module WhiteLabel
       include Seahorse::Structure
 
       def to_s
-        "#<struct WhiteLabel::Types::KitchenSinkOutput "\
+        "#<struct WhiteLabel::Types::KitchenSinkInputOutput "\
           "string=\"[SENSITIVE]\", "\
           "struct=\"[SENSITIVE]\", "\
           "document=#{document || 'nil'}, "\
@@ -314,66 +184,6 @@ module WhiteLabel
     PaginatorsTestOutput = Struct.new(
       :next_token,
       :items,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute next_token
-    #
-    #   @return [String]
-    #
-    PaginatorsTestWithItemsInput = Struct.new(
-      :next_token,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute next_token
-    #
-    #   @return [String]
-    #
-    # @!attribute items
-    #
-    #   @return [Array<String>]
-    #
-    PaginatorsTestWithItemsOutput = Struct.new(
-      :next_token,
-      :items,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute status
-    #
-    #   @return [String]
-    #
-    WaitersTestInput = Struct.new(
-      :status,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute status
-    #
-    #   @return [String]
-    #
-    WaitersTestOutput = Struct.new(
-      :status,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute message
-    #
-    #   @return [String]
-    #
-    ClientError = Struct.new(
-      :message,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -523,6 +333,17 @@ module WhiteLabel
           "#<WhiteLabel::Types::Unknown #{__getobj__ || 'nil'}>"
         end
       end
+    end
+
+    # @!attribute status
+    #
+    #   @return [String]
+    #
+    WaitersTestInputOutput = Struct.new(
+      :status,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
     end
 
   end

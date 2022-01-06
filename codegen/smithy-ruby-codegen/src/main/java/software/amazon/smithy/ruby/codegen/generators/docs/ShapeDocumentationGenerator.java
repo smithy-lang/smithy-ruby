@@ -222,13 +222,13 @@ public class ShapeDocumentationGenerator {
         public Void operationShape(OperationShape shape) {
             writeAllShapeTraits();
 
-            Shape inputShape = model.expectShape(shape.getInput().get());
+            Shape inputShape = model.expectShape(shape.getInputShape());
             String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
             String inputShapeDocumentation = "See {Types::" + inputShapeName + "}.";
 
             writer.writeYardParam("Hash", "params", inputShapeDocumentation);
 
-            ShapeId inputShapeId = shape.getInput().get();
+            ShapeId inputShapeId = shape.getInputShape();
             StructureShape input =
                     model.expectShape(inputShapeId).asStructureShape().get();
 
@@ -245,7 +245,7 @@ public class ShapeDocumentationGenerator {
                 }
             }
 
-            Shape outputShape = model.expectShape(shape.getOutput().get());
+            Shape outputShape = model.expectShape(shape.getOutputShape());
             String outputShapeName = symbolProvider.toSymbol(outputShape).getName();
             String outputShapeType = "Types::" + outputShapeName;
 

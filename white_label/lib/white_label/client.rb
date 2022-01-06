@@ -95,7 +95,7 @@ module WhiteLabel
     # @since today
     #
     # @param [Hash] params
-    #   See {Types::KitchenSinkInput}.
+    #   See {Types::KitchenSinkInputOutput}.
     #
     # @option params [String] :string
     #   This is some member
@@ -109,7 +109,7 @@ module WhiteLabel
     #   This is some union documentation.
     #   It has some union members
     #
-    # @return [Types::KitchenSinkOutput]
+    # @return [Types::KitchenSinkInputOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -143,7 +143,7 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::KitchenSinkOutput
+    #   resp #=> Types::KitchenSinkInputOutput
     #   resp.string #=> String
     #   resp.struct #=> Types::Struct
     #   resp.struct.value #=> String
@@ -282,9 +282,9 @@ module WhiteLabel
     #
     def kitchen_sink(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::KitchenSinkInput.build(params)
+      input = Params::KitchenSinkInputOutput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::KitchenSinkInput,
+        validator: Validators::KitchenSinkInputOutput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
@@ -373,9 +373,9 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestWithItemsInput}.
+    #   See {Types::PaginatorsTestInput}.
     #
-    # @return [Types::PaginatorsTestWithItemsOutput]
+    # @return [Types::PaginatorsTestOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -385,16 +385,16 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::PaginatorsTestWithItemsOutput
+    #   resp #=> Types::PaginatorsTestOutput
     #   resp.next_token #=> String
     #   resp.items #=> Array<String>
     #   resp.items[0] #=> String
     #
     def paginators_test_with_items(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::PaginatorsTestWithItemsInput.build(params)
+      input = Params::PaginatorsTestInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::PaginatorsTestWithItemsInput,
+        validator: Validators::PaginatorsTestInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
@@ -428,9 +428,9 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::WaitersTestInput}.
+    #   See {Types::WaitersTestInputOutput}.
     #
-    # @return [Types::WaitersTestOutput]
+    # @return [Types::WaitersTestInputOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -440,14 +440,14 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::WaitersTestOutput
+    #   resp #=> Types::WaitersTestInputOutput
     #   resp.status #=> String
     #
     def waiters_test(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::WaitersTestInput.build(params)
+      input = Params::WaitersTestInputOutput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::WaitersTestInput,
+        validator: Validators::WaitersTestInputOutput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,

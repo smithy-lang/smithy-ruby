@@ -37,25 +37,6 @@ module WhiteLabel
       attr_reader :location
     end
 
-    class ClientError < ApiClientError
-      # @param [Seahorse::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ClientError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      # @return [Types::ClientError]
-      #
-      attr_reader :data
-    end
-
     class ServerError < ApiServerError
       # @param [Seahorse::HTTP::Response] http_resp
       #
@@ -71,6 +52,25 @@ module WhiteLabel
       end
 
       # @return [Types::ServerError]
+      #
+      attr_reader :data
+    end
+
+    class ClientError < ApiClientError
+      # @param [Seahorse::HTTP::Response] http_resp
+      #
+      # @param [String] error_code
+      #
+      # @param [String] message
+      #
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::ClientError.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      # @return [Types::ClientError]
       #
       attr_reader :data
     end

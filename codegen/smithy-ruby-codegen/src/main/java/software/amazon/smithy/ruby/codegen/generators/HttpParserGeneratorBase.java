@@ -292,7 +292,7 @@ public abstract class HttpParserGeneratorBase {
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
-                    Shape outputShape = model.expectShape(o.getOutput().orElseThrow(IllegalArgumentException::new));
+                    Shape outputShape = model.expectShape(o.getOutputShape());
                     renderParsersForOperation(o, outputShape);
                     generatedParsers.add(o.toShapeId());
                     generatedParsers.add(outputShape.toShapeId());

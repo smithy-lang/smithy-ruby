@@ -15,7 +15,7 @@ module WhiteLabel
     # Operation Parser for KitchenSink
     class KitchenSink
       def self.parse(http_resp)
-        data = Types::KitchenSinkOutput.new
+        data = Types::KitchenSinkInputOutput.new
         data
       end
     end
@@ -123,7 +123,7 @@ module WhiteLabel
     # Operation Parser for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.parse(http_resp)
-        data = Types::PaginatorsTestWithItemsOutput.new
+        data = Types::PaginatorsTestOutput.new
         data
       end
     end
@@ -131,7 +131,7 @@ module WhiteLabel
     # Operation Parser for WaitersTest
     class WaitersTest
       def self.parse(http_resp)
-        data = Types::WaitersTestOutput.new
+        data = Types::WaitersTestInputOutput.new
         data
       end
     end

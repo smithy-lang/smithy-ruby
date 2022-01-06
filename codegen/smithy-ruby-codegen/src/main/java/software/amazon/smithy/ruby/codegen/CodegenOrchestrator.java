@@ -89,8 +89,8 @@ public class CodegenOrchestrator {
                         () -> new CodegenException("Shape is not a service"));
 
         // Add unique operation input/output shapes
-        resolvedModel =
-                AddOperationShapes.execute(resolvedModel, service.getId());
+//        resolvedModel =
+//                AddOperationShapes.execute(resolvedModel, service.getId());
 
         // Now that service and model are resolved, filter integrations for the service
         Model finalResolvedModel = resolvedModel;

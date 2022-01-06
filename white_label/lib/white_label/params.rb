@@ -10,10 +10,10 @@
 module WhiteLabel
   module Params
 
-    module KitchenSinkInput
+    module KitchenSinkInputOutput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::KitchenSinkInput, context: context)
-        type = Types::KitchenSinkInput.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::KitchenSinkInputOutput, context: context)
+        type = Types::KitchenSinkInputOutput.new
         type.string = params[:string]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
@@ -81,15 +81,6 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestWithItemsInput
-      def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
-        type = Types::PaginatorsTestWithItemsInput.new
-        type.next_token = params[:next_token]
-        type
-      end
-    end
-
     module SetOfStrings
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, ::Set, ::Array, context: context)
@@ -146,10 +137,10 @@ module WhiteLabel
       end
     end
 
-    module WaitersTestInput
+    module WaitersTestInputOutput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::WaitersTestInput, context: context)
-        type = Types::WaitersTestInput.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::WaitersTestInputOutput, context: context)
+        type = Types::WaitersTestInputOutput.new
         type.status = params[:status]
         type
       end

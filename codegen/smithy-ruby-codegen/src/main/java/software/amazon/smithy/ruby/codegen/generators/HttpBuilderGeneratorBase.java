@@ -302,7 +302,7 @@ public abstract class HttpBuilderGeneratorBase {
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
-                    Shape inputShape = model.expectShape(o.getInput().orElseThrow(IllegalArgumentException::new));
+                    Shape inputShape = model.expectShape(o.getInputShape());
                     renderBuildersForOperation(o, inputShape);
                     generatedBuilders.add(o.toShapeId());
                     generatedBuilders.add(inputShape.toShapeId());

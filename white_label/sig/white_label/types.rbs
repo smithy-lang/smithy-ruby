@@ -10,23 +10,13 @@
 module WhiteLabel
   module Types
 
-    KitchenSinkInput: untyped
+    ClientError: untyped
 
-    KitchenSinkOutput: untyped
+    KitchenSinkInputOutput: untyped
 
     PaginatorsTestInput: untyped
 
     PaginatorsTestOutput: untyped
-
-    PaginatorsTestWithItemsInput: untyped
-
-    PaginatorsTestWithItemsOutput: untyped
-
-    WaitersTestInput: untyped
-
-    WaitersTestOutput: untyped
-
-    ClientError: untyped
 
     ServerError: untyped
 
@@ -45,6 +35,8 @@ module WhiteLabel
         def to_h: () -> { unknown: Hash[Symbol,Union] }
       end
     end
+
+    WaitersTestInputOutput: untyped
 
   end
 end

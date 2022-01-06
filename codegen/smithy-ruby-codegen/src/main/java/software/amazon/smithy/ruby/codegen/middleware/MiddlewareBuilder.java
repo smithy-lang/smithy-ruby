@@ -118,10 +118,7 @@ public class MiddlewareBuilder {
                 .klass("Seahorse::Middleware::Validate")
                 .step(MiddlewareStackStep.INITIALIZE)
                 .operationParams((ctx, operation) -> {
-                    if (!operation.getInput().isPresent()) {
-                        throw new RuntimeException("Missing Input Shape for: " + operation.getId());
-                    }
-                    ShapeId inputShapeId = operation.getInput().get();
+                    ShapeId inputShapeId = operation.getInputShape();
                     Shape inputShape = ctx.getModel().expectShape(inputShapeId);
                     Map<String, String> params = new HashMap<>();
                     params.put("validator",

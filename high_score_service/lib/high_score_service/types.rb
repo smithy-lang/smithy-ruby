@@ -10,73 +10,6 @@
 module HighScoreService
   module Types
 
-    # Modeled attributes for a High Score
-    #
-    # @!attribute id
-    #   The high score id
-    #
-    #   @return [String]
-    #
-    # @!attribute game
-    #   The game for the high score
-    #
-    #   @return [String]
-    #
-    # @!attribute score
-    #   The high score for the game
-    #
-    #   @return [Integer]
-    #
-    # @!attribute created_at
-    #
-    #   @return [Time]
-    #
-    # @!attribute updated_at
-    #
-    #   @return [Time]
-    #
-    HighScoreAttributes = Struct.new(
-      :id,
-      :game,
-      :score,
-      :created_at,
-      :updated_at,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # Permitted params for a High Score
-    #
-    # @!attribute game
-    #   The game for the high score
-    #
-    #   @return [String]
-    #
-    # @!attribute score
-    #   The high score for the game
-    #
-    #   @return [Integer]
-    #
-    HighScoreParams = Struct.new(
-      :game,
-      :score,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute errors
-    #
-    #   @return [Hash<String, Array<String>>]
-    #
-    UnprocessableEntityError = Struct.new(
-      :errors,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
     # Input structure for CreateHighScore
     #
     # @!attribute high_score
@@ -162,8 +95,57 @@ module HighScoreService
       include Seahorse::Structure
     end
 
-    ListHighScoresInput = Struct.new(
-      nil,
+    # Modeled attributes for a High Score
+    #
+    # @!attribute id
+    #   The high score id
+    #
+    #   @return [String]
+    #
+    # @!attribute game
+    #   The game for the high score
+    #
+    #   @return [String]
+    #
+    # @!attribute score
+    #   The high score for the game
+    #
+    #   @return [Integer]
+    #
+    # @!attribute created_at
+    #
+    #   @return [Time]
+    #
+    # @!attribute updated_at
+    #
+    #   @return [Time]
+    #
+    HighScoreAttributes = Struct.new(
+      :id,
+      :game,
+      :score,
+      :created_at,
+      :updated_at,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # Permitted params for a High Score
+    #
+    # @!attribute game
+    #   The game for the high score
+    #
+    #   @return [String]
+    #
+    # @!attribute score
+    #   The high score for the game
+    #
+    #   @return [Integer]
+    #
+    HighScoreParams = Struct.new(
+      :game,
+      :score,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -212,6 +194,24 @@ module HighScoreService
     #
     UpdateHighScoreOutput = Struct.new(
       :high_score,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    Unit = Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute errors
+    #
+    #   @return [Hash<String, Array<String>>]
+    #
+    UnprocessableEntityError = Struct.new(
+      :errors,
       keyword_init: true
     ) do
       include Seahorse::Structure
