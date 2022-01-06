@@ -92,12 +92,12 @@ public class HttpProtocolTestGenerator {
             String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
             writer.openBlock("describe '#$L' do", operationName);
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
-                renderRequestTests(operationName, operation.getInput(), requestTests);
+                renderRequestTests(operationName, operation.getInputShape(), requestTests);
             });
             writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                renderResponseTests(operationName, operation.getOutput(), responseTests);
-                renderResponseStubberTests(operationName, operation.getOutput(), responseTests);
+                renderResponseTests(operationName, operation.getOutputShape(), responseTests);
+                renderResponseStubberTests(operationName, operation.getOutputShape(), responseTests);
             });
             renderErrorTests(operation);
             writer.closeBlock("end");
@@ -105,9 +105,9 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderResponseTests(String operationName,
-                                     Optional<ShapeId> output,
+                                     ShapeId output,
                                      HttpResponseTestsTrait responseTests) {
-        Shape outputShape = model.expectShape(output.orElseThrow(IllegalArgumentException::new));
+        Shape outputShape = model.expectShape(output);
 
         writer.openBlock("describe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
@@ -129,9 +129,9 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderResponseStubberTests(String operationName,
-                                            Optional<ShapeId> output,
+                                            ShapeId output,
                                             HttpResponseTestsTrait responseTests) {
-        Shape outputShape = model.expectShape(output.orElseThrow(IllegalArgumentException::new));
+        Shape outputShape = model.expectShape(output);
 
         writer.openBlock("describe 'response stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
@@ -156,9 +156,9 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderRequestTests(String operationName,
-                                    Optional<ShapeId> input,
+                                    ShapeId input,
                                     HttpRequestTestsTrait requestTests) {
-        Shape inputShape = model.expectShape(input.orElseThrow(IllegalArgumentException::new));
+        Shape inputShape = model.expectShape(input);
         writer.openBlock("describe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {

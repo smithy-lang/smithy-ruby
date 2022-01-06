@@ -37,6 +37,7 @@ module WhiteLabel
     # Structure Builder for Struct
     class Struct
       def self.build(input)
+        data = {}
         data
       end
     end

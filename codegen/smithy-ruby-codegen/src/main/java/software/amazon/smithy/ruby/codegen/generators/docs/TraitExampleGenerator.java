@@ -55,8 +55,8 @@ public class TraitExampleGenerator {
 
         this.operationName =
                 RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
-        this.operationInput = model.expectShape(operation.getInput().orElseThrow(IllegalArgumentException::new));
-        this.operationOutput = model.expectShape(operation.getOutput().orElseThrow(IllegalArgumentException::new));
+        this.operationInput = model.expectShape(operation.getInputShape());
+        this.operationOutput = model.expectShape(operation.getOutputShape());
     }
 
     public String generate() {

@@ -71,10 +71,7 @@ public class PlaceholderExampleGenerator {
 
     public String generate() {
         Symbol symbol = symbolProvider.toSymbol(operation);
-        if (!operation.getInput().isPresent()) {
-            throw new RuntimeException("Missing Input Shape for: " + operation.getId());
-        }
-        ShapeId inputShapeId = operation.getInput().get();
+        ShapeId inputShapeId = operation.getInputShape();
         Shape inputShape = model.expectShape(inputShapeId);
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());

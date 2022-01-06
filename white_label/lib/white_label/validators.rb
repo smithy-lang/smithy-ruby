@@ -80,9 +80,9 @@ module WhiteLabel
       end
     end
 
-    class PaginatorsTestInput
+    class PaginatorsTestOperationInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PaginatorsTestInput, context: context)
+        Seahorse::Validator.validate!(input, Types::PaginatorsTestOperationInput, context: context)
         Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
       end
     end

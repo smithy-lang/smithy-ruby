@@ -10,12 +10,6 @@
 module HighScoreService
   module Types
 
-    HighScoreAttributes: untyped
-
-    HighScoreParams: untyped
-
-    UnprocessableEntityError: untyped
-
     CreateHighScoreInput: untyped
 
     CreateHighScoreOutput: untyped
@@ -28,6 +22,10 @@ module HighScoreService
 
     GetHighScoreOutput: untyped
 
+    HighScoreAttributes: untyped
+
+    HighScoreParams: untyped
+
     ListHighScoresInput: untyped
 
     ListHighScoresOutput: untyped
@@ -35,6 +33,8 @@ module HighScoreService
     UpdateHighScoreInput: untyped
 
     UpdateHighScoreOutput: untyped
+
+    UnprocessableEntityError: untyped
 
   end
 end

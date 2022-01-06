@@ -318,9 +318,9 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestInput}.
+    #   See {Types::PaginatorsTestOperationInput}.
     #
-    # @return [Types::PaginatorsTestOutput]
+    # @return [Types::PaginatorsTestOperationOutput]
     #
     # @example Request syntax with placeholder values
     #
@@ -330,16 +330,16 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::PaginatorsTestOutput
+    #   resp #=> Types::PaginatorsTestOperationOutput
     #   resp.next_token #=> String
     #   resp.items #=> Array<String>
     #   resp.items[0] #=> String
     #
     def paginators_test(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::PaginatorsTestInput.build(params)
+      input = Params::PaginatorsTestOperationInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::PaginatorsTestInput,
+        validator: Validators::PaginatorsTestOperationInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,

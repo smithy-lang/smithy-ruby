@@ -108,7 +108,7 @@ module WhiteLabel
     # Operation Parser for PaginatorsTest
     class PaginatorsTest
       def self.parse(http_resp)
-        data = Types::PaginatorsTestOutput.new
+        data = Types::PaginatorsTestOperationOutput.new
         data
       end
     end

@@ -53,7 +53,7 @@ public class ResponseExampleGenerator {
     }
 
     public String generate() {
-        Shape operationOutput = model.expectShape(operation.getOutput().orElseThrow(IllegalArgumentException::new));
+        Shape operationOutput = model.expectShape(operation.getOutputShape());
 
         operationOutput.accept(new ResponseMember("resp", visited));
 

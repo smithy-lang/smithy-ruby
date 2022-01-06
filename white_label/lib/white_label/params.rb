@@ -72,10 +72,10 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestInput
+    module PaginatorsTestOperationInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestInput, context: context)
-        type = Types::PaginatorsTestInput.new
+        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
+        type = Types::PaginatorsTestOperationInput.new
         type.next_token = params[:next_token]
         type
       end

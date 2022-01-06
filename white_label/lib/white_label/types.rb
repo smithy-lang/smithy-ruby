@@ -10,6 +10,17 @@
 module WhiteLabel
   module Types
 
+    # @!attribute message
+    #
+    #   @return [String]
+    #
+    ClientError = ::Struct.new(
+      :message,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # @!attribute string
     #   This is some member
     #   documentation of String.
@@ -121,7 +132,7 @@ module WhiteLabel
     #
     #   @return [Union]
     #
-    KitchenSinkInput = Struct.new(
+    KitchenSinkInput = ::Struct.new(
       :string,
       :struct,
       :document,
@@ -262,7 +273,7 @@ module WhiteLabel
     #
     #   @return [Union]
     #
-    KitchenSinkOutput = Struct.new(
+    KitchenSinkOutput = ::Struct.new(
       :string,
       :struct,
       :document,
@@ -296,7 +307,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    PaginatorsTestInput = Struct.new(
+    PaginatorsTestOperationInput = ::Struct.new(
       :next_token,
       keyword_init: true
     ) do
@@ -311,7 +322,7 @@ module WhiteLabel
     #
     #   @return [Array<String>]
     #
-    PaginatorsTestOutput = Struct.new(
+    PaginatorsTestOperationOutput = ::Struct.new(
       :next_token,
       :items,
       keyword_init: true
@@ -323,7 +334,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    PaginatorsTestWithItemsInput = Struct.new(
+    PaginatorsTestWithItemsInput = ::Struct.new(
       :next_token,
       keyword_init: true
     ) do
@@ -338,7 +349,7 @@ module WhiteLabel
     #
     #   @return [Array<String>]
     #
-    PaginatorsTestWithItemsOutput = Struct.new(
+    PaginatorsTestWithItemsOutput = ::Struct.new(
       :next_token,
       :items,
       keyword_init: true
@@ -346,40 +357,7 @@ module WhiteLabel
       include Seahorse::Structure
     end
 
-    # @!attribute status
-    #
-    #   @return [String]
-    #
-    WaitersTestInput = Struct.new(
-      :status,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute status
-    #
-    #   @return [String]
-    #
-    WaitersTestOutput = Struct.new(
-      :status,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute message
-    #
-    #   @return [String]
-    #
-    ClientError = Struct.new(
-      :message,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    ServerError = Struct.new(
+    ServerError = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -412,7 +390,7 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    Struct = Struct.new(
+    Struct = ::Struct.new(
       :value,
       keyword_init: true
     ) do
@@ -523,6 +501,28 @@ module WhiteLabel
           "#<WhiteLabel::Types::Unknown #{__getobj__ || 'nil'}>"
         end
       end
+    end
+
+    # @!attribute status
+    #
+    #   @return [String]
+    #
+    WaitersTestInput = ::Struct.new(
+      :status,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute status
+    #
+    #   @return [String]
+    #
+    WaitersTestOutput = ::Struct.new(
+      :status,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
     end
 
   end

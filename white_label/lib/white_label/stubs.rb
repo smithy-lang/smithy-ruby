@@ -29,6 +29,7 @@ module WhiteLabel
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
       end
     end
 
@@ -44,6 +45,8 @@ module WhiteLabel
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -60,6 +63,8 @@ module WhiteLabel
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -194,6 +199,7 @@ module WhiteLabel
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
       end
     end
 
@@ -225,6 +231,7 @@ module WhiteLabel
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
       end
     end
 
@@ -238,6 +245,7 @@ module WhiteLabel
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
       end
     end
   end

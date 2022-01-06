@@ -11,13 +11,13 @@ module WhiteLabel
 
       subject { PaginatorsTest.new(client, params, options) }
       let(:response_1) do
-        Types::PaginatorsTestOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
       end
       let(:response_2) do
-        Types::PaginatorsTestOutput.new(next_token: 'bar', items: ['1', '2', '3'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: ['1', '2', '3'])
       end
       let(:response_3) do
-        Types::PaginatorsTestOutput.new(items: ['the end'])
+        Types::PaginatorsTestOperationOutput.new(items: ['the end'])
       end
 
       describe '#pages' do
@@ -66,13 +66,13 @@ module WhiteLabel
 
       subject { PaginatorsTestWithItems.new(client, params, options) }
       let(:response_1) do
-        Types::PaginatorsTestOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
       end
       let(:response_2) do
-        Types::PaginatorsTestOutput.new(next_token: 'bar', items: ['1', '2', '3'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: ['1', '2', '3'])
       end
       let(:response_3) do
-        Types::PaginatorsTestOutput.new(items: ['the end'])
+        Types::PaginatorsTestOperationOutput.new(items: ['the end'])
       end
 
       describe '.pages' do

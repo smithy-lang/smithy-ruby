@@ -93,7 +93,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         OperationIndex operationIndex = OperationIndex.of(model);
         Walker walker = new Walker(model);
         Set<Shape> inputShapes = topDownIndex.getContainedOperations(context.getService()).stream()
-                .flatMap(operation -> OptionalUtils.stream(operationIndex.getInput(operation)))
+                .flatMap(operation -> OptionalUtils.stream(operationIndex.getInputShape(operation)))
                 .flatMap(input -> walker.walkShapes(input).stream())
                 .collect(Collectors.toSet());
 
