@@ -1,0 +1,208 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module RailsJson
+  module Types
+
+    GreetingStruct: untyped
+
+    Struct__456efg: untyped
+
+    ComplexError: untyped
+
+    ComplexNestedErrorData: untyped
+
+    EmptyStruct: untyped
+
+    ErrorWithMembers: untyped
+
+    ErrorWithoutMembers: untyped
+
+    InvalidGreeting: untyped
+
+    KitchenSink: untyped
+
+    class MyUnion < Seahorse::Union
+      class StringValue < MyUnion
+        def to_h: () -> { string_value: Hash[Symbol,MyUnion] }
+      end
+
+      class BooleanValue < MyUnion
+        def to_h: () -> { boolean_value: Hash[Symbol,MyUnion] }
+      end
+
+      class NumberValue < MyUnion
+        def to_h: () -> { number_value: Hash[Symbol,MyUnion] }
+      end
+
+      class BlobValue < MyUnion
+        def to_h: () -> { blob_value: Hash[Symbol,MyUnion] }
+      end
+
+      class TimestampValue < MyUnion
+        def to_h: () -> { timestamp_value: Hash[Symbol,MyUnion] }
+      end
+
+      class EnumValue < MyUnion
+        def to_h: () -> { enum_value: Hash[Symbol,MyUnion] }
+      end
+
+      class ListValue < MyUnion
+        def to_h: () -> { list_value: Hash[Symbol,MyUnion] }
+      end
+
+      class MapValue < MyUnion
+        def to_h: () -> { map_value: Hash[Symbol,MyUnion] }
+      end
+
+      class StructureValue < MyUnion
+        def to_h: () -> { structure_value: Hash[Symbol,MyUnion] }
+      end
+
+      class Unknown < MyUnion
+        def to_h: () -> { unknown: Hash[Symbol,MyUnion] }
+      end
+    end
+
+    NestedPayload: untyped
+
+    SimpleStruct: untyped
+
+    StructWithLocationName: untyped
+
+    Struct__789BadNameInput: untyped
+
+    Struct__789BadNameOutput: untyped
+
+    AllQueryStringTypesInput: untyped
+
+    AllQueryStringTypesOutput: untyped
+
+    ConstantAndVariableQueryStringInput: untyped
+
+    ConstantAndVariableQueryStringOutput: untyped
+
+    ConstantQueryStringInput: untyped
+
+    ConstantQueryStringOutput: untyped
+
+    EmptyOperationInput: untyped
+
+    EmptyOperationOutput: untyped
+
+    EndpointOperationInput: untyped
+
+    EndpointOperationOutput: untyped
+
+    EndpointWithHostLabelOperationInput: untyped
+
+    EndpointWithHostLabelOperationOutput: untyped
+
+    GreetingWithErrorsInput: untyped
+
+    GreetingWithErrorsOutput: untyped
+
+    HttpPayloadTraitsInput: untyped
+
+    HttpPayloadTraitsOutput: untyped
+
+    HttpPayloadTraitsWithMediaTypeInput: untyped
+
+    HttpPayloadTraitsWithMediaTypeOutput: untyped
+
+    HttpPayloadWithStructureInput: untyped
+
+    HttpPayloadWithStructureOutput: untyped
+
+    HttpPrefixHeadersInput: untyped
+
+    HttpPrefixHeadersInResponseInput: untyped
+
+    HttpPrefixHeadersInResponseOutput: untyped
+
+    HttpPrefixHeadersOutput: untyped
+
+    HttpRequestWithFloatLabelsInput: untyped
+
+    HttpRequestWithFloatLabelsOutput: untyped
+
+    HttpRequestWithGreedyLabelInPathInput: untyped
+
+    HttpRequestWithGreedyLabelInPathOutput: untyped
+
+    HttpRequestWithLabelsAndTimestampFormatInput: untyped
+
+    HttpRequestWithLabelsAndTimestampFormatOutput: untyped
+
+    HttpRequestWithLabelsInput: untyped
+
+    HttpRequestWithLabelsOutput: untyped
+
+    HttpResponseCodeInput: untyped
+
+    HttpResponseCodeOutput: untyped
+
+    IgnoreQueryParamsInResponseInput: untyped
+
+    IgnoreQueryParamsInResponseOutput: untyped
+
+    InputAndOutputWithHeadersInput: untyped
+
+    InputAndOutputWithHeadersOutput: untyped
+
+    JsonEnumsInput: untyped
+
+    JsonEnumsOutput: untyped
+
+    JsonUnionsInput: untyped
+
+    JsonUnionsOutput: untyped
+
+    KitchenSinkOperationInput: untyped
+
+    KitchenSinkOperationOutput: untyped
+
+    MediaTypeHeaderInput: untyped
+
+    MediaTypeHeaderOutput: untyped
+
+    NestedAttributesOperationInput: untyped
+
+    NestedAttributesOperationOutput: untyped
+
+    NullAndEmptyHeadersClientInput: untyped
+
+    NullAndEmptyHeadersClientOutput: untyped
+
+    NullOperationInput: untyped
+
+    NullOperationOutput: untyped
+
+    OmitsNullSerializesEmptyStringInput: untyped
+
+    OmitsNullSerializesEmptyStringOutput: untyped
+
+    OperationWithOptionalInputOutputInput: untyped
+
+    OperationWithOptionalInputOutputOutput: untyped
+
+    PutAndGetInlineDocumentsInput: untyped
+
+    PutAndGetInlineDocumentsOutput: untyped
+
+    QueryParamsAsStringListMapInput: untyped
+
+    QueryParamsAsStringListMapOutput: untyped
+
+    TimestampFormatHeadersInput: untyped
+
+    TimestampFormatHeadersOutput: untyped
+
+  end
+end

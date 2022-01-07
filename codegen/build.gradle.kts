@@ -24,7 +24,7 @@ plugins {
 }
 
 allprojects {
-    group = "software.amazon.smithy"
+    group = "software.amazon.smithy.ruby"
     version = "0.1.0"
 }
 
@@ -139,7 +139,7 @@ subprojects {
         publishing {
             repositories {
                 mavenCentral {
-                    url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
                     credentials {
                         username = sonatypeUser
                         password = sonatypePassword

@@ -1,0 +1,134 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module Weather
+  module Types
+
+    Struct__456efg: untyped
+
+    class Announcements < Seahorse::Union
+      class Police < Announcements
+        def to_h: () -> { police: Hash[Symbol,Announcements] }
+      end
+
+      class Fire < Announcements
+        def to_h: () -> { fire: Hash[Symbol,Announcements] }
+      end
+
+      class Health < Announcements
+        def to_h: () -> { health: Hash[Symbol,Announcements] }
+      end
+
+      class Unknown < Announcements
+        def to_h: () -> { unknown: Hash[Symbol,Announcements] }
+      end
+    end
+
+    CityCoordinates: untyped
+
+    CitySummary: untyped
+
+    class ImageType < Seahorse::Union
+      class Raw < ImageType
+        def to_h: () -> { raw: Hash[Symbol,ImageType] }
+      end
+
+      class Png < ImageType
+        def to_h: () -> { png: Hash[Symbol,ImageType] }
+      end
+
+      class Unknown < ImageType
+        def to_h: () -> { unknown: Hash[Symbol,ImageType] }
+      end
+    end
+
+    Message: untyped
+
+    NoSuchResource: untyped
+
+    OtherStructure: untyped
+
+    PNGImage: untyped
+
+    class Precipitation < Seahorse::Union
+      class Rain < Precipitation
+        def to_h: () -> { rain: Hash[Symbol,Precipitation] }
+      end
+
+      class Sleet < Precipitation
+        def to_h: () -> { sleet: Hash[Symbol,Precipitation] }
+      end
+
+      class Hail < Precipitation
+        def to_h: () -> { hail: Hash[Symbol,Precipitation] }
+      end
+
+      class Snow < Precipitation
+        def to_h: () -> { snow: Hash[Symbol,Precipitation] }
+      end
+
+      class Mixed < Precipitation
+        def to_h: () -> { mixed: Hash[Symbol,Precipitation] }
+      end
+
+      class Other < Precipitation
+        def to_h: () -> { other: Hash[Symbol,Precipitation] }
+      end
+
+      class Blob < Precipitation
+        def to_h: () -> { blob: Hash[Symbol,Precipitation] }
+      end
+
+      class Foo < Precipitation
+        def to_h: () -> { foo: Hash[Symbol,Precipitation] }
+      end
+
+      class Baz < Precipitation
+        def to_h: () -> { baz: Hash[Symbol,Precipitation] }
+      end
+
+      class Unknown < Precipitation
+        def to_h: () -> { unknown: Hash[Symbol,Precipitation] }
+      end
+    end
+
+    Foo: untyped
+
+    Baz: untyped
+
+    Struct__789BadNameInput: untyped
+
+    Struct__789BadNameOutput: untyped
+
+    GetCityAnnouncementsInput: untyped
+
+    GetCityAnnouncementsOutput: untyped
+
+    GetCityImageInput: untyped
+
+    GetCityImageOutput: untyped
+
+    GetCityInput: untyped
+
+    GetCityOutput: untyped
+
+    GetCurrentTimeInput: untyped
+
+    GetCurrentTimeOutput: untyped
+
+    GetForecastInput: untyped
+
+    GetForecastOutput: untyped
+
+    ListCitiesInput: untyped
+
+    ListCitiesOutput: untyped
+
+  end
+end
