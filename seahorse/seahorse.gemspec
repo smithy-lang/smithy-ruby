@@ -13,6 +13,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'jmespath', '~> 1.4'
 
-  spec.metadata = { 'rubygems_mfa_required' => 'true' }
+  # spec.metadata = { 'rubygems_mfa_required' => 'true' }
   spec.license = 'Apache-2.0'
 end
