@@ -2,6 +2,10 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.5
 
+Gemspec/RequireMFA:
+  Exclude:
+    - '**/*.gemspec'
+
 Layout/LineLength:
   Max: 80
 
