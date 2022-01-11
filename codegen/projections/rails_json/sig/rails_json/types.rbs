@@ -14,68 +14,6 @@ module RailsJson
 
     Struct__456efg: untyped
 
-    ComplexError: untyped
-
-    ComplexNestedErrorData: untyped
-
-    EmptyStruct: untyped
-
-    ErrorWithMembers: untyped
-
-    ErrorWithoutMembers: untyped
-
-    InvalidGreeting: untyped
-
-    KitchenSink: untyped
-
-    class MyUnion < Seahorse::Union
-      class StringValue < MyUnion
-        def to_h: () -> { string_value: Hash[Symbol,MyUnion] }
-      end
-
-      class BooleanValue < MyUnion
-        def to_h: () -> { boolean_value: Hash[Symbol,MyUnion] }
-      end
-
-      class NumberValue < MyUnion
-        def to_h: () -> { number_value: Hash[Symbol,MyUnion] }
-      end
-
-      class BlobValue < MyUnion
-        def to_h: () -> { blob_value: Hash[Symbol,MyUnion] }
-      end
-
-      class TimestampValue < MyUnion
-        def to_h: () -> { timestamp_value: Hash[Symbol,MyUnion] }
-      end
-
-      class EnumValue < MyUnion
-        def to_h: () -> { enum_value: Hash[Symbol,MyUnion] }
-      end
-
-      class ListValue < MyUnion
-        def to_h: () -> { list_value: Hash[Symbol,MyUnion] }
-      end
-
-      class MapValue < MyUnion
-        def to_h: () -> { map_value: Hash[Symbol,MyUnion] }
-      end
-
-      class StructureValue < MyUnion
-        def to_h: () -> { structure_value: Hash[Symbol,MyUnion] }
-      end
-
-      class Unknown < MyUnion
-        def to_h: () -> { unknown: Hash[Symbol,MyUnion] }
-      end
-    end
-
-    NestedPayload: untyped
-
-    SimpleStruct: untyped
-
-    StructWithLocationName: untyped
-
     Struct__789BadNameInput: untyped
 
     Struct__789BadNameOutput: untyped
@@ -83,6 +21,10 @@ module RailsJson
     AllQueryStringTypesInput: untyped
 
     AllQueryStringTypesOutput: untyped
+
+    ComplexError: untyped
+
+    ComplexNestedErrorData: untyped
 
     ConstantAndVariableQueryStringInput: untyped
 
@@ -96,6 +38,8 @@ module RailsJson
 
     EmptyOperationOutput: untyped
 
+    EmptyStruct: untyped
+
     EndpointOperationInput: untyped
 
     EndpointOperationOutput: untyped
@@ -103,6 +47,10 @@ module RailsJson
     EndpointWithHostLabelOperationInput: untyped
 
     EndpointWithHostLabelOperationOutput: untyped
+
+    ErrorWithMembers: untyped
+
+    ErrorWithoutMembers: untyped
 
     GreetingWithErrorsInput: untyped
 
@@ -156,6 +104,8 @@ module RailsJson
 
     InputAndOutputWithHeadersOutput: untyped
 
+    InvalidGreeting: untyped
+
     JsonEnumsInput: untyped
 
     JsonEnumsOutput: untyped
@@ -163,6 +113,8 @@ module RailsJson
     JsonUnionsInput: untyped
 
     JsonUnionsOutput: untyped
+
+    KitchenSink: untyped
 
     KitchenSinkOperationInput: untyped
 
@@ -172,9 +124,53 @@ module RailsJson
 
     MediaTypeHeaderOutput: untyped
 
+    class MyUnion < Seahorse::Union
+      class StringValue < MyUnion
+        def to_h: () -> { string_value: Hash[Symbol,MyUnion] }
+      end
+
+      class BooleanValue < MyUnion
+        def to_h: () -> { boolean_value: Hash[Symbol,MyUnion] }
+      end
+
+      class NumberValue < MyUnion
+        def to_h: () -> { number_value: Hash[Symbol,MyUnion] }
+      end
+
+      class BlobValue < MyUnion
+        def to_h: () -> { blob_value: Hash[Symbol,MyUnion] }
+      end
+
+      class TimestampValue < MyUnion
+        def to_h: () -> { timestamp_value: Hash[Symbol,MyUnion] }
+      end
+
+      class EnumValue < MyUnion
+        def to_h: () -> { enum_value: Hash[Symbol,MyUnion] }
+      end
+
+      class ListValue < MyUnion
+        def to_h: () -> { list_value: Hash[Symbol,MyUnion] }
+      end
+
+      class MapValue < MyUnion
+        def to_h: () -> { map_value: Hash[Symbol,MyUnion] }
+      end
+
+      class StructureValue < MyUnion
+        def to_h: () -> { structure_value: Hash[Symbol,MyUnion] }
+      end
+
+      class Unknown < MyUnion
+        def to_h: () -> { unknown: Hash[Symbol,MyUnion] }
+      end
+    end
+
     NestedAttributesOperationInput: untyped
 
     NestedAttributesOperationOutput: untyped
+
+    NestedPayload: untyped
 
     NullAndEmptyHeadersClientInput: untyped
 
@@ -199,6 +195,10 @@ module RailsJson
     QueryParamsAsStringListMapInput: untyped
 
     QueryParamsAsStringListMapOutput: untyped
+
+    SimpleStruct: untyped
+
+    StructWithLocationName: untyped
 
     TimestampFormatHeadersInput: untyped
 

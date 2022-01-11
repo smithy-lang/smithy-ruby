@@ -212,11 +212,20 @@ public class WaitersGenerator {
                         .openBlock("matcher: {")
                         .call(() -> {
                             String keyValString = "$L: '$L'";
+                            String value = matcher.getValue().toString();
                             // booleans shouldn't be string quoted
                             if (matcher.getMemberName().equals("success")) {
                                 keyValString = "$L: $L";
                             }
-                            writer.write(keyValString, matcher.getMemberName(), matcher.getValue());
+                            if (matcher.getMemberName().equals("inputOutput")) {
+                                Matcher.InputOutputMember pathMatcher = (Matcher.InputOutputMember) matcher;
+                                value = pathMatcher.getValue().getPath();
+                            }
+                            if (matcher.getMemberName().equals("output")) {
+                                Matcher.OutputMember pathMatcher = (Matcher.OutputMember) matcher;
+                                value = pathMatcher.getValue().getPath();
+                            }
+                            writer.write(keyValString, matcher.getMemberName(), value);
                         })
                         .closeBlock("}");
 

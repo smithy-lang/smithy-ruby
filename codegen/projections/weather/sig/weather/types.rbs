@@ -12,6 +12,10 @@ module Weather
 
     Struct__456efg: untyped
 
+    Struct__789BadNameInput: untyped
+
+    Struct__789BadNameOutput: untyped
+
     class Announcements < Seahorse::Union
       class Police < Announcements
         def to_h: () -> { police: Hash[Symbol,Announcements] }
@@ -34,6 +38,26 @@ module Weather
 
     CitySummary: untyped
 
+    GetCityAnnouncementsInput: untyped
+
+    GetCityAnnouncementsOutput: untyped
+
+    GetCityImageInput: untyped
+
+    GetCityImageOutput: untyped
+
+    GetCityInput: untyped
+
+    GetCityOutput: untyped
+
+    GetCurrentTimeInput: untyped
+
+    GetCurrentTimeOutput: untyped
+
+    GetForecastInput: untyped
+
+    GetForecastOutput: untyped
+
     class ImageType < Seahorse::Union
       class Raw < ImageType
         def to_h: () -> { raw: Hash[Symbol,ImageType] }
@@ -47,6 +71,10 @@ module Weather
         def to_h: () -> { unknown: Hash[Symbol,ImageType] }
       end
     end
+
+    ListCitiesInput: untyped
+
+    ListCitiesOutput: untyped
 
     Message: untyped
 
@@ -101,34 +129,6 @@ module Weather
     Foo: untyped
 
     Baz: untyped
-
-    Struct__789BadNameInput: untyped
-
-    Struct__789BadNameOutput: untyped
-
-    GetCityAnnouncementsInput: untyped
-
-    GetCityAnnouncementsOutput: untyped
-
-    GetCityImageInput: untyped
-
-    GetCityImageOutput: untyped
-
-    GetCityInput: untyped
-
-    GetCityOutput: untyped
-
-    GetCurrentTimeInput: untyped
-
-    GetCurrentTimeOutput: untyped
-
-    GetForecastInput: untyped
-
-    GetForecastOutput: untyped
-
-    ListCitiesInput: untyped
-
-    ListCitiesOutput: untyped
 
   end
 end

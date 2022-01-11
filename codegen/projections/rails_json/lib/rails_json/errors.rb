@@ -56,25 +56,6 @@ module RailsJson
       attr_reader :data
     end
 
-    class ComplexError < ApiClientError
-      # @param [Seahorse::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      # @return [Types::ComplexError]
-      #
-      attr_reader :data
-    end
-
     class ErrorWithMembers < ApiClientError
       # @param [Seahorse::HTTP::Response] http_resp
       #
@@ -109,6 +90,25 @@ module RailsJson
       end
 
       # @return [Types::ErrorWithoutMembers]
+      #
+      attr_reader :data
+    end
+
+    class ComplexError < ApiClientError
+      # @param [Seahorse::HTTP::Response] http_resp
+      #
+      # @param [String] error_code
+      #
+      # @param [String] message
+      #
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::ComplexError.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      # @return [Types::ComplexError]
       #
       attr_reader :data
     end

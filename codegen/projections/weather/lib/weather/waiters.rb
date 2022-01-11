@@ -49,13 +49,13 @@ module Weather
               {
                 state: 'retry',
                 matcher: {
-                  inputOutput: 'software.amazon.smithy.waiters.PathMatcher@1a5093bc'
+                  inputOutput: 'length(input.cityId) == length(output.name)'
                 }
               },
               {
                 state: 'success',
                 matcher: {
-                  output: 'software.amazon.smithy.waiters.PathMatcher@87f73cd7'
+                  output: 'name'
                 }
               }
             ]
@@ -95,13 +95,13 @@ module Weather
               {
                 state: 'failure',
                 matcher: {
-                  output: 'software.amazon.smithy.waiters.PathMatcher@bc907207'
+                  output: 'items[].name'
                 }
               },
               {
                 state: 'success',
                 matcher: {
-                  output: 'software.amazon.smithy.waiters.PathMatcher@582bbcca'
+                  output: 'items[].name'
                 }
               }
             ]
