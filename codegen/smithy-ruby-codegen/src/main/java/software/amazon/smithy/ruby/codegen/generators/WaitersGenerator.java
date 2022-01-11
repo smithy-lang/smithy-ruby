@@ -65,7 +65,7 @@ public class WaitersGenerator {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
-                .call(() -> renderWaiters())
+                .call(() -> renderWaiters(false))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -82,7 +82,7 @@ public class WaitersGenerator {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
-                .call(() -> renderRbsWaiters())
+                .call(() -> renderWaiters(true))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -94,7 +94,7 @@ public class WaitersGenerator {
         LOGGER.fine("Wrote waiters rbs to " + typesFile);
     }
 
-    private void renderWaiters() {
+    private void renderWaiters(Boolean rbs) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
@@ -106,29 +106,13 @@ public class WaitersGenerator {
                     Map.Entry<String, Waiter> entry = iterator.next();
                     String waiterName = entry.getKey();
                     Waiter waiter = entry.getValue();
-                    renderWaiter(waiterName, waiter, operation);
+                    if (rbs) {
+                        renderRbsWaiter(waiterName);
+                    } else {
+                        renderWaiter(waiterName, waiter, operation);
+                    }
                     if (iterator.hasNext()) {
                         writer.write("");
-                    }
-                }
-            }
-        });
-    }
-
-    private void renderRbsWaiters() {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-
-        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
-            if (operation.hasTrait(WaitableTrait.class)) {
-                Map<String, Waiter> waiters = operation.getTrait(WaitableTrait.class).get().getWaiters();
-                Iterator<Map.Entry<String, Waiter>> iterator = waiters.entrySet().iterator();
-
-                while (iterator.hasNext()) {
-                    Map.Entry<String, Waiter> entry = iterator.next();
-                    String waiterName = entry.getKey();
-                    renderRbsWaiter(waiterName);
-                    if (iterator.hasNext()) {
-                        rbsWriter.write("");
                     }
                 }
             }
@@ -225,6 +209,7 @@ public class WaitersGenerator {
                             if (matcher instanceof Matcher.OutputMember) {
                                 Matcher.OutputMember pathMatcher = (Matcher.OutputMember) matcher;
                                 value = pathMatcher.getValue().getPath();
+                                pathMatcher.getValue().getComparator();
                             }
                             writer.write(keyValString, matcher.getMemberName(), value);
                         })
