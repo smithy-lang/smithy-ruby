@@ -18,10 +18,10 @@ module Weather
       # @option options [required, Integer] :max_wait_time
       #   The maximum time in seconds to wait before the waiter gives up.
       #
-      # @option options [Integer] :min_delay("2")
+      # @option options [Integer] :min_delay (2)
       #   The minimum time in seconds to delay polling attempts.
       #
-      # @option options [Integer] :max_delay("120")
+      # @option options [Integer] :max_delay (120)
       #   The maximum time in seconds to delay polling attempts.
       #
       def initialize(client, options = {})
@@ -93,10 +93,10 @@ module Weather
       # @option options [required, Integer] :max_wait_time
       #   The maximum time in seconds to wait before the waiter gives up.
       #
-      # @option options [Integer] :min_delay("2")
+      # @option options [Integer] :min_delay (2)
       #   The minimum time in seconds to delay polling attempts.
       #
-      # @option options [Integer] :max_delay("120")
+      # @option options [Integer] :max_delay (120)
       #   The maximum time in seconds to delay polling attempts.
       #
       def initialize(client, options = {})

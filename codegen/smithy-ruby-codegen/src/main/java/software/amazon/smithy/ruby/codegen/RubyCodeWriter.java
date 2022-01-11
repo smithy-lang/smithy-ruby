@@ -128,7 +128,7 @@ public class RubyCodeWriter extends CodeWriter {
         doc(() -> {
             writeInline("@option $L [$L] $L", param, type, option);
             if (!defaultValue.isEmpty()) {
-                write("($S)", defaultValue);
+                write(" ($L)", defaultValue);
             } else {
                 write("");
             }
