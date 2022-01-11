@@ -21,7 +21,7 @@ plugins {
 3. Add the smithy-ruby-rails-codegen as a dependency:
 ```kotlin
 dependencies {
-    implementation("software.amazon.smithy:smithy-ruby-rails-codegen:0.1.0")
+    implementation("software.amazon.smithy.ruby:smithy-ruby-rails-codegen:0.1.0")
 }
 ```
 4. Add your smithy model. under `<project_root>/model`.
