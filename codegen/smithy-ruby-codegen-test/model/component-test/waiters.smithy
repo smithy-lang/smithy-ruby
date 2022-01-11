@@ -36,7 +36,7 @@ use smithy.waiters#waitable
                 state: "failure",
                 matcher: {
                     inputOutput: {
-                        path: "input.Status == `failed` && output.Status == `failed`",
+                        path: "input.Status == 'failed' || output.Status == 'failed'",
                         comparator: "booleanEquals",
                         expected: "true"
                     }

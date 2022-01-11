@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -212,21 +213,7 @@ public class WaitersGenerator {
                         .write("state: '$L',", state)
                         .openBlock("matcher: {")
                         .call(() -> {
-                            String keyValString = "$L: '$L'";
-                            String value = matcher.getValue().toString();
-                            // booleans shouldn't be string quoted
-                            if (matcher.getMemberName().equals("success")) {
-                                keyValString = "$L: $L";
-                            }
-                            if (matcher instanceof Matcher.InputOutputMember) {
-                                Matcher.InputOutputMember pathMatcher = (Matcher.InputOutputMember) matcher;
-                                value = pathMatcher.getValue().getPath();
-                            }
-                            if (matcher instanceof Matcher.OutputMember) {
-                                Matcher.OutputMember pathMatcher = (Matcher.OutputMember) matcher;
-                                value = pathMatcher.getValue().getPath();
-                            }
-                            writer.write(keyValString, matcher.getMemberName(), value);
+                            matcher.accept(new AcceptorVisitor());
                         })
                         .closeBlock("}");
 
@@ -238,6 +225,13 @@ public class WaitersGenerator {
             }
             writer.closeBlock("]");
         }
+    }
+
+    private String translatePath(String path) {
+        //TODO: This needs to use a JMESPathExpression to parse the path and actually correctly translate names
+        // This will not work correctly in all cases
+        return Arrays.stream(path.split("[.]"))
+                .map((m) -> RubyFormatter.toSnakeCase(m)).collect(Collectors.joining("."));
     }
 
     private void renderWaiterWaitDocumentation(OperationShape operation, String operationName) {
@@ -272,5 +266,47 @@ public class WaitersGenerator {
                         ":max_delay",
                         "" + waiter.getMaxDelay(),
                         "The maximum time in seconds to delay polling attempts.");
+    }
+
+    private class AcceptorVisitor implements Matcher.Visitor<Void> {
+
+        @Override
+        public Void visitOutput(Matcher.OutputMember outputPath) {
+            writer
+                    .openBlock("$L: {", outputPath.getMemberName())
+                    .write("path: $L", translatePath(outputPath.getValue().getPath()))
+                    .write("comparator: \"$L\"", outputPath.getValue().getComparator())
+                    .write("expected: '$L'", outputPath.getValue().getExpected())
+                    .closeBlock("}");
+            return null;
+        }
+
+        @Override
+        public Void visitInputOutput(Matcher.InputOutputMember inputOutputPath) {
+            writer
+                    .openBlock("$L: {", inputOutputPath.getMemberName())
+                    .write("path: $L", translatePath(inputOutputPath.getValue().getPath()))
+                    .write("comparator: \"$L\"", inputOutputPath.getValue().getComparator())
+                    .write("expected: '$L'", inputOutputPath.getValue().getExpected())
+                    .closeBlock("}");
+            return null;
+        }
+
+        @Override
+        public Void visitSuccess(Matcher.SuccessMember success) {
+            writer.write("$L: $L", success.getMemberName(), success.getValue() ? "true" : "false");
+            return null;
+        }
+
+        @Override
+        public Void visitErrorType(Matcher.ErrorTypeMember errorType) {
+            writer.write("$L: '$L'", errorType.getMemberName(), errorType.getValue());
+            return null;
+        }
+
+        @Override
+        public Void visitUnknown(Matcher.UnknownMember unknown) {
+            return null;
+        }
     }
 }

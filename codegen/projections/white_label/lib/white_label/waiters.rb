@@ -53,13 +53,21 @@ module WhiteLabel
               {
                 state: 'failure',
                 matcher: {
-                  output: 'Status'
+                  output: {
+                    path: status
+                    comparator: "stringEquals"
+                    expected: 'failed'
+                  }
                 }
               },
               {
                 state: 'failure',
                 matcher: {
-                  inputOutput: 'input.Status == output.Status'
+                  inputOutput: {
+                    path: input.status == 'failed' || output.status == 'failed'
+                    comparator: "booleanEquals"
+                    expected: 'true'
+                  }
                 }
               }
             ]
