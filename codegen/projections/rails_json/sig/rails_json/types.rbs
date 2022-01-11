@@ -10,23 +10,113 @@
 module RailsJson
   module Types
 
-    GreetingStruct: untyped
+    AllQueryStringTypesInput: untyped
 
-    Struct__456efg: untyped
+    AllQueryStringTypesOutput: untyped
 
     ComplexError: untyped
 
     ComplexNestedErrorData: untyped
 
+    ConstantAndVariableQueryStringInput: untyped
+
+    ConstantAndVariableQueryStringOutput: untyped
+
+    ConstantQueryStringInput: untyped
+
+    ConstantQueryStringOutput: untyped
+
+    EmptyOperationInput: untyped
+
+    EmptyOperationOutput: untyped
+
     EmptyStruct: untyped
+
+    EndpointOperationInput: untyped
+
+    EndpointOperationOutput: untyped
+
+    EndpointWithHostLabelOperationInput: untyped
+
+    EndpointWithHostLabelOperationOutput: untyped
 
     ErrorWithMembers: untyped
 
     ErrorWithoutMembers: untyped
 
+    GreetingStruct: untyped
+
+    GreetingWithErrorsInput: untyped
+
+    GreetingWithErrorsOutput: untyped
+
+    HttpPayloadTraitsInput: untyped
+
+    HttpPayloadTraitsOutput: untyped
+
+    HttpPayloadTraitsWithMediaTypeInput: untyped
+
+    HttpPayloadTraitsWithMediaTypeOutput: untyped
+
+    HttpPayloadWithStructureInput: untyped
+
+    HttpPayloadWithStructureOutput: untyped
+
+    HttpPrefixHeadersInResponseInput: untyped
+
+    HttpPrefixHeadersInResponseOutput: untyped
+
+    HttpPrefixHeadersInput: untyped
+
+    HttpPrefixHeadersOutput: untyped
+
+    HttpRequestWithFloatLabelsInput: untyped
+
+    HttpRequestWithFloatLabelsOutput: untyped
+
+    HttpRequestWithGreedyLabelInPathInput: untyped
+
+    HttpRequestWithGreedyLabelInPathOutput: untyped
+
+    HttpRequestWithLabelsAndTimestampFormatInput: untyped
+
+    HttpRequestWithLabelsAndTimestampFormatOutput: untyped
+
+    HttpRequestWithLabelsInput: untyped
+
+    HttpRequestWithLabelsOutput: untyped
+
+    HttpResponseCodeInput: untyped
+
+    HttpResponseCodeOutput: untyped
+
+    IgnoreQueryParamsInResponseInput: untyped
+
+    IgnoreQueryParamsInResponseOutput: untyped
+
+    InputAndOutputWithHeadersInput: untyped
+
+    InputAndOutputWithHeadersOutput: untyped
+
     InvalidGreeting: untyped
 
+    JsonEnumsInput: untyped
+
+    JsonEnumsOutput: untyped
+
+    JsonUnionsInput: untyped
+
+    JsonUnionsOutput: untyped
+
     KitchenSink: untyped
+
+    KitchenSinkOperationInput: untyped
+
+    KitchenSinkOperationOutput: untyped
+
+    MediaTypeHeaderInput: untyped
+
+    MediaTypeHeaderOutput: untyped
 
     class MyUnion < Seahorse::Union
       class StringValue < MyUnion
@@ -70,111 +160,11 @@ module RailsJson
       end
     end
 
-    NestedPayload: untyped
-
-    SimpleStruct: untyped
-
-    StructWithLocationName: untyped
-
-    Struct__789BadNameInput: untyped
-
-    Struct__789BadNameOutput: untyped
-
-    AllQueryStringTypesInput: untyped
-
-    AllQueryStringTypesOutput: untyped
-
-    ConstantAndVariableQueryStringInput: untyped
-
-    ConstantAndVariableQueryStringOutput: untyped
-
-    ConstantQueryStringInput: untyped
-
-    ConstantQueryStringOutput: untyped
-
-    EmptyOperationInput: untyped
-
-    EmptyOperationOutput: untyped
-
-    EndpointOperationInput: untyped
-
-    EndpointOperationOutput: untyped
-
-    EndpointWithHostLabelOperationInput: untyped
-
-    EndpointWithHostLabelOperationOutput: untyped
-
-    GreetingWithErrorsInput: untyped
-
-    GreetingWithErrorsOutput: untyped
-
-    HttpPayloadTraitsInput: untyped
-
-    HttpPayloadTraitsOutput: untyped
-
-    HttpPayloadTraitsWithMediaTypeInput: untyped
-
-    HttpPayloadTraitsWithMediaTypeOutput: untyped
-
-    HttpPayloadWithStructureInput: untyped
-
-    HttpPayloadWithStructureOutput: untyped
-
-    HttpPrefixHeadersInput: untyped
-
-    HttpPrefixHeadersInResponseInput: untyped
-
-    HttpPrefixHeadersInResponseOutput: untyped
-
-    HttpPrefixHeadersOutput: untyped
-
-    HttpRequestWithFloatLabelsInput: untyped
-
-    HttpRequestWithFloatLabelsOutput: untyped
-
-    HttpRequestWithGreedyLabelInPathInput: untyped
-
-    HttpRequestWithGreedyLabelInPathOutput: untyped
-
-    HttpRequestWithLabelsAndTimestampFormatInput: untyped
-
-    HttpRequestWithLabelsAndTimestampFormatOutput: untyped
-
-    HttpRequestWithLabelsInput: untyped
-
-    HttpRequestWithLabelsOutput: untyped
-
-    HttpResponseCodeInput: untyped
-
-    HttpResponseCodeOutput: untyped
-
-    IgnoreQueryParamsInResponseInput: untyped
-
-    IgnoreQueryParamsInResponseOutput: untyped
-
-    InputAndOutputWithHeadersInput: untyped
-
-    InputAndOutputWithHeadersOutput: untyped
-
-    JsonEnumsInput: untyped
-
-    JsonEnumsOutput: untyped
-
-    JsonUnionsInput: untyped
-
-    JsonUnionsOutput: untyped
-
-    KitchenSinkOperationInput: untyped
-
-    KitchenSinkOperationOutput: untyped
-
-    MediaTypeHeaderInput: untyped
-
-    MediaTypeHeaderOutput: untyped
-
     NestedAttributesOperationInput: untyped
 
     NestedAttributesOperationOutput: untyped
+
+    NestedPayload: untyped
 
     NullAndEmptyHeadersClientInput: untyped
 
@@ -200,9 +190,19 @@ module RailsJson
 
     QueryParamsAsStringListMapOutput: untyped
 
+    SimpleStruct: untyped
+
+    StructWithLocationName: untyped
+
     TimestampFormatHeadersInput: untyped
 
     TimestampFormatHeadersOutput: untyped
+
+    Struct__456efg: untyped
+
+    Struct__789BadNameInput: untyped
+
+    Struct__789BadNameOutput: untyped
 
   end
 end

@@ -10,17 +10,6 @@
 module Weather
   module Types
 
-    # @!attribute member___123foo
-    #
-    #   @return [String]
-    #
-    Struct__456efg = Struct.new(
-      :member___123foo,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
     class Announcements < Seahorse::Union
 
       class Police < Announcements
@@ -66,6 +55,22 @@ module Weather
       end
     end
 
+    # @!attribute baz
+    #
+    #   @return [String]
+    #
+    # @!attribute bar
+    #
+    #   @return [String]
+    #
+    Baz = ::Struct.new(
+      :baz,
+      :bar,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # @!attribute latitude
     #
     #   @return [Float]
@@ -74,7 +79,7 @@ module Weather
     #
     #   @return [Float]
     #
-    CityCoordinates = Struct.new(
+    CityCoordinates = ::Struct.new(
       :latitude,
       :longitude,
       keyword_init: true
@@ -98,11 +103,160 @@ module Weather
     #
     #   @return [String]
     #
-    CitySummary = Struct.new(
+    CitySummary = ::Struct.new(
       :city_id,
       :member_name,
       :number,
       :case,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute baz
+    #
+    #   @return [String]
+    #
+    # @!attribute bar
+    #
+    #   @return [String]
+    #
+    Foo = ::Struct.new(
+      :baz,
+      :bar,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    GetCityAnnouncementsInput = ::Struct.new(
+      :city_id,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute last_updated
+    #
+    #   @return [Time]
+    #
+    # @!attribute announcements
+    #
+    #   @return [Announcements]
+    #
+    GetCityAnnouncementsOutput = ::Struct.new(
+      :last_updated,
+      :announcements,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    # @!attribute image_type
+    #
+    #   @return [ImageType]
+    #
+    GetCityImageInput = ::Struct.new(
+      :city_id,
+      :image_type,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute image
+    #
+    #   @return [String]
+    #
+    GetCityImageOutput = ::Struct.new(
+      :image,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # The input used to get a city.
+    #
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    GetCityInput = ::Struct.new(
+      :city_id,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member_name
+    #
+    #   @return [String]
+    #
+    # @!attribute coordinates
+    #
+    #   @return [CityCoordinates]
+    #
+    # @!attribute city
+    #
+    #   @return [CitySummary]
+    #
+    GetCityOutput = ::Struct.new(
+      :member_name,
+      :coordinates,
+      :city,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    GetCurrentTimeInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute time
+    #
+    #   @return [Time]
+    #
+    GetCurrentTimeOutput = ::Struct.new(
+      :time,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    GetForecastInput = ::Struct.new(
+      :city_id,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute chance_of_rain
+    #
+    #   @return [Float]
+    #
+    # @!attribute precipitation
+    #
+    #   @return [Precipitation]
+    #
+    GetForecastOutput = ::Struct.new(
+      :chance_of_rain,
+      :precipitation,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -143,6 +297,103 @@ module Weather
       end
     end
 
+    # @!attribute next_token
+    #
+    #   @return [String]
+    #
+    # @!attribute a_string
+    #
+    #   @return [String]
+    #
+    # @!attribute default_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute boxed_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute default_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute boxed_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute some_enum
+    #
+    #   @return [String]
+    #
+    # @!attribute page_size
+    #
+    #   @return [Integer]
+    #
+    ListCitiesInput = ::Struct.new(
+      :next_token,
+      :a_string,
+      :default_bool,
+      :boxed_bool,
+      :default_number,
+      :boxed_number,
+      :some_enum,
+      :page_size,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute next_token
+    #
+    #   @return [String]
+    #
+    # @!attribute some_enum
+    #
+    #   @return [String]
+    #
+    # @!attribute a_string
+    #
+    #   @return [String]
+    #
+    # @!attribute default_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute boxed_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute default_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute boxed_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute items
+    #
+    #   @return [Array<CitySummary>]
+    #
+    # @!attribute sparse_items
+    #
+    #   @return [Array<CitySummary>]
+    #
+    ListCitiesOutput = ::Struct.new(
+      :next_token,
+      :some_enum,
+      :a_string,
+      :default_bool,
+      :boxed_bool,
+      :default_number,
+      :boxed_number,
+      :items,
+      :sparse_items,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # @!attribute message
     #
     #   @return [String]
@@ -151,7 +402,7 @@ module Weather
     #
     #   @return [String]
     #
-    Message = Struct.new(
+    Message = ::Struct.new(
       :message,
       :author,
       keyword_init: true
@@ -170,7 +421,7 @@ module Weather
     #
     #   @return [String]
     #
-    NoSuchResource = Struct.new(
+    NoSuchResource = ::Struct.new(
       :resource_type,
       :message,
       keyword_init: true
@@ -178,7 +429,7 @@ module Weather
       include Seahorse::Structure
     end
 
-    OtherStructure = Struct.new(
+    OtherStructure = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -193,7 +444,7 @@ module Weather
     #
     #   @return [Integer]
     #
-    PNGImage = Struct.new(
+    PNGImage = ::Struct.new(
       :height,
       :width,
       keyword_init: true
@@ -306,33 +557,12 @@ module Weather
       end
     end
 
-    # @!attribute baz
+    # @!attribute member___123foo
     #
     #   @return [String]
     #
-    # @!attribute bar
-    #
-    #   @return [String]
-    #
-    Foo = Struct.new(
-      :baz,
-      :bar,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute baz
-    #
-    #   @return [String]
-    #
-    # @!attribute bar
-    #
-    #   @return [String]
-    #
-    Baz = Struct.new(
-      :baz,
-      :bar,
+    Struct__456efg = ::Struct.new(
+      :member___123foo,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -346,7 +576,7 @@ module Weather
     #
     #   @return [Struct__456efg]
     #
-    Struct__789BadNameInput = Struct.new(
+    Struct__789BadNameInput = ::Struct.new(
       :member___123abc,
       :member,
       keyword_init: true
@@ -362,239 +592,9 @@ module Weather
     #
     #   @return [Struct__456efg]
     #
-    Struct__789BadNameOutput = Struct.new(
+    Struct__789BadNameOutput = ::Struct.new(
       :member___123abc,
       :member,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute city_id
-    #
-    #   @return [String]
-    #
-    GetCityAnnouncementsInput = Struct.new(
-      :city_id,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute last_updated
-    #
-    #   @return [Time]
-    #
-    # @!attribute announcements
-    #
-    #   @return [Announcements]
-    #
-    GetCityAnnouncementsOutput = Struct.new(
-      :last_updated,
-      :announcements,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute city_id
-    #
-    #   @return [String]
-    #
-    # @!attribute image_type
-    #
-    #   @return [ImageType]
-    #
-    GetCityImageInput = Struct.new(
-      :city_id,
-      :image_type,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute image
-    #
-    #   @return [String]
-    #
-    GetCityImageOutput = Struct.new(
-      :image,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # The input used to get a city.
-    #
-    # @!attribute city_id
-    #
-    #   @return [String]
-    #
-    GetCityInput = Struct.new(
-      :city_id,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute member_name
-    #
-    #   @return [String]
-    #
-    # @!attribute coordinates
-    #
-    #   @return [CityCoordinates]
-    #
-    # @!attribute city
-    #
-    #   @return [CitySummary]
-    #
-    GetCityOutput = Struct.new(
-      :member_name,
-      :coordinates,
-      :city,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    GetCurrentTimeInput = Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute time
-    #
-    #   @return [Time]
-    #
-    GetCurrentTimeOutput = Struct.new(
-      :time,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute city_id
-    #
-    #   @return [String]
-    #
-    GetForecastInput = Struct.new(
-      :city_id,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute chance_of_rain
-    #
-    #   @return [Float]
-    #
-    # @!attribute precipitation
-    #
-    #   @return [Precipitation]
-    #
-    GetForecastOutput = Struct.new(
-      :chance_of_rain,
-      :precipitation,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute next_token
-    #
-    #   @return [String]
-    #
-    # @!attribute a_string
-    #
-    #   @return [String]
-    #
-    # @!attribute default_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute boxed_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute default_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute boxed_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute some_enum
-    #
-    #   @return [String]
-    #
-    # @!attribute page_size
-    #
-    #   @return [Integer]
-    #
-    ListCitiesInput = Struct.new(
-      :next_token,
-      :a_string,
-      :default_bool,
-      :boxed_bool,
-      :default_number,
-      :boxed_number,
-      :some_enum,
-      :page_size,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute next_token
-    #
-    #   @return [String]
-    #
-    # @!attribute some_enum
-    #
-    #   @return [String]
-    #
-    # @!attribute a_string
-    #
-    #   @return [String]
-    #
-    # @!attribute default_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute boxed_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute default_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute boxed_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute items
-    #
-    #   @return [Array<CitySummary>]
-    #
-    # @!attribute sparse_items
-    #
-    #   @return [Array<CitySummary>]
-    #
-    ListCitiesOutput = Struct.new(
-      :next_token,
-      :some_enum,
-      :a_string,
-      :default_bool,
-      :boxed_bool,
-      :default_number,
-      :boxed_number,
-      :items,
-      :sparse_items,
       keyword_init: true
     ) do
       include Seahorse::Structure

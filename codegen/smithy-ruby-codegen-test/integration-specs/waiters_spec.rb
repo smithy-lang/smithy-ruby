@@ -29,7 +29,25 @@ module WhiteLabel
         expect(acceptors).to eq(
           [
             { state: 'success', matcher: { success: true } },
-            { state: 'retry', matcher: { errorType: 'NotFound' } }
+            { state: 'retry', matcher: { errorType: 'NotFound' } },
+            {
+              state: 'failure',
+              matcher: {
+                output: {
+                  path: 'status', comparator: "stringEquals", expected: "failed"
+                }
+              }
+            },
+            {
+              state: 'failure',
+              matcher: {
+                inputOutput: {
+                  path: 'input.status == \'failed\' || output.status == \'failed\'',
+                  comparator: "booleanEquals",
+                  expected: "true"
+                }
+              }
+            }
           ]
         )
       end

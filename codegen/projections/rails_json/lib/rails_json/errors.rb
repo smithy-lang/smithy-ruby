@@ -37,25 +37,6 @@ module RailsJson
       attr_reader :location
     end
 
-    class InvalidGreeting < ApiClientError
-      # @param [Seahorse::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::InvalidGreeting.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      # @return [Types::InvalidGreeting]
-      #
-      attr_reader :data
-    end
-
     class ComplexError < ApiClientError
       # @param [Seahorse::HTTP::Response] http_resp
       #
@@ -109,6 +90,25 @@ module RailsJson
       end
 
       # @return [Types::ErrorWithoutMembers]
+      #
+      attr_reader :data
+    end
+
+    class InvalidGreeting < ApiClientError
+      # @param [Seahorse::HTTP::Response] http_resp
+      #
+      # @param [String] error_code
+      #
+      # @param [String] message
+      #
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::InvalidGreeting.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      # @return [Types::InvalidGreeting]
       #
       attr_reader :data
     end

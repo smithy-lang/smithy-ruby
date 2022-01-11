@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
-import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.waiters.Acceptor;
 import software.amazon.smithy.waiters.AcceptorState;
 import software.amazon.smithy.waiters.Matcher;
@@ -66,7 +66,7 @@ public class WaitersGenerator {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
-                .call(() -> renderWaiters())
+                .call(() -> renderWaiters(false))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -83,7 +83,7 @@ public class WaitersGenerator {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
-                .call(() -> renderRbsWaiters())
+                .call(() -> renderWaiters(true))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -95,7 +95,7 @@ public class WaitersGenerator {
         LOGGER.fine("Wrote waiters rbs to " + typesFile);
     }
 
-    private void renderWaiters() {
+    private void renderWaiters(Boolean rbs) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
@@ -107,30 +107,13 @@ public class WaitersGenerator {
                     Map.Entry<String, Waiter> entry = iterator.next();
                     String waiterName = entry.getKey();
                     Waiter waiter = entry.getValue();
-                    renderWaiter(waiterName, waiter, operation);
+                    if (rbs) {
+                        renderRbsWaiter(waiterName);
+                    } else {
+                        renderWaiter(waiterName, waiter, operation);
+                    }
                     if (iterator.hasNext()) {
                         writer.write("");
-                    }
-                }
-            }
-        });
-    }
-
-    private void renderRbsWaiters() {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-
-        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
-            if (operation.hasTrait(WaitableTrait.class)) {
-                Map<String, Waiter> waiters = operation.getTrait(WaitableTrait.class).get().getWaiters();
-                Iterator<Map.Entry<String, Waiter>> iterator = waiters.entrySet().iterator();
-
-                while (iterator.hasNext()) {
-                    Map.Entry<String, Waiter> entry = iterator.next();
-                    String waiterName = entry.getKey();
-                    Waiter waiter = entry.getValue();
-                    renderRbsWaiter(waiterName, waiter, operation);
-                    if (iterator.hasNext()) {
-                        rbsWriter.write("");
                     }
                 }
             }
@@ -161,7 +144,7 @@ public class WaitersGenerator {
                 .write("")
                 .write("attr_reader :tags")
                 .write("")
-                .call(() -> renderWaiterWaitDocumentation(operationName))
+                .call(() -> renderWaiterWaitDocumentation(operation, operationName))
                 .openBlock("def wait(params = {}, options = {})")
                 .write("@waiter.wait(@client, params, options)")
                 .closeBlock("end")
@@ -170,7 +153,7 @@ public class WaitersGenerator {
         LOGGER.finer("Generated waiter " + waiterName + " for operation: " + operationName);
     }
 
-    private void renderRbsWaiter(String waiterName, Waiter waiter, OperationShape operation) {
+    private void renderRbsWaiter(String waiterName) {
         rbsWriter
                 .write("")
                 .openBlock("class $L", waiterName)
@@ -182,7 +165,10 @@ public class WaitersGenerator {
 
     private void renderWaiterDocumentation(Waiter waiter) {
         if (waiter.getDocumentation().isPresent()) {
-            writer.doc(() -> writer.write(StringUtils.wrap(waiter.getDocumentation().get(), 74)));
+            writer.writeDocstring(waiter.getDocumentation().get());
+        }
+        if (waiter.isDeprecated()) {
+            writer.writeYardDeprecated("This waiter is deprecated.", "");
         }
     }
 
@@ -211,12 +197,7 @@ public class WaitersGenerator {
                         .write("state: '$L',", state)
                         .openBlock("matcher: {")
                         .call(() -> {
-                            String keyValString = "$L: '$L'";
-                            // booleans shouldn't be string quoted
-                            if (matcher.getMemberName().equals("success")) {
-                                keyValString = "$L: $L";
-                            }
-                            writer.write(keyValString, matcher.getMemberName(), matcher.getValue());
+                            matcher.accept(new AcceptorVisitor());
                         })
                         .closeBlock("}");
 
@@ -230,27 +211,93 @@ public class WaitersGenerator {
         }
     }
 
-    private void renderWaiterWaitDocumentation(String operationName) {
+    private String translatePath(String path) {
+        //TODO: This needs to use a JMESPathExpression to parse the path and actually correctly translate names
+        // This will not work correctly in all cases
+        return Arrays.stream(path.split("[.]"))
+                .map((m) -> RubyFormatter.toSnakeCase(m)).collect(Collectors.joining("."));
+    }
+
+    private void renderWaiterWaitDocumentation(OperationShape operation, String operationName) {
+        String operationReturnType = "Types::" + symbolProvider.toSymbol(operation).getName();
+
+        String operationReference = "(see Client#" + operationName + ")";
         writer
-                .doc(() -> writer
-                        .write("@param [Hash] params (see Client#$L)", operationName)
-                        .write("@param [Hash] options (see Client#$L)", operationName)
-                        .write("@return (see Client#$L)", operationName));
+                .writeYardParam("Hash", "params", operationReference)
+                .writeYardParam("Hash", "options", operationReference)
+                .writeYardReturn(operationReturnType, operationReference);
     }
 
     private void renderWaiterInitializeDocumentation(Waiter waiter) {
-        String maxWaitTime = "@option options [required, Integer] :max_wait_time The maximum time in seconds to "
-                + "wait before the waiter gives up.";
-        String minDelay = "@option options [Integer] :min_delay (" + waiter.getMinDelay() + ") The minimum time in "
-                + "seconds to delay polling attempts.";
-        String maxDelay = "@option options [Integer] :max_delay (" + waiter.getMaxDelay() + ") The maximum time in "
-                + "seconds to delay polling attempts.";
+        writer
+                .writeYardParam("Client", "client", "")
+                .writeYardParam("Hash", "options", "")
+                .writeYardOption(
+                        "options",
+                        "required, Integer",
+                        ":max_wait_time",
+                        "",
+                        "The maximum time in seconds to wait before the waiter gives up.")
+                .writeYardOption(
+                        "options",
+                        "Integer",
+                        ":min_delay",
+                        "" + waiter.getMinDelay(),
+                        "The minimum time in seconds to delay polling attempts.")
+                .writeYardOption(
+                        "options",
+                        "Integer",
+                        ":max_delay",
+                        "" + waiter.getMaxDelay(),
+                        "The maximum time in seconds to delay polling attempts.");
+    }
 
-        writer.doc(() -> writer
-                .write("@param [Client] client")
-                .write("@param [Hash] options")
-                .write(StringUtils.wrap(maxWaitTime, 72))
-                .write(StringUtils.wrap(minDelay, 72))
-                .write(StringUtils.wrap(maxDelay, 72)));
+    private class AcceptorVisitor implements Matcher.Visitor<Void> {
+
+        private void renderPathMatcher(String memberName, String path, String comparator, String expected) {
+            writer
+                    .openBlock("$L: {", memberName)
+                    .write("path: \"$L\",", translatePath(path))
+                    .write("comparator: \"$L\",", comparator)
+                    .write("expected: '$L'", expected)
+                    .closeBlock("}");
+        }
+
+        @Override
+        public Void visitOutput(Matcher.OutputMember outputPath) {
+            renderPathMatcher(
+                    outputPath.getMemberName(),
+                    outputPath.getValue().getPath(),
+                    outputPath.getValue().getComparator().toString(),
+                    outputPath.getValue().getExpected());
+            return null;
+        }
+
+        @Override
+        public Void visitInputOutput(Matcher.InputOutputMember inputOutputPath) {
+            renderPathMatcher(
+                    inputOutputPath.getMemberName(),
+                    inputOutputPath.getValue().getPath(),
+                    inputOutputPath.getValue().getComparator().toString(),
+                    inputOutputPath.getValue().getExpected());
+            return null;
+        }
+
+        @Override
+        public Void visitSuccess(Matcher.SuccessMember success) {
+            writer.write("$L: $L", success.getMemberName(), success.getValue() ? "true" : "false");
+            return null;
+        }
+
+        @Override
+        public Void visitErrorType(Matcher.ErrorTypeMember errorType) {
+            writer.write("$L: '$L'", errorType.getMemberName(), errorType.getValue());
+            return null;
+        }
+
+        @Override
+        public Void visitUnknown(Matcher.UnknownMember unknown) {
+            return null;
+        }
     }
 }

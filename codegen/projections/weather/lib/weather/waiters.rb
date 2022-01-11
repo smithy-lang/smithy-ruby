@@ -12,13 +12,18 @@ module Weather
 
     class CityExists
       # @param [Client] client
+      #
       # @param [Hash] options
-      # @option options [required, Integer] :max_wait_time The maximum time in
-      # seconds to wait before the waiter gives up.
-      # @option options [Integer] :min_delay (2) The minimum time in seconds to
-      # delay polling attempts.
-      # @option options [Integer] :max_delay (120) The maximum time in seconds
-      # to delay polling attempts.
+      #
+      # @option options [required, Integer] :max_wait_time
+      #   The maximum time in seconds to wait before the waiter gives up.
+      #
+      # @option options [Integer] :min_delay (2)
+      #   The minimum time in seconds to delay polling attempts.
+      #
+      # @option options [Integer] :max_delay (120)
+      #   The maximum time in seconds to delay polling attempts.
+      #
       def initialize(client, options = {})
         @client = client
         @waiter = Seahorse::Waiters::Waiter.new({
@@ -49,13 +54,21 @@ module Weather
               {
                 state: 'retry',
                 matcher: {
-                  inputOutput: 'software.amazon.smithy.waiters.PathMatcher@1a5093bc'
+                  inputOutput: {
+                    path: "length(input.city_id) == length(output.name)",
+                    comparator: "booleanEquals",
+                    expected: 'true'
+                  }
                 }
               },
               {
                 state: 'success',
                 matcher: {
-                  output: 'software.amazon.smithy.waiters.PathMatcher@87f73cd7'
+                  output: {
+                    path: "name",
+                    comparator: "stringEquals",
+                    expected: 'seattle'
+                  }
                 }
               }
             ]
@@ -66,9 +79,15 @@ module Weather
 
       attr_reader :tags
 
-      # @param [Hash] params (see Client#get_city)
-      # @param [Hash] options (see Client#get_city)
-      # @return (see Client#get_city)
+      # @param [Hash] params
+      #   (see Client#get_city)
+      #
+      # @param [Hash] options
+      #   (see Client#get_city)
+      #
+      # @return [Types::GetCity]
+      #   (see Client#get_city)
+      #
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end
@@ -76,13 +95,18 @@ module Weather
 
     class ListContainsCity
       # @param [Client] client
+      #
       # @param [Hash] options
-      # @option options [required, Integer] :max_wait_time The maximum time in
-      # seconds to wait before the waiter gives up.
-      # @option options [Integer] :min_delay (2) The minimum time in seconds to
-      # delay polling attempts.
-      # @option options [Integer] :max_delay (120) The maximum time in seconds
-      # to delay polling attempts.
+      #
+      # @option options [required, Integer] :max_wait_time
+      #   The maximum time in seconds to wait before the waiter gives up.
+      #
+      # @option options [Integer] :min_delay (2)
+      #   The minimum time in seconds to delay polling attempts.
+      #
+      # @option options [Integer] :max_delay (120)
+      #   The maximum time in seconds to delay polling attempts.
+      #
       def initialize(client, options = {})
         @client = client
         @waiter = Seahorse::Waiters::Waiter.new({
@@ -95,13 +119,21 @@ module Weather
               {
                 state: 'failure',
                 matcher: {
-                  output: 'software.amazon.smithy.waiters.PathMatcher@bc907207'
+                  output: {
+                    path: "items[].name",
+                    comparator: "allStringEquals",
+                    expected: 'seattle'
+                  }
                 }
               },
               {
                 state: 'success',
                 matcher: {
-                  output: 'software.amazon.smithy.waiters.PathMatcher@582bbcca'
+                  output: {
+                    path: "items[].name",
+                    comparator: "anyStringEquals",
+                    expected: 'NewYork'
+                  }
                 }
               }
             ]
@@ -112,9 +144,15 @@ module Weather
 
       attr_reader :tags
 
-      # @param [Hash] params (see Client#list_cities)
-      # @param [Hash] options (see Client#list_cities)
-      # @return (see Client#list_cities)
+      # @param [Hash] params
+      #   (see Client#list_cities)
+      #
+      # @param [Hash] options
+      #   (see Client#list_cities)
+      #
+      # @return [Types::ListCities]
+      #   (see Client#list_cities)
+      #
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

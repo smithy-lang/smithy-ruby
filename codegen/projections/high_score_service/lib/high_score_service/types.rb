@@ -172,6 +172,17 @@ module HighScoreService
       include Seahorse::Structure
     end
 
+    # @!attribute errors
+    #
+    #   @return [Hash<String, Array<String>>]
+    #
+    UnprocessableEntityError = ::Struct.new(
+      :errors,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # Input structure for UpdateHighScore
     #
     # @!attribute id
@@ -201,17 +212,6 @@ module HighScoreService
     #
     UpdateHighScoreOutput = ::Struct.new(
       :high_score,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute errors
-    #
-    #   @return [Hash<String, Array<String>>]
-    #
-    UnprocessableEntityError = ::Struct.new(
-      :errors,
       keyword_init: true
     ) do
       include Seahorse::Structure

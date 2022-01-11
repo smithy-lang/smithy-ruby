@@ -30,11 +30,11 @@ module HighScoreService
 
     ListHighScoresOutput: untyped
 
+    UnprocessableEntityError: untyped
+
     UpdateHighScoreInput: untyped
 
     UpdateHighScoreOutput: untyped
-
-    UnprocessableEntityError: untyped
 
   end
 end
