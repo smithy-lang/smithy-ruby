@@ -38,6 +38,38 @@ module WhiteLabel
         expect(resource_waiter.tags).to eq(["waiter", "test"])
       end
 
+      it 'writes out pathmatcher expressions' do
+        waiter = resource_waiter.instance_variable_get(:@waiter)
+        poller = waiter.instance_variable_get(:@poller)
+        acceptors = poller.instance_variable_get(:@acceptors)
+        expect(acceptors).to eq([
+          {
+            state: 'success',
+            matcher: {
+              success: true
+            }
+          },
+          {
+            state: 'retry',
+            matcher: {
+              errorType: 'NotFound'
+            }
+          },
+          {
+            state: 'failure',
+            matcher: {
+              output: 'status'
+            }
+          },
+          {
+            state: 'failure',
+            matcher: {
+              inputOutput: 'input.status == output.status'
+            }
+          }
+        ])
+      end
+
       it 'has a wait method that uses the waiter' do
         params = { foo: 'bar' }
         options = { stub_responses: true }

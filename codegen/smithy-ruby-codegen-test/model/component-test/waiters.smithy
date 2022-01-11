@@ -8,7 +8,7 @@ use smithy.waiters#waitable
         documentation: "Test that this waiter exists",
         minDelay: 10,
         maxDelay: 100,
-        deprecated: true, // todo - implement
+        deprecated: true,
         acceptors: [
             {
                 state: "success",
@@ -20,6 +20,26 @@ use smithy.waiters#waitable
                 state: "retry",
                 matcher: {
                     errorType: "NotFound"
+                }
+            },
+            {
+                state: "failure",
+                matcher: {
+                    output: {
+                        path: "Status",
+                        comparator: "stringEquals",
+                        expected: "failed"
+                    }
+                }
+            },
+            {
+                state: "failure",
+                matcher: {
+                    inputOutput: {
+                        path: "input.Status == output.Status",
+                        comparator: "booleanEquals",
+                        expected: "true"
+                    }
                 }
             }
         ],

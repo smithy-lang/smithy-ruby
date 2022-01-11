@@ -34,6 +34,7 @@ import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.waiters.Acceptor;
 import software.amazon.smithy.waiters.AcceptorState;
 import software.amazon.smithy.waiters.Matcher;
+import software.amazon.smithy.waiters.PathMatcher;
 import software.amazon.smithy.waiters.WaitableTrait;
 import software.amazon.smithy.waiters.Waiter;
 
@@ -182,7 +183,10 @@ public class WaitersGenerator {
 
     private void renderWaiterDocumentation(Waiter waiter) {
         if (waiter.getDocumentation().isPresent()) {
-            writer.doc(() -> writer.write(StringUtils.wrap(waiter.getDocumentation().get(), 74)));
+            writer.writeDocstring(waiter.getDocumentation().get());
+        }
+        if (waiter.isDeprecated()) {
+            writer.writeYardDeprecated("This waiter is deprecated.", "");
         }
     }
 
@@ -217,11 +221,11 @@ public class WaitersGenerator {
                             if (matcher.getMemberName().equals("success")) {
                                 keyValString = "$L: $L";
                             }
-                            if (matcher.getMemberName().equals("inputOutput")) {
+                            if (matcher instanceof Matcher.InputOutputMember) {
                                 Matcher.InputOutputMember pathMatcher = (Matcher.InputOutputMember) matcher;
                                 value = pathMatcher.getValue().getPath();
                             }
-                            if (matcher.getMemberName().equals("output")) {
+                            if (matcher instanceof Matcher.OutputMember) {
                                 Matcher.OutputMember pathMatcher = (Matcher.OutputMember) matcher;
                                 value = pathMatcher.getValue().getPath();
                             }
@@ -248,18 +252,21 @@ public class WaitersGenerator {
     }
 
     private void renderWaiterInitializeDocumentation(Waiter waiter) {
-        String maxWaitTime = "@option options [required, Integer] :max_wait_time The maximum time in seconds to "
-                + "wait before the waiter gives up.";
-        String minDelay = "@option options [Integer] :min_delay (" + waiter.getMinDelay() + ") The minimum time in "
-                + "seconds to delay polling attempts.";
-        String maxDelay = "@option options [Integer] :max_delay (" + waiter.getMaxDelay() + ") The maximum time in "
-                + "seconds to delay polling attempts.";
-
-        writer.doc(() -> writer
-                .write("@param [Client] client")
-                .write("@param [Hash] options")
-                .write(StringUtils.wrap(maxWaitTime, 72))
-                .write(StringUtils.wrap(minDelay, 72))
-                .write(StringUtils.wrap(maxDelay, 72)));
+//        String maxWaitTimeDocumentation = "The maximum time in seconds to wait before the waiter gives up.";
+//        String minDelayDocumentation = "The minimum time in seconds to delay polling attempts.";
+//        String maxDelayDocumentation = "The maximum time in seconds to delay polling attempts.";
+//
+//        writer
+//                .writeYardParam("Client", "client", "")
+//                .writeYardParam("Hash", "options", "")
+//                .writeYardOption(
+//                        "options",
+//                        "required, Integer",
+//                        ":max_wait_time",
+//                        "",
+//                        maxWaitTimeDocumentation)
+//                .writeYardOption(
+//                        "options", "Integer", ":min_delay", "" + waiter.getMinDelay(), minDelayDocumentation)
+//                .writeYardOption("options", "Integer", ":max_delay", "" + waiter.getMaxDelay(), maxDelayDocumentation);
     }
 }

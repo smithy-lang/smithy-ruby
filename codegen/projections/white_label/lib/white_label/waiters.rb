@@ -40,6 +40,18 @@ module WhiteLabel
                 matcher: {
                   errorType: 'NotFound'
                 }
+              },
+              {
+                state: 'failure',
+                matcher: {
+                  output: 'Status'
+                }
+              },
+              {
+                state: 'failure',
+                matcher: {
+                  inputOutput: 'input.Status == output.Status'
+                }
               }
             ]
           )
