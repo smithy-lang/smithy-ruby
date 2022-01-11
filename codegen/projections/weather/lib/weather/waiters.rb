@@ -55,8 +55,8 @@ module Weather
                 state: 'retry',
                 matcher: {
                   inputOutput: {
-                    path: length(input.city_id) == length(output.name)
-                    comparator: "booleanEquals"
+                    path: "length(input.city_id) == length(output.name)",
+                    comparator: "booleanEquals",
                     expected: 'true'
                   }
                 }
@@ -65,8 +65,8 @@ module Weather
                 state: 'success',
                 matcher: {
                   output: {
-                    path: name
-                    comparator: "stringEquals"
+                    path: "name",
+                    comparator: "stringEquals",
                     expected: 'seattle'
                   }
                 }
@@ -120,8 +120,8 @@ module Weather
                 state: 'failure',
                 matcher: {
                   output: {
-                    path: items[].name
-                    comparator: "allStringEquals"
+                    path: "items[].name",
+                    comparator: "allStringEquals",
                     expected: 'seattle'
                   }
                 }
@@ -130,8 +130,8 @@ module Weather
                 state: 'success',
                 matcher: {
                   output: {
-                    path: items[].name
-                    comparator: "anyStringEquals"
+                    path: "items[].name",
+                    comparator: "anyStringEquals",
                     expected: 'NewYork'
                   }
                 }

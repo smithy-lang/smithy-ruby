@@ -254,25 +254,32 @@ public class WaitersGenerator {
 
     private class AcceptorVisitor implements Matcher.Visitor<Void> {
 
+        private void renderPathMatcher(String memberName, String path, String comparator, String expected) {
+            writer
+                    .openBlock("$L: {", memberName)
+                    .write("path: \"$L\",", translatePath(path))
+                    .write("comparator: \"$L\",", comparator)
+                    .write("expected: '$L'", expected)
+                    .closeBlock("}");
+        }
+
         @Override
         public Void visitOutput(Matcher.OutputMember outputPath) {
-            writer
-                    .openBlock("$L: {", outputPath.getMemberName())
-                    .write("path: $L", translatePath(outputPath.getValue().getPath()))
-                    .write("comparator: \"$L\"", outputPath.getValue().getComparator())
-                    .write("expected: '$L'", outputPath.getValue().getExpected())
-                    .closeBlock("}");
+            renderPathMatcher(
+                    outputPath.getMemberName(),
+                    outputPath.getValue().getPath(),
+                    outputPath.getValue().getComparator().toString(),
+                    outputPath.getValue().getExpected());
             return null;
         }
 
         @Override
         public Void visitInputOutput(Matcher.InputOutputMember inputOutputPath) {
-            writer
-                    .openBlock("$L: {", inputOutputPath.getMemberName())
-                    .write("path: $L", translatePath(inputOutputPath.getValue().getPath()))
-                    .write("comparator: \"$L\"", inputOutputPath.getValue().getComparator())
-                    .write("expected: '$L'", inputOutputPath.getValue().getExpected())
-                    .closeBlock("}");
+            renderPathMatcher(
+                    inputOutputPath.getMemberName(),
+                    inputOutputPath.getValue().getPath(),
+                    inputOutputPath.getValue().getComparator().toString(),
+                    inputOutputPath.getValue().getExpected());
             return null;
         }
 

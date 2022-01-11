@@ -42,7 +42,7 @@ module WhiteLabel
               state: 'failure',
               matcher: {
                 inputOutput: {
-                  path: 'input.Status == `failed` && output.Status == `failed`',
+                  path: 'input.status == \'failed\' || output.status == \'failed\'',
                   comparator: "booleanEquals",
                   expected: "true"
                 }
