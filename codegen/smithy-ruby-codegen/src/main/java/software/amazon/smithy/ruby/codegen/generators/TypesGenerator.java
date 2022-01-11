@@ -15,9 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
@@ -104,13 +103,11 @@ public class TypesGenerator {
         Model modelWithoutTraitShapes = ModelTransformer.create()
                 .getModelWithoutTraitShapes(model);
 
-        Set<Shape> shapes = new TreeSet<>(
-                new Walker(modelWithoutTraitShapes)
-                        .walkShapes(context.getService()));
-
-        for (Shape shape : shapes) {
-            shape.accept(visitor);
-        }
+        new Walker(modelWithoutTraitShapes)
+                .walkShapes(context.getService())
+                .stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach((shape) -> shape.accept(visitor));
     }
 
     private class TypesVisitor extends ShapeVisitor.Default<Void> {

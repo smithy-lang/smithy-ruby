@@ -10,55 +10,6 @@
 module RailsJson
   module Types
 
-    # @!attribute hi
-    #
-    #   @return [String]
-    #
-    GreetingStruct = ::Struct.new(
-      :hi,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute member___123foo
-    #
-    #   @return [String]
-    #
-    Struct__456efg = ::Struct.new(
-      :member___123foo,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct__456efg]
-    #
-    Struct__789BadNameInput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute member
-    #
-    #   @return [Struct__456efg]
-    #
-    Struct__789BadNameOutput = ::Struct.new(
-      :member,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
     # @!attribute query_string
     #
     #   @return [String]
@@ -339,6 +290,17 @@ module RailsJson
       include Seahorse::Structure
     end
 
+    # @!attribute hi
+    #
+    #   @return [String]
+    #
+    GreetingStruct = ::Struct.new(
+      :hi,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     GreetingWithErrorsInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -443,22 +405,6 @@ module RailsJson
       include Seahorse::Structure
     end
 
-    # @!attribute foo
-    #
-    #   @return [String]
-    #
-    # @!attribute foo_map
-    #
-    #   @return [Hash<String, String>]
-    #
-    HttpPrefixHeadersInput = ::Struct.new(
-      :foo,
-      :foo_map,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
     HttpPrefixHeadersInResponseInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -472,6 +418,22 @@ module RailsJson
     #
     HttpPrefixHeadersInResponseOutput = ::Struct.new(
       :prefix_headers,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute foo
+    #
+    #   @return [String]
+    #
+    # @!attribute foo_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    HttpPrefixHeadersInput = ::Struct.new(
+      :foo,
+      :foo_map,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -1811,6 +1773,44 @@ module RailsJson
       :target_epoch_seconds,
       :target_http_date,
       :target_date_time,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member___123foo
+    #
+    #   @return [String]
+    #
+    Struct__456efg = ::Struct.new(
+      :member___123foo,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member___123abc
+    #
+    #   @return [String]
+    #
+    # @!attribute member
+    #
+    #   @return [Struct__456efg]
+    #
+    Struct__789BadNameInput = ::Struct.new(
+      :member___123abc,
+      :member,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member
+    #
+    #   @return [Struct__456efg]
+    #
+    Struct__789BadNameOutput = ::Struct.new(
+      :member,
       keyword_init: true
     ) do
       include Seahorse::Structure

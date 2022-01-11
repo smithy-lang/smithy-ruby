@@ -34,10 +34,10 @@ tasks.withType<Test> {
 
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.4.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.0")
-    testCompile("org.junit.jupiter:junit-jupiter-params:5.4.0")
-    testCompile("org.hamcrest:hamcrest:2.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.0")
+    testImplementation("org.hamcrest:hamcrest:2.1")
 }
 
 // == Code coverage ==

@@ -23,7 +23,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class RubyFormatter {
 
-    private RubyFormatter() {}
+    private RubyFormatter() {
+
+    }
 
     /**
      * Formats a string as a snake case symbol.

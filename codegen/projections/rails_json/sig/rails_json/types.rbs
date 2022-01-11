@@ -10,14 +10,6 @@
 module RailsJson
   module Types
 
-    GreetingStruct: untyped
-
-    Struct__456efg: untyped
-
-    Struct__789BadNameInput: untyped
-
-    Struct__789BadNameOutput: untyped
-
     AllQueryStringTypesInput: untyped
 
     AllQueryStringTypesOutput: untyped
@@ -52,6 +44,8 @@ module RailsJson
 
     ErrorWithoutMembers: untyped
 
+    GreetingStruct: untyped
+
     GreetingWithErrorsInput: untyped
 
     GreetingWithErrorsOutput: untyped
@@ -68,11 +62,11 @@ module RailsJson
 
     HttpPayloadWithStructureOutput: untyped
 
-    HttpPrefixHeadersInput: untyped
-
     HttpPrefixHeadersInResponseInput: untyped
 
     HttpPrefixHeadersInResponseOutput: untyped
+
+    HttpPrefixHeadersInput: untyped
 
     HttpPrefixHeadersOutput: untyped
 
@@ -203,6 +197,12 @@ module RailsJson
     TimestampFormatHeadersInput: untyped
 
     TimestampFormatHeadersOutput: untyped
+
+    Struct__456efg: untyped
+
+    Struct__789BadNameInput: untyped
+
+    Struct__789BadNameOutput: untyped
 
   end
 end
