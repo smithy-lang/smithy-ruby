@@ -17,7 +17,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
@@ -52,7 +52,7 @@ public abstract class ErrorsGeneratorBase {
     protected final RubyCodeWriter writer;
     protected final RubyCodeWriter rbsWriter;
     protected final SymbolProvider symbolProvider;
-    protected final List<Shape> errorShapes;
+    protected final Set<Shape> errorShapes;
 
     public ErrorsGeneratorBase(GenerationContext context) {
         this.context = context;
@@ -152,20 +152,20 @@ public abstract class ErrorsGeneratorBase {
         rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
     }
 
-    private List<Shape> getErrorShapes() {
+    private Set<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         return topDownIndex.getContainedOperations(context.getService()).stream()
                 .map(OperationShape::getErrors)
                 .flatMap(Collection::stream)
                 .map(model::expectShape)
-                .distinct()
-                .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private void renderServiceModelErrors() {
         errorShapes
+                .stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(error -> {
                     String errorName = symbolProvider.toSymbol(error).getName();
                     ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
@@ -177,6 +177,8 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsServiceModelErrors() {
         errorShapes
+                .stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(error -> {
                     String errorName = symbolProvider.toSymbol(error).getName();
                     ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
