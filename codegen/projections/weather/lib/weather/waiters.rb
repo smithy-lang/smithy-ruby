@@ -12,13 +12,18 @@ module Weather
 
     class CityExists
       # @param [Client] client
+      #
       # @param [Hash] options
-      # @option options [required, Integer] :max_wait_time The maximum time in
-      # seconds to wait before the waiter gives up.
-      # @option options [Integer] :min_delay (2) The minimum time in seconds to
-      # delay polling attempts.
-      # @option options [Integer] :max_delay (120) The maximum time in seconds
-      # to delay polling attempts.
+      #
+      # @option options [required, Integer] :max_wait_time
+      #   The maximum time in seconds to wait before the waiter gives up.
+      #
+      # @option options [Integer] :min_delay("2")
+      #   The minimum time in seconds to delay polling attempts.
+      #
+      # @option options [Integer] :max_delay("120")
+      #   The maximum time in seconds to delay polling attempts.
+      #
       def initialize(client, options = {})
         @client = client
         @waiter = Seahorse::Waiters::Waiter.new({
@@ -66,9 +71,15 @@ module Weather
 
       attr_reader :tags
 
-      # @param [Hash] params (see Client#get_city)
-      # @param [Hash] options (see Client#get_city)
-      # @return (see Client#get_city)
+      # @param [Hash] params
+      #   (see Client#get_city)
+      #
+      # @param [Hash] options
+      #   (see Client#get_city)
+      #
+      # @return [Types::GetCity]
+      #   (see Client#get_city)
+      #
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end
@@ -76,13 +87,18 @@ module Weather
 
     class ListContainsCity
       # @param [Client] client
+      #
       # @param [Hash] options
-      # @option options [required, Integer] :max_wait_time The maximum time in
-      # seconds to wait before the waiter gives up.
-      # @option options [Integer] :min_delay (2) The minimum time in seconds to
-      # delay polling attempts.
-      # @option options [Integer] :max_delay (120) The maximum time in seconds
-      # to delay polling attempts.
+      #
+      # @option options [required, Integer] :max_wait_time
+      #   The maximum time in seconds to wait before the waiter gives up.
+      #
+      # @option options [Integer] :min_delay("2")
+      #   The minimum time in seconds to delay polling attempts.
+      #
+      # @option options [Integer] :max_delay("120")
+      #   The maximum time in seconds to delay polling attempts.
+      #
       def initialize(client, options = {})
         @client = client
         @waiter = Seahorse::Waiters::Waiter.new({
@@ -112,9 +128,15 @@ module Weather
 
       attr_reader :tags
 
-      # @param [Hash] params (see Client#list_cities)
-      # @param [Hash] options (see Client#list_cities)
-      # @return (see Client#list_cities)
+      # @param [Hash] params
+      #   (see Client#list_cities)
+      #
+      # @param [Hash] options
+      #   (see Client#list_cities)
+      #
+      # @return [Types::ListCities]
+      #   (see Client#list_cities)
+      #
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

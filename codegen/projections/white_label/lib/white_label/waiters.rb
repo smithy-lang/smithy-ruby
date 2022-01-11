@@ -11,15 +11,24 @@ module WhiteLabel
   module Waiters
 
     # Test that this waiter exists
+    #
+    # @deprecated
+    #   This waiter is deprecated.
+    #
     class ResourceExists
       # @param [Client] client
+      #
       # @param [Hash] options
-      # @option options [required, Integer] :max_wait_time The maximum time in
-      # seconds to wait before the waiter gives up.
-      # @option options [Integer] :min_delay (10) The minimum time in seconds to
-      # delay polling attempts.
-      # @option options [Integer] :max_delay (100) The maximum time in seconds
-      # to delay polling attempts.
+      #
+      # @option options [required, Integer] :max_wait_time
+      #   The maximum time in seconds to wait before the waiter gives up.
+      #
+      # @option options [Integer] :min_delay("10")
+      #   The minimum time in seconds to delay polling attempts.
+      #
+      # @option options [Integer] :max_delay("100")
+      #   The maximum time in seconds to delay polling attempts.
+      #
       def initialize(client, options = {})
         @client = client
         @waiter = Seahorse::Waiters::Waiter.new({
@@ -61,9 +70,15 @@ module WhiteLabel
 
       attr_reader :tags
 
-      # @param [Hash] params (see Client#waiters_test)
-      # @param [Hash] options (see Client#waiters_test)
-      # @return (see Client#waiters_test)
+      # @param [Hash] params
+      #   (see Client#waiters_test)
+      #
+      # @param [Hash] options
+      #   (see Client#waiters_test)
+      #
+      # @return [Types::WaitersTest]
+      #   (see Client#waiters_test)
+      #
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end
