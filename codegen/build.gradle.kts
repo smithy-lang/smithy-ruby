@@ -251,6 +251,7 @@ subprojects {
         // Configure the bug filter for spotbugs.
         spotbugs {
             setEffort("max")
+            ignoreFailures.set(false)
             val excludeFile = File("${project.rootDir}/config/spotbugs/filter.xml")
             if (excludeFile.exists()) {
                 excludeFilter.set(excludeFile)
