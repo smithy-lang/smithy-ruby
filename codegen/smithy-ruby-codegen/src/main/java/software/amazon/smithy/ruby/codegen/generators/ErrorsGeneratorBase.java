@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 /**
  * ErrorGeneratorBase that protocol generators can extend to get
  * common functionality.
- *
+ * <p>
  * Generates the framework and non-protocol specific parts of the
  * errors.rb.
  */
@@ -140,7 +141,7 @@ public abstract class ErrorsGeneratorBase {
 
     /**
      * Called to render the error_code method.
-     *
+     * <p>
      * errors.rb must define a self.error_code(resp) method which will
      * return the protocol specific error code from the response or nil
      * if no error code is found.
@@ -162,23 +163,29 @@ public abstract class ErrorsGeneratorBase {
     }
 
     private void renderServiceModelErrors() {
-        errorShapes.forEach(error -> {
-            String errorName = symbolProvider.toSymbol(error).getName();
-            ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
-            String apiErrorType = getApiErrorType(errorTrait);
+        errorShapes
+                .stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(error -> {
+                    String errorName = symbolProvider.toSymbol(error).getName();
+                    ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
+                    String apiErrorType = getApiErrorType(errorTrait);
 
-            renderServiceModelError(errorName, apiErrorType);
-        });
+                    renderServiceModelError(errorName, apiErrorType);
+                });
     }
 
     private void renderRbsServiceModelErrors() {
-        errorShapes.forEach(error -> {
-            String errorName = symbolProvider.toSymbol(error).getName();
-            ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
-            String apiErrorType = getApiErrorType(errorTrait);
+        errorShapes
+                .stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(error -> {
+                    String errorName = symbolProvider.toSymbol(error).getName();
+                    ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
+                    String apiErrorType = getApiErrorType(errorTrait);
 
-            renderRbsServiceModelError(errorName, apiErrorType);
-        });
+                    renderRbsServiceModelError(errorName, apiErrorType);
+                });
     }
 
     private void renderServiceModelError(String errorName, String apiErrorType) {

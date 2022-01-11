@@ -10,12 +10,6 @@
 module Weather
   module Types
 
-    Struct__456efg: untyped
-
-    Struct__789BadNameInput: untyped
-
-    Struct__789BadNameOutput: untyped
-
     class Announcements < Seahorse::Union
       class Police < Announcements
         def to_h: () -> { police: Hash[Symbol,Announcements] }
@@ -34,9 +28,13 @@ module Weather
       end
     end
 
+    Baz: untyped
+
     CityCoordinates: untyped
 
     CitySummary: untyped
+
+    Foo: untyped
 
     GetCityAnnouncementsInput: untyped
 
@@ -126,9 +124,11 @@ module Weather
       end
     end
 
-    Foo: untyped
+    Struct__456efg: untyped
 
-    Baz: untyped
+    Struct__789BadNameInput: untyped
+
+    Struct__789BadNameOutput: untyped
 
   end
 end
