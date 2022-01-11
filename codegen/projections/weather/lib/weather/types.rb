@@ -10,49 +10,6 @@
 module Weather
   module Types
 
-    # @!attribute member___123foo
-    #
-    #   @return [String]
-    #
-    Struct__456efg = ::Struct.new(
-      :member___123foo,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct__456efg]
-    #
-    Struct__789BadNameInput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct__456efg]
-    #
-    Struct__789BadNameOutput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
     class Announcements < Seahorse::Union
 
       class Police < Announcements
@@ -98,6 +55,22 @@ module Weather
       end
     end
 
+    # @!attribute baz
+    #
+    #   @return [String]
+    #
+    # @!attribute bar
+    #
+    #   @return [String]
+    #
+    Baz = ::Struct.new(
+      :baz,
+      :bar,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # @!attribute latitude
     #
     #   @return [Float]
@@ -135,6 +108,22 @@ module Weather
       :member_name,
       :number,
       :case,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute baz
+    #
+    #   @return [String]
+    #
+    # @!attribute bar
+    #
+    #   @return [String]
+    #
+    Foo = ::Struct.new(
+      :baz,
+      :bar,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -568,33 +557,44 @@ module Weather
       end
     end
 
-    # @!attribute baz
+    # @!attribute member___123foo
     #
     #   @return [String]
     #
-    # @!attribute bar
-    #
-    #   @return [String]
-    #
-    Foo = ::Struct.new(
-      :baz,
-      :bar,
+    Struct__456efg = ::Struct.new(
+      :member___123foo,
       keyword_init: true
     ) do
       include Seahorse::Structure
     end
 
-    # @!attribute baz
+    # @!attribute member___123abc
     #
     #   @return [String]
     #
-    # @!attribute bar
+    # @!attribute member
+    #
+    #   @return [Struct__456efg]
+    #
+    Struct__789BadNameInput = ::Struct.new(
+      :member___123abc,
+      :member,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member___123abc
     #
     #   @return [String]
     #
-    Baz = ::Struct.new(
-      :baz,
-      :bar,
+    # @!attribute member
+    #
+    #   @return [Struct__456efg]
+    #
+    Struct__789BadNameOutput = ::Struct.new(
+      :member___123abc,
+      :member,
       keyword_init: true
     ) do
       include Seahorse::Structure
