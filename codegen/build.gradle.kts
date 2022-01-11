@@ -19,7 +19,7 @@ plugins {
     signing
     checkstyle
     jacoco
-    id("com.github.spotbugs") version "1.6.10"
+    id("com.github.spotbugs") version "4.6.0"
     id("io.codearte.nexus-staging") version "0.21.0"
 }
 
@@ -68,7 +68,7 @@ subprojects {
      * Java
      * ====================================================
      */
-    if (subproject.name != "smithy-ruby-rails-codegen-test" || subproject.name != "smithy-ruby-codegen-test") {
+    if (subproject.name != "smithy-ruby-rails-codegen-test" && subproject.name != "smithy-ruby-codegen-test") {
         apply(plugin = "java-library")
 
         java {
@@ -249,14 +249,11 @@ subprojects {
         tasks["spotbugsTest"].enabled = false
 
         // Configure the bug filter for spotbugs.
-        tasks.withType<com.github.spotbugs.SpotBugsTask> {
-            ignoreFailures = false
-
-            effort = "max"
-            excludeFilterConfig = project.resources.text.fromFile("${project.rootDir}/config/spotbugs/filter.xml")
-            reports {
-                xml.setEnabled(false)
-                html.setEnabled(true)
+        spotbugs {
+            setEffort("max")
+            val excludeFile = File("${project.rootDir}/config/spotbugs/filter.xml")
+            if (excludeFile.exists()) {
+                excludeFilter.set(excludeFile)
             }
         }
     }

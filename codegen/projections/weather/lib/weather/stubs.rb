@@ -22,6 +22,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -41,6 +42,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -58,6 +61,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -73,6 +78,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['x-last-updated'] = Seahorse::TimeHelper.to_http_date(stub[:last_updated]) unless stub[:last_updated].nil?
       end
@@ -90,6 +96,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -107,6 +115,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -121,6 +131,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -135,6 +146,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -150,6 +162,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -166,6 +179,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -183,6 +198,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -200,6 +217,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -215,6 +234,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end
@@ -255,6 +276,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -304,6 +326,7 @@ module Weather
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -320,6 +343,8 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
+        data = {}
         data
       end
     end

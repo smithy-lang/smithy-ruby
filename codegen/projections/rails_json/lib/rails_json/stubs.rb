@@ -19,6 +19,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -32,6 +33,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -45,6 +47,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -58,6 +61,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -71,6 +75,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -84,6 +89,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -98,10 +104,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
@@ -118,6 +123,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
         http_resp.headers['Content-Type'] = 'application/octet-stream'
@@ -136,6 +142,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
         http_resp.headers['Content-Type'] = 'text/plain'
@@ -153,6 +160,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::NestedPayload.stub(stub[:nested]) unless stub[:nested].nil?
@@ -192,6 +200,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
         stub[:foo_map].each do |key, value|
@@ -229,6 +238,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         stub[:prefix_headers].each do |key, value|
           http_resp.headers["#{key}"] = value unless value.nil? || value.empty?
@@ -245,6 +255,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -258,6 +269,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -271,6 +283,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -284,6 +297,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -298,6 +312,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.status = stub[:status]
       end
@@ -313,6 +328,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -342,6 +358,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-String'] = stub[:header_string] unless stub[:header_string].nil? || stub[:header_string].empty?
         http_resp.headers['X-Byte'] = stub[:header_byte].to_s unless stub[:header_byte].nil?
@@ -517,10 +534,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:foo_enum1] = stub[:foo_enum1] unless stub[:foo_enum1].nil?
         data[:foo_enum2] = stub[:foo_enum2] unless stub[:foo_enum2].nil?
         data[:foo_enum3] = stub[:foo_enum3] unless stub[:foo_enum3].nil?
@@ -579,10 +595,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:contents] = Stubs::MyUnion.stub(stub[:contents]) unless stub[:contents].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
@@ -669,10 +684,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:blob] = Base64::encode64(stub[:blob]) unless stub[:blob].nil?
         data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
         data[:double] = stub[:double] unless stub[:double].nil?
@@ -1022,6 +1036,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-Json'] = Base64::encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
       end
@@ -1037,10 +1052,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:value] = stub[:value] unless stub[:value].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
@@ -1058,6 +1072,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-A'] = stub[:a] unless stub[:a].nil? || stub[:a].empty?
         http_resp.headers['X-B'] = stub[:b] unless stub[:b].nil? || stub[:b].empty?
@@ -1082,10 +1097,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:string] = stub[:string] unless stub[:string].nil?
         data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
@@ -1139,6 +1153,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -1153,10 +1168,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:value] = stub[:value] unless stub[:value].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
@@ -1172,10 +1186,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:inline_document] = stub[:inline_document] unless stub[:inline_document].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
@@ -1203,6 +1216,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
       end
     end
@@ -1223,6 +1237,7 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['X-memberEpochSeconds'] = Seahorse::TimeHelper.to_epoch_seconds(stub[:member_epoch_seconds]).to_i unless stub[:member_epoch_seconds].nil?
         http_resp.headers['X-memberHttpDate'] = Seahorse::TimeHelper.to_http_date(stub[:member_http_date]) unless stub[:member_http_date].nil?
@@ -1244,10 +1259,9 @@ module RailsJson
       end
 
       def self.stub(http_resp, stub:)
+        data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        stub ||= {}
-        data = {}
         data[:member] = Stubs::Struct__456efg.stub(stub[:member]) unless stub[:member].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end

@@ -49,6 +49,7 @@ module Weather
     # Structure Builder for PNGImage
     class PNGImage
       def self.build(input)
+        data = {}
         data
       end
     end
@@ -80,6 +81,7 @@ module Weather
     # Structure Builder for __456efg
     class Struct__456efg
       def self.build(input)
+        data = {}
         data
       end
     end
