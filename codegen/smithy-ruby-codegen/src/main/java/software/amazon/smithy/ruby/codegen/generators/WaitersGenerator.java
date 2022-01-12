@@ -15,13 +15,32 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.jmespath.ExpressionVisitor;
+import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.ast.AndExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
+import software.amazon.smithy.jmespath.ast.CurrentExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
+import software.amazon.smithy.jmespath.ast.FieldExpression;
+import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
+import software.amazon.smithy.jmespath.ast.FlattenExpression;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
+import software.amazon.smithy.jmespath.ast.IndexExpression;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectHashExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectListExpression;
+import software.amazon.smithy.jmespath.ast.NotExpression;
+import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
+import software.amazon.smithy.jmespath.ast.OrExpression;
+import software.amazon.smithy.jmespath.ast.ProjectionExpression;
+import software.amazon.smithy.jmespath.ast.SliceExpression;
+import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -212,10 +231,7 @@ public class WaitersGenerator {
     }
 
     private String translatePath(String path) {
-        //TODO: This needs to use a JMESPathExpression to parse the path and actually correctly translate names
-        // This will not work correctly in all cases
-        return Arrays.stream(path.split("[.]"))
-                .map((m) -> RubyFormatter.toSnakeCase(m)).collect(Collectors.joining("."));
+        return JmespathExpression.parse(path).accept(new JmespathTranslator());
     }
 
     private void renderWaiterWaitDocumentation(OperationShape operation, String operationName) {
@@ -250,6 +266,104 @@ public class WaitersGenerator {
                         ":max_delay",
                         "" + waiter.getMaxDelay(),
                         "The maximum time in seconds to delay polling attempts.");
+    }
+
+    private static class JmespathTranslator implements ExpressionVisitor<String> {
+
+        @Override
+        public String visitComparator(ComparatorExpression expression) {
+            return expression.getLeft().accept(this) + " " + expression.getComparator() + " "
+                    + expression.getRight().accept(this);
+        }
+
+        @Override
+        public String visitCurrentNode(CurrentExpression expression) {
+            return "@";
+        }
+
+        @Override
+        public String visitExpressionType(ExpressionTypeExpression expression) {
+            return "&" + expression.getExpression().accept(this);
+        }
+
+        @Override
+        public String visitFlatten(FlattenExpression expression) {
+            return "[" + expression.getExpression().accept(this) + "]";
+        }
+
+        @Override
+        public String visitFunction(FunctionExpression expression) {
+            String args = expression.getArguments().stream().map((a) -> a.accept(this)).collect(
+                    Collectors.joining(","));
+            return expression.getName() + "(" + args + ")";
+        }
+
+        @Override
+        public String visitField(FieldExpression expression) {
+            // TODO: Does this need to snake case?
+            return expression.getName();
+        }
+
+        @Override
+        public String visitIndex(IndexExpression expression) {
+            return "[" + expression.getIndex() + "]";
+        }
+
+        @Override
+        public String visitLiteral(LiteralExpression expression) {
+            //TODO: No idea how to handle this.
+            return expression.getValue().toString();
+        }
+
+        @Override
+        public String visitMultiSelectList(MultiSelectListExpression expression) {
+            return null;
+        }
+
+        @Override
+        public String visitMultiSelectHash(MultiSelectHashExpression expression) {
+            return null;
+        }
+
+        @Override
+        public String visitAnd(AndExpression expression) {
+            return expression.getLeft().accept(this) + " && " + expression.getRight().accept(this);
+        }
+
+        @Override
+        public String visitOr(OrExpression expression) {
+            return expression.getLeft().accept(this) + " || " + expression.getRight().accept(this);
+        }
+
+        @Override
+        public String visitNot(NotExpression expression) {
+            return "!" + expression.getExpression().accept(this);
+        }
+
+        @Override
+        public String visitProjection(ProjectionExpression expression) {
+            return null;
+        }
+
+        @Override
+        public String visitFilterProjection(FilterProjectionExpression expression) {
+            return null;
+        }
+
+        @Override
+        public String visitObjectProjection(ObjectProjectionExpression expression) {
+            return null;
+        }
+
+        @Override
+        public String visitSlice(SliceExpression expression) {
+            return null;
+        }
+
+        @Override
+        public String visitSubexpression(Subexpression expression) {
+            return null;
+        }
     }
 
     private class AcceptorVisitor implements Matcher.Visitor<Void> {
