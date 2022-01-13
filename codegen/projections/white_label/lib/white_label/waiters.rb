@@ -64,7 +64,7 @@ module WhiteLabel
                 state: 'failure',
                 matcher: {
                   inputOutput: {
-                    path: "input.status == 'failed' || output.status == 'failed'",
+                    path: "input.status=='failed'||output.status=='failed'",
                     comparator: "booleanEquals",
                     expected: 'true'
                   }

@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
@@ -231,7 +232,7 @@ public class WaitersGenerator {
     }
 
     private String translatePath(String path) {
-        return JmespathExpression.parse(path).accept(new JmespathTranslator());
+        return JmespathExpression.parse(path).accept(new JmespathTranslator(symbolProvider));
     }
 
     private void renderWaiterWaitDocumentation(OperationShape operation, String operationName) {
@@ -269,10 +270,15 @@ public class WaitersGenerator {
     }
 
     private static class JmespathTranslator implements ExpressionVisitor<String> {
+        private final RubySymbolProvider symbolProvider;
+
+        JmespathTranslator(RubySymbolProvider symbolProvider) {
+            this.symbolProvider = symbolProvider;
+        }
 
         @Override
         public String visitComparator(ComparatorExpression expression) {
-            return expression.getLeft().accept(this) + " " + expression.getComparator() + " "
+            return expression.getLeft().accept(this) + expression.getComparator()
                     + expression.getRight().accept(this);
         }
 
@@ -300,8 +306,7 @@ public class WaitersGenerator {
 
         @Override
         public String visitField(FieldExpression expression) {
-            // TODO: Does this need to snake case?
-            return expression.getName();
+            return symbolProvider.toMemberName(expression.getName());
         }
 
         @Override
@@ -311,28 +316,47 @@ public class WaitersGenerator {
 
         @Override
         public String visitLiteral(LiteralExpression expression) {
-            //TODO: No idea how to handle this.
-            return expression.getValue().toString();
+            if (expression.isStringValue()) {
+                return "'" + expression.getValue().toString() + "'";
+            }
+            // todo handle other cases
+            // return "`" + expression.getValue().toString() + "`";
+            return null;
         }
 
         @Override
         public String visitMultiSelectList(MultiSelectListExpression expression) {
-            return null;
+            String expressions = expression.getExpressions().stream().map((a) -> a.accept(this)).collect(
+                    Collectors.joining(","));
+            return "[" + expressions + "]";
         }
 
         @Override
         public String visitMultiSelectHash(MultiSelectHashExpression expression) {
-            return null;
+            StringBuffer hash = new StringBuffer("{");
+            Iterator<Map.Entry<String, JmespathExpression>> iterator =
+                    expression.getExpressions().entrySet().iterator();
+
+            while (iterator.hasNext()) {
+                Map.Entry<String, JmespathExpression> pair = iterator.next();
+                hash.append(pair.getKey() + ": " + pair.getValue().accept(this));
+                if (iterator.hasNext()) {
+                    hash.append(", ");
+                }
+            }
+            hash.append("}");
+
+            return hash.toString();
         }
 
         @Override
         public String visitAnd(AndExpression expression) {
-            return expression.getLeft().accept(this) + " && " + expression.getRight().accept(this);
+            return expression.getLeft().accept(this) + "&&" + expression.getRight().accept(this);
         }
 
         @Override
         public String visitOr(OrExpression expression) {
-            return expression.getLeft().accept(this) + " || " + expression.getRight().accept(this);
+            return expression.getLeft().accept(this) + "||" + expression.getRight().accept(this);
         }
 
         @Override
@@ -342,27 +366,33 @@ public class WaitersGenerator {
 
         @Override
         public String visitProjection(ProjectionExpression expression) {
-            return null;
+            return expression.getLeft().accept(this) + "." + expression.getRight().accept(this);
         }
 
         @Override
         public String visitFilterProjection(FilterProjectionExpression expression) {
-            return null;
+            return expression.getLeft().accept(this)
+                    + expression.getComparison().accept(this)
+                    + expression.getRight().accept(this);
         }
 
         @Override
         public String visitObjectProjection(ObjectProjectionExpression expression) {
-            return null;
+            return expression.getLeft().accept(this) + "." + expression.getRight().accept(this);
         }
 
         @Override
         public String visitSlice(SliceExpression expression) {
-            return null;
+            // TODO - this is wrong, colons can be optional
+            OptionalInt start = expression.getStart();
+            OptionalInt stop = expression.getStop();
+            int step = expression.getStep();
+            return "[" + start.orElseGet(null) + ":" + stop.orElseGet(null) + ":" + step + "]";
         }
 
         @Override
         public String visitSubexpression(Subexpression expression) {
-            return null;
+            return expression.getLeft().accept(this) + "." + expression.getRight().accept(this);
         }
     }
 

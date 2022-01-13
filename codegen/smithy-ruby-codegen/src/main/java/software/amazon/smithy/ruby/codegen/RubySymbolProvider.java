@@ -139,6 +139,16 @@ public class RubySymbolProvider implements SymbolProvider,
         }
     }
 
+    /**
+     * Convert a String shape name into a snake_cased member. Also checks reserved wording.
+     * @param shapeName The shape's name as a string
+     * @return A snake cased string for the member.
+     */
+    public String toMemberName(String shapeName) {
+        return prefixLeadingInvalidIdentCharacters(
+                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shapeName)), "member_");
+    }
+
     // Member names (Except for union members) are snake_case.
     // The member names MAY start with underscores but MUST NOT start with a number.
     // If they are a reserved word or start with a number they will be prefixed with “member_”.
