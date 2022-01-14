@@ -111,6 +111,9 @@ public class HttpProtocolTestGenerator {
 
         writer.openBlock("describe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
+            if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
+                return;
+            }
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
@@ -135,6 +138,9 @@ public class HttpProtocolTestGenerator {
 
         writer.openBlock("describe 'response stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
+            if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
+                return;
+            }
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
@@ -187,6 +193,10 @@ public class HttpProtocolTestGenerator {
             error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
                 writer.openBlock("describe '$L Errors' do", error.getId().getName());
                 responseTests.getTestCases().forEach((testCase) -> {
+                    if (testCase.getAppliesTo().isPresent()
+                            && testCase.getAppliesTo().get().toString().equals("server")) {
+                        return;
+                    }
                     String documentation = testCase.getDocumentation().orElse("");
 
                     writer
