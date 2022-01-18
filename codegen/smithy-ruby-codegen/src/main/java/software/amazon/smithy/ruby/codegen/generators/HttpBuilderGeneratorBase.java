@@ -326,10 +326,9 @@ public abstract class HttpBuilderGeneratorBase {
                 .write("# Operation Builder for $L", operation.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(http_req, input:)")
+                .write("http_req.http_method = '$L'", getHttpMethod(operation))
                 .call(() -> {
-                    operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
-                        writer.write("http_req.http_method = '$L'", httpTrait.getMethod());
-                    });
+
                 })
                 .call(() -> renderUriBuilder(operation, inputShape))
                 .call(() -> renderQueryInputBuilder(operation, inputShape))
@@ -340,6 +339,12 @@ public abstract class HttpBuilderGeneratorBase {
                 .closeBlock("end");
 
         LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
+    }
+
+    protected String getHttpMethod(OperationShape operation) {
+        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+
+        return httpTrait.getMethod();
     }
 
 
@@ -419,11 +424,9 @@ public abstract class HttpBuilderGeneratorBase {
     }
 
     protected void renderUriBuilder(OperationShape operation, Shape inputShape) {
-        // get a list of all of HttpLabel members
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
-
-        String uri = httpTrait.getUri().toString();
+        String uri = getHttpUri(operation);
         // need to ensure that static query params in the uri are handled first
+        // get a list of all of HttpLabel members
         String[] uriParts = uri.split("[?]");
         if (uriParts.length > 1) {
             uri = uriParts[0];
@@ -471,6 +474,11 @@ public abstract class HttpBuilderGeneratorBase {
         } else {
             writer.write("http_req.append_path('$L')", uri);
         }
+    }
+
+    protected String getHttpUri(OperationShape operation) {
+        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+        return httpTrait.getUri().toString();
     }
 
     // The Input shape is combined with the OperationBuilder
