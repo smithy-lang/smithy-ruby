@@ -24,16 +24,16 @@ module WhiteLabel
       def pages
         params = @params
         Enumerator.new do |e|
-          @prev_token = params[:__next_token]
+          @prev_token = params[:member___next_token]
           response = @client.operation__paginators_test_with_bad_names(params, @options)
           e.yield(response)
-          output_token = response.__wrapper.__123next_token
+          output_token = response.member___wrapper&.member___123next_token
 
           until output_token.nil? || @prev_token == output_token
-            params = params.merge(__next_token: output_token)
+            params = params.merge(member___next_token: output_token)
             response = @client.operation__paginators_test_with_bad_names(params, @options)
             e.yield(response)
-            output_token = response.__wrapper.__123next_token
+            output_token = response.member___wrapper&.member___123next_token
           end
         end
       end
@@ -43,7 +43,7 @@ module WhiteLabel
       def items
         Enumerator.new do |e|
           pages.each do |page|
-            page.__items.each do |item|
+            page.member___items.each do |item|
               e.yield(item)
             end
           end
