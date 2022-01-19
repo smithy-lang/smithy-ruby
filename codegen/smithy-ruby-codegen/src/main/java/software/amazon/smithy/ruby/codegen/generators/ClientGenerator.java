@@ -120,7 +120,7 @@ public class ClientGenerator {
         String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.getService()).render();
 
         writer
-                .writeInline(documentation)
+                .writeInline("$L", documentation)
                 .openBlock("class Client")
                 .write("include Seahorse::ClientStubs")
                 .write("\n@middleware = Seahorse::MiddlewareBuilder.new")
@@ -253,7 +253,7 @@ public class ClientGenerator {
 
         writer
                 .write("")
-                .writeInline(documentation)
+                .writeInline("$L", documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Seahorse::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())

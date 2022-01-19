@@ -132,7 +132,7 @@ public class TypesGenerator {
 
             String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
 
-            writer.writeInline(documentation);
+            writer.writeInline("$L", documentation);
 
             shape.members().forEach(memberShape -> {
                 String attribute = symbolProvider.toMemberName(memberShape);
@@ -145,7 +145,7 @@ public class TypesGenerator {
 
                 writer.writeYardAttribute(attribute, () -> {
                     // delegate to member shape in this visitor
-                    writer.writeInline(memberDocumentation);
+                    writer.writeInline("$L", memberDocumentation);
                     writer.writeYardReturn(returnType, "");
                 });
             });
@@ -168,7 +168,7 @@ public class TypesGenerator {
             String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
             String shapeName = symbolProvider.toSymbol(shape).getName();
 
-            writer.writeInline(documentation);
+            writer.writeInline("$L", documentation);
             writer.openBlock("class $L < Seahorse::Union", shapeName);
 
             for (MemberShape memberShape : shape.members()) {
@@ -176,7 +176,7 @@ public class TypesGenerator {
                         new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
 
                 writer
-                        .writeInline(memberDocumentation)
+                        .writeInline("$L", memberDocumentation)
                         .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
                         .openBlock("def to_h")
                         .write("{ $L: super(__getobj__) }",
