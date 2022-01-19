@@ -757,19 +757,19 @@ module RailsJson
     end
 
     # Operation Parser for __789BadName
-    class Operation__789BadName
+    class Operation____789BadName
       def self.parse(http_resp)
-        data = Types::Struct__789BadNameOutput.new
+        data = Types::Struct____789BadNameOutput.new
         map = Seahorse::JSON.load(http_resp.body)
-        data.member = Parsers::Struct__456efg.parse(map['member']) if map['member']
+        data.member = Parsers::Struct____456efg.parse(map['member']) if map['member']
         data
       end
     end
 
-    class Struct__456efg
+    class Struct____456efg
       def self.parse(map)
-        data = Types::Struct__456efg.new
-        data.member___123foo = map['__123foo']
+        data = Types::Struct____456efg.new
+        data.member____123foo = map['__123foo']
         return data
       end
     end

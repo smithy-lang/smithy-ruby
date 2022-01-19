@@ -897,27 +897,27 @@ module RailsJson
     end
 
     # Operation Builder for __789BadName
-    class Operation__789BadName
+    class Operation____789BadName
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path(format(
             '/BadName/%<__123abc>s',
-            __123abc: Seahorse::HTTP.uri_escape(input[:member___123abc].to_s)
+            __123abc: Seahorse::HTTP.uri_escape(input[:member____123abc].to_s)
           )
         )
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:member] = Builders::Struct__456efg.build(input[:member]) unless input[:member].nil?
+        data[:member] = Builders::Struct____456efg.build(input[:member]) unless input[:member].nil?
         http_req.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end
 
     # Structure Builder for __456efg
-    class Struct__456efg
+    class Struct____456efg
       def self.build(input)
         data = {}
-        data[:__123foo] = input[:member___123foo] unless input[:member___123foo].nil?
+        data[:__123foo] = input[:member____123foo] unless input[:member____123foo].nil?
         data
       end
     end

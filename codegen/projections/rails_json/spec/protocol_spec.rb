@@ -14,7 +14,7 @@ module RailsJson
     let(:endpoint) { 'http://127.0.0.1' }
     let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
 
-    describe '#operation__789_bad_name' do
+    describe '#operation____789_bad_name' do
       describe 'requests' do
         # Serializes requests for operations/members with bad names
         #
@@ -29,10 +29,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
             Seahorse::Output.new
           end
-          client.operation__789_bad_name({
-            member___123abc: "abc_value",
+          client.operation____789_bad_name({
+            member____123abc: "abc_value",
             member: {
-              member___123foo: "foo value"
+              member____123foo: "foo value"
             }
           }, middleware: middleware)
         end
@@ -50,10 +50,10 @@ module RailsJson
             Seahorse::Output.new
           end
           middleware.remove_send.remove_build
-          output = client.operation__789_bad_name({}, middleware: middleware)
+          output = client.operation____789_bad_name({}, middleware: middleware)
           expect(output.to_h).to eq({
             member: {
-              member___123foo: "foo value"
+              member____123foo: "foo value"
             }
           })
         end
@@ -67,15 +67,15 @@ module RailsJson
             expect(response.status).to eq(200)
           end
           middleware.remove_build
-          client.stub_responses(:operation__789_bad_name, {
+          client.stub_responses(:operation____789_bad_name, {
             member: {
-              member___123foo: "foo value"
+              member____123foo: "foo value"
             }
           })
-          output = client.operation__789_bad_name({}, middleware: middleware)
+          output = client.operation____789_bad_name({}, middleware: middleware)
           expect(output.to_h).to eq({
             member: {
-              member___123foo: "foo value"
+              member____123foo: "foo value"
             }
           })
         end

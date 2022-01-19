@@ -1250,11 +1250,11 @@ module RailsJson
     end
 
     # Operation Stubber for __789BadName
-    class Operation__789BadName
+    class Operation____789BadName
 
       def self.default(visited=[])
         {
-          member: Stubs::Struct__456efg.default(visited),
+          member: Stubs::Struct____456efg.default(visited),
         }
       end
 
@@ -1262,26 +1262,26 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:member] = Stubs::Struct__456efg.stub(stub[:member]) unless stub[:member].nil?
+        data[:member] = Stubs::Struct____456efg.stub(stub[:member]) unless stub[:member].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end
 
     # Structure Stubber for __456efg
-    class Struct__456efg
+    class Struct____456efg
 
       def self.default(visited=[])
-        return nil if visited.include?('Struct__456efg')
-        visited = visited + ['Struct__456efg']
+        return nil if visited.include?('Struct____456efg')
+        visited = visited + ['Struct____456efg']
         {
-          member___123foo: 'member___123foo',
+          member____123foo: 'member____123foo',
         }
       end
 
       def self.stub(stub = {})
         stub ||= {}
         data = {}
-        data[:__123foo] = stub[:member___123foo] unless stub[:member___123foo].nil?
+        data[:__123foo] = stub[:member____123foo] unless stub[:member____123foo].nil?
         data
       end
     end
