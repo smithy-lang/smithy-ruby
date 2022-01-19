@@ -73,13 +73,13 @@ module Weather
     end
 
     # Operation Builder for __789BadName
-    class Operation__789BadName
+    class Operation____789BadName
       def self.build(http_req, input:)
       end
     end
 
     # Structure Builder for __456efg
-    class Struct__456efg
+    class Struct____456efg
       def self.build(input)
         data = {}
         data

@@ -14,7 +14,7 @@ module Weather
     let(:endpoint) { 'http://127.0.0.1' }
     let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
 
-    describe '#operation__789_bad_name' do
+    describe '#operation____789_bad_name' do
 
       describe 'NoSuchResource Errors' do
         # Does something

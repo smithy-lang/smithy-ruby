@@ -411,45 +411,45 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::Struct__789BadNameInput}.
+    #   See {Types::Struct____789BadNameInput}.
     #
-    # @return [Types::Struct__789BadNameOutput]
+    # @return [Types::Struct____789BadNameOutput]
     #
     # @example Request syntax with placeholder values
     #
-    #   resp = client.operation__789_bad_name(
-    #     member___123abc: '__123abc', # required
+    #   resp = client.operation____789_bad_name(
+    #     member____123abc: '__123abc', # required
     #     member: {
-    #       member___123foo: '__123foo'
+    #       member____123foo: '__123foo'
     #     }
     #   )
     #
     # @example Response structure
     #
-    #   resp #=> Types::Struct__789BadNameOutput
-    #   resp.member___123abc #=> String
-    #   resp.member #=> Types::Struct__456efg
-    #   resp.member.member___123foo #=> String
+    #   resp #=> Types::Struct____789BadNameOutput
+    #   resp.member____123abc #=> String
+    #   resp.member #=> Types::Struct____456efg
+    #   resp.member.member____123foo #=> String
     #
-    def operation__789_bad_name(params = {}, options = {}, &block)
+    def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::Struct__789BadNameInput.build(params)
+      input = Params::Struct____789BadNameInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::Struct__789BadNameInput,
+        validator: Validators::Struct____789BadNameInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
-        builder: Builders::Operation__789BadName
+        builder: Builders::Operation____789BadName
       )
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
       stack.use(Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::NoSuchResource]),
-        data_parser: Parsers::Operation__789BadName
+        data_parser: Parsers::Operation____789BadName
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
-        stub_class: Stubs::Operation__789BadName,
+        stub_class: Stubs::Operation____789BadName,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -461,7 +461,7 @@ module Weather
           response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
-          operation_name: :operation__789_bad_name
+          operation_name: :operation____789_bad_name
         )
       )
       raise resp.error if resp.error

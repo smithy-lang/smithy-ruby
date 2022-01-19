@@ -706,18 +706,18 @@ module RailsJson
       end
     end
 
-    class Struct__456efg
+    class Struct____456efg
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Struct__456efg, context: context)
-        Seahorse::Validator.validate!(input[:member___123foo], ::String, context: "#{context}[:member___123foo]")
+        Seahorse::Validator.validate!(input, Types::Struct____456efg, context: context)
+        Seahorse::Validator.validate!(input[:member____123foo], ::String, context: "#{context}[:member____123foo]")
       end
     end
 
-    class Struct__789BadNameInput
+    class Struct____789BadNameInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Struct__789BadNameInput, context: context)
-        Seahorse::Validator.validate!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
-        Validators::Struct__456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        Seahorse::Validator.validate!(input, Types::Struct____789BadNameInput, context: context)
+        Seahorse::Validator.validate!(input[:member____123abc], ::String, context: "#{context}[:member____123abc]")
+        Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end
 

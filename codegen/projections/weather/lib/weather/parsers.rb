@@ -179,16 +179,16 @@ module Weather
     end
 
     # Operation Parser for __789BadName
-    class Operation__789BadName
+    class Operation____789BadName
       def self.parse(http_resp)
-        data = Types::Struct__789BadNameOutput.new
+        data = Types::Struct____789BadNameOutput.new
         data
       end
     end
 
-    class Struct__456efg
+    class Struct____456efg
       def self.parse(map)
-        data = Types::Struct__456efg.new
+        data = Types::Struct____456efg.new
         return data
       end
     end

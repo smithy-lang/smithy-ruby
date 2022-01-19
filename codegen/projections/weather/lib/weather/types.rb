@@ -557,43 +557,43 @@ module Weather
       end
     end
 
-    # @!attribute member___123foo
+    # @!attribute member____123foo
     #
     #   @return [String]
     #
-    Struct__456efg = ::Struct.new(
-      :member___123foo,
+    Struct____456efg = ::Struct.new(
+      :member____123foo,
       keyword_init: true
     ) do
       include Seahorse::Structure
     end
 
-    # @!attribute member___123abc
+    # @!attribute member____123abc
     #
     #   @return [String]
     #
     # @!attribute member
     #
-    #   @return [Struct__456efg]
+    #   @return [Struct____456efg]
     #
-    Struct__789BadNameInput = ::Struct.new(
-      :member___123abc,
+    Struct____789BadNameInput = ::Struct.new(
+      :member____123abc,
       :member,
       keyword_init: true
     ) do
       include Seahorse::Structure
     end
 
-    # @!attribute member___123abc
+    # @!attribute member____123abc
     #
     #   @return [String]
     #
     # @!attribute member
     #
-    #   @return [Struct__456efg]
+    #   @return [Struct____456efg]
     #
-    Struct__789BadNameOutput = ::Struct.new(
-      :member___123abc,
+    Struct____789BadNameOutput = ::Struct.new(
+      :member____123abc,
       :member,
       keyword_init: true
     ) do
