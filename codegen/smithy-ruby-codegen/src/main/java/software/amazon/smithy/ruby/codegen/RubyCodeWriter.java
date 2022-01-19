@@ -91,7 +91,7 @@ public class RubyCodeWriter extends CodeWriter {
     public RubyCodeWriter writeDocstring(String docstring) {
         doc(() -> {
 
-            writeWithNoFormatting(docstring);
+            write("$L", docstring);
             write("");
         });
         return this;
