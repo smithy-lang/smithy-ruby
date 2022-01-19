@@ -155,5 +155,14 @@ module WhiteLabel
       end
     end
 
+    module Struct__PaginatorsTestWithBadNamesInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::Struct__PaginatorsTestWithBadNamesInput, context: context)
+        type = Types::Struct__PaginatorsTestWithBadNamesInput.new
+        type.member___next_token = params[:member___next_token]
+        type
+      end
+    end
+
   end
 end

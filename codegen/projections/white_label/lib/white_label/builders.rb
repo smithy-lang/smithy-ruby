@@ -121,5 +121,11 @@ module WhiteLabel
       def self.build(http_req, input:)
       end
     end
+
+    # Operation Builder for __PaginatorsTestWithBadNames
+    class Operation__PaginatorsTestWithBadNames
+      def self.build(http_req, input:)
+      end
+    end
   end
 end

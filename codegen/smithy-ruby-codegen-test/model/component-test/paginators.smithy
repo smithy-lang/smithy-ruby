@@ -22,6 +22,25 @@ structure PaginatorsTestOutput {
     items: Items
 }
 
+@paginated(inputToken: "__nextToken", outputToken: "__wrapper.__123nextToken", items: "__items")
+operation __PaginatorsTestWithBadNames {
+    input: __PaginatorsTestWithBadNamesInput,
+    output: __PaginatorsTestWithBadNamesOutput
+}
+
+structure __PaginatorsTestWithBadNamesInput {
+    __nextToken: String
+}
+
+structure __PaginatorsTestWithBadNamesOutput {
+    __wrapper: ResultWrapper,
+    __items: Items
+}
+
+structure ResultWrapper {
+    __123nextToken: String
+}
+
 list Items {
     member: String
 }

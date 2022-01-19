@@ -11,6 +11,7 @@ service WhiteLabel {
         KitchenSink,
         PaginatorsTest,
         PaginatorsTestWithItems,
+        __PaginatorsTestWithBadNames,
         WaitersTest
     ]
 }

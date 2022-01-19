@@ -248,5 +248,38 @@ module WhiteLabel
         data = {}
       end
     end
+
+    # Operation Stubber for __PaginatorsTestWithBadNames
+    class Operation__PaginatorsTestWithBadNames
+
+      def self.default(visited=[])
+        {
+          member___wrapper: Stubs::ResultWrapper.default(visited),
+          member___items: Stubs::Items.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+      end
+    end
+
+    # Structure Stubber for ResultWrapper
+    class ResultWrapper
+
+      def self.default(visited=[])
+        return nil if visited.include?('ResultWrapper')
+        visited = visited + ['ResultWrapper']
+        {
+          member___123next_token: 'member___123next_token',
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        data
+      end
+    end
   end
 end

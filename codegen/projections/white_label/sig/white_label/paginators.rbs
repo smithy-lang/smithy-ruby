@@ -10,6 +10,13 @@
 module WhiteLabel
   module Paginators
 
+    class Operation__PaginatorsTestWithBadNames
+      def initialize: (untyped client, ?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> void
+
+      def pages: () -> untyped
+      def items: () -> untyped
+    end
+
     class PaginatorsTest
       def initialize: (untyped client, ?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> void
 
