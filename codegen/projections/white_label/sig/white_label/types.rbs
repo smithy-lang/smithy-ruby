@@ -24,6 +24,8 @@ module WhiteLabel
 
     PaginatorsTestWithItemsOutput: untyped
 
+    ResultWrapper: untyped
+
     ServerError: untyped
 
     Struct: untyped
@@ -45,6 +47,10 @@ module WhiteLabel
     WaitersTestInput: untyped
 
     WaitersTestOutput: untyped
+
+    Struct____PaginatorsTestWithBadNamesInput: untyped
+
+    Struct____PaginatorsTestWithBadNamesOutput: untyped
 
   end
 end

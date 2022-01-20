@@ -357,6 +357,17 @@ module WhiteLabel
       include Seahorse::Structure
     end
 
+    # @!attribute member____123next_token
+    #
+    #   @return [String]
+    #
+    ResultWrapper = ::Struct.new(
+      :member____123next_token,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     ServerError = ::Struct.new(
       nil,
       keyword_init: true
@@ -520,6 +531,33 @@ module WhiteLabel
     #
     WaitersTestOutput = ::Struct.new(
       :status,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member____next_token
+    #
+    #   @return [String]
+    #
+    Struct____PaginatorsTestWithBadNamesInput = ::Struct.new(
+      :member____next_token,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute member____wrapper
+    #
+    #   @return [ResultWrapper]
+    #
+    # @!attribute member____items
+    #
+    #   @return [Array<String>]
+    #
+    Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
+      :member____wrapper,
+      :member____items,
       keyword_init: true
     ) do
       include Seahorse::Structure

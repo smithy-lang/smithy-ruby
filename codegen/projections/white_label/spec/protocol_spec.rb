@@ -14,6 +14,9 @@ module WhiteLabel
     let(:endpoint) { 'http://127.0.0.1' }
     let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
 
+    describe '#operation____paginators_test_with_bad_names' do
+
+    end
     describe '#kitchen_sink' do
 
     end

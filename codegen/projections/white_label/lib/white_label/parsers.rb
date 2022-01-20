@@ -135,5 +135,20 @@ module WhiteLabel
         data
       end
     end
+
+    # Operation Parser for __PaginatorsTestWithBadNames
+    class Operation____PaginatorsTestWithBadNames
+      def self.parse(http_resp)
+        data = Types::Struct____PaginatorsTestWithBadNamesOutput.new
+        data
+      end
+    end
+
+    class ResultWrapper
+      def self.parse(map)
+        data = Types::ResultWrapper.new
+        return data
+      end
+    end
   end
 end
