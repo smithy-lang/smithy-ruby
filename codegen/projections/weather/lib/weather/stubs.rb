@@ -316,12 +316,12 @@ module Weather
     end
 
     # Operation Stubber for __789BadName
-    class Operation__789BadName
+    class Operation____789BadName
 
       def self.default(visited=[])
         {
-          member___123abc: 'member___123abc',
-          member: Stubs::Struct__456efg.default(visited),
+          member____123abc: 'member____123abc',
+          member: Stubs::Struct____456efg.default(visited),
         }
       end
 
@@ -332,13 +332,13 @@ module Weather
     end
 
     # Structure Stubber for __456efg
-    class Struct__456efg
+    class Struct____456efg
 
       def self.default(visited=[])
-        return nil if visited.include?('Struct__456efg')
-        visited = visited + ['Struct__456efg']
+        return nil if visited.include?('Struct____456efg')
+        visited = visited + ['Struct____456efg']
         {
-          member___123foo: 'member___123foo',
+          member____123foo: 'member____123foo',
         }
       end
 

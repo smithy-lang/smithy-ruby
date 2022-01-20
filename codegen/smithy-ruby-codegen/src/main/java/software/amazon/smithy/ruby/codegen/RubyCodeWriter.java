@@ -90,7 +90,6 @@ public class RubyCodeWriter extends CodeWriter {
      */
     public RubyCodeWriter writeDocstring(String docstring) {
         doc(() -> {
-
             write("$L", docstring);
             write("");
         });

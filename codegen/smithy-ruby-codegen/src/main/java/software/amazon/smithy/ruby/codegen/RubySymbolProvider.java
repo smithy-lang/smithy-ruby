@@ -144,7 +144,7 @@ public class RubySymbolProvider implements SymbolProvider,
     // If they are a reserved word or start with a number they will be prefixed with “member_”.
     private String getDefaultMemberName(MemberShape shape) {
         return prefixLeadingInvalidIdentCharacters(
-                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member_");
+                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member__");
     }
 
     // Shape Names (generated Class names) should be PascalCase
@@ -255,7 +255,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol listShape(ListShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "List"), "", "", moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
             Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
@@ -268,7 +268,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol setShape(SetShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set"), "", "", moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set__"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
             Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
@@ -281,7 +281,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol mapShape(MapShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map"), "", "", moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
             Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
@@ -297,7 +297,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol documentShape(DocumentShape shape) {
         if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document"), "", "", moduleName)
+            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
             String rbsType = "document"; // alias defined in Seahorse
@@ -315,14 +315,14 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol structureShape(StructureShape shape) {
-        String name = getDefaultShapeName(shape, "Struct");
+        String name = getDefaultShapeName(shape, "Struct__");
         return createSymbolBuilder(shape, name, name, name, moduleName)
                 .definitionFile("types.rb").build();
     }
 
     @Override
     public Symbol unionShape(UnionShape shape) {
-        String name = getDefaultShapeName(shape, "Union");
+        String name = getDefaultShapeName(shape, "Union__");
         return createSymbolBuilder(shape, name, name, name, moduleName)
                 .definitionFile("types.rb").build();
     }
@@ -335,7 +335,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol operationShape(OperationShape shape) {
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Operation"), "", "", moduleName)
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Operation__"), "", "", moduleName)
                 .definitionFile("types.rb").build();
     }
 

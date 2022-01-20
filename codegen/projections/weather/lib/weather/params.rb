@@ -106,21 +106,21 @@ module Weather
       end
     end
 
-    module Struct__456efg
+    module Struct____456efg
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::Struct__456efg, context: context)
-        type = Types::Struct__456efg.new
-        type.member___123foo = params[:member___123foo]
+        Seahorse::Validator.validate!(params, ::Hash, Types::Struct____456efg, context: context)
+        type = Types::Struct____456efg.new
+        type.member____123foo = params[:member____123foo]
         type
       end
     end
 
-    module Struct__789BadNameInput
+    module Struct____789BadNameInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::Struct__789BadNameInput, context: context)
-        type = Types::Struct__789BadNameInput.new
-        type.member___123abc = params[:member___123abc]
-        type.member = Struct__456efg.build(params[:member], context: "#{context}[:member]") unless params[:member].nil?
+        Seahorse::Validator.validate!(params, ::Hash, Types::Struct____789BadNameInput, context: context)
+        type = Types::Struct____789BadNameInput.new
+        type.member____123abc = params[:member____123abc]
+        type.member = Struct____456efg.build(params[:member], context: "#{context}[:member]") unless params[:member].nil?
         type
       end
     end

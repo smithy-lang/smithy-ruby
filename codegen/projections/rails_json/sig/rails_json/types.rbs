@@ -198,11 +198,11 @@ module RailsJson
 
     TimestampFormatHeadersOutput: untyped
 
-    Struct__456efg: untyped
+    Struct____456efg: untyped
 
-    Struct__789BadNameInput: untyped
+    Struct____789BadNameInput: untyped
 
-    Struct__789BadNameOutput: untyped
+    Struct____789BadNameOutput: untyped
 
   end
 end
