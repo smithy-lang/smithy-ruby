@@ -123,7 +123,7 @@ module WhiteLabel
     end
 
     # Operation Builder for __PaginatorsTestWithBadNames
-    class Operation__PaginatorsTestWithBadNames
+    class Operation____PaginatorsTestWithBadNames
       def self.build(http_req, input:)
       end
     end

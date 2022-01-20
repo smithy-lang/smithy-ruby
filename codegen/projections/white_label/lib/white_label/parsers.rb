@@ -137,9 +137,9 @@ module WhiteLabel
     end
 
     # Operation Parser for __PaginatorsTestWithBadNames
-    class Operation__PaginatorsTestWithBadNames
+    class Operation____PaginatorsTestWithBadNames
       def self.parse(http_resp)
-        data = Types::Struct__PaginatorsTestWithBadNamesOutput.new
+        data = Types::Struct____PaginatorsTestWithBadNamesOutput.new
         data
       end
     end

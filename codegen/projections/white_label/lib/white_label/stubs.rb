@@ -250,12 +250,12 @@ module WhiteLabel
     end
 
     # Operation Stubber for __PaginatorsTestWithBadNames
-    class Operation__PaginatorsTestWithBadNames
+    class Operation____PaginatorsTestWithBadNames
 
       def self.default(visited=[])
         {
-          member___wrapper: Stubs::ResultWrapper.default(visited),
-          member___items: Stubs::Items.default(visited),
+          member____wrapper: Stubs::ResultWrapper.default(visited),
+          member____items: Stubs::Items.default(visited),
         }
       end
 
@@ -271,7 +271,7 @@ module WhiteLabel
         return nil if visited.include?('ResultWrapper')
         visited = visited + ['ResultWrapper']
         {
-          member___123next_token: 'member___123next_token',
+          member____123next_token: 'member____123next_token',
         }
       end
 

@@ -10,40 +10,40 @@
 module WhiteLabel
   module Paginators
 
-    class Operation__PaginatorsTestWithBadNames
+    class Operation____PaginatorsTestWithBadNames
       # @param [Client] client
-      # @param [Hash] params (see Client#operation__paginators_test_with_bad_names)
-      # @param [Hash] options (see Client#operation__paginators_test_with_bad_names)
+      # @param [Hash] params (see Client#operation____paginators_test_with_bad_names)
+      # @param [Hash] options (see Client#operation____paginators_test_with_bad_names)
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
         @client = client
       end
-      # Iterate all response pages of the operation__paginators_test_with_bad_names operation.
+      # Iterate all response pages of the operation____paginators_test_with_bad_names operation.
       # @return [Enumerator]
       def pages
         params = @params
         Enumerator.new do |e|
-          @prev_token = params[:member___next_token]
-          response = @client.operation__paginators_test_with_bad_names(params, @options)
+          @prev_token = params[:member____next_token]
+          response = @client.operation____paginators_test_with_bad_names(params, @options)
           e.yield(response)
-          output_token = response.member___wrapper&.member___123next_token
+          output_token = response.member____wrapper&.member____123next_token
 
           until output_token.nil? || @prev_token == output_token
-            params = params.merge(member___next_token: output_token)
-            response = @client.operation__paginators_test_with_bad_names(params, @options)
+            params = params.merge(member____next_token: output_token)
+            response = @client.operation____paginators_test_with_bad_names(params, @options)
             e.yield(response)
-            output_token = response.member___wrapper&.member___123next_token
+            output_token = response.member____wrapper&.member____123next_token
           end
         end
       end
 
-      # Iterate all items from pages in the operation__paginators_test_with_bad_names operation.
+      # Iterate all items from pages in the operation____paginators_test_with_bad_names operation.
       # @return [Enumerator]
       def items
         Enumerator.new do |e|
           pages.each do |page|
-            page.member___items.each do |item|
+            page.member____items.each do |item|
               e.yield(item)
             end
           end

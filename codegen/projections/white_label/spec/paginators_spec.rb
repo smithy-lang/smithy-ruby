@@ -96,22 +96,22 @@ module WhiteLabel
       end
     end
 
-    describe '__PaginatorsTestWithBadNames' do
+    describe Operation____PaginatorsTestWithBadNames do
       let(:client) { double('Client') }
       let(:params) { { param: 'param' } }
       let(:options) { { stub_responses: true } }
 
-      subject { Operation___PaginatorsTestWithBadNames.new(client, params, options) }
+      subject { Operation____PaginatorsTestWithBadNames.new(client, params, options) }
       let(:response_1) do
-        Types::Struct__PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'foo'), member___items: ['a', 'b', 'c'])
+        Types::Struct____PaginatorsTestWithBadNamesOutput.new(
+          member____wrapper: Types::ResultWrapper.new(member____123next_token: 'foo'), member____items: ['a', 'b', 'c'])
       end
       let(:response_2) do
         Types::Struct__PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'bar'), member___items: ['1', '2', '3'])
+          member____wrapper: Types::ResultWrapper.new(member____123next_token: 'bar'), member____items: ['1', '2', '3'])
       end
       let(:response_3) do
-        Types::Struct__PaginatorsTestWithBadNamesOutput.new(member___items: ['the end'])
+        Types::Struct__PaginatorsTestWithBadNamesOutput.new(member____items: ['the end'])
       end
 
       describe '.pages' do
@@ -120,12 +120,12 @@ module WhiteLabel
 
       describe '#items' do
         it 'yields items from paged response data' do
-          expect(client).to receive(:operation__paginators_test_with_bad_names)
+          expect(client).to receive(:operation____paginators_test_with_bad_names)
                               .with({ param: 'param' }, options).and_return(response_1)
-          expect(client).to receive(:operation__paginators_test_with_bad_names)
-                              .with({ param: 'param', member___next_token: 'foo' }, options).and_return(response_2)
-          expect(client).to receive(:operation__paginators_test_with_bad_names)
-                              .with({ param: 'param', member___next_token: 'bar' }, options).and_return(response_3)
+          expect(client).to receive(:operation____paginators_test_with_bad_names)
+                              .with({ param: 'param', member____next_token: 'foo' }, options).and_return(response_2)
+          expect(client).to receive(:operation____paginators_test_with_bad_names)
+                              .with({ param: 'param', member____next_token: 'bar' }, options).and_return(response_3)
 
           paginator = subject.items
           expect(paginator).to be_a(Enumerator)

@@ -48,9 +48,9 @@ module WhiteLabel
 
     WaitersTestOutput: untyped
 
-    Struct__PaginatorsTestWithBadNamesInput: untyped
+    Struct____PaginatorsTestWithBadNamesInput: untyped
 
-    Struct__PaginatorsTestWithBadNamesOutput: untyped
+    Struct____PaginatorsTestWithBadNamesOutput: untyped
 
   end
 end

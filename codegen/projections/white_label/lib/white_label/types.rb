@@ -357,12 +357,12 @@ module WhiteLabel
       include Seahorse::Structure
     end
 
-    # @!attribute member___123next_token
+    # @!attribute member____123next_token
     #
     #   @return [String]
     #
     ResultWrapper = ::Struct.new(
-      :member___123next_token,
+      :member____123next_token,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -536,28 +536,28 @@ module WhiteLabel
       include Seahorse::Structure
     end
 
-    # @!attribute member___next_token
+    # @!attribute member____next_token
     #
     #   @return [String]
     #
-    Struct__PaginatorsTestWithBadNamesInput = ::Struct.new(
-      :member___next_token,
+    Struct____PaginatorsTestWithBadNamesInput = ::Struct.new(
+      :member____next_token,
       keyword_init: true
     ) do
       include Seahorse::Structure
     end
 
-    # @!attribute member___wrapper
+    # @!attribute member____wrapper
     #
     #   @return [ResultWrapper]
     #
-    # @!attribute member___items
+    # @!attribute member____items
     #
     #   @return [Array<String>]
     #
-    Struct__PaginatorsTestWithBadNamesOutput = ::Struct.new(
-      :member___wrapper,
-      :member___items,
+    Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
+      :member____wrapper,
+      :member____items,
       keyword_init: true
     ) do
       include Seahorse::Structure

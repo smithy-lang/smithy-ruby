@@ -481,43 +481,43 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::Struct__PaginatorsTestWithBadNamesInput}.
+    #   See {Types::Struct____PaginatorsTestWithBadNamesInput}.
     #
-    # @return [Types::Struct__PaginatorsTestWithBadNamesOutput]
+    # @return [Types::Struct____PaginatorsTestWithBadNamesOutput]
     #
     # @example Request syntax with placeholder values
     #
-    #   resp = client.operation__paginators_test_with_bad_names(
-    #     member___next_token: '__nextToken'
+    #   resp = client.operation____paginators_test_with_bad_names(
+    #     member____next_token: '__nextToken'
     #   )
     #
     # @example Response structure
     #
-    #   resp #=> Types::Struct__PaginatorsTestWithBadNamesOutput
-    #   resp.member___wrapper #=> Types::ResultWrapper
-    #   resp.member___wrapper.member___123next_token #=> String
-    #   resp.member___items #=> Array<String>
-    #   resp.member___items[0] #=> String
+    #   resp #=> Types::Struct____PaginatorsTestWithBadNamesOutput
+    #   resp.member____wrapper #=> Types::ResultWrapper
+    #   resp.member____wrapper.member____123next_token #=> String
+    #   resp.member____items #=> Array<String>
+    #   resp.member____items[0] #=> String
     #
-    def operation__paginators_test_with_bad_names(params = {}, options = {}, &block)
+    def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::Struct__PaginatorsTestWithBadNamesInput.build(params)
+      input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::Struct__PaginatorsTestWithBadNamesInput,
+        validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
-        builder: Builders::Operation__PaginatorsTestWithBadNames
+        builder: Builders::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
       stack.use(Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
-        data_parser: Parsers::Operation__PaginatorsTestWithBadNames
+        data_parser: Parsers::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
-        stub_class: Stubs::Operation__PaginatorsTestWithBadNames,
+        stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -529,7 +529,7 @@ module WhiteLabel
           response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
-          operation_name: :operation__paginators_test_with_bad_names
+          operation_name: :operation____paginators_test_with_bad_names
         )
       )
       raise resp.error if resp.error
