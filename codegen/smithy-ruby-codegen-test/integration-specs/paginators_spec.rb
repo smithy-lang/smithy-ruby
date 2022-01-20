@@ -96,12 +96,12 @@ module WhiteLabel
       end
     end
 
-    describe Operation___PaginatorsTestWithBadNames do
+    describe '__PaginatorsTestWithBadNames' do
       let(:client) { double('Client') }
       let(:params) { { param: 'param' } }
       let(:options) { { stub_responses: true } }
 
-      subject { Operation___PaginatorsTestWithBadNames.new(client, params, options) }
+      subject { Operation__PaginatorsTestWithBadNames.new(client, params, options) }
       let(:response_1) do
         Types::Struct__PaginatorsTestWithBadNamesOutput.new(
           member___wrapper: Types::ResultWrapper.new(member___123next_token: 'foo'), member___items: ['a', 'b', 'c'])
