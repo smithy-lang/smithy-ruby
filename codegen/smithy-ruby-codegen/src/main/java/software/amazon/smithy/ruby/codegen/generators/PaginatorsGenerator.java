@@ -164,10 +164,10 @@ public class PaginatorsGenerator {
     }
 
     private void renderPaginatorPages(String operationName, PaginationInfo paginationInfo) {
-        String inputToken = RubyFormatter.toSnakeCase(paginationInfo.getInputTokenMember().getMemberName());
+        String inputToken = symbolProvider.toMemberName(paginationInfo.getInputTokenMember());
         String outputToken = paginationInfo.getOutputTokenMemberPath().stream()
-                .map((member) -> RubyFormatter.toSnakeCase(member.getMemberName()))
-                .collect(Collectors.joining("."));
+                .map((member) -> symbolProvider.toMemberName(member))
+                .collect(Collectors.joining("&."));
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
         writer
@@ -198,8 +198,8 @@ public class PaginatorsGenerator {
 
     private void renderPaginatorItems(PaginationInfo paginationInfo, String operationName) {
         String items = paginationInfo.getItemsMemberPath().stream()
-                .map((member) -> RubyFormatter.toSnakeCase(member.getMemberName()))
-                .collect(Collectors.joining("."));
+                .map((member) -> symbolProvider.toMemberName(member))
+                .collect(Collectors.joining("&."));
 
         writer
                 .write("")

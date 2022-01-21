@@ -480,6 +480,62 @@ module WhiteLabel
       resp.data
     end
 
+    # @param [Hash] params
+    #   See {Types::Struct____PaginatorsTestWithBadNamesInput}.
+    #
+    # @return [Types::Struct____PaginatorsTestWithBadNamesOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.operation____paginators_test_with_bad_names(
+    #     member____next_token: '__nextToken'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::Struct____PaginatorsTestWithBadNamesOutput
+    #   resp.member____wrapper #=> Types::ResultWrapper
+    #   resp.member____wrapper.member____123next_token #=> String
+    #   resp.member____items #=> Array<String>
+    #   resp.member____items[0] #=> String
+    #
+    def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
+      stack.use(Seahorse::Middleware::Validate,
+        validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Seahorse::Middleware::Build,
+        builder: Builders::Operation____PaginatorsTestWithBadNames
+      )
+      stack.use(Seahorse::HTTP::Middleware::ContentLength)
+      stack.use(Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        data_parser: Parsers::Operation____PaginatorsTestWithBadNames
+      )
+      stack.use(Seahorse::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :operation____paginators_test_with_bad_names
+        )
+      )
+      raise resp.error if resp.error
+      resp.data
+    end
+
     private
 
     def apply_middleware(middleware_stack, middleware)

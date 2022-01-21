@@ -153,5 +153,12 @@ module WhiteLabel
       end
     end
 
+    class Struct____PaginatorsTestWithBadNamesInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
+        Seahorse::Validator.validate!(input[:member____next_token], ::String, context: "#{context}[:member____next_token]")
+      end
+    end
+
   end
 end
