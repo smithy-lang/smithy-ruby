@@ -251,8 +251,8 @@ module RailsJson
         data.header_short = http_resp.headers['X-Short']&.to_i
         data.header_integer = http_resp.headers['X-Integer']&.to_i
         data.header_long = http_resp.headers['X-Long']&.to_i
-        data.header_float = http_resp.headers['X-Float']&.to_f
-        data.header_double = http_resp.headers['X-Double']&.to_f
+        data.header_float = Seahorse::NumberHelper.deserialize(http_resp.headers['X-Float']) unless http_resp.headers['X-Float'].nil?
+        data.header_double = Seahorse::NumberHelper.deserialize(http_resp.headers['X-Double']) unless http_resp.headers['X-Double'].nil?
         data.header_true_bool = http_resp.headers['X-Boolean1'] == 'true' unless http_resp.headers['X-Boolean1'].nil?
         data.header_false_bool = http_resp.headers['X-Boolean2'] == 'true' unless http_resp.headers['X-Boolean2'].nil?
         unless http_resp.headers['X-StringList'].nil? || http_resp.headers['X-StringList'].empty?

@@ -8,6 +8,7 @@ require_relative 'seahorse/json'
 require_relative 'seahorse/middleware'
 require_relative 'seahorse/middleware_builder'
 require_relative 'seahorse/middleware_stack'
+require_relative 'seahorse/number_helper'
 require_relative 'seahorse/output'
 require_relative 'seahorse/structure'
 require_relative 'seahorse/stubbing/client_stubs'
@@ -21,5 +22,5 @@ require_relative 'seahorse/waiters/waiter'
 require_relative 'seahorse/xml'
 
 module Seahorse
-  VERSION = '0.2.0'
+  VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 end

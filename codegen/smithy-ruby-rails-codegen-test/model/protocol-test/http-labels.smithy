@@ -26,7 +26,7 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: railsJson,
         method: "GET",
-        uri: "/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18.000Z",
+        uri: "/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
             string: "string",
@@ -44,7 +44,7 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: railsJson,
         method: "GET",
-        uri: "/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18.000Z",
+        uri: "/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
             string: "%:/?#[]@!$&'()*+,;=😹",
@@ -113,11 +113,11 @@ apply HttpRequestWithLabelsAndTimestampFormat @httpRequestTests([
              /HttpRequestWithLabelsAndTimestampFormat\
              /1576540098\
              /Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT\
-             /2019-12-16T23%3A48%3A18.000Z\
-             /2019-12-16T23%3A48%3A18.000Z\
+             /2019-12-16T23%3A48%3A18Z\
+             /2019-12-16T23%3A48%3A18Z\
              /1576540098\
              /Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT\
-             /2019-12-16T23%3A48%3A18.000Z""",
+             /2019-12-16T23%3A48%3A18Z""",
         body: "",
         params: {
             memberEpochSeconds: 1576540098,

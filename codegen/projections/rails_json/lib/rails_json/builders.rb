@@ -246,9 +246,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraits')
-        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
         http_req.headers['Content-Type'] = 'application/octet-stream'
         http_req.body = StringIO.new(input[:blob] || '')
+        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
       end
     end
 
@@ -257,9 +257,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraitsWithMediaType')
-        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
         http_req.headers['Content-Type'] = 'text/plain'
         http_req.body = StringIO.new(input[:blob] || '')
+        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
       end
     end
 
@@ -393,8 +393,8 @@ module RailsJson
         http_req.headers['X-Short'] = input[:header_short].to_s unless input[:header_short].nil?
         http_req.headers['X-Integer'] = input[:header_integer].to_s unless input[:header_integer].nil?
         http_req.headers['X-Long'] = input[:header_long].to_s unless input[:header_long].nil?
-        http_req.headers['X-Float'] = input[:header_float].to_s unless input[:header_float].nil?
-        http_req.headers['X-Double'] = input[:header_double].to_s unless input[:header_double].nil?
+        http_req.headers['X-Float'] = Seahorse::NumberHelper.serialize(input[:header_float]) unless input[:header_float].nil?
+        http_req.headers['X-Double'] = Seahorse::NumberHelper.serialize(input[:header_double]) unless input[:header_double].nil?
         http_req.headers['X-Boolean1'] = input[:header_true_bool].to_s unless input[:header_true_bool].nil?
         http_req.headers['X-Boolean2'] = input[:header_false_bool].to_s unless input[:header_false_bool].nil?
         unless input[:header_string_list].nil? || input[:header_string_list].empty?

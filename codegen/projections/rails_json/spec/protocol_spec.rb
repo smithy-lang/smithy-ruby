@@ -91,7 +91,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/AllQueryStringTypesInput')
-            expected_query = CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01.000Z', 'TimestampList=1970-01-01T00%3A00%3A01.000Z', 'TimestampList=1970-01-01T00%3A00%3A02.000Z', 'TimestampList=1970-01-01T00%3A00%3A03.000Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
+            expected_query = CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
             actual_query = CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
@@ -946,7 +946,7 @@ module RailsJson
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18.000Z')
+            expect(request_uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
@@ -968,7 +968,7 @@ module RailsJson
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18.000Z')
+            expect(request_uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
@@ -995,7 +995,7 @@ module RailsJson
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18.000Z/2019-12-16T23%3A48%3A18.000Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18.000Z')
+            expect(request_uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z/2019-12-16T23%3A48%3A18Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
@@ -1745,7 +1745,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "timestamp_value": "2014-04-29T18:30:38.000Z"
+                    "timestamp_value": "2014-04-29T18:30:38Z"
                 }
             }'))
             Seahorse::Output.new
@@ -1957,7 +1957,7 @@ module RailsJson
             response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
-                    "timestamp_value": "2014-04-29T18:30:38.000Z"
+                    "timestamp_value": "2014-04-29T18:30:38Z"
                 }
             }')
             Seahorse::Output.new
@@ -2436,7 +2436,7 @@ module RailsJson
             expect(request_uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56.000Z"}'))
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
             Seahorse::Output.new
           end
           client.kitchen_sink_operation({
@@ -2453,7 +2453,7 @@ module RailsJson
             expect(request_uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56.000Z"}'))
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
             Seahorse::Output.new
           end
           client.kitchen_sink_operation({
@@ -3000,7 +3000,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
-            response.body = StringIO.new('{"timestamp":"2000-01-02T20:34:56.000Z"}')
+            response.body = StringIO.new('{"timestamp":"2000-01-02T20:34:56Z"}')
             Seahorse::Output.new
           end
           middleware.remove_send.remove_build
@@ -3016,7 +3016,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
-            response.body = StringIO.new('{"iso8601_timestamp":"2000-01-02T20:34:56.000Z"}')
+            response.body = StringIO.new('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
             Seahorse::Output.new
           end
           middleware.remove_send.remove_build
@@ -4304,7 +4304,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/TimestampFormatHeaders')
-            { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18.000Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18.000Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
@@ -4327,7 +4327,7 @@ module RailsJson
           middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18.000Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18.000Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' })
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' })
             response.body = StringIO.new('')
             Seahorse::Output.new
           end

@@ -6,7 +6,7 @@ module Seahorse
 
     describe '.to_date_time' do
       it 'converts a time object to date time format' do
-        expect(subject.to_date_time(time)).to eq '1970-01-01T00:00:00.000Z'
+        expect(subject.to_date_time(time)).to eq '1970-01-01T00:00:00Z'
       end
     end
 

@@ -365,8 +365,8 @@ module RailsJson
         http_resp.headers['X-Short'] = stub[:header_short].to_s unless stub[:header_short].nil?
         http_resp.headers['X-Integer'] = stub[:header_integer].to_s unless stub[:header_integer].nil?
         http_resp.headers['X-Long'] = stub[:header_long].to_s unless stub[:header_long].nil?
-        http_resp.headers['X-Float'] = stub[:header_float].to_s unless stub[:header_float].nil?
-        http_resp.headers['X-Double'] = stub[:header_double].to_s unless stub[:header_double].nil?
+        http_resp.headers['X-Float'] = Seahorse::NumberHelper.serialize(stub[:header_float]) unless stub[:header_float].nil?
+        http_resp.headers['X-Double'] = Seahorse::NumberHelper.serialize(stub[:header_double]) unless stub[:header_double].nil?
         http_resp.headers['X-Boolean1'] = stub[:header_true_bool].to_s unless stub[:header_true_bool].nil?
         http_resp.headers['X-Boolean2'] = stub[:header_false_bool].to_s unless stub[:header_false_bool].nil?
         unless stub[:header_string_list].nil? || stub[:header_string_list].empty?

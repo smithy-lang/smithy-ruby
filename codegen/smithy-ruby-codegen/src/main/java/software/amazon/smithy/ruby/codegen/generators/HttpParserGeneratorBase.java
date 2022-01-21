@@ -553,6 +553,22 @@ public abstract class HttpParserGeneratorBase {
             return null;
         }
 
+        private void rubyFloat() {
+            writer.write("$1LSeahorse::NumberHelper.deserialize($2L) unless $2L.nil?", dataSetter, valueGetter);
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloat();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloat();
+            return null;
+        }
+
         @Override
         public Void booleanShape(BooleanShape shape) {
             writer.write("$1L$2L == 'true' unless $2L.nil?", dataSetter, valueGetter);
@@ -580,18 +596,6 @@ public abstract class HttpParserGeneratorBase {
         @Override
         public Void shortShape(ShortShape shape) {
             writer.write("$1L$2L&.to_i", dataSetter, valueGetter);
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            writer.write("$1L$2L&.to_f", dataSetter, valueGetter);
-            return null;
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            writer.write("$1L$2L&.to_f", dataSetter, valueGetter);
             return null;
         }
 

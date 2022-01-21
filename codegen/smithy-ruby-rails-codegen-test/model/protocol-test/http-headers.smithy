@@ -316,11 +316,11 @@ apply TimestampFormatHeaders @httpRequestTests([
         headers: {
             "X-memberEpochSeconds": "1576540098",
             "X-memberHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
-            "X-memberDateTime": "2019-12-16T23:48:18.000Z",
+            "X-memberDateTime": "2019-12-16T23:48:18Z",
             "X-defaultFormat": "Mon, 16 Dec 2019 23:48:18 GMT",
             "X-targetEpochSeconds": "1576540098",
             "X-targetHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
-            "X-targetDateTime": "2019-12-16T23:48:18.000Z",
+            "X-targetDateTime": "2019-12-16T23:48:18Z",
         },
         body: "",
         params: {
@@ -344,11 +344,11 @@ apply TimestampFormatHeaders @httpResponseTests([
         headers: {
             "X-memberEpochSeconds": "1576540098",
             "X-memberHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
-            "X-memberDateTime": "2019-12-16T23:48:18.000Z",
+            "X-memberDateTime": "2019-12-16T23:48:18Z",
             "X-defaultFormat": "Mon, 16 Dec 2019 23:48:18 GMT",
             "X-targetEpochSeconds": "1576540098",
             "X-targetHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
-            "X-targetDateTime": "2019-12-16T23:48:18.000Z",
+            "X-targetDateTime": "2019-12-16T23:48:18Z",
         },
         body: "",
         params: {

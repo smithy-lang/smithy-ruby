@@ -11,7 +11,7 @@ module Seahorse
       # @param [Time] time
       # @return [String<Date Time>] The time as an ISO8601 string.
       def to_date_time(time)
-        time.utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ')
+        time.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
       end
 
       # @param [Time] time

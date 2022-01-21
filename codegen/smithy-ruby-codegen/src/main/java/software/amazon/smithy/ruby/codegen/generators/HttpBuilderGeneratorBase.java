@@ -32,6 +32,8 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -332,9 +334,9 @@ public abstract class HttpBuilderGeneratorBase {
                 })
                 .call(() -> renderUriBuilder(operation, inputShape))
                 .call(() -> renderQueryInputBuilder(operation, inputShape))
+                .call(() -> renderOperationBodyBuilder(operation, inputShape))
                 .call(() -> renderHeadersBuilder(operation, inputShape))
                 .call(() -> renderPrefixHeadersBuilder(operation, inputShape))
-                .call(() -> renderOperationBodyBuilder(operation, inputShape))
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -523,6 +525,22 @@ public abstract class HttpBuilderGeneratorBase {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$1L$2L.to_s unless $2L.nil?", dataSetter, inputGetter);
+            return null;
+        }
+
+        private void rubyFloat() {
+            writer.write("$1LSeahorse::NumberHelper.serialize($2L) unless $2L.nil?", dataSetter, inputGetter);
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloat();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloat();
             return null;
         }
 

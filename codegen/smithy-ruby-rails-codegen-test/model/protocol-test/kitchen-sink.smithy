@@ -156,7 +156,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_timestamp_shapes",
         protocol: railsJson,
         documentation: "Serializes timestamp shapes",
-        body: "{\"timestamp\":\"2000-01-02T20:34:56.000Z\"}",
+        body: "{\"timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -172,7 +172,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat",
         protocol: railsJson,
         documentation: "Serializes timestamp shapes with iso8601 timestampFormat",
-        body: "{\"iso8601_timestamp\":\"2000-01-02T20:34:56.000Z\"}",
+        body: "{\"iso8601_timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         requireHeaders: [
@@ -656,7 +656,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_parses_timestamp_shapes",
         protocol: railsJson,
         documentation: "Parses timestamp shapes",
-        body: "{\"timestamp\":\"2000-01-02T20:34:56.000Z\"}",
+        body: "{\"timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
@@ -668,7 +668,7 @@ use smithy.test#httpResponseTests
         id: "rails_json_parses_iso8601_timestamps",
         protocol: railsJson,
         documentation: "Parses iso8601 timestamps",
-        body: "{\"iso8601_timestamp\":\"2000-01-02T20:34:56.000Z\"}",
+        body: "{\"iso8601_timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {

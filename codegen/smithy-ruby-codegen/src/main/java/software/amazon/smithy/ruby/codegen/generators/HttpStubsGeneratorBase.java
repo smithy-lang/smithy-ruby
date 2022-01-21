@@ -767,6 +767,22 @@ public abstract class HttpStubsGeneratorBase {
             return null;
         }
 
+        private void rubyFloat() {
+            writer.write("$1LSeahorse::NumberHelper.serialize($2L) unless $2L.nil?", dataSetter, inputGetter);
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloat();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloat();
+            return null;
+        }
+
         @Override
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
