@@ -7,6 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'securerandom'
 module WhiteLabel
   module Params
 

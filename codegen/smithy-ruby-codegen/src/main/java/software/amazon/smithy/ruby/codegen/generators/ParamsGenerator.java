@@ -33,9 +33,11 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -68,6 +70,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .writePreamble()
+                .write("require 'securerandom'\n# 2")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())
@@ -128,7 +131,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = RubyFormatter.asSymbol(memberName);
             String input = "params[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberBuilder(writer, symbolProvider, memberSetter, input, context, true));
+            target.accept(new MemberBuilder(writer, symbolProvider,
+                    memberSetter, input, context, member, true));
         });
 
         writer.write("type");
@@ -150,6 +154,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .call(() -> memberTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
                                 "\"#{context}[#{index}]\"",
+                                listShape.getMember(),
                                 true)))
                 .closeBlock("end")
                 .write("data")
@@ -173,7 +178,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("params.each_with_index do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
-                                "\"#{context}[#{index}]\"", true)))
+                                "\"#{context}[#{index}]\"", setShape.getMember(), true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -195,7 +200,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data[key] = ", "value",
-                                "\"#{context}[:#{key}]\"", true)))
+                                "\"#{context}[:#{key}]\"", mapShape.getValue(), true)))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -232,7 +237,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                     .openBlock("Types::$L::$L.new(", shapeName, memberClassName);
             String input = "params[" + memberName + "]";
             String context = "\"#{context}[" + memberName + "]\"";
-            target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, false));
+            target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, member, false));
             writer.closeBlock(")")
                     .dedent();
         }
@@ -257,15 +262,17 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         private final String memberSetter;
         private final String input;
         private final String context;
+        private final MemberShape memberShape;
         private final boolean checkRequired;
 
         MemberBuilder(RubyCodeWriter writer, SymbolProvider symbolProvider, String memberSetter, String input,
-                      String context, boolean checkRequired) {
+                      String context, MemberShape memberShape, boolean checkRequired) {
             this.writer = writer;
             this.symbolProvider = symbolProvider;
             this.memberSetter = memberSetter;
             this.input = input;
             this.context = context;
+            this.memberShape = memberShape;
             this.checkRequired = checkRequired;
         }
 
@@ -280,6 +287,17 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write(memberSetter + input);
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            if (memberShape.hasTrait(IdempotencyTokenTrait.class) ||
+                    shape.hasTrait(IdempotencyTokenTrait.class)) {
+                writer.write("$L$L || SecureRandom.uuid", memberSetter, input);
+            } else {
+                writer.write("$L$L", memberSetter, input);
+            }
             return null;
         }
 

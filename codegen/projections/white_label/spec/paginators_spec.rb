@@ -107,11 +107,11 @@ module WhiteLabel
           member____wrapper: Types::ResultWrapper.new(member____123next_token: 'foo'), member____items: ['a', 'b', 'c'])
       end
       let(:response_2) do
-        Types::Struct__PaginatorsTestWithBadNamesOutput.new(
+        Types::Struct____PaginatorsTestWithBadNamesOutput.new(
           member____wrapper: Types::ResultWrapper.new(member____123next_token: 'bar'), member____items: ['1', '2', '3'])
       end
       let(:response_3) do
-        Types::Struct__PaginatorsTestWithBadNamesOutput.new(member____items: ['the end'])
+        Types::Struct____PaginatorsTestWithBadNamesOutput.new(member____items: ['the end'])
       end
 
       describe '.pages' do
