@@ -14,7 +14,8 @@ module Seahorse
         if input == ::Float::INFINITY then 'Infinity'
         elsif input == -::Float::INFINITY then '-Infinity'
         elsif input&.nan? then 'NaN'
-        else input
+        else
+          input
         end
       end
 
