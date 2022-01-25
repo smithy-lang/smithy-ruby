@@ -29,12 +29,13 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.operation____789_bad_name({
             member____123abc: "abc_value",
             member: {
               member____123foo: "foo value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -99,6 +100,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.all_query_string_types({
             query_string: "Hello there",
             query_string_list: [
@@ -154,7 +156,7 @@ module RailsJson
               'QueryParamsStringKeyA' => "Foo",
               'QueryParamsStringKeyB' => "Bar"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -182,9 +184,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.constant_and_variable_query_string({
             baz: "bam"
-          }, middleware: middleware)
+          }, **opts)
         end
         # Mixes constant and variable query string parameters
         #
@@ -202,10 +205,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.constant_and_variable_query_string({
             baz: "bam",
             maybe_set: "yes"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -228,12 +232,450 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.constant_query_string({
             hello: "hi"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
+    end
+    describe '#document_type' do
+      describe 'requests' do
+        # Serializes document types as part of the JSON request payload with no escaping.
+        #
+        it 'RailsJsonDocumentTypeInputWithObject' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": {
+                    "foo": "bar"
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          }, **opts)
+        end
+        # Serializes document types using a string.
+        #
+        it 'RailsJsonDocumentInputWithString' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": "hello"
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: 'hello'
+          }, **opts)
+        end
+        # Serializes document types using a number.
+        #
+        it 'RailsJsonDocumentInputWithNumber' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": 10
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: 10
+          }, **opts)
+        end
+        # Serializes document types using a boolean.
+        #
+        it 'RailsJsonDocumentInputWithBoolean' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": true
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: true
+          }, **opts)
+        end
+        # Serializes document types using a list.
+        #
+        it 'RailsJsonDocumentInputWithList' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": [
+                    true,
+                    "hi",
+                    [
+                        1,
+                        2
+                    ],
+                    {
+                        "foo": {
+                            "baz": [
+                                3,
+                                4
+                            ]
+                        }
+                    }
+                ]
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: [true, 'hi', [1, 2], {'foo' => {'baz' => [3, 4]}}]
+          }, **opts)
+        end
+      end
+
+      describe 'responses' do
+        # Serializes documents as part of the JSON response payload with no escaping.
+        #
+        it 'RailsJsonDocumentOutput' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": {
+                    "foo": "bar"
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'RailsJsonDocumentOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": "hello"
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 'hello'
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'RailsJsonDocumentOutputNumber' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": 10
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 10
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'RailsJsonDocumentOutputBoolean' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": false
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: false
+          })
+        end
+        # Document types can be JSON arrays.
+        #
+        it 'RailsJsonDocumentOutputArray' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": [
+                    true,
+                    false
+                ]
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: [true, false]
+          })
+        end
+      end
+      describe 'response stubs' do
+        # Serializes documents as part of the JSON response payload with no escaping.
+        #
+        it 'stubs RailsJsonDocumentOutput' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'stubs RailsJsonDocumentOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: 'hello'
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 'hello'
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'stubs RailsJsonDocumentOutputNumber' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: 10
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 10
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'stubs RailsJsonDocumentOutputBoolean' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: false
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: false
+          })
+        end
+        # Document types can be JSON arrays.
+        #
+        it 'stubs RailsJsonDocumentOutputArray' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: [true, false]
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: [true, false]
+          })
+        end
+      end
+    end
+    describe '#document_type_as_payload' do
+      describe 'requests' do
+        # Serializes a document as the target of the httpPayload trait.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadInput' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentTypeAsPayload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "foo": "bar"
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type_as_payload({
+            document_value: {'foo' => 'bar'}
+          }, **opts)
+        end
+        # Serializes a document as the target of the httpPayload trait using a string.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadInputString' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentTypeAsPayload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type_as_payload({
+            document_value: 'hello'
+          }, **opts)
+        end
+      end
+
+      describe 'responses' do
+        # Serializes a document as the target of the httpPayload trait.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadOutput' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "foo": "bar"
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Serializes a document as a payload string.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('"hello"')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: 'hello'
+          })
+        end
+      end
+      describe 'response stubs' do
+        # Serializes a document as the target of the httpPayload trait.
+        #
+        it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type_as_payload, {
+            document_value: {'foo' => 'bar'}
+          })
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Serializes a document as a payload string.
+        #
+        it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type_as_payload, {
+            document_value: 'hello'
+          })
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: 'hello'
+          })
+        end
+      end
     end
     describe '#empty_operation' do
 
@@ -373,9 +815,11 @@ module RailsJson
             expect(request_uri.path).to eq('/endpoint')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
+          opts[:endpoint] = 'http://example.com'
           client.endpoint_operation({
 
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -395,9 +839,11 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
+          opts[:endpoint] = 'http://example.com'
           client.endpoint_with_host_label_operation({
             label: "bar"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -492,10 +938,11 @@ module RailsJson
             expect(request.body.read).to eq('blobby blob blob')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_traits({
             foo: "Foo",
             blob: 'blobby blob blob'
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes an empty blob in the HTTP payload
         #
@@ -509,9 +956,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_traits({
             foo: "Foo"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -602,10 +1050,11 @@ module RailsJson
             expect(request.body.read).to eq('blobby blob blob')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_traits_with_media_type({
             foo: "Foo",
             blob: 'blobby blob blob'
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -667,12 +1116,13 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_with_structure({
             nested: {
               greeting: "hello",
               member_name: "Phreddy"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -739,13 +1189,14 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_prefix_headers({
             foo: "Foo",
             foo_map: {
               'Abc' => "Abc value",
               'Def' => "Def value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # No prefix headers are serialized because the value is empty
         #
@@ -759,12 +1210,13 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_prefix_headers({
             foo: "Foo",
             foo_map: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -876,10 +1328,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_float_labels({
             float: Float::NAN,
             double: Float::NAN
-          }, middleware: middleware)
+          }, **opts)
         end
         # Supports handling Infinity float label values.
         #
@@ -892,10 +1345,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_float_labels({
             float: Float::INFINITY,
             double: Float::INFINITY
-          }, middleware: middleware)
+          }, **opts)
         end
         # Supports handling -Infinity float label values.
         #
@@ -908,10 +1362,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_float_labels({
             float: -Float::INFINITY,
             double: -Float::INFINITY
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -929,10 +1384,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_greedy_label_in_path({
             foo: "hello/escape",
             baz: "there/guy"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -950,6 +1406,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_labels({
             string: "string",
             short: 1,
@@ -959,7 +1416,7 @@ module RailsJson
             double: 5.1,
             boolean: true,
             timestamp: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Sends a GET request that uses URI label bindings
         #
@@ -972,6 +1429,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_labels({
             string: "%:/?#[]@!$&'()*+,;=😹",
             short: 1,
@@ -981,7 +1439,7 @@ module RailsJson
             double: 5.1,
             boolean: true,
             timestamp: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -999,6 +1457,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_labels_and_timestamp_format({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -1007,7 +1466,7 @@ module RailsJson
             target_epoch_seconds: Time.at(1576540098),
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -1188,6 +1647,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_string: "Hello",
             header_string_list: [
@@ -1200,7 +1660,7 @@ module RailsJson
               "b",
               "c"
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Tests requests with numeric header bindings
         #
@@ -1214,6 +1674,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_byte: 1,
             header_short: 123,
@@ -1226,7 +1687,7 @@ module RailsJson
               2,
               3
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Tests requests with boolean header bindings
         #
@@ -1240,6 +1701,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_true_bool: true,
             header_false_bool: false,
@@ -1248,7 +1710,7 @@ module RailsJson
               false,
               true
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Tests requests with enum header bindings
         #
@@ -1262,6 +1724,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_enum: "Foo",
             header_enum_list: [
@@ -1269,7 +1732,7 @@ module RailsJson
               "Bar",
               "Baz"
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -1529,6 +1992,7 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_enums({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -1545,7 +2009,7 @@ module RailsJson
               'hi' => "Foo",
               'zero' => "0"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -1644,6 +2108,739 @@ module RailsJson
         end
       end
     end
+    describe '#json_maps' do
+      describe 'requests' do
+        # Serializes JSON maps
+        #
+        it 'RailsJsonJsonMaps' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dense_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                },
+                "sparse_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          }, **opts)
+        end
+        # Serializes JSON map values in sparse maps
+        #
+        it 'RailsJsonSerializesNullMapValues' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparse_boolean_map": {
+                    "x": null
+                },
+                "sparse_number_map": {
+                    "x": null
+                },
+                "sparse_string_map": {
+                    "x": null
+                },
+                "sparse_struct_map": {
+                    "x": null
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          }, **opts)
+        end
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        #
+        it 'RailsJsonSerializesZeroValuesInMaps' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dense_number_map": {
+                    "x": 0
+                },
+                "sparse_number_map": {
+                    "x": 0
+                },
+                "dense_boolean_map": {
+                    "x": false
+                },
+                "sparse_boolean_map": {
+                    "x": false
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          }, **opts)
+        end
+        # A request that contains a sparse map of sets
+        #
+        it 'RailsJsonSerializesSparseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          }, **opts)
+        end
+        # A request that contains a dense map of sets.
+        #
+        it 'RailsJsonSerializesDenseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dense_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          }, **opts)
+        end
+        # A request that contains a sparse map of sets.
+        #
+        it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          }, **opts)
+        end
+      end
+
+      describe 'responses' do
+        # Deserializes JSON maps
+        #
+        it 'RailsJsonJsonMaps' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                },
+                "sparse_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+               }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+        end
+        # Deserializes null JSON map values
+        #
+        it 'RailsJsonDeserializesNullMapValues' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "sparse_boolean_map": {
+                    "x": null
+                },
+                "sparse_number_map": {
+                    "x": null
+                },
+                "sparse_string_map": {
+                    "x": null
+                },
+                "sparse_struct_map": {
+                    "x": null
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+        end
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        #
+        it 'RailsJsonDeserializesZeroValuesInMaps' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_number_map": {
+                    "x": 0
+                },
+                "sparse_number_map": {
+                    "x": 0
+                },
+                "dense_boolean_map": {
+                    "x": false
+                },
+                "sparse_boolean_map": {
+                    "x": false
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+        end
+        # A response that contains a sparse map of sets
+        #
+        it 'RailsJsonDeserializesSparseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a dense map of sets.
+        #
+        it 'RailsJsonDeserializesDenseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a sparse map of sets.
+        #
+        it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+        end
+        # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
+        # drop the null key-value pair.
+        #
+        it 'RailsJsonDeserializesDenseSetMapAndSkipsNull' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_set_map": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+      end
+      describe 'response stubs' do
+        # Deserializes JSON maps
+        #
+        it 'stubs RailsJsonJsonMaps' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+        end
+        # Deserializes null JSON map values
+        #
+        it 'stubs RailsJsonDeserializesNullMapValues' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+        end
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        #
+        it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+        end
+        # A response that contains a sparse map of sets
+        #
+        it 'stubs RailsJsonDeserializesSparseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a dense map of sets.
+        #
+        it 'stubs RailsJsonDeserializesDenseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a sparse map of sets.
+        #
+        it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+        end
+        # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
+        # drop the null key-value pair.
+        #
+        it 'stubs RailsJsonDeserializesDenseSetMapAndSkipsNull' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+      end
+    end
     describe '#json_unions' do
       describe 'requests' do
         # Serializes a string union value
@@ -1662,11 +2859,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               string_value: "foo"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a boolean union value
         #
@@ -1684,11 +2882,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               boolean_value: true
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a number union value
         #
@@ -1706,11 +2905,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               number_value: 1
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a blob union value
         #
@@ -1728,11 +2928,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               blob_value: 'foo'
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a timestamp union value
         #
@@ -1750,11 +2951,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               timestamp_value: Time.at(1398796238)
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes an enum union value
         #
@@ -1772,11 +2974,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               enum_value: "Foo"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a list union value
         #
@@ -1794,6 +2997,7 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               list_value: [
@@ -1801,7 +3005,7 @@ module RailsJson
                 "bar"
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a map union value
         #
@@ -1822,6 +3026,7 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               map_value: {
@@ -1829,7 +3034,7 @@ module RailsJson
                 'spam' => "eggs"
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a structure union value
         #
@@ -1849,13 +3054,14 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               structure_value: {
                 hi: "hello"
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -2286,9 +3492,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             string: "abc xyz"
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes string shapes with jsonvalue trait
         #
@@ -2303,9 +3510,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             json_value: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes integer shapes
         #
@@ -2320,9 +3528,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             integer: 1234
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes long shapes
         #
@@ -2337,9 +3546,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             long: 999999999999
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes float shapes
         #
@@ -2354,9 +3564,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             float: 1234.5
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes double shapes
         #
@@ -2371,9 +3582,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             double: 1234.5
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes blob shapes
         #
@@ -2388,9 +3600,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             blob: 'binary-value'
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes boolean shapes (true)
         #
@@ -2405,9 +3618,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             boolean: true
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes boolean shapes (false)
         #
@@ -2422,9 +3636,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             boolean: false
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes
         #
@@ -2439,9 +3654,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes with iso8601 timestampFormat
         #
@@ -2456,9 +3672,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             iso8601_timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes with httpdate timestampFormat
         #
@@ -2473,9 +3690,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             httpdate_timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes with unixTimestamp timestampFormat
         #
@@ -2490,9 +3708,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             unix_timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list shapes
         #
@@ -2507,13 +3726,14 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_strings: [
               "abc",
               "mno",
               "xyz"
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty list shapes
         #
@@ -2528,11 +3748,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_strings: [
 
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list of map shapes
         #
@@ -2547,6 +3768,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_maps_of_strings: [
               {
@@ -2559,7 +3781,7 @@ module RailsJson
                 'red' => "blue"
               }
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list of structure shapes
         #
@@ -2574,6 +3796,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_structs: [
               {
@@ -2586,7 +3809,7 @@ module RailsJson
                 value: "xyz"
               }
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list of recursive structure shapes
         #
@@ -2601,6 +3824,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             recursive_list: [
               {
@@ -2615,7 +3839,7 @@ module RailsJson
                 ]
               }
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map shapes
         #
@@ -2630,12 +3854,13 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_strings: {
               'abc' => "xyz",
               'mno' => "hjk"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty map shapes
         #
@@ -2650,11 +3875,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_strings: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map of list shapes
         #
@@ -2669,6 +3895,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_lists_of_strings: {
               'abc' => [
@@ -2680,7 +3907,7 @@ module RailsJson
                 "abc"
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map of structure shapes
         #
@@ -2695,6 +3922,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_structs: {
               'key1' => {
@@ -2704,7 +3932,7 @@ module RailsJson
                 value: "value-2"
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map of recursive structure shapes
         #
@@ -2719,6 +3947,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             recursive_map: {
               'key1' => {
@@ -2733,7 +3962,7 @@ module RailsJson
                 }
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes structure shapes
         #
@@ -2748,11 +3977,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             simple_struct: {
               value: "abc"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes structure members with locationName traits
         #
@@ -2767,11 +3997,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             struct_with_location_name: {
               value: "some-value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty structure shapes
         #
@@ -2786,11 +4017,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             simple_struct: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes structure which have no members
         #
@@ -2805,11 +4037,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             empty_struct: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes recursive structure shapes
         #
@@ -2824,6 +4057,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             string: "top-value",
             boolean: false,
@@ -2844,7 +4078,7 @@ module RailsJson
                 }
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3846,9 +5080,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.media_type_header({
             json: "true"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3903,11 +5138,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.nested_attributes_operation({
             simple_struct: {
               value: "simple struct value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3926,13 +5162,14 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_and_empty_headers_client({
             a: nil,
             b: "",
             c: [
 
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3951,9 +5188,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_operation({
             string: nil
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes null values in maps
         #
@@ -3971,11 +5209,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_operation({
             sparse_string_map: {
               'foo' => nil
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes null values in lists
         #
@@ -3993,11 +5232,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_operation({
             sparse_string_list: [
               nil
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4137,9 +5377,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.omits_null_serializes_empty_string({
             null_value: nil
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty query strings
         #
@@ -4157,9 +5398,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.omits_null_serializes_empty_string({
             empty_string: ""
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4178,9 +5420,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.operation_with_optional_input_output({
 
-          }, middleware: middleware)
+          }, **opts)
         end
         # Can invoke operations with optional input
         #
@@ -4194,74 +5437,62 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.operation_with_optional_input_output({
             value: "Hi"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
     end
-    describe '#put_and_get_inline_documents' do
+    describe '#query_idempotency_token_auto_fill' do
       describe 'requests' do
-        # Serializes inline documents in a JSON request.
+        # Automatically adds idempotency token when not set
         #
-        it 'RailsJsonPutAndGetInlineDocumentsInput' do
+        it 'RailsJsonQueryIdempotencyTokenAutoFill' do
+          allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
           middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/putandgetinlinedocuments')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "inline_document": {"foo": "bar"}
-            }'))
+            expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
+            expected_query = CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
+            actual_query = CGI.parse(request_uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
-          client.put_and_get_inline_documents({
-            inline_document: {'foo' => 'bar'}
-          }, middleware: middleware)
+          opts = {middleware: middleware}
+          client.query_idempotency_token_auto_fill({
+
+          }, **opts)
+        end
+        # Uses the given idempotency token as-is
+        #
+        it 'RailsJsonQueryIdempotencyTokenAutoFillIsSet' do
+          allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
+            expected_query = CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
+            actual_query = CGI.parse(request_uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.query_idempotency_token_auto_fill({
+            token: "00000000-0000-4000-8000-000000000000"
+          }, **opts)
         end
       end
 
-      describe 'responses' do
-        # Serializes inline documents in a JSON response.
-        #
-        it 'RailsJsonPutAndGetInlineDocumentsInput' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
-            response.body = StringIO.new('{
-                "inline_document": {"foo": "bar"}
-            }')
-            Seahorse::Output.new
-          end
-          middleware.remove_send.remove_build
-          output = client.put_and_get_inline_documents({}, middleware: middleware)
-          expect(output.to_h).to eq({
-            inline_document: {'foo' => 'bar'}
-          })
-        end
-      end
-      describe 'response stubs' do
-        # Serializes inline documents in a JSON response.
-        #
-        it 'stubs RailsJsonPutAndGetInlineDocumentsInput' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
-          end
-          middleware.remove_build
-          client.stub_responses(:put_and_get_inline_documents, {
-            inline_document: {'foo' => 'bar'}
-          })
-          output = client.put_and_get_inline_documents({}, middleware: middleware)
-          expect(output.to_h).to eq({
-            inline_document: {'foo' => 'bar'}
-          })
-        end
-      end
     end
     describe '#query_params_as_string_list_map' do
       describe 'requests' do
@@ -4281,6 +5512,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.query_params_as_string_list_map({
             qux: "named",
             foo: {
@@ -4289,7 +5521,7 @@ module RailsJson
                 "qux"
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4308,6 +5540,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.timestamp_format_headers({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -4316,7 +5549,7 @@ module RailsJson
             target_epoch_seconds: Time.at(1576540098),
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 

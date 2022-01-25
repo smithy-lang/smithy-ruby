@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'securerandom'
+
 module WhiteLabel
   module Params
 
@@ -138,7 +139,7 @@ module WhiteLabel
           )
         when :struct
           Types::Union::Struct.new(
-            Struct.build(params[:struct], context: "#{context}[:struct]")
+            (Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?)
           )
         else
           raise ArgumentError,

@@ -259,6 +259,132 @@ module RailsJson
       resp.data
     end
 
+    # This example serializes a document as part of the payload.
+    #
+    # @param [Hash] params
+    #   See {Types::DocumentTypeInput}.
+    #
+    # @return [Types::DocumentTypeOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.document_type(
+    #     string_value: 'stringValue',
+    #     document_value: {
+    #       'nil' => nil,
+    #       'number' => 123.0,
+    #       'string' => 'value',
+    #       'boolean' => true,
+    #       'array' => [],
+    #       'map' => {}
+    #     }
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::DocumentTypeOutput
+    #   resp.string_value #=> String
+    #   resp.document_value #=> Hash,Array,String,Boolean,Numeric
+    #
+    def document_type(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::DocumentTypeInput.build(params)
+      stack.use(Seahorse::Middleware::Validate,
+        validator: Validators::DocumentTypeInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Seahorse::Middleware::Build,
+        builder: Builders::DocumentType
+      )
+      stack.use(Seahorse::HTTP::Middleware::ContentLength)
+      stack.use(Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        data_parser: Parsers::DocumentType
+      )
+      stack.use(Seahorse::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::DocumentType,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :document_type
+        )
+      )
+      raise resp.error if resp.error
+      resp.data
+    end
+
+    # This example serializes a document as the entire HTTP payload.
+    #
+    # @param [Hash] params
+    #   See {Types::DocumentTypeAsPayloadInput}.
+    #
+    # @return [Types::DocumentTypeAsPayloadOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.document_type_as_payload(
+    #     document_value: {
+    #       'nil' => nil,
+    #       'number' => 123.0,
+    #       'string' => 'value',
+    #       'boolean' => true,
+    #       'array' => [],
+    #       'map' => {}
+    #     }
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::DocumentTypeAsPayloadOutput
+    #   resp.document_value #=> Hash,Array,String,Boolean,Numeric
+    #
+    def document_type_as_payload(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::DocumentTypeAsPayloadInput.build(params)
+      stack.use(Seahorse::Middleware::Validate,
+        validator: Validators::DocumentTypeAsPayloadInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Seahorse::Middleware::Build,
+        builder: Builders::DocumentTypeAsPayload
+      )
+      stack.use(Seahorse::HTTP::Middleware::ContentLength)
+      stack.use(Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        data_parser: Parsers::DocumentTypeAsPayload
+      )
+      stack.use(Seahorse::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::DocumentTypeAsPayload,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :document_type_as_payload
+        )
+      )
+      raise resp.error if resp.error
+      resp.data
+    end
+
     # @param [Hash] params
     #   See {Types::EmptyOperationInput}.
     #
@@ -1287,6 +1413,107 @@ module RailsJson
       resp.data
     end
 
+    # The example tests basic map serialization.
+    #
+    # @param [Hash] params
+    #   See {Types::JsonMapsInput}.
+    #
+    # @return [Types::JsonMapsOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.json_maps(
+    #     dense_struct_map: {
+    #       'key' => {
+    #         hi: 'hi'
+    #       }
+    #     },
+    #     dense_number_map: {
+    #       'key' => 1
+    #     },
+    #     dense_boolean_map: {
+    #       'key' => false
+    #     },
+    #     dense_string_map: {
+    #       'key' => 'value'
+    #     },
+    #     sparse_number_map: {
+    #       'key' => 1
+    #     },
+    #     sparse_boolean_map: {
+    #       'key' => false
+    #     },
+    #     sparse_string_map: {
+    #       'key' => 'value'
+    #     },
+    #     dense_set_map: {
+    #       'key' => [
+    #         'member'
+    #       ]
+    #     },
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::JsonMapsOutput
+    #   resp.dense_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.dense_struct_map['key'] #=> Types::GreetingStruct
+    #   resp.dense_struct_map['key'].hi #=> String
+    #   resp.sparse_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.dense_number_map #=> Hash<String, Integer>
+    #   resp.dense_number_map['key'] #=> Integer
+    #   resp.dense_boolean_map #=> Hash<String, Boolean>
+    #   resp.dense_boolean_map['key'] #=> Boolean
+    #   resp.dense_string_map #=> Hash<String, String>
+    #   resp.dense_string_map['key'] #=> String
+    #   resp.sparse_number_map #=> Hash<String, Integer>
+    #   resp.sparse_number_map['key'] #=> Integer
+    #   resp.sparse_boolean_map #=> Hash<String, Boolean>
+    #   resp.sparse_boolean_map['key'] #=> Boolean
+    #   resp.sparse_string_map #=> Hash<String, String>
+    #   resp.sparse_string_map['key'] #=> String
+    #   resp.dense_set_map #=> Hash<String, Set<String>>
+    #   resp.dense_set_map['key'] #=> Set<String>
+    #   resp.dense_set_map['key'][0] #=> String
+    #   resp.sparse_set_map #=> Hash<String, Set<String>>
+    #
+    def json_maps(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::JsonMapsInput.build(params)
+      stack.use(Seahorse::Middleware::Validate,
+        validator: Validators::JsonMapsInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Seahorse::Middleware::Build,
+        builder: Builders::JsonMaps
+      )
+      stack.use(Seahorse::HTTP::Middleware::ContentLength)
+      stack.use(Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        data_parser: Parsers::JsonMaps
+      )
+      stack.use(Seahorse::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::JsonMaps,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :json_maps
+        )
+      )
+      raise resp.error if resp.error
+      resp.data
+    end
+
     # This operation uses unions for inputs and outputs.
     #
     # @param [Hash] params
@@ -1863,50 +2090,42 @@ module RailsJson
       resp.data
     end
 
-    # This example serializes an inline document as part of the payload.
+    # Automatically adds idempotency tokens.
     #
     # @param [Hash] params
-    #   See {Types::PutAndGetInlineDocumentsInput}.
+    #   See {Types::QueryIdempotencyTokenAutoFillInput}.
     #
-    # @return [Types::PutAndGetInlineDocumentsOutput]
+    # @return [Types::QueryIdempotencyTokenAutoFillOutput]
     #
     # @example Request syntax with placeholder values
     #
-    #   resp = client.put_and_get_inline_documents(
-    #     inline_document: {
-    #       'nil' => nil,
-    #       'number' => 123.0,
-    #       'string' => 'value',
-    #       'boolean' => true,
-    #       'array' => [],
-    #       'map' => {}
-    #     }
+    #   resp = client.query_idempotency_token_auto_fill(
+    #     token: 'token'
     #   )
     #
     # @example Response structure
     #
-    #   resp #=> Types::PutAndGetInlineDocumentsOutput
-    #   resp.inline_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp #=> Types::QueryIdempotencyTokenAutoFillOutput
     #
-    def put_and_get_inline_documents(params = {}, options = {}, &block)
+    def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
       stack = Seahorse::MiddlewareStack.new
-      input = Params::PutAndGetInlineDocumentsInput.build(params)
+      input = Params::QueryIdempotencyTokenAutoFillInput.build(params)
       stack.use(Seahorse::Middleware::Validate,
-        validator: Validators::PutAndGetInlineDocumentsInput,
+        validator: Validators::QueryIdempotencyTokenAutoFillInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Seahorse::Middleware::Build,
-        builder: Builders::PutAndGetInlineDocuments
+        builder: Builders::QueryIdempotencyTokenAutoFill
       )
       stack.use(Seahorse::HTTP::Middleware::ContentLength)
       stack.use(Seahorse::Middleware::Parse,
         error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
-        data_parser: Parsers::PutAndGetInlineDocuments
+        data_parser: Parsers::QueryIdempotencyTokenAutoFill
       )
       stack.use(Seahorse::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
-        stub_class: Stubs::PutAndGetInlineDocuments,
+        stub_class: Stubs::QueryIdempotencyTokenAutoFill,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1918,7 +2137,7 @@ module RailsJson
           response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
           params: params,
           logger: @logger,
-          operation_name: :put_and_get_inline_documents
+          operation_name: :query_idempotency_token_auto_fill
         )
       )
       raise resp.error if resp.error

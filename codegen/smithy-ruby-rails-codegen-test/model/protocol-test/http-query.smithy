@@ -392,3 +392,46 @@ structure QueryParamsAsStringListMapInput {
     @httpQueryParams
     foo: StringListMap
 }
+
+/// Automatically adds idempotency tokens.
+@http(uri: "/QueryIdempotencyTokenAutoFill", method: "POST")
+@tags(["client-only"])
+operation QueryIdempotencyTokenAutoFill {
+    input: QueryIdempotencyTokenAutoFillInput
+}
+
+apply QueryIdempotencyTokenAutoFill @httpRequestTests([
+    {
+        id: "RailsJsonQueryIdempotencyTokenAutoFill",
+        documentation: "Automatically adds idempotency token when not set",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/QueryIdempotencyTokenAutoFill",
+        body: "",
+        queryParams: [
+            "token=00000000-0000-4000-8000-000000000000",
+        ],
+        appliesTo: "client",
+    },
+    {
+        id: "RailsJsonQueryIdempotencyTokenAutoFillIsSet",
+        documentation: "Uses the given idempotency token as-is",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/QueryIdempotencyTokenAutoFill",
+        body: "",
+        queryParams: [
+            "token=00000000-0000-4000-8000-000000000000",
+        ],
+        params: {
+            token: "00000000-0000-4000-8000-000000000000"
+        },
+        appliesTo: "client",
+    }
+])
+
+structure QueryIdempotencyTokenAutoFillInput {
+    @httpQuery("token")
+    @idempotencyToken
+    token: String,
+}

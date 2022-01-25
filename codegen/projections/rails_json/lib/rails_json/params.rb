@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'securerandom'
+
 module RailsJson
   module Params
 
@@ -64,6 +65,80 @@ module RailsJson
         Seahorse::Validator.validate!(params, ::Hash, Types::ConstantQueryStringInput, context: context)
         type = Types::ConstantQueryStringInput.new
         type.hello = params[:hello]
+        type
+      end
+    end
+
+    module DenseBooleanMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    module DenseNumberMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    module DenseSetMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = StringSet.build(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+        data
+      end
+    end
+
+    module DenseStringMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    module DenseStructMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = GreetingStruct.build(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+        data
+      end
+    end
+
+    module DocumentTypeAsPayloadInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::DocumentTypeAsPayloadInput, context: context)
+        type = Types::DocumentTypeAsPayloadInput.new
+        type.document_value = params[:document_value]
+        type
+      end
+    end
+
+    module DocumentTypeInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::DocumentTypeInput, context: context)
+        type = Types::DocumentTypeInput.new
+        type.string_value = params[:string_value]
+        type.document_value = params[:document_value]
         type
       end
     end
@@ -336,6 +411,24 @@ module RailsJson
       end
     end
 
+    module JsonMapsInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::JsonMapsInput, context: context)
+        type = Types::JsonMapsInput.new
+        type.dense_struct_map = DenseStructMap.build(params[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless params[:dense_struct_map].nil?
+        type.sparse_struct_map = SparseStructMap.build(params[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless params[:sparse_struct_map].nil?
+        type.dense_number_map = DenseNumberMap.build(params[:dense_number_map], context: "#{context}[:dense_number_map]") unless params[:dense_number_map].nil?
+        type.dense_boolean_map = DenseBooleanMap.build(params[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless params[:dense_boolean_map].nil?
+        type.dense_string_map = DenseStringMap.build(params[:dense_string_map], context: "#{context}[:dense_string_map]") unless params[:dense_string_map].nil?
+        type.sparse_number_map = SparseNumberMap.build(params[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless params[:sparse_number_map].nil?
+        type.sparse_boolean_map = SparseBooleanMap.build(params[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless params[:sparse_boolean_map].nil?
+        type.sparse_string_map = SparseStringMap.build(params[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless params[:sparse_string_map].nil?
+        type.dense_set_map = DenseSetMap.build(params[:dense_set_map], context: "#{context}[:dense_set_map]") unless params[:dense_set_map].nil?
+        type.sparse_set_map = SparseSetMap.build(params[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless params[:sparse_set_map].nil?
+        type
+      end
+    end
+
     module JsonUnionsInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, ::Hash, Types::JsonUnionsInput, context: context)
@@ -568,15 +661,15 @@ module RailsJson
           )
         when :list_value
           Types::MyUnion::ListValue.new(
-            StringList.build(params[:list_value], context: "#{context}[:list_value]")
+            (StringList.build(params[:list_value], context: "#{context}[:list_value]") unless params[:list_value].nil?)
           )
         when :map_value
           Types::MyUnion::MapValue.new(
-            StringMap.build(params[:map_value], context: "#{context}[:map_value]")
+            (StringMap.build(params[:map_value], context: "#{context}[:map_value]") unless params[:map_value].nil?)
           )
         when :structure_value
           Types::MyUnion::StructureValue.new(
-            GreetingStruct.build(params[:structure_value], context: "#{context}[:structure_value]")
+            (GreetingStruct.build(params[:structure_value], context: "#{context}[:structure_value]") unless params[:structure_value].nil?)
           )
         else
           raise ArgumentError,
@@ -645,11 +738,11 @@ module RailsJson
       end
     end
 
-    module PutAndGetInlineDocumentsInput
+    module QueryIdempotencyTokenAutoFillInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PutAndGetInlineDocumentsInput, context: context)
-        type = Types::PutAndGetInlineDocumentsInput.new
-        type.inline_document = params[:inline_document]
+        Seahorse::Validator.validate!(params, ::Hash, Types::QueryIdempotencyTokenAutoFillInput, context: context)
+        type = Types::QueryIdempotencyTokenAutoFillInput.new
+        type.token = params[:token] || SecureRandom.uuid
         type
       end
     end
@@ -673,6 +766,39 @@ module RailsJson
       end
     end
 
+    module SparseBooleanMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    module SparseNumberMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    module SparseSetMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = (StringSet.build(value, context: "#{context}[:#{key}]") unless value.nil?)
+        end
+        data
+      end
+    end
+
     module SparseStringList
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, ::Array, context: context)
@@ -690,6 +816,17 @@ module RailsJson
         data = {}
         params.each do |key, value|
           data[key] = value
+        end
+        data
+      end
+    end
+
+    module SparseStructMap
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = (GreetingStruct.build(value, context: "#{context}[:#{key}]") unless value.nil?)
         end
         data
       end

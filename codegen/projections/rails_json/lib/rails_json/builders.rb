@@ -17,6 +17,11 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/AllQueryStringTypesInput')
+        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
+          input[:query_params_map_of_strings].each do |k, v|
+            http_req.append_query_param(k, v.to_s) unless v.nil?
+          end
+        end
         http_req.append_query_param('String', input[:query_string].to_s) unless input[:query_string].nil?
         unless input[:query_string_list].nil? || input[:query_string_list].empty?
           input[:query_string_list].each do |value|
@@ -67,11 +72,6 @@ module RailsJson
             http_req.append_query_param('EnumList', value.to_s) unless value.nil?
           end
         end
-        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
-          input[:query_params_map_of_strings].each do |k, v|
-            http_req.append_query_param(k, v.to_s) unless v.nil?
-          end
-        end
       end
     end
 
@@ -80,7 +80,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -91,7 +91,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -102,7 +102,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Seahorse::TimeHelper.to_date_time(element)
+          data << Seahorse::TimeHelper.to_date_time(element) unless element.nil?
         end
         data
       end
@@ -113,7 +113,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -124,7 +124,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << element
+          data << Seahorse::NumberHelper.serialize(element) unless element.nil?
         end
         data
       end
@@ -136,7 +136,7 @@ module RailsJson
       def self.build(input)
         data = Set.new
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -147,7 +147,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -159,7 +159,7 @@ module RailsJson
       def self.build(input)
         data = Set.new
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -170,7 +170,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -201,6 +201,30 @@ module RailsJson
             hello: Seahorse::HTTP.uri_escape(input[:hello].to_s)
           )
         )
+      end
+    end
+
+    # Operation Builder for DocumentType
+    class DocumentType
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/DocumentType')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:string_value] = input[:string_value] unless input[:string_value].nil?
+        data[:document_value] = input[:document_value] unless input[:document_value].nil?
+        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+      end
+    end
+
+    # Operation Builder for DocumentTypeAsPayload
+    class DocumentTypeAsPayload
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/DocumentTypeAsPayload')
+        http_req.headers['Content-Type'] = 'application/json'
+        http_req.body = StringIO.new(Seahorse::JSON.dump(input[:document_value]))
       end
     end
 
@@ -461,7 +485,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -473,7 +497,148 @@ module RailsJson
       def self.build(input)
         data = Set.new
         input.each do |element|
-          data << element
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    # Operation Builder for JsonMaps
+    class JsonMaps
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/JsonMaps')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:dense_struct_map] = Builders::DenseStructMap.build(input[:dense_struct_map]) unless input[:dense_struct_map].nil?
+        data[:sparse_struct_map] = Builders::SparseStructMap.build(input[:sparse_struct_map]) unless input[:sparse_struct_map].nil?
+        data[:dense_number_map] = Builders::DenseNumberMap.build(input[:dense_number_map]) unless input[:dense_number_map].nil?
+        data[:dense_boolean_map] = Builders::DenseBooleanMap.build(input[:dense_boolean_map]) unless input[:dense_boolean_map].nil?
+        data[:dense_string_map] = Builders::DenseStringMap.build(input[:dense_string_map]) unless input[:dense_string_map].nil?
+        data[:sparse_number_map] = Builders::SparseNumberMap.build(input[:sparse_number_map]) unless input[:sparse_number_map].nil?
+        data[:sparse_boolean_map] = Builders::SparseBooleanMap.build(input[:sparse_boolean_map]) unless input[:sparse_boolean_map].nil?
+        data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
+        data[:dense_set_map] = Builders::DenseSetMap.build(input[:dense_set_map]) unless input[:dense_set_map].nil?
+        data[:sparse_set_map] = Builders::SparseSetMap.build(input[:sparse_set_map]) unless input[:sparse_set_map].nil?
+        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+      end
+    end
+
+    # Map Builder for SparseSetMap
+    class SparseSetMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = (Builders::StringSet.build(value).to_a unless value.nil?)
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseSetMap
+    class DenseSetMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::StringSet.build(value).to_a unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseStringMap
+    class SparseStringMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseBooleanMap
+    class SparseBooleanMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseNumberMap
+    class SparseNumberMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseStringMap
+    class DenseStringMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseBooleanMap
+    class DenseBooleanMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseNumberMap
+    class DenseNumberMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseStructMap
+    class SparseStructMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = (Builders::GreetingStruct.build(value) unless value.nil?)
+        end
+        data
+      end
+    end
+
+    # Structure Builder for GreetingStruct
+    class GreetingStruct
+      def self.build(input)
+        data = {}
+        data[:hi] = input[:hi] unless input[:hi].nil?
+        data
+      end
+    end
+
+    # Map Builder for DenseStructMap
+    class DenseStructMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::GreetingStruct.build(value) unless value.nil?
         end
         data
       end
@@ -510,25 +675,16 @@ module RailsJson
         when Types::MyUnion::EnumValue
           data[:enum_value] = input
         when Types::MyUnion::ListValue
-          data[:list_value] = Builders::StringList.build(input)
+          data[:list_value] = (Builders::StringList.build(input) unless input.nil?)
         when Types::MyUnion::MapValue
-          data[:map_value] = Builders::StringMap.build(input)
+          data[:map_value] = (Builders::StringMap.build(input) unless input.nil?)
         when Types::MyUnion::StructureValue
-          data[:structure_value] = Builders::GreetingStruct.build(input)
+          data[:structure_value] = (Builders::GreetingStruct.build(input) unless input.nil?)
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::MyUnion"
         end
 
-        data
-      end
-    end
-
-    # Structure Builder for GreetingStruct
-    class GreetingStruct
-      def self.build(input)
-        data = {}
-        data[:hi] = input[:hi] unless input[:hi].nil?
         data
       end
     end
@@ -543,9 +699,9 @@ module RailsJson
         data = {}
         data[:blob] = Base64::encode64(input[:blob]).strip unless input[:blob].nil?
         data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = input[:double] unless input[:double].nil?
+        data[:double] = Seahorse::NumberHelper.serialize(input[:double]) unless input[:double].nil?
         data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = input[:float] unless input[:float].nil?
+        data[:float] = Seahorse::NumberHelper.serialize(input[:float]) unless input[:float].nil?
         data[:httpdate_timestamp] = Seahorse::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
         data[:integer] = input[:integer] unless input[:integer].nil?
         data[:iso8601_timestamp] = Seahorse::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
@@ -595,9 +751,9 @@ module RailsJson
         data = {}
         data[:blob] = Base64::encode64(input[:blob]).strip unless input[:blob].nil?
         data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = input[:double] unless input[:double].nil?
+        data[:double] = Seahorse::NumberHelper.serialize(input[:double]) unless input[:double].nil?
         data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = input[:float] unless input[:float].nil?
+        data[:float] = Seahorse::NumberHelper.serialize(input[:float]) unless input[:float].nil?
         data[:httpdate_timestamp] = Seahorse::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
         data[:integer] = input[:integer] unless input[:integer].nil?
         data[:iso8601_timestamp] = Seahorse::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
@@ -628,7 +784,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::KitchenSink.build(value)
+          data[key] = Builders::KitchenSink.build(value) unless value.nil?
         end
         data
       end
@@ -639,7 +795,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Builders::KitchenSink.build(element)
+          data << Builders::KitchenSink.build(element) unless element.nil?
         end
         data
       end
@@ -650,7 +806,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::SimpleStruct.build(value)
+          data[key] = Builders::SimpleStruct.build(value) unless value.nil?
         end
         data
       end
@@ -661,7 +817,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -672,7 +828,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::MapOfStrings.build(value)
+          data[key] = Builders::MapOfStrings.build(value) unless value.nil?
         end
         data
       end
@@ -683,7 +839,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::ListOfStrings.build(value)
+          data[key] = Builders::ListOfStrings.build(value) unless value.nil?
         end
         data
       end
@@ -694,7 +850,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -705,7 +861,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Builders::SimpleStruct.build(element)
+          data << Builders::SimpleStruct.build(element) unless element.nil?
         end
         data
       end
@@ -716,7 +872,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Builders::MapOfStrings.build(element)
+          data << Builders::MapOfStrings.build(element) unless element.nil?
         end
         data
       end
@@ -727,7 +883,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Builders::ListOfStrings.build(element)
+          data << Builders::ListOfStrings.build(element) unless element.nil?
         end
         data
       end
@@ -794,17 +950,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseStringMap
-    class SparseStringMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value
-        end
-        data
-      end
-    end
-
     # List Builder for SparseStringList
     class SparseStringList
       def self.build(input)
@@ -839,16 +984,12 @@ module RailsJson
       end
     end
 
-    # Operation Builder for PutAndGetInlineDocuments
-    class PutAndGetInlineDocuments
+    # Operation Builder for QueryIdempotencyTokenAutoFill
+    class QueryIdempotencyTokenAutoFill
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/putandgetinlinedocuments')
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:inline_document] = input[:inline_document] unless input[:inline_document].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.append_path('/QueryIdempotencyTokenAutoFill')
+        http_req.append_query_param('token', input[:token].to_s) unless input[:token].nil?
       end
     end
 
@@ -857,7 +998,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/StringListMap')
-        http_req.append_query_param('corge', input[:qux].to_s) unless input[:qux].nil?
         unless input[:foo].nil? || input[:foo].empty?
           input[:foo].each do |k, v|
             unless v.nil? || v.empty?
@@ -867,6 +1007,7 @@ module RailsJson
             end
           end
         end
+        http_req.append_query_param('corge', input[:qux].to_s) unless input[:qux].nil?
       end
     end
 
@@ -875,7 +1016,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::StringList.build(value)
+          data[key] = Builders::StringList.build(value) unless value.nil?
         end
         data
       end

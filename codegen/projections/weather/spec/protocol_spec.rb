@@ -54,9 +54,10 @@ module Weather
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.get_city({
             city_id: "123"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -245,9 +246,10 @@ module Weather
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.list_cities({
             page_size: 50
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 

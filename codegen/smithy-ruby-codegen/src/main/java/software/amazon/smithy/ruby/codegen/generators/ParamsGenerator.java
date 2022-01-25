@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
+import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -70,7 +71,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .writePreamble()
-                .write("require 'securerandom'\n# 2")
+                .write("require 'securerandom'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())
@@ -155,7 +156,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                         .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
                                 "\"#{context}[#{index}]\"",
                                 listShape.getMember(),
-                                true)))
+                                !listShape.hasTrait(SparseTrait.class))))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -200,7 +201,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data[key] = ", "value",
-                                "\"#{context}[:#{key}]\"", mapShape.getValue(), true)))
+                                "\"#{context}[:#{key}]\"", mapShape.getValue(), !
+                                mapShape.hasTrait(SparseTrait.class))))
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end")
@@ -292,8 +294,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void stringShape(StringShape shape) {
-            if (memberShape.hasTrait(IdempotencyTokenTrait.class) ||
-                    shape.hasTrait(IdempotencyTokenTrait.class)) {
+            if (memberShape.hasTrait(IdempotencyTokenTrait.class)
+                    || shape.hasTrait(IdempotencyTokenTrait.class)) {
                 writer.write("$L$L || SecureRandom.uuid", memberSetter, input);
             } else {
                 writer.write("$L$L", memberSetter, input);
@@ -303,42 +305,43 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
-                    checkRequired());
+            defaultComplex(shape);
             return null;
         }
 
         @Override
         public Void setShape(SetShape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
-                    checkRequired());
+            defaultComplex(shape);
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
-                    checkRequired());
+            defaultComplex(shape);
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
-                    checkRequired());
+            defaultComplex(shape);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            writer.write("$1L$2L.build($3L, context: $4L)$5L", memberSetter, shapeName, input, context,
-                    checkRequired());
+            defaultComplex(shape);
             return null;
+        }
+
+        private void defaultComplex(Shape shape) {
+            String shapeName = symbolProvider.toSymbol(shape).getName();
+            if (checkRequired) {
+                writer.write("$1L$2L.build($3L, context: $4L) unless $3L.nil?", memberSetter,
+                        shapeName, input, context);
+            } else {
+                writer.write("$1L($2L.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
+                        shapeName, input, context);
+            }
         }
 
         @Override

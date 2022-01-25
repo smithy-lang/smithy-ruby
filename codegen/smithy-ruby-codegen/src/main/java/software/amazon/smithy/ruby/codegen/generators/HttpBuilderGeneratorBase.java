@@ -351,19 +351,6 @@ public abstract class HttpBuilderGeneratorBase {
 
 
     protected void renderQueryInputBuilder(OperationShape operation, Shape inputShape) {
-        // get a list of all of HttpQuery members
-        List<MemberShape> queryMembers = inputShape.members()
-                .stream()
-                .filter((m) -> m.hasTrait(HttpQueryTrait.class))
-                .collect(Collectors.toList());
-
-        for (MemberShape m : queryMembers) {
-            HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
-            String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
-            Shape target = model.expectShape(m.getTarget());
-            target.accept(new QueryMemberSerializer(m, "'" + queryTrait.getValue() + "'", inputGetter));
-            LOGGER.finest("Generated query input builder for " + m.getMemberName());
-        }
 
         // get a list of all HttpQueryParams members - these must be map shapes
         List<MemberShape> queryParamsMembers = inputShape.members()
@@ -381,6 +368,20 @@ public abstract class HttpBuilderGeneratorBase {
                     .closeBlock("end")
                     .closeBlock("end");
             LOGGER.finest("Generated query params builder for " + m.getMemberName());
+        }
+
+        // get a list of all of HttpQuery members
+        List<MemberShape> queryMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpQueryTrait.class))
+                .collect(Collectors.toList());
+
+        for (MemberShape m : queryMembers) {
+            HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
+            String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
+            Shape target = model.expectShape(m.getTarget());
+            target.accept(new QueryMemberSerializer(m, "'" + queryTrait.getValue() + "'", inputGetter));
+            LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
     }
 

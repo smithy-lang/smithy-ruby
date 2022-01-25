@@ -26,6 +26,14 @@ module RailsJson
 
     ConstantQueryStringOutput: untyped
 
+    DocumentTypeAsPayloadInput: untyped
+
+    DocumentTypeAsPayloadOutput: untyped
+
+    DocumentTypeInput: untyped
+
+    DocumentTypeOutput: untyped
+
     EmptyOperationInput: untyped
 
     EmptyOperationOutput: untyped
@@ -103,6 +111,10 @@ module RailsJson
     JsonEnumsInput: untyped
 
     JsonEnumsOutput: untyped
+
+    JsonMapsInput: untyped
+
+    JsonMapsOutput: untyped
 
     JsonUnionsInput: untyped
 
@@ -182,9 +194,9 @@ module RailsJson
 
     OperationWithOptionalInputOutputOutput: untyped
 
-    PutAndGetInlineDocumentsInput: untyped
+    QueryIdempotencyTokenAutoFillInput: untyped
 
-    PutAndGetInlineDocumentsOutput: untyped
+    QueryIdempotencyTokenAutoFillOutput: untyped
 
     QueryParamsAsStringListMapInput: untyped
 

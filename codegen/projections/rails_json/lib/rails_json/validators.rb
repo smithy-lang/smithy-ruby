@@ -59,6 +59,56 @@ module RailsJson
       end
     end
 
+    class DenseBooleanMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Seahorse::Validator.validate!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class DenseNumberMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Seahorse::Validator.validate!(value, ::Integer, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class DenseSetMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Validators::StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+      end
+    end
+
+    class DenseStringMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Seahorse::Validator.validate!(value, ::String, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class DenseStructMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Validators::GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+      end
+    end
+
     class Document
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, ::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)
@@ -72,6 +122,21 @@ module RailsJson
             validate!(v, context: "#{context}[#{i}]")
           end
         end
+      end
+    end
+
+    class DocumentTypeAsPayloadInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::DocumentTypeAsPayloadInput, context: context)
+        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+      end
+    end
+
+    class DocumentTypeInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::DocumentTypeInput, context: context)
+        Seahorse::Validator.validate!(input[:string_value], ::String, context: "#{context}[:string_value]")
+        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
       end
     end
 
@@ -291,6 +356,22 @@ module RailsJson
         Validators::FooEnumList.validate!(input[:foo_enum_list], context: "#{context}[:foo_enum_list]") unless input[:foo_enum_list].nil?
         Validators::FooEnumSet.validate!(input[:foo_enum_set], context: "#{context}[:foo_enum_set]") unless input[:foo_enum_set].nil?
         Validators::FooEnumMap.validate!(input[:foo_enum_map], context: "#{context}[:foo_enum_map]") unless input[:foo_enum_map].nil?
+      end
+    end
+
+    class JsonMapsInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::JsonMapsInput, context: context)
+        Validators::DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
+        Validators::SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
+        Validators::DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
+        Validators::DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
+        Validators::DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
+        Validators::SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
+        Validators::SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
+        Validators::SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        Validators::DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
+        Validators::SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
       end
     end
 
@@ -598,10 +679,10 @@ module RailsJson
       end
     end
 
-    class PutAndGetInlineDocumentsInput
+    class QueryIdempotencyTokenAutoFillInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PutAndGetInlineDocumentsInput, context: context)
-        Validators::Document.validate!(input[:inline_document], context: "#{context}[:inline_document]") unless input[:inline_document].nil?
+        Seahorse::Validator.validate!(input, Types::QueryIdempotencyTokenAutoFillInput, context: context)
+        Seahorse::Validator.validate!(input[:token], ::String, context: "#{context}[:token]")
       end
     end
 
@@ -620,6 +701,36 @@ module RailsJson
       end
     end
 
+    class SparseBooleanMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Seahorse::Validator.validate!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class SparseNumberMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Seahorse::Validator.validate!(value, ::Integer, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class SparseSetMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Validators::StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+      end
+    end
+
     class SparseStringList
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, ::Array, context: context)
@@ -635,6 +746,16 @@ module RailsJson
         input.each do |key, value|
           Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
           Seahorse::Validator.validate!(value, ::String, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class SparseStructMap
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Validators::GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end

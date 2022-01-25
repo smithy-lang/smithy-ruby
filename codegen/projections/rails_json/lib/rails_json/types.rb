@@ -188,6 +188,60 @@ module RailsJson
       include Seahorse::Structure
     end
 
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeAsPayloadInput = ::Struct.new(
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeAsPayloadOutput = ::Struct.new(
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute string_value
+    #
+    #   @return [String]
+    #
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeInput = ::Struct.new(
+      :string_value,
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute string_value
+    #
+    #   @return [String]
+    #
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeOutput = ::Struct.new(
+      :string_value,
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     EmptyOperationInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -892,6 +946,118 @@ module RailsJson
       :foo_enum_list,
       :foo_enum_set,
       :foo_enum_map,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute dense_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute sparse_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute dense_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute dense_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute dense_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute sparse_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute sparse_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute sparse_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute dense_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    # @!attribute sparse_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    JsonMapsInput = ::Struct.new(
+      :dense_struct_map,
+      :sparse_struct_map,
+      :dense_number_map,
+      :dense_boolean_map,
+      :dense_string_map,
+      :sparse_number_map,
+      :sparse_boolean_map,
+      :sparse_string_map,
+      :dense_set_map,
+      :sparse_set_map,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute dense_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute sparse_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute dense_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute dense_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute dense_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute sparse_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute sparse_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute sparse_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute dense_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    # @!attribute sparse_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    JsonMapsOutput = ::Struct.new(
+      :dense_struct_map,
+      :sparse_struct_map,
+      :dense_number_map,
+      :dense_boolean_map,
+      :dense_string_map,
+      :sparse_number_map,
+      :sparse_boolean_map,
+      :sparse_string_map,
+      :dense_set_map,
+      :sparse_set_map,
       keyword_init: true
     ) do
       include Seahorse::Structure
@@ -1629,23 +1795,19 @@ module RailsJson
       include Seahorse::Structure
     end
 
-    # @!attribute inline_document
+    # @!attribute token
     #
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [String]
     #
-    PutAndGetInlineDocumentsInput = ::Struct.new(
-      :inline_document,
+    QueryIdempotencyTokenAutoFillInput = ::Struct.new(
+      :token,
       keyword_init: true
     ) do
       include Seahorse::Structure
     end
 
-    # @!attribute inline_document
-    #
-    #   @return [Hash,Array,String,Boolean,Numeric]
-    #
-    PutAndGetInlineDocumentsOutput = ::Struct.new(
-      :inline_document,
+    QueryIdempotencyTokenAutoFillOutput = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Seahorse::Structure
