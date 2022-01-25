@@ -36,6 +36,7 @@ import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -91,7 +92,8 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
                 model.expectShape(shape.getMember().getTarget());
         memberTarget
                 .accept(new MemberSerializer(shape.getMember(),
-                        "data << ", "element", false));
+                        "data << ", "element",
+                        !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
@@ -100,7 +102,7 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
                 model.expectShape(shape.getMember().getTarget());
         memberTarget
                 .accept(new MemberSerializer(shape.getMember(),
-                        "data << ", "element", false));
+                        "data << ", "element", true));
     }
 
     @Override
@@ -108,7 +110,7 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
         valueTarget
                 .accept(new MemberSerializer(shape.getValue(), "data[key] = ",
-                        "value", false));
+                        "value", !shape.hasTrait(SparseTrait.class)));
     }
 
     private void renderMemberStubbers(Shape s) {
@@ -212,8 +214,13 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
          * For complex shapes, simply delegate to their Stubber.
          */
         private void defaultComplexSerializer(Shape shape) {
-            writer.write("$LStubs::$L.stub($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), inputGetter,
-                    checkRequired());
+            if (checkRequired) {
+                writer.write("$1LStubs::$2L.stub($3L) unless $3L.nil?", dataSetter,
+                        symbolProvider.toSymbol(shape).getName(), inputGetter);
+            } else {
+                writer.write("$1L(Stubs::$2L.stub($3L) unless $3L.nil?)", dataSetter,
+                        symbolProvider.toSymbol(shape).getName(), inputGetter);
+            }
         }
 
         @Override

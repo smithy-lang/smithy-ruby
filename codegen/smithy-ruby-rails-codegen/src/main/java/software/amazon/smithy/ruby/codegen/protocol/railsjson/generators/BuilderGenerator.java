@@ -19,6 +19,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -37,6 +39,7 @@ import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -103,7 +106,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     protected void renderListMemberBuilder(ListShape shape) {
         Shape memberTarget = model.expectShape(shape.getMember().getTarget());
         memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
-                false));
+                !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
@@ -118,14 +121,14 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     protected void renderMapMemberBuilder(MapShape shape) {
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
         valueTarget.accept(new MemberSerializer(shape.getValue(), "data[key] = ", "value",
-                false));
+                !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
     protected void renderSetMemberBuilder(SetShape shape) {
         Shape memberTarget = model.expectShape(shape.getMember().getTarget());
         memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
-                false));
+                true));
 
     }
 
@@ -144,7 +147,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
             this.checkRequired = checkRequired;
         }
 
-        private String checkRequired(Shape shape) {
+        private String checkRequired() {
             if (this.checkRequired) {
                 return " unless " + inputGetter + ".nil?";
             } else {
@@ -154,13 +157,29 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired(shape));
+            writer.write("$L$L$L", dataSetter, inputGetter, checkRequired());
+            return null;
+        }
+
+        private void rubyFloat() {
+            writer.write("$1LSeahorse::NumberHelper.serialize($2L)$3L", dataSetter, inputGetter, checkRequired());
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloat();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloat();
             return null;
         }
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$LBase64::encode64($L).strip$L", dataSetter, inputGetter, checkRequired(shape));
+            writer.write("$LBase64::encode64($L).strip$L", dataSetter, inputGetter, checkRequired());
             return null;
         }
 
@@ -172,21 +191,21 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
                 switch (format.get().getFormat()) {
                     case EPOCH_SECONDS:
                         writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
-                                checkRequired(shape));
+                                checkRequired());
                         break;
                     case HTTP_DATE:
                         writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
-                                checkRequired(shape));
+                                checkRequired());
                         break;
                     case DATE_TIME:
                     default:
                         writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                                checkRequired(shape));
+                                checkRequired());
                         break;
                 }
             } else {
                 writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                        checkRequired(shape));
+                        checkRequired());
             }
             return null;
         }
@@ -195,9 +214,15 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
          * For complex shapes, simply delegate to their builder.
          */
         private void defaultComplexSerializer(Shape shape) {
-            writer.write("$LBuilders::$L.build($L)$L", dataSetter, symbolProvider.toSymbol(shape).getName(),
-                    inputGetter,
-                    checkRequired(shape));
+            if (checkRequired) {
+                writer.write("$1LBuilders::$2L.build($3L) unless $3L.nil?",
+                        dataSetter, symbolProvider.toSymbol(shape).getName(),
+                        inputGetter);
+            } else {
+                writer.write("$1L(Builders::$2L.build($3L) unless $3L.nil?)",
+                        dataSetter, symbolProvider.toSymbol(shape).getName(),
+                        inputGetter);
+            }
         }
 
         @Override
@@ -208,9 +233,15 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
 
         @Override
         public Void setShape(SetShape shape) {
-            writer.write("$LBuilders::$L.build($L).to_a$L", dataSetter, symbolProvider.toSymbol(shape).getName(),
-                    inputGetter,
-                    checkRequired(shape));
+            if (checkRequired) {
+                writer.write("$1LBuilders::$2L.build($3L).to_a unless $3L.nil?",
+                        dataSetter, symbolProvider.toSymbol(shape).getName(),
+                        inputGetter);
+            } else {
+                writer.write("$1L(Builders::$2L.build($3L).to_a unless $3L.nil?)",
+                        dataSetter, symbolProvider.toSymbol(shape).getName(),
+                        inputGetter);
+            }
             return null;
         }
 

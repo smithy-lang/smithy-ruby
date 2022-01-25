@@ -113,7 +113,7 @@ module RailsJson
         data = Types::ComplexError.new
         map = Seahorse::JSON.load(http_resp.body)
         data.top_level = map['top_level']
-        data.nested = Parsers::ComplexNestedErrorData.parse(map['nested']) if map['nested']
+        data.nested = (Parsers::ComplexNestedErrorData.parse(map['nested']) unless map['nested'].nil?)
         data
       end
     end
@@ -187,7 +187,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -316,7 +316,7 @@ module RailsJson
     class FooEnumList
       def self.parse(list)
         list.map do |value|
-          value
+          value unless value.nil?
         end
       end
     end
@@ -332,7 +332,7 @@ module RailsJson
     class BooleanList
       def self.parse(list)
         list.map do |value|
-          value
+          value unless value.nil?
         end
       end
     end
@@ -340,7 +340,7 @@ module RailsJson
     class IntegerList
       def self.parse(list)
         list.map do |value|
-          value
+          value unless value.nil?
         end
       end
     end
@@ -348,7 +348,7 @@ module RailsJson
     class StringSet
       def self.parse(list)
         data = list.map do |value|
-          value
+          value unless value.nil?
         end
         Set.new(data)
       end
@@ -357,7 +357,7 @@ module RailsJson
     class StringList
       def self.parse(list)
         list.map do |value|
-          value
+          value unless value.nil?
         end
       end
     end
@@ -370,14 +370,52 @@ module RailsJson
         data.foo_enum1 = map['foo_enum1']
         data.foo_enum2 = map['foo_enum2']
         data.foo_enum3 = map['foo_enum3']
-        data.foo_enum_list = Parsers::FooEnumList.parse(map['foo_enum_list']) if map['foo_enum_list']
+        data.foo_enum_list = (Parsers::FooEnumList.parse(map['foo_enum_list']) unless map['foo_enum_list'].nil?)
         data.foo_enum_set = map['foo_enum_set']
-        data.foo_enum_map = Parsers::FooEnumMap.parse(map['foo_enum_map']) if map['foo_enum_map']
+        data.foo_enum_map = (Parsers::FooEnumMap.parse(map['foo_enum_map']) unless map['foo_enum_map'].nil?)
         data
       end
     end
 
     class FooEnumMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class FooEnumSet
+      def self.parse(list)
+        data = list.map do |value|
+          value unless value.nil?
+        end
+        Set.new(data)
+      end
+    end
+
+    # Operation Parser for JsonMaps
+    class JsonMaps
+      def self.parse(http_resp)
+        data = Types::JsonMapsOutput.new
+        map = Seahorse::JSON.load(http_resp.body)
+        data.dense_struct_map = (Parsers::DenseStructMap.parse(map['dense_struct_map']) unless map['dense_struct_map'].nil?)
+        data.sparse_struct_map = (Parsers::SparseStructMap.parse(map['sparse_struct_map']) unless map['sparse_struct_map'].nil?)
+        data.dense_number_map = (Parsers::DenseNumberMap.parse(map['dense_number_map']) unless map['dense_number_map'].nil?)
+        data.dense_boolean_map = (Parsers::DenseBooleanMap.parse(map['dense_boolean_map']) unless map['dense_boolean_map'].nil?)
+        data.dense_string_map = (Parsers::DenseStringMap.parse(map['dense_string_map']) unless map['dense_string_map'].nil?)
+        data.sparse_number_map = (Parsers::SparseNumberMap.parse(map['sparse_number_map']) unless map['sparse_number_map'].nil?)
+        data.sparse_boolean_map = (Parsers::SparseBooleanMap.parse(map['sparse_boolean_map']) unless map['sparse_boolean_map'].nil?)
+        data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
+        data.dense_set_map = (Parsers::DenseSetMap.parse(map['dense_set_map']) unless map['dense_set_map'].nil?)
+        data.sparse_set_map = (Parsers::SparseSetMap.parse(map['sparse_set_map']) unless map['sparse_set_map'].nil?)
+        data
+      end
+    end
+
+    class SparseSetMap
       def self.parse(map)
         data = {}
         map.map do |key, value|
@@ -387,12 +425,101 @@ module RailsJson
       end
     end
 
-    class FooEnumSet
-      def self.parse(list)
-        data = list.map do |value|
-          value
+    class DenseSetMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
         end
-        Set.new(data)
+        data
+      end
+    end
+
+    class SparseStringMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    class SparseBooleanMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    class SparseNumberMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    class DenseStringMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class DenseBooleanMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class DenseNumberMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class SparseStructMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = (Parsers::GreetingStruct.parse(value) unless value.nil?)
+        end
+        data
+      end
+    end
+
+    class GreetingStruct
+      def self.parse(map)
+        data = Types::GreetingStruct.new
+        data.hi = map['hi']
+        return data
+      end
+    end
+
+    class DenseStructMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = Parsers::GreetingStruct.parse(value) unless value.nil?
+        end
+        data
       end
     end
 
@@ -401,7 +528,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonUnionsOutput.new
         map = Seahorse::JSON.load(http_resp.body)
-        data.contents = Parsers::MyUnion.parse(map['contents']) if map['contents']
+        data.contents = (Parsers::MyUnion.parse(map['contents']) unless map['contents'].nil?)
         data
       end
     end
@@ -420,7 +547,7 @@ module RailsJson
           value = value
           Types::MyUnion::NumberValue.new(value) if value
         when 'blob_value'
-          value = Base64::decode64(value) if value
+          value = Base64::decode64(value) unless value.nil?
           Types::MyUnion::BlobValue.new(value) if value
         when 'timestamp_value'
           value = Time.parse(value) if value
@@ -429,25 +556,17 @@ module RailsJson
           value = value
           Types::MyUnion::EnumValue.new(value) if value
         when 'list_value'
-          value = Parsers::StringList.parse(value) if value
+          value = (Parsers::StringList.parse(value) unless value.nil?)
           Types::MyUnion::ListValue.new(value) if value
         when 'map_value'
-          value = Parsers::StringMap.parse(value) if value
+          value = (Parsers::StringMap.parse(value) unless value.nil?)
           Types::MyUnion::MapValue.new(value) if value
         when 'structure_value'
-          value = Parsers::GreetingStruct.parse(value) if value
+          value = (Parsers::GreetingStruct.parse(value) unless value.nil?)
           Types::MyUnion::StructureValue.new(value) if value
         else
           Types::MyUnion::Unknown.new({name: key, value: value})
         end
-      end
-    end
-
-    class GreetingStruct
-      def self.parse(map)
-        data = Types::GreetingStruct.new
-        data.hi = map['hi']
-        return data
       end
     end
 
@@ -456,30 +575,30 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::KitchenSinkOperationOutput.new
         map = Seahorse::JSON.load(http_resp.body)
-        data.blob = Base64::decode64(map['blob']) if map['blob']
+        data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
-        data.double = map['double']
-        data.empty_struct = Parsers::EmptyStruct.parse(map['empty_struct']) if map['empty_struct']
-        data.float = map['float']
+        data.double = Seahorse::NumberHelper.deserialize(map['double'])
+        data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
+        data.float = Seahorse::NumberHelper.deserialize(map['float'])
         data.httpdate_timestamp = Time.parse(map['httpdate_timestamp']) if map['httpdate_timestamp']
         data.integer = map['integer']
         data.iso8601_timestamp = Time.parse(map['iso8601_timestamp']) if map['iso8601_timestamp']
         data.json_value = map['json_value']
-        data.list_of_lists = Parsers::ListOfListOfStrings.parse(map['list_of_lists']) if map['list_of_lists']
-        data.list_of_maps_of_strings = Parsers::ListOfMapsOfStrings.parse(map['list_of_maps_of_strings']) if map['list_of_maps_of_strings']
-        data.list_of_strings = Parsers::ListOfStrings.parse(map['list_of_strings']) if map['list_of_strings']
-        data.list_of_structs = Parsers::ListOfStructs.parse(map['list_of_structs']) if map['list_of_structs']
+        data.list_of_lists = (Parsers::ListOfListOfStrings.parse(map['list_of_lists']) unless map['list_of_lists'].nil?)
+        data.list_of_maps_of_strings = (Parsers::ListOfMapsOfStrings.parse(map['list_of_maps_of_strings']) unless map['list_of_maps_of_strings'].nil?)
+        data.list_of_strings = (Parsers::ListOfStrings.parse(map['list_of_strings']) unless map['list_of_strings'].nil?)
+        data.list_of_structs = (Parsers::ListOfStructs.parse(map['list_of_structs']) unless map['list_of_structs'].nil?)
         data.long = map['long']
-        data.map_of_lists_of_strings = Parsers::MapOfListsOfStrings.parse(map['map_of_lists_of_strings']) if map['map_of_lists_of_strings']
-        data.map_of_maps = Parsers::MapOfMapOfStrings.parse(map['map_of_maps']) if map['map_of_maps']
-        data.map_of_strings = Parsers::MapOfStrings.parse(map['map_of_strings']) if map['map_of_strings']
-        data.map_of_structs = Parsers::MapOfStructs.parse(map['map_of_structs']) if map['map_of_structs']
-        data.recursive_list = Parsers::ListOfKitchenSinks.parse(map['recursive_list']) if map['recursive_list']
-        data.recursive_map = Parsers::MapOfKitchenSinks.parse(map['recursive_map']) if map['recursive_map']
-        data.recursive_struct = Parsers::KitchenSink.parse(map['recursive_struct']) if map['recursive_struct']
-        data.simple_struct = Parsers::SimpleStruct.parse(map['simple_struct']) if map['simple_struct']
+        data.map_of_lists_of_strings = (Parsers::MapOfListsOfStrings.parse(map['map_of_lists_of_strings']) unless map['map_of_lists_of_strings'].nil?)
+        data.map_of_maps = (Parsers::MapOfMapOfStrings.parse(map['map_of_maps']) unless map['map_of_maps'].nil?)
+        data.map_of_strings = (Parsers::MapOfStrings.parse(map['map_of_strings']) unless map['map_of_strings'].nil?)
+        data.map_of_structs = (Parsers::MapOfStructs.parse(map['map_of_structs']) unless map['map_of_structs'].nil?)
+        data.recursive_list = (Parsers::ListOfKitchenSinks.parse(map['recursive_list']) unless map['recursive_list'].nil?)
+        data.recursive_map = (Parsers::MapOfKitchenSinks.parse(map['recursive_map']) unless map['recursive_map'].nil?)
+        data.recursive_struct = (Parsers::KitchenSink.parse(map['recursive_struct']) unless map['recursive_struct'].nil?)
+        data.simple_struct = (Parsers::SimpleStruct.parse(map['simple_struct']) unless map['simple_struct'].nil?)
         data.string = map['string']
-        data.struct_with_location_name = Parsers::StructWithLocationName.parse(map['struct_with_location_name']) if map['struct_with_location_name']
+        data.struct_with_location_name = (Parsers::StructWithLocationName.parse(map['struct_with_location_name']) unless map['struct_with_location_name'].nil?)
         data.timestamp = Time.parse(map['timestamp']) if map['timestamp']
         data.unix_timestamp = Time.at(map['unix_timestamp'].to_i) if map['unix_timestamp']
         data
@@ -505,30 +624,30 @@ module RailsJson
     class KitchenSink
       def self.parse(map)
         data = Types::KitchenSink.new
-        data.blob = Base64::decode64(map['blob']) if map['blob']
+        data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
-        data.double = map['double']
-        data.empty_struct = Parsers::EmptyStruct.parse(map['empty_struct']) if map['empty_struct']
-        data.float = map['float']
+        data.double = Seahorse::NumberHelper.deserialize(map['double'])
+        data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
+        data.float = Seahorse::NumberHelper.deserialize(map['float'])
         data.httpdate_timestamp = Time.parse(map['httpdate_timestamp']) if map['httpdate_timestamp']
         data.integer = map['integer']
         data.iso8601_timestamp = Time.parse(map['iso8601_timestamp']) if map['iso8601_timestamp']
         data.json_value = map['json_value']
-        data.list_of_lists = Parsers::ListOfListOfStrings.parse(map['list_of_lists']) if map['list_of_lists']
-        data.list_of_maps_of_strings = Parsers::ListOfMapsOfStrings.parse(map['list_of_maps_of_strings']) if map['list_of_maps_of_strings']
-        data.list_of_strings = Parsers::ListOfStrings.parse(map['list_of_strings']) if map['list_of_strings']
-        data.list_of_structs = Parsers::ListOfStructs.parse(map['list_of_structs']) if map['list_of_structs']
+        data.list_of_lists = (Parsers::ListOfListOfStrings.parse(map['list_of_lists']) unless map['list_of_lists'].nil?)
+        data.list_of_maps_of_strings = (Parsers::ListOfMapsOfStrings.parse(map['list_of_maps_of_strings']) unless map['list_of_maps_of_strings'].nil?)
+        data.list_of_strings = (Parsers::ListOfStrings.parse(map['list_of_strings']) unless map['list_of_strings'].nil?)
+        data.list_of_structs = (Parsers::ListOfStructs.parse(map['list_of_structs']) unless map['list_of_structs'].nil?)
         data.long = map['long']
-        data.map_of_lists_of_strings = Parsers::MapOfListsOfStrings.parse(map['map_of_lists_of_strings']) if map['map_of_lists_of_strings']
-        data.map_of_maps = Parsers::MapOfMapOfStrings.parse(map['map_of_maps']) if map['map_of_maps']
-        data.map_of_strings = Parsers::MapOfStrings.parse(map['map_of_strings']) if map['map_of_strings']
-        data.map_of_structs = Parsers::MapOfStructs.parse(map['map_of_structs']) if map['map_of_structs']
-        data.recursive_list = Parsers::ListOfKitchenSinks.parse(map['recursive_list']) if map['recursive_list']
-        data.recursive_map = Parsers::MapOfKitchenSinks.parse(map['recursive_map']) if map['recursive_map']
-        data.recursive_struct = Parsers::KitchenSink.parse(map['recursive_struct']) if map['recursive_struct']
-        data.simple_struct = Parsers::SimpleStruct.parse(map['simple_struct']) if map['simple_struct']
+        data.map_of_lists_of_strings = (Parsers::MapOfListsOfStrings.parse(map['map_of_lists_of_strings']) unless map['map_of_lists_of_strings'].nil?)
+        data.map_of_maps = (Parsers::MapOfMapOfStrings.parse(map['map_of_maps']) unless map['map_of_maps'].nil?)
+        data.map_of_strings = (Parsers::MapOfStrings.parse(map['map_of_strings']) unless map['map_of_strings'].nil?)
+        data.map_of_structs = (Parsers::MapOfStructs.parse(map['map_of_structs']) unless map['map_of_structs'].nil?)
+        data.recursive_list = (Parsers::ListOfKitchenSinks.parse(map['recursive_list']) unless map['recursive_list'].nil?)
+        data.recursive_map = (Parsers::MapOfKitchenSinks.parse(map['recursive_map']) unless map['recursive_map'].nil?)
+        data.recursive_struct = (Parsers::KitchenSink.parse(map['recursive_struct']) unless map['recursive_struct'].nil?)
+        data.simple_struct = (Parsers::SimpleStruct.parse(map['simple_struct']) unless map['simple_struct'].nil?)
         data.string = map['string']
-        data.struct_with_location_name = Parsers::StructWithLocationName.parse(map['struct_with_location_name']) if map['struct_with_location_name']
+        data.struct_with_location_name = (Parsers::StructWithLocationName.parse(map['struct_with_location_name']) unless map['struct_with_location_name'].nil?)
         data.timestamp = Time.parse(map['timestamp']) if map['timestamp']
         data.unix_timestamp = Time.at(map['unix_timestamp'].to_i) if map['unix_timestamp']
         return data
@@ -539,7 +658,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = Parsers::KitchenSink.parse(value) if value
+          data[key] = Parsers::KitchenSink.parse(value) unless value.nil?
         end
         data
       end
@@ -548,7 +667,7 @@ module RailsJson
     class ListOfKitchenSinks
       def self.parse(list)
         list.map do |value|
-          Parsers::KitchenSink.parse(value) if value
+          Parsers::KitchenSink.parse(value) unless value.nil?
         end
       end
     end
@@ -557,7 +676,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = Parsers::SimpleStruct.parse(value) if value
+          data[key] = Parsers::SimpleStruct.parse(value) unless value.nil?
         end
         data
       end
@@ -567,7 +686,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -577,7 +696,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = Parsers::MapOfStrings.parse(value) if value
+          data[key] = Parsers::MapOfStrings.parse(value) unless value.nil?
         end
         data
       end
@@ -587,7 +706,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = Parsers::ListOfStrings.parse(value) if value
+          data[key] = Parsers::ListOfStrings.parse(value) unless value.nil?
         end
         data
       end
@@ -596,7 +715,7 @@ module RailsJson
     class ListOfStrings
       def self.parse(list)
         list.map do |value|
-          value
+          value unless value.nil?
         end
       end
     end
@@ -604,7 +723,7 @@ module RailsJson
     class ListOfStructs
       def self.parse(list)
         list.map do |value|
-          Parsers::SimpleStruct.parse(value) if value
+          Parsers::SimpleStruct.parse(value) unless value.nil?
         end
       end
     end
@@ -612,7 +731,7 @@ module RailsJson
     class ListOfMapsOfStrings
       def self.parse(list)
         list.map do |value|
-          Parsers::MapOfStrings.parse(value) if value
+          Parsers::MapOfStrings.parse(value) unless value.nil?
         end
       end
     end
@@ -620,7 +739,7 @@ module RailsJson
     class ListOfListOfStrings
       def self.parse(list)
         list.map do |value|
-          Parsers::ListOfStrings.parse(value) if value
+          Parsers::ListOfStrings.parse(value) unless value.nil?
         end
       end
     end
@@ -638,10 +757,10 @@ module RailsJson
         data = Types::ErrorWithMembers.new
         map = Seahorse::JSON.load(http_resp.body)
         data.code = map['code']
-        data.complex_data = Parsers::KitchenSink.parse(map['complex_data']) if map['complex_data']
+        data.complex_data = (Parsers::KitchenSink.parse(map['complex_data']) unless map['complex_data'].nil?)
         data.integer_field = map['integer_field']
-        data.list_field = Parsers::ListOfStrings.parse(map['list_field']) if map['list_field']
-        data.map_field = Parsers::MapOfStrings.parse(map['map_field']) if map['map_field']
+        data.list_field = (Parsers::ListOfStrings.parse(map['list_field']) unless map['list_field'].nil?)
+        data.map_field = (Parsers::MapOfStrings.parse(map['map_field']) unless map['map_field'].nil?)
         data.message = map['message']
         data.string_field = map['string_field']
         data
@@ -699,18 +818,8 @@ module RailsJson
         data = Types::NullOperationOutput.new
         map = Seahorse::JSON.load(http_resp.body)
         data.string = map['string']
-        data.sparse_string_list = Parsers::SparseStringList.parse(map['sparse_string_list']) if map['sparse_string_list']
-        data.sparse_string_map = Parsers::SparseStringMap.parse(map['sparse_string_map']) if map['sparse_string_map']
-        data
-      end
-    end
-
-    class SparseStringMap
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-          data[key] = value
-        end
+        data.sparse_string_list = (Parsers::SparseStringList.parse(map['sparse_string_list']) unless map['sparse_string_list'].nil?)
+        data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
         data
       end
     end
@@ -781,7 +890,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::Struct____789BadNameOutput.new
         map = Seahorse::JSON.load(http_resp.body)
-        data.member = Parsers::Struct____456efg.parse(map['member']) if map['member']
+        data.member = (Parsers::Struct____456efg.parse(map['member']) unless map['member'].nil?)
         data
       end
     end

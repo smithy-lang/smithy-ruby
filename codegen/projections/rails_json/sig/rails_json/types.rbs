@@ -112,6 +112,10 @@ module RailsJson
 
     JsonEnumsOutput: untyped
 
+    JsonMapsInput: untyped
+
+    JsonMapsOutput: untyped
+
     JsonUnionsInput: untyped
 
     JsonUnionsOutput: untyped

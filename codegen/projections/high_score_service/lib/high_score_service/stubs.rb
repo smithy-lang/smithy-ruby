@@ -120,7 +120,7 @@ module HighScoreService
         stub ||= []
         data = []
         stub.each do |element|
-          data << Stubs::HighScoreAttributes.stub(element)
+          data << Stubs::HighScoreAttributes.stub(element) unless element.nil?
         end
         data
       end

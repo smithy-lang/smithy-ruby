@@ -2108,6 +2108,739 @@ module RailsJson
         end
       end
     end
+    describe '#json_maps' do
+      describe 'requests' do
+        # Serializes JSON maps
+        #
+        it 'RailsJsonJsonMaps' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dense_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                },
+                "sparse_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          }, **opts)
+        end
+        # Serializes JSON map values in sparse maps
+        #
+        it 'RailsJsonSerializesNullMapValues' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparse_boolean_map": {
+                    "x": null
+                },
+                "sparse_number_map": {
+                    "x": null
+                },
+                "sparse_string_map": {
+                    "x": null
+                },
+                "sparse_struct_map": {
+                    "x": null
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          }, **opts)
+        end
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        #
+        it 'RailsJsonSerializesZeroValuesInMaps' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dense_number_map": {
+                    "x": 0
+                },
+                "sparse_number_map": {
+                    "x": 0
+                },
+                "dense_boolean_map": {
+                    "x": false
+                },
+                "sparse_boolean_map": {
+                    "x": false
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          }, **opts)
+        end
+        # A request that contains a sparse map of sets
+        #
+        it 'RailsJsonSerializesSparseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          }, **opts)
+        end
+        # A request that contains a dense map of sets.
+        #
+        it 'RailsJsonSerializesDenseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dense_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          }, **opts)
+        end
+        # A request that contains a sparse map of sets.
+        #
+        it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_maps({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          }, **opts)
+        end
+      end
+
+      describe 'responses' do
+        # Deserializes JSON maps
+        #
+        it 'RailsJsonJsonMaps' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                },
+                "sparse_struct_map": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+               }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+        end
+        # Deserializes null JSON map values
+        #
+        it 'RailsJsonDeserializesNullMapValues' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "sparse_boolean_map": {
+                    "x": null
+                },
+                "sparse_number_map": {
+                    "x": null
+                },
+                "sparse_string_map": {
+                    "x": null
+                },
+                "sparse_struct_map": {
+                    "x": null
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+        end
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        #
+        it 'RailsJsonDeserializesZeroValuesInMaps' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_number_map": {
+                    "x": 0
+                },
+                "sparse_number_map": {
+                    "x": 0
+                },
+                "dense_boolean_map": {
+                    "x": false
+                },
+                "sparse_boolean_map": {
+                    "x": false
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+        end
+        # A response that contains a sparse map of sets
+        #
+        it 'RailsJsonDeserializesSparseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a dense map of sets.
+        #
+        it 'RailsJsonDeserializesDenseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_set_map": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a sparse map of sets.
+        #
+        it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "sparse_set_map": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+        end
+        # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
+        # drop the null key-value pair.
+        #
+        it 'RailsJsonDeserializesDenseSetMapAndSkipsNull' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "dense_set_map": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+      end
+      describe 'response stubs' do
+        # Deserializes JSON maps
+        #
+        it 'stubs RailsJsonJsonMaps' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            },
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+        end
+        # Deserializes null JSON map values
+        #
+        it 'stubs RailsJsonDeserializesNullMapValues' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+        end
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        #
+        it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_number_map: {
+              'x' => 0
+            },
+            sparse_number_map: {
+              'x' => 0
+            },
+            dense_boolean_map: {
+              'x' => false
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+        end
+        # A response that contains a sparse map of sets
+        #
+        it 'stubs RailsJsonDeserializesSparseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a dense map of sets.
+        #
+        it 'stubs RailsJsonDeserializesDenseSetMap' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+        # A response that contains a sparse map of sets.
+        #
+        it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+        end
+        # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
+        # drop the null key-value pair.
+        #
+        it 'stubs RailsJsonDeserializesDenseSetMapAndSkipsNull' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:json_maps, {
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.json_maps({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            dense_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+      end
+    end
     describe '#json_unions' do
       describe 'requests' do
         # Serializes a string union value

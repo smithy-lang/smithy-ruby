@@ -49,7 +49,7 @@ module HighScoreService
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = Parsers::ErrorMessages.parse(value) if value
+          data[key] = Parsers::ErrorMessages.parse(value) unless value.nil?
         end
         data
       end
@@ -58,7 +58,7 @@ module HighScoreService
     class ErrorMessages
       def self.parse(list)
         list.map do |value|
-          value
+          value unless value.nil?
         end
       end
     end
@@ -95,7 +95,7 @@ module HighScoreService
     class HighScores
       def self.parse(list)
         list.map do |value|
-          Parsers::HighScoreAttributes.parse(value) if value
+          Parsers::HighScoreAttributes.parse(value) unless value.nil?
         end
       end
     end

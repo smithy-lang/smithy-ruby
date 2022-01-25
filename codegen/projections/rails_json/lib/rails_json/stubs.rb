@@ -273,7 +273,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -474,7 +474,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -493,7 +493,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << Seahorse::TimeHelper.to_date_time(element)
+          data << Seahorse::TimeHelper.to_date_time(element) unless element.nil?
         end
         data
       end
@@ -512,7 +512,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -531,7 +531,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -551,7 +551,7 @@ module RailsJson
         stub ||= []
         data = Set.new
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data.to_a
       end
@@ -570,7 +570,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -618,7 +618,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -638,9 +638,264 @@ module RailsJson
         stub ||= []
         data = Set.new
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data.to_a
+      end
+    end
+
+    # Operation Stubber for JsonMaps
+    class JsonMaps
+
+      def self.default(visited=[])
+        {
+          dense_struct_map: Stubs::DenseStructMap.default(visited),
+          sparse_struct_map: Stubs::SparseStructMap.default(visited),
+          dense_number_map: Stubs::DenseNumberMap.default(visited),
+          dense_boolean_map: Stubs::DenseBooleanMap.default(visited),
+          dense_string_map: Stubs::DenseStringMap.default(visited),
+          sparse_number_map: Stubs::SparseNumberMap.default(visited),
+          sparse_boolean_map: Stubs::SparseBooleanMap.default(visited),
+          sparse_string_map: Stubs::SparseStringMap.default(visited),
+          dense_set_map: Stubs::DenseSetMap.default(visited),
+          sparse_set_map: Stubs::SparseSetMap.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:dense_struct_map] = Stubs::DenseStructMap.stub(stub[:dense_struct_map]) unless stub[:dense_struct_map].nil?
+        data[:sparse_struct_map] = Stubs::SparseStructMap.stub(stub[:sparse_struct_map]) unless stub[:sparse_struct_map].nil?
+        data[:dense_number_map] = Stubs::DenseNumberMap.stub(stub[:dense_number_map]) unless stub[:dense_number_map].nil?
+        data[:dense_boolean_map] = Stubs::DenseBooleanMap.stub(stub[:dense_boolean_map]) unless stub[:dense_boolean_map].nil?
+        data[:dense_string_map] = Stubs::DenseStringMap.stub(stub[:dense_string_map]) unless stub[:dense_string_map].nil?
+        data[:sparse_number_map] = Stubs::SparseNumberMap.stub(stub[:sparse_number_map]) unless stub[:sparse_number_map].nil?
+        data[:sparse_boolean_map] = Stubs::SparseBooleanMap.stub(stub[:sparse_boolean_map]) unless stub[:sparse_boolean_map].nil?
+        data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
+        data[:dense_set_map] = Stubs::DenseSetMap.stub(stub[:dense_set_map]) unless stub[:dense_set_map].nil?
+        data[:sparse_set_map] = Stubs::SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
+        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+      end
+    end
+
+    # Map Stubber for SparseSetMap
+    class SparseSetMap
+      def self.default(visited=[])
+        return nil if visited.include?('SparseSetMap')
+        visited = visited + ['SparseSetMap']
+        {
+          test_key: Stubs::StringSet.default(visited)
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = (Stubs::StringSet.stub(value) unless value.nil?)
+        end
+        data
+      end
+    end
+
+    # Map Stubber for DenseSetMap
+    class DenseSetMap
+      def self.default(visited=[])
+        return nil if visited.include?('DenseSetMap')
+        visited = visited + ['DenseSetMap']
+        {
+          test_key: Stubs::StringSet.default(visited)
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = Stubs::StringSet.stub(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Stubber for SparseStringMap
+    class SparseStringMap
+      def self.default(visited=[])
+        return nil if visited.include?('SparseStringMap')
+        visited = visited + ['SparseStringMap']
+        {
+          test_key: 'value'
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Stubber for SparseBooleanMap
+    class SparseBooleanMap
+      def self.default(visited=[])
+        return nil if visited.include?('SparseBooleanMap')
+        visited = visited + ['SparseBooleanMap']
+        {
+          test_key: false
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Stubber for SparseNumberMap
+    class SparseNumberMap
+      def self.default(visited=[])
+        return nil if visited.include?('SparseNumberMap')
+        visited = visited + ['SparseNumberMap']
+        {
+          test_key: 1
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Stubber for DenseStringMap
+    class DenseStringMap
+      def self.default(visited=[])
+        return nil if visited.include?('DenseStringMap')
+        visited = visited + ['DenseStringMap']
+        {
+          test_key: 'value'
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Stubber for DenseBooleanMap
+    class DenseBooleanMap
+      def self.default(visited=[])
+        return nil if visited.include?('DenseBooleanMap')
+        visited = visited + ['DenseBooleanMap']
+        {
+          test_key: false
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Stubber for DenseNumberMap
+    class DenseNumberMap
+      def self.default(visited=[])
+        return nil if visited.include?('DenseNumberMap')
+        visited = visited + ['DenseNumberMap']
+        {
+          test_key: 1
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Stubber for SparseStructMap
+    class SparseStructMap
+      def self.default(visited=[])
+        return nil if visited.include?('SparseStructMap')
+        visited = visited + ['SparseStructMap']
+        {
+          test_key: Stubs::GreetingStruct.default(visited)
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = (Stubs::GreetingStruct.stub(value) unless value.nil?)
+        end
+        data
+      end
+    end
+
+    # Structure Stubber for GreetingStruct
+    class GreetingStruct
+
+      def self.default(visited=[])
+        return nil if visited.include?('GreetingStruct')
+        visited = visited + ['GreetingStruct']
+        {
+          hi: 'hi',
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        data[:hi] = stub[:hi] unless stub[:hi].nil?
+        data
+      end
+    end
+
+    # Map Stubber for DenseStructMap
+    class DenseStructMap
+      def self.default(visited=[])
+        return nil if visited.include?('DenseStructMap')
+        visited = visited + ['DenseStructMap']
+        {
+          test_key: Stubs::GreetingStruct.default(visited)
+        }
+      end
+
+      def self.stub(stub = {})
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = Stubs::GreetingStruct.stub(value) unless value.nil?
+        end
+        data
       end
     end
 
@@ -685,25 +940,6 @@ module RailsJson
         data[:list_value] = Stubs::StringList.stub(stub[:list_value]) unless stub[:list_value].nil?
         data[:map_value] = Stubs::StringMap.stub(stub[:map_value]) unless stub[:map_value].nil?
         data[:structure_value] = Stubs::GreetingStruct.stub(stub[:structure_value]) unless stub[:structure_value].nil?
-        data
-      end
-    end
-
-    # Structure Stubber for GreetingStruct
-    class GreetingStruct
-
-      def self.default(visited=[])
-        return nil if visited.include?('GreetingStruct')
-        visited = visited + ['GreetingStruct']
-        {
-          hi: 'hi',
-        }
-      end
-
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data[:hi] = stub[:hi] unless stub[:hi].nil?
         data
       end
     end
@@ -897,7 +1133,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = Stubs::KitchenSink.stub(value)
+          data[key] = Stubs::KitchenSink.stub(value) unless value.nil?
         end
         data
       end
@@ -916,7 +1152,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << Stubs::KitchenSink.stub(element)
+          data << Stubs::KitchenSink.stub(element) unless element.nil?
         end
         data
       end
@@ -936,7 +1172,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = Stubs::SimpleStruct.stub(value)
+          data[key] = Stubs::SimpleStruct.stub(value) unless value.nil?
         end
         data
       end
@@ -956,7 +1192,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -976,7 +1212,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = Stubs::MapOfStrings.stub(value)
+          data[key] = Stubs::MapOfStrings.stub(value) unless value.nil?
         end
         data
       end
@@ -996,7 +1232,7 @@ module RailsJson
         stub ||= {}
         data = {}
         stub.each do |key, value|
-          data[key] = Stubs::ListOfStrings.stub(value)
+          data[key] = Stubs::ListOfStrings.stub(value) unless value.nil?
         end
         data
       end
@@ -1015,7 +1251,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -1034,7 +1270,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << Stubs::SimpleStruct.stub(element)
+          data << Stubs::SimpleStruct.stub(element) unless element.nil?
         end
         data
       end
@@ -1053,7 +1289,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << Stubs::MapOfStrings.stub(element)
+          data << Stubs::MapOfStrings.stub(element) unless element.nil?
         end
         data
       end
@@ -1072,7 +1308,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << Stubs::ListOfStrings.stub(element)
+          data << Stubs::ListOfStrings.stub(element) unless element.nil?
         end
         data
       end
@@ -1173,26 +1409,6 @@ module RailsJson
         data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Map Stubber for SparseStringMap
-    class SparseStringMap
-      def self.default(visited=[])
-        return nil if visited.include?('SparseStringMap')
-        visited = visited + ['SparseStringMap']
-        {
-          test_key: 'value'
-        }
-      end
-
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        stub.each do |key, value|
-          data[key] = value
-        end
-        data
       end
     end
 

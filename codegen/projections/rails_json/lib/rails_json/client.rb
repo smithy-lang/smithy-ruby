@@ -1413,6 +1413,107 @@ module RailsJson
       resp.data
     end
 
+    # The example tests basic map serialization.
+    #
+    # @param [Hash] params
+    #   See {Types::JsonMapsInput}.
+    #
+    # @return [Types::JsonMapsOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.json_maps(
+    #     dense_struct_map: {
+    #       'key' => {
+    #         hi: 'hi'
+    #       }
+    #     },
+    #     dense_number_map: {
+    #       'key' => 1
+    #     },
+    #     dense_boolean_map: {
+    #       'key' => false
+    #     },
+    #     dense_string_map: {
+    #       'key' => 'value'
+    #     },
+    #     sparse_number_map: {
+    #       'key' => 1
+    #     },
+    #     sparse_boolean_map: {
+    #       'key' => false
+    #     },
+    #     sparse_string_map: {
+    #       'key' => 'value'
+    #     },
+    #     dense_set_map: {
+    #       'key' => [
+    #         'member'
+    #       ]
+    #     },
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::JsonMapsOutput
+    #   resp.dense_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.dense_struct_map['key'] #=> Types::GreetingStruct
+    #   resp.dense_struct_map['key'].hi #=> String
+    #   resp.sparse_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.dense_number_map #=> Hash<String, Integer>
+    #   resp.dense_number_map['key'] #=> Integer
+    #   resp.dense_boolean_map #=> Hash<String, Boolean>
+    #   resp.dense_boolean_map['key'] #=> Boolean
+    #   resp.dense_string_map #=> Hash<String, String>
+    #   resp.dense_string_map['key'] #=> String
+    #   resp.sparse_number_map #=> Hash<String, Integer>
+    #   resp.sparse_number_map['key'] #=> Integer
+    #   resp.sparse_boolean_map #=> Hash<String, Boolean>
+    #   resp.sparse_boolean_map['key'] #=> Boolean
+    #   resp.sparse_string_map #=> Hash<String, String>
+    #   resp.sparse_string_map['key'] #=> String
+    #   resp.dense_set_map #=> Hash<String, Set<String>>
+    #   resp.dense_set_map['key'] #=> Set<String>
+    #   resp.dense_set_map['key'][0] #=> String
+    #   resp.sparse_set_map #=> Hash<String, Set<String>>
+    #
+    def json_maps(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::JsonMapsInput.build(params)
+      stack.use(Seahorse::Middleware::Validate,
+        validator: Validators::JsonMapsInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Seahorse::Middleware::Build,
+        builder: Builders::JsonMaps
+      )
+      stack.use(Seahorse::HTTP::Middleware::ContentLength)
+      stack.use(Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        data_parser: Parsers::JsonMaps
+      )
+      stack.use(Seahorse::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::JsonMaps,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :json_maps
+        )
+      )
+      raise resp.error if resp.error
+      resp.data
+    end
+
     # This operation uses unions for inputs and outputs.
     #
     # @param [Hash] params

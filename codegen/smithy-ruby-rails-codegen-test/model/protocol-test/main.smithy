@@ -21,6 +21,7 @@ service RailsJson {
         OperationWithOptionalInputOutput,
         NullOperation,
         JsonUnions,
+        JsonMaps,
         DocumentType,
         DocumentTypeAsPayload,
         InputAndOutputWithHeaders,

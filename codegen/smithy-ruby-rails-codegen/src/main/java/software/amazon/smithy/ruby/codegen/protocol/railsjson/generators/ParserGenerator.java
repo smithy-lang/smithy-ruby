@@ -19,6 +19,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -35,6 +37,7 @@ import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -72,14 +75,16 @@ public class ParserGenerator extends HttpParserGeneratorBase {
     protected void renderUnionMemberParser(UnionShape s, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
         target.accept(new MemberDeserializer(member, "value = ",
-                "value"));
+                "value", false));
     }
 
     @Override
     protected void renderMapMemberParser(MapShape s) {
         Shape valueTarget = model.expectShape(s.getValue().getTarget());
         valueTarget
-                .accept(new MemberDeserializer(s.getValue(), "data[key] = ", "value"));
+                .accept(new MemberDeserializer(s.getValue(),
+                        "data[key] = ", "value",
+                        !s.hasTrait(SparseTrait.class)));
     }
 
     @Override
@@ -87,7 +92,9 @@ public class ParserGenerator extends HttpParserGeneratorBase {
         Shape memberTarget =
                 model.expectShape(s.getMember().getTarget());
         memberTarget
-                .accept(new MemberDeserializer(s.getMember(), "", "value"));
+                .accept(new MemberDeserializer(s.getMember(),
+                        "", "value",
+                        !s.hasTrait(SparseTrait.class)));
     }
 
     @Override
@@ -95,7 +102,8 @@ public class ParserGenerator extends HttpParserGeneratorBase {
         Shape memberTarget =
                 model.expectShape(s.getMember().getTarget());
         memberTarget
-                .accept(new MemberDeserializer(s.getMember(), "", "value"));
+                .accept(new MemberDeserializer(s.getMember(),
+                        "", "value", true));
     }
 
     @Override
@@ -123,7 +131,7 @@ public class ParserGenerator extends HttpParserGeneratorBase {
             }
 
             String valueGetter = "map['" + jsonName + "']";
-            target.accept(new MemberDeserializer(member, dataSetter, valueGetter));
+            target.accept(new MemberDeserializer(member, dataSetter, valueGetter, false));
         });
     }
 
@@ -133,12 +141,22 @@ public class ParserGenerator extends HttpParserGeneratorBase {
         private final String jsonGetter;
         private final String dataSetter;
         private final MemberShape memberShape;
+        private final boolean checkRequired;
 
         MemberDeserializer(MemberShape memberShape,
-                           String dataSetter, String jsonGetter) {
+                           String dataSetter, String jsonGetter, boolean checkRequired) {
             this.jsonGetter = jsonGetter;
             this.dataSetter = dataSetter;
             this.memberShape = memberShape;
+            this.checkRequired = checkRequired;
+        }
+
+        private String checkRequired() {
+            if (this.checkRequired) {
+                return " unless " + jsonGetter + ".nil?";
+            } else {
+                return "";
+            }
         }
 
         /**
@@ -146,13 +164,29 @@ public class ParserGenerator extends HttpParserGeneratorBase {
          */
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$L$L", dataSetter, jsonGetter);
+            writer.write("$L$L$L", dataSetter, jsonGetter, checkRequired());
+            return null;
+        }
+
+        private void rubyFloat() {
+            writer.write("$LSeahorse::NumberHelper.deserialize($L)$L", dataSetter, jsonGetter, checkRequired());
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloat();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloat();
             return null;
         }
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$1LBase64::decode64($2L) if $2L", dataSetter, jsonGetter);
+            writer.write("$1LBase64::decode64($2L) unless $2L.nil?", dataSetter, jsonGetter);
             return null;
         }
 
@@ -181,8 +215,15 @@ public class ParserGenerator extends HttpParserGeneratorBase {
          * For complex shapes, simply delegate to their builder.
          */
         private void defaultComplexDeserializer(Shape shape) {
-            writer.write("$1LParsers::$2L.parse($3L) if $3L", dataSetter, symbolProvider.toSymbol(shape).getName(),
-                    jsonGetter);
+            if (checkRequired) {
+                writer.write("$1LParsers::$2L.parse($3L) unless $3L.nil?",
+                        dataSetter, symbolProvider.toSymbol(shape).getName(),
+                        jsonGetter);
+            } else {
+                writer.write("$1L(Parsers::$2L.parse($3L) unless $3L.nil?)",
+                        dataSetter, symbolProvider.toSymbol(shape).getName(),
+                        jsonGetter);
+            }
         }
 
         @Override

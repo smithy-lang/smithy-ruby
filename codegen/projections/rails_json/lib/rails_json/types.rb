@@ -951,6 +951,118 @@ module RailsJson
       include Seahorse::Structure
     end
 
+    # @!attribute dense_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute sparse_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute dense_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute dense_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute dense_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute sparse_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute sparse_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute sparse_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute dense_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    # @!attribute sparse_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    JsonMapsInput = ::Struct.new(
+      :dense_struct_map,
+      :sparse_struct_map,
+      :dense_number_map,
+      :dense_boolean_map,
+      :dense_string_map,
+      :sparse_number_map,
+      :sparse_boolean_map,
+      :sparse_string_map,
+      :dense_set_map,
+      :sparse_set_map,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute dense_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute sparse_struct_map
+    #
+    #   @return [Hash<String, GreetingStruct>]
+    #
+    # @!attribute dense_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute dense_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute dense_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute sparse_number_map
+    #
+    #   @return [Hash<String, Integer>]
+    #
+    # @!attribute sparse_boolean_map
+    #
+    #   @return [Hash<String, Boolean>]
+    #
+    # @!attribute sparse_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute dense_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    # @!attribute sparse_set_map
+    #
+    #   @return [Hash<String, Set<String>>]
+    #
+    JsonMapsOutput = ::Struct.new(
+      :dense_struct_map,
+      :sparse_struct_map,
+      :dense_number_map,
+      :dense_boolean_map,
+      :dense_string_map,
+      :sparse_number_map,
+      :sparse_boolean_map,
+      :sparse_string_map,
+      :dense_set_map,
+      :sparse_set_map,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # A shared structure that contains a single union member.
     #
     # @!attribute contents
