@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-require 'time'
-
 module Seahorse
-  # A module that provides helper methods to convert from Time objects to
+  # A module that provides helper methods to convert Numeric objects to
   # protocol specific serializable formats.
   # @api private
   module NumberHelper
     class << self
-      # @param [Number,String] n
+      # @param [Number,String] input
       # @return [String] The serialized number
       def serialize(input)
         if input == ::Float::INFINITY then 'Infinity'
