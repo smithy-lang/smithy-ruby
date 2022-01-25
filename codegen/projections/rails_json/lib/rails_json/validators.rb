@@ -75,6 +75,21 @@ module RailsJson
       end
     end
 
+    class DocumentTypeAsPayloadInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::DocumentTypeAsPayloadInput, context: context)
+        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+      end
+    end
+
+    class DocumentTypeInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::DocumentTypeInput, context: context)
+        Seahorse::Validator.validate!(input[:string_value], ::String, context: "#{context}[:string_value]")
+        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+      end
+    end
+
     class DoubleList
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, ::Array, context: context)
@@ -595,13 +610,6 @@ module RailsJson
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Types::OperationWithOptionalInputOutputInput, context: context)
         Seahorse::Validator.validate!(input[:value], ::String, context: "#{context}[:value]")
-      end
-    end
-
-    class PutAndGetInlineDocumentsInput
-      def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PutAndGetInlineDocumentsInput, context: context)
-        Validators::Document.validate!(input[:inline_document], context: "#{context}[:inline_document]") unless input[:inline_document].nil?
       end
     end
 

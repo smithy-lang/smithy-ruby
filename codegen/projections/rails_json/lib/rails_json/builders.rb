@@ -204,6 +204,30 @@ module RailsJson
       end
     end
 
+    # Operation Builder for DocumentType
+    class DocumentType
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/DocumentType')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:string_value] = input[:string_value] unless input[:string_value].nil?
+        data[:document_value] = input[:document_value] unless input[:document_value].nil?
+        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+      end
+    end
+
+    # Operation Builder for DocumentTypeAsPayload
+    class DocumentTypeAsPayload
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/DocumentTypeAsPayload')
+        http_req.headers['Content-Type'] = 'application/json'
+        http_req.body = StringIO.new(Seahorse::JSON.dump(input[:document_value]))
+      end
+    end
+
     # Operation Builder for EmptyOperation
     class EmptyOperation
       def self.build(http_req, input:)
@@ -835,19 +859,6 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:value] = input[:value] unless input[:value].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Operation Builder for PutAndGetInlineDocuments
-    class PutAndGetInlineDocuments
-      def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/putandgetinlinedocuments')
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:inline_document] = input[:inline_document] unless input[:inline_document].nil?
         http_req.body = StringIO.new(Seahorse::JSON.dump(data))
       end
     end

@@ -188,6 +188,60 @@ module RailsJson
       include Seahorse::Structure
     end
 
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeAsPayloadInput = ::Struct.new(
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeAsPayloadOutput = ::Struct.new(
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute string_value
+    #
+    #   @return [String]
+    #
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeInput = ::Struct.new(
+      :string_value,
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    # @!attribute string_value
+    #
+    #   @return [String]
+    #
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeOutput = ::Struct.new(
+      :string_value,
+      :document_value,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     EmptyOperationInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -1624,28 +1678,6 @@ module RailsJson
     #
     OperationWithOptionalInputOutputOutput = ::Struct.new(
       :value,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute inline_document
-    #
-    #   @return [Hash,Array,String,Boolean,Numeric]
-    #
-    PutAndGetInlineDocumentsInput = ::Struct.new(
-      :inline_document,
-      keyword_init: true
-    ) do
-      include Seahorse::Structure
-    end
-
-    # @!attribute inline_document
-    #
-    #   @return [Hash,Array,String,Boolean,Numeric]
-    #
-    PutAndGetInlineDocumentsOutput = ::Struct.new(
-      :inline_document,
       keyword_init: true
     ) do
       include Seahorse::Structure

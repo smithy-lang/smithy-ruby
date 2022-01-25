@@ -52,6 +52,56 @@ module RailsJson
       end
     end
 
+    # Operation Stubber for DocumentType
+    class DocumentType
+
+      def self.default(visited=[])
+        {
+          string_value: 'string_value',
+          document_value: nil,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:string_value] = stub[:string_value] unless stub[:string_value].nil?
+        data[:document_value] = stub[:document_value] unless stub[:document_value].nil?
+        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+      end
+    end
+
+    # Document Type Stubber for Document
+    class Document
+      def self.default(visited=[])
+        return nil if visited.include?('Document')
+        visited = visited + ['Document']
+        { 'Document' => [0, 1, 2] }
+      end
+
+      def self.stub(stub = {})
+        stub
+      end
+    end
+
+    # Operation Stubber for DocumentTypeAsPayload
+    class DocumentTypeAsPayload
+
+      def self.default(visited=[])
+        {
+          document_value: nil,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        http_resp.body = StringIO.new(Seahorse::JSON.dump(stub[:document_value]))
+      end
+    end
+
     # Operation Stubber for EmptyOperation
     class EmptyOperation
 
@@ -1194,37 +1244,6 @@ module RailsJson
         http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
         http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Operation Stubber for PutAndGetInlineDocuments
-    class PutAndGetInlineDocuments
-
-      def self.default(visited=[])
-        {
-          inline_document: nil,
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
-        data[:inline_document] = stub[:inline_document] unless stub[:inline_document].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
-      end
-    end
-
-    # Document Type Stubber for Document
-    class Document
-      def self.default(visited=[])
-        return nil if visited.include?('Document')
-        visited = visited + ['Document']
-        { 'Document' => [0, 1, 2] }
-      end
-
-      def self.stub(stub = {})
-        stub
       end
     end
 

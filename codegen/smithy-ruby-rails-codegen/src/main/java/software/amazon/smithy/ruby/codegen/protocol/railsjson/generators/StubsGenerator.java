@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -280,6 +281,14 @@ public class StubsGenerator extends HttpStubsGeneratorBase {
             writer
                     .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
                     .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void documentShape(DocumentShape shape) {
+            writer
+                    .write("http_resp.headers['Content-Type'] = 'application/json'")
+                    .write("http_resp.body = StringIO.new(Seahorse::JSON.dump($1L))", inputGetter);
             return null;
         }
 

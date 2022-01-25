@@ -26,6 +26,14 @@ module RailsJson
 
     ConstantQueryStringOutput: untyped
 
+    DocumentTypeAsPayloadInput: untyped
+
+    DocumentTypeAsPayloadOutput: untyped
+
+    DocumentTypeInput: untyped
+
+    DocumentTypeOutput: untyped
+
     EmptyOperationInput: untyped
 
     EmptyOperationOutput: untyped
@@ -181,10 +189,6 @@ module RailsJson
     OperationWithOptionalInputOutputInput: untyped
 
     OperationWithOptionalInputOutputOutput: untyped
-
-    PutAndGetInlineDocumentsInput: untyped
-
-    PutAndGetInlineDocumentsOutput: untyped
 
     QueryIdempotencyTokenAutoFillInput: untyped
 

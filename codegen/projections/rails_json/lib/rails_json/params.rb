@@ -69,6 +69,25 @@ module RailsJson
       end
     end
 
+    module DocumentTypeAsPayloadInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::DocumentTypeAsPayloadInput, context: context)
+        type = Types::DocumentTypeAsPayloadInput.new
+        type.document_value = params[:document_value]
+        type
+      end
+    end
+
+    module DocumentTypeInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::DocumentTypeInput, context: context)
+        type = Types::DocumentTypeInput.new
+        type.string_value = params[:string_value]
+        type.document_value = params[:document_value]
+        type
+      end
+    end
+
     module DoubleList
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, ::Array, context: context)
@@ -642,15 +661,6 @@ module RailsJson
         Seahorse::Validator.validate!(params, ::Hash, Types::OperationWithOptionalInputOutputInput, context: context)
         type = Types::OperationWithOptionalInputOutputInput.new
         type.value = params[:value]
-        type
-      end
-    end
-
-    module PutAndGetInlineDocumentsInput
-      def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PutAndGetInlineDocumentsInput, context: context)
-        type = Types::PutAndGetInlineDocumentsInput.new
-        type.inline_document = params[:inline_document]
         type
       end
     end

@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -237,6 +238,14 @@ public class ParserGenerator extends HttpParserGeneratorBase {
             writer
                     .write("payload = http_resp.body.read")
                     .write("$Lpayload unless payload.empty?", dataSetter);
+            return null;
+        }
+
+        @Override
+        public Void documentShape(DocumentShape shape) {
+            writer
+                    .write("payload = Seahorse::JSON.load(http_resp.body.read)")
+                    .write("$Lpayload", dataSetter);
             return null;
         }
 

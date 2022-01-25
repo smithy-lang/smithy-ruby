@@ -240,6 +240,443 @@ module RailsJson
       end
 
     end
+    describe '#document_type' do
+      describe 'requests' do
+        # Serializes document types as part of the JSON request payload with no escaping.
+        #
+        it 'RailsJsonDocumentTypeInputWithObject' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": {
+                    "foo": "bar"
+                }
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          }, **opts)
+        end
+        # Serializes document types using a string.
+        #
+        it 'RailsJsonDocumentInputWithString' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": "hello"
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: 'hello'
+          }, **opts)
+        end
+        # Serializes document types using a number.
+        #
+        it 'RailsJsonDocumentInputWithNumber' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": 10
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: 10
+          }, **opts)
+        end
+        # Serializes document types using a boolean.
+        #
+        it 'RailsJsonDocumentInputWithBoolean' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": true
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: true
+          }, **opts)
+        end
+        # Serializes document types using a list.
+        #
+        it 'RailsJsonDocumentInputWithList' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "string_value": "string",
+                "document_value": [
+                    true,
+                    "hi",
+                    [
+                        1,
+                        2
+                    ],
+                    {
+                        "foo": {
+                            "baz": [
+                                3,
+                                4
+                            ]
+                        }
+                    }
+                ]
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type({
+            string_value: "string",
+            document_value: [true, 'hi', [1, 2], {'foo' => {'baz' => [3, 4]}}]
+          }, **opts)
+        end
+      end
+
+      describe 'responses' do
+        # Serializes documents as part of the JSON response payload with no escaping.
+        #
+        it 'RailsJsonDocumentOutput' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": {
+                    "foo": "bar"
+                }
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'RailsJsonDocumentOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": "hello"
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 'hello'
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'RailsJsonDocumentOutputNumber' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": 10
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 10
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'RailsJsonDocumentOutputBoolean' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": false
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: false
+          })
+        end
+        # Document types can be JSON arrays.
+        #
+        it 'RailsJsonDocumentOutputArray' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "string_value": "string",
+                "document_value": [
+                    true,
+                    false
+                ]
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: [true, false]
+          })
+        end
+      end
+      describe 'response stubs' do
+        # Serializes documents as part of the JSON response payload with no escaping.
+        #
+        it 'stubs RailsJsonDocumentOutput' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'stubs RailsJsonDocumentOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: 'hello'
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 'hello'
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'stubs RailsJsonDocumentOutputNumber' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: 10
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: 10
+          })
+        end
+        # Document types can be JSON scalars too.
+        #
+        it 'stubs RailsJsonDocumentOutputBoolean' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: false
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: false
+          })
+        end
+        # Document types can be JSON arrays.
+        #
+        it 'stubs RailsJsonDocumentOutputArray' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type, {
+            string_value: "string",
+            document_value: [true, false]
+          })
+          output = client.document_type({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            string_value: "string",
+            document_value: [true, false]
+          })
+        end
+      end
+    end
+    describe '#document_type_as_payload' do
+      describe 'requests' do
+        # Serializes a document as the target of the httpPayload trait.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadInput' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentTypeAsPayload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "foo": "bar"
+            }'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type_as_payload({
+            document_value: {'foo' => 'bar'}
+          }, **opts)
+        end
+        # Serializes a document as the target of the httpPayload trait using a string.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadInputString' do
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('PUT')
+            expect(request_uri.path).to eq('/DocumentTypeAsPayload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.document_type_as_payload({
+            document_value: 'hello'
+          }, **opts)
+        end
+      end
+
+      describe 'responses' do
+        # Serializes a document as the target of the httpPayload trait.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadOutput' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('{
+                "foo": "bar"
+            }')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Serializes a document as a payload string.
+        #
+        it 'RailsJsonDocumentTypeAsPayloadOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.body = StringIO.new('"hello"')
+            Seahorse::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: 'hello'
+          })
+        end
+      end
+      describe 'response stubs' do
+        # Serializes a document as the target of the httpPayload trait.
+        #
+        it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type_as_payload, {
+            document_value: {'foo' => 'bar'}
+          })
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: {'foo' => 'bar'}
+          })
+        end
+        # Serializes a document as a payload string.
+        #
+        it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
+          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:document_type_as_payload, {
+            document_value: 'hello'
+          })
+          output = client.document_type_as_payload({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            document_value: 'hello'
+          })
+        end
+      end
+    end
     describe '#empty_operation' do
 
       describe 'responses' do
@@ -4274,69 +4711,6 @@ module RailsJson
         end
       end
 
-    end
-    describe '#put_and_get_inline_documents' do
-      describe 'requests' do
-        # Serializes inline documents in a JSON request.
-        #
-        it 'RailsJsonPutAndGetInlineDocumentsInput' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
-            request = context.request
-            request_uri = URI.parse(request.url)
-            expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/putandgetinlinedocuments')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "inline_document": {"foo": "bar"}
-            }'))
-            Seahorse::Output.new
-          end
-          opts = {middleware: middleware}
-          client.put_and_get_inline_documents({
-            inline_document: {'foo' => 'bar'}
-          }, **opts)
-        end
-      end
-
-      describe 'responses' do
-        # Serializes inline documents in a JSON response.
-        #
-        it 'RailsJsonPutAndGetInlineDocumentsInput' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
-            response.body = StringIO.new('{
-                "inline_document": {"foo": "bar"}
-            }')
-            Seahorse::Output.new
-          end
-          middleware.remove_send.remove_build
-          output = client.put_and_get_inline_documents({}, middleware: middleware)
-          expect(output.to_h).to eq({
-            inline_document: {'foo' => 'bar'}
-          })
-        end
-      end
-      describe 'response stubs' do
-        # Serializes inline documents in a JSON response.
-        #
-        it 'stubs RailsJsonPutAndGetInlineDocumentsInput' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
-          end
-          middleware.remove_build
-          client.stub_responses(:put_and_get_inline_documents, {
-            inline_document: {'foo' => 'bar'}
-          })
-          output = client.put_and_get_inline_documents({}, middleware: middleware)
-          expect(output.to_h).to eq({
-            inline_document: {'foo' => 'bar'}
-          })
-        end
-      end
     end
     describe '#query_idempotency_token_auto_fill' do
       describe 'requests' do

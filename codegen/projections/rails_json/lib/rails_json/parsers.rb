@@ -39,6 +39,27 @@ module RailsJson
       end
     end
 
+    # Operation Parser for DocumentType
+    class DocumentType
+      def self.parse(http_resp)
+        data = Types::DocumentTypeOutput.new
+        map = Seahorse::JSON.load(http_resp.body)
+        data.string_value = map['string_value']
+        data.document_value = map['document_value']
+        data
+      end
+    end
+
+    # Operation Parser for DocumentTypeAsPayload
+    class DocumentTypeAsPayload
+      def self.parse(http_resp)
+        data = Types::DocumentTypeAsPayloadOutput.new
+        payload = Seahorse::JSON.load(http_resp.body.read)
+        data.document_value = payload
+        data
+      end
+    end
+
     # Operation Parser for EmptyOperation
     class EmptyOperation
       def self.parse(http_resp)
@@ -717,16 +738,6 @@ module RailsJson
         data = Types::OperationWithOptionalInputOutputOutput.new
         map = Seahorse::JSON.load(http_resp.body)
         data.value = map['value']
-        data
-      end
-    end
-
-    # Operation Parser for PutAndGetInlineDocuments
-    class PutAndGetInlineDocuments
-      def self.parse(http_resp)
-        data = Types::PutAndGetInlineDocumentsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
-        data.inline_document = map['inline_document']
         data
       end
     end
