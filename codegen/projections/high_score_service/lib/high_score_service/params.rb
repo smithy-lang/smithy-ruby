@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'securerandom'
+
 module HighScoreService
   module Params
 

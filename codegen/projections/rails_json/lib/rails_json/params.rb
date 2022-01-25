@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'securerandom'
+
 module RailsJson
   module Params
 
@@ -568,15 +569,15 @@ module RailsJson
           )
         when :list_value
           Types::MyUnion::ListValue.new(
-            StringList.build(params[:list_value], context: "#{context}[:list_value]")
+            (StringList.build(params[:list_value], context: "#{context}[:list_value]") unless params[:list_value].nil?)
           )
         when :map_value
           Types::MyUnion::MapValue.new(
-            StringMap.build(params[:map_value], context: "#{context}[:map_value]")
+            (StringMap.build(params[:map_value], context: "#{context}[:map_value]") unless params[:map_value].nil?)
           )
         when :structure_value
           Types::MyUnion::StructureValue.new(
-            GreetingStruct.build(params[:structure_value], context: "#{context}[:structure_value]")
+            (GreetingStruct.build(params[:structure_value], context: "#{context}[:structure_value]") unless params[:structure_value].nil?)
           )
         else
           raise ArgumentError,

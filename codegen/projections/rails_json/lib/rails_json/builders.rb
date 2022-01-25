@@ -17,6 +17,11 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/AllQueryStringTypesInput')
+        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
+          input[:query_params_map_of_strings].each do |k, v|
+            http_req.append_query_param(k, v.to_s) unless v.nil?
+          end
+        end
         http_req.append_query_param('String', input[:query_string].to_s) unless input[:query_string].nil?
         unless input[:query_string_list].nil? || input[:query_string_list].empty?
           input[:query_string_list].each do |value|
@@ -65,11 +70,6 @@ module RailsJson
         unless input[:query_enum_list].nil? || input[:query_enum_list].empty?
           input[:query_enum_list].each do |value|
             http_req.append_query_param('EnumList', value.to_s) unless value.nil?
-          end
-        end
-        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
-          input[:query_params_map_of_strings].each do |k, v|
-            http_req.append_query_param(k, v.to_s) unless v.nil?
           end
         end
       end
@@ -857,7 +857,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/StringListMap')
-        http_req.append_query_param('corge', input[:qux].to_s) unless input[:qux].nil?
         unless input[:foo].nil? || input[:foo].empty?
           input[:foo].each do |k, v|
             unless v.nil? || v.empty?
@@ -867,6 +866,7 @@ module RailsJson
             end
           end
         end
+        http_req.append_query_param('corge', input[:qux].to_s) unless input[:qux].nil?
       end
     end
 

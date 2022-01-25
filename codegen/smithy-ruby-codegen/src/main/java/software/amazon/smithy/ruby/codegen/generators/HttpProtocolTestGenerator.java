@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
@@ -174,8 +175,21 @@ public class HttpProtocolTestGenerator {
             writer
                     .writeDocstring(documentation)
                     .openBlock("it '$L' do", testCase.getId())
+                    .call(() -> {
+                        if (inputShape.members().stream().anyMatch((m) -> m.hasTrait(IdempotencyTokenTrait.class))) {
+                            // auto generated tokens during protocol tests should always be this value
+                            writer.write("allow(SecureRandom).to "
+                                    + "receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')");
+                        }
+                    })
                     .call(() -> renderRequestMiddleware(testCase))
-                    .write("client.$L($L, middleware: middleware)", operationName,
+                    .write("opts = {middleware: middleware}")
+                    .call(() -> {
+                        if (testCase.getHost().isPresent()) {
+                            writer.write("opts[:endpoint] = 'http://$L'", testCase.getHost().get());
+                        }
+                    })
+                    .write("client.$L($L, **opts)", operationName,
                             getRubyHashFromParams(inputShape, testCase.getParams()))
                     .closeBlock("end");
             LOGGER.finer(

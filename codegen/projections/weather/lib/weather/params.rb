@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'securerandom'
+
 module Weather
   module Params
 
@@ -72,7 +73,7 @@ module Weather
           )
         when :png
           Types::ImageType::Png.new(
-            PNGImage.build(params[:png], context: "#{context}[:png]")
+            (PNGImage.build(params[:png], context: "#{context}[:png]") unless params[:png].nil?)
           )
         else
           raise ArgumentError,

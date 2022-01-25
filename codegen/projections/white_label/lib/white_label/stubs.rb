@@ -80,6 +80,7 @@ module WhiteLabel
       end
 
       def self.stub(stub = [])
+        stub ||= []
         data = Set.new
         stub.each do |element|
         end
@@ -98,6 +99,7 @@ module WhiteLabel
       end
 
       def self.stub(stub = [])
+        stub ||= []
         data = Set.new
         stub.each do |element|
         end
@@ -116,6 +118,7 @@ module WhiteLabel
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
         end
@@ -134,6 +137,7 @@ module WhiteLabel
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
         end
@@ -151,6 +155,7 @@ module WhiteLabel
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
         end
@@ -168,6 +173,7 @@ module WhiteLabel
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
         end
@@ -213,6 +219,7 @@ module WhiteLabel
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
         end

@@ -117,6 +117,7 @@ module HighScoreService
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << Stubs::HighScoreAttributes.stub(element)

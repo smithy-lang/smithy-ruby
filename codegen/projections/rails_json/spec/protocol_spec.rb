@@ -29,12 +29,13 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.operation____789_bad_name({
             member____123abc: "abc_value",
             member: {
               member____123foo: "foo value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -99,6 +100,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.all_query_string_types({
             query_string: "Hello there",
             query_string_list: [
@@ -154,7 +156,7 @@ module RailsJson
               'QueryParamsStringKeyA' => "Foo",
               'QueryParamsStringKeyB' => "Bar"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -182,9 +184,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.constant_and_variable_query_string({
             baz: "bam"
-          }, middleware: middleware)
+          }, **opts)
         end
         # Mixes constant and variable query string parameters
         #
@@ -202,10 +205,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.constant_and_variable_query_string({
             baz: "bam",
             maybe_set: "yes"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -228,9 +232,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.constant_query_string({
             hello: "hi"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -373,9 +378,11 @@ module RailsJson
             expect(request_uri.path).to eq('/endpoint')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
+          opts[:endpoint] = 'http://example.com'
           client.endpoint_operation({
 
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -395,9 +402,11 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
+          opts[:endpoint] = 'http://example.com'
           client.endpoint_with_host_label_operation({
             label: "bar"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -492,10 +501,11 @@ module RailsJson
             expect(request.body.read).to eq('blobby blob blob')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_traits({
             foo: "Foo",
             blob: 'blobby blob blob'
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes an empty blob in the HTTP payload
         #
@@ -509,9 +519,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_traits({
             foo: "Foo"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -602,10 +613,11 @@ module RailsJson
             expect(request.body.read).to eq('blobby blob blob')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_traits_with_media_type({
             foo: "Foo",
             blob: 'blobby blob blob'
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -667,12 +679,13 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_payload_with_structure({
             nested: {
               greeting: "hello",
               member_name: "Phreddy"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -739,13 +752,14 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_prefix_headers({
             foo: "Foo",
             foo_map: {
               'Abc' => "Abc value",
               'Def' => "Def value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # No prefix headers are serialized because the value is empty
         #
@@ -759,12 +773,13 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_prefix_headers({
             foo: "Foo",
             foo_map: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -876,10 +891,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_float_labels({
             float: Float::NAN,
             double: Float::NAN
-          }, middleware: middleware)
+          }, **opts)
         end
         # Supports handling Infinity float label values.
         #
@@ -892,10 +908,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_float_labels({
             float: Float::INFINITY,
             double: Float::INFINITY
-          }, middleware: middleware)
+          }, **opts)
         end
         # Supports handling -Infinity float label values.
         #
@@ -908,10 +925,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_float_labels({
             float: -Float::INFINITY,
             double: -Float::INFINITY
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -929,10 +947,11 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_greedy_label_in_path({
             foo: "hello/escape",
             baz: "there/guy"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -950,6 +969,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_labels({
             string: "string",
             short: 1,
@@ -959,7 +979,7 @@ module RailsJson
             double: 5.1,
             boolean: true,
             timestamp: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Sends a GET request that uses URI label bindings
         #
@@ -972,6 +992,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_labels({
             string: "%:/?#[]@!$&'()*+,;=😹",
             short: 1,
@@ -981,7 +1002,7 @@ module RailsJson
             double: 5.1,
             boolean: true,
             timestamp: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -999,6 +1020,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.http_request_with_labels_and_timestamp_format({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -1007,7 +1029,7 @@ module RailsJson
             target_epoch_seconds: Time.at(1576540098),
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -1188,6 +1210,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_string: "Hello",
             header_string_list: [
@@ -1200,7 +1223,7 @@ module RailsJson
               "b",
               "c"
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Tests requests with numeric header bindings
         #
@@ -1214,6 +1237,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_byte: 1,
             header_short: 123,
@@ -1226,7 +1250,7 @@ module RailsJson
               2,
               3
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Tests requests with boolean header bindings
         #
@@ -1240,6 +1264,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_true_bool: true,
             header_false_bool: false,
@@ -1248,7 +1273,7 @@ module RailsJson
               false,
               true
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Tests requests with enum header bindings
         #
@@ -1262,6 +1287,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.input_and_output_with_headers({
             header_enum: "Foo",
             header_enum_list: [
@@ -1269,7 +1295,7 @@ module RailsJson
               "Bar",
               "Baz"
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -1529,6 +1555,7 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_enums({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -1545,7 +1572,7 @@ module RailsJson
               'hi' => "Foo",
               'zero' => "0"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -1662,11 +1689,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               string_value: "foo"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a boolean union value
         #
@@ -1684,11 +1712,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               boolean_value: true
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a number union value
         #
@@ -1706,11 +1735,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               number_value: 1
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a blob union value
         #
@@ -1728,11 +1758,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               blob_value: 'foo'
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a timestamp union value
         #
@@ -1750,11 +1781,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               timestamp_value: Time.at(1398796238)
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes an enum union value
         #
@@ -1772,11 +1804,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               enum_value: "Foo"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a list union value
         #
@@ -1794,6 +1827,7 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               list_value: [
@@ -1801,7 +1835,7 @@ module RailsJson
                 "bar"
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a map union value
         #
@@ -1822,6 +1856,7 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               map_value: {
@@ -1829,7 +1864,7 @@ module RailsJson
                 'spam' => "eggs"
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes a structure union value
         #
@@ -1849,13 +1884,14 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.json_unions({
             contents: {
               structure_value: {
                 hi: "hello"
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -2286,9 +2322,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             string: "abc xyz"
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes string shapes with jsonvalue trait
         #
@@ -2303,9 +2340,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             json_value: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes integer shapes
         #
@@ -2320,9 +2358,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             integer: 1234
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes long shapes
         #
@@ -2337,9 +2376,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             long: 999999999999
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes float shapes
         #
@@ -2354,9 +2394,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             float: 1234.5
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes double shapes
         #
@@ -2371,9 +2412,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             double: 1234.5
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes blob shapes
         #
@@ -2388,9 +2430,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             blob: 'binary-value'
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes boolean shapes (true)
         #
@@ -2405,9 +2448,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             boolean: true
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes boolean shapes (false)
         #
@@ -2422,9 +2466,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             boolean: false
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes
         #
@@ -2439,9 +2484,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes with iso8601 timestampFormat
         #
@@ -2456,9 +2502,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             iso8601_timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes with httpdate timestampFormat
         #
@@ -2473,9 +2520,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             httpdate_timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes timestamp shapes with unixTimestamp timestampFormat
         #
@@ -2490,9 +2538,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             unix_timestamp: Time.at(946845296)
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list shapes
         #
@@ -2507,13 +2556,14 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_strings: [
               "abc",
               "mno",
               "xyz"
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty list shapes
         #
@@ -2528,11 +2578,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_strings: [
 
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list of map shapes
         #
@@ -2547,6 +2598,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_maps_of_strings: [
               {
@@ -2559,7 +2611,7 @@ module RailsJson
                 'red' => "blue"
               }
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list of structure shapes
         #
@@ -2574,6 +2626,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             list_of_structs: [
               {
@@ -2586,7 +2639,7 @@ module RailsJson
                 value: "xyz"
               }
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes list of recursive structure shapes
         #
@@ -2601,6 +2654,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             recursive_list: [
               {
@@ -2615,7 +2669,7 @@ module RailsJson
                 ]
               }
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map shapes
         #
@@ -2630,12 +2684,13 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_strings: {
               'abc' => "xyz",
               'mno' => "hjk"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty map shapes
         #
@@ -2650,11 +2705,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_strings: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map of list shapes
         #
@@ -2669,6 +2725,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_lists_of_strings: {
               'abc' => [
@@ -2680,7 +2737,7 @@ module RailsJson
                 "abc"
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map of structure shapes
         #
@@ -2695,6 +2752,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             map_of_structs: {
               'key1' => {
@@ -2704,7 +2762,7 @@ module RailsJson
                 value: "value-2"
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes map of recursive structure shapes
         #
@@ -2719,6 +2777,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             recursive_map: {
               'key1' => {
@@ -2733,7 +2792,7 @@ module RailsJson
                 }
               }
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes structure shapes
         #
@@ -2748,11 +2807,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             simple_struct: {
               value: "abc"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes structure members with locationName traits
         #
@@ -2767,11 +2827,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             struct_with_location_name: {
               value: "some-value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty structure shapes
         #
@@ -2786,11 +2847,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             simple_struct: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes structure which have no members
         #
@@ -2805,11 +2867,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             empty_struct: {
 
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes recursive structure shapes
         #
@@ -2824,6 +2887,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.kitchen_sink_operation({
             string: "top-value",
             boolean: false,
@@ -2844,7 +2908,7 @@ module RailsJson
                 }
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3846,9 +3910,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.media_type_header({
             json: "true"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3903,11 +3968,12 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.nested_attributes_operation({
             simple_struct: {
               value: "simple struct value"
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3926,13 +3992,14 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_and_empty_headers_client({
             a: nil,
             b: "",
             c: [
 
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -3951,9 +4018,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_operation({
             string: nil
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes null values in maps
         #
@@ -3971,11 +4039,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_operation({
             sparse_string_map: {
               'foo' => nil
             }
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes null values in lists
         #
@@ -3993,11 +4062,12 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.null_operation({
             sparse_string_list: [
               nil
             ]
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4137,9 +4207,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.omits_null_serializes_empty_string({
             null_value: nil
-          }, middleware: middleware)
+          }, **opts)
         end
         # Serializes empty query strings
         #
@@ -4157,9 +4228,10 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.omits_null_serializes_empty_string({
             empty_string: ""
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4178,9 +4250,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.operation_with_optional_input_output({
 
-          }, middleware: middleware)
+          }, **opts)
         end
         # Can invoke operations with optional input
         #
@@ -4194,9 +4267,10 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.operation_with_optional_input_output({
             value: "Hi"
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4218,9 +4292,10 @@ module RailsJson
             }'))
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.put_and_get_inline_documents({
             inline_document: {'foo' => 'bar'}
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4281,6 +4356,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.query_params_as_string_list_map({
             qux: "named",
             foo: {
@@ -4289,7 +4365,7 @@ module RailsJson
                 "qux"
               ]
             }
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 
@@ -4308,6 +4384,7 @@ module RailsJson
             expect(request.body.read).to eq('')
             Seahorse::Output.new
           end
+          opts = {middleware: middleware}
           client.timestamp_format_headers({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -4316,7 +4393,7 @@ module RailsJson
             target_epoch_seconds: Time.at(1576540098),
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
-          }, middleware: middleware)
+          }, **opts)
         end
       end
 

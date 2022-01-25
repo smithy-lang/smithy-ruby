@@ -220,6 +220,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = value
@@ -420,6 +421,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << element
@@ -438,6 +440,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << Seahorse::TimeHelper.to_date_time(element)
@@ -456,6 +459,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << element
@@ -474,6 +478,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << element
@@ -493,6 +498,7 @@ module RailsJson
       end
 
       def self.stub(stub = [])
+        stub ||= []
         data = Set.new
         stub.each do |element|
           data << element
@@ -511,6 +517,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << element
@@ -558,6 +565,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = value
@@ -577,6 +585,7 @@ module RailsJson
       end
 
       def self.stub(stub = [])
+        stub ||= []
         data = Set.new
         stub.each do |element|
           data << element
@@ -835,6 +844,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = Stubs::KitchenSink.stub(value)
@@ -853,6 +863,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << Stubs::KitchenSink.stub(element)
@@ -872,6 +883,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = Stubs::SimpleStruct.stub(value)
@@ -891,6 +903,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = value
@@ -910,6 +923,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = Stubs::MapOfStrings.stub(value)
@@ -929,6 +943,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = Stubs::ListOfStrings.stub(value)
@@ -947,6 +962,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << element
@@ -965,6 +981,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << Stubs::SimpleStruct.stub(element)
@@ -983,6 +1000,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << Stubs::MapOfStrings.stub(element)
@@ -1001,6 +1019,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << Stubs::ListOfStrings.stub(element)
@@ -1118,6 +1137,7 @@ module RailsJson
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
           data[key] = value
@@ -1136,6 +1156,7 @@ module RailsJson
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
           data << element

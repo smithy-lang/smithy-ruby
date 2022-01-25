@@ -251,6 +251,7 @@ module Weather
       end
 
       def self.stub(stub = {})
+        stub ||= {}
         data = {}
         stub.each do |key, value|
         end
@@ -291,6 +292,7 @@ module Weather
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
         end
@@ -308,6 +310,7 @@ module Weather
         ]
       end
       def self.stub(stub = [])
+        stub ||= []
         data = []
         stub.each do |element|
         end
