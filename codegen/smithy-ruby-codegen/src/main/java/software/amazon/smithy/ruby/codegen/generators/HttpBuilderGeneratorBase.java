@@ -147,7 +147,7 @@ public abstract class HttpBuilderGeneratorBase {
      * @param operation operation to generate body for
      * @param inputShape operation's input shape.
      */
-    protected abstract void renderNoPayloadBodyBuilder(OperationShape operation, Shape inputShape);
+    protected abstract void renderBodyBuilder(OperationShape operation, Shape inputShape);
 
     /**
      * Called to render builders for Structure member shapes.
@@ -329,9 +329,6 @@ public abstract class HttpBuilderGeneratorBase {
                 .openBlock("class $L", symbol.getName())
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", getHttpMethod(operation))
-                .call(() -> {
-
-                })
                 .call(() -> renderUriBuilder(operation, inputShape))
                 .call(() -> renderQueryInputBuilder(operation, inputShape))
                 .call(() -> renderOperationBodyBuilder(operation, inputShape))
@@ -501,7 +498,7 @@ public abstract class HttpBuilderGeneratorBase {
                     .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
                     .collect(Collectors.toList());
             if (httpPayloadMembers.size() == 0) {
-                renderNoPayloadBodyBuilder(operation, inputShape);
+                renderBodyBuilder(operation, inputShape);
             } else {
                 MemberShape payloadMember = httpPayloadMembers.get(0);
                 Shape target = model.expectShape(payloadMember.getTarget());

@@ -88,7 +88,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderNoPayloadBodyBuilder(OperationShape operation, Shape inputShape) {
+    protected void renderBodyBuilder(OperationShape operation, Shape inputShape) {
         writer
                 .write("")
                 .write("http_req.headers['Content-Type'] = 'application/json'")
