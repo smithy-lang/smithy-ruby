@@ -186,6 +186,10 @@ module RailsJson
 
     PutAndGetInlineDocumentsOutput: untyped
 
+    QueryIdempotencyTokenAutoFillInput: untyped
+
+    QueryIdempotencyTokenAutoFillOutput: untyped
+
     QueryParamsAsStringListMapInput: untyped
 
     QueryParamsAsStringListMapOutput: untyped

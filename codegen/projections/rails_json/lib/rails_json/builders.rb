@@ -852,6 +852,15 @@ module RailsJson
       end
     end
 
+    # Operation Builder for QueryIdempotencyTokenAutoFill
+    class QueryIdempotencyTokenAutoFill
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/QueryIdempotencyTokenAutoFill')
+        http_req.append_query_param('token', input[:token].to_s) unless input[:token].nil?
+      end
+    end
+
     # Operation Builder for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
       def self.build(http_req, input:)

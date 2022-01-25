@@ -4338,6 +4338,55 @@ module RailsJson
         end
       end
     end
+    describe '#query_idempotency_token_auto_fill' do
+      describe 'requests' do
+        # Automatically adds idempotency token when not set
+        #
+        it 'RailsJsonQueryIdempotencyTokenAutoFill' do
+          allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
+            expected_query = CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
+            actual_query = CGI.parse(request_uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.query_idempotency_token_auto_fill({
+
+          }, **opts)
+        end
+        # Uses the given idempotency token as-is
+        #
+        it 'RailsJsonQueryIdempotencyTokenAutoFillIsSet' do
+          allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
+          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
+            expected_query = CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
+            actual_query = CGI.parse(request_uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+            Seahorse::Output.new
+          end
+          opts = {middleware: middleware}
+          client.query_idempotency_token_auto_fill({
+            token: "00000000-0000-4000-8000-000000000000"
+          }, **opts)
+        end
+      end
+
+    end
     describe '#query_params_as_string_list_map' do
       describe 'requests' do
         # Serialize query params from map of list strings

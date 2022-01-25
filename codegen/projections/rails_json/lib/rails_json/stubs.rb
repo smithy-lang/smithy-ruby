@@ -1228,6 +1228,20 @@ module RailsJson
       end
     end
 
+    # Operation Stubber for QueryIdempotencyTokenAutoFill
+    class QueryIdempotencyTokenAutoFill
+
+      def self.default(visited=[])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     # Operation Stubber for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
 

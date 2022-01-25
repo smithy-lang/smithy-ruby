@@ -41,6 +41,7 @@ service RailsJson {
         IgnoreQueryParamsInResponse,
         OmitsNullSerializesEmptyString,
         QueryParamsAsStringListMap,
+        QueryIdempotencyTokenAutoFill,
         HttpResponseCode,
         __789BadName,
         NestedAttributesOperation,

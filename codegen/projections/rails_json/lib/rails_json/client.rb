@@ -1925,6 +1925,60 @@ module RailsJson
       resp.data
     end
 
+    # Automatically adds idempotency tokens.
+    #
+    # @param [Hash] params
+    #   See {Types::QueryIdempotencyTokenAutoFillInput}.
+    #
+    # @return [Types::QueryIdempotencyTokenAutoFillOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.query_idempotency_token_auto_fill(
+    #     token: 'token'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp #=> Types::QueryIdempotencyTokenAutoFillOutput
+    #
+    def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
+      stack = Seahorse::MiddlewareStack.new
+      input = Params::QueryIdempotencyTokenAutoFillInput.build(params)
+      stack.use(Seahorse::Middleware::Validate,
+        validator: Validators::QueryIdempotencyTokenAutoFillInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Seahorse::Middleware::Build,
+        builder: Builders::QueryIdempotencyTokenAutoFill
+      )
+      stack.use(Seahorse::HTTP::Middleware::ContentLength)
+      stack.use(Seahorse::Middleware::Parse,
+        error_parser: Seahorse::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        data_parser: Parsers::QueryIdempotencyTokenAutoFill
+      )
+      stack.use(Seahorse::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::QueryIdempotencyTokenAutoFill,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Seahorse::Context.new(
+          request: Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Seahorse::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :query_idempotency_token_auto_fill
+        )
+      )
+      raise resp.error if resp.error
+      resp.data
+    end
+
     # @param [Hash] params
     #   See {Types::QueryParamsAsStringListMapInput}.
     #

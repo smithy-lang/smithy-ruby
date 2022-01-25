@@ -731,6 +731,15 @@ module RailsJson
       end
     end
 
+    # Operation Parser for QueryIdempotencyTokenAutoFill
+    class QueryIdempotencyTokenAutoFill
+      def self.parse(http_resp)
+        data = Types::QueryIdempotencyTokenAutoFillOutput.new
+        map = Seahorse::JSON.load(http_resp.body)
+        data
+      end
+    end
+
     # Operation Parser for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
       def self.parse(http_resp)

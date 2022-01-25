@@ -1651,6 +1651,24 @@ module RailsJson
       include Seahorse::Structure
     end
 
+    # @!attribute token
+    #
+    #   @return [String]
+    #
+    QueryIdempotencyTokenAutoFillInput = ::Struct.new(
+      :token,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
+    QueryIdempotencyTokenAutoFillOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Seahorse::Structure
+    end
+
     # @!attribute qux
     #
     #   @return [String]

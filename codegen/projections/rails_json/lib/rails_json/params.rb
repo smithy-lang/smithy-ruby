@@ -655,6 +655,15 @@ module RailsJson
       end
     end
 
+    module QueryIdempotencyTokenAutoFillInput
+      def self.build(params, context: '')
+        Seahorse::Validator.validate!(params, ::Hash, Types::QueryIdempotencyTokenAutoFillInput, context: context)
+        type = Types::QueryIdempotencyTokenAutoFillInput.new
+        type.token = params[:token] || SecureRandom.uuid
+        type
+      end
+    end
+
     module QueryParamsAsStringListMapInput
       def self.build(params, context: '')
         Seahorse::Validator.validate!(params, ::Hash, Types::QueryParamsAsStringListMapInput, context: context)

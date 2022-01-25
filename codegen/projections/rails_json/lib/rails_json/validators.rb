@@ -605,6 +605,13 @@ module RailsJson
       end
     end
 
+    class QueryIdempotencyTokenAutoFillInput
+      def self.validate!(input, context:)
+        Seahorse::Validator.validate!(input, Types::QueryIdempotencyTokenAutoFillInput, context: context)
+        Seahorse::Validator.validate!(input[:token], ::String, context: "#{context}[:token]")
+      end
+    end
+
     class QueryParamsAsStringListMapInput
       def self.validate!(input, context:)
         Seahorse::Validator.validate!(input, Types::QueryParamsAsStringListMapInput, context: context)
