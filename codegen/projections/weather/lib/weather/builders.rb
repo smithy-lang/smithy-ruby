@@ -32,26 +32,10 @@ module Weather
 
     # Structure Builder for ImageType
     class ImageType
-      def self.build(input)
-        data = {}
-        case input
-        when Types::ImageType::Raw
-        when Types::ImageType::Png
-        else
-          raise ArgumentError,
-          "Expected input to be one of the subclasses of Types::ImageType"
-        end
-
-        data
-      end
     end
 
     # Structure Builder for PNGImage
     class PNGImage
-      def self.build(input)
-        data = {}
-        data
-      end
     end
 
     # Operation Builder for GetCurrentTime
@@ -80,10 +64,6 @@ module Weather
 
     # Structure Builder for __456efg
     class Struct____456efg
-      def self.build(input)
-        data = {}
-        data
-      end
     end
   end
 end

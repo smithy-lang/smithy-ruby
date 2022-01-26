@@ -20,88 +20,36 @@ module WhiteLabel
 
     # Structure Builder for Union
     class Union
-      def self.build(input)
-        data = {}
-        case input
-        when Types::Union::String
-        when Types::Union::Struct
-        else
-          raise ArgumentError,
-          "Expected input to be one of the subclasses of Types::Union"
-        end
-
-        data
-      end
     end
 
     # Structure Builder for Struct
     class Struct
-      def self.build(input)
-        data = {}
-        data
-      end
     end
 
     # Set Builder for SetOfStructs
 
     class SetOfStructs
-      def self.build(input)
-        data = Set.new
-        input.each do |element|
-        end
-        data
-      end
     end
 
     # Set Builder for SetOfStrings
 
     class SetOfStrings
-      def self.build(input)
-        data = Set.new
-        input.each do |element|
-        end
-        data
-      end
     end
 
     # Map Builder for MapOfStructs
     class MapOfStructs
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-        end
-        data
-      end
     end
 
     # Map Builder for MapOfStrings
     class MapOfStrings
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-        end
-        data
-      end
     end
 
     # List Builder for ListOfStructs
     class ListOfStructs
-      def self.build(input)
-        data = []
-        input.each do |element|
-        end
-        data
-      end
     end
 
     # List Builder for ListOfStrings
     class ListOfStrings
-      def self.build(input)
-        data = []
-        input.each do |element|
-        end
-        data
-      end
     end
 
     # Operation Builder for PaginatorsTest

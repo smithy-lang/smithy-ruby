@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -98,19 +99,62 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderStructureMemberBuilders(StructureShape shape) {
+    protected void renderStructureBuildMethod(StructureShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .call(() -> renderStructureMemberBuilders(shape))
+                .write("data")
+                .closeBlock("end");
+    }
+
+    private void renderStructureMemberBuilders(StructureShape shape) {
         renderMemberBuilders(shape);
     }
 
     @Override
-    protected void renderListMemberBuilder(ListShape shape) {
+    protected void renderListBuildMethod(ListShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = []")
+                .openBlock("input.each do |element|")
+                .call(() -> renderListMemberBuilder(shape))
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
+    }
+
+    private void renderListMemberBuilder(ListShape shape) {
         Shape memberTarget = model.expectShape(shape.getMember().getTarget());
         memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
                 !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
-    protected void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
+    protected void renderUnionBuildMethod(UnionShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .write("case input");
+
+        shape.members().forEach((member) -> {
+            writer
+                    .write("when Types::$L::$L", shape.getId().getName(), symbolProvider.toMemberName(member))
+                    .indent();
+            renderUnionMemberBuilder(shape, member);
+            writer.dedent();
+        });
+        writer.openBlock("else")
+                .write("raise ArgumentError,\n\"Expected input to be one of the subclasses of Types::$L\"",
+                        symbol.getName())
+                .closeBlock("end")
+                .write("")
+                .write("data")
+                .closeBlock("end");
+    }
+
+    private void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
         String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
         String dataSetter = "data[" + symbolName + "] = ";
@@ -118,14 +162,37 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderMapMemberBuilder(MapShape shape) {
+    protected void renderMapBuildMethod(MapShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .openBlock("input.each do |key, value|")
+                .call(() -> renderMapMemberBuilder(shape))
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
+
+    }
+
+    private void renderMapMemberBuilder(MapShape shape) {
         Shape valueTarget = model.expectShape(shape.getValue().getTarget());
         valueTarget.accept(new MemberSerializer(shape.getValue(), "data[key] = ", "value",
                 !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
-    protected void renderSetMemberBuilder(SetShape shape) {
+    protected void renderSetBuildMethod(SetShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = Set.new")
+                .openBlock("input.each do |element|")
+                .call(() -> renderSetMemberBuilder(shape))
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
+    }
+
+    private void renderSetMemberBuilder(SetShape shape) {
         Shape memberTarget = model.expectShape(shape.getMember().getTarget());
         memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
                 true));
@@ -340,9 +407,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
                             inputGetter)
                     .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
-
     }
-
 }
 
 
