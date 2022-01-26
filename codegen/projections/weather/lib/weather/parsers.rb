@@ -21,17 +21,9 @@ module Weather
     end
 
     class CitySummary
-      def self.parse(map)
-        data = Types::CitySummary.new
-        return data
-      end
     end
 
     class CityCoordinates
-      def self.parse(map)
-        data = Types::CityCoordinates.new
-        return data
-      end
     end
 
     # Error Parser for NoSuchResource
@@ -52,26 +44,9 @@ module Weather
     end
 
     class Announcements
-      def self.parse(map)
-        key, value = map.flatten
-        case key
-        when 'police'
-          Types::Announcements::Police.new(value) if value
-        when 'fire'
-          Types::Announcements::Fire.new(value) if value
-        when 'health'
-          Types::Announcements::Health.new(value) if value
-        else
-          Types::Announcements::Unknown.new({name: key, value: value})
-        end
-      end
     end
 
     class Message
-      def self.parse(map)
-        data = Types::Message.new
-        return data
-      end
     end
 
     # Operation Parser for GetCityImage
@@ -99,61 +74,18 @@ module Weather
     end
 
     class Precipitation
-      def self.parse(map)
-        key, value = map.flatten
-        case key
-        when 'rain'
-          Types::Precipitation::Rain.new(value) if value
-        when 'sleet'
-          Types::Precipitation::Sleet.new(value) if value
-        when 'hail'
-          Types::Precipitation::Hail.new(value) if value
-        when 'snow'
-          Types::Precipitation::Snow.new(value) if value
-        when 'mixed'
-          Types::Precipitation::Mixed.new(value) if value
-        when 'other'
-          Types::Precipitation::Other.new(value) if value
-        when 'blob'
-          Types::Precipitation::Blob.new(value) if value
-        when 'foo'
-          Types::Precipitation::Foo.new(value) if value
-        when 'baz'
-          Types::Precipitation::Baz.new(value) if value
-        else
-          Types::Precipitation::Unknown.new({name: key, value: value})
-        end
-      end
     end
 
     class Baz
-      def self.parse(map)
-        data = Types::Baz.new
-        return data
-      end
     end
 
     class Foo
-      def self.parse(map)
-        data = Types::Foo.new
-        return data
-      end
     end
 
     class OtherStructure
-      def self.parse(map)
-        data = Types::OtherStructure.new
-        return data
-      end
     end
 
     class StringMap
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-        end
-        data
-      end
     end
 
     # Operation Parser for ListCities
@@ -165,17 +97,9 @@ module Weather
     end
 
     class SparseCitySummaries
-      def self.parse(list)
-        list.map do |value|
-        end
-      end
     end
 
     class CitySummaries
-      def self.parse(list)
-        list.map do |value|
-        end
-      end
     end
 
     # Operation Parser for __789BadName
@@ -187,10 +111,6 @@ module Weather
     end
 
     class Struct____456efg
-      def self.parse(map)
-        data = Types::Struct____456efg.new
-        return data
-      end
     end
   end
 end
