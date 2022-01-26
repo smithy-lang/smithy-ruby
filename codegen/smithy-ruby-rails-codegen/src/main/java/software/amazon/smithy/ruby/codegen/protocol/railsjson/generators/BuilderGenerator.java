@@ -103,13 +103,9 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
         writer
                 .openBlock("def self.build(input)")
                 .write("data = {}")
-                .call(() -> renderStructureMemberBuilders(shape))
+                .call(() -> renderMemberBuilders(shape))
                 .write("data")
                 .closeBlock("end");
-    }
-
-    private void renderStructureMemberBuilders(StructureShape shape) {
-        renderMemberBuilders(shape);
     }
 
     @Override
@@ -118,16 +114,14 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
                 .openBlock("def self.build(input)")
                 .write("data = []")
                 .openBlock("input.each do |element|")
-                .call(() -> renderListMemberBuilder(shape))
+                .call(() -> {
+                    Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+                    memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
+                            !shape.hasTrait(SparseTrait.class)));
+                })
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end");
-    }
-
-    private void renderListMemberBuilder(ListShape shape) {
-        Shape memberTarget = model.expectShape(shape.getMember().getTarget());
-        memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
-                !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
@@ -167,17 +161,15 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
                 .openBlock("def self.build(input)")
                 .write("data = {}")
                 .openBlock("input.each do |key, value|")
-                .call(() -> renderMapMemberBuilder(shape))
+                .call(() -> {
+                    Shape valueTarget = model.expectShape(shape.getValue().getTarget());
+                    valueTarget.accept(new MemberSerializer(shape.getValue(), "data[key] = ", "value",
+                            !shape.hasTrait(SparseTrait.class)));
+                })
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end");
 
-    }
-
-    private void renderMapMemberBuilder(MapShape shape) {
-        Shape valueTarget = model.expectShape(shape.getValue().getTarget());
-        valueTarget.accept(new MemberSerializer(shape.getValue(), "data[key] = ", "value",
-                !shape.hasTrait(SparseTrait.class)));
     }
 
     @Override
@@ -186,17 +178,14 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
                 .openBlock("def self.build(input)")
                 .write("data = Set.new")
                 .openBlock("input.each do |element|")
-                .call(() -> renderSetMemberBuilder(shape))
+                .call(() -> {
+                    Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+                    memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
+                            true));
+                })
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end");
-    }
-
-    private void renderSetMemberBuilder(SetShape shape) {
-        Shape memberTarget = model.expectShape(shape.getMember().getTarget());
-        memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
-                true));
-
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {
