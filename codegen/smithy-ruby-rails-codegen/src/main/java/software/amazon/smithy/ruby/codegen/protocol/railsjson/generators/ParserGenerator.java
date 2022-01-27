@@ -41,10 +41,10 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.generators.HttpParserGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
-public class ParserGenerator extends HttpParserGeneratorBase {
+public class ParserGenerator extends RestParserGeneratorBase {
 
     public ParserGenerator(GenerationContext context) {
         super(context);

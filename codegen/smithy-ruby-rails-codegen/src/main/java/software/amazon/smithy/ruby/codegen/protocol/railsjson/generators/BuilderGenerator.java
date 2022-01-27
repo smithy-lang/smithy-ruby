@@ -44,11 +44,11 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.generators.HttpBuilderGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
 
-public class BuilderGenerator extends HttpBuilderGeneratorBase {
+public class BuilderGenerator extends RestBuilderGeneratorBase {
 
     public BuilderGenerator(GenerationContext context) {
         super(context);

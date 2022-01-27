@@ -69,10 +69,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * parsers.rb.
  */
 @SmithyUnstableApi
-public abstract class HttpParserGeneratorBase {
+public abstract class RestParserGeneratorBase {
 
     private static final Logger LOGGER =
-            Logger.getLogger(HttpParserGeneratorBase.class.getName());
+            Logger.getLogger(RestParserGeneratorBase.class.getName());
 
     protected final GenerationContext context;
     protected final RubySettings settings;
@@ -82,7 +82,7 @@ public abstract class HttpParserGeneratorBase {
 
     protected final RubyCodeWriter writer;
 
-    public HttpParserGeneratorBase(GenerationContext context) {
+    public RestParserGeneratorBase(GenerationContext context) {
         this.context = context;
         this.settings = context.getRubySettings();
         this.model = context.getModel();

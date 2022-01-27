@@ -25,9 +25,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.HttpBuilderGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
 
-public class BuilderGenerator extends HttpBuilderGeneratorBase {
+public class BuilderGenerator extends RestBuilderGeneratorBase {
     public BuilderGenerator(GenerationContext context) {
         super(context);
     }

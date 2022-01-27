@@ -23,9 +23,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.HttpParserGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 
-public class ParserGenerator extends HttpParserGeneratorBase {
+public class ParserGenerator extends RestParserGeneratorBase {
 
     public ParserGenerator(GenerationContext context) {
         super(context);

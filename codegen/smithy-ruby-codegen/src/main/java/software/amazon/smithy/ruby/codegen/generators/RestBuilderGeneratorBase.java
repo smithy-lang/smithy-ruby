@@ -54,12 +54,12 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * builders.rb.
  */
 @SmithyUnstableApi
-public abstract class HttpBuilderGeneratorBase extends BuilderGeneratorBase {
+public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
     private static final Logger LOGGER =
-            Logger.getLogger(HttpBuilderGeneratorBase.class.getName());
+            Logger.getLogger(RestBuilderGeneratorBase.class.getName());
 
-    public HttpBuilderGeneratorBase(GenerationContext context) {
+    public RestBuilderGeneratorBase(GenerationContext context) {
         super(context);
     }
 
