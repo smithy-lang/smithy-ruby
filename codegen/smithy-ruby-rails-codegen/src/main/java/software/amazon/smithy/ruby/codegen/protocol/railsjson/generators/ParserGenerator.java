@@ -41,28 +41,109 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.generators.HttpParserGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
-public class ParserGenerator extends HttpParserGeneratorBase {
+public class ParserGenerator extends RestParserGeneratorBase {
 
     public ParserGenerator(GenerationContext context) {
         super(context);
     }
 
     @Override
-    protected void renderNoPayloadBodyParser(Shape outputShape) {
+    protected void renderBodyParser(Shape outputShape) {
         writer.write("map = Seahorse::JSON.load(http_resp.body)");
         renderMemberParsers(outputShape);
     }
 
     @Override
-    protected void renderStructureMemberParsers(StructureShape s) {
-        renderMemberParsers(s);
+    protected void renderMapParseMethod(MapShape s) {
+        writer
+                .openBlock("def self.parse(map)")
+                .write("data = {}")
+                .openBlock("map.map do |key, value|")
+                .call(() -> {
+                    Shape valueTarget = model.expectShape(s.getValue().getTarget());
+                    valueTarget
+                            .accept(new MemberDeserializer(s.getValue(),
+                                    "data[key] = ", "value",
+                                    !s.hasTrait(SparseTrait.class)));
+                })
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
     }
 
     @Override
-    protected String unionMemberDataName(UnionShape s, MemberShape member) {
+    protected void renderSetParseMethod(SetShape s) {
+        writer
+                .openBlock("def self.parse(list)")
+                .openBlock("data = list.map do |value|")
+                .call(() -> {
+                    Shape memberTarget =
+                            model.expectShape(s.getMember().getTarget());
+                    memberTarget
+                            .accept(new MemberDeserializer(s.getMember(),
+                                    "", "value", true));
+                })
+                .closeBlock("end")
+                .write("Set.new(data)")
+                .closeBlock("end");
+    }
+
+    @Override
+    protected void renderListParseMethod(ListShape s) {
+        writer
+                .openBlock("def self.parse(list)")
+                .openBlock("list.map do |value|")
+                .call(() -> {
+                    Shape memberTarget =
+                            model.expectShape(s.getMember().getTarget());
+                    memberTarget
+                            .accept(new MemberDeserializer(s.getMember(),
+                                    "", "value",
+                                    !s.hasTrait(SparseTrait.class)));
+                })
+                .closeBlock("end")
+                .closeBlock("end");
+    }
+
+    @Override
+    protected void renderStructureParseMethod(StructureShape s) {
+        writer
+                .openBlock("def self.parse(map)")
+                .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
+                .call(() -> renderMemberParsers(s))
+                .write("return data")
+                .closeBlock("end");
+    }
+
+    @Override
+    protected void renderUnionParseMethod(UnionShape s) {
+        writer
+                .openBlock("def self.parse(map)")
+                .write("key, value = map.flatten")
+                .write("case key")
+                .call(() -> {
+                    s.members().forEach((member) -> {
+                        writer
+                                .write("when '$L'", unionMemberDataName(s, member))
+                                .indent()
+                                .call(() -> {
+                                    renderUnionMemberParser(s, member);
+                                })
+                                .write("Types::$L::$L.new(value) if value", symbolProvider.toSymbol(s).getName(),
+                                        symbolProvider.toMemberName(member))
+                                .dedent();
+                    });
+                })
+                .openBlock("else")
+                .write("Types::$L::Unknown.new({name: key, value: value})", s.getId().getName())
+                .closeBlock("end") // end of case
+                .closeBlock("end");
+    }
+
+    private String unionMemberDataName(UnionShape s, MemberShape member) {
         String dataName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member));
         String jsonName = dataName;
         if (member.hasTrait(JsonNameTrait.class)) {
@@ -71,39 +152,10 @@ public class ParserGenerator extends HttpParserGeneratorBase {
         return jsonName;
     }
 
-    @Override
-    protected void renderUnionMemberParser(UnionShape s, MemberShape member) {
+    private void renderUnionMemberParser(UnionShape s, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
         target.accept(new MemberDeserializer(member, "value = ",
                 "value", false));
-    }
-
-    @Override
-    protected void renderMapMemberParser(MapShape s) {
-        Shape valueTarget = model.expectShape(s.getValue().getTarget());
-        valueTarget
-                .accept(new MemberDeserializer(s.getValue(),
-                        "data[key] = ", "value",
-                        !s.hasTrait(SparseTrait.class)));
-    }
-
-    @Override
-    protected void renderListMemberParser(ListShape s) {
-        Shape memberTarget =
-                model.expectShape(s.getMember().getTarget());
-        memberTarget
-                .accept(new MemberDeserializer(s.getMember(),
-                        "", "value",
-                        !s.hasTrait(SparseTrait.class)));
-    }
-
-    @Override
-    protected void renderSetMemberParser(SetShape s) {
-        Shape memberTarget =
-                model.expectShape(s.getMember().getTarget());
-        memberTarget
-                .accept(new MemberDeserializer(s.getMember(),
-                        "", "value", true));
     }
 
     @Override

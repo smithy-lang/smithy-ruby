@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -43,11 +44,11 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.generators.HttpBuilderGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 
 
-public class BuilderGenerator extends HttpBuilderGeneratorBase {
+public class BuilderGenerator extends RestBuilderGeneratorBase {
 
     public BuilderGenerator(GenerationContext context) {
         super(context);
@@ -98,19 +99,56 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderStructureMemberBuilders(StructureShape shape) {
-        renderMemberBuilders(shape);
+    protected void renderStructureBuildMethod(StructureShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(shape))
+                .write("data")
+                .closeBlock("end");
     }
 
     @Override
-    protected void renderListMemberBuilder(ListShape shape) {
-        Shape memberTarget = model.expectShape(shape.getMember().getTarget());
-        memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
-                !shape.hasTrait(SparseTrait.class)));
+    protected void renderListBuildMethod(ListShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = []")
+                .openBlock("input.each do |element|")
+                .call(() -> {
+                    Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+                    memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
+                            !shape.hasTrait(SparseTrait.class)));
+                })
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
     }
 
     @Override
-    protected void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
+    protected void renderUnionBuildMethod(UnionShape shape) {
+        Symbol symbol = symbolProvider.toSymbol(shape);
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .write("case input");
+
+        shape.members().forEach((member) -> {
+            writer
+                    .write("when Types::$L::$L", shape.getId().getName(), symbolProvider.toMemberName(member))
+                    .indent();
+            renderUnionMemberBuilder(shape, member);
+            writer.dedent();
+        });
+        writer.openBlock("else")
+                .write("raise ArgumentError,\n\"Expected input to be one of the subclasses of Types::$L\"",
+                        symbol.getName())
+                .closeBlock("end")
+                .write("")
+                .write("data")
+                .closeBlock("end");
+    }
+
+    private void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
         String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
         String dataSetter = "data[" + symbolName + "] = ";
@@ -118,18 +156,36 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderMapMemberBuilder(MapShape shape) {
-        Shape valueTarget = model.expectShape(shape.getValue().getTarget());
-        valueTarget.accept(new MemberSerializer(shape.getValue(), "data[key] = ", "value",
-                !shape.hasTrait(SparseTrait.class)));
+    protected void renderMapBuildMethod(MapShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = {}")
+                .openBlock("input.each do |key, value|")
+                .call(() -> {
+                    Shape valueTarget = model.expectShape(shape.getValue().getTarget());
+                    valueTarget.accept(new MemberSerializer(shape.getValue(), "data[key] = ", "value",
+                            !shape.hasTrait(SparseTrait.class)));
+                })
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
+
     }
 
     @Override
-    protected void renderSetMemberBuilder(SetShape shape) {
-        Shape memberTarget = model.expectShape(shape.getMember().getTarget());
-        memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
-                true));
-
+    protected void renderSetBuildMethod(SetShape shape) {
+        writer
+                .openBlock("def self.build(input)")
+                .write("data = Set.new")
+                .openBlock("input.each do |element|")
+                .call(() -> {
+                    Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+                    memberTarget.accept(new MemberSerializer(shape.getMember(), "data << ", "element",
+                            true));
+                })
+                .closeBlock("end")
+                .write("data")
+                .closeBlock("end");
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {
@@ -340,9 +396,7 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
                             inputGetter)
                     .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
         }
-
     }
-
 }
 
 

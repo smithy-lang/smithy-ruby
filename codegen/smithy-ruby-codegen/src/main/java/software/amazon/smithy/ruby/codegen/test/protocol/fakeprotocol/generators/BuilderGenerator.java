@@ -25,9 +25,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.HttpBuilderGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
 
-public class BuilderGenerator extends HttpBuilderGeneratorBase {
+public class BuilderGenerator extends RestBuilderGeneratorBase {
     public BuilderGenerator(GenerationContext context) {
         super(context);
     }
@@ -56,29 +56,30 @@ public class BuilderGenerator extends HttpBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderStructureMemberBuilders(StructureShape shape) {
+    protected void renderStructureBuildMethod(StructureShape shape) {
 
     }
 
     @Override
-    protected void renderListMemberBuilder(ListShape shape) {
+    protected void renderListBuildMethod(ListShape shape) {
 
     }
 
     @Override
-    protected void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
+    protected void renderSetBuildMethod(SetShape shape) {
 
     }
 
     @Override
-    protected void renderMapMemberBuilder(MapShape shape) {
+    protected void renderUnionBuildMethod(UnionShape shape) {
 
     }
 
     @Override
-    protected void renderSetMemberBuilder(SetShape shape) {
+    protected void renderMapBuildMethod(MapShape shape) {
 
     }
+
 }
 
 

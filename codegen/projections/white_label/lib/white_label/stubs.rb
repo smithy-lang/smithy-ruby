@@ -44,11 +44,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Structure Stubber for Struct
@@ -62,11 +57,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Set Stubber for SetOfStructs
@@ -79,13 +69,6 @@ module WhiteLabel
         ]
       end
 
-      def self.stub(stub = [])
-        stub ||= []
-        data = Set.new
-        stub.each do |element|
-        end
-        data.to_a
-      end
     end
 
     # Set Stubber for SetOfStrings
@@ -98,13 +81,6 @@ module WhiteLabel
         ]
       end
 
-      def self.stub(stub = [])
-        stub ||= []
-        data = Set.new
-        stub.each do |element|
-        end
-        data.to_a
-      end
     end
 
     # Map Stubber for MapOfStructs
@@ -117,13 +93,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        stub.each do |key, value|
-        end
-        data
-      end
     end
 
     # Map Stubber for MapOfStrings
@@ -136,13 +105,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        stub.each do |key, value|
-        end
-        data
-      end
     end
 
     # List Stubber for ListOfStructs
@@ -154,13 +116,7 @@ module WhiteLabel
           Stubs::Struct.default(visited)
         ]
       end
-      def self.stub(stub = [])
-        stub ||= []
-        data = []
-        stub.each do |element|
-        end
-        data
-      end
+
     end
 
     # List Stubber for ListOfStrings
@@ -172,13 +128,7 @@ module WhiteLabel
           'member'
         ]
       end
-      def self.stub(stub = [])
-        stub ||= []
-        data = []
-        stub.each do |element|
-        end
-        data
-      end
+
     end
 
     # Document Type Stubber for Document
@@ -218,13 +168,7 @@ module WhiteLabel
           'member'
         ]
       end
-      def self.stub(stub = [])
-        stub ||= []
-        data = []
-        stub.each do |element|
-        end
-        data
-      end
+
     end
 
     # Operation Stubber for PaginatorsTestWithItems
@@ -282,11 +226,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
   end
 end

@@ -116,6 +116,7 @@ module HighScoreService
           Stubs::HighScoreAttributes.default(visited)
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []

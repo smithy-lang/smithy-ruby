@@ -23,9 +23,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.HttpParserGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 
-public class ParserGenerator extends HttpParserGeneratorBase {
+public class ParserGenerator extends RestParserGeneratorBase {
 
     public ParserGenerator(GenerationContext context) {
         super(context);
@@ -37,40 +37,33 @@ public class ParserGenerator extends HttpParserGeneratorBase {
     }
 
     @Override
-    protected void renderNoPayloadBodyParser(Shape outputShape) {
+    protected void renderBodyParser(Shape outputShape) {
 
     }
 
     @Override
-    protected void renderUnionMemberParser(UnionShape s, MemberShape member) {
+    protected void renderUnionParseMethod(UnionShape s) {
 
     }
 
     @Override
-    protected String unionMemberDataName(UnionShape s, MemberShape member) {
-        return member.getMemberName();
-    }
-
-    @Override
-    protected void renderMapMemberParser(MapShape s) {
+    protected void renderMapParseMethod(MapShape s) {
 
     }
 
     @Override
-    protected void renderSetMemberParser(SetShape s) {
+    protected void renderSetParseMethod(SetShape s) {
 
     }
 
     @Override
-    protected void renderListMemberParser(ListShape s) {
+    protected void renderListParseMethod(ListShape s) {
 
     }
 
     @Override
-    protected void renderStructureMemberParsers(StructureShape s) {
+    protected void renderStructureParseMethod(StructureShape s) {
 
     }
-
-
 }
 
