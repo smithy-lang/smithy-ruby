@@ -56,7 +56,8 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 /**
- * Base class for Stubs for HTTP based protocols.
+ * Base class for Stubs which iterates shapes and builds skeleton classes.
+ *
  * <p>
  * Protocols should extend this class to get common functionality -
  * generates the framework and non-protocol specific parts of

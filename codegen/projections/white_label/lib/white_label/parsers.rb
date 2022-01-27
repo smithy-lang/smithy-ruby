@@ -14,6 +14,7 @@ module WhiteLabel
 
     # Operation Parser for KitchenSink
     class KitchenSink
+
       def self.parse(http_resp)
         data = Types::KitchenSinkOutput.new
         data
@@ -46,6 +47,7 @@ module WhiteLabel
 
     # Error Parser for ClientError
     class ClientError
+
       def self.parse(http_resp)
         data = Types::ClientError.new
         data
@@ -54,6 +56,7 @@ module WhiteLabel
 
     # Error Parser for ServerError
     class ServerError
+
       def self.parse(http_resp)
         data = Types::ServerError.new
         data
@@ -62,6 +65,7 @@ module WhiteLabel
 
     # Operation Parser for PaginatorsTest
     class PaginatorsTest
+
       def self.parse(http_resp)
         data = Types::PaginatorsTestOperationOutput.new
         data
@@ -73,6 +77,7 @@ module WhiteLabel
 
     # Operation Parser for PaginatorsTestWithItems
     class PaginatorsTestWithItems
+
       def self.parse(http_resp)
         data = Types::PaginatorsTestWithItemsOutput.new
         data
@@ -81,6 +86,7 @@ module WhiteLabel
 
     # Operation Parser for WaitersTest
     class WaitersTest
+
       def self.parse(http_resp)
         data = Types::WaitersTestOutput.new
         data
@@ -89,6 +95,7 @@ module WhiteLabel
 
     # Operation Parser for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
+
       def self.parse(http_resp)
         data = Types::Struct____PaginatorsTestWithBadNamesOutput.new
         data

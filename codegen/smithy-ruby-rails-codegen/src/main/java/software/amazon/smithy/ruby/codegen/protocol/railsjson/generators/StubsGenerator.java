@@ -148,7 +148,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
     }
 
-    protected void renderUnionMemberStubbers(UnionShape shape) {
+    private void renderUnionMemberStubbers(UnionShape shape) {
         shape.members().forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
 

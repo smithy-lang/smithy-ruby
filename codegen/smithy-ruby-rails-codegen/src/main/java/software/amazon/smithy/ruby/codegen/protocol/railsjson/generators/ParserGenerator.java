@@ -56,7 +56,6 @@ public class ParserGenerator extends RestParserGeneratorBase {
         renderMemberParsers(outputShape);
     }
 
-
     @Override
     protected void renderMapParseMethod(MapShape s) {
         writer
