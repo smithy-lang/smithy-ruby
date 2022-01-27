@@ -47,11 +47,11 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Base class for Builders for HTTP based protocols.
+ * Base class for Builders for REST protocols which support HTTP binding traits.
  * <p>
  * Protocols should extend this class to get common functionality -
  * generates the framework and non-protocol specific parts of
- * builders.rb.
+ * builders.rb to handle http binding traits.
  */
 @SmithyUnstableApi
 public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {

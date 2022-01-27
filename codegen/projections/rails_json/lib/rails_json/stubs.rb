@@ -470,6 +470,7 @@ module RailsJson
           'member'
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -489,6 +490,7 @@ module RailsJson
           Time.now
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -508,6 +510,7 @@ module RailsJson
           false
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -527,6 +530,7 @@ module RailsJson
           1
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -566,6 +570,7 @@ module RailsJson
           'member'
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -1148,6 +1153,7 @@ module RailsJson
           Stubs::KitchenSink.default(visited)
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -1247,6 +1253,7 @@ module RailsJson
           'member'
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -1266,6 +1273,7 @@ module RailsJson
           Stubs::SimpleStruct.default(visited)
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -1285,6 +1293,7 @@ module RailsJson
           Stubs::MapOfStrings.default(visited)
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -1304,6 +1313,7 @@ module RailsJson
           Stubs::ListOfStrings.default(visited)
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []
@@ -1421,6 +1431,7 @@ module RailsJson
           'member'
         ]
       end
+
       def self.stub(stub = [])
         stub ||= []
         data = []

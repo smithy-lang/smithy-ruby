@@ -41,11 +41,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Structure Stubber for CityCoordinates
@@ -60,11 +55,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Operation Stubber for GetCityAnnouncements
@@ -95,11 +85,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Structure Stubber for Message
@@ -114,11 +99,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Operation Stubber for GetCityImage
@@ -178,11 +158,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Structure Stubber for Baz
@@ -197,11 +172,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Structure Stubber for Foo
@@ -216,11 +186,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Structure Stubber for OtherStructure
@@ -233,11 +198,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
 
     # Map Stubber for StringMap
@@ -250,13 +210,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        stub.each do |key, value|
-        end
-        data
-      end
     end
 
     # Operation Stubber for ListCities
@@ -291,13 +244,7 @@ module Weather
           Stubs::CitySummary.default(visited)
         ]
       end
-      def self.stub(stub = [])
-        stub ||= []
-        data = []
-        stub.each do |element|
-        end
-        data
-      end
+
     end
 
     # List Stubber for CitySummaries
@@ -309,13 +256,7 @@ module Weather
           Stubs::CitySummary.default(visited)
         ]
       end
-      def self.stub(stub = [])
-        stub ||= []
-        data = []
-        stub.each do |element|
-        end
-        data
-      end
+
     end
 
     # Operation Stubber for __789BadName
@@ -345,11 +286,6 @@ module Weather
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
-        data = {}
-        data
-      end
     end
   end
 end

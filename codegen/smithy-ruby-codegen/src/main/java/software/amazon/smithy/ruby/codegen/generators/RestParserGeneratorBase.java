@@ -62,11 +62,11 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Base class for Parsers for HTTP based protocols.
+ * Base class for Parsers for REST protocols which support HTTP binding traits.
  * <p>
  * Protocols should extend this class to get common functionality -
  * generates the framework and non-protocol specific parts of
- * parsers.rb.
+ * parsers.rb to handle http binding traits.
  */
 @SmithyUnstableApi
 public abstract class RestParserGeneratorBase {
