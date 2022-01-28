@@ -324,6 +324,13 @@ public class HttpProtocolTestGenerator {
                     case "application/json":
                         writer.write("expect(JSON.parse(request.body.read)).to eq(JSON.parse('$L'))", body.get());
                         break;
+                    case "application/xml":
+                        writer
+                                .write("f = Seahorse::XML::Formatter.new")
+                                .write("expect(f.format(Seahorse::XML.parse(request.body.read))).to "
+                                                + "eq(f.format(Seahorse::XML.parse('$L')))",
+                                        body.get());
+                        break;
                     default:
                         writer.write("expect(request.body.read).to eq('$L')", body.get());
                         break;
