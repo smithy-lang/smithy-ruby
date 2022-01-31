@@ -9,6 +9,8 @@
 
 require 'rails_json'
 
+require 'seahorse/xml/node_equality'
+
 module RailsJson
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }

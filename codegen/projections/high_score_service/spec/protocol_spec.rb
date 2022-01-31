@@ -9,6 +9,8 @@
 
 require 'high_score_service'
 
+require 'seahorse/xml/node_equality'
+
 module HighScoreService
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }

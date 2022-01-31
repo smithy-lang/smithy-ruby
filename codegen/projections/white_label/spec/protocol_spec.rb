@@ -9,6 +9,8 @@
 
 require 'white_label'
 
+require 'seahorse/xml/node_equality'
+
 module WhiteLabel
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }

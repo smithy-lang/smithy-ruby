@@ -9,6 +9,8 @@
 
 require 'weather'
 
+require 'seahorse/xml/node_equality'
+
 module Weather
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
