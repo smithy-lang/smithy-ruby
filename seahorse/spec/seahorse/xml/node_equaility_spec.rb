@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-#
+
 require_relative '../../../lib/seahorse/xml/node_equality'
 
 module Seahorse
   module XML
     describe :be_equal_xml do
-
       it 'is true when the node is self' do
         actual = Node.new('name')
         expect(actual).to be_equal_xml(actual)
