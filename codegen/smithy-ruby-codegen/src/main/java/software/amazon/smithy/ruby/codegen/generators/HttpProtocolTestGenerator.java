@@ -70,7 +70,7 @@ public class HttpProtocolTestGenerator {
         writer
                 .writePreamble()
                 .write("require '$L'\n", settings.getGemName())
-                .write("require 'seahorse/xml/node_equality'")
+                .write("require 'seahorse/xml/node_matcher'")
                 .write("")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
@@ -329,7 +329,7 @@ public class HttpProtocolTestGenerator {
                     case "application/xml":
                         writer
                                 .write("expect(Seahorse::XML.parse(request.body.read)).to "
-                                                + "be_equal_xml(Seahorse::XML.parse('$L'))",
+                                                + "match_xml_node(Seahorse::XML.parse('$L'))",
                                         body.get());
                         break;
                     case "application/x-www-form-urlencoded":

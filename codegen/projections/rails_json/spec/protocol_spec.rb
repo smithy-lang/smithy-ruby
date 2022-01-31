@@ -9,7 +9,7 @@
 
 require 'rails_json'
 
-require 'seahorse/xml/node_equality'
+require 'seahorse/xml/node_matcher'
 
 module RailsJson
   describe Client do

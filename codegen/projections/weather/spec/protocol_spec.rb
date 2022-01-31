@@ -9,7 +9,7 @@
 
 require 'weather'
 
-require 'seahorse/xml/node_equality'
+require 'seahorse/xml/node_matcher'
 
 module Weather
   describe Client do

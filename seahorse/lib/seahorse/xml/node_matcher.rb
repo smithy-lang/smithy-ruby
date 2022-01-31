@@ -2,7 +2,9 @@
 
 require 'rspec/expectations'
 
-RSpec::Matchers.define :be_equal_xml do |expected|
+# Provides an rspec matcher for Seahorse::XML::Node
+# @api private
+RSpec::Matchers.define :match_xml_node do |expected|
   match do |actual|
     return true if actual == expected
     return false unless actual.instance_of?(expected.class)
@@ -14,7 +16,7 @@ RSpec::Matchers.define :be_equal_xml do |expected|
     expect(actual.children.length).to eq(expected.children.length)
 
     expected.children.zip(actual.children).each do |a, e|
-      expect(a).to be_equal_xml(e)
+      expect(a).to match_xml_node(e)
     end
   end
 
