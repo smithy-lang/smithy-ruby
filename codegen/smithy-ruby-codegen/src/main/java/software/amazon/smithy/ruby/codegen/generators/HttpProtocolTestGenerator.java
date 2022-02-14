@@ -70,6 +70,8 @@ public class HttpProtocolTestGenerator {
         writer
                 .writePreamble()
                 .write("require '$L'\n", settings.getGemName())
+                .write("require 'seahorse/xml/node_matcher'")
+                .write("")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
@@ -326,11 +328,13 @@ public class HttpProtocolTestGenerator {
                         break;
                     case "application/xml":
                         writer
-                                .write("f = Seahorse::XML::Formatter.new")
-                                .write("expect(f.format(Seahorse::XML.parse(request.body.read))).to "
-                                                + "eq(f.format(Seahorse::XML.parse('$L')))",
+                                .write("expect(Seahorse::XML.parse(request.body.read)).to "
+                                                + "match_xml_node(Seahorse::XML.parse('$L'))",
                                         body.get());
                         break;
+                    case "application/x-www-form-urlencoded":
+                        // query params in the body - parse and compare
+                        writer.write("expect(CGI.parse(request.body.read)).to eq(CGI.parse('$L'))", body.get());
                     default:
                         writer.write("expect(request.body.read).to eq('$L')", body.get());
                         break;
