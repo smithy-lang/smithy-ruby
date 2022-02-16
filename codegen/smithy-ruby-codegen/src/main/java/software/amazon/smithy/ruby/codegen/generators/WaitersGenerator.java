@@ -15,13 +15,34 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.jmespath.ExpressionSerializer;
+import software.amazon.smithy.jmespath.ExpressionVisitor;
+import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.ast.AndExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
+import software.amazon.smithy.jmespath.ast.CurrentExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
+import software.amazon.smithy.jmespath.ast.FieldExpression;
+import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
+import software.amazon.smithy.jmespath.ast.FlattenExpression;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
+import software.amazon.smithy.jmespath.ast.IndexExpression;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectHashExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectListExpression;
+import software.amazon.smithy.jmespath.ast.NotExpression;
+import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
+import software.amazon.smithy.jmespath.ast.OrExpression;
+import software.amazon.smithy.jmespath.ast.ProjectionExpression;
+import software.amazon.smithy.jmespath.ast.SliceExpression;
+import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -212,10 +233,9 @@ public class WaitersGenerator {
     }
 
     private String translatePath(String path) {
-        //TODO: This needs to use a JMESPathExpression to parse the path and actually correctly translate names
-        // This will not work correctly in all cases
-        return Arrays.stream(path.split("[.]"))
-                .map((m) -> RubyFormatter.toSnakeCase(m)).collect(Collectors.joining("."));
+        JmespathExpression transformedExpression = JmespathExpression.parse(path).accept(new JmespathTranslator());
+        String transformedPath = (new ExpressionSerializer()).serialize(transformedExpression);
+        return transformedPath;
     }
 
     private void renderWaiterWaitDocumentation(OperationShape operation, String operationName) {
@@ -257,7 +277,7 @@ public class WaitersGenerator {
         private void renderPathMatcher(String memberName, String path, String comparator, String expected) {
             writer
                     .openBlock("$L: {", memberName)
-                    .write("path: \"$L\",", translatePath(path))
+                    .write("path: $S,", translatePath(path))
                     .write("comparator: \"$L\",", comparator)
                     .write("expected: '$L'", expected)
                     .closeBlock("}");
@@ -298,6 +318,185 @@ public class WaitersGenerator {
         @Override
         public Void visitUnknown(Matcher.UnknownMember unknown) {
             return null;
+        }
+    }
+
+    private class JmespathTranslator implements ExpressionVisitor<JmespathExpression> {
+
+        @Override
+        public JmespathExpression visitComparator(ComparatorExpression expression) {
+            return new ComparatorExpression(
+                    expression.getComparator(),
+                    expression.getLeft().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitCurrentNode(CurrentExpression expression) {
+            return new CurrentExpression(expression.getLine(), expression.getColumn());
+        }
+
+        @Override
+        public JmespathExpression visitExpressionType(ExpressionTypeExpression expression) {
+            return new ExpressionTypeExpression(
+                    expression.getExpression().accept(this),
+                    expression.getLine(),
+                    expression.getColumn());
+        }
+
+        @Override
+        public JmespathExpression visitFlatten(FlattenExpression expression) {
+            return new FlattenExpression(
+                    expression.getExpression().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitFunction(FunctionExpression expression) {
+
+            return new FunctionExpression(
+                    expression.getName(),
+                    expression.getArguments().stream()
+                            .map((e) -> e.accept(this)).collect(Collectors.toList()),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitField(FieldExpression expression) {
+            return new FieldExpression(
+                    symbolProvider.toMemberName(expression.getName()),
+                    expression.getLine(), expression.getColumn());
+        }
+
+        @Override
+        public JmespathExpression visitIndex(IndexExpression expression) {
+            return new IndexExpression(
+                    expression.getIndex(),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitLiteral(LiteralExpression expression) {
+            return new LiteralExpression(
+                    expression.getValue(),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitMultiSelectList(MultiSelectListExpression expression) {
+            return new MultiSelectListExpression(
+                    expression.getExpressions().stream()
+                            .map((e) -> e.accept(this)).collect(Collectors.toList()),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitMultiSelectHash(MultiSelectHashExpression expression) {
+            Map<String, JmespathExpression> newExpression = new HashMap<>();
+            for (Map.Entry<String, JmespathExpression> entry : expression.getExpressions().entrySet()) {
+                newExpression.put(entry.getKey(), entry.getValue().accept(this));
+            }
+
+            return new MultiSelectHashExpression(
+                    newExpression,
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitAnd(AndExpression expression) {
+            return new AndExpression(
+                    expression.getLeft().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitOr(OrExpression expression) {
+            return new OrExpression(
+                    expression.getLeft().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitNot(NotExpression expression) {
+            return new NotExpression(
+                    expression.getExpression().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitProjection(ProjectionExpression expression) {
+            return new ProjectionExpression(
+                    expression.getLeft().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitFilterProjection(FilterProjectionExpression expression) {
+            return new FilterProjectionExpression(
+                    expression.getLeft().accept(this),
+                    expression.getComparison().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitObjectProjection(ObjectProjectionExpression expression) {
+            return new ObjectProjectionExpression(
+                    expression.getLeft().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitSlice(SliceExpression expression) {
+            return new SliceExpression(
+                    expression.getStart().isPresent() ? expression.getStart().getAsInt() : null,
+                    expression.getStop().isPresent() ? expression.getStop().getAsInt() : null,
+                    expression.getStep(),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
+        }
+
+        @Override
+        public JmespathExpression visitSubexpression(Subexpression expression) {
+            return new Subexpression(
+                    expression.getLeft().accept(this),
+                    expression.getRight().accept(this),
+                    expression.getLine(),
+                    expression.getColumn(),
+                    expression.isPipe()
+            );
         }
     }
 }
