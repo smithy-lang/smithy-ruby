@@ -34,7 +34,7 @@ module WhiteLabel
               state: 'failure',
               matcher: {
                 output: {
-                  path: 'status', comparator: "stringEquals", expected: "failed"
+                  path: '"status"', comparator: "stringEquals", expected: "failed"
                 }
               }
             },

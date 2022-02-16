@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -404,7 +405,16 @@ public class WaitersGenerator {
 
         @Override
         public JmespathExpression visitMultiSelectHash(MultiSelectHashExpression expression) {
-            return expression; // TODO
+            Map<String, JmespathExpression> newExpression = new HashMap<>();
+            for (Map.Entry<String, JmespathExpression> entry : expression.getExpressions().entrySet()) {
+                newExpression.put(entry.getKey(), entry.getValue().accept(this));
+            }
+
+            return new MultiSelectHashExpression(
+                    newExpression,
+                    expression.getLine(),
+                    expression.getColumn()
+            );
         }
 
         @Override
@@ -469,7 +479,13 @@ public class WaitersGenerator {
 
         @Override
         public JmespathExpression visitSlice(SliceExpression expression) {
-            return expression; // TODO
+            return new SliceExpression(
+                    expression.getStart().isPresent() ? expression.getStart().getAsInt() : null,
+                    expression.getStop().isPresent() ? expression.getStop().getAsInt() : null,
+                    expression.getStep(),
+                    expression.getLine(),
+                    expression.getColumn()
+            );
         }
 
         @Override
