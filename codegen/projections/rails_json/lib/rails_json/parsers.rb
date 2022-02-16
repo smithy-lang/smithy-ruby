@@ -17,7 +17,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::AllQueryStringTypesOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -27,7 +27,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::ConstantAndVariableQueryStringOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -37,7 +37,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::ConstantQueryStringOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -47,7 +47,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::DocumentTypeOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.string_value = map['string_value']
         data.document_value = map['document_value']
         data
@@ -59,7 +59,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::DocumentTypeAsPayloadOutput.new
-        payload = Seahorse::JSON.load(http_resp.body.read)
+        payload = Hearth::JSON.load(http_resp.body.read)
         data.document_value = payload
         data
       end
@@ -70,7 +70,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::EmptyOperationOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -80,7 +80,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::EndpointOperationOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -90,7 +90,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -100,7 +100,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::GreetingWithErrorsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.greeting = map['greeting']
         data
       end
@@ -111,7 +111,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::InvalidGreeting.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.message = map['message']
         data
       end
@@ -122,7 +122,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::ComplexError.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.top_level = map['top_level']
         data.nested = (Parsers::ComplexNestedErrorData.parse(map['nested']) unless map['nested'].nil?)
         data
@@ -166,7 +166,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::HttpPayloadWithStructureOutput.new
-        json = Seahorse::JSON.load(http_resp.body)
+        json = Hearth::JSON.load(http_resp.body)
         data.nested = Parsers::NestedPayload.parse(json)
         data
       end
@@ -193,7 +193,7 @@ module RailsJson
             data.foo_map[key.delete_prefix('X-Foo-')] = value
           end
         end
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -219,7 +219,7 @@ module RailsJson
             data.prefix_headers[key.delete_prefix('')] = value
           end
         end
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -229,7 +229,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::HttpRequestWithFloatLabelsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -239,7 +239,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::HttpRequestWithGreedyLabelInPathOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -249,7 +249,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::HttpRequestWithLabelsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -259,7 +259,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::HttpRequestWithLabelsAndTimestampFormatOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -270,7 +270,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::HttpResponseCodeOutput.new
         data.status = http_resp.status
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -280,7 +280,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::IgnoreQueryParamsInResponseOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -295,8 +295,8 @@ module RailsJson
         data.header_short = http_resp.headers['X-Short']&.to_i
         data.header_integer = http_resp.headers['X-Integer']&.to_i
         data.header_long = http_resp.headers['X-Long']&.to_i
-        data.header_float = Seahorse::NumberHelper.deserialize(http_resp.headers['X-Float']) unless http_resp.headers['X-Float'].nil?
-        data.header_double = Seahorse::NumberHelper.deserialize(http_resp.headers['X-Double']) unless http_resp.headers['X-Double'].nil?
+        data.header_float = Hearth::NumberHelper.deserialize(http_resp.headers['X-Float']) unless http_resp.headers['X-Float'].nil?
+        data.header_double = Hearth::NumberHelper.deserialize(http_resp.headers['X-Double']) unless http_resp.headers['X-Double'].nil?
         data.header_true_bool = http_resp.headers['X-Boolean1'] == 'true' unless http_resp.headers['X-Boolean1'].nil?
         data.header_false_bool = http_resp.headers['X-Boolean2'] == 'true' unless http_resp.headers['X-Boolean2'].nil?
         unless http_resp.headers['X-StringList'].nil? || http_resp.headers['X-StringList'].empty?
@@ -331,7 +331,7 @@ module RailsJson
             .split(', ')
             .map { |s| s.to_s }
         end
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -390,7 +390,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::JsonEnumsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.foo_enum1 = map['foo_enum1']
         data.foo_enum2 = map['foo_enum2']
         data.foo_enum3 = map['foo_enum3']
@@ -425,7 +425,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::JsonMapsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.dense_struct_map = (Parsers::DenseStructMap.parse(map['dense_struct_map']) unless map['dense_struct_map'].nil?)
         data.sparse_struct_map = (Parsers::SparseStructMap.parse(map['sparse_struct_map']) unless map['sparse_struct_map'].nil?)
         data.dense_number_map = (Parsers::DenseNumberMap.parse(map['dense_number_map']) unless map['dense_number_map'].nil?)
@@ -553,7 +553,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::JsonUnionsOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.contents = (Parsers::MyUnion.parse(map['contents']) unless map['contents'].nil?)
         data
       end
@@ -601,12 +601,12 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::KitchenSinkOperationOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
-        data.double = Seahorse::NumberHelper.deserialize(map['double'])
+        data.double = Hearth::NumberHelper.deserialize(map['double'])
         data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
-        data.float = Seahorse::NumberHelper.deserialize(map['float'])
+        data.float = Hearth::NumberHelper.deserialize(map['float'])
         data.httpdate_timestamp = Time.parse(map['httpdate_timestamp']) if map['httpdate_timestamp']
         data.integer = map['integer']
         data.iso8601_timestamp = Time.parse(map['iso8601_timestamp']) if map['iso8601_timestamp']
@@ -653,9 +653,9 @@ module RailsJson
         data = Types::KitchenSink.new
         data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
-        data.double = Seahorse::NumberHelper.deserialize(map['double'])
+        data.double = Hearth::NumberHelper.deserialize(map['double'])
         data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
-        data.float = Seahorse::NumberHelper.deserialize(map['float'])
+        data.float = Hearth::NumberHelper.deserialize(map['float'])
         data.httpdate_timestamp = Time.parse(map['httpdate_timestamp']) if map['httpdate_timestamp']
         data.integer = map['integer']
         data.iso8601_timestamp = Time.parse(map['iso8601_timestamp']) if map['iso8601_timestamp']
@@ -783,7 +783,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::ErrorWithMembers.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.code = map['code']
         data.complex_data = (Parsers::KitchenSink.parse(map['complex_data']) unless map['complex_data'].nil?)
         data.integer_field = map['integer_field']
@@ -800,7 +800,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::ErrorWithoutMembers.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -811,7 +811,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::MediaTypeHeaderOutput.new
         data.json = Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -821,7 +821,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::NestedAttributesOperationOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.value = map['value']
         data
       end
@@ -839,7 +839,7 @@ module RailsJson
             .split(', ')
             .map { |s| s.to_s }
         end
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -849,7 +849,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::NullOperationOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.string = map['string']
         data.sparse_string_list = (Parsers::SparseStringList.parse(map['sparse_string_list']) unless map['sparse_string_list'].nil?)
         data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
@@ -870,7 +870,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::OmitsNullSerializesEmptyStringOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -880,7 +880,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::OperationWithOptionalInputOutputOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.value = map['value']
         data
       end
@@ -891,7 +891,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::QueryIdempotencyTokenAutoFillOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -901,7 +901,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::QueryParamsAsStringListMapOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -918,7 +918,7 @@ module RailsJson
         data.target_epoch_seconds = Time.at(http_resp.headers['X-targetEpochSeconds'].to_i) if http_resp.headers['X-targetEpochSeconds']
         data.target_http_date = Time.parse(http_resp.headers['X-targetHttpDate']) if http_resp.headers['X-targetHttpDate']
         data.target_date_time = Time.parse(http_resp.headers['X-targetDateTime']) if http_resp.headers['X-targetDateTime']
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -928,7 +928,7 @@ module RailsJson
 
       def self.parse(http_resp)
         data = Types::Struct____789BadNameOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data.member = (Parsers::Struct____456efg.parse(map['member']) unless map['member'].nil?)
         data
       end

@@ -12,7 +12,7 @@ module WhiteLabel
 
     class Document
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)
+        Hearth::Validator.validate!(input, ::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)
         case input
         when ::Hash
           input.each do |k,v|
@@ -28,8 +28,8 @@ module WhiteLabel
 
     class KitchenSinkInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::KitchenSinkInput, context: context)
-        Seahorse::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
+        Hearth::Validator.validate!(input, Types::KitchenSinkInput, context: context)
+        Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
         Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
         Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
@@ -44,16 +44,16 @@ module WhiteLabel
 
     class ListOfStrings
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Array, context: context)
+        Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Seahorse::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
+          Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
         end
       end
     end
 
     class ListOfStructs
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Array, context: context)
+        Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
           Validators::Struct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
@@ -62,19 +62,19 @@ module WhiteLabel
 
     class MapOfStrings
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
-          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Seahorse::Validator.validate!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Hearth::Validator.validate!(value, ::String, context: "#{context}[:#{key}]")
         end
       end
     end
 
     class MapOfStructs
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Hash, context: context)
+        Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
-          Seahorse::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
           Validators::Struct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
@@ -82,30 +82,30 @@ module WhiteLabel
 
     class PaginatorsTestOperationInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PaginatorsTestOperationInput, context: context)
-        Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+        Hearth::Validator.validate!(input, Types::PaginatorsTestOperationInput, context: context)
+        Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
       end
     end
 
     class PaginatorsTestWithItemsInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PaginatorsTestWithItemsInput, context: context)
-        Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+        Hearth::Validator.validate!(input, Types::PaginatorsTestWithItemsInput, context: context)
+        Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
       end
     end
 
     class SetOfStrings
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Set, context: context)
+        Hearth::Validator.validate!(input, ::Set, context: context)
         input.each_with_index do |element, index|
-          Seahorse::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
+          Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
         end
       end
     end
 
     class SetOfStructs
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, ::Set, context: context)
+        Hearth::Validator.validate!(input, ::Set, context: context)
         input.each_with_index do |element, index|
           Validators::Struct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
@@ -114,8 +114,8 @@ module WhiteLabel
 
     class Struct
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Struct, context: context)
-        Seahorse::Validator.validate!(input[:value], ::String, context: "#{context}[:value]")
+        Hearth::Validator.validate!(input, Types::Struct, context: context)
+        Hearth::Validator.validate!(input[:value], ::String, context: "#{context}[:value]")
       end
     end
 
@@ -123,7 +123,7 @@ module WhiteLabel
       def self.validate!(input, context:)
         case input
         when Types::Union::String
-          Seahorse::Validator.validate!(input.__getobj__, ::String, context: context)
+          Hearth::Validator.validate!(input.__getobj__, ::String, context: context)
         when Types::Union::Struct
           Validators::Struct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
@@ -135,7 +135,7 @@ module WhiteLabel
 
       class String
         def self.validate!(input, context:)
-          Seahorse::Validator.validate!(input, ::String, context: context)
+          Hearth::Validator.validate!(input, ::String, context: context)
         end
       end
 
@@ -148,15 +148,15 @@ module WhiteLabel
 
     class WaitersTestInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::WaitersTestInput, context: context)
-        Seahorse::Validator.validate!(input[:status], ::String, context: "#{context}[:status]")
+        Hearth::Validator.validate!(input, Types::WaitersTestInput, context: context)
+        Hearth::Validator.validate!(input[:status], ::String, context: "#{context}[:status]")
       end
     end
 
     class Struct____PaginatorsTestWithBadNamesInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
-        Seahorse::Validator.validate!(input[:member____next_token], ::String, context: "#{context}[:member____next_token]")
+        Hearth::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
+        Hearth::Validator.validate!(input[:member____next_token], ::String, context: "#{context}[:member____next_token]")
       end
     end
 

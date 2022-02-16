@@ -15,7 +15,7 @@ module RailsJson
     end
 
     # Base class for all errors returned by this service
-    class ApiError < Seahorse::HTTP::ApiError; end
+    class ApiError < Hearth::HTTP::ApiError; end
 
     # Base class for all errors returned where the client is at fault.
     # These are generally errors with 4XX HTTP status codes.
@@ -38,7 +38,7 @@ module RailsJson
     end
 
     class ComplexError < ApiClientError
-      # @param [Seahorse::HTTP::Response] http_resp
+      # @param [Hearth::HTTP::Response] http_resp
       #
       # @param [String] error_code
       #
@@ -57,7 +57,7 @@ module RailsJson
     end
 
     class ErrorWithMembers < ApiClientError
-      # @param [Seahorse::HTTP::Response] http_resp
+      # @param [Hearth::HTTP::Response] http_resp
       #
       # @param [String] error_code
       #
@@ -76,7 +76,7 @@ module RailsJson
     end
 
     class ErrorWithoutMembers < ApiServerError
-      # @param [Seahorse::HTTP::Response] http_resp
+      # @param [Hearth::HTTP::Response] http_resp
       #
       # @param [String] error_code
       #
@@ -95,7 +95,7 @@ module RailsJson
     end
 
     class InvalidGreeting < ApiClientError
-      # @param [Seahorse::HTTP::Response] http_resp
+      # @param [Hearth::HTTP::Response] http_resp
       #
       # @param [String] error_code
       #

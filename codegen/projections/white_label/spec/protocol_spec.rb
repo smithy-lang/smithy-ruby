@@ -9,7 +9,7 @@
 
 require 'white_label'
 
-require 'seahorse/xml/node_matcher'
+require 'hearth/xml/node_matcher'
 
 module WhiteLabel
   describe Client do

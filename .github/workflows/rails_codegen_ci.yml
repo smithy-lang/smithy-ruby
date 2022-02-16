@@ -56,11 +56,11 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Build and install Seahorse
+      - name: Build and install Hearth
         run: |
-          gem build seahorse.gemspec
-          gem install seahorse-$(<VERSION).gem
-        working-directory: ./seahorse
+          gem build hearth.gemspec
+          gem install hearth-$(<VERSION).gem
+        working-directory: ./hearth
 
       - name: Download generated test sdk
         uses: actions/download-artifact@v2
@@ -70,7 +70,7 @@ jobs:
 
       - name: Copy Gemfile
         run: |
-          cp seahorse/Gemfile rails_json/
+          cp hearth/Gemfile rails_json/
 
       - name: Install gems
         run: |
@@ -79,5 +79,5 @@ jobs:
         working-directory: ./rails_json
 
       - name: Tests
-        run: bundle exec rspec -I ../seahorse/lib
+        run: bundle exec rspec -I ../hearth/lib
         working-directory: ./rails_json

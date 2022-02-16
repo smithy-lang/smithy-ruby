@@ -1,0 +1,29 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.5
+
+Gemspec/RequireMFA:
+  Exclude:
+    - '**/*.gemspec'
+
+Layout/LineLength:
+  Max: 80
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/hearth/middleware_builder.rb'
+
+Style/Documentation:
+  Exclude:
+    - 'spec/**/*.rb'

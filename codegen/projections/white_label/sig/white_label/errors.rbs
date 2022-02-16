@@ -12,7 +12,7 @@ module WhiteLabel
 
     def self.error_code: (untyped http_resp) -> untyped
 
-    class ApiError < Seahorse::HTTP::ApiError
+    class ApiError < Hearth::HTTP::ApiError
     end
 
     class ApiClientError < ApiError

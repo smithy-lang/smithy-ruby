@@ -7,7 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'seahorse'
+require 'hearth'
 
 require_relative 'high_score_service/builders'
 require_relative 'high_score_service/client'

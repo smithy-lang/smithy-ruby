@@ -108,14 +108,14 @@ module RailsJson
       :query_params_map_of_strings,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     AllQueryStringTypesOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # This error is thrown when a request is invalid.
@@ -133,7 +133,7 @@ module RailsJson
       :nested,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -144,7 +144,7 @@ module RailsJson
       :foo,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute baz
@@ -160,14 +160,14 @@ module RailsJson
       :maybe_set,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     ConstantAndVariableQueryStringOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute hello
@@ -178,14 +178,14 @@ module RailsJson
       :hello,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     ConstantQueryStringOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute document_value
@@ -196,7 +196,7 @@ module RailsJson
       :document_value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute document_value
@@ -207,7 +207,7 @@ module RailsJson
       :document_value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute string_value
@@ -223,7 +223,7 @@ module RailsJson
       :document_value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute string_value
@@ -239,42 +239,42 @@ module RailsJson
       :document_value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     EmptyOperationInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     EmptyOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     EmptyStruct = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     EndpointOperationInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     EndpointOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute label
@@ -285,14 +285,14 @@ module RailsJson
       :label,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     EndpointWithHostLabelOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute code
@@ -334,14 +334,14 @@ module RailsJson
       :string_field,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     ErrorWithoutMembers = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute hi
@@ -352,14 +352,14 @@ module RailsJson
       :hi,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     GreetingWithErrorsInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute greeting
@@ -370,7 +370,7 @@ module RailsJson
       :greeting,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -386,7 +386,7 @@ module RailsJson
       :blob,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -402,7 +402,7 @@ module RailsJson
       :blob,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -418,7 +418,7 @@ module RailsJson
       :blob,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -434,7 +434,7 @@ module RailsJson
       :blob,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute nested
@@ -445,7 +445,7 @@ module RailsJson
       :nested,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute nested
@@ -456,14 +456,14 @@ module RailsJson
       :nested,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     HttpPrefixHeadersInResponseInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute prefix_headers
@@ -474,7 +474,7 @@ module RailsJson
       :prefix_headers,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -490,7 +490,7 @@ module RailsJson
       :foo_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -506,7 +506,7 @@ module RailsJson
       :foo_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute float
@@ -522,14 +522,14 @@ module RailsJson
       :double,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     HttpRequestWithFloatLabelsOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo
@@ -545,14 +545,14 @@ module RailsJson
       :baz,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     HttpRequestWithGreedyLabelInPathOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member_epoch_seconds
@@ -593,14 +593,14 @@ module RailsJson
       :target_date_time,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     HttpRequestWithLabelsAndTimestampFormatOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute string
@@ -648,21 +648,21 @@ module RailsJson
       :timestamp,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     HttpRequestWithLabelsOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     HttpResponseCodeInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute status
@@ -673,14 +673,14 @@ module RailsJson
       :status,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     IgnoreQueryParamsInResponseInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute baz
@@ -691,7 +691,7 @@ module RailsJson
       :baz,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute header_string
@@ -777,7 +777,7 @@ module RailsJson
       :header_enum_list,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute header_string
@@ -863,7 +863,7 @@ module RailsJson
       :header_enum_list,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # This error is thrown when an invalid greeting value is provided.
@@ -876,7 +876,7 @@ module RailsJson
       :message,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo_enum1
@@ -912,7 +912,7 @@ module RailsJson
       :foo_enum_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute foo_enum1
@@ -948,7 +948,7 @@ module RailsJson
       :foo_enum_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute dense_struct_map
@@ -1004,7 +1004,7 @@ module RailsJson
       :sparse_set_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute dense_struct_map
@@ -1060,7 +1060,7 @@ module RailsJson
       :sparse_set_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # A shared structure that contains a single union member.
@@ -1074,7 +1074,7 @@ module RailsJson
       :contents,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # A shared structure that contains a single union member.
@@ -1088,7 +1088,7 @@ module RailsJson
       :contents,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute blob
@@ -1224,7 +1224,7 @@ module RailsJson
       :unix_timestamp,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute blob
@@ -1360,7 +1360,7 @@ module RailsJson
       :unix_timestamp,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute blob
@@ -1496,7 +1496,7 @@ module RailsJson
       :unix_timestamp,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute json
@@ -1507,7 +1507,7 @@ module RailsJson
       :json,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute json
@@ -1518,12 +1518,12 @@ module RailsJson
       :json,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # A union with a representative set of types for members.
     #
-    class MyUnion < Seahorse::Union
+    class MyUnion < Hearth::Union
 
       class StringValue < MyUnion
         def to_h
@@ -1636,7 +1636,7 @@ module RailsJson
       :simple_struct,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute value
@@ -1647,7 +1647,7 @@ module RailsJson
       :value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute greeting
@@ -1663,7 +1663,7 @@ module RailsJson
       :member_name,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute a
@@ -1684,7 +1684,7 @@ module RailsJson
       :c,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute a
@@ -1705,7 +1705,7 @@ module RailsJson
       :c,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute string
@@ -1726,7 +1726,7 @@ module RailsJson
       :sparse_string_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute string
@@ -1747,7 +1747,7 @@ module RailsJson
       :sparse_string_map,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute null_value
@@ -1763,14 +1763,14 @@ module RailsJson
       :empty_string,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     OmitsNullSerializesEmptyStringOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute value
@@ -1781,7 +1781,7 @@ module RailsJson
       :value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute value
@@ -1792,7 +1792,7 @@ module RailsJson
       :value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute token
@@ -1803,14 +1803,14 @@ module RailsJson
       :token,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     QueryIdempotencyTokenAutoFillOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute qux
@@ -1826,14 +1826,14 @@ module RailsJson
       :foo,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     QueryParamsAsStringListMapOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute value
@@ -1844,7 +1844,7 @@ module RailsJson
       :value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute value
@@ -1855,7 +1855,7 @@ module RailsJson
       :value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member_epoch_seconds
@@ -1896,7 +1896,7 @@ module RailsJson
       :target_date_time,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member_epoch_seconds
@@ -1937,7 +1937,7 @@ module RailsJson
       :target_date_time,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____123foo
@@ -1948,7 +1948,7 @@ module RailsJson
       :member____123foo,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____123abc
@@ -1964,7 +1964,7 @@ module RailsJson
       :member,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member
@@ -1975,7 +1975,7 @@ module RailsJson
       :member,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
   end

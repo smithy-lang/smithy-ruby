@@ -68,7 +68,7 @@ module RailsJson
         http_resp.headers['Content-Type'] = 'application/json'
         data[:string_value] = stub[:string_value] unless stub[:string_value].nil?
         data[:document_value] = stub[:document_value] unless stub[:document_value].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -98,7 +98,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(stub[:document_value]))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(stub[:document_value]))
       end
     end
 
@@ -158,7 +158,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -214,7 +214,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::NestedPayload.stub(stub[:nested]) unless stub[:nested].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -416,8 +416,8 @@ module RailsJson
         http_resp.headers['X-Short'] = stub[:header_short].to_s unless stub[:header_short].nil?
         http_resp.headers['X-Integer'] = stub[:header_integer].to_s unless stub[:header_integer].nil?
         http_resp.headers['X-Long'] = stub[:header_long].to_s unless stub[:header_long].nil?
-        http_resp.headers['X-Float'] = Seahorse::NumberHelper.serialize(stub[:header_float]) unless stub[:header_float].nil?
-        http_resp.headers['X-Double'] = Seahorse::NumberHelper.serialize(stub[:header_double]) unless stub[:header_double].nil?
+        http_resp.headers['X-Float'] = Hearth::NumberHelper.serialize(stub[:header_float]) unless stub[:header_float].nil?
+        http_resp.headers['X-Double'] = Hearth::NumberHelper.serialize(stub[:header_double]) unless stub[:header_double].nil?
         http_resp.headers['X-Boolean1'] = stub[:header_true_bool].to_s unless stub[:header_true_bool].nil?
         http_resp.headers['X-Boolean2'] = stub[:header_false_bool].to_s unless stub[:header_false_bool].nil?
         unless stub[:header_string_list].nil? || stub[:header_string_list].empty?
@@ -448,7 +448,7 @@ module RailsJson
         unless stub[:header_timestamp_list].nil? || stub[:header_timestamp_list].empty?
           http_resp.headers['X-TimestampList'] = stub[:header_timestamp_list]
             .compact
-            .map { |s| Seahorse::TimeHelper.to_date_time(s) }
+            .map { |s| Hearth::TimeHelper.to_date_time(s) }
             .join(', ')
         end
         http_resp.headers['X-Enum'] = stub[:header_enum] unless stub[:header_enum].nil? || stub[:header_enum].empty?
@@ -495,7 +495,7 @@ module RailsJson
         stub ||= []
         data = []
         stub.each do |element|
-          data << Seahorse::TimeHelper.to_date_time(element) unless element.nil?
+          data << Hearth::TimeHelper.to_date_time(element) unless element.nil?
         end
         data
       end
@@ -605,7 +605,7 @@ module RailsJson
         data[:foo_enum_list] = Stubs::FooEnumList.stub(stub[:foo_enum_list]) unless stub[:foo_enum_list].nil?
         data[:foo_enum_set] = Stubs::FooEnumSet.stub(stub[:foo_enum_set]) unless stub[:foo_enum_set].nil?
         data[:foo_enum_map] = Stubs::FooEnumMap.stub(stub[:foo_enum_map]) unless stub[:foo_enum_map].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -681,7 +681,7 @@ module RailsJson
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
         data[:dense_set_map] = Stubs::DenseSetMap.stub(stub[:dense_set_map]) unless stub[:dense_set_map].nil?
         data[:sparse_set_map] = Stubs::SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -918,7 +918,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:contents] = Stubs::MyUnion.stub(stub[:contents]) unless stub[:contents].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -940,7 +940,7 @@ module RailsJson
         data[:boolean_value] = stub[:boolean_value] unless stub[:boolean_value].nil?
         data[:number_value] = stub[:number_value] unless stub[:number_value].nil?
         data[:blob_value] = Base64::encode64(stub[:blob_value]) unless stub[:blob_value].nil?
-        data[:timestamp_value] = Seahorse::TimeHelper.to_date_time(stub[:timestamp_value]) unless stub[:timestamp_value].nil?
+        data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub[:timestamp_value]) unless stub[:timestamp_value].nil?
         data[:enum_value] = stub[:enum_value] unless stub[:enum_value].nil?
         data[:list_value] = Stubs::StringList.stub(stub[:list_value]) unless stub[:list_value].nil?
         data[:map_value] = Stubs::StringMap.stub(stub[:map_value]) unless stub[:map_value].nil?
@@ -992,9 +992,9 @@ module RailsJson
         data[:double] = stub[:double] unless stub[:double].nil?
         data[:empty_struct] = Stubs::EmptyStruct.stub(stub[:empty_struct]) unless stub[:empty_struct].nil?
         data[:float] = stub[:float] unless stub[:float].nil?
-        data[:httpdate_timestamp] = Seahorse::TimeHelper.to_http_date(stub[:httpdate_timestamp]) unless stub[:httpdate_timestamp].nil?
+        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(stub[:httpdate_timestamp]) unless stub[:httpdate_timestamp].nil?
         data[:integer] = stub[:integer] unless stub[:integer].nil?
-        data[:iso8601_timestamp] = Seahorse::TimeHelper.to_date_time(stub[:iso8601_timestamp]) unless stub[:iso8601_timestamp].nil?
+        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(stub[:iso8601_timestamp]) unless stub[:iso8601_timestamp].nil?
         data[:json_value] = stub[:json_value] unless stub[:json_value].nil?
         data[:list_of_lists] = Stubs::ListOfListOfStrings.stub(stub[:list_of_lists]) unless stub[:list_of_lists].nil?
         data[:list_of_maps_of_strings] = Stubs::ListOfMapsOfStrings.stub(stub[:list_of_maps_of_strings]) unless stub[:list_of_maps_of_strings].nil?
@@ -1011,9 +1011,9 @@ module RailsJson
         data[:simple_struct] = Stubs::SimpleStruct.stub(stub[:simple_struct]) unless stub[:simple_struct].nil?
         data[:string] = stub[:string] unless stub[:string].nil?
         data[:struct_with_location_name] = Stubs::StructWithLocationName.stub(stub[:struct_with_location_name]) unless stub[:struct_with_location_name].nil?
-        data[:timestamp] = Seahorse::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
-        data[:unix_timestamp] = Seahorse::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]) unless stub[:unix_timestamp].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        data[:timestamp] = Hearth::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]) unless stub[:unix_timestamp].nil?
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1099,9 +1099,9 @@ module RailsJson
         data[:double] = stub[:double] unless stub[:double].nil?
         data[:empty_struct] = Stubs::EmptyStruct.stub(stub[:empty_struct]) unless stub[:empty_struct].nil?
         data[:float] = stub[:float] unless stub[:float].nil?
-        data[:httpdate_timestamp] = Seahorse::TimeHelper.to_http_date(stub[:httpdate_timestamp]) unless stub[:httpdate_timestamp].nil?
+        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(stub[:httpdate_timestamp]) unless stub[:httpdate_timestamp].nil?
         data[:integer] = stub[:integer] unless stub[:integer].nil?
-        data[:iso8601_timestamp] = Seahorse::TimeHelper.to_date_time(stub[:iso8601_timestamp]) unless stub[:iso8601_timestamp].nil?
+        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(stub[:iso8601_timestamp]) unless stub[:iso8601_timestamp].nil?
         data[:json_value] = stub[:json_value] unless stub[:json_value].nil?
         data[:list_of_lists] = Stubs::ListOfListOfStrings.stub(stub[:list_of_lists]) unless stub[:list_of_lists].nil?
         data[:list_of_maps_of_strings] = Stubs::ListOfMapsOfStrings.stub(stub[:list_of_maps_of_strings]) unless stub[:list_of_maps_of_strings].nil?
@@ -1118,8 +1118,8 @@ module RailsJson
         data[:simple_struct] = Stubs::SimpleStruct.stub(stub[:simple_struct]) unless stub[:simple_struct].nil?
         data[:string] = stub[:string] unless stub[:string].nil?
         data[:struct_with_location_name] = Stubs::StructWithLocationName.stub(stub[:struct_with_location_name]) unless stub[:struct_with_location_name].nil?
-        data[:timestamp] = Seahorse::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
-        data[:unix_timestamp] = Seahorse::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]) unless stub[:unix_timestamp].nil?
+        data[:timestamp] = Hearth::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]) unless stub[:unix_timestamp].nil?
         data
       end
     end
@@ -1371,7 +1371,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1418,7 +1418,7 @@ module RailsJson
         data[:string] = stub[:string] unless stub[:string].nil?
         data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1470,7 +1470,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1520,13 +1520,13 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['X-memberEpochSeconds'] = Seahorse::TimeHelper.to_epoch_seconds(stub[:member_epoch_seconds]).to_i unless stub[:member_epoch_seconds].nil?
-        http_resp.headers['X-memberHttpDate'] = Seahorse::TimeHelper.to_http_date(stub[:member_http_date]) unless stub[:member_http_date].nil?
-        http_resp.headers['X-memberDateTime'] = Seahorse::TimeHelper.to_date_time(stub[:member_date_time]) unless stub[:member_date_time].nil?
-        http_resp.headers['X-defaultFormat'] = Seahorse::TimeHelper.to_http_date(stub[:default_format]) unless stub[:default_format].nil?
-        http_resp.headers['X-targetEpochSeconds'] = Seahorse::TimeHelper.to_epoch_seconds(stub[:target_epoch_seconds]).to_i unless stub[:target_epoch_seconds].nil?
-        http_resp.headers['X-targetHttpDate'] = Seahorse::TimeHelper.to_http_date(stub[:target_http_date]) unless stub[:target_http_date].nil?
-        http_resp.headers['X-targetDateTime'] = Seahorse::TimeHelper.to_date_time(stub[:target_date_time]) unless stub[:target_date_time].nil?
+        http_resp.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:member_epoch_seconds]).to_i unless stub[:member_epoch_seconds].nil?
+        http_resp.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:member_http_date]) unless stub[:member_http_date].nil?
+        http_resp.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(stub[:member_date_time]) unless stub[:member_date_time].nil?
+        http_resp.headers['X-defaultFormat'] = Hearth::TimeHelper.to_http_date(stub[:default_format]) unless stub[:default_format].nil?
+        http_resp.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:target_epoch_seconds]).to_i unless stub[:target_epoch_seconds].nil?
+        http_resp.headers['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:target_http_date]) unless stub[:target_http_date].nil?
+        http_resp.headers['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(stub[:target_date_time]) unless stub[:target_date_time].nil?
       end
     end
 
@@ -1544,7 +1544,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:member] = Stubs::Struct____456efg.stub(stub[:member]) unless stub[:member].nil?
-        http_resp.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 

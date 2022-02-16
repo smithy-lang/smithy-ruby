@@ -14,7 +14,7 @@ module WhiteLabel
 
     module KitchenSinkInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::KitchenSinkInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkInput, context: context)
         type = Types::KitchenSinkInput.new
         type.string = params[:string]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
@@ -32,7 +32,7 @@ module WhiteLabel
 
     module ListOfStrings
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Array, context: context)
+        Hearth::Validator.validate!(params, ::Array, context: context)
         data = []
         params.each_with_index do |element, index|
           data << element
@@ -43,7 +43,7 @@ module WhiteLabel
 
     module ListOfStructs
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Array, context: context)
+        Hearth::Validator.validate!(params, ::Array, context: context)
         data = []
         params.each_with_index do |element, index|
           data << Struct.build(element, context: "#{context}[#{index}]") unless element.nil?
@@ -54,7 +54,7 @@ module WhiteLabel
 
     module MapOfStrings
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        Hearth::Validator.validate!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
           data[key] = value
@@ -65,7 +65,7 @@ module WhiteLabel
 
     module MapOfStructs
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, context: context)
+        Hearth::Validator.validate!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
           data[key] = Struct.build(value, context: "#{context}[:#{key}]") unless value.nil?
@@ -76,7 +76,7 @@ module WhiteLabel
 
     module PaginatorsTestOperationInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
         type = Types::PaginatorsTestOperationInput.new
         type.next_token = params[:next_token]
         type
@@ -85,7 +85,7 @@ module WhiteLabel
 
     module PaginatorsTestWithItemsInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
         type = Types::PaginatorsTestWithItemsInput.new
         type.next_token = params[:next_token]
         type
@@ -94,7 +94,7 @@ module WhiteLabel
 
     module SetOfStrings
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Set, ::Array, context: context)
+        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
         data = Set.new
         params.each_with_index do |element, index|
           data << element
@@ -105,7 +105,7 @@ module WhiteLabel
 
     module SetOfStructs
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Set, ::Array, context: context)
+        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
         data = Set.new
         params.each_with_index do |element, index|
           data << Struct.build(element, context: "#{context}[#{index}]") unless element.nil?
@@ -116,7 +116,7 @@ module WhiteLabel
 
     module Struct
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::Struct, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::Struct, context: context)
         type = Types::Struct.new
         type.value = params[:value]
         type
@@ -126,7 +126,7 @@ module WhiteLabel
     module Union
       def self.build(params, context: '')
         return params if params.is_a?(Types::Union)
-        Seahorse::Validator.validate!(params, ::Hash, Types::Union, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::Union, context: context)
         unless params.size == 1
           raise ArgumentError,
                 "Expected #{context} to have exactly one member, got: #{params}"
@@ -150,7 +150,7 @@ module WhiteLabel
 
     module WaitersTestInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::WaitersTestInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::WaitersTestInput, context: context)
         type = Types::WaitersTestInput.new
         type.status = params[:status]
         type
@@ -159,7 +159,7 @@ module WhiteLabel
 
     module Struct____PaginatorsTestWithBadNamesInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesInput.new
         type.member____next_token = params[:member____next_token]
         type

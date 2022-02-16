@@ -21,7 +21,7 @@ module HighScoreService
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -41,7 +41,7 @@ module HighScoreService
         http_req.http_method = 'DELETE'
         http_req.append_path(format(
             '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_s)
+            id: Hearth::HTTP.uri_escape(input[:id].to_s)
           )
         )
       end
@@ -53,7 +53,7 @@ module HighScoreService
         http_req.http_method = 'GET'
         http_req.append_path(format(
             '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_s)
+            id: Hearth::HTTP.uri_escape(input[:id].to_s)
           )
         )
       end
@@ -73,14 +73,14 @@ module HighScoreService
         http_req.http_method = 'PUT'
         http_req.append_path(format(
             '/high_scores/%<id>s',
-            id: Seahorse::HTTP.uri_escape(input[:id].to_s)
+            id: Hearth::HTTP.uri_escape(input[:id].to_s)
           )
         )
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
   end

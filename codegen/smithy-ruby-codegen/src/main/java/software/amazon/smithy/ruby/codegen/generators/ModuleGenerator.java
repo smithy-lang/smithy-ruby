@@ -41,7 +41,7 @@ public class ModuleGenerator {
 
         writer.writePreamble();
 
-        writer.write("require 'seahorse'\n");
+        writer.write("require 'hearth'\n");
 
         String[] requires = {
                 "builders", "client", "errors", "parsers", "types",

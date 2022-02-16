@@ -9,7 +9,7 @@
 
 require 'weather'
 
-require 'seahorse/xml/node_matcher'
+require 'hearth/xml/node_matcher'
 
 module Weather
   describe Client do
@@ -22,14 +22,14 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
             response.body = StringIO.new('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -48,13 +48,13 @@ module Weather
         # Does something
         #
         it 'WriteGetCityAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/cities/123')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.get_city({
@@ -67,7 +67,7 @@ module Weather
         # Does something
         #
         it 'WriteGetCityResponseAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
             response.body = StringIO.new('{
@@ -83,7 +83,7 @@ module Weather
                     "case": "Upper"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.get_city({}, middleware: middleware)
@@ -106,7 +106,7 @@ module Weather
         # Does something
         #
         it 'stubs WriteGetCityResponseAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -144,14 +144,14 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
             response.body = StringIO.new('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -171,14 +171,14 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
             response.body = StringIO.new('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -198,14 +198,14 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
             response.body = StringIO.new('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -230,7 +230,7 @@ module Weather
         # Does something
         #
         it 'WriteListCitiesAssertions' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
@@ -246,7 +246,7 @@ module Weather
               expect(actual_query.key?(query)).to be false
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.list_cities({

@@ -10,7 +10,7 @@
 module Weather
   module Types
 
-    class Announcements < Seahorse::Union
+    class Announcements < Hearth::Union
       class Police < Announcements
         def to_h: () -> { police: Hash[Symbol,Announcements] }
       end
@@ -56,7 +56,7 @@ module Weather
 
     GetForecastOutput: untyped
 
-    class ImageType < Seahorse::Union
+    class ImageType < Hearth::Union
       class Raw < ImageType
         def to_h: () -> { raw: Hash[Symbol,ImageType] }
       end
@@ -82,7 +82,7 @@ module Weather
 
     PNGImage: untyped
 
-    class Precipitation < Seahorse::Union
+    class Precipitation < Hearth::Union
       class Rain < Precipitation
         def to_h: () -> { rain: Hash[Symbol,Precipitation] }
       end

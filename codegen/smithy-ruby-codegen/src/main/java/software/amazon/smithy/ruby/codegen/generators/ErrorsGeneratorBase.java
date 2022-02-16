@@ -104,7 +104,7 @@ public abstract class ErrorsGeneratorBase {
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < Seahorse::HTTP::ApiError; end")
+                .write("class ApiError < Hearth::HTTP::ApiError; end")
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
@@ -127,7 +127,7 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsBaseErrors() {
         rbsWriter
-                .write("\nclass ApiError < Seahorse::HTTP::ApiError")
+                .write("\nclass ApiError < Hearth::HTTP::ApiError")
                 .write("end")
                 .write("\nclass ApiClientError < ApiError")
                 .write("end")
@@ -194,7 +194,7 @@ public abstract class ErrorsGeneratorBase {
                 .openBlock("class $L < $L", errorName, apiErrorType);
 
         writer
-                .writeYardParam("Seahorse::HTTP::Response", "http_resp", "")
+                .writeYardParam("Hearth::HTTP::Response", "http_resp", "")
                 .writeYardParam("String", "error_code", "")
                 .writeYardParam("String", "message", "");
 
@@ -232,7 +232,7 @@ public abstract class ErrorsGeneratorBase {
             apiErrorType = "ApiServerError";
         } else {
             // This should not happen but it's a safe fallback
-            apiErrorType = "Seahorse::ApiError";
+            apiErrorType = "Hearth::ApiError";
         }
 
         return apiErrorType;

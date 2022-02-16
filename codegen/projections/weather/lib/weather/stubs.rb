@@ -70,7 +70,7 @@ module Weather
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['x-last-updated'] = Seahorse::TimeHelper.to_http_date(stub[:last_updated]) unless stub[:last_updated].nil?
+        http_resp.headers['x-last-updated'] = Hearth::TimeHelper.to_http_date(stub[:last_updated]) unless stub[:last_updated].nil?
       end
     end
 

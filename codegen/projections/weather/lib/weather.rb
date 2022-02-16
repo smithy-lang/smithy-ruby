@@ -7,7 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'seahorse'
+require 'hearth'
 
 require_relative 'weather/builders'
 require_relative 'weather/client'

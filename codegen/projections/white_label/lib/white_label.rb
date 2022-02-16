@@ -7,7 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'seahorse'
+require 'hearth'
 
 require_relative 'white_label/builders'
 require_relative 'white_label/client'

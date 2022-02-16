@@ -130,7 +130,7 @@ module RailsJson
 
     MediaTypeHeaderOutput: untyped
 
-    class MyUnion < Seahorse::Union
+    class MyUnion < Hearth::Union
       class StringValue < MyUnion
         def to_h: () -> { string_value: Hash[Symbol,MyUnion] }
       end

@@ -156,7 +156,7 @@ public class TypesGenerator {
                     .write("keyword_init: true")
                     .closeBlock(") do")
                     .indent()
-                    .write("include Seahorse::Structure")
+                    .write("include Hearth::Structure")
                     .call(() -> renderStructureToSMethod(shape))
                     .closeBlock("end\n");
 
@@ -169,7 +169,7 @@ public class TypesGenerator {
             String shapeName = symbolProvider.toSymbol(shape).getName();
 
             writer.writeInline("$L", documentation);
-            writer.openBlock("class $L < Seahorse::Union", shapeName);
+            writer.openBlock("class $L < Hearth::Union", shapeName);
 
             for (MemberShape memberShape : shape.members()) {
                 String memberDocumentation =
@@ -287,7 +287,7 @@ public class TypesGenerator {
             Symbol symbol = symbolProvider.toSymbol(shape);
             String shapeName = symbol.getName();
 
-            rbsWriter.openBlock("class $L < Seahorse::Union", shapeName);
+            rbsWriter.openBlock("class $L < Hearth::Union", shapeName);
 
             for (MemberShape memberShape : shape.members()) {
                 rbsWriter

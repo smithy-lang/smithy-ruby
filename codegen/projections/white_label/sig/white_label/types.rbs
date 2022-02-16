@@ -30,7 +30,7 @@ module WhiteLabel
 
     Struct: untyped
 
-    class Union < Seahorse::Union
+    class Union < Hearth::Union
       class String < Union
         def to_h: () -> { string: Hash[Symbol,Union] }
       end

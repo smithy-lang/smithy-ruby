@@ -14,7 +14,7 @@ module HighScoreService
 
     module CreateHighScoreInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::CreateHighScoreInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::CreateHighScoreInput, context: context)
         type = Types::CreateHighScoreInput.new
         type.high_score = HighScoreParams.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
         type
@@ -23,7 +23,7 @@ module HighScoreService
 
     module DeleteHighScoreInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
         type = Types::DeleteHighScoreInput.new
         type.id = params[:id]
         type
@@ -32,7 +32,7 @@ module HighScoreService
 
     module GetHighScoreInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::GetHighScoreInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::GetHighScoreInput, context: context)
         type = Types::GetHighScoreInput.new
         type.id = params[:id]
         type
@@ -41,7 +41,7 @@ module HighScoreService
 
     module HighScoreParams
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::HighScoreParams, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::HighScoreParams, context: context)
         type = Types::HighScoreParams.new
         type.game = params[:game]
         type.score = params[:score]
@@ -51,7 +51,7 @@ module HighScoreService
 
     module ListHighScoresInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::ListHighScoresInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::ListHighScoresInput, context: context)
         type = Types::ListHighScoresInput.new
         type
       end
@@ -59,7 +59,7 @@ module HighScoreService
 
     module UpdateHighScoreInput
       def self.build(params, context: '')
-        Seahorse::Validator.validate!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
+        Hearth::Validator.validate!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
         type = Types::UpdateHighScoreInput.new
         type.id = params[:id]
         type.high_score = HighScoreParams.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?

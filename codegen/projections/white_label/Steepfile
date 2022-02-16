@@ -5,7 +5,7 @@ target :app do
 
   check 'lib/white_label/types'
 
-  library "seahorse"
+  library "hearth"
   library "set"
 
   configure_code_diagnostics(D::Ruby.strict)

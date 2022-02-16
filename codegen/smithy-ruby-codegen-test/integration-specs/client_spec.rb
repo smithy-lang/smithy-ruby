@@ -30,7 +30,7 @@ module WhiteLabel
 
       it 'uses validate_input from initialize' do
         client = Client.new(validate_input: false, stub_responses: true)
-        expect(Seahorse::Middleware::Validate)
+        expect(Hearth::Middleware::Validate)
           .to receive(:new)
                 .with(anything, validator: Validators::KitchenSinkInput, validate_input: false)
                 .and_call_original
@@ -40,7 +40,7 @@ module WhiteLabel
 
       it 'uses validate_input from options' do
         client = Client.new(stub_responses: true)
-        expect(Seahorse::Middleware::Validate)
+        expect(Hearth::Middleware::Validate)
           .to receive(:new)
                 .with(anything, validator: Validators::KitchenSinkInput, validate_input: false)
                 .and_call_original
@@ -50,7 +50,7 @@ module WhiteLabel
 
       it 'uses http_wire_trace from initialize' do
         client = Client.new(http_wire_trace: true, stub_responses: true)
-        expect(Seahorse::HTTP::Client)
+        expect(Hearth::HTTP::Client)
           .to receive(:new)
                 .with(hash_including(http_wire_trace: true))
                 .and_call_original
@@ -60,7 +60,7 @@ module WhiteLabel
 
       it 'uses http_wire_trace from options' do
         client = Client.new(stub_responses: true)
-        expect(Seahorse::HTTP::Client)
+        expect(Hearth::HTTP::Client)
           .to receive(:new)
                 .with(hash_including(http_wire_trace: true))
                 .and_call_original
@@ -70,12 +70,12 @@ module WhiteLabel
 
       it 'uses logger' do
         client = Client.new(logger: logger, stub_responses: true)
-        expect(Seahorse::HTTP::Client)
+        expect(Hearth::HTTP::Client)
           .to receive(:new)
                 .with(hash_including(logger: logger))
                 .and_call_original
 
-        expect(Seahorse::Context)
+        expect(Hearth::Context)
           .to receive(:new)
                 .with(hash_including(logger: logger))
                 .and_call_original
@@ -88,9 +88,9 @@ module WhiteLabel
         it 'creates and uses a blockIO as the body' do
           client = Client.new(stub_responses: true)
 
-          expect(Seahorse::BlockIO).to receive(:new).and_return(block_io)
+          expect(Hearth::BlockIO).to receive(:new).and_return(block_io)
 
-          expect(Seahorse::HTTP::Response)
+          expect(Hearth::HTTP::Response)
             .to receive(:new)
                   .with(hash_including(body: block_io))
                   .and_call_original
@@ -104,7 +104,7 @@ module WhiteLabel
         it 'uses the output_stream as the body' do
           client = Client.new(stub_responses: true)
 
-          expect(Seahorse::HTTP::Response)
+          expect(Hearth::HTTP::Response)
             .to receive(:new)
                   .with(hash_including(body: output_stream))
                   .and_call_original

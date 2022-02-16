@@ -95,7 +95,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                 .write("http_req.headers['Content-Type'] = 'application/json'")
                 .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
-                .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+                .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
     }
 
     @Override
@@ -218,7 +218,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LSeahorse::NumberHelper.serialize($2L)$3L", dataSetter, inputGetter, checkRequired());
+            writer.write("$1LHearth::NumberHelper.serialize($2L)$3L", dataSetter, inputGetter, checkRequired());
         }
 
         @Override
@@ -246,21 +246,21 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             if (format.isPresent()) {
                 switch (format.get().getFormat()) {
                     case EPOCH_SECONDS:
-                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
+                        writer.write("$LHearth::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
                                 checkRequired());
                         break;
                     case HTTP_DATE:
-                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
+                        writer.write("$LHearth::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
                                 checkRequired());
                         break;
                     case DATE_TIME:
                     default:
-                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                        writer.write("$LHearth::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
                                 checkRequired());
                         break;
                 }
             } else {
-                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                writer.write("$LHearth::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
                         checkRequired());
             }
             return null;
@@ -361,7 +361,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         public Void documentShape(DocumentShape shape) {
             writer
                     .write("http_req.headers['Content-Type'] = 'application/json'")
-                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump($1L))", inputGetter);
+                    .write("http_req.body = StringIO.new(Hearth::JSON.dump($1L))", inputGetter);
             return null;
         }
 
@@ -394,7 +394,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                     .write("http_req.headers['Content-Type'] = 'application/json'")
                     .write("data = Builders::$1L.build($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
                             inputGetter)
-                    .write("http_req.body = StringIO.new(Seahorse::JSON.dump(data))");
+                    .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
         }
     }
 }
