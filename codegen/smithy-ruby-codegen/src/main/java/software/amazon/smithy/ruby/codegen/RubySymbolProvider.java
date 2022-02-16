@@ -133,10 +133,20 @@ public class RubySymbolProvider implements SymbolProvider,
                 return memberName;
             }
         } else {
-            // Note: we do not neeed to escape words that are only reserved for error members
+            // Note: we do not need to escape words that are only reserved for error members
             // error classes have parsed data accessible through a `data` member only so there are no conflicts.
             return getDefaultMemberName(shape);
         }
+    }
+
+    /**
+     * Convert a String shape name into a snake_cased member. Also checks reserved wording.
+     * @param shapeName The shape's name as a string
+     * @return A snake cased string for the member.
+     */
+    public String toMemberName(String shapeName) {
+        return prefixLeadingInvalidIdentCharacters(
+                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shapeName)), "member_");
     }
 
     // Member names (Except for union members) are snake_case.
