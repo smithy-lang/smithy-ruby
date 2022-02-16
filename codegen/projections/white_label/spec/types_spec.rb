@@ -26,8 +26,8 @@ module WhiteLabel
         expect(subject).to be_a(::Struct)
       end
 
-      it 'is a seahorse structure' do
-        expect(subject).to be_a(Seahorse::Structure)
+      it 'is a hearth structure' do
+        expect(subject).to be_a(Hearth::Structure)
       end
     end
 
@@ -35,8 +35,8 @@ module WhiteLabel
       subject { Union.new(nil) }
       let(:struct) { Types::Struct.new(value: 'struct value') }
 
-      it 'is a seahorse union' do
-        expect(subject).to be_a(Seahorse::Union)
+      it 'is a hearth union' do
+        expect(subject).to be_a(Hearth::Union)
         # implementation detail
         expect(subject).to be_a(SimpleDelegator)
       end

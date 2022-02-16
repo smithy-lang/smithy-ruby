@@ -10,7 +10,7 @@
 module Weather
   module Types
 
-    class Announcements < Seahorse::Union
+    class Announcements < Hearth::Union
 
       class Police < Announcements
         def to_h
@@ -68,7 +68,7 @@ module Weather
       :bar,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute latitude
@@ -84,7 +84,7 @@ module Weather
       :longitude,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute city_id
@@ -110,7 +110,7 @@ module Weather
       :case,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute baz
@@ -126,7 +126,7 @@ module Weather
       :bar,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute city_id
@@ -137,7 +137,7 @@ module Weather
       :city_id,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute last_updated
@@ -153,7 +153,7 @@ module Weather
       :announcements,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute city_id
@@ -169,7 +169,7 @@ module Weather
       :image_type,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute image
@@ -180,7 +180,7 @@ module Weather
       :image,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # The input used to get a city.
@@ -193,7 +193,7 @@ module Weather
       :city_id,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member_name
@@ -214,14 +214,14 @@ module Weather
       :city,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     GetCurrentTimeInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute time
@@ -232,7 +232,7 @@ module Weather
       :time,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute city_id
@@ -243,7 +243,7 @@ module Weather
       :city_id,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute chance_of_rain
@@ -259,10 +259,10 @@ module Weather
       :precipitation,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
-    class ImageType < Seahorse::Union
+    class ImageType < Hearth::Union
 
       class Raw < ImageType
         def to_h
@@ -340,7 +340,7 @@ module Weather
       :page_size,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute next_token
@@ -391,7 +391,7 @@ module Weather
       :sparse_items,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute message
@@ -407,7 +407,7 @@ module Weather
       :author,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Error encountered when no resource could be found.
@@ -426,14 +426,14 @@ module Weather
       :message,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     OtherStructure = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute height
@@ -449,10 +449,10 @@ module Weather
       :width,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
-    class Precipitation < Seahorse::Union
+    class Precipitation < Hearth::Union
 
       class Rain < Precipitation
         def to_h
@@ -565,7 +565,7 @@ module Weather
       :member____123foo,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____123abc
@@ -581,7 +581,7 @@ module Weather
       :member,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____123abc
@@ -597,7 +597,7 @@ module Weather
       :member,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
   end

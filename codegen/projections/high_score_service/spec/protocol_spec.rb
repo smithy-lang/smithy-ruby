@@ -9,7 +9,7 @@
 
 require 'high_score_service'
 
-require 'seahorse/xml/node_matcher'
+require 'hearth/xml/node_matcher'
 
 module HighScoreService
   describe Client do

@@ -84,11 +84,11 @@ public final class ApplicationTransport {
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Seahorse::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
-                .render((self, ctx) -> "Seahorse::HTTP::Response.new(body: output_stream(options, &block))")
+                .render((self, ctx) -> "Hearth::HTTP::Response.new(body: output_stream(options, &block))")
                 .build();
 
         ClientConfig wireTrace = (new ClientConfig.Builder())
@@ -118,20 +118,20 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Seahorse::HTTP::Client.new(logger: @logger, http_wire_trace: "
+                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: "
                         + "options.fetch(:http_wire_trace, @http_wire_trace))")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
             List<Middleware> middleware = new ArrayList();
             middleware.add((new Middleware.Builder())
-                    .klass("Seahorse::HTTP::Middleware::ContentLength")
+                    .klass("Hearth::HTTP::Middleware::ContentLength")
                     .step(MiddlewareStackStep.BUILD)
                     .build()
             );
 
             middleware.add((new Middleware.Builder())
-                    .klass("Seahorse::Middleware::Parse")
+                    .klass("Hearth::Middleware::Parse")
                     .step(MiddlewareStackStep.DESERIALIZE)
                     .operationParams((ctx, operation) -> {
                         SymbolProvider symbolProvider =
@@ -150,7 +150,7 @@ public final class ApplicationTransport {
                                         + symbolProvider.toSymbol(ctx.getModel().expectShape(error)).getName()).collect(
                                         Collectors.joining(", "));
                         params.put("error_parser",
-                                "Seahorse::HTTP::ErrorParser.new("
+                                "Hearth::HTTP::ErrorParser.new("
                                         + "error_module: Errors, error_code_fn: "
                                         + "Errors.method(:error_code), "
                                         + "success_status: "

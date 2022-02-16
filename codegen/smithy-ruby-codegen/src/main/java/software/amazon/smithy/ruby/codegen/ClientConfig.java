@@ -57,7 +57,7 @@ public class ClientConfig {
                 .documentation(
                         "Additional Middleware to be applied for every operation")
                 .initializationCustomization(
-                        "@middleware = Seahorse::MiddlewareBuilder.new(options[:middleware])")
+                        "@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
                 .build();
 
         configs.add(middleware);

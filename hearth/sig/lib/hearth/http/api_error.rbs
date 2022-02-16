@@ -1,0 +1,21 @@
+module Hearth
+  module HTTP
+    # Base class for HTTP errors returned from an API. Inherits from
+    # {Hearth::ApiError}.
+    class ApiError < Hearth::ApiError
+      def initialize: (http_resp: Response, **untyped kwargs) -> ApiError
+
+      # @return [Integer]
+      attr_reader http_status: Integer
+
+      # @return [Hash<String, String>]
+      attr_reader http_headers: Hash[String, String]
+
+      # @return [String]
+      attr_reader http_body: String
+
+      # @return [String]
+      attr_reader request_id: String
+    end
+  end
+end

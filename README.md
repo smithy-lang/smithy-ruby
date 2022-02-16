@@ -57,13 +57,13 @@ Codegen integration tests are written as ruby rspec tests (under smithy-ruby-cod
 
 These tests run against the generated test sdk defined by the high-score model in the smithy-ruby-codegen-test project.
 
-#### Running seahorse unit tests.
-Seahorse has a full suite of rspec tests which can be run from the seahorse directory with: `rspec`.
+#### Running hearth unit tests.
+Hearth has a full suite of rspec tests which can be run from the hearth directory with: `rspec`.
 
 #### Manual Testing
-The `sample-service` directory defines a rails service that can be run with `rails s`.  You can then test manually by adding seahorse and the generated sdk client to your library path with:
+The `sample-service` directory defines a rails service that can be run with `rails s`.  You can then test manually by adding hearth and the generated sdk client to your library path with:
 ```sh
-irb -I 'seahorse/lib' -I 'sample_service/lib'
+irb -I 'hearth/lib' -I 'sample_service/lib'
 ```
 
 And test with:

@@ -60,10 +60,10 @@ module RailsJson
             http_req.append_query_param('BooleanList', value.to_s) unless value.nil?
           end
         end
-        http_req.append_query_param('Timestamp', Seahorse::TimeHelper.to_date_time(input[:query_timestamp])) unless input[:query_timestamp].nil?
+        http_req.append_query_param('Timestamp', Hearth::TimeHelper.to_date_time(input[:query_timestamp])) unless input[:query_timestamp].nil?
         unless input[:query_timestamp_list].nil? || input[:query_timestamp_list].empty?
           input[:query_timestamp_list].each do |value|
-            http_req.append_query_param('TimestampList', Seahorse::TimeHelper.to_date_time(value)) unless value.nil?
+            http_req.append_query_param('TimestampList', Hearth::TimeHelper.to_date_time(value)) unless value.nil?
           end
         end
         http_req.append_query_param('Enum', input[:query_enum].to_s) unless input[:query_enum].nil?
@@ -102,7 +102,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Seahorse::TimeHelper.to_date_time(element) unless element.nil?
+          data << Hearth::TimeHelper.to_date_time(element) unless element.nil?
         end
         data
       end
@@ -124,7 +124,7 @@ module RailsJson
       def self.build(input)
         data = []
         input.each do |element|
-          data << Seahorse::NumberHelper.serialize(element) unless element.nil?
+          data << Hearth::NumberHelper.serialize(element) unless element.nil?
         end
         data
       end
@@ -198,7 +198,7 @@ module RailsJson
         end
         http_req.append_path(format(
             '/ConstantQueryString/%<hello>s',
-            hello: Seahorse::HTTP.uri_escape(input[:hello].to_s)
+            hello: Hearth::HTTP.uri_escape(input[:hello].to_s)
           )
         )
       end
@@ -214,7 +214,7 @@ module RailsJson
         data = {}
         data[:string_value] = input[:string_value] unless input[:string_value].nil?
         data[:document_value] = input[:document_value] unless input[:document_value].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -224,7 +224,7 @@ module RailsJson
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentTypeAsPayload')
         http_req.headers['Content-Type'] = 'application/json'
-        http_req.body = StringIO.new(Seahorse::JSON.dump(input[:document_value]))
+        http_req.body = StringIO.new(Hearth::JSON.dump(input[:document_value]))
       end
     end
 
@@ -253,7 +253,7 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:label] = input[:label] unless input[:label].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -294,7 +294,7 @@ module RailsJson
         http_req.append_path('/HttpPayloadWithStructure')
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::NestedPayload.build(input[:nested]) unless input[:nested].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -334,8 +334,8 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path(format(
             '/FloatHttpLabels/%<float>s/%<double>s',
-            float: Seahorse::HTTP.uri_escape(input[:float].to_s),
-            double: Seahorse::HTTP.uri_escape(input[:double].to_s)
+            float: Hearth::HTTP.uri_escape(input[:float].to_s),
+            double: Hearth::HTTP.uri_escape(input[:double].to_s)
           )
         )
       end
@@ -347,8 +347,8 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path(format(
             '/HttpRequestWithGreedyLabelInPath/foo/%<foo>s/baz/%<baz>s',
-            foo: Seahorse::HTTP.uri_escape(input[:foo].to_s),
-            baz: (input[:baz].to_s).split('/').map { |s| Seahorse::HTTP.uri_escape(s) }.join('/')
+            foo: Hearth::HTTP.uri_escape(input[:foo].to_s),
+            baz: (input[:baz].to_s).split('/').map { |s| Hearth::HTTP.uri_escape(s) }.join('/')
           )
         )
       end
@@ -360,14 +360,14 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path(format(
             '/HttpRequestWithLabels/%<string>s/%<short>s/%<integer>s/%<long>s/%<float>s/%<double>s/%<boolean>s/%<timestamp>s',
-            string: Seahorse::HTTP.uri_escape(input[:string].to_s),
-            short: Seahorse::HTTP.uri_escape(input[:short].to_s),
-            integer: Seahorse::HTTP.uri_escape(input[:integer].to_s),
-            long: Seahorse::HTTP.uri_escape(input[:long].to_s),
-            float: Seahorse::HTTP.uri_escape(input[:float].to_s),
-            double: Seahorse::HTTP.uri_escape(input[:double].to_s),
-            boolean: Seahorse::HTTP.uri_escape(input[:boolean].to_s),
-            timestamp: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_date_time(input[:timestamp]))
+            string: Hearth::HTTP.uri_escape(input[:string].to_s),
+            short: Hearth::HTTP.uri_escape(input[:short].to_s),
+            integer: Hearth::HTTP.uri_escape(input[:integer].to_s),
+            long: Hearth::HTTP.uri_escape(input[:long].to_s),
+            float: Hearth::HTTP.uri_escape(input[:float].to_s),
+            double: Hearth::HTTP.uri_escape(input[:double].to_s),
+            boolean: Hearth::HTTP.uri_escape(input[:boolean].to_s),
+            timestamp: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:timestamp]))
           )
         )
       end
@@ -379,13 +379,13 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path(format(
             '/HttpRequestWithLabelsAndTimestampFormat/%<memberEpochSeconds>s/%<memberHttpDate>s/%<memberDateTime>s/%<defaultFormat>s/%<targetEpochSeconds>s/%<targetHttpDate>s/%<targetDateTime>s',
-            memberEpochSeconds: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i.to_s),
-            memberHttpDate: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_http_date(input[:member_http_date])),
-            memberDateTime: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_date_time(input[:member_date_time])),
-            defaultFormat: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_date_time(input[:default_format])),
-            targetEpochSeconds: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i.to_s),
-            targetHttpDate: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_http_date(input[:target_http_date])),
-            targetDateTime: Seahorse::HTTP.uri_escape(Seahorse::TimeHelper.to_date_time(input[:target_date_time]))
+            memberEpochSeconds: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i.to_s),
+            memberHttpDate: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_http_date(input[:member_http_date])),
+            memberDateTime: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:member_date_time])),
+            defaultFormat: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:default_format])),
+            targetEpochSeconds: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i.to_s),
+            targetHttpDate: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_http_date(input[:target_http_date])),
+            targetDateTime: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:target_date_time]))
           )
         )
       end
@@ -417,8 +417,8 @@ module RailsJson
         http_req.headers['X-Short'] = input[:header_short].to_s unless input[:header_short].nil?
         http_req.headers['X-Integer'] = input[:header_integer].to_s unless input[:header_integer].nil?
         http_req.headers['X-Long'] = input[:header_long].to_s unless input[:header_long].nil?
-        http_req.headers['X-Float'] = Seahorse::NumberHelper.serialize(input[:header_float]) unless input[:header_float].nil?
-        http_req.headers['X-Double'] = Seahorse::NumberHelper.serialize(input[:header_double]) unless input[:header_double].nil?
+        http_req.headers['X-Float'] = Hearth::NumberHelper.serialize(input[:header_float]) unless input[:header_float].nil?
+        http_req.headers['X-Double'] = Hearth::NumberHelper.serialize(input[:header_double]) unless input[:header_double].nil?
         http_req.headers['X-Boolean1'] = input[:header_true_bool].to_s unless input[:header_true_bool].nil?
         http_req.headers['X-Boolean2'] = input[:header_false_bool].to_s unless input[:header_false_bool].nil?
         unless input[:header_string_list].nil? || input[:header_string_list].empty?
@@ -449,7 +449,7 @@ module RailsJson
         unless input[:header_timestamp_list].nil? || input[:header_timestamp_list].empty?
           http_req.headers['X-TimestampList'] = input[:header_timestamp_list]
             .compact
-            .map { |s| Seahorse::TimeHelper.to_http_date(s) }
+            .map { |s| Hearth::TimeHelper.to_http_date(s) }
             .join(', ')
         end
         http_req.headers['X-Enum'] = input[:header_enum] unless input[:header_enum].nil? || input[:header_enum].empty?
@@ -476,7 +476,7 @@ module RailsJson
         data[:foo_enum_list] = Builders::FooEnumList.build(input[:foo_enum_list]) unless input[:foo_enum_list].nil?
         data[:foo_enum_set] = Builders::FooEnumSet.build(input[:foo_enum_set]).to_a unless input[:foo_enum_set].nil?
         data[:foo_enum_map] = Builders::FooEnumMap.build(input[:foo_enum_map]) unless input[:foo_enum_map].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -521,7 +521,7 @@ module RailsJson
         data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
         data[:dense_set_map] = Builders::DenseSetMap.build(input[:dense_set_map]) unless input[:dense_set_map].nil?
         data[:sparse_set_map] = Builders::SparseSetMap.build(input[:sparse_set_map]) unless input[:sparse_set_map].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -653,7 +653,7 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:contents] = Builders::MyUnion.build(input[:contents]) unless input[:contents].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -671,7 +671,7 @@ module RailsJson
         when Types::MyUnion::BlobValue
           data[:blob_value] = Base64::encode64(input).strip
         when Types::MyUnion::TimestampValue
-          data[:timestamp_value] = Seahorse::TimeHelper.to_date_time(input)
+          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(input)
         when Types::MyUnion::EnumValue
           data[:enum_value] = input
         when Types::MyUnion::ListValue
@@ -699,12 +699,12 @@ module RailsJson
         data = {}
         data[:blob] = Base64::encode64(input[:blob]).strip unless input[:blob].nil?
         data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = Seahorse::NumberHelper.serialize(input[:double]) unless input[:double].nil?
+        data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
         data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = Seahorse::NumberHelper.serialize(input[:float]) unless input[:float].nil?
-        data[:httpdate_timestamp] = Seahorse::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
+        data[:float] = Hearth::NumberHelper.serialize(input[:float]) unless input[:float].nil?
+        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
         data[:integer] = input[:integer] unless input[:integer].nil?
-        data[:iso8601_timestamp] = Seahorse::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
+        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
         data[:json_value] = input[:json_value] unless input[:json_value].nil?
         data[:list_of_lists] = Builders::ListOfListOfStrings.build(input[:list_of_lists]) unless input[:list_of_lists].nil?
         data[:list_of_maps_of_strings] = Builders::ListOfMapsOfStrings.build(input[:list_of_maps_of_strings]) unless input[:list_of_maps_of_strings].nil?
@@ -721,9 +721,9 @@ module RailsJson
         data[:simple_struct] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
         data[:string] = input[:string] unless input[:string].nil?
         data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
-        data[:timestamp] = Seahorse::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Seahorse::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -751,12 +751,12 @@ module RailsJson
         data = {}
         data[:blob] = Base64::encode64(input[:blob]).strip unless input[:blob].nil?
         data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = Seahorse::NumberHelper.serialize(input[:double]) unless input[:double].nil?
+        data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
         data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = Seahorse::NumberHelper.serialize(input[:float]) unless input[:float].nil?
-        data[:httpdate_timestamp] = Seahorse::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
+        data[:float] = Hearth::NumberHelper.serialize(input[:float]) unless input[:float].nil?
+        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
         data[:integer] = input[:integer] unless input[:integer].nil?
-        data[:iso8601_timestamp] = Seahorse::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
+        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
         data[:json_value] = input[:json_value] unless input[:json_value].nil?
         data[:list_of_lists] = Builders::ListOfListOfStrings.build(input[:list_of_lists]) unless input[:list_of_lists].nil?
         data[:list_of_maps_of_strings] = Builders::ListOfMapsOfStrings.build(input[:list_of_maps_of_strings]) unless input[:list_of_maps_of_strings].nil?
@@ -773,8 +773,8 @@ module RailsJson
         data[:simple_struct] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
         data[:string] = input[:string] unless input[:string].nil?
         data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
-        data[:timestamp] = Seahorse::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Seahorse::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
+        data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
         data
       end
     end
@@ -915,7 +915,7 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:simple_struct_attributes] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -946,7 +946,7 @@ module RailsJson
         data[:string] = input[:string] unless input[:string].nil?
         data[:sparse_string_list] = Builders::SparseStringList.build(input[:sparse_string_list]) unless input[:sparse_string_list].nil?
         data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -980,7 +980,7 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:value] = input[:value] unless input[:value].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1027,13 +1027,13 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/TimestampFormatHeaders')
-        http_req.headers['X-memberEpochSeconds'] = Seahorse::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i unless input[:member_epoch_seconds].nil?
-        http_req.headers['X-memberHttpDate'] = Seahorse::TimeHelper.to_http_date(input[:member_http_date]) unless input[:member_http_date].nil?
-        http_req.headers['X-memberDateTime'] = Seahorse::TimeHelper.to_date_time(input[:member_date_time]) unless input[:member_date_time].nil?
-        http_req.headers['X-defaultFormat'] = Seahorse::TimeHelper.to_http_date(input[:default_format]) unless input[:default_format].nil?
-        http_req.headers['X-targetEpochSeconds'] = Seahorse::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i unless input[:target_epoch_seconds].nil?
-        http_req.headers['X-targetHttpDate'] = Seahorse::TimeHelper.to_http_date(input[:target_http_date]) unless input[:target_http_date].nil?
-        http_req.headers['X-targetDateTime'] = Seahorse::TimeHelper.to_date_time(input[:target_date_time]) unless input[:target_date_time].nil?
+        http_req.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i unless input[:member_epoch_seconds].nil?
+        http_req.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(input[:member_http_date]) unless input[:member_http_date].nil?
+        http_req.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(input[:member_date_time]) unless input[:member_date_time].nil?
+        http_req.headers['X-defaultFormat'] = Hearth::TimeHelper.to_http_date(input[:default_format]) unless input[:default_format].nil?
+        http_req.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i unless input[:target_epoch_seconds].nil?
+        http_req.headers['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(input[:target_http_date]) unless input[:target_http_date].nil?
+        http_req.headers['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(input[:target_date_time]) unless input[:target_date_time].nil?
       end
     end
 
@@ -1043,14 +1043,14 @@ module RailsJson
         http_req.http_method = 'POST'
         http_req.append_path(format(
             '/BadName/%<__123abc>s',
-            __123abc: Seahorse::HTTP.uri_escape(input[:member____123abc].to_s)
+            __123abc: Hearth::HTTP.uri_escape(input[:member____123abc].to_s)
           )
         )
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:member] = Builders::Struct____456efg.build(input[:member]) unless input[:member].nil?
-        http_req.body = StringIO.new(Seahorse::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 

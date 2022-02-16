@@ -12,36 +12,36 @@ module Weather
 
     class GetCityAnnouncementsInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::GetCityAnnouncementsInput, context: context)
-        Seahorse::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
+        Hearth::Validator.validate!(input, Types::GetCityAnnouncementsInput, context: context)
+        Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
       end
     end
 
     class GetCityImageInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::GetCityImageInput, context: context)
-        Seahorse::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
+        Hearth::Validator.validate!(input, Types::GetCityImageInput, context: context)
+        Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
         Validators::ImageType.validate!(input[:image_type], context: "#{context}[:image_type]") unless input[:image_type].nil?
       end
     end
 
     class GetCityInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::GetCityInput, context: context)
-        Seahorse::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
+        Hearth::Validator.validate!(input, Types::GetCityInput, context: context)
+        Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
       end
     end
 
     class GetCurrentTimeInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::GetCurrentTimeInput, context: context)
+        Hearth::Validator.validate!(input, Types::GetCurrentTimeInput, context: context)
       end
     end
 
     class GetForecastInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::GetForecastInput, context: context)
-        Seahorse::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
+        Hearth::Validator.validate!(input, Types::GetForecastInput, context: context)
+        Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
       end
     end
 
@@ -49,7 +49,7 @@ module Weather
       def self.validate!(input, context:)
         case input
         when Types::ImageType::Raw
-          Seahorse::Validator.validate!(input.__getobj__, ::TrueClass, ::FalseClass, context: context)
+          Hearth::Validator.validate!(input.__getobj__, ::TrueClass, ::FalseClass, context: context)
         when Types::ImageType::Png
           Validators::PNGImage.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
@@ -61,7 +61,7 @@ module Weather
 
       class Raw
         def self.validate!(input, context:)
-          Seahorse::Validator.validate!(input, ::TrueClass, ::FalseClass, context: context)
+          Hearth::Validator.validate!(input, ::TrueClass, ::FalseClass, context: context)
         end
       end
 
@@ -74,37 +74,37 @@ module Weather
 
     class ListCitiesInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::ListCitiesInput, context: context)
-        Seahorse::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
-        Seahorse::Validator.validate!(input[:a_string], ::String, context: "#{context}[:a_string]")
-        Seahorse::Validator.validate!(input[:default_bool], ::TrueClass, ::FalseClass, context: "#{context}[:default_bool]")
-        Seahorse::Validator.validate!(input[:boxed_bool], ::TrueClass, ::FalseClass, context: "#{context}[:boxed_bool]")
-        Seahorse::Validator.validate!(input[:default_number], ::Integer, context: "#{context}[:default_number]")
-        Seahorse::Validator.validate!(input[:boxed_number], ::Integer, context: "#{context}[:boxed_number]")
-        Seahorse::Validator.validate!(input[:some_enum], ::String, context: "#{context}[:some_enum]")
-        Seahorse::Validator.validate!(input[:page_size], ::Integer, context: "#{context}[:page_size]")
+        Hearth::Validator.validate!(input, Types::ListCitiesInput, context: context)
+        Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+        Hearth::Validator.validate!(input[:a_string], ::String, context: "#{context}[:a_string]")
+        Hearth::Validator.validate!(input[:default_bool], ::TrueClass, ::FalseClass, context: "#{context}[:default_bool]")
+        Hearth::Validator.validate!(input[:boxed_bool], ::TrueClass, ::FalseClass, context: "#{context}[:boxed_bool]")
+        Hearth::Validator.validate!(input[:default_number], ::Integer, context: "#{context}[:default_number]")
+        Hearth::Validator.validate!(input[:boxed_number], ::Integer, context: "#{context}[:boxed_number]")
+        Hearth::Validator.validate!(input[:some_enum], ::String, context: "#{context}[:some_enum]")
+        Hearth::Validator.validate!(input[:page_size], ::Integer, context: "#{context}[:page_size]")
       end
     end
 
     class PNGImage
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::PNGImage, context: context)
-        Seahorse::Validator.validate!(input[:height], ::Integer, context: "#{context}[:height]")
-        Seahorse::Validator.validate!(input[:width], ::Integer, context: "#{context}[:width]")
+        Hearth::Validator.validate!(input, Types::PNGImage, context: context)
+        Hearth::Validator.validate!(input[:height], ::Integer, context: "#{context}[:height]")
+        Hearth::Validator.validate!(input[:width], ::Integer, context: "#{context}[:width]")
       end
     end
 
     class Struct____456efg
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Struct____456efg, context: context)
-        Seahorse::Validator.validate!(input[:member____123foo], ::String, context: "#{context}[:member____123foo]")
+        Hearth::Validator.validate!(input, Types::Struct____456efg, context: context)
+        Hearth::Validator.validate!(input[:member____123foo], ::String, context: "#{context}[:member____123foo]")
       end
     end
 
     class Struct____789BadNameInput
       def self.validate!(input, context:)
-        Seahorse::Validator.validate!(input, Types::Struct____789BadNameInput, context: context)
-        Seahorse::Validator.validate!(input[:member____123abc], ::String, context: "#{context}[:member____123abc]")
+        Hearth::Validator.validate!(input, Types::Struct____789BadNameInput, context: context)
+        Hearth::Validator.validate!(input[:member____123abc], ::String, context: "#{context}[:member____123abc]")
         Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end

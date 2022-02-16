@@ -21,7 +21,7 @@ module HighScoreService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Output structure for CreateHighScore
@@ -41,7 +41,7 @@ module HighScoreService
       :location,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Input structure for DeleteHighScore
@@ -55,7 +55,7 @@ module HighScoreService
       :id,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Output structure for DeleteHighScore
@@ -64,7 +64,7 @@ module HighScoreService
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Input structure for GetHighScore
@@ -78,7 +78,7 @@ module HighScoreService
       :id,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Output structure for GetHighScore
@@ -92,7 +92,7 @@ module HighScoreService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Modeled attributes for a High Score
@@ -128,7 +128,7 @@ module HighScoreService
       :updated_at,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Permitted params for a High Score
@@ -148,14 +148,14 @@ module HighScoreService
       :score,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     ListHighScoresInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Output structure for ListHighScores
@@ -169,7 +169,7 @@ module HighScoreService
       :high_scores,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute errors
@@ -180,7 +180,7 @@ module HighScoreService
       :errors,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Input structure for UpdateHighScore
@@ -200,7 +200,7 @@ module HighScoreService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # Output structure for UpdateHighScore
@@ -214,7 +214,7 @@ module HighScoreService
       :high_score,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
   end

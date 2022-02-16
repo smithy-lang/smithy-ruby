@@ -122,8 +122,8 @@ public class ClientGenerator {
         writer
                 .writeInline("$L", documentation)
                 .openBlock("class Client")
-                .write("include Seahorse::ClientStubs")
-                .write("\n@middleware = Seahorse::MiddlewareBuilder.new")
+                .write("include Hearth::ClientStubs")
+                .write("\n@middleware = Hearth::MiddlewareBuilder.new")
                 .openBlock("\ndef self.middleware")
                 .write("@middleware")
                 .closeBlock("end")
@@ -149,7 +149,7 @@ public class ClientGenerator {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("class Client")
-                .write("include Seahorse::ClientStubs\n")
+                .write("include Hearth::ClientStubs\n")
                 .write("def self.middleware: () -> untyped\n")
                 .write("def initialize: (?::Hash[untyped, untyped] options) -> void")
                 .call(() -> renderRbsOperations())
@@ -255,14 +255,14 @@ public class ClientGenerator {
                 .write("")
                 .writeInline("$L", documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
-                .write("stack = Seahorse::MiddlewareStack.new")
+                .write("stack = Hearth::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("apply_middleware(stack, options[:middleware])\n")
                 .openBlock("resp = stack.run(")
                 .write("input: input,")
-                .openBlock("context: Seahorse::Context.new(")
+                .openBlock("context: Hearth::Context.new(")
                 .write("request: $L,",
                         context.getApplicationTransport().getRequest()
                                 .render(context))
@@ -295,7 +295,7 @@ public class ClientGenerator {
                         "\ndef apply_middleware(middleware_stack, middleware)")
                 .write("Client.middleware.apply(middleware_stack)")
                 .write("@middleware.apply(middleware_stack)")
-                .write("Seahorse::MiddlewareBuilder.new(middleware).apply(middleware_stack)")
+                .write("Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)")
                 .closeBlock("end");
     }
 
@@ -303,7 +303,7 @@ public class ClientGenerator {
         writer
                 .openBlock("\ndef output_stream(options = {}, &block)")
                 .write("return options[:output_stream] if options[:output_stream]")
-                .write("return Seahorse::BlockIO.new(block) if block")
+                .write("return Hearth::BlockIO.new(block) if block")
                 .write("\nStringIO.new")
                 .closeBlock("end");
     }

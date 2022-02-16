@@ -110,7 +110,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", name)
                 .openBlock("def self.validate!(input, context:)")
-                .write("Seahorse::Validator.validate!(input, Types::$L, context: context)", name)
+                .write("Hearth::Validator.validate!(input, Types::$L, context: context)", name)
                 .call(() -> renderValidatorsForStructureMembers(members))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -136,9 +136,9 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("Seahorse::Validator.validate!(input, ::Hash, context: context)")
+                .write("Hearth::Validator.validate!(input, ::Hash, context: context)")
                 .openBlock("input.each do |key, value|")
-                .write("Seahorse::Validator.validate!(key, ::String, ::Symbol, context: \"#{context}.keys\")")
+                .write("Hearth::Validator.validate!(key, ::String, ::Symbol, context: \"#{context}.keys\")")
                 .call(() -> valueTarget
                         .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"")))
                 .closeBlock("end")
@@ -157,7 +157,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("Seahorse::Validator.validate!(input, ::Array, context: context)")
+                .write("Hearth::Validator.validate!(input, ::Array, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
@@ -177,7 +177,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(setShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("Seahorse::Validator.validate!(input, ::Set, context: context)")
+                .write("Hearth::Validator.validate!(input, ::Set, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
@@ -226,7 +226,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(documentShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("Seahorse::Validator.validate!(input, "
+                .write("Hearth::Validator.validate!(input, "
                         + "::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)")
                 .write("case input")
                 .openBlock("when ::Hash")
@@ -289,13 +289,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::String, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::TrueClass, ::FalseClass, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::TrueClass, ::FalseClass, context: $L)", input, context);
             return null;
         }
 
@@ -315,31 +315,31 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Float, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Float, context: $L)", input, context);
             return null;
         }
 
@@ -352,13 +352,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Float, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Float, context: $L)", input, context);
             return null;
         }
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::BigDecimal, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::BigDecimal, context: $L)", input, context);
             return null;
         }
 
@@ -371,7 +371,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::String, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
             return null;
         }
 
@@ -391,7 +391,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("Seahorse::Validator.validate!($L, ::Time, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, ::Time, context: $L)", input, context);
             return null;
         }
     }

@@ -8,19 +8,19 @@ module WhiteLabel
       let(:client) { double('Client') }
       let(:resource_waiter) { ResourceExists.new(client, max_wait_time: 9001) }
 
-      it 'initializes a Seahorse::Waiters::Waiter with min and max delays' do
+      it 'initializes a Hearth::Waiters::Waiter with min and max delays' do
         waiter = resource_waiter.instance_variable_get(:@waiter)
-        expect(waiter).to be_a(Seahorse::Waiters::Waiter)
+        expect(waiter).to be_a(Hearth::Waiters::Waiter)
         expect(waiter.max_wait_time).to eq(9001)
         # modeled min and max delay
         expect(waiter.min_delay).to eq(10)
         expect(waiter.max_delay).to eq(100)
       end
 
-      it 'initializes a Seahorse::Waiters::Poller with operation and acceptors' do
+      it 'initializes a Hearth::Waiters::Poller with operation and acceptors' do
         waiter = resource_waiter.instance_variable_get(:@waiter)
         poller = waiter.instance_variable_get(:@poller)
-        expect(poller).to be_a(Seahorse::Waiters::Poller)
+        expect(poller).to be_a(Hearth::Waiters::Poller)
         operation_name = poller.instance_variable_get(:@operation_name)
         # modeled operation name
         expect(operation_name).to eq(:waiters_test)

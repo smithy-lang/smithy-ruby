@@ -18,7 +18,7 @@ module WhiteLabel
       :message,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute string
@@ -145,7 +145,7 @@ module WhiteLabel
       :union,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
 
       def to_s
         "#<struct WhiteLabel::Types::KitchenSinkInput "\
@@ -286,7 +286,7 @@ module WhiteLabel
       :union,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
 
       def to_s
         "#<struct WhiteLabel::Types::KitchenSinkOutput "\
@@ -311,7 +311,7 @@ module WhiteLabel
       :next_token,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute next_token
@@ -327,7 +327,7 @@ module WhiteLabel
       :items,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute next_token
@@ -338,7 +338,7 @@ module WhiteLabel
       :next_token,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute next_token
@@ -354,7 +354,7 @@ module WhiteLabel
       :items,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____123next_token
@@ -365,14 +365,14 @@ module WhiteLabel
       :member____123next_token,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     ServerError = ::Struct.new(
       nil,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # This docstring should be different than KitchenSink struct member.
@@ -405,7 +405,7 @@ module WhiteLabel
       :value,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
 
       def to_s
         "#<struct WhiteLabel::Types::Struct [SENSITIVE]>"
@@ -435,7 +435,7 @@ module WhiteLabel
     # @note
     #   This shape is sensitive and must be handled with care.
     #
-    class Union < Seahorse::Union
+    class Union < Hearth::Union
       # This is a String member.
       # Struct should also be documented too because the structure is.
       #
@@ -522,7 +522,7 @@ module WhiteLabel
       :status,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute status
@@ -533,7 +533,7 @@ module WhiteLabel
       :status,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____next_token
@@ -544,7 +544,7 @@ module WhiteLabel
       :member____next_token,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
     # @!attribute member____wrapper
@@ -560,7 +560,7 @@ module WhiteLabel
       :member____items,
       keyword_init: true
     ) do
-      include Seahorse::Structure
+      include Hearth::Structure
     end
 
   end

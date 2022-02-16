@@ -9,7 +9,7 @@
 
 require 'rails_json'
 
-require 'seahorse/xml/node_matcher'
+require 'hearth/xml/node_matcher'
 
 module RailsJson
   describe Client do
@@ -21,7 +21,7 @@ module RailsJson
         # Serializes requests for operations/members with bad names
         #
         it 'rails_json_serializes_bad_names' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -29,7 +29,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.operation____789_bad_name({
@@ -45,12 +45,12 @@ module RailsJson
         # Parses responses for operations/members with bad names
         #
         it 'rails_json_parses_bad_names' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"member":{"__123foo":"foo value"}}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.operation____789_bad_name({}, middleware: middleware)
@@ -65,7 +65,7 @@ module RailsJson
         # Parses responses for operations/members with bad names
         #
         it 'stubs rails_json_parses_bad_names' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -89,7 +89,7 @@ module RailsJson
         # Serializes query string parameters with all supported types
         #
         it 'RailsJsonAllQueryStringTypes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
@@ -100,7 +100,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.all_query_string_types({
@@ -168,7 +168,7 @@ module RailsJson
         # Mixes constant and variable query string parameters
         #
         it 'RailsJsonConstantAndVariableQueryStringMissingOneValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
@@ -184,7 +184,7 @@ module RailsJson
               expect(actual_query.key?(query)).to be false
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.constant_and_variable_query_string({
@@ -194,7 +194,7 @@ module RailsJson
         # Mixes constant and variable query string parameters
         #
         it 'RailsJsonConstantAndVariableQueryStringAllValues' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
@@ -205,7 +205,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.constant_and_variable_query_string({
@@ -221,7 +221,7 @@ module RailsJson
         # Includes constant query string parameters
         #
         it 'RailsJsonConstantQueryString' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
@@ -232,7 +232,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.constant_query_string({
@@ -247,7 +247,7 @@ module RailsJson
         # Serializes document types as part of the JSON request payload with no escaping.
         #
         it 'RailsJsonDocumentTypeInputWithObject' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -259,7 +259,7 @@ module RailsJson
                     "foo": "bar"
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type({
@@ -270,7 +270,7 @@ module RailsJson
         # Serializes document types using a string.
         #
         it 'RailsJsonDocumentInputWithString' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -280,7 +280,7 @@ module RailsJson
                 "string_value": "string",
                 "document_value": "hello"
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type({
@@ -291,7 +291,7 @@ module RailsJson
         # Serializes document types using a number.
         #
         it 'RailsJsonDocumentInputWithNumber' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -301,7 +301,7 @@ module RailsJson
                 "string_value": "string",
                 "document_value": 10
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type({
@@ -312,7 +312,7 @@ module RailsJson
         # Serializes document types using a boolean.
         #
         it 'RailsJsonDocumentInputWithBoolean' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -322,7 +322,7 @@ module RailsJson
                 "string_value": "string",
                 "document_value": true
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type({
@@ -333,7 +333,7 @@ module RailsJson
         # Serializes document types using a list.
         #
         it 'RailsJsonDocumentInputWithList' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -358,7 +358,7 @@ module RailsJson
                     }
                 ]
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type({
@@ -372,17 +372,17 @@ module RailsJson
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'RailsJsonDocumentOutput' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": {
                     "foo": "bar"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
@@ -394,15 +394,15 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputString' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": "hello"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
@@ -414,15 +414,15 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputNumber' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": 10
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
@@ -434,15 +434,15 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputBoolean' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": false
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
@@ -454,10 +454,10 @@ module RailsJson
         # Document types can be JSON arrays.
         #
         it 'RailsJsonDocumentOutputArray' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": [
@@ -465,7 +465,7 @@ module RailsJson
                     false
                 ]
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
@@ -479,7 +479,7 @@ module RailsJson
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'stubs RailsJsonDocumentOutput' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -497,7 +497,7 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputString' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -515,7 +515,7 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputNumber' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -533,7 +533,7 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputBoolean' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -551,7 +551,7 @@ module RailsJson
         # Document types can be JSON arrays.
         #
         it 'stubs RailsJsonDocumentOutputArray' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -573,7 +573,7 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'RailsJsonDocumentTypeAsPayloadInput' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -582,7 +582,7 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "foo": "bar"
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type_as_payload({
@@ -592,14 +592,14 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait using a string.
         #
         it 'RailsJsonDocumentTypeAsPayloadInputString' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentTypeAsPayload')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.document_type_as_payload({
@@ -612,14 +612,14 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'RailsJsonDocumentTypeAsPayloadOutput' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "foo": "bar"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type_as_payload({}, middleware: middleware)
@@ -630,12 +630,12 @@ module RailsJson
         # Serializes a document as a payload string.
         #
         it 'RailsJsonDocumentTypeAsPayloadOutputString' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('"hello"')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.document_type_as_payload({}, middleware: middleware)
@@ -648,7 +648,7 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -664,7 +664,7 @@ module RailsJson
         # Serializes a document as a payload string.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -688,12 +688,12 @@ module RailsJson
         # then it will not break the client.
         #
         it 'rails_json_handles_empty_output_shape' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.empty_operation({}, middleware: middleware)
@@ -707,14 +707,14 @@ module RailsJson
         # JSON object data.
         #
         it 'rails_json_handles_unexpected_json_output' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "foo": true
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.empty_operation({}, middleware: middleware)
@@ -729,12 +729,12 @@ module RailsJson
         # a service returns no JSON at all.
         #
         it 'rails_json_service_responds_with_no_payload' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.empty_operation({}, middleware: middleware)
@@ -750,7 +750,7 @@ module RailsJson
         # then it will not break the client.
         #
         it 'stubs rails_json_handles_empty_output_shape' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -769,7 +769,7 @@ module RailsJson
         # JSON object data.
         #
         it 'stubs rails_json_handles_unexpected_json_output' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -789,7 +789,7 @@ module RailsJson
         # a service returns no JSON at all.
         #
         it 'stubs rails_json_service_responds_with_no_payload' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -810,12 +810,12 @@ module RailsJson
         # endpoint trait.
         #
         it 'RailsJsonEndpointTrait' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/endpoint')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           opts[:endpoint] = 'http://example.com'
@@ -833,13 +833,13 @@ module RailsJson
         # further customization based on user input.
         #
         it 'RailsJsonEndpointTraitWithHostLabel' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/endpointwithhostlabel')
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           opts[:endpoint] = 'http://example.com'
@@ -856,14 +856,14 @@ module RailsJson
         # Parses simple JSON errors
         #
         it 'RailsJsonInvalidGreetingError' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 400
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'InvalidGreeting' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'InvalidGreeting' })
             response.body = StringIO.new('{
                 "message": "Hi"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -879,17 +879,17 @@ module RailsJson
         # Parses a complex error with no message member
         #
         it 'RailsJsonComplexError' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 400
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
             response.body = StringIO.new('{
                 "top_level": "Top level",
                 "nested": {
                     "Fooooo": "bar"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -906,13 +906,13 @@ module RailsJson
         #
         #
         it 'RailsJsonEmptyComplexError' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 400
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
             response.body = StringIO.new('{
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           begin
@@ -930,7 +930,7 @@ module RailsJson
         # Serializes a blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -938,7 +938,7 @@ module RailsJson
             { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_payload_traits({
@@ -949,14 +949,14 @@ module RailsJson
         # Serializes an empty blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/HttpPayloadTraits')
             { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_payload_traits({
@@ -969,12 +969,12 @@ module RailsJson
         # Serializes a blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo' })
             response.body = StringIO.new('blobby blob blob')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_payload_traits({}, middleware: middleware)
@@ -986,12 +986,12 @@ module RailsJson
         # Serializes an empty blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_payload_traits({}, middleware: middleware)
@@ -1004,7 +1004,7 @@ module RailsJson
         # Serializes a blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithBlob' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1022,7 +1022,7 @@ module RailsJson
         # Serializes an empty blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1042,7 +1042,7 @@ module RailsJson
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -1050,7 +1050,7 @@ module RailsJson
             { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_payload_traits_with_media_type({
@@ -1064,12 +1064,12 @@ module RailsJson
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' })
             response.body = StringIO.new('blobby blob blob')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_payload_traits_with_media_type({}, middleware: middleware)
@@ -1083,7 +1083,7 @@ module RailsJson
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1105,7 +1105,7 @@ module RailsJson
         # Serializes a structure in the payload
         #
         it 'RailsJsonHttpPayloadWithStructure' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
@@ -1116,7 +1116,7 @@ module RailsJson
                 "greeting": "hello",
                 "name": "Phreddy"
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_payload_with_structure({
@@ -1132,15 +1132,15 @@ module RailsJson
         # Serializes a structure in the payload
         #
         it 'RailsJsonHttpPayloadWithStructure' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "greeting": "hello",
                 "name": "Phreddy"
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_payload_with_structure({}, middleware: middleware)
@@ -1156,7 +1156,7 @@ module RailsJson
         # Serializes a structure in the payload
         #
         it 'stubs RailsJsonHttpPayloadWithStructure' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1182,14 +1182,14 @@ module RailsJson
         # Adds headers by prefix
         #
         it 'RailsJsonHttpPrefixHeadersArePresent' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpPrefixHeaders')
             { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_prefix_headers({
@@ -1203,14 +1203,14 @@ module RailsJson
         # No prefix headers are serialized because the value is empty
         #
         it 'RailsJsonHttpPrefixHeadersAreNotPresent' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpPrefixHeaders')
             { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_prefix_headers({
@@ -1226,11 +1226,11 @@ module RailsJson
         # Adds headers by prefix
         #
         it 'RailsJsonHttpPrefixHeadersArePresent' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' })
-            Seahorse::Output.new
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' })
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_prefix_headers({}, middleware: middleware)
@@ -1247,7 +1247,7 @@ module RailsJson
         # Adds headers by prefix
         #
         it 'stubs RailsJsonHttpPrefixHeadersArePresent' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1276,11 +1276,11 @@ module RailsJson
         # (de)serializes all response headers
         #
         it 'RailsJsonHttpPrefixHeadersResponse' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Hello' => 'Hello', 'X-Foo' => 'Foo' })
-            Seahorse::Output.new
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Hello' => 'Hello', 'X-Foo' => 'Foo' })
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_prefix_headers_in_response({}, middleware: middleware)
@@ -1296,7 +1296,7 @@ module RailsJson
         # (de)serializes all response headers
         #
         it 'stubs RailsJsonHttpPrefixHeadersResponse' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1322,13 +1322,13 @@ module RailsJson
         # Supports handling NaN float label values.
         #
         it 'RailsJsonSupportsNaNFloatLabels' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/FloatHttpLabels/NaN/NaN')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_float_labels({
@@ -1339,13 +1339,13 @@ module RailsJson
         # Supports handling Infinity float label values.
         #
         it 'RailsJsonSupportsInfinityFloatLabels' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/FloatHttpLabels/Infinity/Infinity')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_float_labels({
@@ -1356,13 +1356,13 @@ module RailsJson
         # Supports handling -Infinity float label values.
         #
         it 'RailsJsonSupportsNegativeInfinityFloatLabels' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/FloatHttpLabels/-Infinity/-Infinity')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_float_labels({
@@ -1378,13 +1378,13 @@ module RailsJson
         # Serializes greedy labels and normal labels
         #
         it 'RailsJsonHttpRequestWithGreedyLabelInPath' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_greedy_label_in_path({
@@ -1400,13 +1400,13 @@ module RailsJson
         # Sends a GET request that uses URI label bindings
         #
         it 'RailsJsonInputWithHeadersAndAllParams' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_labels({
@@ -1423,13 +1423,13 @@ module RailsJson
         # Sends a GET request that uses URI label bindings
         #
         it 'RailsJsonHttpRequestLabelEscaping' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_labels({
@@ -1451,13 +1451,13 @@ module RailsJson
         # Serializes different timestamp formats in URI labels
         #
         it 'RailsJsonHttpRequestWithLabelsAndTimestampFormat' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z/2019-12-16T23%3A48%3A18Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.http_request_with_labels_and_timestamp_format({
@@ -1483,12 +1483,12 @@ module RailsJson
         # empty payload without failing to deserialize a response.
         #
         it 'RailsJsonHttpResponseCode' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 201
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_response_code({}, middleware: middleware)
@@ -1501,11 +1501,11 @@ module RailsJson
         # object.
         #
         it 'RailsJsonHttpResponseCodeWithNoPayload' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 201
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.http_response_code({}, middleware: middleware)
@@ -1522,7 +1522,7 @@ module RailsJson
         # empty payload without failing to deserialize a response.
         #
         it 'stubs RailsJsonHttpResponseCode' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(201)
           end
@@ -1540,7 +1540,7 @@ module RailsJson
         # object.
         #
         it 'stubs RailsJsonHttpResponseCodeWithNoPayload' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(201)
           end
@@ -1564,12 +1564,12 @@ module RailsJson
         # if the output parameters are empty.
         #
         it 'RailsJsonIgnoreQueryParamsInResponse' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.ignore_query_params_in_response({}, middleware: middleware)
@@ -1582,11 +1582,11 @@ module RailsJson
         # the server that do not serialize an empty JSON object.
         #
         it 'RailsJsonIgnoreQueryParamsInResponseNoPayload' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.ignore_query_params_in_response({}, middleware: middleware)
@@ -1602,7 +1602,7 @@ module RailsJson
         # if the output parameters are empty.
         #
         it 'stubs RailsJsonIgnoreQueryParamsInResponse' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1620,7 +1620,7 @@ module RailsJson
         # the server that do not serialize an empty JSON object.
         #
         it 'stubs RailsJsonIgnoreQueryParamsInResponseNoPayload' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1640,14 +1640,14 @@ module RailsJson
         # Tests requests with string header bindings
         #
         it 'RailsJsonInputAndOutputWithStringHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.input_and_output_with_headers({
@@ -1667,14 +1667,14 @@ module RailsJson
         # Tests requests with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.input_and_output_with_headers({
@@ -1694,14 +1694,14 @@ module RailsJson
         # Tests requests with boolean header bindings
         #
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.input_and_output_with_headers({
@@ -1717,14 +1717,14 @@ module RailsJson
         # Tests requests with enum header bindings
         #
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.input_and_output_with_headers({
@@ -1742,12 +1742,12 @@ module RailsJson
         # Tests responses with string header bindings
         #
         it 'RailsJsonInputAndOutputWithStringHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
@@ -1768,12 +1768,12 @@ module RailsJson
         # Tests responses with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
@@ -1794,12 +1794,12 @@ module RailsJson
         # Tests responses with boolean header bindings
         #
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
@@ -1816,12 +1816,12 @@ module RailsJson
         # Tests responses with enum header bindings
         #
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
@@ -1839,7 +1839,7 @@ module RailsJson
         # Tests responses with string header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithStringHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1875,7 +1875,7 @@ module RailsJson
         # Tests responses with numeric header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithNumericHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1911,7 +1911,7 @@ module RailsJson
         # Tests responses with boolean header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithBooleanHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1939,7 +1939,7 @@ module RailsJson
         # Tests responses with enum header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithEnumHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -1969,7 +1969,7 @@ module RailsJson
         # Serializes simple scalar properties
         #
         it 'RailsJsonEnums' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -1992,7 +1992,7 @@ module RailsJson
                     "zero": "0"
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_enums({
@@ -2019,10 +2019,10 @@ module RailsJson
         # Serializes simple scalar properties
         #
         it 'RailsJsonEnums' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "foo_enum1": "Foo",
                 "foo_enum2": "0",
@@ -2040,7 +2040,7 @@ module RailsJson
                     "zero": "0"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_enums({}, middleware: middleware)
@@ -2067,7 +2067,7 @@ module RailsJson
         # Serializes simple scalar properties
         #
         it 'stubs RailsJsonEnums' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2115,7 +2115,7 @@ module RailsJson
         # Serializes JSON maps
         #
         it 'RailsJsonJsonMaps' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2139,7 +2139,7 @@ module RailsJson
                     }
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_maps({
@@ -2164,7 +2164,7 @@ module RailsJson
         # Serializes JSON map values in sparse maps
         #
         it 'RailsJsonSerializesNullMapValues' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2184,7 +2184,7 @@ module RailsJson
                     "x": null
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_maps({
@@ -2205,7 +2205,7 @@ module RailsJson
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'RailsJsonSerializesZeroValuesInMaps' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2225,7 +2225,7 @@ module RailsJson
                     "x": false
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_maps({
@@ -2246,7 +2246,7 @@ module RailsJson
         # A request that contains a sparse map of sets
         #
         it 'RailsJsonSerializesSparseSetMap' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2258,7 +2258,7 @@ module RailsJson
                     "y": ["a", "b"]
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_maps({
@@ -2276,7 +2276,7 @@ module RailsJson
         # A request that contains a dense map of sets.
         #
         it 'RailsJsonSerializesDenseSetMap' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2288,7 +2288,7 @@ module RailsJson
                     "y": ["a", "b"]
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_maps({
@@ -2306,7 +2306,7 @@ module RailsJson
         # A request that contains a sparse map of sets.
         #
         it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2319,7 +2319,7 @@ module RailsJson
                     "z": null
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_maps({
@@ -2341,10 +2341,10 @@ module RailsJson
         # Deserializes JSON maps
         #
         it 'RailsJsonJsonMaps' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_struct_map": {
                     "foo": {
@@ -2363,7 +2363,7 @@ module RailsJson
                     }
                }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2389,10 +2389,10 @@ module RailsJson
         # Deserializes null JSON map values
         #
         it 'RailsJsonDeserializesNullMapValues' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_boolean_map": {
                     "x": null
@@ -2407,7 +2407,7 @@ module RailsJson
                     "x": null
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2429,10 +2429,10 @@ module RailsJson
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'RailsJsonDeserializesZeroValuesInMaps' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_number_map": {
                     "x": 0
@@ -2447,7 +2447,7 @@ module RailsJson
                     "x": false
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2469,17 +2469,17 @@ module RailsJson
         # A response that contains a sparse map of sets
         #
         it 'RailsJsonDeserializesSparseSetMap' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2498,17 +2498,17 @@ module RailsJson
         # A response that contains a dense map of sets.
         #
         it 'RailsJsonDeserializesDenseSetMap' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2527,10 +2527,10 @@ module RailsJson
         # A response that contains a sparse map of sets.
         #
         it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_set_map": {
                     "x": [],
@@ -2538,7 +2538,7 @@ module RailsJson
                     "z": null
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2559,10 +2559,10 @@ module RailsJson
         # drop the null key-value pair.
         #
         it 'RailsJsonDeserializesDenseSetMapAndSkipsNull' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_set_map": {
                     "x": [],
@@ -2570,7 +2570,7 @@ module RailsJson
                     "z": null
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
@@ -2591,7 +2591,7 @@ module RailsJson
         # Deserializes JSON maps
         #
         it 'stubs RailsJsonJsonMaps' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2637,7 +2637,7 @@ module RailsJson
         # Deserializes null JSON map values
         #
         it 'stubs RailsJsonDeserializesNullMapValues' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2675,7 +2675,7 @@ module RailsJson
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2713,7 +2713,7 @@ module RailsJson
         # A response that contains a sparse map of sets
         #
         it 'stubs RailsJsonDeserializesSparseSetMap' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2745,7 +2745,7 @@ module RailsJson
         # A response that contains a dense map of sets.
         #
         it 'stubs RailsJsonDeserializesDenseSetMap' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2777,7 +2777,7 @@ module RailsJson
         # A response that contains a sparse map of sets.
         #
         it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2812,7 +2812,7 @@ module RailsJson
         # drop the null key-value pair.
         #
         it 'stubs RailsJsonDeserializesDenseSetMapAndSkipsNull' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -2848,7 +2848,7 @@ module RailsJson
         # Serializes a string union value
         #
         it 'RailsJsonSerializeStringUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2859,7 +2859,7 @@ module RailsJson
                     "string_value": "foo"
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -2871,7 +2871,7 @@ module RailsJson
         # Serializes a boolean union value
         #
         it 'RailsJsonSerializeBooleanUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2882,7 +2882,7 @@ module RailsJson
                     "boolean_value": true
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -2894,7 +2894,7 @@ module RailsJson
         # Serializes a number union value
         #
         it 'RailsJsonSerializeNumberUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2905,7 +2905,7 @@ module RailsJson
                     "number_value": 1
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -2917,7 +2917,7 @@ module RailsJson
         # Serializes a blob union value
         #
         it 'RailsJsonSerializeBlobUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2928,7 +2928,7 @@ module RailsJson
                     "blob_value": "Zm9v"
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -2940,7 +2940,7 @@ module RailsJson
         # Serializes a timestamp union value
         #
         it 'RailsJsonSerializeTimestampUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2951,7 +2951,7 @@ module RailsJson
                     "timestamp_value": "2014-04-29T18:30:38Z"
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -2963,7 +2963,7 @@ module RailsJson
         # Serializes an enum union value
         #
         it 'RailsJsonSerializeEnumUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2974,7 +2974,7 @@ module RailsJson
                     "enum_value": "Foo"
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -2986,7 +2986,7 @@ module RailsJson
         # Serializes a list union value
         #
         it 'RailsJsonSerializeListUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -2997,7 +2997,7 @@ module RailsJson
                     "list_value": ["foo", "bar"]
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -3012,7 +3012,7 @@ module RailsJson
         # Serializes a map union value
         #
         it 'RailsJsonSerializeMapUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3026,7 +3026,7 @@ module RailsJson
                     }
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -3041,7 +3041,7 @@ module RailsJson
         # Serializes a structure union value
         #
         it 'RailsJsonSerializeStructureUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3054,7 +3054,7 @@ module RailsJson
                     }
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.json_unions({
@@ -3071,16 +3071,16 @@ module RailsJson
         # Deserializes a string union value
         #
         it 'RailsJsonDeserializeStringUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "string_value": "foo"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3093,16 +3093,16 @@ module RailsJson
         # Deserializes a boolean union value
         #
         it 'RailsJsonDeserializeBooleanUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "boolean_value": true
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3115,16 +3115,16 @@ module RailsJson
         # Deserializes a number union value
         #
         it 'RailsJsonDeserializeNumberUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "number_value": 1
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3137,16 +3137,16 @@ module RailsJson
         # Deserializes a blob union value
         #
         it 'RailsJsonDeserializeBlobUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "blob_value": "Zm9v"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3159,16 +3159,16 @@ module RailsJson
         # Deserializes a timestamp union value
         #
         it 'RailsJsonDeserializeTimestampUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "timestamp_value": "2014-04-29T18:30:38Z"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3181,16 +3181,16 @@ module RailsJson
         # Deserializes an enum union value
         #
         it 'RailsJsonDeserializeEnumUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "enum_value": "Foo"
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3203,16 +3203,16 @@ module RailsJson
         # Deserializes a list union value
         #
         it 'RailsJsonDeserializeListUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "list_value": ["foo", "bar"]
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3228,10 +3228,10 @@ module RailsJson
         # Deserializes a map union value
         #
         it 'RailsJsonDeserializeMapUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "map_value": {
@@ -3240,7 +3240,7 @@ module RailsJson
                     }
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3256,10 +3256,10 @@ module RailsJson
         # Deserializes a structure union value
         #
         it 'RailsJsonDeserializeStructureUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "structure_value": {
@@ -3267,7 +3267,7 @@ module RailsJson
                     }
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
@@ -3284,7 +3284,7 @@ module RailsJson
         # Deserializes a string union value
         #
         it 'stubs RailsJsonDeserializeStringUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3304,7 +3304,7 @@ module RailsJson
         # Deserializes a boolean union value
         #
         it 'stubs RailsJsonDeserializeBooleanUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3324,7 +3324,7 @@ module RailsJson
         # Deserializes a number union value
         #
         it 'stubs RailsJsonDeserializeNumberUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3344,7 +3344,7 @@ module RailsJson
         # Deserializes a blob union value
         #
         it 'stubs RailsJsonDeserializeBlobUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3364,7 +3364,7 @@ module RailsJson
         # Deserializes a timestamp union value
         #
         it 'stubs RailsJsonDeserializeTimestampUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3384,7 +3384,7 @@ module RailsJson
         # Deserializes an enum union value
         #
         it 'stubs RailsJsonDeserializeEnumUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3404,7 +3404,7 @@ module RailsJson
         # Deserializes a list union value
         #
         it 'stubs RailsJsonDeserializeListUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3430,7 +3430,7 @@ module RailsJson
         # Deserializes a map union value
         #
         it 'stubs RailsJsonDeserializeMapUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3456,7 +3456,7 @@ module RailsJson
         # Deserializes a structure union value
         #
         it 'stubs RailsJsonDeserializeStructureUnionValue' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -3484,7 +3484,7 @@ module RailsJson
         # Serializes string shapes
         #
         it 'rails_json_rails_json_serializes_string_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3492,7 +3492,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3502,7 +3502,7 @@ module RailsJson
         # Serializes string shapes with jsonvalue trait
         #
         it 'rails_json_serializes_string_shapes_with_jsonvalue_trait' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3510,7 +3510,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3520,7 +3520,7 @@ module RailsJson
         # Serializes integer shapes
         #
         it 'rails_json_serializes_integer_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3528,7 +3528,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3538,7 +3538,7 @@ module RailsJson
         # Serializes long shapes
         #
         it 'rails_json_serializes_long_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3546,7 +3546,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3556,7 +3556,7 @@ module RailsJson
         # Serializes float shapes
         #
         it 'rails_json_serializes_float_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3564,7 +3564,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3574,7 +3574,7 @@ module RailsJson
         # Serializes double shapes
         #
         it 'rails_json_serializes_double_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3582,7 +3582,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3592,7 +3592,7 @@ module RailsJson
         # Serializes blob shapes
         #
         it 'rails_json_serializes_blob_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3600,7 +3600,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3610,7 +3610,7 @@ module RailsJson
         # Serializes boolean shapes (true)
         #
         it 'rails_json_serializes_boolean_shapes_true' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3618,7 +3618,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3628,7 +3628,7 @@ module RailsJson
         # Serializes boolean shapes (false)
         #
         it 'rails_json_serializes_boolean_shapes_false' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3636,7 +3636,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3646,7 +3646,7 @@ module RailsJson
         # Serializes timestamp shapes
         #
         it 'rails_json_serializes_timestamp_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3654,7 +3654,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3664,7 +3664,7 @@ module RailsJson
         # Serializes timestamp shapes with iso8601 timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3672,7 +3672,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3682,7 +3682,7 @@ module RailsJson
         # Serializes timestamp shapes with httpdate timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_httpdate_timestampformat' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3690,7 +3690,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3700,7 +3700,7 @@ module RailsJson
         # Serializes timestamp shapes with unixTimestamp timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_unixtimestamp_timestampformat' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3708,7 +3708,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3718,7 +3718,7 @@ module RailsJson
         # Serializes list shapes
         #
         it 'rails_json_serializes_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3726,7 +3726,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3740,7 +3740,7 @@ module RailsJson
         # Serializes empty list shapes
         #
         it 'rails_json_serializes_empty_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3748,7 +3748,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3760,7 +3760,7 @@ module RailsJson
         # Serializes list of map shapes
         #
         it 'rails_json_serializes_list_of_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3768,7 +3768,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3788,7 +3788,7 @@ module RailsJson
         # Serializes list of structure shapes
         #
         it 'rails_json_serializes_list_of_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3796,7 +3796,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3816,7 +3816,7 @@ module RailsJson
         # Serializes list of recursive structure shapes
         #
         it 'rails_json_serializes_list_of_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3824,7 +3824,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3846,7 +3846,7 @@ module RailsJson
         # Serializes map shapes
         #
         it 'rails_json_serializes_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3854,7 +3854,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3867,7 +3867,7 @@ module RailsJson
         # Serializes empty map shapes
         #
         it 'rails_json_serializes_empty_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3875,7 +3875,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3887,7 +3887,7 @@ module RailsJson
         # Serializes map of list shapes
         #
         it 'rails_json_serializes_map_of_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3895,7 +3895,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3914,7 +3914,7 @@ module RailsJson
         # Serializes map of structure shapes
         #
         it 'rails_json_serializes_map_of_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3922,7 +3922,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3939,7 +3939,7 @@ module RailsJson
         # Serializes map of recursive structure shapes
         #
         it 'rails_json_serializes_map_of_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3947,7 +3947,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3969,7 +3969,7 @@ module RailsJson
         # Serializes structure shapes
         #
         it 'rails_json_serializes_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3977,7 +3977,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -3989,7 +3989,7 @@ module RailsJson
         # Serializes structure members with locationName traits
         #
         it 'rails_json_serializes_structure_members_with_locationname_traits' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -3997,7 +3997,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -4009,7 +4009,7 @@ module RailsJson
         # Serializes empty structure shapes
         #
         it 'rails_json_serializes_empty_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -4017,7 +4017,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -4029,7 +4029,7 @@ module RailsJson
         # Serializes structure which have no members
         #
         it 'rails_json_serializes_structure_which_have_no_members' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -4037,7 +4037,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -4049,7 +4049,7 @@ module RailsJson
         # Serializes recursive structure shapes
         #
         it 'rails_json_serializes_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -4057,7 +4057,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.kitchen_sink_operation({
@@ -4088,12 +4088,12 @@ module RailsJson
         # Parses operations with empty JSON bodies
         #
         it 'rails_json_parses_operations_with_empty_json_bodies' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4104,12 +4104,12 @@ module RailsJson
         # Parses string shapes
         #
         it 'rails_json_parses_string_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"string":"string-value"}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4120,12 +4120,12 @@ module RailsJson
         # Parses integer shapes
         #
         it 'rails_json_parses_integer_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"integer":1234}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4136,12 +4136,12 @@ module RailsJson
         # Parses long shapes
         #
         it 'rails_json_parses_long_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"long":1234567890123456789}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4152,12 +4152,12 @@ module RailsJson
         # Parses float shapes
         #
         it 'rails_json_parses_float_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"float":1234.5}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4168,12 +4168,12 @@ module RailsJson
         # Parses double shapes
         #
         it 'rails_json_parses_double_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"double":123456789.12345679}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4184,12 +4184,12 @@ module RailsJson
         # Parses boolean shapes (true)
         #
         it 'rails_json_parses_boolean_shapes_true' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"boolean":true}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4200,12 +4200,12 @@ module RailsJson
         # Parses boolean (false)
         #
         it 'rails_json_parses_boolean_false' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"boolean":false}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4216,12 +4216,12 @@ module RailsJson
         # Parses blob shapes
         #
         it 'rails_json_parses_blob_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"blob":"YmluYXJ5LXZhbHVl"}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4232,12 +4232,12 @@ module RailsJson
         # Parses timestamp shapes
         #
         it 'rails_json_parses_timestamp_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"timestamp":"2000-01-02T20:34:56Z"}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4248,12 +4248,12 @@ module RailsJson
         # Parses iso8601 timestamps
         #
         it 'rails_json_parses_iso8601_timestamps' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4264,12 +4264,12 @@ module RailsJson
         # Parses httpdate timestamps
         #
         it 'rails_json_parses_httpdate_timestamps' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4280,12 +4280,12 @@ module RailsJson
         # Parses list shapes
         #
         it 'rails_json_parses_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_strings":["abc","mno","xyz"]}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4300,12 +4300,12 @@ module RailsJson
         # Parses list of map shapes
         #
         it 'rails_json_parses_list_of_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4323,12 +4323,12 @@ module RailsJson
         # Parses list of list shapes
         #
         it 'rails_json_parses_list_of_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4350,12 +4350,12 @@ module RailsJson
         # Parses list of structure shapes
         #
         it 'rails_json_parses_list_of_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4373,12 +4373,12 @@ module RailsJson
         # Parses list of recursive structure shapes
         #
         it 'rails_json_parses_list_of_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4401,12 +4401,12 @@ module RailsJson
         # Parses map shapes
         #
         it 'rails_json_parses_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_strings":{"size":"large","color":"red"}}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4420,12 +4420,12 @@ module RailsJson
         # Parses map of list shapes
         #
         it 'rails_json_parses_map_of_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4445,12 +4445,12 @@ module RailsJson
         # Parses map of map shapes
         #
         it 'rails_json_parses_map_of_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4470,12 +4470,12 @@ module RailsJson
         # Parses map of structure shapes
         #
         it 'rails_json_parses_map_of_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4493,12 +4493,12 @@ module RailsJson
         # Parses map of recursive structure shapes
         #
         it 'rails_json_parses_map_of_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4521,12 +4521,12 @@ module RailsJson
         # Parses the request id from the response
         #
         it 'rails_json_parses_the_request_id_from_the_response' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'X-Amzn-Requestid' => 'amazon-uniq-request-id' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'X-Amzn-Requestid' => 'amazon-uniq-request-id' })
             response.body = StringIO.new('{}')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
@@ -4539,7 +4539,7 @@ module RailsJson
         # Parses operations with empty JSON bodies
         #
         it 'stubs rails_json_parses_operations_with_empty_json_bodies' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4555,7 +4555,7 @@ module RailsJson
         # Parses string shapes
         #
         it 'stubs rails_json_parses_string_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4571,7 +4571,7 @@ module RailsJson
         # Parses integer shapes
         #
         it 'stubs rails_json_parses_integer_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4587,7 +4587,7 @@ module RailsJson
         # Parses long shapes
         #
         it 'stubs rails_json_parses_long_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4603,7 +4603,7 @@ module RailsJson
         # Parses float shapes
         #
         it 'stubs rails_json_parses_float_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4619,7 +4619,7 @@ module RailsJson
         # Parses double shapes
         #
         it 'stubs rails_json_parses_double_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4635,7 +4635,7 @@ module RailsJson
         # Parses boolean shapes (true)
         #
         it 'stubs rails_json_parses_boolean_shapes_true' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4651,7 +4651,7 @@ module RailsJson
         # Parses boolean (false)
         #
         it 'stubs rails_json_parses_boolean_false' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4667,7 +4667,7 @@ module RailsJson
         # Parses blob shapes
         #
         it 'stubs rails_json_parses_blob_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4683,7 +4683,7 @@ module RailsJson
         # Parses timestamp shapes
         #
         it 'stubs rails_json_parses_timestamp_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4699,7 +4699,7 @@ module RailsJson
         # Parses iso8601 timestamps
         #
         it 'stubs rails_json_parses_iso8601_timestamps' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4715,7 +4715,7 @@ module RailsJson
         # Parses httpdate timestamps
         #
         it 'stubs rails_json_parses_httpdate_timestamps' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4731,7 +4731,7 @@ module RailsJson
         # Parses list shapes
         #
         it 'stubs rails_json_parses_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4755,7 +4755,7 @@ module RailsJson
         # Parses list of map shapes
         #
         it 'stubs rails_json_parses_list_of_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4785,7 +4785,7 @@ module RailsJson
         # Parses list of list shapes
         #
         it 'stubs rails_json_parses_list_of_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4823,7 +4823,7 @@ module RailsJson
         # Parses list of structure shapes
         #
         it 'stubs rails_json_parses_list_of_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4853,7 +4853,7 @@ module RailsJson
         # Parses list of recursive structure shapes
         #
         it 'stubs rails_json_parses_list_of_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4893,7 +4893,7 @@ module RailsJson
         # Parses map shapes
         #
         it 'stubs rails_json_parses_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4915,7 +4915,7 @@ module RailsJson
         # Parses map of list shapes
         #
         it 'stubs rails_json_parses_map_of_list_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4949,7 +4949,7 @@ module RailsJson
         # Parses map of map shapes
         #
         it 'stubs rails_json_parses_map_of_map_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -4983,7 +4983,7 @@ module RailsJson
         # Parses map of structure shapes
         #
         it 'stubs rails_json_parses_map_of_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5013,7 +5013,7 @@ module RailsJson
         # Parses map of recursive structure shapes
         #
         it 'stubs rails_json_parses_map_of_recursive_structure_shapes' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5053,7 +5053,7 @@ module RailsJson
         # Parses the request id from the response
         #
         it 'stubs rails_json_parses_the_request_id_from_the_response' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5073,14 +5073,14 @@ module RailsJson
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'RailsJsonMediaTypeHeaderInputBase64' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/MediaTypeHeader')
             { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.media_type_header({
@@ -5093,12 +5093,12 @@ module RailsJson
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'RailsJsonMediaTypeHeaderOutputBase64' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-Json' => 'dHJ1ZQ==' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Json' => 'dHJ1ZQ==' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.media_type_header({}, middleware: middleware)
@@ -5111,7 +5111,7 @@ module RailsJson
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'stubs RailsJsonMediaTypeHeaderOutputBase64' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5131,14 +5131,14 @@ module RailsJson
         # Serializes members with nestedAttributes
         #
         it 'rails_json_nested_attributes' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/nestedattributes')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.nested_attributes_operation({
@@ -5155,14 +5155,14 @@ module RailsJson
         # Do not send null values, empty strings, or empty lists over the wire in headers
         #
         it 'RailsJsonNullAndEmptyHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/NullAndEmptyHeadersClient')
             ['X-A', 'X-B', 'X-C'].each { |k| expect(request.headers.key?(k)).to be(false) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.null_and_empty_headers_client({
@@ -5181,14 +5181,14 @@ module RailsJson
         # Null structure values are dropped
         #
         it 'RailsJsonStructuresDontSerializeNullValues' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/nulloperation')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.null_operation({
@@ -5198,7 +5198,7 @@ module RailsJson
         # Serializes null values in maps
         #
         it 'RailsJsonMapsSerializeNullValues' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -5209,7 +5209,7 @@ module RailsJson
                     "foo": null
                 }
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.null_operation({
@@ -5221,7 +5221,7 @@ module RailsJson
         # Serializes null values in lists
         #
         it 'RailsJsonListsSerializeNull' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -5232,7 +5232,7 @@ module RailsJson
                     null
                 ]
             }'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.null_operation({
@@ -5247,14 +5247,14 @@ module RailsJson
         # Null structure values are dropped
         #
         it 'RailsJsonStructuresDontDeserializeNullValues' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string": null
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.null_operation({}, middleware: middleware)
@@ -5265,16 +5265,16 @@ module RailsJson
         # Deserializes null values in maps
         #
         it 'RailsJsonMapsDeserializeNullValues' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_string_map": {
                     "foo": null
                 }
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.null_operation({}, middleware: middleware)
@@ -5287,16 +5287,16 @@ module RailsJson
         # Deserializes null values in lists
         #
         it 'RailsJsonListsDeserializeNull' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_string_list": [
                     null
                 ]
             }')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.null_operation({}, middleware: middleware)
@@ -5311,7 +5311,7 @@ module RailsJson
         # Null structure values are dropped
         #
         it 'stubs RailsJsonStructuresDontDeserializeNullValues' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5327,7 +5327,7 @@ module RailsJson
         # Deserializes null values in maps
         #
         it 'stubs RailsJsonMapsDeserializeNullValues' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5347,7 +5347,7 @@ module RailsJson
         # Deserializes null values in lists
         #
         it 'stubs RailsJsonListsDeserializeNull' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end
@@ -5371,13 +5371,13 @@ module RailsJson
         # Omits null query values
         #
         it 'RailsJsonOmitsNullQuery' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/OmitsNullSerializesEmptyString')
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.omits_null_serializes_empty_string({
@@ -5387,7 +5387,7 @@ module RailsJson
         # Serializes empty query strings
         #
         it 'RailsJsonSerializesEmptyQueryValue' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
@@ -5398,7 +5398,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.omits_null_serializes_empty_string({
@@ -5413,14 +5413,14 @@ module RailsJson
         # Can call operations with no input or output
         #
         it 'rails_json_can_call_operation_with_no_input_or_output' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/operationwithoptionalinputoutput')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.operation_with_optional_input_output({
@@ -5430,14 +5430,14 @@ module RailsJson
         # Can invoke operations with optional input
         #
         it 'rails_json_can_call_operation_with_optional_input' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/operationwithoptionalinputoutput')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.operation_with_optional_input_output({
@@ -5453,7 +5453,7 @@ module RailsJson
         #
         it 'RailsJsonQueryIdempotencyTokenAutoFill' do
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -5464,7 +5464,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.query_idempotency_token_auto_fill({
@@ -5475,7 +5475,7 @@ module RailsJson
         #
         it 'RailsJsonQueryIdempotencyTokenAutoFillIsSet' do
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -5486,7 +5486,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.query_idempotency_token_auto_fill({
@@ -5501,7 +5501,7 @@ module RailsJson
         # Serialize query params from map of list strings
         #
         it 'RailsJsonQueryParamsStringListMap' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
@@ -5512,7 +5512,7 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.query_params_as_string_list_map({
@@ -5533,14 +5533,14 @@ module RailsJson
         # Tests how timestamp request headers are serialized
         #
         it 'RailsJsonTimestampFormatHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/TimestampFormatHeaders')
             { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           opts = {middleware: middleware}
           client.timestamp_format_headers({
@@ -5559,12 +5559,12 @@ module RailsJson
         # Tests how timestamp response headers are serialized
         #
         it 'RailsJsonTimestampFormatHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Seahorse::HTTP::Headers.new(headers: { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' })
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' })
             response.body = StringIO.new('')
-            Seahorse::Output.new
+            Hearth::Output.new
           end
           middleware.remove_send.remove_build
           output = client.timestamp_format_headers({}, middleware: middleware)
@@ -5583,7 +5583,7 @@ module RailsJson
         # Tests how timestamp response headers are serialized
         #
         it 'stubs RailsJsonTimestampFormatHeaders' do
-          middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
             response = context.response
             expect(response.status).to eq(200)
           end

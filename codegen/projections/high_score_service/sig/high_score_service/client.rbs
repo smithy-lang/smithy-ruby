@@ -9,7 +9,7 @@
 
 module HighScoreService
   class Client
-    include Seahorse::ClientStubs
+    include Hearth::ClientStubs
 
     def self.middleware: () -> untyped
 

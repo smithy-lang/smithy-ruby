@@ -70,7 +70,7 @@ public class HttpProtocolTestGenerator {
         writer
                 .writePreamble()
                 .write("require '$L'\n", settings.getGemName())
-                .write("require 'seahorse/xml/node_matcher'")
+                .write("require 'hearth/xml/node_matcher'")
                 .write("")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
@@ -279,12 +279,12 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseMiddleware(HttpResponseTestCase testCase) {
         writer
-                .openBlock("middleware = Seahorse::MiddlewareBuilder.around_send do |app, input, context|")
+                .openBlock("middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|")
                 .write("response = context.response")
                 .write("response.status = $L", testCase.getCode())
                 .call(() -> renderResponseMiddlewareHeaders(testCase.getHeaders()))
                 .call(() -> renderResponseMiddlewareBody(testCase.getBody()))
-                .write("Seahorse::Output.new")
+                .write("Hearth::Output.new")
                 .closeBlock("end");
     }
 
@@ -296,13 +296,13 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
-            writer.write("response.headers = Seahorse::HTTP::Headers.new(headers: $L)", getRubyHashFromMap(headers));
+            writer.write("response.headers = Hearth::HTTP::Headers.new(headers: $L)", getRubyHashFromMap(headers));
         }
     }
 
     private void renderRequestMiddleware(HttpRequestTestCase testCase) {
         writer
-                .openBlock("middleware = Seahorse::MiddlewareBuilder.before_send do |input, context|")
+                .openBlock("middleware = Hearth::MiddlewareBuilder.before_send do |input, context|")
                 .write("request = context.request")
                 .write("request_uri = URI.parse(request.url)")
                 .write("expect(request.http_method).to eq('$L')", testCase.getMethod())
@@ -314,7 +314,7 @@ public class HttpProtocolTestGenerator {
                 .call(() -> renderRequestMiddlewareForbiddenHeaders(testCase.getForbidHeaders()))
                 .call(() -> renderRequestMiddlewareRequiredHeaders(testCase.getRequireHeaders()))
                 .call(() -> renderRequestMiddlewareBody(testCase.getBody(), testCase.getBodyMediaType()))
-                .write("Seahorse::Output.new")
+                .write("Hearth::Output.new")
                 .closeBlock("end");
     }
 
@@ -328,8 +328,8 @@ public class HttpProtocolTestGenerator {
                         break;
                     case "application/xml":
                         writer
-                                .write("expect(Seahorse::XML.parse(request.body.read)).to "
-                                                + "match_xml_node(Seahorse::XML.parse('$L'))",
+                                .write("expect(Hearth::XML.parse(request.body.read)).to "
+                                                + "match_xml_node(Hearth::XML.parse('$L'))",
                                         body.get());
                         break;
                     case "application/x-www-form-urlencoded":
@@ -400,7 +400,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseStubMiddleware(HttpResponseTestCase testCase) {
         writer
-                .openBlock("middleware = Seahorse::MiddlewareBuilder.after_send do |input, context|")
+                .openBlock("middleware = Hearth::MiddlewareBuilder.after_send do |input, context|")
                 .write("response = context.response")
                 .write("expect(response.status).to eq($L)", testCase.getCode())
                 .closeBlock("end");

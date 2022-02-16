@@ -300,7 +300,7 @@ public class RubySymbolProvider implements SymbolProvider,
             return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), "", "", moduleName)
                     .definitionFile("types.rb").build();
         } else {
-            String rbsType = "document"; // alias defined in Seahorse
+            String rbsType = "document"; // alias defined in Hearth
             String yardType = "Hash,Array,String,Boolean,Numeric";
             return createSymbolBuilder(shape, "", rbsType, yardType).build();
         }

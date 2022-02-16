@@ -11,7 +11,7 @@ module HighScoreService
   module Errors
 
     # Base class for all errors returned by this service
-    class ApiError < Seahorse::HTTP::ApiError
+    class ApiError < Hearth::HTTP::ApiError
     end
 
     # Base class for all errors returned where the client is at fault.

@@ -125,7 +125,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         writer
                 .write("http_resp.headers['Content-Type'] = 'application/json'")
                 .call(() -> renderMemberStubbers(outputShape))
-                .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
+                .write("http_resp.body = StringIO.new(Hearth::JSON.dump(data))");
     }
 
     @Override
@@ -240,21 +240,21 @@ public class StubsGenerator extends RestStubsGeneratorBase {
             if (format.isPresent()) {
                 switch (format.get().getFormat()) {
                     case EPOCH_SECONDS:
-                        writer.write("$LSeahorse::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
+                        writer.write("$LHearth::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
                                 checkRequired());
                         break;
                     case HTTP_DATE:
-                        writer.write("$LSeahorse::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
+                        writer.write("$LHearth::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
                                 checkRequired());
                         break;
                     case DATE_TIME:
                     default:
-                        writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                        writer.write("$LHearth::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
                                 checkRequired());
                         break;
                 }
             } else {
-                writer.write("$LSeahorse::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
+                writer.write("$LHearth::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
                         checkRequired());
             }
             return null;
@@ -345,7 +345,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         public Void documentShape(DocumentShape shape) {
             writer
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
-                    .write("http_resp.body = StringIO.new(Seahorse::JSON.dump($1L))", inputGetter);
+                    .write("http_resp.body = StringIO.new(Hearth::JSON.dump($1L))", inputGetter);
             return null;
         }
 
@@ -378,7 +378,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
                     .write("http_resp.headers['Content-Type'] = 'application/json'")
                     .write("data = Stubs::$1L.stub($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
                             inputGetter)
-                    .write("http_resp.body = StringIO.new(Seahorse::JSON.dump(data))");
+                    .write("http_resp.body = StringIO.new(Hearth::JSON.dump(data))");
         }
 
     }

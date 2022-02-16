@@ -115,7 +115,7 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware validate = (new Middleware.Builder())
-                .klass("Seahorse::Middleware::Validate")
+                .klass("Hearth::Middleware::Validate")
                 .step(MiddlewareStackStep.INITIALIZE)
                 .operationParams((ctx, operation) -> {
                     ShapeId inputShapeId = operation.getInputShape();
@@ -129,7 +129,7 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware build = (new Middleware.Builder())
-                .klass("Seahorse::Middleware::Build")
+                .klass("Hearth::Middleware::Build")
                 .step(MiddlewareStackStep.SERIALIZE)
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
@@ -149,13 +149,13 @@ public class MiddlewareBuilder {
 
         ClientConfig stubs = (new ClientConfig.Builder())
                 .name("stubs")
-                .type("Seahorse::Stubbing::Stubs")
+                .type("Hearth::Stubbing::Stubs")
                 .initializationCustomization(
-                        "@stubs = Seahorse::Stubbing::Stubs.new")
+                        "@stubs = Hearth::Stubbing::Stubs.new")
                 .build();
 
         Middleware send = (new Middleware.Builder())
-                .klass("Seahorse::Middleware::Send")
+                .klass("Hearth::Middleware::Send")
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client",
                         transport.getTransportClient().render(context))

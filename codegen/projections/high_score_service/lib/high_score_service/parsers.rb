@@ -18,7 +18,7 @@ module HighScoreService
       def self.parse(http_resp)
         data = Types::CreateHighScoreOutput.new
         data.location = http_resp.headers['Location']
-        json = Seahorse::JSON.load(http_resp.body)
+        json = Hearth::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -41,7 +41,7 @@ module HighScoreService
 
       def self.parse(http_resp)
         data = Types::UnprocessableEntityError.new
-        json = Seahorse::JSON.load(http_resp.body)
+        json = Hearth::JSON.load(http_resp.body)
         data.errors = Parsers::AttributeErrors.parse(json)
         data
       end
@@ -70,7 +70,7 @@ module HighScoreService
 
       def self.parse(http_resp)
         data = Types::DeleteHighScoreOutput.new
-        map = Seahorse::JSON.load(http_resp.body)
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -80,7 +80,7 @@ module HighScoreService
 
       def self.parse(http_resp)
         data = Types::GetHighScoreOutput.new
-        json = Seahorse::JSON.load(http_resp.body)
+        json = Hearth::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -91,7 +91,7 @@ module HighScoreService
 
       def self.parse(http_resp)
         data = Types::ListHighScoresOutput.new
-        json = Seahorse::JSON.load(http_resp.body)
+        json = Hearth::JSON.load(http_resp.body)
         data.high_scores = Parsers::HighScores.parse(json)
         data
       end
@@ -110,7 +110,7 @@ module HighScoreService
 
       def self.parse(http_resp)
         data = Types::UpdateHighScoreOutput.new
-        json = Seahorse::JSON.load(http_resp.body)
+        json = Hearth::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
