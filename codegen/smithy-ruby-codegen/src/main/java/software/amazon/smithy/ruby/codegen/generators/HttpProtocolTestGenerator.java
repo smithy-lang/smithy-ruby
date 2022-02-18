@@ -335,6 +335,7 @@ public class HttpProtocolTestGenerator {
                     case "application/x-www-form-urlencoded":
                         // query params in the body - parse and compare
                         writer.write("expect(CGI.parse(request.body.read)).to eq(CGI.parse('$L'))", body.get());
+                        break;
                     default:
                         writer.write("expect(request.body.read).to eq('$L')", body.get());
                         break;
