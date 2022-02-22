@@ -19,17 +19,22 @@ module WhiteLabel
     describe '#operation____paginators_test_with_bad_names' do
 
     end
+
     describe '#kitchen_sink' do
 
     end
+
     describe '#paginators_test' do
 
     end
+
     describe '#paginators_test_with_items' do
 
     end
+
     describe '#waiters_test' do
 
     end
+
   end
 end

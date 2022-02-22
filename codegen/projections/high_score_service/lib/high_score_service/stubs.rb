@@ -12,7 +12,6 @@ module HighScoreService
 
     # Operation Stubber for CreateHighScore
     class CreateHighScore
-
       def self.default(visited=[])
         {
           high_score: Stubs::HighScoreAttributes.default(visited),
@@ -32,7 +31,6 @@ module HighScoreService
 
     # Structure Stubber for HighScoreAttributes
     class HighScoreAttributes
-
       def self.default(visited=[])
         return nil if visited.include?('HighScoreAttributes')
         visited = visited + ['HighScoreAttributes']
@@ -59,7 +57,6 @@ module HighScoreService
 
     # Operation Stubber for DeleteHighScore
     class DeleteHighScore
-
       def self.default(visited=[])
         {
         }
@@ -73,7 +70,6 @@ module HighScoreService
 
     # Operation Stubber for GetHighScore
     class GetHighScore
-
       def self.default(visited=[])
         {
           high_score: Stubs::HighScoreAttributes.default(visited),
@@ -91,7 +87,6 @@ module HighScoreService
 
     # Operation Stubber for ListHighScores
     class ListHighScores
-
       def self.default(visited=[])
         {
           high_scores: Stubs::HighScores.default(visited),
@@ -129,7 +124,6 @@ module HighScoreService
 
     # Operation Stubber for UpdateHighScore
     class UpdateHighScore
-
       def self.default(visited=[])
         {
           high_score: Stubs::HighScoreAttributes.default(visited),

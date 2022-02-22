@@ -14,7 +14,6 @@ module RailsJson
 
     # Operation Parser for AllQueryStringTypes
     class AllQueryStringTypes
-
       def self.parse(http_resp)
         data = Types::AllQueryStringTypesOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -24,7 +23,6 @@ module RailsJson
 
     # Operation Parser for ConstantAndVariableQueryString
     class ConstantAndVariableQueryString
-
       def self.parse(http_resp)
         data = Types::ConstantAndVariableQueryStringOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -34,7 +32,6 @@ module RailsJson
 
     # Operation Parser for ConstantQueryString
     class ConstantQueryString
-
       def self.parse(http_resp)
         data = Types::ConstantQueryStringOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -44,7 +41,6 @@ module RailsJson
 
     # Operation Parser for DocumentType
     class DocumentType
-
       def self.parse(http_resp)
         data = Types::DocumentTypeOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -56,7 +52,6 @@ module RailsJson
 
     # Operation Parser for DocumentTypeAsPayload
     class DocumentTypeAsPayload
-
       def self.parse(http_resp)
         data = Types::DocumentTypeAsPayloadOutput.new
         payload = Hearth::JSON.load(http_resp.body.read)
@@ -67,7 +62,6 @@ module RailsJson
 
     # Operation Parser for EmptyOperation
     class EmptyOperation
-
       def self.parse(http_resp)
         data = Types::EmptyOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -77,7 +71,6 @@ module RailsJson
 
     # Operation Parser for EndpointOperation
     class EndpointOperation
-
       def self.parse(http_resp)
         data = Types::EndpointOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -87,7 +80,6 @@ module RailsJson
 
     # Operation Parser for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
-
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -97,7 +89,6 @@ module RailsJson
 
     # Operation Parser for GreetingWithErrors
     class GreetingWithErrors
-
       def self.parse(http_resp)
         data = Types::GreetingWithErrorsOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -108,7 +99,6 @@ module RailsJson
 
     # Error Parser for InvalidGreeting
     class InvalidGreeting
-
       def self.parse(http_resp)
         data = Types::InvalidGreeting.new
         map = Hearth::JSON.load(http_resp.body)
@@ -119,7 +109,6 @@ module RailsJson
 
     # Error Parser for ComplexError
     class ComplexError
-
       def self.parse(http_resp)
         data = Types::ComplexError.new
         map = Hearth::JSON.load(http_resp.body)
@@ -139,7 +128,6 @@ module RailsJson
 
     # Operation Parser for HttpPayloadTraits
     class HttpPayloadTraits
-
       def self.parse(http_resp)
         data = Types::HttpPayloadTraitsOutput.new
         data.foo = http_resp.headers['X-Foo']
@@ -151,7 +139,6 @@ module RailsJson
 
     # Operation Parser for HttpPayloadTraitsWithMediaType
     class HttpPayloadTraitsWithMediaType
-
       def self.parse(http_resp)
         data = Types::HttpPayloadTraitsWithMediaTypeOutput.new
         data.foo = http_resp.headers['X-Foo']
@@ -163,7 +150,6 @@ module RailsJson
 
     # Operation Parser for HttpPayloadWithStructure
     class HttpPayloadWithStructure
-
       def self.parse(http_resp)
         data = Types::HttpPayloadWithStructureOutput.new
         json = Hearth::JSON.load(http_resp.body)
@@ -183,7 +169,6 @@ module RailsJson
 
     # Operation Parser for HttpPrefixHeaders
     class HttpPrefixHeaders
-
       def self.parse(http_resp)
         data = Types::HttpPrefixHeadersOutput.new
         data.foo = http_resp.headers['X-Foo']
@@ -210,7 +195,6 @@ module RailsJson
 
     # Operation Parser for HttpPrefixHeadersInResponse
     class HttpPrefixHeadersInResponse
-
       def self.parse(http_resp)
         data = Types::HttpPrefixHeadersInResponseOutput.new
         data.prefix_headers = {}
@@ -226,7 +210,6 @@ module RailsJson
 
     # Operation Parser for HttpRequestWithFloatLabels
     class HttpRequestWithFloatLabels
-
       def self.parse(http_resp)
         data = Types::HttpRequestWithFloatLabelsOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -236,7 +219,6 @@ module RailsJson
 
     # Operation Parser for HttpRequestWithGreedyLabelInPath
     class HttpRequestWithGreedyLabelInPath
-
       def self.parse(http_resp)
         data = Types::HttpRequestWithGreedyLabelInPathOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -246,7 +228,6 @@ module RailsJson
 
     # Operation Parser for HttpRequestWithLabels
     class HttpRequestWithLabels
-
       def self.parse(http_resp)
         data = Types::HttpRequestWithLabelsOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -256,7 +237,6 @@ module RailsJson
 
     # Operation Parser for HttpRequestWithLabelsAndTimestampFormat
     class HttpRequestWithLabelsAndTimestampFormat
-
       def self.parse(http_resp)
         data = Types::HttpRequestWithLabelsAndTimestampFormatOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -266,7 +246,6 @@ module RailsJson
 
     # Operation Parser for HttpResponseCode
     class HttpResponseCode
-
       def self.parse(http_resp)
         data = Types::HttpResponseCodeOutput.new
         data.status = http_resp.status
@@ -277,7 +256,6 @@ module RailsJson
 
     # Operation Parser for IgnoreQueryParamsInResponse
     class IgnoreQueryParamsInResponse
-
       def self.parse(http_resp)
         data = Types::IgnoreQueryParamsInResponseOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -287,7 +265,6 @@ module RailsJson
 
     # Operation Parser for InputAndOutputWithHeaders
     class InputAndOutputWithHeaders
-
       def self.parse(http_resp)
         data = Types::InputAndOutputWithHeadersOutput.new
         data.header_string = http_resp.headers['X-String']
@@ -387,7 +364,6 @@ module RailsJson
 
     # Operation Parser for JsonEnums
     class JsonEnums
-
       def self.parse(http_resp)
         data = Types::JsonEnumsOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -422,7 +398,6 @@ module RailsJson
 
     # Operation Parser for JsonMaps
     class JsonMaps
-
       def self.parse(http_resp)
         data = Types::JsonMapsOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -550,7 +525,6 @@ module RailsJson
 
     # Operation Parser for JsonUnions
     class JsonUnions
-
       def self.parse(http_resp)
         data = Types::JsonUnionsOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -598,7 +572,6 @@ module RailsJson
 
     # Operation Parser for KitchenSinkOperation
     class KitchenSinkOperation
-
       def self.parse(http_resp)
         data = Types::KitchenSinkOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -780,7 +753,6 @@ module RailsJson
 
     # Error Parser for ErrorWithMembers
     class ErrorWithMembers
-
       def self.parse(http_resp)
         data = Types::ErrorWithMembers.new
         map = Hearth::JSON.load(http_resp.body)
@@ -797,7 +769,6 @@ module RailsJson
 
     # Error Parser for ErrorWithoutMembers
     class ErrorWithoutMembers
-
       def self.parse(http_resp)
         data = Types::ErrorWithoutMembers.new
         map = Hearth::JSON.load(http_resp.body)
@@ -807,7 +778,6 @@ module RailsJson
 
     # Operation Parser for MediaTypeHeader
     class MediaTypeHeader
-
       def self.parse(http_resp)
         data = Types::MediaTypeHeaderOutput.new
         data.json = Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
@@ -818,7 +788,6 @@ module RailsJson
 
     # Operation Parser for NestedAttributesOperation
     class NestedAttributesOperation
-
       def self.parse(http_resp)
         data = Types::NestedAttributesOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -829,7 +798,6 @@ module RailsJson
 
     # Operation Parser for NullAndEmptyHeadersClient
     class NullAndEmptyHeadersClient
-
       def self.parse(http_resp)
         data = Types::NullAndEmptyHeadersClientOutput.new
         data.a = http_resp.headers['X-A']
@@ -846,7 +814,6 @@ module RailsJson
 
     # Operation Parser for NullOperation
     class NullOperation
-
       def self.parse(http_resp)
         data = Types::NullOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -867,7 +834,6 @@ module RailsJson
 
     # Operation Parser for OmitsNullSerializesEmptyString
     class OmitsNullSerializesEmptyString
-
       def self.parse(http_resp)
         data = Types::OmitsNullSerializesEmptyStringOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -877,7 +843,6 @@ module RailsJson
 
     # Operation Parser for OperationWithOptionalInputOutput
     class OperationWithOptionalInputOutput
-
       def self.parse(http_resp)
         data = Types::OperationWithOptionalInputOutputOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -888,7 +853,6 @@ module RailsJson
 
     # Operation Parser for QueryIdempotencyTokenAutoFill
     class QueryIdempotencyTokenAutoFill
-
       def self.parse(http_resp)
         data = Types::QueryIdempotencyTokenAutoFillOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -898,7 +862,6 @@ module RailsJson
 
     # Operation Parser for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
-
       def self.parse(http_resp)
         data = Types::QueryParamsAsStringListMapOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -908,7 +871,6 @@ module RailsJson
 
     # Operation Parser for TimestampFormatHeaders
     class TimestampFormatHeaders
-
       def self.parse(http_resp)
         data = Types::TimestampFormatHeadersOutput.new
         data.member_epoch_seconds = Time.at(http_resp.headers['X-memberEpochSeconds'].to_i) if http_resp.headers['X-memberEpochSeconds']
@@ -925,7 +887,6 @@ module RailsJson
 
     # Operation Parser for __789BadName
     class Operation____789BadName
-
       def self.parse(http_resp)
         data = Types::Struct____789BadNameOutput.new
         map = Hearth::JSON.load(http_resp.body)

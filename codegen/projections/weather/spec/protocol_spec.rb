@@ -42,8 +42,11 @@ module Weather
           end
         end
       end
+
     end
+
     describe '#get_city' do
+
       describe 'requests' do
         # Does something
         #
@@ -102,6 +105,7 @@ module Weather
           })
         end
       end
+
       describe 'response stubs' do
         # Does something
         #
@@ -140,6 +144,7 @@ module Weather
           })
         end
       end
+
       describe 'NoSuchResource Errors' do
         # Does something
         #
@@ -164,7 +169,9 @@ module Weather
           end
         end
       end
+
     end
+
     describe '#get_city_announcements' do
 
       describe 'NoSuchResource Errors' do
@@ -191,7 +198,9 @@ module Weather
           end
         end
       end
+
     end
+
     describe '#get_city_image' do
 
       describe 'NoSuchResource Errors' do
@@ -218,14 +227,19 @@ module Weather
           end
         end
       end
+
     end
+
     describe '#get_current_time' do
 
     end
+
     describe '#get_forecast' do
 
     end
+
     describe '#list_cities' do
+
       describe 'requests' do
         # Does something
         #
@@ -256,5 +270,6 @@ module Weather
       end
 
     end
+
   end
 end

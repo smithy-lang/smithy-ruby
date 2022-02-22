@@ -294,7 +294,6 @@ public abstract class ParserGeneratorBase {
                 .write("")
                 .write("# Operation Parser for $L", operation.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
-                .write("")
                 .call(() -> renderOperationParseMethod(operation, outputShape))
                 .closeBlock("end");
         LOGGER.finer("Generated parser class for " + operation.getId().getName());
@@ -305,7 +304,6 @@ public abstract class ParserGeneratorBase {
                 .write("")
                 .write("# Error Parser for $L", s.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(s).getName())
-                .write("")
                 .call(() -> renderErrorParseMethod(s))
                 .closeBlock("end");
         LOGGER.finer("Generated Error parser for " + s.getId().getName());

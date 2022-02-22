@@ -14,7 +14,6 @@ module Weather
 
     # Operation Parser for GetCity
     class GetCity
-
       def self.parse(http_resp)
         data = Types::GetCityOutput.new
         data
@@ -29,7 +28,6 @@ module Weather
 
     # Error Parser for NoSuchResource
     class NoSuchResource
-
       def self.parse(http_resp)
         data = Types::NoSuchResource.new
         data
@@ -38,7 +36,6 @@ module Weather
 
     # Operation Parser for GetCityAnnouncements
     class GetCityAnnouncements
-
       def self.parse(http_resp)
         data = Types::GetCityAnnouncementsOutput.new
         data.last_updated = Time.parse(http_resp.headers['x-last-updated']) if http_resp.headers['x-last-updated']
@@ -54,7 +51,6 @@ module Weather
 
     # Operation Parser for GetCityImage
     class GetCityImage
-
       def self.parse(http_resp)
         data = Types::GetCityImageOutput.new
         data
@@ -63,7 +59,6 @@ module Weather
 
     # Operation Parser for GetCurrentTime
     class GetCurrentTime
-
       def self.parse(http_resp)
         data = Types::GetCurrentTimeOutput.new
         data
@@ -72,7 +67,6 @@ module Weather
 
     # Operation Parser for GetForecast
     class GetForecast
-
       def self.parse(http_resp)
         data = Types::GetForecastOutput.new
         data
@@ -96,7 +90,6 @@ module Weather
 
     # Operation Parser for ListCities
     class ListCities
-
       def self.parse(http_resp)
         data = Types::ListCitiesOutput.new
         data
@@ -111,7 +104,6 @@ module Weather
 
     # Operation Parser for __789BadName
     class Operation____789BadName
-
       def self.parse(http_resp)
         data = Types::Struct____789BadNameOutput.new
         data

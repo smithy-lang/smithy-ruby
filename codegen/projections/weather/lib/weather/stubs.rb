@@ -12,7 +12,6 @@ module Weather
 
     # Operation Stubber for GetCity
     class GetCity
-
       def self.default(visited=[])
         {
           member_name: 'member_name',
@@ -29,7 +28,6 @@ module Weather
 
     # Structure Stubber for CitySummary
     class CitySummary
-
       def self.default(visited=[])
         return nil if visited.include?('CitySummary')
         visited = visited + ['CitySummary']
@@ -45,7 +43,6 @@ module Weather
 
     # Structure Stubber for CityCoordinates
     class CityCoordinates
-
       def self.default(visited=[])
         return nil if visited.include?('CityCoordinates')
         visited = visited + ['CityCoordinates']
@@ -59,7 +56,6 @@ module Weather
 
     # Operation Stubber for GetCityAnnouncements
     class GetCityAnnouncements
-
       def self.default(visited=[])
         {
           last_updated: Time.now,
@@ -89,7 +85,6 @@ module Weather
 
     # Structure Stubber for Message
     class Message
-
       def self.default(visited=[])
         return nil if visited.include?('Message')
         visited = visited + ['Message']
@@ -103,7 +98,6 @@ module Weather
 
     # Operation Stubber for GetCityImage
     class GetCityImage
-
       def self.default(visited=[])
         {
           image: 'image',
@@ -118,7 +112,6 @@ module Weather
 
     # Operation Stubber for GetCurrentTime
     class GetCurrentTime
-
       def self.default(visited=[])
         {
           time: Time.now,
@@ -133,7 +126,6 @@ module Weather
 
     # Operation Stubber for GetForecast
     class GetForecast
-
       def self.default(visited=[])
         {
           chance_of_rain: 1.0,
@@ -162,7 +154,6 @@ module Weather
 
     # Structure Stubber for Baz
     class Baz
-
       def self.default(visited=[])
         return nil if visited.include?('Baz')
         visited = visited + ['Baz']
@@ -176,7 +167,6 @@ module Weather
 
     # Structure Stubber for Foo
     class Foo
-
       def self.default(visited=[])
         return nil if visited.include?('Foo')
         visited = visited + ['Foo']
@@ -190,7 +180,6 @@ module Weather
 
     # Structure Stubber for OtherStructure
     class OtherStructure
-
       def self.default(visited=[])
         return nil if visited.include?('OtherStructure')
         visited = visited + ['OtherStructure']
@@ -214,7 +203,6 @@ module Weather
 
     # Operation Stubber for ListCities
     class ListCities
-
       def self.default(visited=[])
         {
           next_token: 'next_token',
@@ -261,7 +249,6 @@ module Weather
 
     # Operation Stubber for __789BadName
     class Operation____789BadName
-
       def self.default(visited=[])
         {
           member____123abc: 'member____123abc',
@@ -277,7 +264,6 @@ module Weather
 
     # Structure Stubber for __456efg
     class Struct____456efg
-
       def self.default(visited=[])
         return nil if visited.include?('Struct____456efg')
         visited = visited + ['Struct____456efg']

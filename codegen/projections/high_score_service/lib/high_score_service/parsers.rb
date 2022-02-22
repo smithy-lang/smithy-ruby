@@ -14,7 +14,6 @@ module HighScoreService
 
     # Operation Parser for CreateHighScore
     class CreateHighScore
-
       def self.parse(http_resp)
         data = Types::CreateHighScoreOutput.new
         data.location = http_resp.headers['Location']
@@ -38,7 +37,6 @@ module HighScoreService
 
     # Error Parser for UnprocessableEntityError
     class UnprocessableEntityError
-
       def self.parse(http_resp)
         data = Types::UnprocessableEntityError.new
         json = Hearth::JSON.load(http_resp.body)
@@ -67,7 +65,6 @@ module HighScoreService
 
     # Operation Parser for DeleteHighScore
     class DeleteHighScore
-
       def self.parse(http_resp)
         data = Types::DeleteHighScoreOutput.new
         map = Hearth::JSON.load(http_resp.body)
@@ -77,7 +74,6 @@ module HighScoreService
 
     # Operation Parser for GetHighScore
     class GetHighScore
-
       def self.parse(http_resp)
         data = Types::GetHighScoreOutput.new
         json = Hearth::JSON.load(http_resp.body)
@@ -88,7 +84,6 @@ module HighScoreService
 
     # Operation Parser for ListHighScores
     class ListHighScores
-
       def self.parse(http_resp)
         data = Types::ListHighScoresOutput.new
         json = Hearth::JSON.load(http_resp.body)
@@ -107,7 +102,6 @@ module HighScoreService
 
     # Operation Parser for UpdateHighScore
     class UpdateHighScore
-
       def self.parse(http_resp)
         data = Types::UpdateHighScoreOutput.new
         json = Hearth::JSON.load(http_resp.body)

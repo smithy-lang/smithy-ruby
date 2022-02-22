@@ -12,7 +12,6 @@ module WhiteLabel
 
     # Operation Stubber for KitchenSink
     class KitchenSink
-
       def self.default(visited=[])
         {
           string: 'string',
@@ -48,7 +47,6 @@ module WhiteLabel
 
     # Structure Stubber for Struct
     class Struct
-
       def self.default(visited=[])
         return nil if visited.include?('Struct')
         visited = visited + ['Struct']
@@ -146,7 +144,6 @@ module WhiteLabel
 
     # Operation Stubber for PaginatorsTest
     class PaginatorsTest
-
       def self.default(visited=[])
         {
           next_token: 'next_token',
@@ -173,7 +170,6 @@ module WhiteLabel
 
     # Operation Stubber for PaginatorsTestWithItems
     class PaginatorsTestWithItems
-
       def self.default(visited=[])
         {
           next_token: 'next_token',
@@ -188,7 +184,6 @@ module WhiteLabel
 
     # Operation Stubber for WaitersTest
     class WaitersTest
-
       def self.default(visited=[])
         {
           status: 'status',
@@ -202,7 +197,6 @@ module WhiteLabel
 
     # Operation Stubber for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
-
       def self.default(visited=[])
         {
           member____wrapper: Stubs::ResultWrapper.default(visited),
@@ -217,7 +211,6 @@ module WhiteLabel
 
     # Structure Stubber for ResultWrapper
     class ResultWrapper
-
       def self.default(visited=[])
         return nil if visited.include?('ResultWrapper')
         visited = visited + ['ResultWrapper']

@@ -90,7 +90,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderTests() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
-
+        writer.write("");
         topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
             String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
             writer.openBlock("describe '#$L' do", operationName);
@@ -103,7 +103,7 @@ public class HttpProtocolTestGenerator {
                 renderResponseStubberTests(operationName, operation.getOutputShape(), responseTests);
             });
             renderErrorTests(operation);
-            writer.closeBlock("end");
+            writer.closeBlock("\nend\n");
         });
     }
 
@@ -112,7 +112,7 @@ public class HttpProtocolTestGenerator {
                                      HttpResponseTestsTrait responseTests) {
         Shape outputShape = model.expectShape(output);
 
-        writer.openBlock("describe 'responses' do");
+        writer.openBlock("\ndescribe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
                 return;
@@ -139,7 +139,7 @@ public class HttpProtocolTestGenerator {
                                             HttpResponseTestsTrait responseTests) {
         Shape outputShape = model.expectShape(output);
 
-        writer.openBlock("describe 'response stubs' do");
+        writer.openBlock("\ndescribe 'response stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
                 return;
@@ -168,7 +168,7 @@ public class HttpProtocolTestGenerator {
                                     ShapeId input,
                                     HttpRequestTestsTrait requestTests) {
         Shape inputShape = model.expectShape(input);
-        writer.openBlock("describe 'requests' do");
+        writer.openBlock("\ndescribe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
                 return;
@@ -207,7 +207,7 @@ public class HttpProtocolTestGenerator {
 
         for (StructureShape error : OperationIndex.of(model).getErrors(operation)) {
             error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                writer.openBlock("describe '$L Errors' do", error.getId().getName());
+                writer.openBlock("\ndescribe '$L Errors' do", error.getId().getName());
                 responseTests.getTestCases().forEach((testCase) -> {
                     if (testCase.getAppliesTo().isPresent()
                             && testCase.getAppliesTo().get().toString().equals("server")) {

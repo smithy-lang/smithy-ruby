@@ -152,7 +152,7 @@ public abstract class ErrorsGeneratorBase {
         rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
     }
 
-    private Set<Shape> getErrorShapes() {
+    protected Set<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         return topDownIndex.getContainedOperations(context.getService()).stream()

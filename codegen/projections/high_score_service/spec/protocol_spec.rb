@@ -19,17 +19,22 @@ module HighScoreService
     describe '#create_high_score' do
 
     end
+
     describe '#delete_high_score' do
 
     end
+
     describe '#get_high_score' do
 
     end
+
     describe '#list_high_scores' do
 
     end
+
     describe '#update_high_score' do
 
     end
+
   end
 end

@@ -17,6 +17,7 @@ module RailsJson
     let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
 
     describe '#operation____789_bad_name' do
+
       describe 'requests' do
         # Serializes requests for operations/members with bad names
         #
@@ -61,6 +62,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Parses responses for operations/members with bad names
         #
@@ -83,8 +85,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#all_query_string_types' do
+
       describe 'requests' do
         # Serializes query string parameters with all supported types
         #
@@ -163,7 +168,9 @@ module RailsJson
       end
 
     end
+
     describe '#constant_and_variable_query_string' do
+
       describe 'requests' do
         # Mixes constant and variable query string parameters
         #
@@ -216,7 +223,9 @@ module RailsJson
       end
 
     end
+
     describe '#constant_query_string' do
+
       describe 'requests' do
         # Includes constant query string parameters
         #
@@ -242,7 +251,9 @@ module RailsJson
       end
 
     end
+
     describe '#document_type' do
+
       describe 'requests' do
         # Serializes document types as part of the JSON request payload with no escaping.
         #
@@ -475,6 +486,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Serializes documents as part of the JSON response payload with no escaping.
         #
@@ -567,8 +579,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#document_type_as_payload' do
+
       describe 'requests' do
         # Serializes a document as the target of the httpPayload trait.
         #
@@ -644,6 +659,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Serializes a document as the target of the httpPayload trait.
         #
@@ -678,7 +694,9 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#empty_operation' do
 
       describe 'responses' do
@@ -743,6 +761,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # When no output is defined, the service is expected to return
         # an empty payload, however, client must ignore a JSON payload
@@ -803,8 +822,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#endpoint_operation' do
+
       describe 'requests' do
         # Operations can prepend to the given host if they define the
         # endpoint trait.
@@ -826,7 +848,9 @@ module RailsJson
       end
 
     end
+
     describe '#endpoint_with_host_label_operation' do
+
       describe 'requests' do
         # Operations can prepend to the given host if they define the
         # endpoint trait, and can use the host label trait to define
@@ -850,6 +874,7 @@ module RailsJson
       end
 
     end
+
     describe '#greeting_with_errors' do
 
       describe 'InvalidGreeting Errors' do
@@ -875,6 +900,7 @@ module RailsJson
           end
         end
       end
+
       describe 'ComplexError Errors' do
         # Parses a complex error with no message member
         #
@@ -924,8 +950,11 @@ module RailsJson
           end
         end
       end
+
     end
+
     describe '#http_payload_traits' do
+
       describe 'requests' do
         # Serializes a blob in the HTTP payload
         #
@@ -1000,6 +1029,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Serializes a blob in the HTTP payload
         #
@@ -1036,8 +1066,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#http_payload_traits_with_media_type' do
+
       describe 'requests' do
         # Serializes a blob in the HTTP payload with a content-type
         #
@@ -1079,6 +1112,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Serializes a blob in the HTTP payload with a content-type
         #
@@ -1099,8 +1133,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#http_payload_with_structure' do
+
       describe 'requests' do
         # Serializes a structure in the payload
         #
@@ -1152,6 +1189,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Serializes a structure in the payload
         #
@@ -1176,8 +1214,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#http_prefix_headers' do
+
       describe 'requests' do
         # Adds headers by prefix
         #
@@ -1243,6 +1284,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Adds headers by prefix
         #
@@ -1269,7 +1311,9 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#http_prefix_headers_in_response' do
 
       describe 'responses' do
@@ -1292,6 +1336,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # (de)serializes all response headers
         #
@@ -1316,8 +1361,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#http_request_with_float_labels' do
+
       describe 'requests' do
         # Supports handling NaN float label values.
         #
@@ -1373,7 +1421,9 @@ module RailsJson
       end
 
     end
+
     describe '#http_request_with_greedy_label_in_path' do
+
       describe 'requests' do
         # Serializes greedy labels and normal labels
         #
@@ -1395,7 +1445,9 @@ module RailsJson
       end
 
     end
+
     describe '#http_request_with_labels' do
+
       describe 'requests' do
         # Sends a GET request that uses URI label bindings
         #
@@ -1446,7 +1498,9 @@ module RailsJson
       end
 
     end
+
     describe '#http_request_with_labels_and_timestamp_format' do
+
       describe 'requests' do
         # Serializes different timestamp formats in URI labels
         #
@@ -1473,6 +1527,7 @@ module RailsJson
       end
 
     end
+
     describe '#http_response_code' do
 
       describe 'responses' do
@@ -1514,6 +1569,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Binds the http response code to an output structure. Note that
         # even though all members are bound outside of the payload, an
@@ -1554,7 +1610,9 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#ignore_query_params_in_response' do
 
       describe 'responses' do
@@ -1595,6 +1653,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Query parameters must be ignored when serializing the output
         # of an operation. As of January 2021, server implementations
@@ -1634,8 +1693,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#input_and_output_with_headers' do
+
       describe 'requests' do
         # Tests requests with string header bindings
         #
@@ -1835,6 +1897,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Tests responses with string header bindings
         #
@@ -1963,8 +2026,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#json_enums' do
+
       describe 'requests' do
         # Serializes simple scalar properties
         #
@@ -2063,6 +2129,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Serializes simple scalar properties
         #
@@ -2109,8 +2176,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#json_maps' do
+
       describe 'requests' do
         # Serializes JSON maps
         #
@@ -2587,6 +2657,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Deserializes JSON maps
         #
@@ -2842,8 +2913,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#json_unions' do
+
       describe 'requests' do
         # Serializes a string union value
         #
@@ -3280,6 +3354,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Deserializes a string union value
         #
@@ -3478,8 +3553,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#kitchen_sink_operation' do
+
       describe 'requests' do
         # Serializes string shapes
         #
@@ -4535,6 +4613,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Parses operations with empty JSON bodies
         #
@@ -5067,8 +5146,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#media_type_header' do
+
       describe 'requests' do
         # Headers that target strings with a mediaType are base64 encoded
         #
@@ -5107,6 +5189,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Headers that target strings with a mediaType are base64 encoded
         #
@@ -5125,8 +5208,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#nested_attributes_operation' do
+
       describe 'requests' do
         # Serializes members with nestedAttributes
         #
@@ -5150,7 +5236,9 @@ module RailsJson
       end
 
     end
+
     describe '#null_and_empty_headers_client' do
+
       describe 'requests' do
         # Do not send null values, empty strings, or empty lists over the wire in headers
         #
@@ -5176,7 +5264,9 @@ module RailsJson
       end
 
     end
+
     describe '#null_operation' do
+
       describe 'requests' do
         # Null structure values are dropped
         #
@@ -5307,6 +5397,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Null structure values are dropped
         #
@@ -5365,8 +5456,11 @@ module RailsJson
           })
         end
       end
+
     end
+
     describe '#omits_null_serializes_empty_string' do
+
       describe 'requests' do
         # Omits null query values
         #
@@ -5408,7 +5502,9 @@ module RailsJson
       end
 
     end
+
     describe '#operation_with_optional_input_output' do
+
       describe 'requests' do
         # Can call operations with no input or output
         #
@@ -5447,7 +5543,9 @@ module RailsJson
       end
 
     end
+
     describe '#query_idempotency_token_auto_fill' do
+
       describe 'requests' do
         # Automatically adds idempotency token when not set
         #
@@ -5496,7 +5594,9 @@ module RailsJson
       end
 
     end
+
     describe '#query_params_as_string_list_map' do
+
       describe 'requests' do
         # Serialize query params from map of list strings
         #
@@ -5528,7 +5628,9 @@ module RailsJson
       end
 
     end
+
     describe '#timestamp_format_headers' do
+
       describe 'requests' do
         # Tests how timestamp request headers are serialized
         #
@@ -5579,6 +5681,7 @@ module RailsJson
           })
         end
       end
+
       describe 'response stubs' do
         # Tests how timestamp response headers are serialized
         #
@@ -5609,6 +5712,8 @@ module RailsJson
           })
         end
       end
+
     end
+
   end
 end
