@@ -179,27 +179,6 @@ module WhiteLabel
       end
     end
 
-    describe SetOfStructs do
-      let(:struct_1) { Types::Struct.new(value: 'one') }
-      let(:struct_2) { Types::Struct.new(value: 'two') }
-
-      it 'validates input is a set' do
-        expect { SetOfStructs.validate!({}, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input to be in [Set], got Hash.")
-      end
-
-      it 'validates a set of complex elements' do
-        input = Set.new([struct_1, struct_2])
-        SetOfStructs.validate!(input, context: 'input')
-      end
-
-      it 'raises when element is not an expected type' do
-        input = Set.new([struct_1, struct_2, 'struct_3'])
-        expect { SetOfStructs.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input[2] to be in [WhiteLabel::Types::Struct], got String.")
-      end
-    end
-
     describe Struct do
       it 'validates the members' do
         input = Types::Struct.new({ value: 'foo' })

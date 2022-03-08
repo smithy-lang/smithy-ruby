@@ -118,20 +118,6 @@ module WhiteLabel
       end
     end
 
-    describe SetOfStructs do
-      include_examples "validates params", Set, Array
-
-      let(:struct_1) { Types::Struct.new(value: 'one') }
-      let(:struct_2) { Types::Struct.new(value: 'two') }
-      let(:params) { Set.new([struct_1, struct_2]) }
-
-      it 'builds an array of complex elements' do
-        data = SetOfStructs.build(params, context: 'params[:set_of_structs]')
-        expect(data).to be_a(Set)
-        expect(data).to eq(params)
-      end
-    end
-
     describe Struct do
       include_examples "validates params", Hash, Types::Struct
 
