@@ -327,10 +327,14 @@ public class HttpProtocolTestGenerator {
                         writer.write("expect(JSON.parse(request.body.read)).to eq(JSON.parse('$L'))", body.get());
                         break;
                     case "application/xml":
-                        writer
-                                .write("expect(Hearth::XML.parse(request.body.read)).to "
-                                                + "match_xml_node(Hearth::XML.parse('$L'))",
-                                        body.get());
+                        if (body.get().length() > 0) {
+                            writer
+                                    .write("expect(Hearth::XML.parse(request.body.read)).to "
+                                                    + "match_xml_node(Hearth::XML.parse('$L'))",
+                                            body.get());
+                        } else {
+                            writer.write("expect(request.body.read).to eq('$L')", body.get());
+                        }
                         break;
                     case "application/x-www-form-urlencoded":
                         // query params in the body - parse and compare

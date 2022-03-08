@@ -24,7 +24,6 @@ module WhiteLabel
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
         type.map_of_structs = MapOfStructs.build(params[:map_of_structs], context: "#{context}[:map_of_structs]") unless params[:map_of_structs].nil?
         type.set_of_strings = SetOfStrings.build(params[:set_of_strings], context: "#{context}[:set_of_strings]") unless params[:set_of_strings].nil?
-        type.set_of_structs = SetOfStructs.build(params[:set_of_structs], context: "#{context}[:set_of_structs]") unless params[:set_of_structs].nil?
         type.union = Union.build(params[:union], context: "#{context}[:union]") unless params[:union].nil?
         type
       end
@@ -98,17 +97,6 @@ module WhiteLabel
         data = Set.new
         params.each_with_index do |element, index|
           data << element
-        end
-        data
-      end
-    end
-
-    module SetOfStructs
-      def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
-        data = Set.new
-        params.each_with_index do |element, index|
-          data << Struct.build(element, context: "#{context}[#{index}]") unless element.nil?
         end
         data
       end

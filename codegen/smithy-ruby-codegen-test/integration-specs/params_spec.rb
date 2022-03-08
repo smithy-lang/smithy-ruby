@@ -81,7 +81,6 @@ module WhiteLabel
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
           set_of_strings: Set.new(['dank', 'memes']),
-          set_of_structs: Set.new([struct]),
           union: { string: 'simple string' }
         }
       end
@@ -99,7 +98,6 @@ module WhiteLabel
           map_of_strings: { key: 'value' },
           map_of_structs: { key: { value: 'struct value' } },
           set_of_strings: ["dank", "memes"],
-          set_of_structs: [{:value=>"struct value"}],
           union: { string: 'simple string' }
         }
         expect(data.to_h).to eq(expected)
@@ -113,20 +111,6 @@ module WhiteLabel
 
       it 'builds a set of simple elements' do
         data = SetOfStrings.build(params, context: 'params')
-        expect(data).to be_a(Set)
-        expect(data).to eq(params)
-      end
-    end
-
-    describe SetOfStructs do
-      include_examples "validates params", Set, Array
-
-      let(:struct_1) { Types::Struct.new(value: 'one') }
-      let(:struct_2) { Types::Struct.new(value: 'two') }
-      let(:params) { Set.new([struct_1, struct_2]) }
-
-      it 'builds an array of complex elements' do
-        data = SetOfStructs.build(params, context: 'params[:set_of_structs]')
         expect(data).to be_a(Set)
         expect(data).to eq(params)
       end

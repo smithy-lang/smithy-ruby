@@ -38,7 +38,6 @@ structure KitchenSinkInputOutput {
     MapOfStrings: MapOfStrings,
     MapOfStructs: MapOfStructs,
     SetOfStrings: SetOfStrings,
-    SetOfStructs: SetOfStructs,
 
     // union member
     Union: Union,
@@ -68,10 +67,6 @@ map MapOfStructs {
 
 set SetOfStrings {
     member: String,
-}
-
-set SetOfStructs {
-    member: Struct,
 }
 
 union Union {

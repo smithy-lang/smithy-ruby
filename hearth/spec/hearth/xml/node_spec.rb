@@ -48,6 +48,29 @@ module Hearth
             Node.new('name', 'text', Node.new('child'))
           end.to raise_error(ArgumentError)
         end
+
+        it 'accepts attributes' do
+          attr = { 'attr1' => 'value1' }
+          node = Node.new('name', attributes: attr)
+          expect(node.attributes).to eq(attr)
+        end
+
+        it 'accepts text arguments and attributes' do
+          attr = { 'attr1' => 'value1' }
+          node = Node.new('name', 'te', 'xt', attributes: attr)
+          expect(node.name).to eq('name')
+          expect(node.text).to eq('text')
+          expect(node.attributes).to eq(attr)
+        end
+
+        it 'accepts an array of child nodes and attributes' do
+          attr = { 'attr1' => 'value1' }
+          child1 = Node.new('child1')
+          child2 = Node.new('child1')
+          node = Node.new('name', [child1, child2], attributes: attr)
+          expect(node.child_nodes).to eq([child1, child2])
+          expect(node.attributes).to eq(attr)
+        end
       end
 
       describe '#name' do

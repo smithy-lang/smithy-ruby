@@ -26,9 +26,6 @@ module WhiteLabel
     class Struct
     end
 
-    class SetOfStructs
-    end
-
     class SetOfStrings
     end
 

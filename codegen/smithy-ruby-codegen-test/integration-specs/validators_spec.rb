@@ -149,7 +149,6 @@ module WhiteLabel
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
           set_of_strings: Set.new(['dank', 'memes']),
-          set_of_structs: Set.new([struct]),
           union: { string: 'simple string' }
         }
       end
@@ -176,27 +175,6 @@ module WhiteLabel
         input = Set.new(['dank', 'memes', 420])
         expect { SetOfStrings.validate!(input, context: 'input') }
           .to raise_error(ArgumentError, "Expected input[2] to be in [String], got Integer.")
-      end
-    end
-
-    describe SetOfStructs do
-      let(:struct_1) { Types::Struct.new(value: 'one') }
-      let(:struct_2) { Types::Struct.new(value: 'two') }
-
-      it 'validates input is a set' do
-        expect { SetOfStructs.validate!({}, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input to be in [Set], got Hash.")
-      end
-
-      it 'validates a set of complex elements' do
-        input = Set.new([struct_1, struct_2])
-        SetOfStructs.validate!(input, context: 'input')
-      end
-
-      it 'raises when element is not an expected type' do
-        input = Set.new([struct_1, struct_2, 'struct_3'])
-        expect { SetOfStructs.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input[2] to be in [WhiteLabel::Types::Struct], got String.")
       end
     end
 
