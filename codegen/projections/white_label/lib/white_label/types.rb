@@ -102,10 +102,6 @@ module WhiteLabel
     #
     #   @return [Set<String>]
     #
-    # @!attribute set_of_structs
-    #
-    #   @return [Set<Struct>]
-    #
     # @!attribute union
     #   This is some union documentation.
     #   It has some union members
@@ -141,7 +137,6 @@ module WhiteLabel
       :map_of_strings,
       :map_of_structs,
       :set_of_strings,
-      :set_of_structs,
       :union,
       keyword_init: true
     ) do
@@ -157,7 +152,6 @@ module WhiteLabel
           "map_of_strings=#{map_of_strings || 'nil'}, "\
           "map_of_structs=#{map_of_structs || 'nil'}, "\
           "set_of_strings=#{set_of_strings || 'nil'}, "\
-          "set_of_structs=#{set_of_structs || 'nil'}, "\
           "union=\"[SENSITIVE]\">"
       end
     end
@@ -243,10 +237,6 @@ module WhiteLabel
     #
     #   @return [Set<String>]
     #
-    # @!attribute set_of_structs
-    #
-    #   @return [Set<Struct>]
-    #
     # @!attribute union
     #   This is some union documentation.
     #   It has some union members
@@ -282,7 +272,6 @@ module WhiteLabel
       :map_of_strings,
       :map_of_structs,
       :set_of_strings,
-      :set_of_structs,
       :union,
       keyword_init: true
     ) do
@@ -298,7 +287,6 @@ module WhiteLabel
           "map_of_strings=#{map_of_strings || 'nil'}, "\
           "map_of_structs=#{map_of_structs || 'nil'}, "\
           "set_of_strings=#{set_of_strings || 'nil'}, "\
-          "set_of_structs=#{set_of_structs || 'nil'}, "\
           "union=\"[SENSITIVE]\">"
       end
     end

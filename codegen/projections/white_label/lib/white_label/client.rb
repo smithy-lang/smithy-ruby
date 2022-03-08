@@ -156,7 +156,6 @@ module WhiteLabel
     #   resp.map_of_structs #=> Hash<String, Struct>
     #   resp.set_of_strings #=> Set<String>
     #   resp.set_of_strings[0] #=> String
-    #   resp.set_of_structs #=> Set<Struct>
     #   resp.union #=> Union
     #
     # @example Test input and output
@@ -198,14 +197,6 @@ module WhiteLabel
     #       "of",
     #       "strings"
     #     ],
-    #     set_of_structs: [
-    #       {
-    #         value: "struct1"
-    #       },
-    #       {
-    #         value: "struct2"
-    #       }
-    #     ],
     #     union: {
     #       string: "union string"
     #     }
@@ -246,14 +237,6 @@ module WhiteLabel
     #       "set",
     #       "of",
     #       "strings"
-    #     ],
-    #     set_of_structs: [
-    #       {
-    #         value: "struct1"
-    #       },
-    #       {
-    #         value: "struct2"
-    #       }
     #     ],
     #     union: {
     #       struct: {

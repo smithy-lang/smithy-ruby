@@ -23,7 +23,6 @@ module WhiteLabel
           map_of_strings: Stubs::MapOfStrings.default(visited),
           map_of_structs: Stubs::MapOfStructs.default(visited),
           set_of_strings: Stubs::SetOfStrings.default(visited),
-          set_of_structs: Stubs::SetOfStructs.default(visited),
           union: Stubs::Union.default(visited),
         }
       end
@@ -55,18 +54,6 @@ module WhiteLabel
         {
           value: 'value',
         }
-      end
-
-    end
-
-    # Set Stubber for SetOfStructs
-    class SetOfStructs
-      def self.default(visited=[])
-        return nil if visited.include?('SetOfStructs')
-        visited = visited + ['SetOfStructs']
-        [
-          Stubs::Struct.default(visited)
-        ]
       end
 
     end

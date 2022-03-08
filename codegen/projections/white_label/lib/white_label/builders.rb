@@ -26,11 +26,6 @@ module WhiteLabel
     class Struct
     end
 
-    # Set Builder for SetOfStructs
-
-    class SetOfStructs
-    end
-
     # Set Builder for SetOfStrings
 
     class SetOfStrings
