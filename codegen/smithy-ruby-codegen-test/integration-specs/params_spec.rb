@@ -81,7 +81,6 @@ module WhiteLabel
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
           set_of_strings: Set.new(['dank', 'memes']),
-          set_of_structs: Set.new([struct]),
           union: { string: 'simple string' }
         }
       end
@@ -99,7 +98,6 @@ module WhiteLabel
           map_of_strings: { key: 'value' },
           map_of_structs: { key: { value: 'struct value' } },
           set_of_strings: ["dank", "memes"],
-          set_of_structs: [{:value=>"struct value"}],
           union: { string: 'simple string' }
         }
         expect(data.to_h).to eq(expected)
