@@ -9,9 +9,9 @@ module Hearth
       BOTH_TYPES = 'Nodes may not have both text and child nodes'
 
       # @param [String] name
-      def initialize(name, *children)
+      def initialize(name, *children, attributes: {})
         @name = name
-        @attributes = {}
+        @attributes = attributes
         @child_nodes = []
         @child_node_map = {}
         @text = []
