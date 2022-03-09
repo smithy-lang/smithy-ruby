@@ -16,7 +16,7 @@ RSpec::Matchers.define :match_query_params do |expected|
     expected.values.zip(actual.values).each do |a, e|
       a.zip(e).each do |a0, e0|
         # Timestamps can have optional precision.
-        if (float = Float(a0, exception: false))
+        if (float = Float(a0) rescue false)
           expect(float).to eq(e0.to_f)
         else
           expect(a0).to eq(e0)
