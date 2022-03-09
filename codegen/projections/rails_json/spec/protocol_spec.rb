@@ -10,6 +10,7 @@
 require 'rails_json'
 
 require 'hearth/xml/node_matcher'
+require 'hearth/query/param_matcher'
 
 module RailsJson
   describe Client do

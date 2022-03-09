@@ -10,6 +10,7 @@
 require 'weather'
 
 require 'hearth/xml/node_matcher'
+require 'hearth/query/param_matcher'
 
 module Weather
   describe Client do
