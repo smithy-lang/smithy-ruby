@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
@@ -52,7 +53,7 @@ public abstract class ErrorsGeneratorBase {
     protected final RubyCodeWriter writer;
     protected final RubyCodeWriter rbsWriter;
     protected final SymbolProvider symbolProvider;
-    protected final ArrayList<Shape> errorShapes;
+    protected final List<Shape> errorShapes;
 
     public ErrorsGeneratorBase(GenerationContext context) {
         this.context = context;
@@ -152,7 +153,7 @@ public abstract class ErrorsGeneratorBase {
         rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
     }
 
-    protected ArrayList<Shape> getErrorShapes() {
+    protected List<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         return topDownIndex.getContainedOperations(context.getService()).stream()
