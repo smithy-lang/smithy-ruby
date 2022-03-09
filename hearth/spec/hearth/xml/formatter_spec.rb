@@ -55,7 +55,7 @@ module Hearth
             # "\n \n"
             input = Base64.decode64('CiAK').force_encoding('utf-8')
             node = Node.new('node', input)
-            result = Formatter.new().format(node)
+            result = Formatter.new.format(node)
             expect(result).to include('&#xA; &#xA;')
           end
 
@@ -63,7 +63,7 @@ module Hearth
             # "a\r\n b\n c\r"
             input = Base64.decode64('YQ0KIGIKIGMN').force_encoding('utf-8')
             node = Node.new('node', input)
-            result = Formatter.new().format(node)
+            result = Formatter.new.format(node)
             expect(result).to include('a&#xD;&#xA; b&#xA; c&#xD;')
           end
 
@@ -71,15 +71,16 @@ module Hearth
             # "a\r\u0085 b\u0085"
             input = Base64.decode64('YQ3ChSBiwoU=').force_encoding('utf-8')
             node = Node.new('node', input)
-            result = Formatter.new().format(node)
+            result = Formatter.new.format(node)
             expect(result).to include('a&#xD;&#x85; b&#x85;')
           end
 
           it 'encodes line separators' do
             # "a\r\u2028 b\u0085 c\u2028"
-            input = Base64.decode64('YQ3igKggYsKFIGPigKg=').force_encoding('utf-8')
+            input = Base64.decode64('YQ3igKggYsKFIGPigKg=')
+                          .force_encoding('utf-8')
             node = Node.new('node', input)
-            result = Formatter.new().format(node)
+            result = Formatter.new.format(node)
             expect(result).to include('a&#xD;&#x2028; b&#x85; c&#x2028;')
           end
         end
