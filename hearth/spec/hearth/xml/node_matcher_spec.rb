@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# not included in lib
 require_relative '../../../lib/hearth/xml/node_matcher'
 
 module Hearth

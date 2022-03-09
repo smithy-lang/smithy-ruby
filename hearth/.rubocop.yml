@@ -27,3 +27,7 @@ Metrics/ClassLength:
 Style/Documentation:
   Exclude:
     - 'spec/**/*.rb'
+
+Style/RescueModifier:
+  Exclude:
+    - 'lib/hearth/query/param_matcher.rb'
