@@ -45,7 +45,7 @@ module Hearth
       end
 
       def text_node(node, pad)
-        text = node.text.encode(xml: :text)
+        text = escape(node.text, :text)
         "#{pad}<#{node.name}#{attrs(node)}>#{text}</#{node.name}>#{@eol}"
       end
 
@@ -60,8 +60,17 @@ module Hearth
 
       def attrs(node)
         node.attributes.map do |key, value|
-          " #{key}=#{value.to_s.encode(xml: :attr)}"
+          " #{key}=#{escape(value, :attr)}"
         end.join
+      end
+
+      def escape(string, text_or_attr)
+        string.to_s
+          .encode(:xml => text_or_attr)
+          .gsub("\u{000D}", '&#xD;') # Carriage Return
+          .gsub("\u{000A}", '&#xA;') # Line Feed
+          .gsub("\u{0085}", '&#x85;') # Next Line
+          .gsub("\u{2028}", '&#x2028;') # Line Separator
       end
     end
   end
