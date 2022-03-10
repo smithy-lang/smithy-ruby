@@ -151,9 +151,10 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
     protected void renderOperationBodyStubber(OperationShape operation, Shape outputShape) {
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
-                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpHeaderTrait.class)
+                && !m.hasTrait(HttpQueryTrait.class)
+                && !m.hasTrait(HttpQueryParamsTrait.class)
+                && !m.hasTrait(HttpHeaderTrait.class)
                 && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
                 && !m.hasTrait(HttpResponseCodeTrait.class));
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
