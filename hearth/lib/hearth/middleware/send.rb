@@ -45,18 +45,16 @@ module Hearth
         when Proc
           stub = stub.call(context)
           apply_stub(stub, context, output) if stub
-        when Exception
-          output.error = stub
-        when Class
-          output.error = stub.new
+        when Exception then output.error = stub
+        when Class then output.error = stub.new
         when NilClass
           @stub_class.stub(context.response, stub: @stub_class.default)
         else
-          if stub.class.include?(Hearth::Structure)
-            @stub_class.stub(context.response, stub: stub)
-          else
+          unless stub.class.include?(Hearth::Structure)
             raise ArgumentError, 'Unsupported stub type'
           end
+
+          @stub_class.stub(context.response, stub: stub)
         end
       end
     end

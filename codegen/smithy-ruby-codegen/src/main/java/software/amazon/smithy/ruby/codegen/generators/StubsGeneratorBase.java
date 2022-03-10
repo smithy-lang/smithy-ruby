@@ -386,6 +386,7 @@ public abstract class StubsGeneratorBase {
             return null;
         }
 
+        //TODO: Convert all the defaults!!!
         @Override
         public Void unionShape(UnionShape shape) {
             String name = symbolProvider.toSymbol(shape).getName();

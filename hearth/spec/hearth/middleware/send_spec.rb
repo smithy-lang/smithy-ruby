@@ -2,6 +2,10 @@
 
 module Hearth
   module Middleware
+    StubOutput = ::Struct.new(:param1, keyword_init: true) do
+      include Hearth::Structure
+    end
+
     describe Send do
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
@@ -111,13 +115,13 @@ module Hearth
             end
           end
 
-          context 'stub is a hash' do
-            let(:stub_hash) { { param1: 'value' } }
-            before { stubs.add_stubs(operation, [stub_hash]) }
+          context 'stub is an output object' do
+            let(:stub_output) { StubOutput.new(param1: 'value') }
+            before { stubs.add_stubs(operation, [stub_output]) }
 
             it 'uses the stub class to stub the response' do
               expect(stub_class).to receive(:stub)
-                .with(response, stub: stub_hash)
+                .with(response, stub: stub_output)
               subject.call(input, context)
             end
           end

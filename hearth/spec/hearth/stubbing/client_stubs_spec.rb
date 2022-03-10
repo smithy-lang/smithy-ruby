@@ -9,6 +9,10 @@ module Hearth
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
+    def transform_stubs(_operation_name, stubs)
+      stubs
+    end
+
     # for testing
     attr_reader :stubs
   end

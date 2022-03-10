@@ -104,7 +104,8 @@ module Hearth
     #   `:stub_responses => true`.
     def stub_responses(operation_name, *stubs)
       if @stub_responses
-        @stubs.add_stubs(operation_name, transform_stubs(operation_name, stubs.flatten))
+        @stubs.add_stubs(operation_name,
+                         transform_stubs(operation_name, stubs.flatten))
       else
         msg = 'Stubbing is not enabled. Enable stubbing in the constructor '\
               'with `stub_responses: true`'
