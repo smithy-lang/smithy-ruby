@@ -37,9 +37,8 @@ module WhiteLabel
       def self.default(visited=[])
         return nil if visited.include?('Union')
         visited = visited + ['Union']
-        {
-          string: 'string',
-        }
+        value = 'string'
+        Types::Union::String.new(value)
       end
 
     end

@@ -533,5 +533,23 @@ module WhiteLabel
 
       StringIO.new
     end
+
+    def transform_stubs(operation_name, stubs)
+      param_class = case operation_name
+      when :kitchen_sink then Params::KitchenSinkOutput
+      when :paginators_test then Params::PaginatorsTestOperationOutput
+      when :paginators_test_with_items then Params::PaginatorsTestWithItemsOutput
+      when :waiters_test then Params::WaitersTestOutput
+      when :operation____paginators_test_with_bad_names then Params::Struct____PaginatorsTestWithBadNamesOutput
+      end
+
+      stubs.map do |stub|
+        if Hash === stub
+          param_class.build(stub)
+        else
+          stub
+        end
+      end
+    end
   end
 end

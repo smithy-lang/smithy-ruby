@@ -386,5 +386,23 @@ module HighScoreService
 
       StringIO.new
     end
+
+    def transform_stubs(operation_name, stubs)
+      param_class = case operation_name
+      when :create_high_score then Params::CreateHighScoreOutput
+      when :delete_high_score then Params::DeleteHighScoreOutput
+      when :get_high_score then Params::GetHighScoreOutput
+      when :list_high_scores then Params::ListHighScoresOutput
+      when :update_high_score then Params::UpdateHighScoreOutput
+      end
+
+      stubs.map do |stub|
+        if Hash === stub
+          param_class.build(stub)
+        else
+          stub
+        end
+      end
+    end
   end
 end

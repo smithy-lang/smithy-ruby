@@ -49,12 +49,14 @@ module Hearth
           output.error = stub
         when Class
           output.error = stub.new
-        when Hash
-          @stub_class.stub(context.response, stub: stub)
         when NilClass
           @stub_class.stub(context.response, stub: @stub_class.default)
         else
-          raise ArgumentError, 'Unsupported stub type'
+          if stub.class.include?(Hearth::Structure)
+            @stub_class.stub(context.response, stub: stub)
+          else
+            raise ArgumentError, 'Unsupported stub type'
+          end
         end
       end
     end

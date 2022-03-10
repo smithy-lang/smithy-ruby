@@ -76,9 +76,8 @@ module Weather
       def self.default(visited=[])
         return nil if visited.include?('Announcements')
         visited = visited + ['Announcements']
-        {
-          police: Stubs::Message.default(visited),
-        }
+        value = Stubs::Message.default(visited)
+        Types::Announcements::Police.new(value)
       end
 
     end
@@ -145,9 +144,8 @@ module Weather
       def self.default(visited=[])
         return nil if visited.include?('Precipitation')
         visited = visited + ['Precipitation']
-        {
-          rain: false,
-        }
+        value = false
+        Types::Precipitation::Rain.new(value)
       end
 
     end

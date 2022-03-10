@@ -2339,5 +2339,53 @@ module RailsJson
 
       StringIO.new
     end
+
+    def transform_stubs(operation_name, stubs)
+      param_class = case operation_name
+      when :all_query_string_types then Params::AllQueryStringTypesOutput
+      when :constant_and_variable_query_string then Params::ConstantAndVariableQueryStringOutput
+      when :constant_query_string then Params::ConstantQueryStringOutput
+      when :document_type then Params::DocumentTypeOutput
+      when :document_type_as_payload then Params::DocumentTypeAsPayloadOutput
+      when :empty_operation then Params::EmptyOperationOutput
+      when :endpoint_operation then Params::EndpointOperationOutput
+      when :endpoint_with_host_label_operation then Params::EndpointWithHostLabelOperationOutput
+      when :greeting_with_errors then Params::GreetingWithErrorsOutput
+      when :http_payload_traits then Params::HttpPayloadTraitsOutput
+      when :http_payload_traits_with_media_type then Params::HttpPayloadTraitsWithMediaTypeOutput
+      when :http_payload_with_structure then Params::HttpPayloadWithStructureOutput
+      when :http_prefix_headers then Params::HttpPrefixHeadersOutput
+      when :http_prefix_headers_in_response then Params::HttpPrefixHeadersInResponseOutput
+      when :http_request_with_float_labels then Params::HttpRequestWithFloatLabelsOutput
+      when :http_request_with_greedy_label_in_path then Params::HttpRequestWithGreedyLabelInPathOutput
+      when :http_request_with_labels then Params::HttpRequestWithLabelsOutput
+      when :http_request_with_labels_and_timestamp_format then Params::HttpRequestWithLabelsAndTimestampFormatOutput
+      when :http_response_code then Params::HttpResponseCodeOutput
+      when :ignore_query_params_in_response then Params::IgnoreQueryParamsInResponseOutput
+      when :input_and_output_with_headers then Params::InputAndOutputWithHeadersOutput
+      when :json_enums then Params::JsonEnumsOutput
+      when :json_maps then Params::JsonMapsOutput
+      when :json_unions then Params::JsonUnionsOutput
+      when :kitchen_sink_operation then Params::KitchenSinkOperationOutput
+      when :media_type_header then Params::MediaTypeHeaderOutput
+      when :nested_attributes_operation then Params::NestedAttributesOperationOutput
+      when :null_and_empty_headers_client then Params::NullAndEmptyHeadersClientOutput
+      when :null_operation then Params::NullOperationOutput
+      when :omits_null_serializes_empty_string then Params::OmitsNullSerializesEmptyStringOutput
+      when :operation_with_optional_input_output then Params::OperationWithOptionalInputOutputOutput
+      when :query_idempotency_token_auto_fill then Params::QueryIdempotencyTokenAutoFillOutput
+      when :query_params_as_string_list_map then Params::QueryParamsAsStringListMapOutput
+      when :timestamp_format_headers then Params::TimestampFormatHeadersOutput
+      when :operation____789_bad_name then Params::Struct____789BadNameOutput
+      end
+
+      stubs.map do |stub|
+        if Hash === stub
+          param_class.build(stub)
+        else
+          stub
+        end
+      end
+    end
   end
 end

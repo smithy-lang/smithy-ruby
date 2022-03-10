@@ -482,5 +482,25 @@ module Weather
 
       StringIO.new
     end
+
+    def transform_stubs(operation_name, stubs)
+      param_class = case operation_name
+      when :get_city then Params::GetCityOutput
+      when :get_city_announcements then Params::GetCityAnnouncementsOutput
+      when :get_city_image then Params::GetCityImageOutput
+      when :get_current_time then Params::GetCurrentTimeOutput
+      when :get_forecast then Params::GetForecastOutput
+      when :list_cities then Params::ListCitiesOutput
+      when :operation____789_bad_name then Params::Struct____789BadNameOutput
+      end
+
+      stubs.map do |stub|
+        if Hash === stub
+          param_class.build(stub)
+        else
+          stub
+        end
+      end
+    end
   end
 end

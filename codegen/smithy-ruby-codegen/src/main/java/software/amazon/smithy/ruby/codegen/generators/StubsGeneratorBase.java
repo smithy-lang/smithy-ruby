@@ -397,13 +397,12 @@ public abstract class StubsGeneratorBase {
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
                     .call(() -> {
-                        writer.openBlock("{");
                         MemberShape defaultMember = shape.members().iterator().next();
                         Shape target = model.expectShape(defaultMember.getTarget());
                         String symbolName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(defaultMember));
-                        String dataSetter = symbolName + ": ";
-                        target.accept(new MemberDefaults(dataSetter, ",", symbolName));
-                        writer.closeBlock("}");
+                        target.accept(new MemberDefaults("value = ", "", symbolName));
+                        writer.write("Types::$L::$L.new(value)",
+                                shape.getId().getName(), symbolProvider.toMemberName(defaultMember));
                     })
                     .closeBlock("end")
                     .write("")

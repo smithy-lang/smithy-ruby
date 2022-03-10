@@ -132,6 +132,7 @@ public class ClientGenerator {
                 .write("\nprivate")
                 .call(() -> renderApplyMiddlewareMethod())
                 .call(() -> renderOutputStreamMethod())
+                .call(() -> renderTransformStubsMethod())
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -305,6 +306,37 @@ public class ClientGenerator {
                 .write("return options[:output_stream] if options[:output_stream]")
                 .write("return Hearth::BlockIO.new(block) if block")
                 .write("\nStringIO.new")
+                .closeBlock("end");
+    }
+
+    private void renderTransformStubsMethod() {
+        writer
+                .openBlock(
+                        "\ndef transform_stubs(operation_name, stubs)")
+                .write("param_class = case operation_name")
+                .call(() -> {
+                    TopDownIndex topDownIndex = TopDownIndex.of(model);
+                    Set<OperationShape> containedOperations = new TreeSet<>(
+                            topDownIndex.getContainedOperations(context.getService()));
+                    containedOperations.stream()
+                            .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                            .forEach(o -> {
+                                Shape outputShape = model.expectShape(o.getOutputShape());
+                                writer.write("when $L then Params::$L",
+                                        RubyFormatter.asSymbol(symbolProvider.toSymbol(o).getName()),
+                                        symbolProvider.toSymbol(outputShape).getName());
+                            });
+                })
+                .write("end\n")
+                .openBlock("stubs.map do |stub|")
+                .openBlock("if Hash === stub")
+                .write("param_class.build(stub)")
+                .closeBlock("else")
+                .indent()
+                .write("stub")
+                .dedent()
+                .write("end")
+                .closeBlock("end")
                 .closeBlock("end");
     }
 }
