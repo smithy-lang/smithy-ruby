@@ -124,10 +124,10 @@ module RailsJson
         data_parser: Parsers::AllQueryStringTypes
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::AllQueryStringTypesOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::AllQueryStringTypes,
+        params_class: Params::AllQueryStringTypesOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -182,10 +182,10 @@ module RailsJson
         data_parser: Parsers::ConstantAndVariableQueryString
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::ConstantAndVariableQueryStringOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ConstantAndVariableQueryString,
+        params_class: Params::ConstantAndVariableQueryStringOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -240,10 +240,10 @@ module RailsJson
         data_parser: Parsers::ConstantQueryString
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::ConstantQueryStringOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ConstantQueryString,
+        params_class: Params::ConstantQueryStringOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -305,10 +305,10 @@ module RailsJson
         data_parser: Parsers::DocumentType
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::DocumentTypeOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::DocumentType,
+        params_class: Params::DocumentTypeOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -368,10 +368,10 @@ module RailsJson
         data_parser: Parsers::DocumentTypeAsPayload
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::DocumentTypeAsPayloadOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::DocumentTypeAsPayload,
+        params_class: Params::DocumentTypeAsPayloadOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -419,10 +419,10 @@ module RailsJson
         data_parser: Parsers::EmptyOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::EmptyOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::EmptyOperation,
+        params_class: Params::EmptyOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -470,10 +470,10 @@ module RailsJson
         data_parser: Parsers::EndpointOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::EndpointOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::EndpointOperation,
+        params_class: Params::EndpointOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -523,10 +523,10 @@ module RailsJson
         data_parser: Parsers::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::EndpointWithHostLabelOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::EndpointWithHostLabelOperation,
+        params_class: Params::EndpointWithHostLabelOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -584,10 +584,10 @@ module RailsJson
         data_parser: Parsers::GreetingWithErrors
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GreetingWithErrorsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GreetingWithErrors,
+        params_class: Params::GreetingWithErrorsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -645,10 +645,10 @@ module RailsJson
         data_parser: Parsers::HttpPayloadTraits
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpPayloadTraitsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpPayloadTraits,
+        params_class: Params::HttpPayloadTraitsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -704,10 +704,10 @@ module RailsJson
         data_parser: Parsers::HttpPayloadTraitsWithMediaType
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpPayloadTraitsWithMediaTypeOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpPayloadTraitsWithMediaType,
+        params_class: Params::HttpPayloadTraitsWithMediaTypeOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -768,10 +768,10 @@ module RailsJson
         data_parser: Parsers::HttpPayloadWithStructure
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpPayloadWithStructureOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpPayloadWithStructure,
+        params_class: Params::HttpPayloadWithStructureOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -831,10 +831,10 @@ module RailsJson
         data_parser: Parsers::HttpPrefixHeaders
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpPrefixHeadersOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpPrefixHeaders,
+        params_class: Params::HttpPrefixHeadersOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -886,10 +886,10 @@ module RailsJson
         data_parser: Parsers::HttpPrefixHeadersInResponse
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpPrefixHeadersInResponseOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpPrefixHeadersInResponse,
+        params_class: Params::HttpPrefixHeadersInResponseOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -940,10 +940,10 @@ module RailsJson
         data_parser: Parsers::HttpRequestWithFloatLabels
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpRequestWithFloatLabelsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpRequestWithFloatLabels,
+        params_class: Params::HttpRequestWithFloatLabelsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -994,10 +994,10 @@ module RailsJson
         data_parser: Parsers::HttpRequestWithGreedyLabelInPath
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpRequestWithGreedyLabelInPathOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpRequestWithGreedyLabelInPath,
+        params_class: Params::HttpRequestWithGreedyLabelInPathOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1063,10 +1063,10 @@ module RailsJson
         data_parser: Parsers::HttpRequestWithLabels
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpRequestWithLabelsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpRequestWithLabels,
+        params_class: Params::HttpRequestWithLabelsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1125,10 +1125,10 @@ module RailsJson
         data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
+        params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1177,10 +1177,10 @@ module RailsJson
         data_parser: Parsers::HttpResponseCode
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::HttpResponseCodeOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::HttpResponseCode,
+        params_class: Params::HttpResponseCodeOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1233,10 +1233,10 @@ module RailsJson
         data_parser: Parsers::IgnoreQueryParamsInResponse
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::IgnoreQueryParamsInResponseOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::IgnoreQueryParamsInResponse,
+        params_class: Params::IgnoreQueryParamsInResponseOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1338,10 +1338,10 @@ module RailsJson
         data_parser: Parsers::InputAndOutputWithHeaders
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::InputAndOutputWithHeadersOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::InputAndOutputWithHeaders,
+        params_class: Params::InputAndOutputWithHeadersOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1413,10 +1413,10 @@ module RailsJson
         data_parser: Parsers::JsonEnums
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::JsonEnumsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::JsonEnums,
+        params_class: Params::JsonEnumsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1515,10 +1515,10 @@ module RailsJson
         data_parser: Parsers::JsonMaps
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::JsonMapsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::JsonMaps,
+        params_class: Params::JsonMapsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1591,10 +1591,10 @@ module RailsJson
         data_parser: Parsers::JsonUnions
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::JsonUnionsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::JsonUnions,
+        params_class: Params::JsonUnionsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1750,10 +1750,10 @@ module RailsJson
         data_parser: Parsers::KitchenSinkOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::KitchenSinkOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::KitchenSinkOperation,
+        params_class: Params::KitchenSinkOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1806,10 +1806,10 @@ module RailsJson
         data_parser: Parsers::MediaTypeHeader
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::MediaTypeHeaderOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::MediaTypeHeader,
+        params_class: Params::MediaTypeHeaderOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1862,10 +1862,10 @@ module RailsJson
         data_parser: Parsers::NestedAttributesOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::NestedAttributesOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::NestedAttributesOperation,
+        params_class: Params::NestedAttributesOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1925,10 +1925,10 @@ module RailsJson
         data_parser: Parsers::NullAndEmptyHeadersClient
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::NullAndEmptyHeadersClientOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::NullAndEmptyHeadersClient,
+        params_class: Params::NullAndEmptyHeadersClientOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -1989,10 +1989,10 @@ module RailsJson
         data_parser: Parsers::NullOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::NullOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::NullOperation,
+        params_class: Params::NullOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -2045,10 +2045,10 @@ module RailsJson
         data_parser: Parsers::OmitsNullSerializesEmptyString
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::OmitsNullSerializesEmptyStringOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::OmitsNullSerializesEmptyString,
+        params_class: Params::OmitsNullSerializesEmptyStringOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -2099,10 +2099,10 @@ module RailsJson
         data_parser: Parsers::OperationWithOptionalInputOutput
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::OperationWithOptionalInputOutputOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::OperationWithOptionalInputOutput,
+        params_class: Params::OperationWithOptionalInputOutputOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -2154,10 +2154,10 @@ module RailsJson
         data_parser: Parsers::QueryIdempotencyTokenAutoFill
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::QueryIdempotencyTokenAutoFillOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::QueryIdempotencyTokenAutoFill,
+        params_class: Params::QueryIdempotencyTokenAutoFillOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -2212,10 +2212,10 @@ module RailsJson
         data_parser: Parsers::QueryParamsAsStringListMap
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::QueryParamsAsStringListMapOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::QueryParamsAsStringListMap,
+        params_class: Params::QueryParamsAsStringListMapOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -2280,10 +2280,10 @@ module RailsJson
         data_parser: Parsers::TimestampFormatHeaders
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::TimestampFormatHeadersOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::TimestampFormatHeaders,
+        params_class: Params::TimestampFormatHeadersOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -2338,10 +2338,10 @@ module RailsJson
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::Struct____789BadNameOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::Operation____789BadName,
+        params_class: Params::Struct____789BadNameOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])

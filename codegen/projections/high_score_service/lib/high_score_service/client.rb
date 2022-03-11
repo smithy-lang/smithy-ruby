@@ -102,10 +102,10 @@ module HighScoreService
         data_parser: Parsers::CreateHighScore
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::CreateHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::CreateHighScore,
+        params_class: Params::CreateHighScoreOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -160,10 +160,10 @@ module HighScoreService
         data_parser: Parsers::DeleteHighScore
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::DeleteHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::DeleteHighScore,
+        params_class: Params::DeleteHighScoreOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -224,10 +224,10 @@ module HighScoreService
         data_parser: Parsers::GetHighScore
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GetHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetHighScore,
+        params_class: Params::GetHighScoreOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -284,10 +284,10 @@ module HighScoreService
         data_parser: Parsers::ListHighScores
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::ListHighScoresOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ListHighScores,
+        params_class: Params::ListHighScoresOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -355,10 +355,10 @@ module HighScoreService
         data_parser: Parsers::UpdateHighScore
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::UpdateHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::UpdateHighScore,
+        params_class: Params::UpdateHighScoreOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])

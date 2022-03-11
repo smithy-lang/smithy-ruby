@@ -279,10 +279,10 @@ module WhiteLabel
         data_parser: Parsers::KitchenSink
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::KitchenSinkOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::KitchenSink,
+        params_class: Params::KitchenSinkOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -335,10 +335,10 @@ module WhiteLabel
         data_parser: Parsers::PaginatorsTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::PaginatorsTestOperationOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::PaginatorsTest,
+        params_class: Params::PaginatorsTestOperationOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -391,10 +391,10 @@ module WhiteLabel
         data_parser: Parsers::PaginatorsTestWithItems
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::PaginatorsTestWithItemsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::PaginatorsTestWithItems,
+        params_class: Params::PaginatorsTestWithItemsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -445,10 +445,10 @@ module WhiteLabel
         data_parser: Parsers::WaitersTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::WaitersTestOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::WaitersTest,
+        params_class: Params::WaitersTestOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -502,10 +502,10 @@ module WhiteLabel
         data_parser: Parsers::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::Struct____PaginatorsTestWithBadNamesOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
+        params_class: Params::Struct____PaginatorsTestWithBadNamesOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])

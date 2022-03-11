@@ -96,10 +96,10 @@ module Weather
         data_parser: Parsers::GetCity
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GetCityOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCity,
+        params_class: Params::GetCityOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -151,10 +151,10 @@ module Weather
         data_parser: Parsers::GetCityAnnouncements
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GetCityAnnouncementsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCityAnnouncements,
+        params_class: Params::GetCityAnnouncementsOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -213,10 +213,10 @@ module Weather
         data_parser: Parsers::GetCityImage
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GetCityImageOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCityImage,
+        params_class: Params::GetCityImageOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -265,10 +265,10 @@ module Weather
         data_parser: Parsers::GetCurrentTime
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GetCurrentTimeOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCurrentTime,
+        params_class: Params::GetCurrentTimeOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -320,10 +320,10 @@ module Weather
         data_parser: Parsers::GetForecast
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::GetForecastOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetForecast,
+        params_class: Params::GetForecastOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -394,10 +394,10 @@ module Weather
         data_parser: Parsers::ListCities
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::ListCitiesOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ListCities,
+        params_class: Params::ListCitiesOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
@@ -453,10 +453,10 @@ module Weather
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,
-        stub_params_class: Params::Struct____789BadNameOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::Operation____789BadName,
+        params_class: Params::Struct____789BadNameOutput,
         stubs: options.fetch(:stubs, @stubs)
       )
       apply_middleware(stack, options[:middleware])
