@@ -7,7 +7,7 @@ module Hearth
     end
 
     class StubOutputParams
-      def self.build(params = {}, context:)
+      def self.build(params = {}, _opts = {})
         StubOutput.new(params)
       end
     end
