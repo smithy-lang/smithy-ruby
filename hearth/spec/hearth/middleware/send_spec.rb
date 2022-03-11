@@ -6,18 +6,12 @@ module Hearth
       include Hearth::Structure
     end
 
-    class StubOutputParams
-      def self.build(params = {}, _opts = {})
-        StubOutput.new(params)
-      end
-    end
-
     describe Send do
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
       let(:stub_responses) { false }
       let(:stub_class) { double('stub_class') }
-      let(:stub_params_class) { StubOutputParams }
+      let(:params_class) { double('params_class') }
       let(:stubs) { Hearth::Stubbing::Stubs.new }
 
       subject do
@@ -26,7 +20,7 @@ module Hearth
           client: client,
           stub_responses: stub_responses,
           stub_class: stub_class,
-          stub_params_class: stub_params_class,
+          params_class: params_class,
           stubs: stubs
         )
       end
@@ -130,8 +124,8 @@ module Hearth
             before { stubs.add_stubs(operation, [stub_hash]) }
 
             it 'uses the stub class to stub the response' do
-              expect(stub_params_class).to receive(:build)
-                .with(stub_hash, context: 'stub[operation]')
+              expect(params_class).to receive(:build)
+                .with(stub_hash, context: 'stub')
                 .and_return(output_type)
               expect(stub_class).to receive(:stub)
                 .with(response, stub: output_type)
@@ -148,8 +142,8 @@ module Hearth
             it 'uses the stub class default' do
               expect(stub_class).to receive(:default)
                 .and_return(stub_hash)
-              expect(stub_params_class).to receive(:build)
-                .with(stub_hash, context: 'stub[operation](default)')
+              expect(params_class).to receive(:build)
+                .with(stub_hash, context: 'stub')
                 .and_return(output_type)
 
               expect(stub_class).to receive(:stub)
