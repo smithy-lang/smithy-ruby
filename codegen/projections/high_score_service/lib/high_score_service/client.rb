@@ -102,6 +102,7 @@ module HighScoreService
         data_parser: Parsers::CreateHighScore
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::CreateHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::CreateHighScore,
@@ -159,6 +160,7 @@ module HighScoreService
         data_parser: Parsers::DeleteHighScore
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::DeleteHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::DeleteHighScore,
@@ -222,6 +224,7 @@ module HighScoreService
         data_parser: Parsers::GetHighScore
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::GetHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetHighScore,
@@ -281,6 +284,7 @@ module HighScoreService
         data_parser: Parsers::ListHighScores
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::ListHighScoresOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ListHighScores,
@@ -351,6 +355,7 @@ module HighScoreService
         data_parser: Parsers::UpdateHighScore
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::UpdateHighScoreOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::UpdateHighScore,

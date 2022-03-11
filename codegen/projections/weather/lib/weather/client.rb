@@ -96,6 +96,7 @@ module Weather
         data_parser: Parsers::GetCity
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::GetCityOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCity,
@@ -150,6 +151,7 @@ module Weather
         data_parser: Parsers::GetCityAnnouncements
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::GetCityAnnouncementsOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCityAnnouncements,
@@ -211,6 +213,7 @@ module Weather
         data_parser: Parsers::GetCityImage
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::GetCityImageOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCityImage,
@@ -262,6 +265,7 @@ module Weather
         data_parser: Parsers::GetCurrentTime
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::GetCurrentTimeOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetCurrentTime,
@@ -316,6 +320,7 @@ module Weather
         data_parser: Parsers::GetForecast
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::GetForecastOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::GetForecast,
@@ -389,6 +394,7 @@ module Weather
         data_parser: Parsers::ListCities
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::ListCitiesOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::ListCities,
@@ -447,6 +453,7 @@ module Weather
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,
+        stub_params_class: Params::Struct____789BadNameOutput,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::Operation____789BadName,

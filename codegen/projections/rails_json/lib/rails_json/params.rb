@@ -39,6 +39,14 @@ module RailsJson
       end
     end
 
+    module AllQueryStringTypesOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::AllQueryStringTypesOutput, context: context)
+        type = Types::AllQueryStringTypesOutput.new
+        type
+      end
+    end
+
     module BooleanList
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Array, context: context)
@@ -47,6 +55,25 @@ module RailsJson
           data << element
         end
         data
+      end
+    end
+
+    module ComplexError
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::ComplexError, context: context)
+        type = Types::ComplexError.new
+        type.top_level = params[:top_level]
+        type.nested = ComplexNestedErrorData.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
+        type
+      end
+    end
+
+    module ComplexNestedErrorData
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::ComplexNestedErrorData, context: context)
+        type = Types::ComplexNestedErrorData.new
+        type.foo = params[:foo]
+        type
       end
     end
 
@@ -60,11 +87,27 @@ module RailsJson
       end
     end
 
+    module ConstantAndVariableQueryStringOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::ConstantAndVariableQueryStringOutput, context: context)
+        type = Types::ConstantAndVariableQueryStringOutput.new
+        type
+      end
+    end
+
     module ConstantQueryStringInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::ConstantQueryStringInput, context: context)
         type = Types::ConstantQueryStringInput.new
         type.hello = params[:hello]
+        type
+      end
+    end
+
+    module ConstantQueryStringOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::ConstantQueryStringOutput, context: context)
+        type = Types::ConstantQueryStringOutput.new
         type
       end
     end
@@ -133,10 +176,29 @@ module RailsJson
       end
     end
 
+    module DocumentTypeAsPayloadOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeAsPayloadOutput, context: context)
+        type = Types::DocumentTypeAsPayloadOutput.new
+        type.document_value = params[:document_value]
+        type
+      end
+    end
+
     module DocumentTypeInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeInput, context: context)
         type = Types::DocumentTypeInput.new
+        type.string_value = params[:string_value]
+        type.document_value = params[:document_value]
+        type
+      end
+    end
+
+    module DocumentTypeOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeOutput, context: context)
+        type = Types::DocumentTypeOutput.new
         type.string_value = params[:string_value]
         type.document_value = params[:document_value]
         type
@@ -162,6 +224,14 @@ module RailsJson
       end
     end
 
+    module EmptyOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EmptyOperationOutput, context: context)
+        type = Types::EmptyOperationOutput.new
+        type
+      end
+    end
+
     module EmptyStruct
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::EmptyStruct, context: context)
@@ -178,11 +248,50 @@ module RailsJson
       end
     end
 
+    module EndpointOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EndpointOperationOutput, context: context)
+        type = Types::EndpointOperationOutput.new
+        type
+      end
+    end
+
     module EndpointWithHostLabelOperationInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
         type = Types::EndpointWithHostLabelOperationInput.new
         type.label = params[:label]
+        type
+      end
+    end
+
+    module EndpointWithHostLabelOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
+        type = Types::EndpointWithHostLabelOperationOutput.new
+        type
+      end
+    end
+
+    module ErrorWithMembers
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::ErrorWithMembers, context: context)
+        type = Types::ErrorWithMembers.new
+        type.code = params[:code]
+        type.complex_data = KitchenSink.build(params[:complex_data], context: "#{context}[:complex_data]") unless params[:complex_data].nil?
+        type.integer_field = params[:integer_field]
+        type.list_field = ListOfStrings.build(params[:list_field], context: "#{context}[:list_field]") unless params[:list_field].nil?
+        type.map_field = MapOfStrings.build(params[:map_field], context: "#{context}[:map_field]") unless params[:map_field].nil?
+        type.message = params[:message]
+        type.string_field = params[:string_field]
+        type
+      end
+    end
+
+    module ErrorWithoutMembers
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::ErrorWithoutMembers, context: context)
+        type = Types::ErrorWithoutMembers.new
         type
       end
     end
@@ -237,10 +346,29 @@ module RailsJson
       end
     end
 
+    module GreetingWithErrorsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::GreetingWithErrorsOutput, context: context)
+        type = Types::GreetingWithErrorsOutput.new
+        type.greeting = params[:greeting]
+        type
+      end
+    end
+
     module HttpPayloadTraitsInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsInput, context: context)
         type = Types::HttpPayloadTraitsInput.new
+        type.foo = params[:foo]
+        type.blob = params[:blob]
+        type
+      end
+    end
+
+    module HttpPayloadTraitsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsOutput, context: context)
+        type = Types::HttpPayloadTraitsOutput.new
         type.foo = params[:foo]
         type.blob = params[:blob]
         type
@@ -257,10 +385,29 @@ module RailsJson
       end
     end
 
+    module HttpPayloadTraitsWithMediaTypeOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsWithMediaTypeOutput, context: context)
+        type = Types::HttpPayloadTraitsWithMediaTypeOutput.new
+        type.foo = params[:foo]
+        type.blob = params[:blob]
+        type
+      end
+    end
+
     module HttpPayloadWithStructureInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadWithStructureInput, context: context)
         type = Types::HttpPayloadWithStructureInput.new
+        type.nested = NestedPayload.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
+        type
+      end
+    end
+
+    module HttpPayloadWithStructureOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadWithStructureOutput, context: context)
+        type = Types::HttpPayloadWithStructureOutput.new
         type.nested = NestedPayload.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
         type
       end
@@ -274,10 +421,29 @@ module RailsJson
       end
     end
 
+    module HttpPrefixHeadersInResponseOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpPrefixHeadersInResponseOutput, context: context)
+        type = Types::HttpPrefixHeadersInResponseOutput.new
+        type.prefix_headers = StringMap.build(params[:prefix_headers], context: "#{context}[:prefix_headers]") unless params[:prefix_headers].nil?
+        type
+      end
+    end
+
     module HttpPrefixHeadersInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPrefixHeadersInput, context: context)
         type = Types::HttpPrefixHeadersInput.new
+        type.foo = params[:foo]
+        type.foo_map = StringMap.build(params[:foo_map], context: "#{context}[:foo_map]") unless params[:foo_map].nil?
+        type
+      end
+    end
+
+    module HttpPrefixHeadersOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpPrefixHeadersOutput, context: context)
+        type = Types::HttpPrefixHeadersOutput.new
         type.foo = params[:foo]
         type.foo_map = StringMap.build(params[:foo_map], context: "#{context}[:foo_map]") unless params[:foo_map].nil?
         type
@@ -294,12 +460,28 @@ module RailsJson
       end
     end
 
+    module HttpRequestWithFloatLabelsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithFloatLabelsOutput, context: context)
+        type = Types::HttpRequestWithFloatLabelsOutput.new
+        type
+      end
+    end
+
     module HttpRequestWithGreedyLabelInPathInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithGreedyLabelInPathInput, context: context)
         type = Types::HttpRequestWithGreedyLabelInPathInput.new
         type.foo = params[:foo]
         type.baz = params[:baz]
+        type
+      end
+    end
+
+    module HttpRequestWithGreedyLabelInPathOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithGreedyLabelInPathOutput, context: context)
+        type = Types::HttpRequestWithGreedyLabelInPathOutput.new
         type
       end
     end
@@ -315,6 +497,14 @@ module RailsJson
         type.target_epoch_seconds = params[:target_epoch_seconds]
         type.target_http_date = params[:target_http_date]
         type.target_date_time = params[:target_date_time]
+        type
+      end
+    end
+
+    module HttpRequestWithLabelsAndTimestampFormatOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithLabelsAndTimestampFormatOutput, context: context)
+        type = Types::HttpRequestWithLabelsAndTimestampFormatOutput.new
         type
       end
     end
@@ -335,10 +525,27 @@ module RailsJson
       end
     end
 
+    module HttpRequestWithLabelsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithLabelsOutput, context: context)
+        type = Types::HttpRequestWithLabelsOutput.new
+        type
+      end
+    end
+
     module HttpResponseCodeInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpResponseCodeInput, context: context)
         type = Types::HttpResponseCodeInput.new
+        type
+      end
+    end
+
+    module HttpResponseCodeOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::HttpResponseCodeOutput, context: context)
+        type = Types::HttpResponseCodeOutput.new
+        type.status = params[:status]
         type
       end
     end
@@ -351,10 +558,43 @@ module RailsJson
       end
     end
 
+    module IgnoreQueryParamsInResponseOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::IgnoreQueryParamsInResponseOutput, context: context)
+        type = Types::IgnoreQueryParamsInResponseOutput.new
+        type.baz = params[:baz]
+        type
+      end
+    end
+
     module InputAndOutputWithHeadersInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::InputAndOutputWithHeadersInput, context: context)
         type = Types::InputAndOutputWithHeadersInput.new
+        type.header_string = params[:header_string]
+        type.header_byte = params[:header_byte]
+        type.header_short = params[:header_short]
+        type.header_integer = params[:header_integer]
+        type.header_long = params[:header_long]
+        type.header_float = params[:header_float]
+        type.header_double = params[:header_double]
+        type.header_true_bool = params[:header_true_bool]
+        type.header_false_bool = params[:header_false_bool]
+        type.header_string_list = StringList.build(params[:header_string_list], context: "#{context}[:header_string_list]") unless params[:header_string_list].nil?
+        type.header_string_set = StringSet.build(params[:header_string_set], context: "#{context}[:header_string_set]") unless params[:header_string_set].nil?
+        type.header_integer_list = IntegerList.build(params[:header_integer_list], context: "#{context}[:header_integer_list]") unless params[:header_integer_list].nil?
+        type.header_boolean_list = BooleanList.build(params[:header_boolean_list], context: "#{context}[:header_boolean_list]") unless params[:header_boolean_list].nil?
+        type.header_timestamp_list = TimestampList.build(params[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless params[:header_timestamp_list].nil?
+        type.header_enum = params[:header_enum]
+        type.header_enum_list = FooEnumList.build(params[:header_enum_list], context: "#{context}[:header_enum_list]") unless params[:header_enum_list].nil?
+        type
+      end
+    end
+
+    module InputAndOutputWithHeadersOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::InputAndOutputWithHeadersOutput, context: context)
+        type = Types::InputAndOutputWithHeadersOutput.new
         type.header_string = params[:header_string]
         type.header_byte = params[:header_byte]
         type.header_short = params[:header_short]
@@ -397,10 +637,33 @@ module RailsJson
       end
     end
 
+    module InvalidGreeting
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::InvalidGreeting, context: context)
+        type = Types::InvalidGreeting.new
+        type.message = params[:message]
+        type
+      end
+    end
+
     module JsonEnumsInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::JsonEnumsInput, context: context)
         type = Types::JsonEnumsInput.new
+        type.foo_enum1 = params[:foo_enum1]
+        type.foo_enum2 = params[:foo_enum2]
+        type.foo_enum3 = params[:foo_enum3]
+        type.foo_enum_list = FooEnumList.build(params[:foo_enum_list], context: "#{context}[:foo_enum_list]") unless params[:foo_enum_list].nil?
+        type.foo_enum_set = FooEnumSet.build(params[:foo_enum_set], context: "#{context}[:foo_enum_set]") unless params[:foo_enum_set].nil?
+        type.foo_enum_map = FooEnumMap.build(params[:foo_enum_map], context: "#{context}[:foo_enum_map]") unless params[:foo_enum_map].nil?
+        type
+      end
+    end
+
+    module JsonEnumsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::JsonEnumsOutput, context: context)
+        type = Types::JsonEnumsOutput.new
         type.foo_enum1 = params[:foo_enum1]
         type.foo_enum2 = params[:foo_enum2]
         type.foo_enum3 = params[:foo_enum3]
@@ -429,10 +692,37 @@ module RailsJson
       end
     end
 
+    module JsonMapsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::JsonMapsOutput, context: context)
+        type = Types::JsonMapsOutput.new
+        type.dense_struct_map = DenseStructMap.build(params[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless params[:dense_struct_map].nil?
+        type.sparse_struct_map = SparseStructMap.build(params[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless params[:sparse_struct_map].nil?
+        type.dense_number_map = DenseNumberMap.build(params[:dense_number_map], context: "#{context}[:dense_number_map]") unless params[:dense_number_map].nil?
+        type.dense_boolean_map = DenseBooleanMap.build(params[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless params[:dense_boolean_map].nil?
+        type.dense_string_map = DenseStringMap.build(params[:dense_string_map], context: "#{context}[:dense_string_map]") unless params[:dense_string_map].nil?
+        type.sparse_number_map = SparseNumberMap.build(params[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless params[:sparse_number_map].nil?
+        type.sparse_boolean_map = SparseBooleanMap.build(params[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless params[:sparse_boolean_map].nil?
+        type.sparse_string_map = SparseStringMap.build(params[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless params[:sparse_string_map].nil?
+        type.dense_set_map = DenseSetMap.build(params[:dense_set_map], context: "#{context}[:dense_set_map]") unless params[:dense_set_map].nil?
+        type.sparse_set_map = SparseSetMap.build(params[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless params[:sparse_set_map].nil?
+        type
+      end
+    end
+
     module JsonUnionsInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::JsonUnionsInput, context: context)
         type = Types::JsonUnionsInput.new
+        type.contents = MyUnion.build(params[:contents], context: "#{context}[:contents]") unless params[:contents].nil?
+        type
+      end
+    end
+
+    module JsonUnionsOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::JsonUnionsOutput, context: context)
+        type = Types::JsonUnionsOutput.new
         type.contents = MyUnion.build(params[:contents], context: "#{context}[:contents]") unless params[:contents].nil?
         type
       end
@@ -476,6 +766,40 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkOperationInput, context: context)
         type = Types::KitchenSinkOperationInput.new
+        type.blob = params[:blob]
+        type.boolean = params[:boolean]
+        type.double = params[:double]
+        type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
+        type.float = params[:float]
+        type.httpdate_timestamp = params[:httpdate_timestamp]
+        type.integer = params[:integer]
+        type.iso8601_timestamp = params[:iso8601_timestamp]
+        type.json_value = params[:json_value]
+        type.list_of_lists = ListOfListOfStrings.build(params[:list_of_lists], context: "#{context}[:list_of_lists]") unless params[:list_of_lists].nil?
+        type.list_of_maps_of_strings = ListOfMapsOfStrings.build(params[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless params[:list_of_maps_of_strings].nil?
+        type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
+        type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
+        type.long = params[:long]
+        type.map_of_lists_of_strings = MapOfListsOfStrings.build(params[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless params[:map_of_lists_of_strings].nil?
+        type.map_of_maps = MapOfMapOfStrings.build(params[:map_of_maps], context: "#{context}[:map_of_maps]") unless params[:map_of_maps].nil?
+        type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
+        type.map_of_structs = MapOfStructs.build(params[:map_of_structs], context: "#{context}[:map_of_structs]") unless params[:map_of_structs].nil?
+        type.recursive_list = ListOfKitchenSinks.build(params[:recursive_list], context: "#{context}[:recursive_list]") unless params[:recursive_list].nil?
+        type.recursive_map = MapOfKitchenSinks.build(params[:recursive_map], context: "#{context}[:recursive_map]") unless params[:recursive_map].nil?
+        type.recursive_struct = KitchenSink.build(params[:recursive_struct], context: "#{context}[:recursive_struct]") unless params[:recursive_struct].nil?
+        type.simple_struct = SimpleStruct.build(params[:simple_struct], context: "#{context}[:simple_struct]") unless params[:simple_struct].nil?
+        type.string = params[:string]
+        type.struct_with_location_name = StructWithLocationName.build(params[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless params[:struct_with_location_name].nil?
+        type.timestamp = params[:timestamp]
+        type.unix_timestamp = params[:unix_timestamp]
+        type
+      end
+    end
+
+    module KitchenSinkOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkOperationOutput, context: context)
+        type = Types::KitchenSinkOperationOutput.new
         type.blob = params[:blob]
         type.boolean = params[:boolean]
         type.double = params[:double]
@@ -625,6 +949,15 @@ module RailsJson
       end
     end
 
+    module MediaTypeHeaderOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::MediaTypeHeaderOutput, context: context)
+        type = Types::MediaTypeHeaderOutput.new
+        type.json = params[:json]
+        type
+      end
+    end
+
     module MyUnion
       def self.build(params, context: '')
         return params if params.is_a?(Types::MyUnion)
@@ -687,6 +1020,15 @@ module RailsJson
       end
     end
 
+    module NestedAttributesOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::NestedAttributesOperationOutput, context: context)
+        type = Types::NestedAttributesOperationOutput.new
+        type.value = params[:value]
+        type
+      end
+    end
+
     module NestedPayload
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::NestedPayload, context: context)
@@ -708,10 +1050,32 @@ module RailsJson
       end
     end
 
+    module NullAndEmptyHeadersClientOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::NullAndEmptyHeadersClientOutput, context: context)
+        type = Types::NullAndEmptyHeadersClientOutput.new
+        type.a = params[:a]
+        type.b = params[:b]
+        type.c = StringList.build(params[:c], context: "#{context}[:c]") unless params[:c].nil?
+        type
+      end
+    end
+
     module NullOperationInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::NullOperationInput, context: context)
         type = Types::NullOperationInput.new
+        type.string = params[:string]
+        type.sparse_string_list = SparseStringList.build(params[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless params[:sparse_string_list].nil?
+        type.sparse_string_map = SparseStringMap.build(params[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless params[:sparse_string_map].nil?
+        type
+      end
+    end
+
+    module NullOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::NullOperationOutput, context: context)
+        type = Types::NullOperationOutput.new
         type.string = params[:string]
         type.sparse_string_list = SparseStringList.build(params[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless params[:sparse_string_list].nil?
         type.sparse_string_map = SparseStringMap.build(params[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless params[:sparse_string_map].nil?
@@ -729,10 +1093,27 @@ module RailsJson
       end
     end
 
+    module OmitsNullSerializesEmptyStringOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::OmitsNullSerializesEmptyStringOutput, context: context)
+        type = Types::OmitsNullSerializesEmptyStringOutput.new
+        type
+      end
+    end
+
     module OperationWithOptionalInputOutputInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::OperationWithOptionalInputOutputInput, context: context)
         type = Types::OperationWithOptionalInputOutputInput.new
+        type.value = params[:value]
+        type
+      end
+    end
+
+    module OperationWithOptionalInputOutputOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::OperationWithOptionalInputOutputOutput, context: context)
+        type = Types::OperationWithOptionalInputOutputOutput.new
         type.value = params[:value]
         type
       end
@@ -747,12 +1128,28 @@ module RailsJson
       end
     end
 
+    module QueryIdempotencyTokenAutoFillOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::QueryIdempotencyTokenAutoFillOutput, context: context)
+        type = Types::QueryIdempotencyTokenAutoFillOutput.new
+        type
+      end
+    end
+
     module QueryParamsAsStringListMapInput
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::QueryParamsAsStringListMapInput, context: context)
         type = Types::QueryParamsAsStringListMapInput.new
         type.qux = params[:qux]
         type.foo = StringListMap.build(params[:foo], context: "#{context}[:foo]") unless params[:foo].nil?
+        type
+      end
+    end
+
+    module QueryParamsAsStringListMapOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::QueryParamsAsStringListMapOutput, context: context)
+        type = Types::QueryParamsAsStringListMapOutput.new
         type
       end
     end
@@ -900,6 +1297,21 @@ module RailsJson
       end
     end
 
+    module TimestampFormatHeadersOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::TimestampFormatHeadersOutput, context: context)
+        type = Types::TimestampFormatHeadersOutput.new
+        type.member_epoch_seconds = params[:member_epoch_seconds]
+        type.member_http_date = params[:member_http_date]
+        type.member_date_time = params[:member_date_time]
+        type.default_format = params[:default_format]
+        type.target_epoch_seconds = params[:target_epoch_seconds]
+        type.target_http_date = params[:target_http_date]
+        type.target_date_time = params[:target_date_time]
+        type
+      end
+    end
+
     module TimestampList
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Array, context: context)
@@ -925,6 +1337,15 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::Struct____789BadNameInput, context: context)
         type = Types::Struct____789BadNameInput.new
         type.member____123abc = params[:member____123abc]
+        type.member = Struct____456efg.build(params[:member], context: "#{context}[:member]") unless params[:member].nil?
+        type
+      end
+    end
+
+    module Struct____789BadNameOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::Struct____789BadNameOutput, context: context)
+        type = Types::Struct____789BadNameOutput.new
         type.member = Struct____456efg.build(params[:member], context: "#{context}[:member]") unless params[:member].nil?
         type
       end

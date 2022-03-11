@@ -2,11 +2,22 @@
 
 module Hearth
   module Middleware
+    StubOutput = ::Struct.new(:param1, keyword_init: true) do
+      include Hearth::Structure
+    end
+
+    class StubOutputParams
+      def self.build(params = {}, context:)
+        StubOutput.new(params)
+      end
+    end
+
     describe Send do
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
       let(:stub_responses) { false }
       let(:stub_class) { double('stub_class') }
+      let(:stub_params_class) { StubOutputParams }
       let(:stubs) { Hearth::Stubbing::Stubs.new }
 
       subject do
@@ -15,6 +26,7 @@ module Hearth
           client: client,
           stub_responses: stub_responses,
           stub_class: stub_class,
+          stub_params_class: stub_params_class,
           stubs: stubs
         )
       end
@@ -113,23 +125,35 @@ module Hearth
 
           context 'stub is a hash' do
             let(:stub_hash) { { param1: 'value' } }
+            let(:output_type) { StubOutput.new(**stub_hash) }
+
             before { stubs.add_stubs(operation, [stub_hash]) }
 
             it 'uses the stub class to stub the response' do
+              expect(stub_params_class).to receive(:build)
+                .with(stub_hash, context: 'stub[operation]')
+                .and_return(output_type)
               expect(stub_class).to receive(:stub)
-                .with(response, stub: stub_hash)
+                .with(response, stub: output_type)
               subject.call(input, context)
             end
           end
 
           context 'stub is nil' do
             let(:stub_hash) { { param1: 'value' } }
+            let(:output_type) { StubOutput.new(**stub_hash) }
+
             before { stubs.add_stubs(operation, [nil]) }
 
             it 'uses the stub class default' do
-              expect(stub_class).to receive(:default).and_return(stub_hash)
+              expect(stub_class).to receive(:default)
+                .and_return(stub_hash)
+              expect(stub_params_class).to receive(:build)
+                .with(stub_hash, context: 'stub[operation](default)')
+                .and_return(output_type)
+
               expect(stub_class).to receive(:stub)
-                .with(response, stub: stub_hash)
+                .with(response, stub: output_type)
               subject.call(input, context)
             end
           end

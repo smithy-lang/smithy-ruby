@@ -908,17 +908,31 @@ module RailsJson
       end
 
       def self.stub(stub = {})
-        stub ||= {}
         data = {}
-        data[:string_value] = stub[:string_value] unless stub[:string_value].nil?
-        data[:boolean_value] = stub[:boolean_value] unless stub[:boolean_value].nil?
-        data[:number_value] = stub[:number_value] unless stub[:number_value].nil?
-        data[:blob_value] = Base64::encode64(stub[:blob_value]) unless stub[:blob_value].nil?
-        data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub[:timestamp_value]) unless stub[:timestamp_value].nil?
-        data[:enum_value] = stub[:enum_value] unless stub[:enum_value].nil?
-        data[:list_value] = Stubs::StringList.stub(stub[:list_value]) unless stub[:list_value].nil?
-        data[:map_value] = Stubs::StringMap.stub(stub[:map_value]) unless stub[:map_value].nil?
-        data[:structure_value] = Stubs::GreetingStruct.stub(stub[:structure_value]) unless stub[:structure_value].nil?
+        case stub
+        when Types::MyUnion::StringValue
+          data[:string_value] = stub
+        when Types::MyUnion::BooleanValue
+          data[:boolean_value] = stub
+        when Types::MyUnion::NumberValue
+          data[:number_value] = stub
+        when Types::MyUnion::BlobValue
+          data[:blob_value] = Base64::encode64(stub)
+        when Types::MyUnion::TimestampValue
+          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub)
+        when Types::MyUnion::EnumValue
+          data[:enum_value] = stub
+        when Types::MyUnion::ListValue
+          data[:list_value] = (Stubs::StringList.stub(stub) unless stub.nil?)
+        when Types::MyUnion::MapValue
+          data[:map_value] = (Stubs::StringMap.stub(stub) unless stub.nil?)
+        when Types::MyUnion::StructureValue
+          data[:structure_value] = (Stubs::GreetingStruct.stub(stub) unless stub.nil?)
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::MyUnion"
+        end
+
         data
       end
     end

@@ -17,14 +17,10 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.OperationIndex;
-import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -46,11 +42,11 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -89,17 +85,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     private void renderValidators() {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-        OperationIndex operationIndex = OperationIndex.of(model);
-        Walker walker = new Walker(model);
-        Set<Shape> inputShapes = topDownIndex.getContainedOperations(context.getService()).stream()
-                .flatMap(operation -> OptionalUtils.stream(operationIndex.getInputShape(operation)))
-                .flatMap(input -> walker.walkShapes(input).stream())
-                .collect(Collectors.toSet());
+        Model modelWithoutTraitShapes = ModelTransformer.create()
+                .getModelWithoutTraitShapes(model);
 
-        inputShapes.stream()
+        new Walker(modelWithoutTraitShapes)
+                .walkShapes(context.getService())
+                .stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(inputShape -> inputShape.accept(this));
+                .forEach((shape) -> shape.accept(this));
     }
 
     @Override
