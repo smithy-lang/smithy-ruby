@@ -161,7 +161,9 @@ public class MiddlewareBuilder {
                         transport.getTransportClient().render(context))
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
+                    Shape outputShape = ctx.getModel().expectShape(operation.getOutputShape());
                     params.put("stub_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
+                    params.put("params_class", "Params::" + symbolProvider.toSymbol(outputShape).getName());
                     return params;
                 })
                 .addConfig(stubResponses)

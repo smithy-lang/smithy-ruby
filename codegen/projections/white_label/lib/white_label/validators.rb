@@ -10,6 +10,13 @@
 module WhiteLabel
   module Validators
 
+    class ClientError
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::ClientError, context: context)
+        Hearth::Validator.validate!(input[:message], ::String, context: "#{context}[:message]")
+      end
+    end
+
     class Document
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)
@@ -26,9 +33,33 @@ module WhiteLabel
       end
     end
 
+    class Items
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
+        end
+      end
+    end
+
     class KitchenSinkInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::KitchenSinkInput, context: context)
+        Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
+        Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
+        Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
+        Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
+        Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
+        Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
+        Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
+        Validators::SetOfStrings.validate!(input[:set_of_strings], context: "#{context}[:set_of_strings]") unless input[:set_of_strings].nil?
+        Validators::Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
+      end
+    end
+
+    class KitchenSinkOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::KitchenSinkOutput, context: context)
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
         Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
@@ -86,10 +117,39 @@ module WhiteLabel
       end
     end
 
+    class PaginatorsTestOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::PaginatorsTestOperationOutput, context: context)
+        Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+        Validators::Items.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
+      end
+    end
+
     class PaginatorsTestWithItemsInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::PaginatorsTestWithItemsInput, context: context)
         Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+      end
+    end
+
+    class PaginatorsTestWithItemsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::PaginatorsTestWithItemsOutput, context: context)
+        Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
+        Validators::Items.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
+      end
+    end
+
+    class ResultWrapper
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::ResultWrapper, context: context)
+        Hearth::Validator.validate!(input[:member____123next_token], ::String, context: "#{context}[:member____123next_token]")
+      end
+    end
+
+    class ServerError
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::ServerError, context: context)
       end
     end
 
@@ -143,10 +203,25 @@ module WhiteLabel
       end
     end
 
+    class WaitersTestOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::WaitersTestOutput, context: context)
+        Hearth::Validator.validate!(input[:status], ::String, context: "#{context}[:status]")
+      end
+    end
+
     class Struct____PaginatorsTestWithBadNamesInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
         Hearth::Validator.validate!(input[:member____next_token], ::String, context: "#{context}[:member____next_token]")
+      end
+    end
+
+    class Struct____PaginatorsTestWithBadNamesOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesOutput, context: context)
+        Validators::ResultWrapper.validate!(input[:member____wrapper], context: "#{context}[:member____wrapper]") unless input[:member____wrapper].nil?
+        Validators::Items.validate!(input[:member____items], context: "#{context}[:member____items]") unless input[:member____items].nil?
       end
     end
 

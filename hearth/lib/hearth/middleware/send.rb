@@ -11,12 +11,16 @@ module Hearth
       # @param [Class] stub_class A stub object that is responsible for creating
       #   a stubbed response. It must respond to #stub and take the response
       #   and stub data as arguments.
+      # @param [Class] params_class A Params class responsible for
+      #   converting a ruby hash into the operation's modeled output Type.
       # @param [Stubs] stubs A {Hearth::Stubbing:Stubs} object containing
       #   stubbed data for any given operation.
-      def initialize(_app, client:, stub_responses:, stub_class:, stubs:)
+      def initialize(_app, client:, stub_responses:,
+                     stub_class:, params_class:, stubs:)
         @client = client
         @stub_responses = stub_responses
         @stub_class = stub_class
+        @params_class = params_class
         @stubs = stubs
       end
 
@@ -50,9 +54,21 @@ module Hearth
         when Class
           output.error = stub.new
         when Hash
-          @stub_class.stub(context.response, stub: stub)
+          @stub_class.stub(
+            context.response,
+            stub: @params_class.build(
+              stub,
+              context: 'stub'
+            )
+          )
         when NilClass
-          @stub_class.stub(context.response, stub: @stub_class.default)
+          @stub_class.stub(
+            context.response,
+            stub: @params_class.build(
+              @stub_class.default,
+              context: 'stub'
+            )
+          )
         else
           raise ArgumentError, 'Unsupported stub type'
         end
