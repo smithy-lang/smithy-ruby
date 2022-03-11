@@ -911,23 +911,23 @@ module RailsJson
         data = {}
         case stub
         when Types::MyUnion::StringValue
-          data[:string_value] = stub
+          data[:string_value] = stub.__getobj__
         when Types::MyUnion::BooleanValue
-          data[:boolean_value] = stub
+          data[:boolean_value] = stub.__getobj__
         when Types::MyUnion::NumberValue
-          data[:number_value] = stub
+          data[:number_value] = stub.__getobj__
         when Types::MyUnion::BlobValue
-          data[:blob_value] = Base64::encode64(stub)
+          data[:blob_value] = Base64::encode64(stub.__getobj__)
         when Types::MyUnion::TimestampValue
-          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub)
+          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub.__getobj__)
         when Types::MyUnion::EnumValue
-          data[:enum_value] = stub
+          data[:enum_value] = stub.__getobj__
         when Types::MyUnion::ListValue
-          data[:list_value] = (Stubs::StringList.stub(stub) unless stub.nil?)
+          data[:list_value] = (Stubs::StringList.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         when Types::MyUnion::MapValue
-          data[:map_value] = (Stubs::StringMap.stub(stub) unless stub.nil?)
+          data[:map_value] = (Stubs::StringMap.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         when Types::MyUnion::StructureValue
-          data[:structure_value] = (Stubs::GreetingStruct.stub(stub) unless stub.nil?)
+          data[:structure_value] = (Stubs::GreetingStruct.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::MyUnion"
