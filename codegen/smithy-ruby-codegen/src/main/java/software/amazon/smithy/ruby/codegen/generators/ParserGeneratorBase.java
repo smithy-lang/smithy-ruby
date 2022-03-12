@@ -66,8 +66,8 @@ public abstract class ParserGeneratorBase {
 
     public ParserGeneratorBase(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.generatedParsers = new HashSet<>();
         this.writer = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
@@ -253,7 +253,7 @@ public abstract class ParserGeneratorBase {
     protected void renderParsers() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.getService()));
+                topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {

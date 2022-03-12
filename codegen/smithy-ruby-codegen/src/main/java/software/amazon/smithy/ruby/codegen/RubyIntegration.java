@@ -17,11 +17,11 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
+import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -29,7 +29,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * generators, renaming shapes, modifying the model, adding custom code, etc.
  */
 @SmithyUnstableApi
-public interface RubyIntegration {
+public interface RubyIntegration extends SmithyIntegration<RubySettings, CodeWriter, GenerationContext> {
 
     /**
      * Should this Integration be included for the given Service.
@@ -43,65 +43,12 @@ public interface RubyIntegration {
     }
 
     /**
-     * Gets the sort order of the customization from -128 to 127.
-     *
-     * <p>Customizations are applied according to this sort order. Lower values
-     * are executed before higher values (for example, -128 comes before 0,
-     * comes before 127). Customizations default to 0, which is the middle point
-     * between the minimum and maximum order values. The customization
-     * applied later can override the runtime configurations that provided
-     * by customizations applied earlier.
-     *
-     * @return Returns the sort order, defaulting to 0.
-     */
-    default byte getOrder() {
-        return 0;
-    }
-
-    /**
      * Gets a list of protocol generators to register.
      *
      * @return Returns the list of protocol generators to register.
      */
     default List<ProtocolGenerator> getProtocolGenerators() {
         return Collections.emptyList();
-    }
-
-    /**
-     * Preprocess the model before code generation.
-     *
-     * <p>This can be used to remove unsupported features, remove traits
-     * from shapes (e.g., make members optional), etc.
-     *
-     * @param context  - plugin context
-     * @param model    model definition.
-     * @param settings Setting used to generate.
-     * @return Returns the updated model.
-     */
-    default Model preprocessModel(PluginContext context, Model model,
-                                  RubySettings settings) {
-        return model;
-    }
-
-    /**
-     * Updates the {@link SymbolProvider} used when generating code.
-     *
-     * <p>This can be used to customize the names of shapes, the package
-     * that code is generated into, add dependencies, add imports, etc.
-     *
-     * @param context        plugin context
-     * @param settings       Setting used to generate.
-     * @param model          Model being generated.
-     * @param symbolProvider The original {@code SymbolProvider}.
-     * @return The decorated {@code SymbolProvider}.
-     */
-    default SymbolProvider decorateSymbolProvider(
-            PluginContext context,
-            RubySettings settings,
-            Model model,
-            SymbolProvider symbolProvider
-    ) {
-        return symbolProvider;
     }
 
     /**

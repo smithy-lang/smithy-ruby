@@ -46,15 +46,15 @@ public class PaginatorsGenerator {
 
     public PaginatorsGenerator(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Paginators", false);
     }
 
     public void render() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         writer
                 .writePreamble()
@@ -71,7 +71,7 @@ public class PaginatorsGenerator {
     }
 
     public void renderRbs() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
                 .writePreamble()
@@ -93,9 +93,9 @@ public class PaginatorsGenerator {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         PaginatedIndex paginatedIndex = PaginatedIndex.of(model);
 
-        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
+        topDownIndex.getContainedOperations(context.service()).stream().forEach((operation) -> {
             Optional<PaginationInfo> paginationInfoOptional =
-                    paginatedIndex.getPaginationInfo(context.getService(), operation);
+                    paginatedIndex.getPaginationInfo(context.service(), operation);
             if (paginationInfoOptional.isPresent()) {
                 PaginationInfo paginationInfo = paginationInfoOptional.get();
                 String operationName = symbolProvider.toSymbol(operation).getName();
@@ -108,9 +108,9 @@ public class PaginatorsGenerator {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         PaginatedIndex paginatedIndex = PaginatedIndex.of(model);
 
-        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
+        topDownIndex.getContainedOperations(context.service()).stream().forEach((operation) -> {
             Optional<PaginationInfo> paginationInfoOptional =
-                    paginatedIndex.getPaginationInfo(context.getService(), operation);
+                    paginatedIndex.getPaginationInfo(context.service(), operation);
             if (paginationInfoOptional.isPresent()) {
                 PaginationInfo paginationInfo = paginationInfoOptional.get();
                 String operationName = symbolProvider.toSymbol(operation).getName();

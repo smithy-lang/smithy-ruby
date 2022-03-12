@@ -26,7 +26,7 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
     }
 
     public void renderErrorCode() {
-        RailsJsonTrait railsJsonTrait = context.getService().getTrait(RailsJsonTrait.class).get();
+        RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
         String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
 
         writer.openBlock("def self.error_code(http_resp)");

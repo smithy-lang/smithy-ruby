@@ -62,14 +62,14 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     public ValidatorsGenerator(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Validators", true);
     }
 
     public void render() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
         writer
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
@@ -89,7 +89,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .getModelWithoutTraitShapes(model);
 
         new Walker(modelWithoutTraitShapes)
-                .walkShapes(context.getService())
+                .walkShapes(context.service())
                 .stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach((shape) -> shape.accept(this));

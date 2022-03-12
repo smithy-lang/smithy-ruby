@@ -57,8 +57,8 @@ public class ClientGenerator {
 
     public ClientGenerator(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
 
@@ -66,7 +66,7 @@ public class ClientGenerator {
         this.middlewareBuilder = new MiddlewareBuilder();
         middlewareBuilder.addDefaultMiddleware(context);
 
-        context.getIntegrations().forEach((integration) -> {
+        context.integrations().forEach((integration) -> {
             middlewareBuilder.register(integration.getClientMiddleware());
             LOGGER.fine("Integration " + integration + " registered middleware: "
                     + integration.getClientMiddleware().stream()
@@ -76,9 +76,9 @@ public class ClientGenerator {
         // get all config
         Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig();
         unorderedConfig
-                .addAll(context.getApplicationTransport().getClientConfig());
+                .addAll(context.applicationTransport().getClientConfig());
         unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));
-        unorderedConfig.addAll(context.getIntegrations()
+        unorderedConfig.addAll(context.integrations()
                 .stream()
                 .map((i) -> i.getAdditionalClientConfig())
                 .flatMap(Collection::stream)
@@ -92,11 +92,11 @@ public class ClientGenerator {
         LOGGER.fine("Client config: "
                 + clientConfig.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
 
-        this.symbolProvider = new RubySymbolProvider(model, context.getRubySettings(), "Client", false);
+        this.symbolProvider = new RubySymbolProvider(model, context.settings(), "Client", false);
     }
 
     public void render() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         writer.writePreamble();
 
@@ -117,7 +117,7 @@ public class ClientGenerator {
                         settings.getService().getName())
                 .write("# See {#initialize} for a full list of supported configuration options");
 
-        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.getService()).render();
+        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.service()).render();
 
         writer
                 .writeInline("$L", documentation)
@@ -143,7 +143,7 @@ public class ClientGenerator {
     }
 
     public void renderRbs() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
                 .writePreamble()
@@ -225,7 +225,7 @@ public class ClientGenerator {
         // limit it to the operations bound to the service.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.getService()));
+                topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(o));
@@ -236,7 +236,7 @@ public class ClientGenerator {
         // limit it to the operations bound to the service.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.getService()));
+                topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderRbsOperation(o));
@@ -264,10 +264,10 @@ public class ClientGenerator {
                 .write("input: input,")
                 .openBlock("context: Hearth::Context.new(")
                 .write("request: $L,",
-                        context.getApplicationTransport().getRequest()
+                        context.applicationTransport().getRequest()
                                 .render(context))
                 .write("response: $L,",
-                        context.getApplicationTransport().getResponse()
+                        context.applicationTransport().getResponse()
                                 .render(context))
                 .write("params: params,")
                 .write("logger: @logger,")

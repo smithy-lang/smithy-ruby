@@ -18,6 +18,8 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.CodegenContext;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -30,7 +32,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * loaded integrations, service, ect.
  */
 @SmithyUnstableApi
-public class GenerationContext {
+public class GenerationContext implements CodegenContext<RubySettings> {
 
     private final RubySettings rubySettings;
     private final FileManifest fileManifest;
@@ -40,13 +42,15 @@ public class GenerationContext {
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
+    private final SymbolProvider symbolProvider;
 
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
                              List<RubyIntegration> integrations, Model model,
                              ServiceShape service, ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
-                             ApplicationTransport applicationTransport) {
+                             ApplicationTransport applicationTransport,
+                             SymbolProvider symbolProvider) {
 
         this.rubySettings = rubySettings;
         this.fileManifest = fileManifest;
@@ -56,38 +60,48 @@ public class GenerationContext {
         this.protocol = protocol;
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
+        this.symbolProvider = symbolProvider;
     }
 
-    public RubySettings getRubySettings() {
-        return rubySettings;
-    }
-
-    public FileManifest getFileManifest() {
-        return fileManifest;
-    }
-
-    public List<RubyIntegration> getIntegrations() {
-        return integrations;
-    }
-
-    public Model getModel() {
+    @Override
+    public Model model() {
         return model;
     }
 
-    public ServiceShape getService() {
+    @Override
+    public RubySettings settings() {
+        return rubySettings;
+    }
+
+    @Override
+    public SymbolProvider symbolProvider() {
+        return symbolProvider;
+    }
+
+    @Override
+    public FileManifest fileManifest() {
+        return fileManifest;
+    }
+
+    public List<RubyIntegration> integrations() {
+        return integrations;
+    }
+
+    public ServiceShape service() {
         return service;
     }
 
-    public ApplicationTransport getApplicationTransport() {
+    public ApplicationTransport applicationTransport() {
         return applicationTransport;
     }
 
-    public ShapeId getProtocol() {
+    public ShapeId protocol() {
         return protocol;
     }
 
-    public Optional<ProtocolGenerator> getProtocolGenerator() {
+    public Optional<ProtocolGenerator> protocolGenerator() {
         return protocolGenerator;
     }
+
 
 }

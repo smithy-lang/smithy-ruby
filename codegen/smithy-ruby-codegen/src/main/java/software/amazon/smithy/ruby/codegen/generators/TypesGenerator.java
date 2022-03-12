@@ -54,15 +54,15 @@ public class TypesGenerator {
 
     public TypesGenerator(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Types", false);
     }
 
     public void render() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         writer
                 .writePreamble()
@@ -81,7 +81,7 @@ public class TypesGenerator {
     }
 
     public void renderRbs() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
                 .writePreamble()
@@ -104,7 +104,7 @@ public class TypesGenerator {
                 .getModelWithoutTraitShapes(model);
 
         new Walker(modelWithoutTraitShapes)
-                .walkShapes(context.getService())
+                .walkShapes(context.service())
                 .stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach((shape) -> shape.accept(visitor));

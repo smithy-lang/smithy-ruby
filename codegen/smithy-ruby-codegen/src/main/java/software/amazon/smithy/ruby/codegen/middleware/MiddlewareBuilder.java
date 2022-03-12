@@ -58,8 +58,8 @@ public class MiddlewareBuilder {
     }
 
     public Set<ClientConfig> getClientConfig(GenerationContext context) {
-        Model model = context.getModel();
-        ServiceShape service = context.getService();
+        Model model = context.model();
+        ServiceShape service = context.service();
         Set<ClientConfig> config = new HashSet<>();
 
         for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
@@ -85,8 +85,8 @@ public class MiddlewareBuilder {
 
     public void render(RubyCodeWriter writer, GenerationContext context,
                        OperationShape operation) {
-        Model model = context.getModel();
-        ServiceShape service = context.getService();
+        Model model = context.model();
+        ServiceShape service = context.service();
 
         for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
             List<Middleware> orderedStepMiddleware = middlewares.get(step)
@@ -102,9 +102,9 @@ public class MiddlewareBuilder {
     }
 
     public void addDefaultMiddleware(GenerationContext context) {
-        ApplicationTransport transport = context.getApplicationTransport();
+        ApplicationTransport transport = context.applicationTransport();
         SymbolProvider symbolProvider =
-                new RubySymbolProvider(context.getModel(), context.getRubySettings(), "Client", false);
+                new RubySymbolProvider(context.model(), context.settings(), "Client", false);
 
         ClientConfig validateInput = (new ClientConfig.Builder())
                 .name("validate_input")
@@ -119,7 +119,7 @@ public class MiddlewareBuilder {
                 .step(MiddlewareStackStep.INITIALIZE)
                 .operationParams((ctx, operation) -> {
                     ShapeId inputShapeId = operation.getInputShape();
-                    Shape inputShape = ctx.getModel().expectShape(inputShapeId);
+                    Shape inputShape = ctx.model().expectShape(inputShapeId);
                     Map<String, String> params = new HashMap<>();
                     params.put("validator",
                             "Validators::" + symbolProvider.toSymbol(inputShape).getName());
@@ -161,7 +161,7 @@ public class MiddlewareBuilder {
                         transport.getTransportClient().render(context))
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
-                    Shape outputShape = ctx.getModel().expectShape(operation.getOutputShape());
+                    Shape outputShape = ctx.model().expectShape(operation.getOutputShape());
                     params.put("stub_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
                     params.put("params_class", "Params::" + symbolProvider.toSymbol(outputShape).getName());
                     return params;

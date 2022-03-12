@@ -47,8 +47,8 @@ public class GemspecGenerator {
     }
 
     public void render(List<RubyDependency> additionalDependencies) {
-        FileManifest fileManifest = context.getFileManifest();
-        RubySettings settings = context.getRubySettings();
+        FileManifest fileManifest = context.fileManifest();
+        RubySettings settings = context.settings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
         writer

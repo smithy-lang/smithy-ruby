@@ -57,15 +57,15 @@ public class HttpProtocolTestGenerator {
 
     public HttpProtocolTestGenerator(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Protocol", true);
     }
 
     public void render() {
         //TODO: Support filtering of tests through config
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         writer
                 .writePreamble()
@@ -92,7 +92,7 @@ public class HttpProtocolTestGenerator {
     private void renderTests() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         writer.write("");
-        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
+        topDownIndex.getContainedOperations(context.service()).stream().forEach((operation) -> {
             String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
             writer.openBlock("describe '#$L' do", operationName);
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
