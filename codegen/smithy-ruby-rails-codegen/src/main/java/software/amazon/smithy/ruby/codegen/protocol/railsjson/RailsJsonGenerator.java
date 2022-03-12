@@ -42,28 +42,28 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     @Override
     public void generateBuilders(GenerationContext context) {
         BuilderGenerator builderGenerator = new BuilderGenerator(context);
-        builderGenerator.render(context.getFileManifest());
+        builderGenerator.render(context.fileManifest());
         LOGGER.info("created builders");
     }
 
     @Override
     public void generateParsers(GenerationContext context) {
         ParserGenerator parserGenerator = new ParserGenerator(context);
-        parserGenerator.render(context.getFileManifest());
+        parserGenerator.render(context.fileManifest());
         LOGGER.info("created parsers");
     }
 
     @Override
     public void generateErrors(GenerationContext context) {
         ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
-        errorsGenerator.render(context.getFileManifest());
+        errorsGenerator.render(context.fileManifest());
         LOGGER.info("created errors");
     }
 
     @Override
     public void generateStubs(GenerationContext context) {
         StubsGenerator stubsGenerator = new StubsGenerator(context);
-        stubsGenerator.render(context.getFileManifest());
+        stubsGenerator.render(context.fileManifest());
         LOGGER.info("created stubs");
     }
 }

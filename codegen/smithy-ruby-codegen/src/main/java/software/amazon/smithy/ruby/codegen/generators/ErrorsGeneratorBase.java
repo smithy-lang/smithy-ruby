@@ -57,8 +57,8 @@ public abstract class ErrorsGeneratorBase {
 
     public ErrorsGeneratorBase(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
@@ -156,7 +156,7 @@ public abstract class ErrorsGeneratorBase {
     protected List<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        return topDownIndex.getContainedOperations(context.getService()).stream()
+        return topDownIndex.getContainedOperations(context.service()).stream()
                 .map(OperationShape::getErrors)
                 .flatMap(Collection::stream)
                 .map(model::expectShape)

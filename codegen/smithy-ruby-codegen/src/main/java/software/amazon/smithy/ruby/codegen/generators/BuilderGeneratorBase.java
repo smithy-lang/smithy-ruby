@@ -59,8 +59,8 @@ public abstract class BuilderGeneratorBase {
     protected final SymbolProvider symbolProvider;
 
     public BuilderGeneratorBase(GenerationContext context) {
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.generatedBuilders = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
@@ -234,7 +234,7 @@ public abstract class BuilderGeneratorBase {
     protected void renderBuilders() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.getService()));
+                topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {

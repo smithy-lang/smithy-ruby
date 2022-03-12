@@ -73,15 +73,15 @@ public class WaitersGenerator {
 
     public WaitersGenerator(GenerationContext context) {
         this.context = context;
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
-        this.symbolProvider = new RubySymbolProvider(context.getModel(), settings, "Waiters", false);
+        this.symbolProvider = new RubySymbolProvider(context.model(), settings, "Waiters", false);
     }
 
     public void render() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         writer
                 .writePreamble()
@@ -98,7 +98,7 @@ public class WaitersGenerator {
     }
 
     public void renderRbs() {
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
                 .writePreamble()
@@ -119,7 +119,7 @@ public class WaitersGenerator {
     private void renderWaiters(Boolean rbs) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        topDownIndex.getContainedOperations(context.getService()).stream().forEach((operation) -> {
+        topDownIndex.getContainedOperations(context.service()).stream().forEach((operation) -> {
             if (operation.hasTrait(WaitableTrait.class)) {
                 Map<String, Waiter> waiters = operation.getTrait(WaitableTrait.class).get().getWaiters();
                 Iterator<Map.Entry<String, Waiter>> iterator = waiters.entrySet().iterator();

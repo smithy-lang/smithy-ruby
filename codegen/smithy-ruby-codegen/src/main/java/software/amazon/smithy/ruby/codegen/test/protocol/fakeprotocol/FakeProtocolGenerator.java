@@ -47,24 +47,24 @@ public class FakeProtocolGenerator implements ProtocolGenerator {
 
     @Override
     public void generateBuilders(GenerationContext context) {
-        (new BuilderGenerator(context)).render(context.getFileManifest());
+        (new BuilderGenerator(context)).render(context.fileManifest());
     }
 
     @Override
     public void generateParsers(GenerationContext context) {
-        (new ParserGenerator(context)).render(context.getFileManifest());
+        (new ParserGenerator(context)).render(context.fileManifest());
     }
 
     @Override
     public void generateErrors(GenerationContext context) {
         ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
-        FileManifest fileManifest = context.getFileManifest();
+        FileManifest fileManifest = context.fileManifest();
         errorsGenerator.render(fileManifest);
         errorsGenerator.renderRbs(fileManifest);
     }
 
     @Override
     public void generateStubs(GenerationContext context) {
-        (new StubsGenerator(context)).render(context.getFileManifest());
+        (new StubsGenerator(context)).render(context.fileManifest());
     }
 }

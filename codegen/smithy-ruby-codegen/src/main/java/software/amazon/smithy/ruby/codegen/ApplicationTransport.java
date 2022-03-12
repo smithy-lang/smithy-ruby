@@ -135,7 +135,7 @@ public final class ApplicationTransport {
                     .step(MiddlewareStackStep.DESERIALIZE)
                     .operationParams((ctx, operation) -> {
                         SymbolProvider symbolProvider =
-                                new RubySymbolProvider(ctx.getModel(), ctx.getRubySettings(), "Client", false);
+                                new RubySymbolProvider(ctx.model(), ctx.settings(), "Client", false);
 
                         Map<String, String> params = new HashMap<>();
                         params.put("data_parser",
@@ -147,7 +147,7 @@ public final class ApplicationTransport {
                         }
                         String errors =
                                 operation.getErrors().stream().map((error) -> "Errors::"
-                                        + symbolProvider.toSymbol(ctx.getModel().expectShape(error)).getName()).collect(
+                                        + symbolProvider.toSymbol(ctx.model().expectShape(error)).getName()).collect(
                                         Collectors.joining(", "));
                         params.put("error_parser",
                                 "Hearth::HTTP::ErrorParser.new("

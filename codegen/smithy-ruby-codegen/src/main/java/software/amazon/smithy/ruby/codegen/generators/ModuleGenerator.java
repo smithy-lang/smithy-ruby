@@ -35,8 +35,8 @@ public class ModuleGenerator {
     }
 
     public void render(List<String> additionalFiles) {
-        FileManifest fileManifest = context.getFileManifest();
-        RubySettings settings = context.getRubySettings();
+        FileManifest fileManifest = context.fileManifest();
+        RubySettings settings = context.settings();
         RubyCodeWriter writer = new RubyCodeWriter();
 
         writer.writePreamble();

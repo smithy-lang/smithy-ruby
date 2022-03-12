@@ -398,10 +398,10 @@ public final class Middleware {
                                     StandardCharsets.UTF_8);
                     String relativeName = "middleware/" + f.getName();
                     String fileName =
-                            context.getRubySettings().getGemName() + "/lib/"
-                                    + context.getRubySettings().getGemName()
+                            context.settings().getGemName() + "/lib/"
+                                    + context.settings().getGemName()
                                     + "/" + relativeName;
-                    context.getFileManifest().writeFile(fileName, fileReader);
+                    context.fileManifest().writeFile(fileName, fileReader);
                     fileReader.close();
                     return Collections.singletonList(relativeName);
                 } catch (IOException e) {

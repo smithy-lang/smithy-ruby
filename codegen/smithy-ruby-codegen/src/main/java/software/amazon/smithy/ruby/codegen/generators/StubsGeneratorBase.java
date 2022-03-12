@@ -77,8 +77,8 @@ public abstract class StubsGeneratorBase {
 
 
     public StubsGeneratorBase(GenerationContext context) {
-        this.settings = context.getRubySettings();
-        this.model = context.getModel();
+        this.settings = context.settings();
+        this.model = context.model();
         this.generatedStubs = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter();
@@ -237,7 +237,7 @@ public abstract class StubsGeneratorBase {
     private void renderStubs() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.getService()));
+                topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {

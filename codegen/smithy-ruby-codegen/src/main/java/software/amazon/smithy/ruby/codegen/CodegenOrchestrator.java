@@ -16,7 +16,6 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +23,11 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.codegen.core.SmithyIntegration;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -66,22 +66,15 @@ public class CodegenOrchestrator {
                 );
 
         LOGGER.info("Loading integrations");
-        List<RubyIntegration> integrations =
-                StreamSupport
-                        .stream(integrationServiceLoader.spliterator(), false)
-                        .peek((i) -> LOGGER.info(
-                                "Loaded RubyIntegration: "
-                                        + i.getClass().getName()))
-                        .sorted(Comparator.comparing(RubyIntegration::getOrder))
-                        .collect(Collectors.toList());
+        List<RubyIntegration> integrations = SmithyIntegration.sort(integrationServiceLoader);
+
         LOGGER.info("Loaded integrations: " + integrations.size());
 
         Model resolvedModel = pluginContext.getModel();
 
         for (RubyIntegration integration : integrations) {
             resolvedModel = integration
-                    .preprocessModel(pluginContext, resolvedModel,
-                            rubySettings);
+                    .preprocessModel(resolvedModel, rubySettings);
         }
 
         ServiceShape service =
@@ -135,6 +128,15 @@ public class CodegenOrchestrator {
         LOGGER.info(
                 "Resolved ApplicationTransport: " + applicationTransport);
 
+        // TODO: Apply CodeInterceptors (where?)
+
+        SymbolProvider symbolProvider = new RubySymbolProvider(
+                resolvedModel, rubySettings, rubySettings.getModule(), true);
+
+        for (RubyIntegration integration : integrations) {
+            symbolProvider = integration.decorateSymbolProvider(resolvedModel, rubySettings, symbolProvider);
+        }
+
         context = new GenerationContext(
                 rubySettings,
                 pluginContext.getFileManifest(),
@@ -143,7 +145,8 @@ public class CodegenOrchestrator {
                 service,
                 protocol,
                 protocolGenerator,
-                applicationTransport
+                applicationTransport,
+                symbolProvider
         );
     }
 
@@ -166,7 +169,7 @@ public class CodegenOrchestrator {
     public void execute() {
 
         // Integration hook - processFinalizedModel
-        context.getIntegrations().forEach(
+        context.integrations().forEach(
                 (integration) -> integration.processFinalizedModel(context));
 
         generateTypes();
@@ -174,9 +177,9 @@ public class CodegenOrchestrator {
         generateValidators();
         generateProtocolTests();
 
-        if (context.getProtocolGenerator().isPresent()) {
+        if (context.protocolGenerator().isPresent()) {
             ProtocolGenerator protocolGenerator =
-                    context.getProtocolGenerator().get();
+                    context.protocolGenerator().get();
 
             protocolGenerator.generateBuilders(context);
             protocolGenerator.generateParsers(context);
@@ -191,6 +194,9 @@ public class CodegenOrchestrator {
         generateModule();
         generateGemSpec();
         generateYardOpts();
+
+        context.integrations().forEach(
+                (integration) -> integration.customize(context));
     }
 
     private void generateTypes() {
@@ -214,7 +220,7 @@ public class CodegenOrchestrator {
     }
 
     private void generateProtocolTests() {
-        if (context.getApplicationTransport().isHttpTransport()) {
+        if (context.applicationTransport().isHttpTransport()) {
             HttpProtocolTestGenerator testGenerator =
                     new HttpProtocolTestGenerator(context);
             testGenerator.render();
@@ -230,7 +236,7 @@ public class CodegenOrchestrator {
     }
 
     private void generateModule() {
-        List<String> additionalFiles = context.getIntegrations().stream()
+        List<String> additionalFiles = context.integrations().stream()
                 .map((integration) -> integration.writeAdditionalFiles(context))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
@@ -241,7 +247,7 @@ public class CodegenOrchestrator {
 
     private void generateGemSpec() {
         List<RubyDependency> additionalDependencies =
-                context.getIntegrations().stream()
+                context.integrations().stream()
                         .map((integration) -> integration
                                 .additionalGemDependencies(context))
                         .flatMap(Collection::stream)
@@ -252,13 +258,13 @@ public class CodegenOrchestrator {
     }
 
     private void generateYardOpts() {
-        Optional<TitleTrait> title = context.getService().getTrait(TitleTrait.class);
+        Optional<TitleTrait> title = context.service().getTrait(TitleTrait.class);
         if (title.isPresent()) {
-            FileManifest fileManifest = context.getFileManifest();
+            FileManifest fileManifest = context.fileManifest();
             CodeWriter writer = new CodeWriter();
             writer.write("--title \"$L\"", title.get().getValue());
             writer.write("--hide-api private");
-            String fileName = context.getRubySettings().getGemName() + "/.yardopts";
+            String fileName = context.settings().getGemName() + "/.yardopts";
             fileManifest.writeFile(fileName, writer.toString());
         }
     }
