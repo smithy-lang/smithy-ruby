@@ -393,7 +393,7 @@ public abstract class StubsGeneratorBase {
                     .write("")
                     .write("# Union Stubber for $L", shape.getId().getName())
                     .openBlock("class $L", name)
-                    .openBlock("\ndef self.default(visited=[])")
+                    .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
                     .call(() -> {

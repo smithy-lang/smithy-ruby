@@ -135,7 +135,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape listShape) {
-        String shapeName = listShape.getId().getName();
+        String shapeName = symbolProvider.toSymbol(listShape).getName();
         Shape memberTarget =
                 model.expectShape(listShape.getMember().getTarget());
 

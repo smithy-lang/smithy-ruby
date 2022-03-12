@@ -33,7 +33,6 @@ module WhiteLabel
 
     # Union Stubber for Union
     class Union
-
       def self.default(visited=[])
         return nil if visited.include?('Union')
         visited = visited + ['Union']

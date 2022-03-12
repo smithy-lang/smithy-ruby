@@ -898,7 +898,6 @@ module RailsJson
 
     # Union Stubber for MyUnion
     class MyUnion
-
       def self.default(visited=[])
         return nil if visited.include?('MyUnion')
         visited = visited + ['MyUnion']

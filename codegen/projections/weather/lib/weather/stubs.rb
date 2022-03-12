@@ -72,7 +72,6 @@ module Weather
 
     # Union Stubber for Announcements
     class Announcements
-
       def self.default(visited=[])
         return nil if visited.include?('Announcements')
         visited = visited + ['Announcements']
@@ -141,7 +140,6 @@ module Weather
 
     # Union Stubber for Precipitation
     class Precipitation
-
       def self.default(visited=[])
         return nil if visited.include?('Precipitation')
         visited = visited + ['Precipitation']
