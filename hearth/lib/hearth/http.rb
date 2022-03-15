@@ -15,7 +15,6 @@ module Hearth
   # methods for URI escaping.
   # @api private
   module HTTP
-    # TODO: - do these belong here?
     class << self
       # URI escapes the given value.
       #
