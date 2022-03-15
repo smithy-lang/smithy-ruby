@@ -32,6 +32,13 @@ module Hearth
         expect(actual).not_to match_query_params(expected)
       end
 
+      it 'is false when param names differs' do
+        actual = CGI.parse('Param1=Value1&Other=Value2')
+        expected = CGI.parse('Param1=Value1&Param2=Value2')
+
+        expect(actual).not_to match_query_params(expected)
+      end
+
       it 'compares floats with precision' do
         actual = CGI.parse('Param=Value&Time=123')
         expected = CGI.parse('Param=Value&Time=123.0')
