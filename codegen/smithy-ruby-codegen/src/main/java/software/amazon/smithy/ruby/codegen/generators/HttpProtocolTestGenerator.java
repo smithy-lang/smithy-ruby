@@ -100,8 +100,8 @@ public class HttpProtocolTestGenerator {
             });
             writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-//                renderResponseTests(operationName, operation.getOutputShape(), responseTests);
-//                renderResponseStubberTests(operationName, operation.getOutputShape(), responseTests);
+                renderResponseTests(operationName, operation.getOutputShape(), responseTests);
+                renderResponseStubberTests(operationName, operation.getOutputShape(), responseTests);
             });
             renderErrorTests(operation);
             writer.closeBlock("\nend\n");
