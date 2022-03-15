@@ -12,7 +12,11 @@ RSpec::Matchers.define :match_query_params do |expected|
     expect(actual.keys.length).to eq(expected.keys.length)
     expect(actual.values.length).to eq(expected.values.length)
 
-    expected.values.sort.zip(actual.values.sort).each do |a, e|
+    expected.each do |ek, e|
+      expect(actual.keys).to include(ek)
+      a = actual[ek]
+      expect(e.length).to eq(a.length)
+
       a.zip(e).each do |a0, e0|
         # Timestamps can have optional precision.
         if (float = Float(a0) rescue false)
