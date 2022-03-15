@@ -12,7 +12,7 @@ module Hearth
 
     describe '.to_epoch_seconds' do
       it 'converts a time object to epoch seconds format' do
-        expect(subject.to_epoch_seconds(time)).to eq('0.0')
+        expect(subject.to_epoch_seconds(time)).to eq 0.0
       end
     end
 

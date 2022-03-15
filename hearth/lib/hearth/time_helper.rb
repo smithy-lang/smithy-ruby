@@ -15,13 +15,13 @@ module Hearth
       end
 
       # @param [Time] time
-      # @return [String<Epoch Seconds>] Returns string representing the
-      #   float value of epoch seconds with millisecond precision.
+      # @return [Float<Epoch Seconds>] Returns the float value of
+      #   epoch seconds with millisecond precision.
       def to_epoch_seconds(time)
         time = time.utc
         epoch_seconds = time.to_i
         epoch_seconds += (time.nsec / 1_000_000) / 1000.0
-        epoch_seconds.to_s
+        epoch_seconds
       end
 
       # @param [Time] time
