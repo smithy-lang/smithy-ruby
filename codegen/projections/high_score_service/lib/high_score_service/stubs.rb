@@ -43,7 +43,7 @@ module HighScoreService
         }
       end
 
-      def self.stub(stub = Types::HighScoreAttributes.new)
+      def self.stub(stub)
         stub ||= Types::HighScoreAttributes.new
         data = {}
         data[:id] = stub[:id] unless stub[:id].nil?
@@ -112,7 +112,7 @@ module HighScoreService
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
