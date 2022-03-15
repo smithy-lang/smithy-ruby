@@ -6,7 +6,7 @@ module Hearth
     # @api private
     class Param
       # @param [String] name
-      # @param [String, nil] value (nil)
+      # @param [String, Array, nil] value (nil)
       def initialize(name, value = nil)
         @name = name
         @value = value
@@ -20,7 +20,11 @@ module Hearth
 
       # @return [String]
       def to_s
-        value ? "#{escape(name)}=#{escape(value)}" : "#{escape(name)}="
+        if value.is_a?(Array)
+          value.map { |v| serialize(name, v) }.join('&')
+        else
+          serialize(name, value)
+        end
       end
 
       # @return [Boolean]
@@ -36,6 +40,10 @@ module Hearth
       end
 
       private
+
+      def serialize(name, value)
+        value ? "#{escape(name)}=#{escape(value)}" : "#{escape(name)}="
+      end
 
       def escape(str)
         Hearth::HTTP.uri_escape(str)

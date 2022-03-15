@@ -29,6 +29,11 @@ module Hearth
           param = Param.new('key')
           expect(param.to_s).to eq('key=')
         end
+
+        it 'can handle arrays' do
+          param = Param.new('foo', ['1', nil, '3'])
+          expect(param.to_s).to eq('foo=1&foo=&foo=3')
+        end
       end
 
       describe '#==' do

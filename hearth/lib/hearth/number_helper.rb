@@ -13,7 +13,7 @@ module Hearth
         elsif input == -::Float::INFINITY then '-Infinity'
         elsif input&.nan? then 'NaN'
         else
-          input
+          input.to_s
         end
       end
 

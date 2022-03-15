@@ -12,8 +12,7 @@ RSpec::Matchers.define :match_query_params do |expected|
     expect(actual.keys.length).to eq(expected.keys.length)
     expect(actual.values.length).to eq(expected.values.length)
 
-    # CGI.parse is always a flat map with an array of values.
-    expected.values.zip(actual.values).each do |a, e|
+    expected.values.sort.zip(actual.values.sort).each do |a, e|
       a.zip(e).each do |a0, e0|
         # Timestamps can have optional precision.
         if (float = Float(a0) rescue false)
