@@ -16,11 +16,11 @@ module Hearth
       end
 
       it 'converts nil' do
-        expect(subject.serialize(nil)).to eq ''
+        expect(subject.serialize(nil)).to be_nil
       end
 
       it 'converts numbers' do
-        expect(subject.serialize(123.111)).to eq '123.111'
+        expect(subject.serialize(123.111)).to eq 123.111
       end
     end
 

@@ -6,14 +6,14 @@ module Hearth
   # @api private
   module NumberHelper
     class << self
-      # @param [Number,String] input
-      # @return [String] The serialized number
+      # @param [Number] input
+      # @return [Number, String] The serialized number
       def serialize(input)
         if input == ::Float::INFINITY then 'Infinity'
         elsif input == -::Float::INFINITY then '-Infinity'
         elsif input&.nan? then 'NaN'
         else
-          input.to_s
+          input
         end
       end
 
