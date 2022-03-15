@@ -217,8 +217,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::NestedPayload.new
         data = {}
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
         data[:name] = stub[:member_name] unless stub[:member_name].nil?
@@ -255,7 +255,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -449,7 +449,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -469,7 +469,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -489,7 +489,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -509,7 +509,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -529,7 +529,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = Set.new
         stub.each do |element|
@@ -549,7 +549,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -596,7 +596,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -616,7 +616,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = Set.new
         stub.each do |element|
@@ -671,7 +671,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -691,7 +691,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -711,7 +711,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -731,7 +731,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -751,7 +751,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -771,7 +771,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -791,7 +791,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -811,7 +811,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -831,7 +831,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -851,8 +851,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::GreetingStruct.new
         data = {}
         data[:hi] = stub[:hi] unless stub[:hi].nil?
         data
@@ -869,7 +869,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -906,7 +906,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         data = {}
         case stub
         when Types::MyUnion::StringValue
@@ -1013,8 +1013,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::StructWithLocationName.new
         data = {}
         data['RenamedMember'] = stub[:value] unless stub[:value].nil?
         data
@@ -1031,8 +1031,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::SimpleStruct.new
         data = {}
         data[:value] = stub[:value] unless stub[:value].nil?
         data
@@ -1074,8 +1074,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::KitchenSink.new
         data = {}
         data[:blob] = Base64::encode64(stub[:blob]) unless stub[:blob].nil?
         data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
@@ -1117,7 +1117,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -1137,7 +1137,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -1157,7 +1157,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -1177,7 +1177,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -1197,7 +1197,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -1217,7 +1217,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub)
         stub ||= {}
         data = {}
         stub.each do |key, value|
@@ -1237,7 +1237,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -1257,7 +1257,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -1277,7 +1277,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -1297,7 +1297,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -1316,8 +1316,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::EmptyStruct.new
         data = {}
         data
       end
@@ -1410,7 +1410,7 @@ module RailsJson
         ]
       end
 
-      def self.stub(stub = [])
+      def self.stub(stub)
         stub ||= []
         data = []
         stub.each do |element|
@@ -1530,8 +1530,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub)
+        stub ||= Types::Struct____456efg.new
         data = {}
         data[:__123foo] = stub[:member____123foo] unless stub[:member____123foo].nil?
         data
