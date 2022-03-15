@@ -217,8 +217,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::NestedPayload.new)
+        stub ||= Types::NestedPayload.new
         data = {}
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
         data[:name] = stub[:member_name] unless stub[:member_name].nil?
@@ -851,8 +851,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::GreetingStruct.new)
+        stub ||= Types::GreetingStruct.new
         data = {}
         data[:hi] = stub[:hi] unless stub[:hi].nil?
         data
@@ -906,7 +906,7 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
+      def self.stub(stub = nil)
         data = {}
         case stub
         when Types::MyUnion::StringValue
@@ -1013,8 +1013,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::StructWithLocationName.new)
+        stub ||= Types::StructWithLocationName.new
         data = {}
         data['RenamedMember'] = stub[:value] unless stub[:value].nil?
         data
@@ -1031,8 +1031,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::SimpleStruct.new)
+        stub ||= Types::SimpleStruct.new
         data = {}
         data[:value] = stub[:value] unless stub[:value].nil?
         data
@@ -1074,8 +1074,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::KitchenSink.new)
+        stub ||= Types::KitchenSink.new
         data = {}
         data[:blob] = Base64::encode64(stub[:blob]) unless stub[:blob].nil?
         data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
@@ -1316,8 +1316,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::EmptyStruct.new)
+        stub ||= Types::EmptyStruct.new
         data = {}
         data
       end
@@ -1530,8 +1530,8 @@ module RailsJson
         }
       end
 
-      def self.stub(stub = {})
-        stub ||= {}
+      def self.stub(stub = Types::Struct____456efg.new)
+        stub ||= Types::Struct____456efg.new
         data = {}
         data[:__123foo] = stub[:member____123foo] unless stub[:member____123foo].nil?
         data

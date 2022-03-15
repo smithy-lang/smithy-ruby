@@ -112,9 +112,10 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
     @Override
     protected void renderStructureStubMethod(StructureShape shape) {
+        String typeName = symbolProvider.toSymbol(shape).getName();
         writer
-                .openBlock("def self.stub(stub = {})")
-                .write("stub ||= {}")
+                .openBlock("def self.stub(stub = Types::$L.new)", typeName)
+                .write("stub ||= Types::$L.new", typeName)
                 .write("data = {}")
                 .call(() -> renderMemberStubbers(shape))
                 .write("data")
@@ -141,7 +142,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     protected void renderUnionStubMethod(UnionShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
         writer
-                .openBlock("def self.stub(stub = {})")
+                .openBlock("def self.stub(stub = nil)")
                 .write("data = {}")
                 .write("case stub");
 
