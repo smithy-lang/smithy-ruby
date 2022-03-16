@@ -66,4 +66,3 @@ jobs:
       - name: Rubocop
         run: bundle exec rubocop -E -S
         working-directory: hearth
-
