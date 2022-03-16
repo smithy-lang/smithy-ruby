@@ -54,6 +54,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
+      - uses: actions/checkout@v2
+
       - name: Build and install Hearth
         run: |
           gem build hearth.gemspec

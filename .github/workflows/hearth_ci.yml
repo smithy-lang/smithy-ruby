@@ -23,6 +23,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
+      - uses: actions/checkout@v2
+
       - name: Install gems
         run: bundle install
         working-directory: hearth
@@ -58,6 +60,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
+
+      - uses: actions/checkout@v2
 
       - name: Install gems
         run: bundle install
