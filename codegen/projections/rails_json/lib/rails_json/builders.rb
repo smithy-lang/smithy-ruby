@@ -18,57 +18,59 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path('/AllQueryStringTypesInput')
         params = Hearth::Query::ParamList.new
-        params['StringMap'] = input[:query_params_map_of_strings].map do |k, v|
-          http_req.append_query_param(k, v.to_s) unless v.nil?
+        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
+          input[:query_params_map_of_strings].each do |k, v|
+            params[k] = v.to_s unless v.nil?
+          end
         end
-        http_req.append_query_param('String', input[:query_string].to_s) unless input[:query_string].nil?
+        params['String'] = input[:query_string].to_s unless input[:query_string].nil?
         unless input[:query_string_list].nil? || input[:query_string_list].empty?
-          input[:query_string_list].each do |value|
-            http_req.append_query_param('StringList', value.to_s) unless value.nil?
+          params['StringList'] = input[:query_string_list].map do |value|
+            value.to_s unless value.nil?
           end
         end
         unless input[:query_string_set].nil? || input[:query_string_set].empty?
-          input[:query_string_set].each do |value|
-            http_req.append_query_param('StringSet', value.to_s) unless value.nil?
+          params['StringSet'] = input[:query_string_set].map do |value|
+            value.to_s unless value.nil?
           end
         end
-        http_req.append_query_param('Byte', input[:query_byte].to_s) unless input[:query_byte].nil?
-        http_req.append_query_param('Short', input[:query_short].to_s) unless input[:query_short].nil?
-        http_req.append_query_param('Integer', input[:query_integer].to_s) unless input[:query_integer].nil?
+        params['Byte'] = input[:query_byte].to_s unless input[:query_byte].nil?
+        params['Short'] = input[:query_short].to_s unless input[:query_short].nil?
+        params['Integer'] = input[:query_integer].to_s unless input[:query_integer].nil?
         unless input[:query_integer_list].nil? || input[:query_integer_list].empty?
-          input[:query_integer_list].each do |value|
-            http_req.append_query_param('IntegerList', value.to_s) unless value.nil?
+          params['IntegerList'] = input[:query_integer_list].map do |value|
+            value.to_s unless value.nil?
           end
         end
         unless input[:query_integer_set].nil? || input[:query_integer_set].empty?
-          input[:query_integer_set].each do |value|
-            http_req.append_query_param('IntegerSet', value.to_s) unless value.nil?
+          params['IntegerSet'] = input[:query_integer_set].map do |value|
+            value.to_s unless value.nil?
           end
         end
-        http_req.append_query_param('Long', input[:query_long].to_s) unless input[:query_long].nil?
-        http_req.append_query_param('Float', input[:query_float].to_s) unless input[:query_float].nil?
-        http_req.append_query_param('Double', input[:query_double].to_s) unless input[:query_double].nil?
+        params['Long'] = input[:query_long].to_s unless input[:query_long].nil?
+        params['Float'] = input[:query_float].to_s unless input[:query_float].nil?
+        params['Double'] = input[:query_double].to_s unless input[:query_double].nil?
         unless input[:query_double_list].nil? || input[:query_double_list].empty?
-          input[:query_double_list].each do |value|
-            http_req.append_query_param('DoubleList', value.to_s) unless value.nil?
+          params['DoubleList'] = input[:query_double_list].map do |value|
+            value.to_s unless value.nil?
           end
         end
-        http_req.append_query_param('Boolean', input[:query_boolean].to_s) unless input[:query_boolean].nil?
+        params['Boolean'] = input[:query_boolean].to_s unless input[:query_boolean].nil?
         unless input[:query_boolean_list].nil? || input[:query_boolean_list].empty?
-          input[:query_boolean_list].each do |value|
-            http_req.append_query_param('BooleanList', value.to_s) unless value.nil?
+          params['BooleanList'] = input[:query_boolean_list].map do |value|
+            value.to_s unless value.nil?
           end
         end
-        http_req.append_query_param('Timestamp', Hearth::TimeHelper.to_date_time(input[:query_timestamp])) unless input[:query_timestamp].nil?
+        params['Timestamp'] = Hearth::TimeHelper.to_date_time(input[:query_timestamp]) unless input[:query_timestamp].nil?
         unless input[:query_timestamp_list].nil? || input[:query_timestamp_list].empty?
-          input[:query_timestamp_list].each do |value|
-            http_req.append_query_param('TimestampList', Hearth::TimeHelper.to_date_time(value)) unless value.nil?
+          params['TimestampList'] = input[:query_timestamp_list].map do |value|
+            Hearth::TimeHelper.to_date_time(value) unless value.nil?
           end
         end
-        http_req.append_query_param('Enum', input[:query_enum].to_s) unless input[:query_enum].nil?
+        params['Enum'] = input[:query_enum].to_s unless input[:query_enum].nil?
         unless input[:query_enum_list].nil? || input[:query_enum_list].empty?
-          input[:query_enum_list].each do |value|
-            http_req.append_query_param('EnumList', value.to_s) unless value.nil?
+          params['EnumList'] = input[:query_enum_list].map do |value|
+            value.to_s unless value.nil?
           end
         end
         http_req.append_query_params(params)
@@ -183,8 +185,8 @@ module RailsJson
         end
         http_req.append_path('/ConstantAndVariableQueryString')
         params = Hearth::Query::ParamList.new
-        http_req.append_query_param('baz', input[:baz].to_s) unless input[:baz].nil?
-        http_req.append_query_param('maybeSet', input[:maybe_set].to_s) unless input[:maybe_set].nil?
+        params['baz'] = input[:baz].to_s unless input[:baz].nil?
+        params['maybeSet'] = input[:maybe_set].to_s unless input[:maybe_set].nil?
         http_req.append_query_params(params)
       end
     end
@@ -1020,8 +1022,8 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path('/OmitsNullSerializesEmptyString')
         params = Hearth::Query::ParamList.new
-        http_req.append_query_param('Null', input[:null_value].to_s) unless input[:null_value].nil?
-        http_req.append_query_param('Empty', input[:empty_string].to_s) unless input[:empty_string].nil?
+        params['Null'] = input[:null_value].to_s unless input[:null_value].nil?
+        params['Empty'] = input[:empty_string].to_s unless input[:empty_string].nil?
         http_req.append_query_params(params)
       end
     end
@@ -1047,7 +1049,7 @@ module RailsJson
         http_req.http_method = 'POST'
         http_req.append_path('/QueryIdempotencyTokenAutoFill')
         params = Hearth::Query::ParamList.new
-        http_req.append_query_param('token', input[:token].to_s) unless input[:token].nil?
+        params['token'] = input[:token].to_s unless input[:token].nil?
         http_req.append_query_params(params)
       end
     end
@@ -1058,14 +1060,16 @@ module RailsJson
         http_req.http_method = 'POST'
         http_req.append_path('/StringListMap')
         params = Hearth::Query::ParamList.new
-        params['StringListMap'] = input[:foo].map do |k, v|
-          unless v.nil? || v.empty?
-            v.each do |value|
-              http_req.append_query_param(k, value.to_s) unless value.nil?
+        unless input[:foo].nil? || input[:foo].empty?
+          input[:foo].each do |k, v|
+            unless v.nil? || v.empty?
+              params[k] = v.map do |value|
+                value.to_s unless value.nil?
+              end
             end
           end
         end
-        http_req.append_query_param('corge', input[:qux].to_s) unless input[:qux].nil?
+        params['corge'] = input[:qux].to_s unless input[:qux].nil?
         http_req.append_query_params(params)
       end
     end
