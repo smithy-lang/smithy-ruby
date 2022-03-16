@@ -106,6 +106,27 @@ module Hearth
         @url = uri.to_s
       end
 
+      # Append querystring parameters to the HTTP request URL.
+      #
+      #     http_req.url = "https://example.com"
+      #     query_params = Hearth::Query::ParamList.new
+      #     query_params['key 1'] = nil
+      #     query_params['key 2'] = 'value 2'
+      #     http_req.append_query_params(query_params)
+      #
+      #     http_req.url
+      #     #=> "https://example.com?key%201=&key%202=value%202"
+      #
+      # @param [ParamList] param_list
+      #   An instance of Hearth::Query::ParamList containing the list of
+      #   querystring parameters to add. The names and values are URI escaped.
+      #
+      def append_query_params(param_list)
+        uri = URI.parse(@url)
+        uri.query = uri.query ? "#{uri.query}&#{param_list}" : param_list.to_s
+        @url = uri.to_s
+      end
+
       # Append a host prefix to the HTTP request URL.
       #
       #     http_req.url = "https://example.com"

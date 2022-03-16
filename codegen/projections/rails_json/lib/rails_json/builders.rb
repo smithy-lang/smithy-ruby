@@ -17,10 +17,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/AllQueryStringTypesInput')
-        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
-          input[:query_params_map_of_strings].each do |k, v|
-            http_req.append_query_param(k, v.to_s) unless v.nil?
-          end
+        params = Hearth::Query::ParamList.new
+        params['StringMap'] = input[:query_params_map_of_strings].map do |k, v|
+          http_req.append_query_param(k, v.to_s) unless v.nil?
         end
         http_req.append_query_param('String', input[:query_string].to_s) unless input[:query_string].nil?
         unless input[:query_string_list].nil? || input[:query_string_list].empty?
@@ -72,6 +71,7 @@ module RailsJson
             http_req.append_query_param('EnumList', value.to_s) unless value.nil?
           end
         end
+        http_req.append_query_params(params)
       end
     end
 
@@ -131,7 +131,6 @@ module RailsJson
     end
 
     # Set Builder for IntegerSet
-
     class IntegerSet
       def self.build(input)
         data = Set.new
@@ -154,7 +153,6 @@ module RailsJson
     end
 
     # Set Builder for StringSet
-
     class StringSet
       def self.build(input)
         data = Set.new
@@ -184,8 +182,10 @@ module RailsJson
           v.each { |q_v| http_req.append_query_param(k, q_v) }
         end
         http_req.append_path('/ConstantAndVariableQueryString')
+        params = Hearth::Query::ParamList.new
         http_req.append_query_param('baz', input[:baz].to_s) unless input[:baz].nil?
         http_req.append_query_param('maybeSet', input[:maybe_set].to_s) unless input[:maybe_set].nil?
+        http_req.append_query_params(params)
       end
     end
 
@@ -201,6 +201,8 @@ module RailsJson
             hello: Hearth::HTTP.uri_escape(input[:hello].to_s)
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -209,6 +211,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentType')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -223,6 +227,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentTypeAsPayload')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['Content-Type'] = 'application/json'
         http_req.body = StringIO.new(Hearth::JSON.dump(input[:document_value]))
       end
@@ -233,6 +239,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/emptyoperation')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -241,6 +249,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/endpoint')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -249,6 +259,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/endpointwithhostlabel')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -262,6 +274,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/greetingwitherrors')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -270,6 +284,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraits')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['Content-Type'] = 'application/octet-stream'
         http_req.body = StringIO.new(input[:blob] || '')
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
@@ -281,6 +297,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraitsWithMediaType')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['Content-Type'] = 'text/plain'
         http_req.body = StringIO.new(input[:blob] || '')
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
@@ -292,6 +310,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/HttpPayloadWithStructure')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::NestedPayload.build(input[:nested]) unless input[:nested].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
@@ -313,6 +333,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeaders')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
         input[:foo_map].each do |key, value|
           http_req.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
@@ -325,6 +347,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeadersResponse')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -338,6 +362,8 @@ module RailsJson
             double: Hearth::HTTP.uri_escape(input[:double].to_s)
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -351,6 +377,8 @@ module RailsJson
             baz: (input[:baz].to_s).split('/').map { |s| Hearth::HTTP.uri_escape(s) }.join('/')
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -370,6 +398,8 @@ module RailsJson
             timestamp: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:timestamp]))
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -388,6 +418,8 @@ module RailsJson
             targetDateTime: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:target_date_time]))
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -396,6 +428,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/HttpResponseCode')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -404,6 +438,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/IgnoreQueryParamsInResponse')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
       end
     end
 
@@ -412,6 +448,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/InputAndOutputWithHeaders')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['X-String'] = input[:header_string] unless input[:header_string].nil? || input[:header_string].empty?
         http_req.headers['X-Byte'] = input[:header_byte].to_s unless input[:header_byte].nil?
         http_req.headers['X-Short'] = input[:header_short].to_s unless input[:header_short].nil?
@@ -467,6 +505,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/jsonenums')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -492,7 +532,6 @@ module RailsJson
     end
 
     # Set Builder for FooEnumSet
-
     class FooEnumSet
       def self.build(input)
         data = Set.new
@@ -508,6 +547,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/JsonMaps')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -649,6 +690,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/jsonunions')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -694,6 +737,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -902,6 +947,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/MediaTypeHeader')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['X-Json'] = Base64::encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
       end
     end
@@ -911,6 +958,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/nestedattributes')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -924,6 +973,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/NullAndEmptyHeadersClient')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['X-A'] = input[:a] unless input[:a].nil? || input[:a].empty?
         http_req.headers['X-B'] = input[:b] unless input[:b].nil? || input[:b].empty?
         unless input[:c].nil? || input[:c].empty?
@@ -940,6 +991,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/nulloperation')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -966,8 +1019,10 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/OmitsNullSerializesEmptyString')
+        params = Hearth::Query::ParamList.new
         http_req.append_query_param('Null', input[:null_value].to_s) unless input[:null_value].nil?
         http_req.append_query_param('Empty', input[:empty_string].to_s) unless input[:empty_string].nil?
+        http_req.append_query_params(params)
       end
     end
 
@@ -976,6 +1031,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/operationwithoptionalinputoutput')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -989,7 +1046,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/QueryIdempotencyTokenAutoFill')
+        params = Hearth::Query::ParamList.new
         http_req.append_query_param('token', input[:token].to_s) unless input[:token].nil?
+        http_req.append_query_params(params)
       end
     end
 
@@ -998,16 +1057,16 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/StringListMap')
-        unless input[:foo].nil? || input[:foo].empty?
-          input[:foo].each do |k, v|
-            unless v.nil? || v.empty?
-              v.each do |value|
-                http_req.append_query_param(k, value.to_s) unless value.nil?
-              end
+        params = Hearth::Query::ParamList.new
+        params['StringListMap'] = input[:foo].map do |k, v|
+          unless v.nil? || v.empty?
+            v.each do |value|
+              http_req.append_query_param(k, value.to_s) unless value.nil?
             end
           end
         end
         http_req.append_query_param('corge', input[:qux].to_s) unless input[:qux].nil?
+        http_req.append_query_params(params)
       end
     end
 
@@ -1027,6 +1086,8 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/TimestampFormatHeaders')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
         http_req.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i unless input[:member_epoch_seconds].nil?
         http_req.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(input[:member_http_date]) unless input[:member_http_date].nil?
         http_req.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(input[:member_date_time]) unless input[:member_date_time].nil?
@@ -1046,6 +1107,8 @@ module RailsJson
             __123abc: Hearth::HTTP.uri_escape(input[:member____123abc].to_s)
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}

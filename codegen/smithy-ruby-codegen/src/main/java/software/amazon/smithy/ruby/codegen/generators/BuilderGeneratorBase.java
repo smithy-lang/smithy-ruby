@@ -305,7 +305,7 @@ public abstract class BuilderGeneratorBase {
             writer
                     .write("")
                     .write("# Set Builder for $L", shape.getId().getName())
-                    .openBlock("\nclass $L", symbol.getName())
+                    .openBlock("class $L", symbol.getName())
                     .call(() -> renderSetBuildMethod(shape))
                     .closeBlock("end");
 

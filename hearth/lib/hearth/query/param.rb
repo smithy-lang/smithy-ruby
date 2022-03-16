@@ -42,11 +42,11 @@ module Hearth
       private
 
       def serialize(name, value)
-        value ? "#{escape(name)}=#{escape(value)}" : "#{escape(name)}="
+        value.nil? ? "#{escape(name)}=" : "#{escape(name)}=#{escape(value)}"
       end
 
-      def escape(str)
-        Hearth::HTTP.uri_escape(str)
+      def escape(value)
+        Hearth::HTTP.uri_escape(value.to_s)
       end
     end
   end

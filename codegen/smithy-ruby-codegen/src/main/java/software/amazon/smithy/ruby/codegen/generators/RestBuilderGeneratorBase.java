@@ -124,14 +124,13 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
      */
     protected abstract void renderBodyBuilder(OperationShape operation, Shape inputShape);
 
-
     @Override
     protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", getHttpMethod(operation))
                 .call(() -> renderUriBuilder(operation, inputShape))
-                .call(() -> renderQueryInputBuilder(operation, inputShape))
+                .call(() -> renderQueryInputBuilder(inputShape))
                 .call(() -> renderOperationBodyBuilder(operation, inputShape))
                 .call(() -> renderHeadersBuilder(operation, inputShape))
                 .call(() -> renderPrefixHeadersBuilder(operation, inputShape))
@@ -146,23 +145,23 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         return httpTrait.getMethod();
     }
 
-
-    protected void renderQueryInputBuilder(OperationShape operation, Shape inputShape) {
-
+    protected void renderQueryInputBuilder(Shape inputShape) {
         // get a list of all HttpQueryParams members - these must be map shapes
         List<MemberShape> queryParamsMembers = inputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpQueryParamsTrait.class))
                 .collect(Collectors.toList());
 
+        writer.write("params = Hearth::Query::ParamList.new");
+
         for (MemberShape m : queryParamsMembers) {
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
             MapShape queryParamMap = model.expectShape(m.getTarget(), MapShape.class);
             Shape target = model.expectShape(queryParamMap.getValue().getTarget());
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .openBlock("$1L.each do |k, v|", inputGetter)
+            String shapeName = symbolProvider.toSymbol(queryParamMap).getName();
+            writer
+                    .openBlock("params['$1L'] = $2L.map do |k, v|", shapeName, inputGetter)
                     .call(() -> target.accept(new QueryMemberSerializer(queryParamMap.getValue(), "k", "v")))
-                    .closeBlock("end")
                     .closeBlock("end");
             LOGGER.finest("Generated query params builder for " + m.getMemberName());
         }
@@ -180,6 +179,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             target.accept(new QueryMemberSerializer(m, "'" + queryTrait.getValue() + "'", inputGetter));
             LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
+
+        writer.write("http_req.append_query_params(params)");
     }
 
     protected void renderHeadersBuilder(OperationShape operation, Shape inputShape) {
@@ -517,19 +518,19 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
     protected class QueryMemberSerializer extends ShapeVisitor.Default<Void> {
 
         private final String inputGetter;
-        private final String headerName;
+        private final String paramName;
         private final MemberShape memberShape;
 
-        QueryMemberSerializer(MemberShape memberShape, String headerName, String inputGetter) {
+        QueryMemberSerializer(MemberShape memberShape, String paramName, String inputGetter) {
             this.inputGetter = inputGetter;
-            this.headerName = headerName;
+            this.paramName = paramName;
             this.memberShape = memberShape;
         }
 
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("http_req.append_query_param($1L, $2L.to_s) unless $2L.nil?",
-                    headerName, inputGetter);
+                    paramName, inputGetter);
             return null;
         }
 
@@ -546,14 +547,14 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                         writer.write(
                                 "http_req.append_query_param($1L, "
                                         + "Hearth::TimeHelper.to_epoch_seconds($2L).to_i) unless $2L.nil?",
-                                headerName,
+                                paramName,
                                 inputGetter);
                         break;
                     case HTTP_DATE:
                         writer.write(
                                 "http_req.append_query_param($1L, "
                                         + "Hearth::TimeHelper.to_http_date($2L)) unless $2L.nil?",
-                                headerName,
+                                paramName,
                                 inputGetter);
                         break;
                     case DATE_TIME:
@@ -561,7 +562,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                         writer.write(
                                 "http_req.append_query_param($1L, "
                                         + "Hearth::TimeHelper.to_date_time($2L)) unless $2L.nil?",
-                                headerName,
+                                paramName,
                                 inputGetter);
                         break;
                 }
@@ -569,7 +570,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 writer.write(
                         "http_req.append_query_param($1L, "
                                 + "Hearth::TimeHelper.to_date_time($2L)) unless $2L.nil?",
-                        headerName,
+                        paramName,
                         inputGetter);
             }
             return null;
@@ -580,7 +581,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             Shape target = model.expectShape(shape.getMember().getTarget());
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .openBlock("$1L.each do |value|", inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), headerName, "value")))
+                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), paramName, "value")))
                     .closeBlock("end")
                     .closeBlock("end");
             return null;
@@ -591,7 +592,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             Shape target = model.expectShape(shape.getMember().getTarget());
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .openBlock("$1L.each do |value|", inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), headerName, "value")))
+                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), paramName, "value")))
                     .closeBlock("end")
                     .closeBlock("end");
             return null;
