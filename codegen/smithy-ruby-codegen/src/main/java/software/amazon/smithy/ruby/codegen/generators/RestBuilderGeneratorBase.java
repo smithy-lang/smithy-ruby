@@ -155,13 +155,17 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 .filter((m) -> m.hasTrait(HttpQueryParamsTrait.class))
                 .collect(Collectors.toList());
 
+        writer.write("params = Hearth::Query::ParamList.new");
+
         for (MemberShape m : queryParamsMembers) {
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
             MapShape queryParamMap = model.expectShape(m.getTarget(), MapShape.class);
             Shape target = model.expectShape(queryParamMap.getValue().getTarget());
+            String shapeName = symbolProvider.toSymbol(queryParamMap).getName();
+
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .openBlock("$1L.each do |k, v|", inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(queryParamMap.getValue(), "k", "v")))
+                    .call(() -> target.accept(new QueryMemberSerializer(queryParamMap.getValue(), "params[k] = ", "v")))
                     .closeBlock("end")
                     .closeBlock("end");
             LOGGER.finest("Generated query params builder for " + m.getMemberName());
@@ -177,9 +181,12 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
             Shape target = model.expectShape(m.getTarget());
-            target.accept(new QueryMemberSerializer(m, "'" + queryTrait.getValue() + "'", inputGetter));
+            String setter = writer.format("params['$L'] = ", queryTrait.getValue());
+            target.accept(new QueryMemberSerializer(m, setter, inputGetter));
             LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
+
+        writer.write("http_req.append_query_params(params)");
     }
 
     protected void renderHeadersBuilder(OperationShape operation, Shape inputShape) {
@@ -517,19 +524,19 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
     protected class QueryMemberSerializer extends ShapeVisitor.Default<Void> {
 
         private final String inputGetter;
-        private final String headerName;
+        private final String setter;
         private final MemberShape memberShape;
 
-        QueryMemberSerializer(MemberShape memberShape, String headerName, String inputGetter) {
+        QueryMemberSerializer(MemberShape memberShape, String setter, String inputGetter) {
             this.inputGetter = inputGetter;
-            this.headerName = headerName;
+            this.setter = setter;
             this.memberShape = memberShape;
         }
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("http_req.append_query_param($1L, $2L.to_s) unless $2L.nil?",
-                    headerName, inputGetter);
+            writer.write("$1L$2L.to_s unless $2L.nil?",
+                    setter, inputGetter);
             return null;
         }
 
@@ -544,32 +551,28 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 switch (format.get().getFormat()) {
                     case EPOCH_SECONDS:
                         writer.write(
-                                "http_req.append_query_param($1L, "
-                                        + "Hearth::TimeHelper.to_epoch_seconds($2L).to_i) unless $2L.nil?",
-                                headerName,
+                                "$1LHearth::TimeHelper.to_epoch_seconds($2L).to_i unless $2L.nil?",
+                                setter,
                                 inputGetter);
                         break;
                     case HTTP_DATE:
                         writer.write(
-                                "http_req.append_query_param($1L, "
-                                        + "Hearth::TimeHelper.to_http_date($2L)) unless $2L.nil?",
-                                headerName,
+                                "$1LHearth::TimeHelper.to_http_date($2L) unless $2L.nil?",
+                                setter,
                                 inputGetter);
                         break;
                     case DATE_TIME:
                     default:
                         writer.write(
-                                "http_req.append_query_param($1L, "
-                                        + "Hearth::TimeHelper.to_date_time($2L)) unless $2L.nil?",
-                                headerName,
+                                "$1LHearth::TimeHelper.to_date_time($2L) unless $2L.nil?",
+                                setter,
                                 inputGetter);
                         break;
                 }
             } else {
                 writer.write(
-                        "http_req.append_query_param($1L, "
-                                + "Hearth::TimeHelper.to_date_time($2L)) unless $2L.nil?",
-                        headerName,
+                        "$1LHearth::TimeHelper.to_date_time($2L) unless $2L.nil?",
+                        setter,
                         inputGetter);
             }
             return null;
@@ -579,8 +582,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         public Void listShape(ListShape shape) {
             Shape target = model.expectShape(shape.getMember().getTarget());
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .openBlock("$1L.each do |value|", inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), headerName, "value")))
+                    .openBlock("$1L$2L.map do |value|", setter, inputGetter)
+                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), "", "value")))
                     .closeBlock("end")
                     .closeBlock("end");
             return null;
@@ -590,8 +593,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         public Void setShape(SetShape shape) {
             Shape target = model.expectShape(shape.getMember().getTarget());
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .openBlock("$1L.each do |value|", inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), headerName, "value")))
+                    .openBlock("$1L$2L.map do |value|", setter, inputGetter)
+                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), "", "value")))
                     .closeBlock("end")
                     .closeBlock("end");
             return null;

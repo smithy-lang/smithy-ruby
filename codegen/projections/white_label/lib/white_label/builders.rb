@@ -27,7 +27,6 @@ module WhiteLabel
     end
 
     # Set Builder for SetOfStrings
-
     class SetOfStrings
     end
 

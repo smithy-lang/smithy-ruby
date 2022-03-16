@@ -74,6 +74,25 @@ module Hearth
         end
       end
 
+      describe '#append_query_params' do
+        it 'appends a param list' do
+          params = Hearth::Query::ParamList.new
+          params['key 1'] = nil
+          params['key 2'] = 'value 2'
+          subject.append_query_params(params)
+          expect(subject.url).to eq('http://example.com?key%201=&key%202=value%202')
+        end
+
+        it 'appends to existing query params' do
+          subject.append_query_param('original')
+          params = Hearth::Query::ParamList.new
+          params['key 1'] = nil
+          params['key 2'] = 'value 2'
+          subject.append_query_params(params)
+          expect(subject.url).to eq('http://example.com?original&key%201=&key%202=value%202')
+        end
+      end
+
       describe '#prefix_host' do
         it 'prefixes the host' do
           subject.prefix_host('data.')
