@@ -45,10 +45,10 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-      - name: Set up Ruby 3.0
-        uses: actions/setup-ruby@v1
+      - name: Set up Ruby 3.1
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0
+          ruby-version: 3.1
 
       - uses: actions/checkout@v2
 
@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.5, 2.6, 2.7, '3.0']
+        ruby: [2.5, 2.6, 2.7, '3.0', 3.1]
 
     steps:
       - name: Setup Ruby
