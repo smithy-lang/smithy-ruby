@@ -25,18 +25,18 @@ jobs:
 
       - name: Install gems
         run: bundle install
-        working-directory: ./hearth
+        working-directory: hearth
 
       - name: Unit tests
         run: bundle exec rspec
-        working-directory: ./hearth
+        working-directory: hearth
 
   steep:
     runs-on: ubuntu-latest
 
     steps:
       - name: Set up Ruby 3.1
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
 
@@ -44,25 +44,25 @@ jobs:
 
       - name: Install gems
         run: bundle install
-        working-directory: ./hearth
+        working-directory: hearth
 
       - name: Type checks
         run: bundle exec steep check
-        working-directory: ./hearth
+        working-directory: hearth
 
   rubocop:
     runs-on: ubuntu-latest
 
     steps:
       - name: Set up Ruby 3.1
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
 
       - name: Install gems
         run: bundle install
-        working-directory: ./hearth
+        working-directory: hearth
 
       - name: Rubocop
         run: bundle exec rubocop -E -S
-        working-directory: ./hearth
+        working-directory: hearth
