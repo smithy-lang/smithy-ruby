@@ -838,6 +838,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/endpoint')
+            expect(request_uri.host).to eq('foo.example.com')
             Hearth::Output.new
           end
           opts = {middleware: middleware}
@@ -863,6 +864,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/endpointwithhostlabel')
+            expect(request_uri.host).to eq('foo.bar.example.com')
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
             Hearth::Output.new
           end

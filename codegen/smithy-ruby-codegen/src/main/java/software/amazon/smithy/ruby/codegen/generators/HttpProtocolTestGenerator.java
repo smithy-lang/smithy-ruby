@@ -307,6 +307,7 @@ public class HttpProtocolTestGenerator {
                 .write("request = context.request")
                 .write("request_uri = URI.parse(request.url)")
                 .write("expect(request.http_method).to eq('$L')", testCase.getMethod())
+                .call(() -> renderRequestMiddlewareHost(testCase.getResolvedHost()))
                 .write("expect(request_uri.path).to eq('$L')", testCase.getUri())
                 .call(() -> renderRequestMiddlewareQueryParams(testCase.getQueryParams()))
                 .call(() -> renderRequestMiddlewareForbidQueryParams(testCase.getForbidQueryParams()))
@@ -317,6 +318,12 @@ public class HttpProtocolTestGenerator {
                 .call(() -> renderRequestMiddlewareBody(testCase.getBody(), testCase.getBodyMediaType()))
                 .write("Hearth::Output.new")
                 .closeBlock("end");
+    }
+
+    private void renderRequestMiddlewareHost(Optional<String> resolvedHost) {
+        if (resolvedHost.isPresent()) {
+            writer.write("expect(request_uri.host).to eq('$L')", resolvedHost.get());
+        }
     }
 
     private void renderRequestMiddlewareBody(Optional<String> body, Optional<String> bodyMediaType) {
