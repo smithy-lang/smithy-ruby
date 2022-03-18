@@ -17,6 +17,11 @@ description = "Generates Ruby code from Smithy models"
 extra["displayName"] = "Smithy :: Ruby :: Codegen"
 extra["moduleName"] = "software.amazon.smithy.ruby.codegen"
 
+plugins {
+    `java-library`
+    id("software.amazon.smithy").version("0.5.3")
+}
+
 dependencies {
     api("software.amazon.smithy:smithy-codegen-core:[1.18.0,2.0.0[")
     implementation("software.amazon.smithy:smithy-waiters:[1.4.0,2.0.0[")

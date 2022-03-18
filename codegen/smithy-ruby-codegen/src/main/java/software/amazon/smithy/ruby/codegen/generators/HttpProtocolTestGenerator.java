@@ -28,7 +28,6 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
@@ -40,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.trait.SkipTestTrait;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -64,7 +64,6 @@ public class HttpProtocolTestGenerator {
     }
 
     public void render() {
-        //TODO: Support filtering of tests through config
         FileManifest fileManifest = context.fileManifest();
 
         writer
@@ -96,22 +95,22 @@ public class HttpProtocolTestGenerator {
             String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
             writer.openBlock("describe '#$L' do", operationName);
             operation.getTrait(HttpRequestTestsTrait.class).ifPresent((requestTests) -> {
-                renderRequestTests(operationName, operation.getInputShape(), requestTests);
+                renderRequestTests(operation, requestTests);
             });
             writer.write("");
             operation.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                renderResponseTests(operationName, operation.getOutputShape(), responseTests);
-                renderResponseStubberTests(operationName, operation.getOutputShape(), responseTests);
+                renderResponseTests(operation, responseTests);
+                renderResponseStubberTests(operation, responseTests);
             });
             renderErrorTests(operation);
             writer.closeBlock("\nend\n");
         });
     }
 
-    private void renderResponseTests(String operationName,
-                                     ShapeId output,
+    private void renderResponseTests(OperationShape operation,
                                      HttpResponseTestsTrait responseTests) {
-        Shape outputShape = model.expectShape(output);
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        Shape outputShape = model.expectShape(operation.getOutputShape());
 
         writer.openBlock("\ndescribe 'responses' do");
         responseTests.getTestCases().forEach((testCase) -> {
@@ -121,7 +120,7 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it '$L' do", testCase.getId())
+                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
@@ -135,10 +134,11 @@ public class HttpProtocolTestGenerator {
         writer.closeBlock("end");
     }
 
-    private void renderResponseStubberTests(String operationName,
-                                            ShapeId output,
+    private void renderResponseStubberTests(OperationShape operation,
                                             HttpResponseTestsTrait responseTests) {
-        Shape outputShape = model.expectShape(output);
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
+        Shape outputShape = model.expectShape(operation.getOutputShape());
 
         writer.openBlock("\ndescribe 'response stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
@@ -148,7 +148,7 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it 'stubs $L' do", testCase.getId())
+                    .openBlock("it 'stubs $L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
                     .call(() -> renderResponseStubMiddleware(testCase))
                     .write("middleware.remove_build")
                     .write("client.stub_responses(:$L, $L)", operationName,
@@ -165,10 +165,10 @@ public class HttpProtocolTestGenerator {
         writer.closeBlock("end");
     }
 
-    private void renderRequestTests(String operationName,
-                                    ShapeId input,
-                                    HttpRequestTestsTrait requestTests) {
-        Shape inputShape = model.expectShape(input);
+
+    private void renderRequestTests(OperationShape operation, HttpRequestTestsTrait requestTests) {
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        Shape inputShape = model.expectShape(operation.getInputShape());
         writer.openBlock("\ndescribe 'requests' do");
         requestTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
@@ -177,7 +177,7 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it '$L' do", testCase.getId())
+                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
                     .call(() -> {
                         if (inputShape.members().stream().anyMatch((m) -> m.hasTrait(IdempotencyTokenTrait.class))) {
                             // auto generated tokens during protocol tests should always be this value
@@ -200,6 +200,20 @@ public class HttpProtocolTestGenerator {
 
         });
         writer.closeBlock("end");
+    }
+
+    private String skipTest(OperationShape operation, String testCaseId) {
+        if (operation.hasTrait(SkipTestTrait.class)) {
+            SkipTestTrait skipTest = operation.expectTrait(SkipTestTrait.class);
+            if (skipTest.getId().equals(testCaseId)) {
+                if (skipTest.getReason().isPresent()) {
+                    return writer.format(", skip: '$L' ", skipTest.getReason().get());
+                } else {
+                    return ", skip: true ";
+                }
+            }
+        }
+        return "";
     }
 
     private void renderErrorTests(OperationShape operation) {
