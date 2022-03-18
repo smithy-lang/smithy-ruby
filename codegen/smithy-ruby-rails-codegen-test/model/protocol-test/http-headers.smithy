@@ -18,7 +18,7 @@ use aws.protocoltests.shared#StringSet
 use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
-use smithy.ruby#skipTest
+use smithy.ruby#skipTests
 
 /// The example tests how requests and responses are serialized when there is
 /// no input or output payload but there are HTTP header bindings.
@@ -109,7 +109,12 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     },
 ])
 
-apply InputAndOutputWithHeaders @skipTest(id: "RailsJsonInputAndOutputWithQuotedStringHeaders", reason: "Not Supported")
+apply InputAndOutputWithHeaders @skipTests([
+    {
+        id: "RailsJsonInputAndOutputWithQuotedStringHeaders",
+        reason: "Not Supported"
+    }
+])
 apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RailsJsonInputAndOutputWithStringHeaders",

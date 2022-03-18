@@ -39,7 +39,8 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
-import software.amazon.smithy.ruby.codegen.trait.SkipTestTrait;
+import software.amazon.smithy.ruby.codegen.trait.SkipTest;
+import software.amazon.smithy.ruby.codegen.trait.SkipTestsTrait;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -203,13 +204,15 @@ public class HttpProtocolTestGenerator {
     }
 
     private String skipTest(OperationShape operation, String testCaseId) {
-        if (operation.hasTrait(SkipTestTrait.class)) {
-            SkipTestTrait skipTest = operation.expectTrait(SkipTestTrait.class);
-            if (skipTest.getId().equals(testCaseId)) {
-                if (skipTest.getReason().isPresent()) {
-                    return writer.format(", skip: '$L' ", skipTest.getReason().get());
-                } else {
-                    return ", skip: true ";
+        if (operation.hasTrait(SkipTestsTrait.class)) {
+            Optional<SkipTest> skipTest = operation.expectTrait(SkipTestsTrait.class).skipTest(testCaseId);
+            if (skipTest.isPresent()) {
+                if (skipTest.get().getId().equals(testCaseId)) {
+                    if (skipTest.get().getReason().isPresent()) {
+                        return writer.format(", skip: '$L' ", skipTest.get().getReason().get());
+                    } else {
+                        return ", skip: true ";
+                    }
                 }
             }
         }
