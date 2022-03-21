@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.util;
 
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -25,12 +26,15 @@ public final class TimestampFormat {
     private TimestampFormat() {
     }
 
-    public static String serializeTimestamp(MemberShape memberShape, String input,
+    public static String serializeTimestamp(TimestampShape shape, MemberShape memberShape, String input,
                                             TimestampFormatTrait.Format defaultFormat) {
         TimestampFormatTrait.Format format = memberShape
                 .getTrait(TimestampFormatTrait.class)
                 .map((t) -> t.getFormat())
-                .orElse(defaultFormat);
+                .orElseGet(() ->
+                        shape.getTrait(TimestampFormatTrait.class)
+                                .map((t) -> t.getFormat())
+                                .orElse(defaultFormat));
 
         switch (format) {
             case EPOCH_SECONDS:

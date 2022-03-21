@@ -28,7 +28,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/BadName/abc_value')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
             Hearth::Output.new
@@ -264,7 +264,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": {
@@ -287,7 +287,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": "hello"
@@ -308,7 +308,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": 10
@@ -329,7 +329,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": true
@@ -350,7 +350,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": [
@@ -594,7 +594,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentTypeAsPayload')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "foo": "bar"
             }'))
@@ -613,7 +613,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/DocumentTypeAsPayload')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
             Hearth::Output.new
           end
@@ -965,7 +965,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/HttpPayloadTraits')
-            { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
             Hearth::Output.new
@@ -984,7 +984,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/HttpPayloadTraits')
-            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1081,7 +1081,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/HttpPayloadTraitsWithMediaType')
-            { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
             Hearth::Output.new
@@ -1148,7 +1148,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
             expect(request_uri.path).to eq('/HttpPayloadWithStructure')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "greeting": "hello",
@@ -1229,7 +1229,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpPrefixHeaders')
-            { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1250,7 +1250,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/HttpPrefixHeaders')
-            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1708,7 +1708,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1735,7 +1735,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1762,7 +1762,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1785,7 +1785,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -2041,7 +2041,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonenums')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "foo_enum1": "Foo",
                 "foo_enum2": "0",
@@ -2191,7 +2191,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "dense_struct_map": {
                     "foo": {
@@ -2240,7 +2240,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_boolean_map": {
                     "x": null
@@ -2281,7 +2281,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "dense_number_map": {
                     "x": 0
@@ -2322,7 +2322,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_set_map": {
                     "x": [],
@@ -2352,7 +2352,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "dense_set_map": {
                     "x": [],
@@ -2382,7 +2382,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_set_map": {
                     "x": [],
@@ -2928,7 +2928,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "string_value": "foo"
@@ -2951,7 +2951,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "boolean_value": true
@@ -2974,7 +2974,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "number_value": 1
@@ -2997,7 +2997,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "blob_value": "Zm9v"
@@ -3020,7 +3020,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "timestamp_value": "2014-04-29T18:30:38Z"
@@ -3043,7 +3043,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "enum_value": "Foo"
@@ -3066,7 +3066,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "list_value": ["foo", "bar"]
@@ -3092,7 +3092,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "map_value": {
@@ -3121,7 +3121,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "structure_value": {
@@ -3568,7 +3568,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
             Hearth::Output.new
@@ -3586,7 +3586,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
             Hearth::Output.new
@@ -3604,7 +3604,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
             Hearth::Output.new
@@ -3622,7 +3622,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
             Hearth::Output.new
@@ -3640,7 +3640,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
             Hearth::Output.new
@@ -3658,7 +3658,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
             Hearth::Output.new
@@ -3676,7 +3676,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
             Hearth::Output.new
@@ -3694,7 +3694,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
             Hearth::Output.new
@@ -3712,7 +3712,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
             Hearth::Output.new
@@ -3730,7 +3730,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
             Hearth::Output.new
@@ -3748,7 +3748,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
             Hearth::Output.new
@@ -3766,7 +3766,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
             Hearth::Output.new
@@ -3784,7 +3784,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
             Hearth::Output.new
@@ -3802,7 +3802,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
             Hearth::Output.new
@@ -3824,7 +3824,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
             Hearth::Output.new
@@ -3844,7 +3844,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
             Hearth::Output.new
@@ -3872,7 +3872,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
             Hearth::Output.new
@@ -3900,7 +3900,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
             Hearth::Output.new
@@ -3930,7 +3930,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
             Hearth::Output.new
@@ -3951,7 +3951,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
             Hearth::Output.new
@@ -3971,7 +3971,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
             Hearth::Output.new
@@ -3998,7 +3998,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
             Hearth::Output.new
@@ -4023,7 +4023,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
             Hearth::Output.new
@@ -4053,7 +4053,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
             Hearth::Output.new
@@ -4073,7 +4073,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
             Hearth::Output.new
@@ -4093,7 +4093,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
             Hearth::Output.new
@@ -4113,7 +4113,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
             Hearth::Output.new
@@ -4133,7 +4133,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
             Hearth::Output.new
@@ -5161,7 +5161,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/MediaTypeHeader')
-            { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -5223,7 +5223,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/nestedattributes')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
             Hearth::Output.new
           end
@@ -5277,7 +5277,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Hearth::Output.new
           end
@@ -5294,7 +5294,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_string_map": {
                     "foo": null
@@ -5317,7 +5317,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_string_list": [
                     null
@@ -5515,7 +5515,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/operationwithoptionalinputoutput')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Hearth::Output.new
           end
@@ -5532,7 +5532,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/operationwithoptionalinputoutput')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
             Hearth::Output.new
           end
@@ -5641,7 +5641,7 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/TimestampFormatHeaders')
-            { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to flex_eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end

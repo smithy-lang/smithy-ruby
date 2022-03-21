@@ -245,7 +245,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             writer.write("$L$L$L",
                     dataSetter,
                     TimestampFormat.serializeTimestamp(
-                            memberShape, inputGetter, TimestampFormatTrait.Format.DATE_TIME),
+                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.DATE_TIME),
                     checkRequired());
             return null;
         }

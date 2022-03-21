@@ -44,6 +44,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -362,30 +363,11 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // header values are serialized using the http-date format by default
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (!format.isPresent()) {
-                format = shape.getTrait(TimestampFormatTrait.class);
-            }
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write("$1LHearth::TimeHelper.to_epoch_seconds($2L).to_i unless $2L.nil?", dataSetter,
-                                inputGetter);
-                        break;
-                    case DATE_TIME:
-                        writer.write("$1LHearth::TimeHelper.to_date_time($2L) unless $2L.nil?", dataSetter,
-                                inputGetter);
-                        break;
-                    case HTTP_DATE:
-                    default:
-                        writer.write("$1LHearth::TimeHelper.to_http_date($2L) unless $2L.nil?", dataSetter,
-                                inputGetter);
-                        break;
-                }
-            } else {
-                writer.write("$1LHearth::TimeHelper.to_http_date($2L) unless $2L.nil?", dataSetter, inputGetter);
-            }
+            writer.write("$1L$2L unless $3L.nil?",
+                    dataSetter,
+                    TimestampFormat.serializeTimestamp(
+                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.HTTP_DATE),
+                    inputGetter);
             return null;
         }
 
