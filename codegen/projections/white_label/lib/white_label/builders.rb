@@ -14,7 +14,7 @@ module WhiteLabel
 
     # Operation Builder for KitchenSink
     class KitchenSink
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
       end
     end
 
@@ -48,25 +48,25 @@ module WhiteLabel
 
     # Operation Builder for PaginatorsTest
     class PaginatorsTest
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
       end
     end
 
     # Operation Builder for PaginatorsTestWithItems
     class PaginatorsTestWithItems
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
       end
     end
 
     # Operation Builder for WaitersTest
     class WaitersTest
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
       end
     end
 
     # Operation Builder for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
       end
     end
   end
