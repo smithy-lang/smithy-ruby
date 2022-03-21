@@ -130,6 +130,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", getHttpMethod(operation))
+                .call(() -> prefixHost(operation))
                 .call(() -> renderUriBuilder(operation, inputShape))
                 .call(() -> renderQueryInputBuilder(operation, inputShape))
                 .call(() -> renderOperationBodyBuilder(operation, inputShape))

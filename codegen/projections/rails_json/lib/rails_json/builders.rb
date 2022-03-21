@@ -250,6 +250,7 @@ module RailsJson
     class EndpointOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
+        http_req.prefix_host("foo.")
         http_req.append_path('/endpoint')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
@@ -260,6 +261,10 @@ module RailsJson
     class EndpointWithHostLabelOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
+        if input[:label].nil? || input[:label].empty?
+          raise ArgumentError, "Host label #{:label} cannot be nil or empty."
+        end
+        http_req.prefix_host("foo.#{input[:label]}.")
         http_req.append_path('/endpointwithhostlabel')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
