@@ -366,7 +366,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             writer.write("$1L$2L unless $3L.nil?",
                     dataSetter,
                     TimestampFormat.serializeTimestamp(
-                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.HTTP_DATE),
+                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.HTTP_DATE, false),
                     inputGetter);
             return null;
         }
@@ -443,24 +443,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // header values are serialized using the http-date format by default
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write(".map { |s| Hearth::TimeHelper.to_epoch_seconds(s) }");
-                        break;
-                    case DATE_TIME:
-                        writer.write(".map { |s| Hearth::TimeHelper.to_date_time(s) }");
-                        break;
-                    case HTTP_DATE:
-                    default:
-                        writer.write(".map { |s| Hearth::TimeHelper.to_http_date(s) }");
-                        break;
-                }
-            } else {
-                writer.write(".map { |s| Hearth::TimeHelper.to_http_date(s) }");
-            }
+            writer.write(".map { |s| $L }",
+                    TimestampFormat.serializeTimestamp(
+                            shape, memberShape, "s", TimestampFormatTrait.Format.HTTP_DATE, false));
             return null;
         }
     }
@@ -482,24 +467,10 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         @Override
         public String timestampShape(TimestampShape shape) {
             // label values are serialized using RFC 3399 date-time by default
-            Optional<TimestampFormatTrait> formatTrait = memberShape.getTrait(TimestampFormatTrait.class);
-            if (!formatTrait.isPresent()) {
-                formatTrait = shape.getTrait(TimestampFormatTrait.class);
-            }
-            TimestampFormatTrait.Format format = TimestampFormatTrait.Format.DATE_TIME;
-            if (formatTrait.isPresent()) {
-                format = formatTrait.get().getFormat();
-            }
             String symbolName = ":" + symbolProvider.toMemberName(memberShape);
-            switch (format) {
-                case EPOCH_SECONDS:
-                    return "Hearth::TimeHelper.to_epoch_seconds(input[" + symbolName + "]).to_i.to_s";
-                case HTTP_DATE:
-                    return "Hearth::TimeHelper.to_http_date(input[" + symbolName + "])";
-                case DATE_TIME:
-                default:
-                    return "Hearth::TimeHelper.to_date_time(input[" + symbolName + "])";
-            }
+            return (TimestampFormat.serializeTimestamp(
+                    shape, memberShape,
+                    "input[" + symbolName + "]", TimestampFormatTrait.Format.DATE_TIME, true));
         }
     }
 
@@ -524,39 +495,11 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // header values are serialized using the date-time format by default
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (!format.isPresent()) {
-                format = shape.getTrait(TimestampFormatTrait.class);
-            }
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write(
-                                "$1LHearth::TimeHelper.to_epoch_seconds($2L).to_i unless $2L.nil?",
-                                setter,
-                                inputGetter);
-                        break;
-                    case HTTP_DATE:
-                        writer.write(
-                                "$1LHearth::TimeHelper.to_http_date($2L) unless $2L.nil?",
-                                setter,
-                                inputGetter);
-                        break;
-                    case DATE_TIME:
-                    default:
-                        writer.write(
-                                "$1LHearth::TimeHelper.to_date_time($2L) unless $2L.nil?",
-                                setter,
-                                inputGetter);
-                        break;
-                }
-            } else {
-                writer.write(
-                        "$1LHearth::TimeHelper.to_date_time($2L) unless $2L.nil?",
-                        setter,
-                        inputGetter);
-            }
+            writer.write("$L$L unless $L.nil?",
+                    setter,
+                    TimestampFormat.serializeTimestamp(
+                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.DATE_TIME, false),
+                    inputGetter);
             return null;
         }
 

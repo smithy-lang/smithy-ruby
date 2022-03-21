@@ -27,7 +27,7 @@ public final class TimestampFormat {
     }
 
     public static String serializeTimestamp(TimestampShape shape, MemberShape memberShape, String input,
-                                            TimestampFormatTrait.Format defaultFormat) {
+                                            TimestampFormatTrait.Format defaultFormat, boolean toS) {
         TimestampFormatTrait.Format format = memberShape
                 .getTrait(TimestampFormatTrait.class)
                 .map((t) -> t.getFormat())
@@ -36,14 +36,35 @@ public final class TimestampFormat {
                                 .map((t) -> t.getFormat())
                                 .orElse(defaultFormat));
 
+        String suffix = toS ? ".to_s" : "";
+
         switch (format) {
             case EPOCH_SECONDS:
-                return String.format("Hearth::TimeHelper.to_epoch_seconds(%s)", input);
+                return String.format("Hearth::TimeHelper.to_epoch_seconds(%s).to_i%s", input, suffix);
             case HTTP_DATE:
                 return String.format("Hearth::TimeHelper.to_http_date(%s)", input);
             case DATE_TIME:
             default:
                 return String.format("Hearth::TimeHelper.to_date_time(%s)", input);
+        }
+    }
+
+    public static String parseTimestamp(TimestampShape shape, MemberShape memberShape, String input,
+                                            TimestampFormatTrait.Format defaultFormat) {
+        TimestampFormatTrait.Format format = memberShape
+                .getTrait(TimestampFormatTrait.class)
+                .map((t) -> t.getFormat())
+                .orElseGet(() ->
+                        shape.getTrait(TimestampFormatTrait.class)
+                                .map((t) -> t.getFormat())
+                                .orElse(defaultFormat));
+        switch (format) {
+            case EPOCH_SECONDS:
+                return String.format("Time.at(%s.to_i)", input);
+            case HTTP_DATE:
+            case DATE_TIME:
+            default:
+                return String.format("Time.parse(%s)", input);
         }
     }
 }

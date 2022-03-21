@@ -769,7 +769,7 @@ module RailsJson
         data[:string] = input[:string] unless input[:string].nil?
         data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
         data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
@@ -821,7 +821,7 @@ module RailsJson
         data[:string] = input[:string] unless input[:string].nil?
         data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
         data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
         data
       end
     end
@@ -1092,11 +1092,11 @@ module RailsJson
         http_req.append_path('/TimestampFormatHeaders')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
-        http_req.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]) unless input[:member_epoch_seconds].nil?
+        http_req.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i unless input[:member_epoch_seconds].nil?
         http_req.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(input[:member_http_date]) unless input[:member_http_date].nil?
         http_req.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(input[:member_date_time]) unless input[:member_date_time].nil?
         http_req.headers['X-defaultFormat'] = Hearth::TimeHelper.to_http_date(input[:default_format]) unless input[:default_format].nil?
-        http_req.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]) unless input[:target_epoch_seconds].nil?
+        http_req.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i unless input[:target_epoch_seconds].nil?
         http_req.headers['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(input[:target_http_date]) unless input[:target_http_date].nil?
         http_req.headers['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(input[:target_date_time]) unless input[:target_date_time].nil?
       end
