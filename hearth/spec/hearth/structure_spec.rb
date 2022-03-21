@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 module Hearth
+  class MyUnion < Hearth::Union
+    class StringValue < MyUnion
+      def to_h
+        { string_value: super(__getobj__) }
+      end
+    end
+  end
+
   describe Structure do
     let(:struct) do
       Struct.new(
@@ -13,14 +21,6 @@ module Hearth
         keyword_init: true
       ) do
         include Hearth::Structure
-      end
-    end
-
-    class MyUnion < Hearth::Union
-      class StringValue < MyUnion
-        def to_h
-          { string_value: super(__getobj__) }
-        end
       end
     end
 

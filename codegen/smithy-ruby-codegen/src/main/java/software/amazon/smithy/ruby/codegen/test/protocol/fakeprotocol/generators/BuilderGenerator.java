@@ -39,7 +39,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                 .write("")
                 .write("# Operation Builder for $L", operation.getId().getName())
                 .openBlock("class $L", symbol.getName())
-                .openBlock("def self.build(http_req, input:)")
+                .openBlock("def self.build(http_req, input:, disable_host_prefix:)")
                 .closeBlock("end")
                 .closeBlock("end");
     }
