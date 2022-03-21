@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rspec/expectations'
-require_relative '../flex_eq_matcher'
 
 # Provides an rspec matcher for CGI.parse to check Float precision.
 # @api private
@@ -20,7 +19,11 @@ RSpec::Matchers.define :match_query_params do |expected|
 
       a.zip(e).each do |a0, e0|
         # Timestamps can have optional precision.
-        expect(a0).to flex_eq(e0)
+        if (float = Float(a0) rescue false)
+          expect(float).to eq(e0.to_f)
+        else
+          expect(a0).to eq(e0)
+        end
       end
     end
   end
