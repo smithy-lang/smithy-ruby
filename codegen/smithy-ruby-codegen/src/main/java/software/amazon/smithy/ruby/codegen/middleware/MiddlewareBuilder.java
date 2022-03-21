@@ -128,6 +128,14 @@ public class MiddlewareBuilder {
                 .addConfig(validateInput)
                 .build();
 
+        ClientConfig disableHostPrefix = (new ClientConfig.Builder())
+                .name("disable_host_prefix")
+                .type("Boolean")
+                .defaultValue("false")
+                .documentation(
+                        "When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.")
+                .build();
+
         Middleware build = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Build")
                 .step(MiddlewareStackStep.SERIALIZE)
@@ -135,8 +143,10 @@ public class MiddlewareBuilder {
                     Map<String, String> params = new HashMap<>();
                     params.put("builder",
                             "Builders::" + symbolProvider.toSymbol(operation).getName());
+                    params.put("disable_host_prefix", "@disable_host_prefix");
                     return params;
                 })
+                .addConfig(disableHostPrefix)
                 .build();
 
         ClientConfig stubResponses = (new ClientConfig.Builder())
