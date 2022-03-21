@@ -38,6 +38,7 @@ module Hearth
       it 'applies the middleware to the stack' do
         subject.before(middleware_class, handler)
         subject.before(middleware_class, handler)
+        subject.remove(middleware_class)
         expect(stack).to receive(:use_before)
           .with(
             middleware_class,
@@ -50,6 +51,7 @@ module Hearth
             Hearth::Middleware::RequestHandler,
             { handler: handler }
           )
+        expect(stack).to receive(:remove).with(middleware_class)
         subject.apply(stack)
       end
     end

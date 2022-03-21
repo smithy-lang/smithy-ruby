@@ -14,7 +14,7 @@ module HighScoreService
 
     # Operation Builder for CreateHighScore
     class CreateHighScore
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'POST'
         http_req.append_path('/high_scores')
         params = Hearth::Query::ParamList.new
@@ -39,7 +39,7 @@ module HighScoreService
 
     # Operation Builder for DeleteHighScore
     class DeleteHighScore
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'DELETE'
         http_req.append_path(format(
             '/high_scores/%<id>s',
@@ -53,7 +53,7 @@ module HighScoreService
 
     # Operation Builder for GetHighScore
     class GetHighScore
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'GET'
         http_req.append_path(format(
             '/high_scores/%<id>s',
@@ -67,7 +67,7 @@ module HighScoreService
 
     # Operation Builder for ListHighScores
     class ListHighScores
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
         params = Hearth::Query::ParamList.new
@@ -77,7 +77,7 @@ module HighScoreService
 
     # Operation Builder for UpdateHighScore
     class UpdateHighScore
-      def self.build(http_req, input:)
+      def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'PUT'
         http_req.append_path(format(
             '/high_scores/%<id>s',

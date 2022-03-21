@@ -24,7 +24,7 @@ module Hearth
 
       # @return [Param, nil]
       def [](param_name)
-        @params[param_name.to_s]
+        @params[param_name]
       end
 
       # @param [String] param_name

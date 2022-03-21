@@ -23,14 +23,41 @@ module Hearth
         end
       end
 
+      describe '#[]' do
+        it 'gets the param by name' do
+          param = subject.set('name')
+          expect(subject['name']).to eq(param)
+        end
+      end
+
       describe '#delete' do
         it 'removes a returns a param' do
           param = subject.set('name', 'value')
           expect(subject.delete('name')).to be(param)
         end
 
-        it 'returns nil if the param was not seted' do
+        it 'returns nil if the param was not set' do
           expect(subject.delete('name')).to be(nil)
+        end
+      end
+
+      describe '#empty?' do
+        it 'returns true when empty' do
+          expect(subject.empty?).to be(true)
+        end
+
+        it 'returns false when not empty' do
+          subject.set('name', 'value')
+          expect(subject.empty?).to be(false)
+        end
+      end
+
+      describe '#each' do
+        it 'returns an enumerable' do
+          subject.set('name', 'value')
+          subject.set('other_name', 'other_value')
+          expect(subject.each).to be_a(Enumerable)
+          expect(subject.each.to_a).to eq(subject.to_a)
         end
       end
 
