@@ -46,6 +46,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
+import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 
 public class BuilderGenerator extends RestBuilderGeneratorBase {
@@ -241,28 +242,11 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // the default protocol format is date_time
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write("$LHearth::TimeHelper.to_epoch_seconds($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                    case HTTP_DATE:
-                        writer.write("$LHearth::TimeHelper.to_http_date($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                    case DATE_TIME:
-                    default:
-                        writer.write("$LHearth::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                                checkRequired());
-                        break;
-                }
-            } else {
-                writer.write("$LHearth::TimeHelper.to_date_time($L)$L", dataSetter, inputGetter,
-                        checkRequired());
-            }
+            writer.write("$L$L$L",
+                    dataSetter,
+                    TimestampFormat.serializeTimestamp(
+                            memberShape, inputGetter, TimestampFormatTrait.Format.DATE_TIME),
+                    checkRequired());
             return null;
         }
 
