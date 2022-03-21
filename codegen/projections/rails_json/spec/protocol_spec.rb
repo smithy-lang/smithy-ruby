@@ -1830,6 +1830,26 @@ module RailsJson
             ]
           })
         end
+        # Tests requests with string list header bindings that require quoting
+        #
+        it 'RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-StringList' => '"b,c", "\"def\"", a' })
+            response.body = StringIO.new('')
+            Hearth::Output.new
+          end
+          middleware.remove_send.remove_build
+          output = client.input_and_output_with_headers({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            header_string_list: [
+              "b,c",
+              "\"def\"",
+              "a"
+            ]
+          })
+        end
         # Tests responses with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
@@ -1935,6 +1955,30 @@ module RailsJson
               "a",
               "b",
               "c"
+            ]
+          })
+        end
+        # Tests requests with string list header bindings that require quoting
+        #
+        it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build
+          client.stub_responses(:input_and_output_with_headers, {
+            header_string_list: [
+              "b,c",
+              "\"def\"",
+              "a"
+            ]
+          })
+          output = client.input_and_output_with_headers({}, middleware: middleware)
+          expect(output.to_h).to eq({
+            header_string_list: [
+              "b,c",
+              "\"def\"",
+              "a"
             ]
           })
         end
