@@ -16,7 +16,6 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.BooleanShape;
@@ -42,6 +41,7 @@ import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -296,25 +296,10 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // the default protocol format is date_time, which is parsed by Time.parse
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (!format.isPresent()) {
-                format = shape.getTrait(TimestampFormatTrait.class);
-            }
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write("$1LTime.at($2L.to_i) if $2L", dataSetter, valueGetter);
-                        break;
-                    case HTTP_DATE:
-                    case DATE_TIME:
-                    default:
-                        writer.write("$1LTime.parse($2L) if $2L", dataSetter, valueGetter);
-                        break;
-                }
-            } else {
-                writer.write("$1LTime.parse($2L) if $2L", dataSetter, valueGetter);
-            }
+            writer.write("$L$L if $L", dataSetter,
+                    TimestampFormat.parseTimestamp(
+                            shape, memberShape, valueGetter, TimestampFormatTrait.Format.DATE_TIME),
+                    valueGetter);
             return null;
         }
 
@@ -383,22 +368,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // header values are serialized using the http-date format by default
-            Optional<TimestampFormatTrait> format = memberShape.getTrait(TimestampFormatTrait.class);
-            if (format.isPresent()) {
-                switch (format.get().getFormat()) {
-                    case EPOCH_SECONDS:
-                        writer.write(".map { |s| Time.at(s.to_i) }");
-                        break;
-                    case DATE_TIME:
-                    case HTTP_DATE:
-                    default:
-                        writer.write(".map { |s| Time.parse(s) }");
-                        break;
-                }
-            } else {
-                writer.write(".map { |s| Time.parse(s) }");
-            }
+            writer.write(".map { |s| $L }",
+                    TimestampFormat.parseTimestamp(
+                            shape, memberShape, "s", TimestampFormatTrait.Format.HTTP_DATE));
             return null;
         }
     }

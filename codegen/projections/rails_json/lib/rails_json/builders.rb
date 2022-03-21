@@ -778,7 +778,7 @@ module RailsJson
         data[:string] = input[:string] unless input[:string].nil?
         data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
         data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
@@ -830,7 +830,7 @@ module RailsJson
         data[:string] = input[:string] unless input[:string].nil?
         data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
         data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]) unless input[:unix_timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
         data
       end
     end
