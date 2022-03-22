@@ -15,7 +15,10 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.Collections;
+import java.util.List;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -75,4 +78,47 @@ public interface ProtocolGenerator {
      * @param context context to use for generation
      */
     void generateStubs(GenerationContext context);
+
+    /**
+     * Return all of the Middleware to be registered on the Client.
+     *
+     * @param middlewareBuilder - Client middleware to be modified
+     * @param context - Generation context to process within
+     */
+    default void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
+        // pass
+    }
+
+    /**
+     * Returns a list of additional (non-middleware) Config
+     * to be added to the generated Client.
+     *
+     * @param context - Generation context to process within
+     *
+     * @return list of additional config
+     */
+    default List<ClientConfig> getAdditionalClientConfig(GenerationContext context) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Writes additional files.
+     *
+     * @param context - context for generation
+     * @return List of relative paths generated to be added to module requires.
+     */
+    default List<String> writeAdditionalFiles(GenerationContext context) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Adds additional Gem Dependencies.
+     *
+     * @param context - context for generation
+     * @return List of relative paths generated to be added to module requires.
+     */
+    default List<RubyDependency> additionalGemDependencies(
+            GenerationContext context) {
+        return Collections.emptyList();
+    }
 }

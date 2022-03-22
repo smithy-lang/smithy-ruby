@@ -20,7 +20,7 @@ import java.util.List;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.ruby.codegen.middleware.Middleware;
+import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -56,7 +56,7 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, CodeWri
      * code generation starts. This plugin can be used to add RuntimeClientPlugins
      * to the integration's list of plugin.
      *
-     * @param context - generation context to process within
+     * @param context - generation context to process within. Contains the finalized model.
      */
     default void processFinalizedModel(GenerationContext context) {
         // pass
@@ -65,19 +65,21 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, CodeWri
     /**
      * Return all of the Middleware to be registered on the Client.
      *
-     * @return list of middleware to be registered on the client
+     * @param middlewareBuilder - Client middleware to be modified
+     * @param context           - Generation context to process within
      */
-    default List<Middleware> getClientMiddleware() {
-        return Collections.emptyList();
+    default void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
+        // pass
     }
 
     /**
      * Returns a list of additional (non-middleware) Config
      * to be added to the generated Client.
      *
+     * @param context - Generation context to process within
      * @return list of additional config
      */
-    default List<ClientConfig> getAdditionalClientConfig() {
+    default List<ClientConfig> getAdditionalClientConfig(GenerationContext context) {
         return Collections.emptyList();
     }
 

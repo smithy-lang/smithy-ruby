@@ -240,6 +240,7 @@ public class CodegenOrchestrator {
                 .map((integration) -> integration.writeAdditionalFiles(context))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+        context.protocolGenerator().ifPresent((g) -> additionalFiles.addAll(g.writeAdditionalFiles(context)));
         ModuleGenerator moduleGenerator = new ModuleGenerator(context);
         moduleGenerator.render(additionalFiles);
         LOGGER.info("generated module");
@@ -252,6 +253,8 @@ public class CodegenOrchestrator {
                                 .additionalGemDependencies(context))
                         .flatMap(Collection::stream)
                         .collect(Collectors.toList());
+        context.protocolGenerator()
+                .ifPresent((g) -> additionalDependencies.addAll(g.additionalGemDependencies(context)));
         GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
         gemspecGenerator.render(additionalDependencies);
         LOGGER.info("generated .gemspec");

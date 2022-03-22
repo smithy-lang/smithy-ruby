@@ -67,11 +67,10 @@ public class ClientGenerator {
         middlewareBuilder.addDefaultMiddleware(context);
 
         context.integrations().forEach((integration) -> {
-            middlewareBuilder.register(integration.getClientMiddleware());
-            LOGGER.fine("Integration " + integration + " registered middleware: "
-                    + integration.getClientMiddleware().stream()
-                    .map((m) -> m.toString()).collect(Collectors.joining(",")));
+            integration.modifyClientMiddleware(middlewareBuilder, context);
         });
+
+        context.protocolGenerator().ifPresent((g) -> g.modifyClientMiddleware(middlewareBuilder, context));
 
         // get all config
         Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig();
@@ -80,10 +79,11 @@ public class ClientGenerator {
         unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));
         unorderedConfig.addAll(context.integrations()
                 .stream()
-                .map((i) -> i.getAdditionalClientConfig())
+                .map((i) -> i.getAdditionalClientConfig(context))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList())
         );
+        context.protocolGenerator().ifPresent((g) -> unorderedConfig.addAll(g.getAdditionalClientConfig(context)));
 
         clientConfig = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
