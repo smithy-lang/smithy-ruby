@@ -121,7 +121,7 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
+                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
@@ -149,7 +149,8 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it 'stubs $L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
+                    .openBlock("it 'stubs $L'$L do", testCase.getId(),
+                            skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubMiddleware(testCase))
                     .write("middleware.remove_build")
                     .write("client.stub_responses(:$L, $L)", operationName,
@@ -178,7 +179,7 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
+                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "request"))
                     .call(() -> {
                         if (inputShape.members().stream().anyMatch((m) -> m.hasTrait(IdempotencyTokenTrait.class))) {
                             // auto generated tokens during protocol tests should always be this value
@@ -203,9 +204,9 @@ public class HttpProtocolTestGenerator {
         writer.closeBlock("end");
     }
 
-    private String skipTest(OperationShape operation, String testCaseId) {
+    private String skipTest(OperationShape operation, String testCaseId, String testType) {
         if (operation.hasTrait(SkipTestsTrait.class)) {
-            Optional<SkipTest> skipTest = operation.expectTrait(SkipTestsTrait.class).skipTest(testCaseId);
+            Optional<SkipTest> skipTest = operation.expectTrait(SkipTestsTrait.class).skipTest(testCaseId, testType);
             if (skipTest.isPresent()) {
                 if (skipTest.get().getId().equals(testCaseId)) {
                     if (skipTest.get().getReason().isPresent()) {

@@ -12,11 +12,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public class SkipTest implements ToSmithyBuilder<SkipTest>, ToNode {
     private final String id;
     private final String reason;
+    private final String type;
 
 
     private SkipTest(Builder builder) {
         this.id = builder.id;
         this.reason = builder.reason;
+        this.type = builder.type;
     }
 
     public String getId() {
@@ -26,6 +28,8 @@ public class SkipTest implements ToSmithyBuilder<SkipTest>, ToNode {
     public Optional<String> getReason() {
         return Optional.ofNullable(reason);
     }
+
+    public Optional<String> getType() { return Optional.ofNullable(type); }
 
     /**
      * @return Returns a builder used to create a RailJson trait.
@@ -37,7 +41,8 @@ public class SkipTest implements ToSmithyBuilder<SkipTest>, ToNode {
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("id", getId())
-                .withOptionalMember("reason", getReason().map(Node::from));
+                .withOptionalMember("reason", getReason().map(Node::from))
+                .withOptionalMember("type", getType().map(Node::from));
 
         return builder.build();
     }
@@ -48,18 +53,21 @@ public class SkipTest implements ToSmithyBuilder<SkipTest>, ToNode {
                 .map(v -> v.expectStringNode().getValue()).orElse(null);
         String reasonValue = objectNode.getMember("reason")
                 .map(v -> v.expectStringNode().getValue()).orElse(null);
-        return builder().id(idValue).reason(reasonValue).build();
+        String typeValue = objectNode.getMember("type")
+                .map(v -> v.expectStringNode().getValue()).orElse(null);
+        return builder().id(idValue).reason(reasonValue).type(typeValue).build();
     }
 
     @Override
     public SmithyBuilder<SkipTest> toBuilder() {
-        return builder().id(id).reason(reason);
+        return builder().id(id).reason(reason).type(type);
     }
 
     public static final class Builder implements SmithyBuilder<SkipTest> {
 
         private String id;
         private String reason;
+        private String type;;
 
         public Builder id(String id) {
             this.id = id;
@@ -68,6 +76,11 @@ public class SkipTest implements ToSmithyBuilder<SkipTest>, ToNode {
 
         public Builder reason(String reason) {
             this.reason = reason;
+            return this;
+        }
+
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
