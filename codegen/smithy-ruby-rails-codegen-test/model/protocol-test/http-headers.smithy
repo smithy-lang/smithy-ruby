@@ -112,7 +112,8 @@ apply InputAndOutputWithHeaders @httpRequestTests([
 apply InputAndOutputWithHeaders @skipTests([
     {
         id: "RailsJsonInputAndOutputWithQuotedStringHeaders",
-        reason: "Not Supported"
+        reason: "Not Supported",
+        type: "response"
     }
 ])
 apply InputAndOutputWithHeaders @httpResponseTests([

@@ -7,6 +7,19 @@ list skipTests {
 }
 
 structure skipTest {
+    @required
     id: String,
-    reason: String
+    reason: String,
+    type: TestType
 }
+@enum([
+    {
+        value: "request",
+        name: "REQUEST"
+    },
+    {
+        value: "response",
+        name: "RESPONSE"
+    }
+])
+string TestType
