@@ -50,7 +50,7 @@ public class MiddlewareBuilder {
     }
 
     public boolean remove(MiddlewareStackStep step, String klass) {
-        return middlewares.get(step).removeIf( (m) -> m.getKlass().equals(klass));
+        return middlewares.get(step).removeIf((m) -> m.getKlass().equals(klass));
     }
 
     public void register(Middleware middleware) {
