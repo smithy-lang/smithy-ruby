@@ -7,6 +7,7 @@ list skipTests {
 }
 
 structure skipTest {
+    @required
     id: String,
     reason: String,
     type: TestType
