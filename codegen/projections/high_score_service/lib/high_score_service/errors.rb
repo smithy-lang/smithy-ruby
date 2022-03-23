@@ -62,7 +62,15 @@ module HighScoreService
     end
 
     # Base class for all errors returned by this service
-    class ApiError < Hearth::HTTP::ApiError; end
+    class ApiError < Hearth::HTTP::ApiError
+      def initialize(request_id: nil, **kwargs)
+        @request_id = request_id
+        super(**kwargs)
+      end
+
+      # @return [String, nil] request_id
+      attr_reader :request_id
+    end
 
     # Base class for all errors returned where the client is at fault.
     # These are generally errors with 4XX HTTP status codes.
@@ -93,6 +101,7 @@ module HighScoreService
       #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
+        kwargs[:request_id] = http_resp.headers['x-request-id']
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)

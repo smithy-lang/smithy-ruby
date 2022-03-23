@@ -10,6 +10,17 @@ module WhiteLabel
         error = ApiError.new(http_resp: http_resp, error_code: 'error')
         expect(error).to be_a(Hearth::HTTP::ApiError)
       end
+
+      it 'stores a request_id' do
+        http_resp = Hearth::HTTP::Response.new
+        error = ApiError.new(
+          http_resp: http_resp,
+          request_id: '123',
+          error_code: 'error',
+          message: 'error message'
+        )
+        expect(error.request_id).to eq('123')
+      end
     end
 
     describe ApiClientError do

@@ -91,7 +91,7 @@ module Weather
           end
           middleware.remove_send.remove_build
           output = client.get_city({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             member_name: "Seattle",
             coordinates: {
               latitude: 12.34,
@@ -130,7 +130,7 @@ module Weather
             }
           })
           output = client.get_city({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             member_name: "Seattle",
             coordinates: {
               latitude: 12.34,

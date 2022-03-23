@@ -56,7 +56,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.operation____789_bad_name({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             member: {
               member____123foo: "foo value"
             }
@@ -79,7 +79,7 @@ module RailsJson
             }
           })
           output = client.operation____789_bad_name({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             member: {
               member____123foo: "foo value"
             }
@@ -398,7 +398,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: {'foo' => 'bar'}
           })
@@ -418,7 +418,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 'hello'
           })
@@ -438,7 +438,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 10
           })
@@ -458,7 +458,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: false
           })
@@ -481,7 +481,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
           })
@@ -502,7 +502,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           })
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: {'foo' => 'bar'}
           })
@@ -520,7 +520,7 @@ module RailsJson
             document_value: 'hello'
           })
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 'hello'
           })
@@ -538,7 +538,7 @@ module RailsJson
             document_value: 10
           })
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 10
           })
@@ -556,7 +556,7 @@ module RailsJson
             document_value: false
           })
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: false
           })
@@ -574,7 +574,7 @@ module RailsJson
             document_value: [true, false]
           })
           output = client.document_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
           })
@@ -639,7 +639,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type_as_payload({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
           })
         end
@@ -655,7 +655,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.document_type_as_payload({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             document_value: 'hello'
           })
         end
@@ -674,7 +674,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           })
           output = client.document_type_as_payload({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
           })
         end
@@ -690,7 +690,7 @@ module RailsJson
             document_value: 'hello'
           })
           output = client.document_type_as_payload({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             document_value: 'hello'
           })
         end
@@ -716,7 +716,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.empty_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -737,7 +737,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.empty_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -757,7 +757,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.empty_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -779,7 +779,7 @@ module RailsJson
 
           })
           output = client.empty_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -798,7 +798,7 @@ module RailsJson
 
           })
           output = client.empty_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -818,7 +818,7 @@ module RailsJson
 
           })
           output = client.empty_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -1010,7 +1010,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_payload_traits({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
           })
@@ -1027,7 +1027,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_payload_traits({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo"
           })
         end
@@ -1047,7 +1047,7 @@ module RailsJson
             blob: 'blobby blob blob'
           })
           output = client.http_payload_traits({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
           })
@@ -1064,7 +1064,7 @@ module RailsJson
             foo: "Foo"
           })
           output = client.http_payload_traits({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo"
           })
         end
@@ -1109,7 +1109,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_payload_traits_with_media_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
           })
@@ -1130,7 +1130,7 @@ module RailsJson
             blob: 'blobby blob blob'
           })
           output = client.http_payload_traits_with_media_type({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
           })
@@ -1184,7 +1184,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_payload_with_structure({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
               member_name: "Phreddy"
@@ -1209,7 +1209,7 @@ module RailsJson
             }
           })
           output = client.http_payload_with_structure({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
               member_name: "Phreddy"
@@ -1278,7 +1278,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_prefix_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo",
             foo_map: {
               'Abc' => "Abc value",
@@ -1305,7 +1305,7 @@ module RailsJson
             }
           })
           output = client.http_prefix_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo: "Foo",
             foo_map: {
               'Abc' => "Abc value",
@@ -1331,7 +1331,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_prefix_headers_in_response({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             prefix_headers: {
               'X-Foo' => "Foo",
               'Hello' => "Hello"
@@ -1356,7 +1356,7 @@ module RailsJson
             }
           })
           output = client.http_prefix_headers_in_response({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             prefix_headers: {
               'X-Foo' => "Foo",
               'Hello' => "Hello"
@@ -1550,7 +1550,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_response_code({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             status: 201
           })
         end
@@ -1567,7 +1567,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.http_response_code({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             status: 201
           })
         end
@@ -1590,7 +1590,7 @@ module RailsJson
             status: 201
           })
           output = client.http_response_code({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             status: 201
           })
         end
@@ -1608,7 +1608,7 @@ module RailsJson
             status: 201
           })
           output = client.http_response_code({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             status: 201
           })
         end
@@ -1634,7 +1634,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.ignore_query_params_in_response({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -1651,7 +1651,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.ignore_query_params_in_response({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -1673,7 +1673,7 @@ module RailsJson
 
           })
           output = client.ignore_query_params_in_response({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -1691,7 +1691,7 @@ module RailsJson
 
           })
           output = client.ignore_query_params_in_response({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -1816,7 +1816,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_string: "Hello",
             header_string_list: [
               "a",
@@ -1842,7 +1842,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_string_list: [
               "b,c",
               "\"def\"",
@@ -1862,7 +1862,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_byte: 1,
             header_short: 123,
             header_integer: 123,
@@ -1888,7 +1888,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_true_bool: true,
             header_false_bool: false,
             header_boolean_list: [
@@ -1910,7 +1910,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_enum: "Foo",
             header_enum_list: [
               "Foo",
@@ -1944,7 +1944,7 @@ module RailsJson
             ]
           })
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_string: "Hello",
             header_string_list: [
               "a",
@@ -1974,7 +1974,7 @@ module RailsJson
             ]
           })
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_string_list: [
               "b,c",
               "\"def\"",
@@ -2004,7 +2004,7 @@ module RailsJson
             ]
           })
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_byte: 1,
             header_short: 123,
             header_integer: 123,
@@ -2036,7 +2036,7 @@ module RailsJson
             ]
           })
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_true_bool: true,
             header_false_bool: false,
             header_boolean_list: [
@@ -2063,7 +2063,7 @@ module RailsJson
             ]
           })
           output = client.input_and_output_with_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             header_enum: "Foo",
             header_enum_list: [
               "Foo",
@@ -2157,7 +2157,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_enums({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
             foo_enum2: "0",
             foo_enum3: "1",
@@ -2204,7 +2204,7 @@ module RailsJson
             }
           })
           output = client.json_enums({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
             foo_enum2: "0",
             foo_enum3: "1",
@@ -2484,7 +2484,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_struct_map: {
               'foo' => {
                 hi: "there"
@@ -2528,7 +2528,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_boolean_map: {
               'x' => nil
             },
@@ -2568,7 +2568,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_number_map: {
               'x' => 0
             },
@@ -2600,7 +2600,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
 
@@ -2629,7 +2629,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
 
@@ -2659,7 +2659,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
 
@@ -2691,7 +2691,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
 
@@ -2733,7 +2733,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_struct_map: {
               'foo' => {
                 hi: "there"
@@ -2775,7 +2775,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_boolean_map: {
               'x' => nil
             },
@@ -2813,7 +2813,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_number_map: {
               'x' => 0
             },
@@ -2848,7 +2848,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
 
@@ -2880,7 +2880,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
 
@@ -2913,7 +2913,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
 
@@ -2947,7 +2947,7 @@ module RailsJson
             }
           })
           output = client.json_maps({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
 
@@ -3205,7 +3205,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               string_value: "foo"
             }
@@ -3227,7 +3227,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               boolean_value: true
             }
@@ -3249,7 +3249,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               number_value: 1
             }
@@ -3271,7 +3271,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               blob_value: 'foo'
             }
@@ -3293,7 +3293,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               timestamp_value: Time.at(1398796238)
             }
@@ -3315,7 +3315,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               enum_value: "Foo"
             }
@@ -3337,7 +3337,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               list_value: [
                 "foo",
@@ -3365,7 +3365,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               map_value: {
                 'foo' => "bar",
@@ -3392,7 +3392,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               structure_value: {
                 hi: "hello"
@@ -3417,7 +3417,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               string_value: "foo"
             }
@@ -3437,7 +3437,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               boolean_value: true
             }
@@ -3457,7 +3457,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               number_value: 1
             }
@@ -3477,7 +3477,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               blob_value: 'foo'
             }
@@ -3497,7 +3497,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               timestamp_value: Time.at(1398796238)
             }
@@ -3517,7 +3517,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               enum_value: "Foo"
             }
@@ -3540,7 +3540,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               list_value: [
                 "foo",
@@ -3566,7 +3566,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               map_value: {
                 'foo' => "bar",
@@ -3591,7 +3591,7 @@ module RailsJson
             }
           })
           output = client.json_unions({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             contents: {
               structure_value: {
                 hi: "hello"
@@ -4222,7 +4222,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -4238,7 +4238,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string: "string-value"
           })
         end
@@ -4254,7 +4254,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             integer: 1234
           })
         end
@@ -4270,7 +4270,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             long: 1234567890123456789
           })
         end
@@ -4286,7 +4286,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             float: 1234.5
           })
         end
@@ -4302,7 +4302,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
           })
         end
@@ -4318,7 +4318,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             boolean: true
           })
         end
@@ -4334,7 +4334,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             boolean: false
           })
         end
@@ -4350,7 +4350,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             blob: 'binary-value'
           })
         end
@@ -4366,7 +4366,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
           })
         end
@@ -4382,7 +4382,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
           })
         end
@@ -4398,7 +4398,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
           })
         end
@@ -4414,7 +4414,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_strings: [
               "abc",
               "mno",
@@ -4434,7 +4434,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
               {
                 'size' => "large"
@@ -4457,7 +4457,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_lists: [
               [
                 "abc",
@@ -4484,7 +4484,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_structs: [
               {
                 value: "value-1"
@@ -4507,7 +4507,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             recursive_list: [
               {
                 recursive_list: [
@@ -4535,7 +4535,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_strings: {
               'size' => "large",
               'color' => "red"
@@ -4554,7 +4554,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
               'sizes' => [
                 "large",
@@ -4579,7 +4579,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_maps: {
               'sizes' => {
                 'large' => "L",
@@ -4604,7 +4604,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_structs: {
               'size' => {
                 value: "small"
@@ -4627,7 +4627,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             recursive_map: {
               'key-1' => {
                 recursive_map: {
@@ -4655,7 +4655,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -4674,7 +4674,7 @@ module RailsJson
 
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -4690,7 +4690,7 @@ module RailsJson
             string: "string-value"
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             string: "string-value"
           })
         end
@@ -4706,7 +4706,7 @@ module RailsJson
             integer: 1234
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             integer: 1234
           })
         end
@@ -4722,7 +4722,7 @@ module RailsJson
             long: 1234567890123456789
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             long: 1234567890123456789
           })
         end
@@ -4738,7 +4738,7 @@ module RailsJson
             float: 1234.5
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             float: 1234.5
           })
         end
@@ -4754,7 +4754,7 @@ module RailsJson
             double: 1.2345678912345679E8
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
           })
         end
@@ -4770,7 +4770,7 @@ module RailsJson
             boolean: true
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             boolean: true
           })
         end
@@ -4786,7 +4786,7 @@ module RailsJson
             boolean: false
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             boolean: false
           })
         end
@@ -4802,7 +4802,7 @@ module RailsJson
             blob: 'binary-value'
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             blob: 'binary-value'
           })
         end
@@ -4818,7 +4818,7 @@ module RailsJson
             timestamp: Time.at(946845296)
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
           })
         end
@@ -4834,7 +4834,7 @@ module RailsJson
             iso8601_timestamp: Time.at(946845296)
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
           })
         end
@@ -4850,7 +4850,7 @@ module RailsJson
             httpdate_timestamp: Time.at(946845296)
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
           })
         end
@@ -4870,7 +4870,7 @@ module RailsJson
             ]
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_strings: [
               "abc",
               "mno",
@@ -4897,7 +4897,7 @@ module RailsJson
             ]
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
               {
                 'size' => "large"
@@ -4931,7 +4931,7 @@ module RailsJson
             ]
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_lists: [
               [
                 "abc",
@@ -4965,7 +4965,7 @@ module RailsJson
             ]
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             list_of_structs: [
               {
                 value: "value-1"
@@ -5000,7 +5000,7 @@ module RailsJson
             ]
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             recursive_list: [
               {
                 recursive_list: [
@@ -5031,7 +5031,7 @@ module RailsJson
             }
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_strings: {
               'size' => "large",
               'color' => "red"
@@ -5059,7 +5059,7 @@ module RailsJson
             }
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
               'sizes' => [
                 "large",
@@ -5093,7 +5093,7 @@ module RailsJson
             }
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_maps: {
               'sizes' => {
                 'large' => "L",
@@ -5125,7 +5125,7 @@ module RailsJson
             }
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             map_of_structs: {
               'size' => {
                 value: "small"
@@ -5160,7 +5160,7 @@ module RailsJson
             }
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             recursive_map: {
               'key-1' => {
                 recursive_map: {
@@ -5188,7 +5188,7 @@ module RailsJson
 
           })
           output = client.kitchen_sink_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -5231,7 +5231,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.media_type_header({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             json: "true"
           })
         end
@@ -5250,7 +5250,7 @@ module RailsJson
             json: "true"
           })
           output = client.media_type_header({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             json: "true"
           })
         end
@@ -5395,7 +5395,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.null_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -5415,7 +5415,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.null_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_string_map: {
               'foo' => nil
             }
@@ -5437,7 +5437,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.null_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_string_list: [
               nil
             ]
@@ -5458,7 +5458,7 @@ module RailsJson
 
           })
           output = client.null_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
 
           })
         end
@@ -5476,7 +5476,7 @@ module RailsJson
             }
           })
           output = client.null_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_string_map: {
               'foo' => nil
             }
@@ -5496,7 +5496,7 @@ module RailsJson
             ]
           })
           output = client.null_operation({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             sparse_string_list: [
               nil
             ]
@@ -5717,7 +5717,7 @@ module RailsJson
           end
           middleware.remove_send.remove_build
           output = client.timestamp_format_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
             member_date_time: Time.at(1576540098),
@@ -5748,7 +5748,7 @@ module RailsJson
             target_date_time: Time.at(1576540098)
           })
           output = client.timestamp_format_headers({}, middleware: middleware)
-          expect(output.to_h).to eq({
+          expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
             member_date_time: Time.at(1576540098),

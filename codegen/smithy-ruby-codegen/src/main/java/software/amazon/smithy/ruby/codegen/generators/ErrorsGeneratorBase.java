@@ -105,7 +105,15 @@ public abstract class ErrorsGeneratorBase {
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < Hearth::HTTP::ApiError; end")
+                .openBlock("class ApiError < Hearth::HTTP::ApiError")
+                .openBlock("def initialize(request_id: nil, **kwargs)")
+                .write("@request_id = request_id")
+                .write("super(**kwargs)")
+                .closeBlock("end")
+                .write("")
+                .write("# @return [String, nil] request_id")
+                .write("attr_reader :request_id")
+                .closeBlock("end")
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
@@ -129,6 +137,8 @@ public abstract class ErrorsGeneratorBase {
     private void renderRbsBaseErrors() {
         rbsWriter
                 .write("\nclass ApiError < Hearth::HTTP::ApiError")
+                .write("def initialize: (request_id: untyped request_id, **untyped kwargs) -> void\n")
+                .write("attr_reader request_id: untyped")
                 .write("end")
                 .write("\nclass ApiClientError < ApiError")
                 .write("end")
@@ -205,6 +215,7 @@ public abstract class ErrorsGeneratorBase {
         writer
                 .openBlock("def initialize(http_resp:, **kwargs)")
                 .write("@data = Parsers::$L.parse(http_resp)", errorName)
+                .write("kwargs[:request_id] = http_resp.headers['x-request-id']")
                 .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                 .write("super(http_resp: http_resp, **kwargs)")
                 .closeBlock("end")
