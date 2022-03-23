@@ -334,7 +334,7 @@ module RailsJson
       def self.build(input)
         data = {}
         data[:greeting] = input[:greeting] unless input[:greeting].nil?
-        data[:name] = input[:member_name] unless input[:member_name].nil?
+        data[:name] = input[:name] unless input[:name].nil?
         data
       end
     end

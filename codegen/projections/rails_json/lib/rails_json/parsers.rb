@@ -162,7 +162,7 @@ module RailsJson
       def self.parse(map)
         data = Types::NestedPayload.new
         data.greeting = map['greeting']
-        data.member_name = map['name']
+        data.name = map['name']
         return data
       end
     end

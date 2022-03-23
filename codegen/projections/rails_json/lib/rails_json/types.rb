@@ -1654,13 +1654,13 @@ module RailsJson
     #
     #   @return [String]
     #
-    # @!attribute member_name
+    # @!attribute name
     #
     #   @return [String]
     #
     NestedPayload = ::Struct.new(
       :greeting,
-      :member_name,
+      :name,
       keyword_init: true
     ) do
       include Hearth::Structure

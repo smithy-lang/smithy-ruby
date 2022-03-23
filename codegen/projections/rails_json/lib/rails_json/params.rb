@@ -1034,7 +1034,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::NestedPayload, context: context)
         type = Types::NestedPayload.new
         type.greeting = params[:greeting]
-        type.member_name = params[:member_name]
+        type.name = params[:name]
         type
       end
     end

@@ -756,7 +756,7 @@ module RailsJson
     #   resp = client.http_payload_with_structure(
     #     nested: {
     #       greeting: 'greeting',
-    #       member_name: 'name'
+    #       name: 'name'
     #     }
     #   )
     #
@@ -765,7 +765,7 @@ module RailsJson
     #   resp #=> Types::HttpPayloadWithStructureOutput
     #   resp.nested #=> Types::NestedPayload
     #   resp.nested.greeting #=> String
-    #   resp.nested.member_name #=> String
+    #   resp.nested.name #=> String
     #
     def http_payload_with_structure(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

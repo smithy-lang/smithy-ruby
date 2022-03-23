@@ -81,11 +81,15 @@ public class RubySymbolProvider implements SymbolProvider,
                 .buildEscaper();
     }
 
+    // Taken from https://docs.ruby-lang.org/en/3.1/doc/keywords_rdoc.html
+    // Some of these will never occur (like defined?) but define the entire list anyway for safety.
     private ReservedWords rubyReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
-                {"alias", "break", "BEGIN", "case", "class", "def", "do", "else", "elsif", "end", "ensure", "for",
-                        "if", "in", "next", "nil", "module"};
+                {"__ENCODING__", "__LINE__", "__FILE__", "BEGIN", "END", "alias", "and", "begin", "break", "case",
+                        "class", "def", "defined?", "do", "else", "elsif", "end", "ensure", "false", "for",
+                        "if", "in", "module", "next", "nil", "not", "or", "redo", "rescue", "retry", "return",
+                        "self", "super", "then", "true", "undef", "unless", "until", "when", "while", "yield"};
 
         for (String w : reserved) {
             reservedNames.put(w, w + "_");
@@ -93,23 +97,22 @@ public class RubySymbolProvider implements SymbolProvider,
         return reservedNames.build();
     }
 
+    // Mark all instances methods of a class as reserved. Shape members are accessors of a class.
+    // Taken from "class Foo; end; Foo.new.methods.sort".
     private ReservedWords memberReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
-                {"allocate", "superclass", "new", "included_modules", "name", "ancestors", "attr", "attr_reader",
-                        "attr_writer", "attr_accessor", "instance_methods", "public_instance_methods",
-                        "protected_instance_methods", "private_instance_methods", "constants", "const_get", "const_set",
-                        "class_variables", "remove_class_variable", "class_variable_get", "class_variable_set",
-                        "freeze", "inspect", "private_constant", "public_constant", "const_missing",
-                        "deprecate_constant", "include", "prepend", "module_exec", "module_eval", "class_eval",
-                        "remove_method", "undef_method", "class_exec", "alias_method", "to_s", "private_class_method",
-                        "public_class_method", "autoload", "instance_method", "public_instance_method", "define_method",
-                        "remove_instance_variable", "tap", "instance_variable_set", "protected_methods",
-                        "instance_variables", "instance_variable_get", "public_methods", "private_methods", "method",
-                        "public_method", "public_send", "singleton_method", "define_singleton_method", "extend",
-                        "to_enum", "enum_for", "object_id", "send", "display", "hash", "class", "singleton_class",
-                        "clone", "dup", "itself", "yield_self", "then", "taint", "untaint", "untrust", "trust",
-                        "methods", "singleton_methods", "instance_exec", "instance_eval", "__id__", "__send__"};
+                {"!", "!=", "!~", "<=>", "==", "===", "=~", "__id__", "__send__", "class", "clone",
+                        "define_singleton_method", "display", "dup", "enum_for", "eql?", "equal?", "extend", "freeze",
+                        "frozen?", "hash", "inspect", "instance_eval", "instance_exec", "instance_of?",
+                        "instance_variable_defined?", "instance_variable_get", "instance_variable_set",
+                        "instance_variables", "is_a?", "itself", "kind_of?", "method", "methods", "nil?", "object_id",
+                        "pretty_inspect", "pretty_print", "pretty_print_cycle", "pretty_print_inspect",
+                        "pretty_print_instance_variables", "private_methods", "protected_methods", "public_method",
+                        "public_methods", "public_send", "remove_instance_variable", "respond_to?", "send",
+                        "singleton_class", "singleton_method", "singleton_methods", "taint", "tainted?", "tap", "then",
+                        "to_enum", "to_s", "trust", "untaint", "untrust", "untrusted?", "yield_self"};
+
         for (String w : reserved) {
             reservedNames.put(w, "member_" + w);
         }

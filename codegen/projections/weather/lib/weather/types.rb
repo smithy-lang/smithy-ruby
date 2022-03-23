@@ -91,7 +91,7 @@ module Weather
     #
     #   @return [String]
     #
-    # @!attribute member_name
+    # @!attribute name
     #
     #   @return [String]
     #
@@ -105,7 +105,7 @@ module Weather
     #
     CitySummary = ::Struct.new(
       :city_id,
-      :member_name,
+      :name,
       :number,
       :case,
       keyword_init: true
@@ -196,7 +196,7 @@ module Weather
       include Hearth::Structure
     end
 
-    # @!attribute member_name
+    # @!attribute name
     #
     #   @return [String]
     #
@@ -209,7 +209,7 @@ module Weather
     #   @return [CitySummary]
     #
     GetCityOutput = ::Struct.new(
-      :member_name,
+      :name,
       :coordinates,
       :city,
       keyword_init: true

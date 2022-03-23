@@ -77,7 +77,7 @@ module Weather
         Hearth::Validator.validate!(params, ::Hash, Types::CitySummary, context: context)
         type = Types::CitySummary.new
         type.city_id = params[:city_id]
-        type.member_name = params[:member_name]
+        type.name = params[:name]
         type.number = params[:number]
         type.case = params[:case]
         type
@@ -145,7 +145,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::GetCityOutput, context: context)
         type = Types::GetCityOutput.new
-        type.member_name = params[:member_name]
+        type.name = params[:name]
         type.coordinates = CityCoordinates.build(params[:coordinates], context: "#{context}[:coordinates]") unless params[:coordinates].nil?
         type.city = CitySummary.build(params[:city], context: "#{context}[:city]") unless params[:city].nil?
         type

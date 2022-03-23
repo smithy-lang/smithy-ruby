@@ -14,7 +14,7 @@ module Weather
     class GetCity
       def self.default(visited=[])
         {
-          member_name: 'member_name',
+          name: 'name',
           coordinates: Stubs::CityCoordinates.default(visited),
           city: Stubs::CitySummary.default(visited),
         }
@@ -33,7 +33,7 @@ module Weather
         visited = visited + ['CitySummary']
         {
           city_id: 'city_id',
-          member_name: 'member_name',
+          name: 'name',
           number: 'number',
           case: 'case',
         }

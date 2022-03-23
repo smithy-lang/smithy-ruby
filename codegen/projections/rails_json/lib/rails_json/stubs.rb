@@ -213,7 +213,7 @@ module RailsJson
         visited = visited + ['NestedPayload']
         {
           greeting: 'greeting',
-          member_name: 'member_name',
+          name: 'name',
         }
       end
 
@@ -221,7 +221,7 @@ module RailsJson
         stub ||= Types::NestedPayload.new
         data = {}
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
-        data[:name] = stub[:member_name] unless stub[:member_name].nil?
+        data[:name] = stub[:name] unless stub[:name].nil?
         data
       end
     end

@@ -1162,7 +1162,7 @@ module RailsJson
           client.http_payload_with_structure({
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           }, **opts)
         end
@@ -1187,7 +1187,7 @@ module RailsJson
           expect(output.to_h).to eq({
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           })
         end
@@ -1205,14 +1205,14 @@ module RailsJson
           client.stub_responses(:http_payload_with_structure, {
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           })
           output = client.http_payload_with_structure({}, middleware: middleware)
           expect(output.to_h).to eq({
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           })
         end

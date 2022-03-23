@@ -74,7 +74,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::CitySummary, context: context)
         Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
-        Hearth::Validator.validate!(input[:member_name], ::String, context: "#{context}[:member_name]")
+        Hearth::Validator.validate!(input[:name], ::String, context: "#{context}[:name]")
         Hearth::Validator.validate!(input[:number], ::String, context: "#{context}[:number]")
         Hearth::Validator.validate!(input[:case], ::String, context: "#{context}[:case]")
       end
@@ -128,7 +128,7 @@ module Weather
     class GetCityOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetCityOutput, context: context)
-        Hearth::Validator.validate!(input[:member_name], ::String, context: "#{context}[:member_name]")
+        Hearth::Validator.validate!(input[:name], ::String, context: "#{context}[:name]")
         Validators::CityCoordinates.validate!(input[:coordinates], context: "#{context}[:coordinates]") unless input[:coordinates].nil?
         Validators::CitySummary.validate!(input[:city], context: "#{context}[:city]") unless input[:city].nil?
       end

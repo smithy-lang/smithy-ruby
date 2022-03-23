@@ -74,13 +74,13 @@ module Weather
     # @example Response structure
     #
     #   resp #=> Types::GetCityOutput
-    #   resp.member_name #=> String
+    #   resp.name #=> String
     #   resp.coordinates #=> Types::CityCoordinates
     #   resp.coordinates.latitude #=> Float
     #   resp.coordinates.longitude #=> Float
     #   resp.city #=> Types::CitySummary
     #   resp.city.city_id #=> String
-    #   resp.city.member_name #=> String
+    #   resp.city.name #=> String
     #   resp.city.number #=> String
     #   resp.city.case #=> String
     #
@@ -382,7 +382,7 @@ module Weather
     #   resp.items #=> Array<CitySummary>
     #   resp.items[0] #=> Types::CitySummary
     #   resp.items[0].city_id #=> String
-    #   resp.items[0].member_name #=> String
+    #   resp.items[0].name #=> String
     #   resp.items[0].number #=> String
     #   resp.items[0].case #=> String
     #   resp.sparse_items #=> Array<CitySummary>

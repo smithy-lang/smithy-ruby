@@ -920,7 +920,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::NestedPayload, context: context)
         Hearth::Validator.validate!(input[:greeting], ::String, context: "#{context}[:greeting]")
-        Hearth::Validator.validate!(input[:member_name], ::String, context: "#{context}[:member_name]")
+        Hearth::Validator.validate!(input[:name], ::String, context: "#{context}[:name]")
       end
     end
 
