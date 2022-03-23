@@ -8,7 +8,7 @@ module RailsJson
       let(:client) { RailsJson::Client.new(stub_responses: true, endpoint: 'https://example.com')}
 
       it 'returns a default with recursive values' do
-        resp = client.kitchen_sink_operation()
+        resp = client.kitchen_sink_operation().data
 
         expect(resp.blob).to eq('blob')
         expect(resp.boolean).to eq(false)
@@ -50,7 +50,7 @@ module RailsJson
                                 recursive_map: { 'test_key' => { blob: 'blob 2' } }
                               }
         )
-        resp = client.kitchen_sink_operation()
+        resp = client.kitchen_sink_operation().data
 
         expect(resp.blob).to eq('my blob')
         expect(resp.boolean).to eq(true)
@@ -61,7 +61,7 @@ module RailsJson
 
       it 'stubs an empty body when given nil' do
         client.stub_responses(:kitchen_sink_operation, { })
-        resp = client.kitchen_sink_operation()
+        resp = client.kitchen_sink_operation().data
 
         expect(resp.blob).to be_nil
         expect(resp.boolean).to be_nil
