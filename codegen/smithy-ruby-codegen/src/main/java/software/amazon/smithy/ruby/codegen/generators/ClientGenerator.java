@@ -275,7 +275,7 @@ public class ClientGenerator {
                 .closeBlock(")")
                 .closeBlock(")")
                 .write("raise resp.error if resp.error")
-                .write("resp.data")
+                .write("resp")
                 .closeBlock("end");
         LOGGER.finer("Generated client operation method " + operationName);
     }

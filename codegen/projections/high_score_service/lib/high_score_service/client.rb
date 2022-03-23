@@ -81,14 +81,14 @@ module HighScoreService
     #
     # @example Response structure
     #
-    #   resp #=> Types::CreateHighScoreOutput
-    #   resp.high_score #=> Types::HighScoreAttributes
-    #   resp.high_score.id #=> String
-    #   resp.high_score.game #=> String
-    #   resp.high_score.score #=> Integer
-    #   resp.high_score.created_at #=> Time
-    #   resp.high_score.updated_at #=> Time
-    #   resp.location #=> String
+    #   resp.data #=> Types::CreateHighScoreOutput
+    #   resp.data.high_score #=> Types::HighScoreAttributes
+    #   resp.data.high_score.id #=> String
+    #   resp.data.high_score.game #=> String
+    #   resp.data.high_score.score #=> Integer
+    #   resp.data.high_score.created_at #=> Time
+    #   resp.data.high_score.updated_at #=> Time
+    #   resp.data.location #=> String
     #
     def create_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -126,7 +126,7 @@ module HighScoreService
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Delete a high score
@@ -147,7 +147,7 @@ module HighScoreService
     #
     # @example Response structure
     #
-    #   resp #=> Types::DeleteHighScoreOutput
+    #   resp.data #=> Types::DeleteHighScoreOutput
     #
     def delete_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -185,7 +185,7 @@ module HighScoreService
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Get a high score
@@ -206,13 +206,13 @@ module HighScoreService
     #
     # @example Response structure
     #
-    #   resp #=> Types::GetHighScoreOutput
-    #   resp.high_score #=> Types::HighScoreAttributes
-    #   resp.high_score.id #=> String
-    #   resp.high_score.game #=> String
-    #   resp.high_score.score #=> Integer
-    #   resp.high_score.created_at #=> Time
-    #   resp.high_score.updated_at #=> Time
+    #   resp.data #=> Types::GetHighScoreOutput
+    #   resp.data.high_score #=> Types::HighScoreAttributes
+    #   resp.data.high_score.id #=> String
+    #   resp.data.high_score.game #=> String
+    #   resp.data.high_score.score #=> Integer
+    #   resp.data.high_score.created_at #=> Time
+    #   resp.data.high_score.updated_at #=> Time
     #
     def get_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -250,7 +250,7 @@ module HighScoreService
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # List all high scores
@@ -266,14 +266,14 @@ module HighScoreService
     #
     # @example Response structure
     #
-    #   resp #=> Types::ListHighScoresOutput
-    #   resp.high_scores #=> Array<HighScoreAttributes>
-    #   resp.high_scores[0] #=> Types::HighScoreAttributes
-    #   resp.high_scores[0].id #=> String
-    #   resp.high_scores[0].game #=> String
-    #   resp.high_scores[0].score #=> Integer
-    #   resp.high_scores[0].created_at #=> Time
-    #   resp.high_scores[0].updated_at #=> Time
+    #   resp.data #=> Types::ListHighScoresOutput
+    #   resp.data.high_scores #=> Array<HighScoreAttributes>
+    #   resp.data.high_scores[0] #=> Types::HighScoreAttributes
+    #   resp.data.high_scores[0].id #=> String
+    #   resp.data.high_scores[0].game #=> String
+    #   resp.data.high_scores[0].score #=> Integer
+    #   resp.data.high_scores[0].created_at #=> Time
+    #   resp.data.high_scores[0].updated_at #=> Time
     #
     def list_high_scores(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -311,7 +311,7 @@ module HighScoreService
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Update a high score
@@ -339,13 +339,13 @@ module HighScoreService
     #
     # @example Response structure
     #
-    #   resp #=> Types::UpdateHighScoreOutput
-    #   resp.high_score #=> Types::HighScoreAttributes
-    #   resp.high_score.id #=> String
-    #   resp.high_score.game #=> String
-    #   resp.high_score.score #=> Integer
-    #   resp.high_score.created_at #=> Time
-    #   resp.high_score.updated_at #=> Time
+    #   resp.data #=> Types::UpdateHighScoreOutput
+    #   resp.data.high_score #=> Types::HighScoreAttributes
+    #   resp.data.high_score.id #=> String
+    #   resp.data.high_score.game #=> String
+    #   resp.data.high_score.score #=> Integer
+    #   resp.data.high_score.created_at #=> Time
+    #   resp.data.high_score.updated_at #=> Time
     #
     def update_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -383,7 +383,7 @@ module HighScoreService
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     private

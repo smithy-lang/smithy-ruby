@@ -147,20 +147,20 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::KitchenSinkOutput
-    #   resp.string #=> String
-    #   resp.struct #=> Types::Struct
-    #   resp.struct.value #=> String
-    #   resp.document #=> Hash,Array,String,Boolean,Numeric
-    #   resp.list_of_strings #=> Array<String>
-    #   resp.list_of_strings[0] #=> String
-    #   resp.list_of_structs #=> Array<Struct>
-    #   resp.map_of_strings #=> Hash<String, String>
-    #   resp.map_of_strings['key'] #=> String
-    #   resp.map_of_structs #=> Hash<String, Struct>
-    #   resp.set_of_strings #=> Set<String>
-    #   resp.set_of_strings[0] #=> String
-    #   resp.union #=> Union
+    #   resp.data #=> Types::KitchenSinkOutput
+    #   resp.data.string #=> String
+    #   resp.data.struct #=> Types::Struct
+    #   resp.data.struct.value #=> String
+    #   resp.data.document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.list_of_strings #=> Array<String>
+    #   resp.data.list_of_strings[0] #=> String
+    #   resp.data.list_of_structs #=> Array<Struct>
+    #   resp.data.map_of_strings #=> Hash<String, String>
+    #   resp.data.map_of_strings['key'] #=> String
+    #   resp.data.map_of_structs #=> Hash<String, Struct>
+    #   resp.data.set_of_strings #=> Set<String>
+    #   resp.data.set_of_strings[0] #=> String
+    #   resp.data.union #=> Union
     #
     # @example Test input and output
     #
@@ -303,7 +303,7 @@ module WhiteLabel
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -319,10 +319,10 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::PaginatorsTestOperationOutput
-    #   resp.next_token #=> String
-    #   resp.items #=> Array<String>
-    #   resp.items[0] #=> String
+    #   resp.data #=> Types::PaginatorsTestOperationOutput
+    #   resp.data.next_token #=> String
+    #   resp.data.items #=> Array<String>
+    #   resp.data.items[0] #=> String
     #
     def paginators_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -360,7 +360,7 @@ module WhiteLabel
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -376,10 +376,10 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::PaginatorsTestWithItemsOutput
-    #   resp.next_token #=> String
-    #   resp.items #=> Array<String>
-    #   resp.items[0] #=> String
+    #   resp.data #=> Types::PaginatorsTestWithItemsOutput
+    #   resp.data.next_token #=> String
+    #   resp.data.items #=> Array<String>
+    #   resp.data.items[0] #=> String
     #
     def paginators_test_with_items(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -417,7 +417,7 @@ module WhiteLabel
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -433,8 +433,8 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::WaitersTestOutput
-    #   resp.status #=> String
+    #   resp.data #=> Types::WaitersTestOutput
+    #   resp.data.status #=> String
     #
     def waiters_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -472,7 +472,7 @@ module WhiteLabel
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -488,11 +488,11 @@ module WhiteLabel
     #
     # @example Response structure
     #
-    #   resp #=> Types::Struct____PaginatorsTestWithBadNamesOutput
-    #   resp.member____wrapper #=> Types::ResultWrapper
-    #   resp.member____wrapper.member____123next_token #=> String
-    #   resp.member____items #=> Array<String>
-    #   resp.member____items[0] #=> String
+    #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
+    #   resp.data.member____wrapper #=> Types::ResultWrapper
+    #   resp.data.member____wrapper.member____123next_token #=> String
+    #   resp.data.member____items #=> Array<String>
+    #   resp.data.member____items[0] #=> String
     #
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -530,7 +530,7 @@ module WhiteLabel
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     private
