@@ -345,12 +345,12 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    # @!attribute member____123next_token
+    # @!attribute member___123next_token
     #
     #   @return [String]
     #
     ResultWrapper = ::Struct.new(
-      :member____123next_token,
+      :member___123next_token,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -524,28 +524,28 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    # @!attribute member____next_token
+    # @!attribute member___next_token
     #
     #   @return [String]
     #
     Struct____PaginatorsTestWithBadNamesInput = ::Struct.new(
-      :member____next_token,
+      :member___next_token,
       keyword_init: true
     ) do
       include Hearth::Structure
     end
 
-    # @!attribute member____wrapper
+    # @!attribute member___wrapper
     #
     #   @return [ResultWrapper]
     #
-    # @!attribute member____items
+    # @!attribute member___items
     #
     #   @return [Array<String>]
     #
     Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
-      :member____wrapper,
-      :member____items,
+      :member___wrapper,
+      :member___items,
       keyword_init: true
     ) do
       include Hearth::Structure

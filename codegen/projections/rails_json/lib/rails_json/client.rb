@@ -2348,9 +2348,9 @@ module RailsJson
     # @example Request syntax with placeholder values
     #
     #   resp = client.operation____789_bad_name(
-    #     member____123abc: '__123abc', # required
+    #     member___123abc: '__123abc', # required
     #     member: {
-    #       member____123foo: '__123foo'
+    #       member___123foo: '__123foo'
     #     }
     #   )
     #
@@ -2358,7 +2358,7 @@ module RailsJson
     #
     #   resp #=> Types::Struct____789BadNameOutput
     #   resp.member #=> Types::Struct____456efg
-    #   resp.member.member____123foo #=> String
+    #   resp.member.member___123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

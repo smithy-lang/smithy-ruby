@@ -157,7 +157,7 @@ public class RubySymbolProvider implements SymbolProvider,
     // If they are a reserved word or start with a number they will be prefixed with “member_”.
     private String getDefaultMemberName(MemberShape shape) {
         return prefixLeadingInvalidIdentCharacters(
-                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member__");
+                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member_");
     }
 
     // Shape Names (generated Class names) should be PascalCase

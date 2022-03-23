@@ -249,7 +249,7 @@ module Weather
     class Operation____789BadName
       def self.default(visited=[])
         {
-          member____123abc: 'member____123abc',
+          member___123abc: 'member___123abc',
           member: Stubs::Struct____456efg.default(visited),
         }
       end
@@ -266,7 +266,7 @@ module Weather
         return nil if visited.include?('Struct____456efg')
         visited = visited + ['Struct____456efg']
         {
-          member____123foo: 'member____123foo',
+          member___123foo: 'member___123foo',
         }
       end
 

@@ -363,7 +363,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::Struct____456efg, context: context)
         type = Types::Struct____456efg.new
-        type.member____123foo = params[:member____123foo]
+        type.member___123foo = params[:member___123foo]
         type
       end
     end
@@ -372,7 +372,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::Struct____789BadNameInput, context: context)
         type = Types::Struct____789BadNameInput.new
-        type.member____123abc = params[:member____123abc]
+        type.member___123abc = params[:member___123abc]
         type.member = Struct____456efg.build(params[:member], context: "#{context}[:member]") unless params[:member].nil?
         type
       end
@@ -382,7 +382,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::Struct____789BadNameOutput, context: context)
         type = Types::Struct____789BadNameOutput.new
-        type.member____123abc = params[:member____123abc]
+        type.member___123abc = params[:member___123abc]
         type.member = Struct____456efg.build(params[:member], context: "#{context}[:member]") unless params[:member].nil?
         type
       end

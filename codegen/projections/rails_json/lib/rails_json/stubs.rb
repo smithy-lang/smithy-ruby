@@ -1526,14 +1526,14 @@ module RailsJson
         return nil if visited.include?('Struct____456efg')
         visited = visited + ['Struct____456efg']
         {
-          member____123foo: 'member____123foo',
+          member___123foo: 'member___123foo',
         }
       end
 
       def self.stub(stub)
         stub ||= Types::Struct____456efg.new
         data = {}
-        data[:__123foo] = stub[:member____123foo] unless stub[:member____123foo].nil?
+        data[:__123foo] = stub[:member___123foo] unless stub[:member___123foo].nil?
         data
       end
     end

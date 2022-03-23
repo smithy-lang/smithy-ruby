@@ -483,16 +483,16 @@ module WhiteLabel
     # @example Request syntax with placeholder values
     #
     #   resp = client.operation____paginators_test_with_bad_names(
-    #     member____next_token: '__nextToken'
+    #     member___next_token: '__nextToken'
     #   )
     #
     # @example Response structure
     #
     #   resp #=> Types::Struct____PaginatorsTestWithBadNamesOutput
-    #   resp.member____wrapper #=> Types::ResultWrapper
-    #   resp.member____wrapper.member____123next_token #=> String
-    #   resp.member____items #=> Array<String>
-    #   resp.member____items[0] #=> String
+    #   resp.member___wrapper #=> Types::ResultWrapper
+    #   resp.member___wrapper.member___123next_token #=> String
+    #   resp.member___items #=> Array<String>
+    #   resp.member___items[0] #=> String
     #
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
