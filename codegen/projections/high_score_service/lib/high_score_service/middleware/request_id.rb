@@ -1,7 +1,7 @@
 module HighScoreService
   module Middleware
     # A middleware that extracts a request id from a response and sets it
-    # on the context.
+    # on output's metadata.
     # @api private
     class RequestId
       def initialize(app, _ = {})

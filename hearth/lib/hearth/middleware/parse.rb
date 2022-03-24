@@ -23,19 +23,19 @@ module Hearth
       # @return [Output]
       def call(input, context)
         output = @app.call(input, context)
-        parse_error(context.response, output) unless output.error
-        parse_data(context.response, output) unless output.error
+        parse_error(context, output) unless output.error
+        parse_data(context, output) unless output.error
         output
       end
 
       private
 
-      def parse_error(response, output)
-        output.error = @error_parser.parse(response)
+      def parse_error(context, output)
+        output.error = @error_parser.parse(context.response, output.metadata)
       end
 
-      def parse_data(response, output)
-        output.data = @data_parser.parse(response)
+      def parse_data(context, output)
+        output.data = @data_parser.parse(context.response)
       end
     end
   end

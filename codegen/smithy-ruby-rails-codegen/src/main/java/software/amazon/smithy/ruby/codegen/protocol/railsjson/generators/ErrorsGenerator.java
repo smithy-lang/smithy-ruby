@@ -25,19 +25,15 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
         super(context);
     }
 
-    public void renderErrorCode() {
+    public void renderErrorCodeBody() {
         RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
         String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
-
-        writer.openBlock("def self.error_code(http_resp)");
 
         if (errorLocation.equals("header")) {
             renderErrorCodeFromHeader();
         } else if (errorLocation.equals("status_code")) {
             renderErrorCodeFromStatusCode();
         }
-
-        writer.closeBlock("end");
     }
 
     private void renderErrorCodeFromHeader() {

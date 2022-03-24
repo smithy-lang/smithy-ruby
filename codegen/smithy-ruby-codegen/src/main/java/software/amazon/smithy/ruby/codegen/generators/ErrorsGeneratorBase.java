@@ -70,8 +70,9 @@ public abstract class ErrorsGeneratorBase {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
-                .write("")
-                .call(() -> renderErrorCode())
+                .openBlock("def self.error_code(http_resp)")
+                .call(() -> renderErrorCodeBody())
+                .closeBlock("end")
                 .call(() -> renderBaseErrors())
                 .call(() -> renderServiceModelErrors())
                 .write("")
@@ -105,15 +106,7 @@ public abstract class ErrorsGeneratorBase {
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .openBlock("class ApiError < Hearth::HTTP::ApiError")
-                .openBlock("def initialize(request_id: nil, **kwargs)")
-                .write("@request_id = request_id")
-                .write("super(**kwargs)")
-                .closeBlock("end")
-                .write("")
-                .write("# @return [String, nil] request_id")
-                .write("attr_reader :request_id")
-                .closeBlock("end")
+                .write("class ApiError < Hearth::HTTP::ApiError; end")
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
@@ -151,13 +144,13 @@ public abstract class ErrorsGeneratorBase {
     }
 
     /**
-     * Called to render the error_code method.
+     * Called to render the error_code method body.
      * <p>
-     * errors.rb must define a self.error_code(resp) method which will
+     * errors.rb defines a self.error_code(resp) method that should
      * return the protocol specific error code from the response or nil
      * if no error code is found.
      */
-    public abstract void renderErrorCode();
+    public abstract void renderErrorCodeBody();
 
     public void renderRbsErrorCode() {
         rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
@@ -215,7 +208,6 @@ public abstract class ErrorsGeneratorBase {
         writer
                 .openBlock("def initialize(http_resp:, **kwargs)")
                 .write("@data = Parsers::$L.parse(http_resp)", errorName)
-                .write("kwargs[:request_id] = http_resp.headers['x-request-id']")
                 .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                 .write("super(http_resp: http_resp, **kwargs)")
                 .closeBlock("end")

@@ -4,12 +4,8 @@ module Hearth
   module HTTP
     describe ApiError do
       let(:http_status) { 404 }
-      let(:http_headers) do
-        Headers.new(headers: { 'x-request-id' => request_id })
-      end
-      let(:request_id) { '123' }
+      let(:http_headers) { Headers.new }
       let(:http_body) { 'body' }
-
       let(:http_resp) do
         Response.new(
           status: http_status,
@@ -17,13 +13,13 @@ module Hearth
           body: http_body
         )
       end
-      let(:error_code) { 'error_code' }
       let(:message) { 'message' }
 
       subject do
         ApiError.new(
           http_resp: http_resp,
-          error_code: error_code,
+          error_code: 'error_code',
+          metadata: {},
           message: message
         )
       end
@@ -32,8 +28,22 @@ module Hearth
         expect(subject).to be_a Hearth::ApiError
       end
 
-      it 'raises with the message' do
-        expect { raise subject }.to raise_error(ApiError, message)
+      describe '#http_status' do
+        it 'returns the http status' do
+          expect(subject.http_status).to eq(http_status)
+        end
+      end
+
+      describe '#http_headers' do
+        it 'returns the http headers' do
+          expect(subject.http_headers).to eq(http_headers)
+        end
+      end
+
+      describe '#http_body' do
+        it 'returns the http body' do
+          expect(subject.http_body).to eq(http_body)
+        end
       end
     end
   end

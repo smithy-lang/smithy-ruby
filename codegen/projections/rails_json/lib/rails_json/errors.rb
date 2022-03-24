@@ -9,21 +9,12 @@
 
 module RailsJson
   module Errors
-
     def self.error_code(http_resp)
       http_resp.headers['x-smithy-rails-error']
     end
 
     # Base class for all errors returned by this service
-    class ApiError < Hearth::HTTP::ApiError
-      def initialize(request_id: nil, **kwargs)
-        @request_id = request_id
-        super(**kwargs)
-      end
-
-      # @return [String, nil] request_id
-      attr_reader :request_id
-    end
+    class ApiError < Hearth::HTTP::ApiError; end
 
     # Base class for all errors returned where the client is at fault.
     # These are generally errors with 4XX HTTP status codes.
@@ -54,7 +45,6 @@ module RailsJson
       #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ComplexError.parse(http_resp)
-        kwargs[:request_id] = http_resp.headers['x-request-id']
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
@@ -74,7 +64,6 @@ module RailsJson
       #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ErrorWithMembers.parse(http_resp)
-        kwargs[:request_id] = http_resp.headers['x-request-id']
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
@@ -94,7 +83,6 @@ module RailsJson
       #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ErrorWithoutMembers.parse(http_resp)
-        kwargs[:request_id] = http_resp.headers['x-request-id']
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
@@ -114,7 +102,6 @@ module RailsJson
       #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::InvalidGreeting.parse(http_resp)
-        kwargs[:request_id] = http_resp.headers['x-request-id']
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
         super(http_resp: http_resp, **kwargs)
