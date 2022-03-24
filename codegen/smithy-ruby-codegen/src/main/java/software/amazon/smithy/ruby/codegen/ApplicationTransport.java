@@ -126,7 +126,7 @@ public final class ApplicationTransport {
             List<Middleware> middleware = new ArrayList();
             middleware.add((new Middleware.Builder())
                     .klass("Hearth::HTTP::Middleware::ContentLength")
-                    .step(MiddlewareStackStep.BUILD)
+                    .step(MiddlewareStackStep.SERIALIZE)
                     .build()
             );
 

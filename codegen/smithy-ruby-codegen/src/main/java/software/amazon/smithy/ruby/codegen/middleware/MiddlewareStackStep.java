@@ -27,7 +27,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public enum MiddlewareStackStep {
     INITIALIZE,
     SERIALIZE,
-    BUILD,
+    VALIDATE,
     RETRY,
     FINALIZE,
     DESERIALIZE,
@@ -42,8 +42,8 @@ public enum MiddlewareStackStep {
                 return "Retry";
             case SERIALIZE:
                 return "Serialize";
-            case BUILD:
-                return "Build";
+            case VALIDATE:
+                return "Validate";
             case DESERIALIZE:
                 return "Deserialize";
             case FINALIZE:
