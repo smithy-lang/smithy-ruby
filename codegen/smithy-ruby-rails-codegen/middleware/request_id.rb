@@ -3,7 +3,7 @@ module Middleware
   # on the context.
   # @api private
   class RequestId
-    def initialize(app)
+    def initialize(app, _ = {})
       @app = app
     end
 

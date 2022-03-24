@@ -35,8 +35,6 @@ public class RailsIntegration implements RubyIntegration {
 
     @Override
     public void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
-
         Middleware requestId = (new Middleware.Builder())
                 .klass("Middleware::RequestId")
                 .step(MiddlewareStackStep.DESERIALIZE)
