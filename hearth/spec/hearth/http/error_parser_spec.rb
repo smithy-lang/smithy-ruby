@@ -3,8 +3,7 @@
 module Hearth
   module HTTP
     module TestErrors
-      def self.error_code(http_resp)
-        http_resp # satisfy rubocop
+      def self.error_code(_http_resp)
         nil
       end
 
