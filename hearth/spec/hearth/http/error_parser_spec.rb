@@ -4,6 +4,7 @@ module Hearth
   module HTTP
     module TestErrors
       def self.error_code(http_resp)
+        http_resp # satisfy rubocop
         nil
       end
 
@@ -85,7 +86,10 @@ module Hearth
         end
 
         context 'error code on response' do
-          before { allow(TestErrors).to receive(:error_code).and_return('TestModeledError') }
+          before do
+            allow(TestErrors).to receive(:error_code)
+              .with(http_resp).and_return('TestModeledError')
+          end
 
           context 'error response: 2XX with error code' do
             let(:resp_status) { 200 }
