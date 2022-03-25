@@ -25,6 +25,6 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
     }
 
     public void renderErrorCodeBody() {
-        writer.write("http_resp.headers['x-smithy-error']");
+        writer.write("resp.headers['x-smithy-error']");
     }
 }

@@ -19,7 +19,8 @@ module Hearth
 
       # @param [Module] error_module The code generated Errors module.
       #   Must contain service specific implementations of
-      #   ApiRedirectError, ApiClientError, and ApiServerError
+      #   ApiRedirectError, ApiClientError, and ApiServerError, and it
+      #   must have defined a `self.error_code(http_resp)` method.
       #
       # @param [Integer] success_status The status code of a
       #   successful response as defined by the model for
@@ -39,6 +40,7 @@ module Hearth
       # Parse and return the error if the response is not successful.
       #
       # @param [Response] response The HTTP response
+      # @param [Hash] metadata The metadata from {Hearth::Output}
       def parse(response, metadata)
         create_error(response, metadata) if error?(response)
       end
