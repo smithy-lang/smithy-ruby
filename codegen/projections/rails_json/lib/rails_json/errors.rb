@@ -9,8 +9,8 @@
 
 module RailsJson
   module Errors
-    def self.error_code(http_resp)
-      http_resp.headers['x-smithy-rails-error']
+    def self.error_code(resp)
+      resp.headers['x-smithy-rails-error']
     end
 
     # Base class for all errors returned by this service

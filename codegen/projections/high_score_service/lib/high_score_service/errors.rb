@@ -9,8 +9,8 @@
 
 module HighScoreService
   module Errors
-    def self.error_code(http_resp)
-      case http_resp.status
+    def self.error_code(resp)
+      case resp.status
       when 300 then 'MultipleChoicesError'
       when 301 then 'MovedPermanentlyError'
       when 302 then 'FoundError'

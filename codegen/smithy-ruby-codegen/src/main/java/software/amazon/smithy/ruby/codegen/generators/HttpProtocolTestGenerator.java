@@ -141,7 +141,7 @@ public class HttpProtocolTestGenerator {
 
         Shape outputShape = model.expectShape(operation.getOutputShape());
 
-        writer.openBlock("\ndescribe 'response stubs' do");
+        writer.openBlock("\ndescribe 'stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
                 return;
@@ -160,7 +160,7 @@ public class HttpProtocolTestGenerator {
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
-            LOGGER.finer("Generated protocol response stubber test for operation " + operationName + " test: "
+            LOGGER.finer("Generated protocol stubs test for operation " + operationName + " test: "
                     + testCase.getId());
 
         });

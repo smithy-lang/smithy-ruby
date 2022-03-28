@@ -107,7 +107,7 @@ module Weather
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Does something
         #
         it 'stubs WriteGetCityResponseAssertions' do

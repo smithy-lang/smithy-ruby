@@ -64,7 +64,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Parses responses for operations/members with bad names
         #
         it 'stubs rails_json_parses_bad_names' do
@@ -488,7 +488,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'stubs RailsJsonDocumentOutput' do
@@ -661,7 +661,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
@@ -763,7 +763,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # When no output is defined, the service is expected to return
         # an empty payload, however, client must ignore a JSON payload
         # if one is returned. This ensures that if output is added later,
@@ -1033,7 +1033,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Serializes a blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithBlob' do
@@ -1116,7 +1116,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
@@ -1193,7 +1193,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Serializes a structure in the payload
         #
         it 'stubs RailsJsonHttpPayloadWithStructure' do
@@ -1288,7 +1288,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Adds headers by prefix
         #
         it 'stubs RailsJsonHttpPrefixHeadersArePresent' do
@@ -1340,7 +1340,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # (de)serializes all response headers
         #
         it 'stubs RailsJsonHttpPrefixHeadersResponse' do
@@ -1573,7 +1573,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Binds the http response code to an output structure. Note that
         # even though all members are bound outside of the payload, an
         # empty JSON object is serialized in the response. However,
@@ -1657,7 +1657,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Query parameters must be ignored when serializing the output
         # of an operation. As of January 2021, server implementations
         # are expected to respond with a JSON object regardless of
@@ -1921,7 +1921,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Tests responses with string header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithStringHeaders' do
@@ -2177,7 +2177,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Serializes simple scalar properties
         #
         it 'stubs RailsJsonEnums' do
@@ -2705,7 +2705,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Deserializes JSON maps
         #
         it 'stubs RailsJsonJsonMaps' do
@@ -3402,7 +3402,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Deserializes a string union value
         #
         it 'stubs RailsJsonDeserializeStringUnionValue' do
@@ -4661,7 +4661,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Parses operations with empty JSON bodies
         #
         it 'stubs rails_json_parses_operations_with_empty_json_bodies' do
@@ -5237,7 +5237,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'stubs RailsJsonMediaTypeHeaderOutputBase64' do
@@ -5445,7 +5445,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Null structure values are dropped
         #
         it 'stubs RailsJsonStructuresDontDeserializeNullValues' do
@@ -5729,7 +5729,7 @@ module RailsJson
         end
       end
 
-      describe 'response stubs' do
+      describe 'stubs' do
         # Tests how timestamp response headers are serialized
         #
         it 'stubs RailsJsonTimestampFormatHeaders' do
