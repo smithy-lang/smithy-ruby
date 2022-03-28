@@ -21,6 +21,7 @@ module Hearth
       let(:error) do
         Hearth::ApiError.new(
           error_code: 'SomeError',
+          metadata: {},
           message: 'error'
         )
       end

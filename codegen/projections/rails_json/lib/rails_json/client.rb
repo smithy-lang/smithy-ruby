@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require_relative 'middleware/request_id'
+
 module RailsJson
   # An API client for RailsJson
   # See {#initialize} for a full list of supported configuration options
@@ -110,7 +112,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::AllQueryStringTypesOutput
+    #   resp.data #=> Types::AllQueryStringTypesOutput
     #
     def all_query_string_types(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -125,9 +127,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::AllQueryStringTypes
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -148,7 +151,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example uses fixed query string params and variable query string params.
@@ -169,7 +172,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::ConstantAndVariableQueryStringOutput
+    #   resp.data #=> Types::ConstantAndVariableQueryStringOutput
     #
     def constant_and_variable_query_string(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -184,9 +187,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::ConstantAndVariableQueryString
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -207,7 +211,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example uses a constant query string parameters and a label.
@@ -228,7 +232,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::ConstantQueryStringOutput
+    #   resp.data #=> Types::ConstantQueryStringOutput
     #
     def constant_query_string(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -243,9 +247,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::ConstantQueryString
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -266,7 +271,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example serializes a document as part of the payload.
@@ -292,9 +297,9 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::DocumentTypeOutput
-    #   resp.string_value #=> String
-    #   resp.document_value #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data #=> Types::DocumentTypeOutput
+    #   resp.data.string_value #=> String
+    #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
     #
     def document_type(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -309,9 +314,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::DocumentType
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -332,7 +338,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example serializes a document as the entire HTTP payload.
@@ -357,8 +363,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::DocumentTypeAsPayloadOutput
-    #   resp.document_value #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data #=> Types::DocumentTypeAsPayloadOutput
+    #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
     #
     def document_type_as_payload(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -373,9 +379,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::DocumentTypeAsPayload
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -396,7 +403,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -410,7 +417,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::EmptyOperationOutput
+    #   resp.data #=> Types::EmptyOperationOutput
     #
     def empty_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -425,9 +432,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::EmptyOperation
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -448,7 +456,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -462,7 +470,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::EndpointOperationOutput
+    #   resp.data #=> Types::EndpointOperationOutput
     #
     def endpoint_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -477,9 +485,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::EndpointOperation
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -500,7 +509,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -516,7 +525,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::EndpointWithHostLabelOperationOutput
+    #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     #
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -531,9 +540,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::EndpointWithHostLabelOperation
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -554,7 +564,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This operation has three possible return values:
@@ -577,8 +587,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::GreetingWithErrorsOutput
-    #   resp.greeting #=> String
+    #   resp.data #=> Types::GreetingWithErrorsOutput
+    #   resp.data.greeting #=> String
     #
     def greeting_with_errors(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -593,9 +603,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::InvalidGreeting, Errors::ComplexError]),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::InvalidGreeting, Errors::ComplexError]),
         data_parser: Parsers::GreetingWithErrors
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -616,7 +627,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This examples serializes a blob shape in the payload.
@@ -638,9 +649,9 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpPayloadTraitsOutput
-    #   resp.foo #=> String
-    #   resp.blob #=> String
+    #   resp.data #=> Types::HttpPayloadTraitsOutput
+    #   resp.data.foo #=> String
+    #   resp.data.blob #=> String
     #
     def http_payload_traits(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -655,9 +666,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpPayloadTraits
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -678,7 +690,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This examples uses a `@mediaType` trait on the payload to force a custom
@@ -698,9 +710,9 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpPayloadTraitsWithMediaTypeOutput
-    #   resp.foo #=> String
-    #   resp.blob #=> String
+    #   resp.data #=> Types::HttpPayloadTraitsWithMediaTypeOutput
+    #   resp.data.foo #=> String
+    #   resp.data.blob #=> String
     #
     def http_payload_traits_with_media_type(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -715,9 +727,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpPayloadTraitsWithMediaType
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -738,7 +751,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This examples serializes a structure in the payload.
@@ -762,10 +775,10 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpPayloadWithStructureOutput
-    #   resp.nested #=> Types::NestedPayload
-    #   resp.nested.greeting #=> String
-    #   resp.nested.member_name #=> String
+    #   resp.data #=> Types::HttpPayloadWithStructureOutput
+    #   resp.data.nested #=> Types::NestedPayload
+    #   resp.data.nested.greeting #=> String
+    #   resp.data.nested.member_name #=> String
     #
     def http_payload_with_structure(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -780,9 +793,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpPayloadWithStructure
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -803,7 +817,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This examples adds headers to the input of a request and response by prefix.
@@ -826,10 +840,10 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpPrefixHeadersOutput
-    #   resp.foo #=> String
-    #   resp.foo_map #=> Hash<String, String>
-    #   resp.foo_map['key'] #=> String
+    #   resp.data #=> Types::HttpPrefixHeadersOutput
+    #   resp.data.foo #=> String
+    #   resp.data.foo_map #=> Hash<String, String>
+    #   resp.data.foo_map['key'] #=> String
     #
     def http_prefix_headers(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -844,9 +858,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpPrefixHeaders
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -867,7 +882,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Clients that perform this test extract all headers from the response.
@@ -883,9 +898,9 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpPrefixHeadersInResponseOutput
-    #   resp.prefix_headers #=> Hash<String, String>
-    #   resp.prefix_headers['key'] #=> String
+    #   resp.data #=> Types::HttpPrefixHeadersInResponseOutput
+    #   resp.data.prefix_headers #=> Hash<String, String>
+    #   resp.data.prefix_headers['key'] #=> String
     #
     def http_prefix_headers_in_response(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -900,9 +915,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpPrefixHeadersInResponse
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -923,7 +939,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -940,7 +956,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpRequestWithFloatLabelsOutput
+    #   resp.data #=> Types::HttpRequestWithFloatLabelsOutput
     #
     def http_request_with_float_labels(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -955,9 +971,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpRequestWithFloatLabels
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -978,7 +995,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -995,7 +1012,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpRequestWithGreedyLabelInPathOutput
+    #   resp.data #=> Types::HttpRequestWithGreedyLabelInPathOutput
     #
     def http_request_with_greedy_label_in_path(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1010,9 +1027,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpRequestWithGreedyLabelInPath
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1033,7 +1051,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # The example tests how requests are serialized when there's no input
@@ -1065,7 +1083,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpRequestWithLabelsOutput
+    #   resp.data #=> Types::HttpRequestWithLabelsOutput
     #
     def http_request_with_labels(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1080,9 +1098,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpRequestWithLabels
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1103,7 +1122,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # The example tests how requests serialize different timestamp formats in the
@@ -1128,7 +1147,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpRequestWithLabelsAndTimestampFormatOutput
+    #   resp.data #=> Types::HttpRequestWithLabelsAndTimestampFormatOutput
     #
     def http_request_with_labels_and_timestamp_format(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1143,9 +1162,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1166,7 +1186,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -1180,8 +1200,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::HttpResponseCodeOutput
-    #   resp.status #=> Integer
+    #   resp.data #=> Types::HttpResponseCodeOutput
+    #   resp.data.status #=> Integer
     #
     def http_response_code(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1196,9 +1216,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::HttpResponseCode
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1219,7 +1240,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example ensures that query string bound request parameters are
@@ -1237,8 +1258,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::IgnoreQueryParamsInResponseOutput
-    #   resp.baz #=> String
+    #   resp.data #=> Types::IgnoreQueryParamsInResponseOutput
+    #   resp.data.baz #=> String
     #
     def ignore_query_params_in_response(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1253,9 +1274,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::IgnoreQueryParamsInResponse
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1276,7 +1298,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # The example tests how requests and responses are serialized when there is
@@ -1322,29 +1344,29 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::InputAndOutputWithHeadersOutput
-    #   resp.header_string #=> String
-    #   resp.header_byte #=> Integer
-    #   resp.header_short #=> Integer
-    #   resp.header_integer #=> Integer
-    #   resp.header_long #=> Integer
-    #   resp.header_float #=> Float
-    #   resp.header_double #=> Float
-    #   resp.header_true_bool #=> Boolean
-    #   resp.header_false_bool #=> Boolean
-    #   resp.header_string_list #=> Array<String>
-    #   resp.header_string_list[0] #=> String
-    #   resp.header_string_set #=> Set<String>
-    #   resp.header_string_set[0] #=> String
-    #   resp.header_integer_list #=> Array<Integer>
-    #   resp.header_integer_list[0] #=> Integer
-    #   resp.header_boolean_list #=> Array<Boolean>
-    #   resp.header_boolean_list[0] #=> Boolean
-    #   resp.header_timestamp_list #=> Array<Time>
-    #   resp.header_timestamp_list[0] #=> Time
-    #   resp.header_enum #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.header_enum_list #=> Array<String>
-    #   resp.header_enum_list[0] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data #=> Types::InputAndOutputWithHeadersOutput
+    #   resp.data.header_string #=> String
+    #   resp.data.header_byte #=> Integer
+    #   resp.data.header_short #=> Integer
+    #   resp.data.header_integer #=> Integer
+    #   resp.data.header_long #=> Integer
+    #   resp.data.header_float #=> Float
+    #   resp.data.header_double #=> Float
+    #   resp.data.header_true_bool #=> Boolean
+    #   resp.data.header_false_bool #=> Boolean
+    #   resp.data.header_string_list #=> Array<String>
+    #   resp.data.header_string_list[0] #=> String
+    #   resp.data.header_string_set #=> Set<String>
+    #   resp.data.header_string_set[0] #=> String
+    #   resp.data.header_integer_list #=> Array<Integer>
+    #   resp.data.header_integer_list[0] #=> Integer
+    #   resp.data.header_boolean_list #=> Array<Boolean>
+    #   resp.data.header_boolean_list[0] #=> Boolean
+    #   resp.data.header_timestamp_list #=> Array<Time>
+    #   resp.data.header_timestamp_list[0] #=> Time
+    #   resp.data.header_enum #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.header_enum_list #=> Array<String>
+    #   resp.data.header_enum_list[0] #=> String, one of Foo, Baz, Bar, 1, 0
     #
     def input_and_output_with_headers(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1359,9 +1381,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::InputAndOutputWithHeaders
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1382,7 +1405,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example serializes enums as top level properties, in lists, sets, and maps.
@@ -1411,16 +1434,16 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::JsonEnumsOutput
-    #   resp.foo_enum1 #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.foo_enum2 #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.foo_enum3 #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.foo_enum_list #=> Array<String>
-    #   resp.foo_enum_list[0] #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.foo_enum_set #=> Set<String>
-    #   resp.foo_enum_set[0] #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.foo_enum_map #=> Hash<String, String>
-    #   resp.foo_enum_map['key'] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data #=> Types::JsonEnumsOutput
+    #   resp.data.foo_enum1 #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum2 #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum3 #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum_list #=> Array<String>
+    #   resp.data.foo_enum_list[0] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum_set #=> Set<String>
+    #   resp.data.foo_enum_set[0] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum_map #=> Hash<String, String>
+    #   resp.data.foo_enum_map['key'] #=> String, one of Foo, Baz, Bar, 1, 0
     #
     def json_enums(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1435,9 +1458,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::JsonEnums
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1458,7 +1482,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # The example tests basic map serialization.
@@ -1503,27 +1527,27 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::JsonMapsOutput
-    #   resp.dense_struct_map #=> Hash<String, GreetingStruct>
-    #   resp.dense_struct_map['key'] #=> Types::GreetingStruct
-    #   resp.dense_struct_map['key'].hi #=> String
-    #   resp.sparse_struct_map #=> Hash<String, GreetingStruct>
-    #   resp.dense_number_map #=> Hash<String, Integer>
-    #   resp.dense_number_map['key'] #=> Integer
-    #   resp.dense_boolean_map #=> Hash<String, Boolean>
-    #   resp.dense_boolean_map['key'] #=> Boolean
-    #   resp.dense_string_map #=> Hash<String, String>
-    #   resp.dense_string_map['key'] #=> String
-    #   resp.sparse_number_map #=> Hash<String, Integer>
-    #   resp.sparse_number_map['key'] #=> Integer
-    #   resp.sparse_boolean_map #=> Hash<String, Boolean>
-    #   resp.sparse_boolean_map['key'] #=> Boolean
-    #   resp.sparse_string_map #=> Hash<String, String>
-    #   resp.sparse_string_map['key'] #=> String
-    #   resp.dense_set_map #=> Hash<String, Set<String>>
-    #   resp.dense_set_map['key'] #=> Set<String>
-    #   resp.dense_set_map['key'][0] #=> String
-    #   resp.sparse_set_map #=> Hash<String, Set<String>>
+    #   resp.data #=> Types::JsonMapsOutput
+    #   resp.data.dense_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.data.dense_struct_map['key'] #=> Types::GreetingStruct
+    #   resp.data.dense_struct_map['key'].hi #=> String
+    #   resp.data.sparse_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.data.dense_number_map #=> Hash<String, Integer>
+    #   resp.data.dense_number_map['key'] #=> Integer
+    #   resp.data.dense_boolean_map #=> Hash<String, Boolean>
+    #   resp.data.dense_boolean_map['key'] #=> Boolean
+    #   resp.data.dense_string_map #=> Hash<String, String>
+    #   resp.data.dense_string_map['key'] #=> String
+    #   resp.data.sparse_number_map #=> Hash<String, Integer>
+    #   resp.data.sparse_number_map['key'] #=> Integer
+    #   resp.data.sparse_boolean_map #=> Hash<String, Boolean>
+    #   resp.data.sparse_boolean_map['key'] #=> Boolean
+    #   resp.data.sparse_string_map #=> Hash<String, String>
+    #   resp.data.sparse_string_map['key'] #=> String
+    #   resp.data.dense_set_map #=> Hash<String, Set<String>>
+    #   resp.data.dense_set_map['key'] #=> Set<String>
+    #   resp.data.dense_set_map['key'][0] #=> String
+    #   resp.data.sparse_set_map #=> Hash<String, Set<String>>
     #
     def json_maps(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1538,9 +1562,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::JsonMaps
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1561,7 +1586,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This operation uses unions for inputs and outputs.
@@ -1599,8 +1624,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::JsonUnionsOutput
-    #   resp.contents #=> MyUnion
+    #   resp.data #=> Types::JsonUnionsOutput
+    #   resp.data.contents #=> MyUnion
     #
     def json_unions(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1615,9 +1640,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::JsonUnions
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1638,7 +1664,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -1700,67 +1726,67 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::KitchenSinkOperationOutput
-    #   resp.blob #=> String
-    #   resp.boolean #=> Boolean
-    #   resp.double #=> Float
-    #   resp.empty_struct #=> Types::EmptyStruct
-    #   resp.float #=> Float
-    #   resp.httpdate_timestamp #=> Time
-    #   resp.integer #=> Integer
-    #   resp.iso8601_timestamp #=> Time
-    #   resp.json_value #=> String
-    #   resp.list_of_lists #=> Array<Array<String>>
-    #   resp.list_of_lists[0] #=> Array<String>
-    #   resp.list_of_lists[0][0] #=> String
-    #   resp.list_of_maps_of_strings #=> Array<Hash<String, String>>
-    #   resp.list_of_maps_of_strings[0] #=> Hash<String, String>
-    #   resp.list_of_maps_of_strings[0]['key'] #=> String
-    #   resp.list_of_strings #=> Array<String>
-    #   resp.list_of_structs #=> Array<SimpleStruct>
-    #   resp.list_of_structs[0] #=> Types::SimpleStruct
-    #   resp.list_of_structs[0].value #=> String
-    #   resp.long #=> Integer
-    #   resp.map_of_lists_of_strings #=> Hash<String, Array<String>>
-    #   resp.map_of_maps #=> Hash<String, Hash<String, String>>
-    #   resp.map_of_strings #=> Hash<String, String>
-    #   resp.map_of_structs #=> Hash<String, SimpleStruct>
-    #   resp.recursive_list #=> Array<KitchenSink>
-    #   resp.recursive_list[0] #=> Types::KitchenSink
-    #   resp.recursive_list[0].blob #=> String
-    #   resp.recursive_list[0].boolean #=> Boolean
-    #   resp.recursive_list[0].double #=> Float
-    #   resp.recursive_list[0].empty_struct #=> Types::EmptyStruct
-    #   resp.recursive_list[0].float #=> Float
-    #   resp.recursive_list[0].httpdate_timestamp #=> Time
-    #   resp.recursive_list[0].integer #=> Integer
-    #   resp.recursive_list[0].iso8601_timestamp #=> Time
-    #   resp.recursive_list[0].json_value #=> String
-    #   resp.recursive_list[0].list_of_lists #=> Array<Array<String>>
-    #   resp.recursive_list[0].list_of_maps_of_strings #=> Array<Hash<String, String>>
-    #   resp.recursive_list[0].list_of_strings #=> Array<String>
-    #   resp.recursive_list[0].list_of_structs #=> Array<SimpleStruct>
-    #   resp.recursive_list[0].long #=> Integer
-    #   resp.recursive_list[0].map_of_lists_of_strings #=> Hash<String, Array<String>>
-    #   resp.recursive_list[0].map_of_maps #=> Hash<String, Hash<String, String>>
-    #   resp.recursive_list[0].map_of_strings #=> Hash<String, String>
-    #   resp.recursive_list[0].map_of_structs #=> Hash<String, SimpleStruct>
-    #   resp.recursive_list[0].recursive_list #=> Array<KitchenSink>
-    #   resp.recursive_list[0].recursive_map #=> Hash<String, KitchenSink>
-    #   resp.recursive_list[0].recursive_struct #=> Types::KitchenSink
-    #   resp.recursive_list[0].simple_struct #=> Types::SimpleStruct
-    #   resp.recursive_list[0].string #=> String
-    #   resp.recursive_list[0].struct_with_location_name #=> Types::StructWithLocationName
-    #   resp.recursive_list[0].struct_with_location_name.value #=> String
-    #   resp.recursive_list[0].timestamp #=> Time
-    #   resp.recursive_list[0].unix_timestamp #=> Time
-    #   resp.recursive_map #=> Hash<String, KitchenSink>
-    #   resp.recursive_struct #=> Types::KitchenSink
-    #   resp.simple_struct #=> Types::SimpleStruct
-    #   resp.string #=> String
-    #   resp.struct_with_location_name #=> Types::StructWithLocationName
-    #   resp.timestamp #=> Time
-    #   resp.unix_timestamp #=> Time
+    #   resp.data #=> Types::KitchenSinkOperationOutput
+    #   resp.data.blob #=> String
+    #   resp.data.boolean #=> Boolean
+    #   resp.data.double #=> Float
+    #   resp.data.empty_struct #=> Types::EmptyStruct
+    #   resp.data.float #=> Float
+    #   resp.data.httpdate_timestamp #=> Time
+    #   resp.data.integer #=> Integer
+    #   resp.data.iso8601_timestamp #=> Time
+    #   resp.data.json_value #=> String
+    #   resp.data.list_of_lists #=> Array<Array<String>>
+    #   resp.data.list_of_lists[0] #=> Array<String>
+    #   resp.data.list_of_lists[0][0] #=> String
+    #   resp.data.list_of_maps_of_strings #=> Array<Hash<String, String>>
+    #   resp.data.list_of_maps_of_strings[0] #=> Hash<String, String>
+    #   resp.data.list_of_maps_of_strings[0]['key'] #=> String
+    #   resp.data.list_of_strings #=> Array<String>
+    #   resp.data.list_of_structs #=> Array<SimpleStruct>
+    #   resp.data.list_of_structs[0] #=> Types::SimpleStruct
+    #   resp.data.list_of_structs[0].value #=> String
+    #   resp.data.long #=> Integer
+    #   resp.data.map_of_lists_of_strings #=> Hash<String, Array<String>>
+    #   resp.data.map_of_maps #=> Hash<String, Hash<String, String>>
+    #   resp.data.map_of_strings #=> Hash<String, String>
+    #   resp.data.map_of_structs #=> Hash<String, SimpleStruct>
+    #   resp.data.recursive_list #=> Array<KitchenSink>
+    #   resp.data.recursive_list[0] #=> Types::KitchenSink
+    #   resp.data.recursive_list[0].blob #=> String
+    #   resp.data.recursive_list[0].boolean #=> Boolean
+    #   resp.data.recursive_list[0].double #=> Float
+    #   resp.data.recursive_list[0].empty_struct #=> Types::EmptyStruct
+    #   resp.data.recursive_list[0].float #=> Float
+    #   resp.data.recursive_list[0].httpdate_timestamp #=> Time
+    #   resp.data.recursive_list[0].integer #=> Integer
+    #   resp.data.recursive_list[0].iso8601_timestamp #=> Time
+    #   resp.data.recursive_list[0].json_value #=> String
+    #   resp.data.recursive_list[0].list_of_lists #=> Array<Array<String>>
+    #   resp.data.recursive_list[0].list_of_maps_of_strings #=> Array<Hash<String, String>>
+    #   resp.data.recursive_list[0].list_of_strings #=> Array<String>
+    #   resp.data.recursive_list[0].list_of_structs #=> Array<SimpleStruct>
+    #   resp.data.recursive_list[0].long #=> Integer
+    #   resp.data.recursive_list[0].map_of_lists_of_strings #=> Hash<String, Array<String>>
+    #   resp.data.recursive_list[0].map_of_maps #=> Hash<String, Hash<String, String>>
+    #   resp.data.recursive_list[0].map_of_strings #=> Hash<String, String>
+    #   resp.data.recursive_list[0].map_of_structs #=> Hash<String, SimpleStruct>
+    #   resp.data.recursive_list[0].recursive_list #=> Array<KitchenSink>
+    #   resp.data.recursive_list[0].recursive_map #=> Hash<String, KitchenSink>
+    #   resp.data.recursive_list[0].recursive_struct #=> Types::KitchenSink
+    #   resp.data.recursive_list[0].simple_struct #=> Types::SimpleStruct
+    #   resp.data.recursive_list[0].string #=> String
+    #   resp.data.recursive_list[0].struct_with_location_name #=> Types::StructWithLocationName
+    #   resp.data.recursive_list[0].struct_with_location_name.value #=> String
+    #   resp.data.recursive_list[0].timestamp #=> Time
+    #   resp.data.recursive_list[0].unix_timestamp #=> Time
+    #   resp.data.recursive_map #=> Hash<String, KitchenSink>
+    #   resp.data.recursive_struct #=> Types::KitchenSink
+    #   resp.data.simple_struct #=> Types::SimpleStruct
+    #   resp.data.string #=> String
+    #   resp.data.struct_with_location_name #=> Types::StructWithLocationName
+    #   resp.data.timestamp #=> Time
+    #   resp.data.unix_timestamp #=> Time
     #
     def kitchen_sink_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1775,9 +1801,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::ErrorWithMembers, Errors::ErrorWithoutMembers]),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::ErrorWithMembers, Errors::ErrorWithoutMembers]),
         data_parser: Parsers::KitchenSinkOperation
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1798,7 +1825,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example ensures that mediaType strings are base64 encoded in headers.
@@ -1816,8 +1843,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::MediaTypeHeaderOutput
-    #   resp.json #=> String
+    #   resp.data #=> Types::MediaTypeHeaderOutput
+    #   resp.data.json #=> String
     #
     def media_type_header(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1832,9 +1859,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::MediaTypeHeader
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1855,7 +1883,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -1873,8 +1901,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::NestedAttributesOperationOutput
-    #   resp.value #=> String
+    #   resp.data #=> Types::NestedAttributesOperationOutput
+    #   resp.data.value #=> String
     #
     def nested_attributes_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1889,9 +1917,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::NestedAttributesOperation
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1912,7 +1941,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Null and empty headers are not sent over the wire.
@@ -1934,11 +1963,11 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::NullAndEmptyHeadersClientOutput
-    #   resp.a #=> String
-    #   resp.b #=> String
-    #   resp.c #=> Array<String>
-    #   resp.c[0] #=> String
+    #   resp.data #=> Types::NullAndEmptyHeadersClientOutput
+    #   resp.data.a #=> String
+    #   resp.data.b #=> String
+    #   resp.data.c #=> Array<String>
+    #   resp.data.c[0] #=> String
     #
     def null_and_empty_headers_client(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1953,9 +1982,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::NullAndEmptyHeadersClient
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -1976,7 +2006,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -1998,12 +2028,12 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::NullOperationOutput
-    #   resp.string #=> String
-    #   resp.sparse_string_list #=> Array<String>
-    #   resp.sparse_string_list[0] #=> String
-    #   resp.sparse_string_map #=> Hash<String, String>
-    #   resp.sparse_string_map['key'] #=> String
+    #   resp.data #=> Types::NullOperationOutput
+    #   resp.data.string #=> String
+    #   resp.data.sparse_string_list #=> Array<String>
+    #   resp.data.sparse_string_list[0] #=> String
+    #   resp.data.sparse_string_map #=> Hash<String, String>
+    #   resp.data.sparse_string_map['key'] #=> String
     #
     def null_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2018,9 +2048,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::NullOperation
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2041,7 +2072,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Omits null, but serializes empty string value.
@@ -2060,7 +2091,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::OmitsNullSerializesEmptyStringOutput
+    #   resp.data #=> Types::OmitsNullSerializesEmptyStringOutput
     #
     def omits_null_serializes_empty_string(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2075,9 +2106,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::OmitsNullSerializesEmptyString
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2098,7 +2130,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -2114,8 +2146,8 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::OperationWithOptionalInputOutputOutput
-    #   resp.value #=> String
+    #   resp.data #=> Types::OperationWithOptionalInputOutputOutput
+    #   resp.data.value #=> String
     #
     def operation_with_optional_input_output(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2130,9 +2162,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::OperationWithOptionalInputOutput
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2153,7 +2186,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # Automatically adds idempotency tokens.
@@ -2171,7 +2204,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::QueryIdempotencyTokenAutoFillOutput
+    #   resp.data #=> Types::QueryIdempotencyTokenAutoFillOutput
     #
     def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2186,9 +2219,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::QueryIdempotencyTokenAutoFill
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2209,7 +2243,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -2230,7 +2264,7 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::QueryParamsAsStringListMapOutput
+    #   resp.data #=> Types::QueryParamsAsStringListMapOutput
     #
     def query_params_as_string_list_map(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2245,9 +2279,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::QueryParamsAsStringListMap
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2268,7 +2303,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # This example tests how timestamp request and response headers are serialized.
@@ -2292,14 +2327,14 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::TimestampFormatHeadersOutput
-    #   resp.member_epoch_seconds #=> Time
-    #   resp.member_http_date #=> Time
-    #   resp.member_date_time #=> Time
-    #   resp.default_format #=> Time
-    #   resp.target_epoch_seconds #=> Time
-    #   resp.target_http_date #=> Time
-    #   resp.target_date_time #=> Time
+    #   resp.data #=> Types::TimestampFormatHeadersOutput
+    #   resp.data.member_epoch_seconds #=> Time
+    #   resp.data.member_http_date #=> Time
+    #   resp.data.member_date_time #=> Time
+    #   resp.data.default_format #=> Time
+    #   resp.data.target_epoch_seconds #=> Time
+    #   resp.data.target_http_date #=> Time
+    #   resp.data.target_date_time #=> Time
     #
     def timestamp_format_headers(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2314,9 +2349,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::TimestampFormatHeaders
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2337,7 +2373,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -2356,9 +2392,9 @@ module RailsJson
     #
     # @example Response structure
     #
-    #   resp #=> Types::Struct____789BadNameOutput
-    #   resp.member #=> Types::Struct____456efg
-    #   resp.member.member____123foo #=> String
+    #   resp.data #=> Types::Struct____789BadNameOutput
+    #   resp.data.member #=> Types::Struct____456efg
+    #   resp.data.member.member____123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2373,9 +2409,10 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::Operation____789BadName
       )
+      stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
@@ -2396,7 +2433,7 @@ module RailsJson
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     private

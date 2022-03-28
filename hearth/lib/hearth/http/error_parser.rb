@@ -19,7 +19,8 @@ module Hearth
 
       # @param [Module] error_module The code generated Errors module.
       #   Must contain service specific implementations of
-      #   ApiRedirectError, ApiClientError, and ApiServerError
+      #   ApiRedirectError, ApiClientError, and ApiServerError, and it
+      #   must have defined a `self.error_code(http_resp)` method.
       #
       # @param [Integer] success_status The status code of a
       #   successful response as defined by the model for
@@ -30,22 +31,18 @@ module Hearth
       #
       # @param [Array<Class<ApiError>>] errors Array of Error classes
       #   modeled for the operation.
-      #
-      # @param [callable] error_code_fn Protocol specific function
-      #   that will return the error code from a response, or nil if
-      #   there is none.
-      def initialize(error_module:, success_status:, errors:, error_code_fn:)
+      def initialize(error_module:, success_status:, errors:)
         @error_module = error_module
         @success_status = success_status
         @errors = errors
-        @error_code_fn = error_code_fn
       end
 
       # Parse and return the error if the response is not successful.
       #
       # @param [Response] response The HTTP response
-      def parse(response)
-        extract_error(response) if error?(response)
+      # @param [Hash] metadata The metadata from {Hearth::Output}
+      def parse(response, metadata)
+        create_error(response, metadata) if error?(response)
       end
 
       private
@@ -60,19 +57,20 @@ module Hearth
       #   [MODIFIED, 3xx, 4xx, 5xx mapped, everything else is Generic ApiError]
       # 7. Everything else -> unknown client error
       def error?(http_resp)
-        return true if @error_code_fn.call(http_resp)
+        return true if @error_module.method(:error_code).call(http_resp)
         return false if http_resp.status == @success_status
 
         !(200..299).cover?(http_resp.status)
       end
 
-      def extract_error(http_resp)
-        error_code = @error_code_fn.call(http_resp)
+      def create_error(http_resp, metadata)
+        error_code = @error_module.method(:error_code).call(http_resp)
         error_class = error_class(error_code) if error_code
 
         error_opts = {
           http_resp: http_resp,
           error_code: error_code,
+          metadata: metadata,
           message: error_code # default message
         }
 

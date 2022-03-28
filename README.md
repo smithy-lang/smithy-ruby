@@ -63,13 +63,13 @@ Hearth has a full suite of rspec tests which can be run from the hearth director
 #### Manual Testing
 The `sample-service` directory defines a rails service that can be run with `rails s`.  You can then test manually by adding hearth and the generated sdk client to your library path with:
 ```sh
-irb -I 'hearth/lib' -I 'sample_service/lib'
+irb -I 'hearth/lib' -I 'codegen/projections/high_score_service/lib'
 ```
 
 And test with:
 ```Ruby
-require 'sample_service'
+require 'high_score_service'
 
-c = SampleService::Client.new(endpoint: 'http://127.0.0.1:3000')
+c = HighScoreService::Client.new(endpoint: 'http://127.0.0.1:3000')
 c.get_high_score(id: '1')
 ```

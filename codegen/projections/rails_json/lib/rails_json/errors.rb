@@ -9,7 +9,6 @@
 
 module RailsJson
   module Errors
-
     def self.error_code(http_resp)
       http_resp.headers['x-smithy-rails-error']
     end

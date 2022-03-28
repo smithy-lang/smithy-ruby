@@ -125,7 +125,7 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .write("expect(output.to_h).to eq($L)",
+                    .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
             LOGGER.finer(
@@ -157,7 +157,7 @@ public class HttpProtocolTestGenerator {
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     // Note: This part is not required, but its an additional check on parsers
-                    .write("expect(output.to_h).to eq($L)",
+                    .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
             LOGGER.finer("Generated protocol response stubber test for operation " + operationName + " test: "

@@ -9,7 +9,6 @@
 
 module Weather
   module Errors
-
     def self.error_code(http_resp)
       http_resp.headers['x-smithy-error']
     end

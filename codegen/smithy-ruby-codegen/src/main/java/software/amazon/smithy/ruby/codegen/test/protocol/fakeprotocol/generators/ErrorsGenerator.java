@@ -24,10 +24,7 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
         super(context);
     }
 
-    public void renderErrorCode() {
-        writer
-                .openBlock("def self.error_code(http_resp)")
-                .write("http_resp.headers['x-smithy-error']")
-                .closeBlock("end");
+    public void renderErrorCodeBody() {
+        writer.write("resp.headers['x-smithy-error']");
     }
 }

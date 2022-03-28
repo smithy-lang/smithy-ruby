@@ -16,8 +16,9 @@ module Hearth
       end
 
       describe '#call' do
+        let(:metadata) { { key: 'value' } }
         let(:input) { double('input') }
-        let(:output) { Output.new }
+        let(:output) { Output.new(metadata: metadata) }
         let(:request) { double('request') }
         let(:response) { double('response') }
         let(:context) do
@@ -31,7 +32,8 @@ module Hearth
           expect(app).to receive(:call)
             .with(input, context).ordered
 
-          expect(error_parser).to receive(:parse).with(response).ordered
+          expect(error_parser).to receive(:parse)
+            .with(response, metadata).ordered
           expect(data_parser).to receive(:parse).with(response).ordered
 
           resp = subject.call(input, context)
@@ -43,6 +45,7 @@ module Hearth
           let(:error) do
             Hearth::ApiError.new(
               error_code: 'error_code',
+              metadata: metadata,
               message: 'error'
             )
           end
@@ -51,7 +54,7 @@ module Hearth
             expect(app).to receive(:call)
               .with(input, context).and_return(output).ordered
             expect(error_parser).to receive(:parse)
-              .with(response).ordered.and_return(error)
+              .with(response, metadata).ordered.and_return(error)
             expect(data_parser).not_to receive(:parse)
 
             resp = subject.call(input, context)
@@ -66,7 +69,8 @@ module Hearth
           it 'parses the data' do
             expect(app).to receive(:call)
               .with(input, context).ordered
-            expect(error_parser).to receive(:parse).with(response).ordered
+            expect(error_parser).to receive(:parse)
+              .with(response, metadata).ordered
             expect(data_parser).to receive(:parse)
               .with(response).and_return(data)
 
