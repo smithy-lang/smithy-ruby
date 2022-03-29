@@ -40,7 +40,6 @@ public class ModuleGenerator {
         RubyCodeWriter writer = new RubyCodeWriter();
 
         writer.writePreamble();
-
         writer.write("require 'hearth'\n");
 
         String[] requires = {

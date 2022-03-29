@@ -16,22 +16,16 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.function.Consumer;
-import software.amazon.smithy.codegen.core.SymbolWriter;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A helper class for generating well formatted Ruby code.
  */
 @SmithyUnstableApi
-public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
+public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
 
     public RubyCodeWriter() {
-        this("");
-    }
-
-    public RubyCodeWriter(String namespace) {
-        super(new RubyImportContainer(namespace));
-
         trimTrailingSpaces();
         trimBlankLines();
         setIndentText("  ");
@@ -61,7 +55,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
      * @param consumer All lines written by the task will be prefixed with the comment string.
      * @return Returns the CodeWriter
      */
-    @Override
     public RubyCodeWriter writeDocs(Consumer<RubyCodeWriter> consumer) {
         pushState();
         setNewlinePrefix("# ");
