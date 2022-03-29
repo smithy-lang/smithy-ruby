@@ -5,7 +5,7 @@ module Hearth
     subject { MiddlewareStack.new }
     let(:build_middleware) { Hearth::Middleware::Build }
     let(:builder) { double('builder') }
-    let(:builder_params) { { builder: builder, disable_host_prefix: false } }
+    let(:builder_params) { { builder: builder } }
 
     let(:parse_middleware) { Hearth::Middleware::Parse }
     let(:error_parser) { double('error_parser') }

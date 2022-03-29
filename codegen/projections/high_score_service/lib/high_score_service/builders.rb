@@ -14,7 +14,7 @@ module HighScoreService
 
     # Operation Builder for CreateHighScore
     class CreateHighScore
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/high_scores')
         params = Hearth::Query::ParamList.new
@@ -39,8 +39,11 @@ module HighScoreService
 
     # Operation Builder for DeleteHighScore
     class DeleteHighScore
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'DELETE'
+        if input[:id].to_s.empty?
+          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+        end
         http_req.append_path(format(
             '/high_scores/%<id>s',
             id: Hearth::HTTP.uri_escape(input[:id].to_s)
@@ -53,8 +56,11 @@ module HighScoreService
 
     # Operation Builder for GetHighScore
     class GetHighScore
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
+        if input[:id].to_s.empty?
+          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+        end
         http_req.append_path(format(
             '/high_scores/%<id>s',
             id: Hearth::HTTP.uri_escape(input[:id].to_s)
@@ -67,7 +73,7 @@ module HighScoreService
 
     # Operation Builder for ListHighScores
     class ListHighScores
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
         params = Hearth::Query::ParamList.new
@@ -77,8 +83,11 @@ module HighScoreService
 
     # Operation Builder for UpdateHighScore
     class UpdateHighScore
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'PUT'
+        if input[:id].to_s.empty?
+          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+        end
         http_req.append_path(format(
             '/high_scores/%<id>s',
             id: Hearth::HTTP.uri_escape(input[:id].to_s)

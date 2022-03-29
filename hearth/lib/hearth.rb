@@ -2,6 +2,7 @@
 
 require_relative 'hearth/api_error'
 require_relative 'hearth/block_io'
+require_relative 'hearth/checksums'
 require_relative 'hearth/context'
 require_relative 'hearth/http'
 require_relative 'hearth/json'

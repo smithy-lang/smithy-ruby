@@ -55,6 +55,9 @@ Hearth implements the following protocol agnostic Middleware interfaces:
 * `Build`: Populates a protocol specific request object using input with a
    builder class. The builder class must respond to `.build` and take the
    request object as a positional parameter and `input` as a keyword argument.
+* `HostPrefix`: Prefixes the host with the `host_prefix` option before sending
+   the request. The `host_prefix` option may contain a label that is populated
+   by input. It can be disabled with `disable_host_prefix`.
 * `Parse`: Populates `Hearth::Output` using a protocol specific response
    object with both a data parser and error parser class. The data parser must
    respond to `.parse` and take the response object as a positional parameter

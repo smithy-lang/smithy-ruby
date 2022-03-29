@@ -11,6 +11,7 @@ module Hearth
   # defined for all of the key request lifecycle events:
   #
   # * validate
+  # * host_prefix
   # * build
   # * send
   # * parse
@@ -192,6 +193,7 @@ module Hearth
     # eg: before_build, after_build, around_build.
     STANDARD_MIDDLEWARE = [
       Hearth::Middleware::Validate,
+      Hearth::Middleware::HostPrefix,
       Hearth::Middleware::Build,
       Hearth::Middleware::Send,
       Hearth::Middleware::Retry,
