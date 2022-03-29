@@ -99,6 +99,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     // Mark all instances methods of a class as reserved. Shape members are accessors of a class.
     // Taken from "class Foo; end; Foo.new.methods.sort".
+    // Additionally add "each_pair" as we leverage this methods for Type's to_h of Struct.
     private ReservedWords memberReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
@@ -111,7 +112,8 @@ public class RubySymbolProvider implements SymbolProvider,
                         "pretty_print_instance_variables", "private_methods", "protected_methods", "public_method",
                         "public_methods", "public_send", "remove_instance_variable", "respond_to?", "send",
                         "singleton_class", "singleton_method", "singleton_methods", "taint", "tainted?", "tap", "then",
-                        "to_enum", "to_s", "trust", "untaint", "untrust", "untrusted?", "yield_self"};
+                        "to_enum", "to_s", "trust", "untaint", "untrust", "untrusted?", "yield_self",
+                        "each_pair" };
 
         for (String w : reserved) {
             reservedNames.put(w, "member_" + w);
