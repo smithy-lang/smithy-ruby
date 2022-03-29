@@ -97,30 +97,21 @@ public class RubySymbolProvider implements SymbolProvider,
         return reservedNames.build();
     }
 
-    // Mark all instances methods of a struct class as reserved. Shape members are accessors of a class.
-    // Taken from "Foo = Struct.new(nil); Foo.new.methods.sort".
+    // Mark all instances methods of a class as reserved. Shape members are accessors of a class.
+    // Taken from "class Foo; end; Foo.new.methods.sort".
     private ReservedWords memberReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
-                {"!", "!=", "!~", "<=>", "==", "===", "=~", "[]", "[]=", "__id__", "__send__", "all?", "any?", "chain",
-                        "chunk", "chunk_while", "class", "clone", "collect", "collect_concat", "count", "cycle",
-                        "deconstruct", "deconstruct_keys", "define_singleton_method", "detect", "dig", "display",
-                        "drop", "drop_while", "dup", "each", "each_cons", "each_entry", "each_pair", "each_slice",
-                        "each_with_index", "each_with_object", "entries", "enum_for", "eql?", "equal?", "extend",
-                        "filter", "filter_map", "find", "find_all", "find_index", "first", "flat_map", "freeze",
-                        "frozen?", "grep", "grep_v", "group_by", "hash", "include?", "inject", "inspect",
-                        "instance_eval", "instance_exec", "instance_of?", "instance_variable_defined?",
-                        "instance_variable_get", "instance_variable_set", "instance_variables", "is_a?", "itself",
-                        "kind_of?", "lazy", "length", "map", "max", "max_by", "member?", "members", "method", "methods",
-                        "min", "min_by", "minmax", "minmax_by", "nil?", "none?", "object_id", "one?", "partition",
+                {"!", "!=", "!~", "<=>", "==", "===", "=~", "__id__", "__send__", "class", "clone",
+                        "define_singleton_method", "display", "dup", "enum_for", "eql?", "equal?", "extend", "freeze",
+                        "frozen?", "hash", "inspect", "instance_eval", "instance_exec", "instance_of?",
+                        "instance_variable_defined?", "instance_variable_get", "instance_variable_set",
+                        "instance_variables", "is_a?", "itself", "kind_of?", "method", "methods", "nil?", "object_id",
                         "pretty_inspect", "pretty_print", "pretty_print_cycle", "pretty_print_inspect",
                         "pretty_print_instance_variables", "private_methods", "protected_methods", "public_method",
-                        "public_methods", "public_send", "reduce", "reject", "remove_instance_variable", "respond_to?",
-                        "reverse_each", "select", "send", "singleton_class", "singleton_method", "singleton_methods",
-                        "size", "slice_after", "slice_before", "slice_when", "sort", "sort_by", "sum", "taint",
-                        "tainted?", "take", "take_while", "tally", "tap", "then", "to_a", "to_enum", "to_h", "to_s",
-                        "to_set", "trust", "uniq", "untaint", "untrust", "untrusted?", "values", "values_at",
-                        "yield_self", "zip"};
+                        "public_methods", "public_send", "remove_instance_variable", "respond_to?", "send",
+                        "singleton_class", "singleton_method", "singleton_methods", "taint", "tainted?", "tap", "then",
+                        "to_enum", "to_s", "trust", "untaint", "untrust", "untrusted?", "yield_self"};
 
         for (String w : reserved) {
             reservedNames.put(w, "member_" + w);
