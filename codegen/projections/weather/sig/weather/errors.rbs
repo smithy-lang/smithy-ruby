@@ -10,9 +10,12 @@
 module Weather
   module Errors
 
-    def self.error_code: (untyped http_resp) -> untyped
+    def self.error_code: (untyped resp) -> untyped
 
     class ApiError < Hearth::HTTP::ApiError
+    def initialize: (request_id: untyped request_id, **untyped kwargs) -> void
+
+    attr_reader request_id: untyped
     end
 
     class ApiClientError < ApiError

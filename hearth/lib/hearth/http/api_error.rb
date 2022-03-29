@@ -9,7 +9,6 @@ module Hearth
         @http_status = http_resp.status
         @http_headers = http_resp.headers
         @http_body = http_resp.body
-        @request_id = http_resp.headers['x-request-id']
         super(**kwargs)
       end
 
@@ -21,9 +20,6 @@ module Hearth
 
       # @return [String]
       attr_reader :http_body
-
-      # @return [String]
-      attr_reader :request_id
     end
   end
 end

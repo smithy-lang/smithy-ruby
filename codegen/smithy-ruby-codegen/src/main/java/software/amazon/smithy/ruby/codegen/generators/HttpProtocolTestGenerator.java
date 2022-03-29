@@ -121,11 +121,11 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
+                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .write("expect(output.to_h).to eq($L)",
+                    .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
             LOGGER.finer(
@@ -141,7 +141,7 @@ public class HttpProtocolTestGenerator {
 
         Shape outputShape = model.expectShape(operation.getOutputShape());
 
-        writer.openBlock("\ndescribe 'response stubs' do");
+        writer.openBlock("\ndescribe 'stubs' do");
         responseTests.getTestCases().forEach((testCase) -> {
             if (testCase.getAppliesTo().isPresent() && testCase.getAppliesTo().get().toString().equals("server")) {
                 return;
@@ -149,17 +149,18 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it 'stubs $L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
+                    .openBlock("it 'stubs $L'$L do", testCase.getId(),
+                            skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubMiddleware(testCase))
                     .write("middleware.remove_build")
                     .write("client.stub_responses(:$L, $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     // Note: This part is not required, but its an additional check on parsers
-                    .write("expect(output.to_h).to eq($L)",
+                    .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
-            LOGGER.finer("Generated protocol response stubber test for operation " + operationName + " test: "
+            LOGGER.finer("Generated protocol stubs test for operation " + operationName + " test: "
                     + testCase.getId());
 
         });
@@ -178,7 +179,7 @@ public class HttpProtocolTestGenerator {
             String documentation = testCase.getDocumentation().orElse("");
             writer
                     .writeDocstring(documentation)
-                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId()))
+                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "request"))
                     .call(() -> {
                         if (inputShape.members().stream().anyMatch((m) -> m.hasTrait(IdempotencyTokenTrait.class))) {
                             // auto generated tokens during protocol tests should always be this value
@@ -203,9 +204,9 @@ public class HttpProtocolTestGenerator {
         writer.closeBlock("end");
     }
 
-    private String skipTest(OperationShape operation, String testCaseId) {
+    private String skipTest(OperationShape operation, String testCaseId, String testType) {
         if (operation.hasTrait(SkipTestsTrait.class)) {
-            Optional<SkipTest> skipTest = operation.expectTrait(SkipTestsTrait.class).skipTest(testCaseId);
+            Optional<SkipTest> skipTest = operation.expectTrait(SkipTestsTrait.class).skipTest(testCaseId, testType);
             if (skipTest.isPresent()) {
                 if (skipTest.get().getId().equals(testCaseId)) {
                     if (skipTest.get().getReason().isPresent()) {

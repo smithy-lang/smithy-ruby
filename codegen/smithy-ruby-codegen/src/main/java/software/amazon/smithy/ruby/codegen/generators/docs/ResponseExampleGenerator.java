@@ -55,7 +55,7 @@ public class ResponseExampleGenerator {
     public String generate() {
         Shape operationOutput = model.expectShape(operation.getOutputShape());
 
-        operationOutput.accept(new ResponseMember("resp", visited));
+        operationOutput.accept(new ResponseMember("resp.data", visited));
 
         return writer.toString();
     }

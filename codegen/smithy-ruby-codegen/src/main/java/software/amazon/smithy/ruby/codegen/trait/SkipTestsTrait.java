@@ -44,9 +44,13 @@ public final class SkipTestsTrait extends AbstractTrait {
         return skipTests;
     }
 
-    public Optional<SkipTest> skipTest(String testId) {
+    public Optional<SkipTest> skipTest(String testId, String testType) {
         return skipTests.stream()
-                .filter((skipTest) -> skipTest.getId().equals(testId))
+                .filter((skipTest) -> skipTest.getId().equals(testId)
+                        && skipTest.getType()
+                        .map((t) -> t.equals(testType))
+                        .orElse(true)
+                )
                 .findFirst();
     }
 

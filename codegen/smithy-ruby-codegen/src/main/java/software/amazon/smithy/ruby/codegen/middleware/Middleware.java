@@ -15,13 +15,11 @@
 
 package software.amazon.smithy.ruby.codegen.middleware;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +37,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.OperationPredicate;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.ServicePredicate;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -381,28 +380,32 @@ public final class Middleware {
         }
 
         /**
-         * Used to copy a given ruby file (often the middleware class definition)
-         * into the generated SDK.
+         * Used to copy a middleware ruby file into the generated SDK. The copied file
+         * must be a middleware class under the Middleware namespace. This method will
+         * apply the generated service's namespace to the middleware file.
          *
-         * @param rubyFileName the name of the ruby file to copy.
+         * @param rubyFileName the file name (with path) of the ruby file to copy.
          * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
             this.writeAdditionalFiles = (context) -> {
                 try {
-
-                    File f = new File(rubyFileName);
-                    InputStream inputStream = new FileInputStream(f);
-                    Reader fileReader =
-                            new InputStreamReader(inputStream,
-                                    StandardCharsets.UTF_8);
-                    String relativeName = "middleware/" + f.getName();
+                    Path path = Paths.get(rubyFileName);
+                    String relativeName = "middleware/" + path.getFileName();
                     String fileName =
                             context.settings().getGemName() + "/lib/"
                                     + context.settings().getGemName()
                                     + "/" + relativeName;
-                    context.fileManifest().writeFile(fileName, fileReader);
-                    fileReader.close();
+                    String fileContent =
+                            new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+
+                    RubyCodeWriter writer = new RubyCodeWriter();
+                    writer
+                            .openBlock("module $L", context.settings().getModule())
+                            .write(fileContent)
+                            .closeBlock("end");
+
+                    context.fileManifest().writeFile(fileName, writer.toString());
                     return Collections.singletonList(relativeName);
                 } catch (IOException e) {
                     throw new CodegenException(

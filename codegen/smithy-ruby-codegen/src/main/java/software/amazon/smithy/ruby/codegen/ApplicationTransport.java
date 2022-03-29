@@ -151,11 +151,8 @@ public final class ApplicationTransport {
                                         Collectors.joining(", "));
                         params.put("error_parser",
                                 "Hearth::HTTP::ErrorParser.new("
-                                        + "error_module: Errors, error_code_fn: "
-                                        + "Errors.method(:error_code), "
-                                        + "success_status: "
-                                        + successCode + ", errors: [" + errors + "]"
-                                        + ")"
+                                        + "error_module: Errors, success_status: " + successCode
+                                        + ", errors: [" + errors + "]" + ")"
                         );
                         return params;
                     })

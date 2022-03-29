@@ -1,24 +1,18 @@
-# frozen_string_literal: true
-
 module Hearth
   # A wrapper class that contains an error or data from the response.
   class Output
     # @param [StandardError] error The error class to be raised.
     # @param [Struct] data The data returned by a client.
     # @param [Hash] metadata Response metadata set by client middleware.
-    def initialize(error: nil, data: nil, metadata: {})
-      @error = error
-      @data = data
-      @metadata = metadata
-    end
+    def initialize: (?error: untyped? error, ?data: untyped? data, ?metadata: ::Hash[untyped, untyped] metadata) -> void
 
     # @return [StandardError, nil]
-    attr_accessor :error
+    attr_accessor error: untyped
 
     # @return [Struct, nil]
-    attr_accessor :data
+    attr_accessor data: untyped
 
     # @return [Hash, nil]
-    attr_accessor :metadata
+    attr_accessor metadata: untyped
   end
 end

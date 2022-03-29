@@ -25,29 +25,25 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
         super(context);
     }
 
-    public void renderErrorCode() {
+    public void renderErrorCodeBody() {
         RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
         String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
-
-        writer.openBlock("def self.error_code(http_resp)");
 
         if (errorLocation.equals("header")) {
             renderErrorCodeFromHeader();
         } else if (errorLocation.equals("status_code")) {
             renderErrorCodeFromStatusCode();
         }
-
-        writer.closeBlock("end");
     }
 
     private void renderErrorCodeFromHeader() {
-        writer.write("http_resp.headers['x-smithy-rails-error']");
+        writer.write("resp.headers['x-smithy-rails-error']");
     }
 
     // See https://github.com/rails/rails/blob/2dfd4fcd73ae7c4b40114f2447c7ef9d4c0790b4/guides/source/layouts_and_rendering.md?plain=1#L363-L408
     private void renderErrorCodeFromStatusCode() {
         writer
-                .write("case http_resp.status")
+                .write("case resp.status")
                 // 3xx errors
                 .write("when 300 then 'MultipleChoicesError'")
                 .write("when 301 then 'MovedPermanentlyError'")

@@ -70,8 +70,9 @@ public abstract class ErrorsGeneratorBase {
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
-                .write("")
-                .call(() -> renderErrorCode())
+                .openBlock("def self.error_code(resp)")
+                .call(() -> renderErrorCodeBody())
+                .closeBlock("end")
                 .call(() -> renderBaseErrors())
                 .call(() -> renderServiceModelErrors())
                 .write("")
@@ -129,6 +130,8 @@ public abstract class ErrorsGeneratorBase {
     private void renderRbsBaseErrors() {
         rbsWriter
                 .write("\nclass ApiError < Hearth::HTTP::ApiError")
+                .write("def initialize: (request_id: untyped request_id, **untyped kwargs) -> void\n")
+                .write("attr_reader request_id: untyped")
                 .write("end")
                 .write("\nclass ApiClientError < ApiError")
                 .write("end")
@@ -141,16 +144,20 @@ public abstract class ErrorsGeneratorBase {
     }
 
     /**
-     * Called to render the error_code method.
+     * Called to render the error_code method body.
      * <p>
-     * errors.rb must define a self.error_code(resp) method which will
-     * return the protocol specific error code from the response or nil
-     * if no error code is found.
+     * errors.rb defines a self.error_code(resp) method that should
+     * return the protocol specific error code (as a string) from the
+     * response, or nil if no error code is found. The error code is
+     * used to find and raise a generated error with the same name.
+     *
+     * For example, an error code of 'FooError' will attempt to raise
+     * the Service::Errors::FooError error.
      */
-    public abstract void renderErrorCode();
+    public abstract void renderErrorCodeBody();
 
     public void renderRbsErrorCode() {
-        rbsWriter.write("def self.error_code: (untyped http_resp) -> untyped");
+        rbsWriter.write("def self.error_code: (untyped resp) -> untyped");
     }
 
     protected List<Shape> getErrorShapes() {

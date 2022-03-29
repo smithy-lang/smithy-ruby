@@ -73,16 +73,16 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::GetCityOutput
-    #   resp.name #=> String
-    #   resp.coordinates #=> Types::CityCoordinates
-    #   resp.coordinates.latitude #=> Float
-    #   resp.coordinates.longitude #=> Float
-    #   resp.city #=> Types::CitySummary
-    #   resp.city.city_id #=> String
-    #   resp.city.name #=> String
-    #   resp.city.number #=> String
-    #   resp.city.case #=> String
+    #   resp.data #=> Types::GetCityOutput
+    #   resp.data.member_name #=> String
+    #   resp.data.coordinates #=> Types::CityCoordinates
+    #   resp.data.coordinates.latitude #=> Float
+    #   resp.data.coordinates.longitude #=> Float
+    #   resp.data.city #=> Types::CitySummary
+    #   resp.data.city.city_id #=> String
+    #   resp.data.city.member_name #=> String
+    #   resp.data.city.number #=> String
+    #   resp.data.city.case #=> String
     #
     def get_city(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -97,7 +97,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::NoSuchResource]),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::GetCity
       )
       stack.use(Hearth::Middleware::Send,
@@ -120,7 +120,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -136,9 +136,9 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::GetCityAnnouncementsOutput
-    #   resp.last_updated #=> Time
-    #   resp.announcements #=> Announcements
+    #   resp.data #=> Types::GetCityAnnouncementsOutput
+    #   resp.data.last_updated #=> Time
+    #   resp.data.announcements #=> Announcements
     #
     def get_city_announcements(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -153,7 +153,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::NoSuchResource]),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::GetCityAnnouncements
       )
       stack.use(Hearth::Middleware::Send,
@@ -176,7 +176,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -200,8 +200,8 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::GetCityImageOutput
-    #   resp.image #=> String
+    #   resp.data #=> Types::GetCityImageOutput
+    #   resp.data.image #=> String
     #
     def get_city_image(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -216,7 +216,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::NoSuchResource]),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::GetCityImage
       )
       stack.use(Hearth::Middleware::Send,
@@ -239,7 +239,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -253,8 +253,8 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::GetCurrentTimeOutput
-    #   resp.time #=> Time
+    #   resp.data #=> Types::GetCurrentTimeOutput
+    #   resp.data.time #=> Time
     #
     def get_current_time(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -269,7 +269,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::GetCurrentTime
       )
       stack.use(Hearth::Middleware::Send,
@@ -292,7 +292,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -308,9 +308,9 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::GetForecastOutput
-    #   resp.chance_of_rain #=> Float
-    #   resp.precipitation #=> Precipitation
+    #   resp.data #=> Types::GetForecastOutput
+    #   resp.data.chance_of_rain #=> Float
+    #   resp.data.precipitation #=> Precipitation
     #
     def get_forecast(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -325,7 +325,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::GetForecast
       )
       stack.use(Hearth::Middleware::Send,
@@ -348,7 +348,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -371,21 +371,21 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::ListCitiesOutput
-    #   resp.next_token #=> String
-    #   resp.some_enum #=> String, one of YES, NO
-    #   resp.a_string #=> String
-    #   resp.default_bool #=> Boolean
-    #   resp.boxed_bool #=> Boolean
-    #   resp.default_number #=> Integer
-    #   resp.boxed_number #=> Integer
-    #   resp.items #=> Array<CitySummary>
-    #   resp.items[0] #=> Types::CitySummary
-    #   resp.items[0].city_id #=> String
-    #   resp.items[0].name #=> String
-    #   resp.items[0].number #=> String
-    #   resp.items[0].case #=> String
-    #   resp.sparse_items #=> Array<CitySummary>
+    #   resp.data #=> Types::ListCitiesOutput
+    #   resp.data.next_token #=> String
+    #   resp.data.some_enum #=> String, one of YES, NO
+    #   resp.data.a_string #=> String
+    #   resp.data.default_bool #=> Boolean
+    #   resp.data.boxed_bool #=> Boolean
+    #   resp.data.default_number #=> Integer
+    #   resp.data.boxed_number #=> Integer
+    #   resp.data.items #=> Array<CitySummary>
+    #   resp.data.items[0] #=> Types::CitySummary
+    #   resp.data.items[0].city_id #=> String
+    #   resp.data.items[0].member_name #=> String
+    #   resp.data.items[0].number #=> String
+    #   resp.data.items[0].case #=> String
+    #   resp.data.sparse_items #=> Array<CitySummary>
     #
     def list_cities(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -400,7 +400,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: []),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::ListCities
       )
       stack.use(Hearth::Middleware::Send,
@@ -423,7 +423,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     # @param [Hash] params
@@ -442,10 +442,10 @@ module Weather
     #
     # @example Response structure
     #
-    #   resp #=> Types::Struct____789BadNameOutput
-    #   resp.member___123abc #=> String
-    #   resp.member #=> Types::Struct____456efg
-    #   resp.member.member___123foo #=> String
+    #   resp.data #=> Types::Struct____789BadNameOutput
+    #   resp.data.member____123abc #=> String
+    #   resp.data.member #=> Types::Struct____456efg
+    #   resp.data.member.member____123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -460,7 +460,7 @@ module Weather
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, error_code_fn: Errors.method(:error_code), success_status: 200, errors: [Errors::NoSuchResource]),
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,
@@ -483,7 +483,7 @@ module Weather
         )
       )
       raise resp.error if resp.error
-      resp.data
+      resp
     end
 
     private
