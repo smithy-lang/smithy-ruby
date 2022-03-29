@@ -10,7 +10,7 @@ on:
       - main
 
 env:
-  java_version: 8
+  java_version: 17
 
 jobs:
   generate-test-sdk:

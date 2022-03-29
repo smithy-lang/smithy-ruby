@@ -204,17 +204,17 @@ public class ClientGenerator {
 
     private void renderInitializeDocumentation() {
         writer.write("");
-        writer.doc(() -> {
-            writer.write("@overload initialize(options)");
-            writer.write("@param [Hash] options");
+        writer.writeDocs((w) -> {
+            w.write("@overload initialize(options)");
+            w.write("@param [Hash] options");
             clientConfig.forEach((cfg) -> {
                 if (StringUtils.isNotBlank(cfg.getDocumentation())) {
-                    writer.write("@option options [$L] :$L $L", cfg.getType(),
+                    w.write("@option options [$L] :$L $L", cfg.getType(),
                             cfg.getName(),
                             StringUtils.isNotBlank(cfg.getDefaultValue())
                                     ? "(" + cfg.getDefaultValue() + ")" : "");
-                    writer.write("  $L", cfg.getDocumentation());
-                    writer.write("");
+                    w.write("  $L", cfg.getDocumentation());
+                    w.write("");
                 }
             });
         });

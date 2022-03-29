@@ -23,7 +23,7 @@ plugins {
 }
 
 dependencies {
-    api("software.amazon.smithy:smithy-codegen-core:[1.18.0,2.0.0[")
+    api("software.amazon.smithy:smithy-codegen-core:[1.19.0,2.0.0[")
     implementation("software.amazon.smithy:smithy-waiters:[1.4.0,2.0.0[")
     implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.9.0,2.0.0[")
 }
