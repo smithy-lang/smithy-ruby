@@ -13,17 +13,20 @@
  * permissions and limitations under the License.
  */
 
-description = "Generates Ruby code from Smithy models"
-extra["displayName"] = "Smithy :: Ruby :: Codegen"
-extra["moduleName"] = "software.amazon.smithy.ruby.codegen"
+package software.amazon.smithy.ruby.codegen;
 
-plugins {
-    `java-library`
-    id("software.amazon.smithy").version("0.5.3")
-}
+import software.amazon.smithy.codegen.core.ImportContainer;
+import software.amazon.smithy.codegen.core.Symbol;
 
-dependencies {
-    api("software.amazon.smithy:smithy-codegen-core:[1.19.0,2.0.0[")
-    implementation("software.amazon.smithy:smithy-waiters:[1.4.0,2.0.0[")
-    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.9.0,2.0.0[")
+public class RubyImportContainer implements ImportContainer {
+    private final String namespace;
+
+    public RubyImportContainer(String namespace) {
+        this.namespace = namespace;
+    }
+
+    @Override
+    public void importSymbol(Symbol symbol, String alias) {
+
+    }
 }

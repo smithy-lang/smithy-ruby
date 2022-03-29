@@ -74,13 +74,13 @@ module Weather
     # @example Response structure
     #
     #   resp.data #=> Types::GetCityOutput
-    #   resp.data.member_name #=> String
+    #   resp.data.name #=> String
     #   resp.data.coordinates #=> Types::CityCoordinates
     #   resp.data.coordinates.latitude #=> Float
     #   resp.data.coordinates.longitude #=> Float
     #   resp.data.city #=> Types::CitySummary
     #   resp.data.city.city_id #=> String
-    #   resp.data.city.member_name #=> String
+    #   resp.data.city.name #=> String
     #   resp.data.city.number #=> String
     #   resp.data.city.case #=> String
     #
@@ -382,7 +382,7 @@ module Weather
     #   resp.data.items #=> Array<CitySummary>
     #   resp.data.items[0] #=> Types::CitySummary
     #   resp.data.items[0].city_id #=> String
-    #   resp.data.items[0].member_name #=> String
+    #   resp.data.items[0].name #=> String
     #   resp.data.items[0].number #=> String
     #   resp.data.items[0].case #=> String
     #   resp.data.sparse_items #=> Array<CitySummary>
@@ -443,9 +443,9 @@ module Weather
     # @example Response structure
     #
     #   resp.data #=> Types::Struct____789BadNameOutput
-    #   resp.data.member____123abc #=> String
+    #   resp.data.member___123abc #=> String
     #   resp.data.member #=> Types::Struct____456efg
-    #   resp.data.member.member____123foo #=> String
+    #   resp.data.member.member___123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

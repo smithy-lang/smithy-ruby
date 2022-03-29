@@ -15,15 +15,23 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import software.amazon.smithy.utils.CodeWriter;
+import java.util.function.Consumer;
+import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A helper class for generating well formatted Ruby code.
  */
 @SmithyUnstableApi
-public class RubyCodeWriter extends CodeWriter {
+public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
+
     public RubyCodeWriter() {
+        this("");
+    }
+
+    public RubyCodeWriter(String namespace) {
+        super(new RubyImportContainer(namespace));
+
         trimTrailingSpaces();
         trimBlankLines();
         setIndentText("  ");
@@ -57,6 +65,22 @@ public class RubyCodeWriter extends CodeWriter {
         pushState();
         setNewlinePrefix("# ");
         task.run();
+        popState();
+        return this;
+    }
+
+
+    /**
+     * Sets formatting for writing Rdoc doc comments.
+     *
+     * @param consumer All lines written by the task will be prefixed with the comment string.
+     * @return Returns the CodeWriter
+     */
+    @Override
+    public RubyCodeWriter writeDocs(Consumer<RubyCodeWriter> consumer) {
+        pushState();
+        setNewlinePrefix("# ");
+        consumer.accept(this);
         popState();
         return this;
     }

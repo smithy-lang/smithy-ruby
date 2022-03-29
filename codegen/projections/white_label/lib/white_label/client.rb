@@ -489,10 +489,10 @@ module WhiteLabel
     # @example Response structure
     #
     #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
-    #   resp.data.member____wrapper #=> Types::ResultWrapper
-    #   resp.data.member____wrapper.member____123next_token #=> String
-    #   resp.data.member____items #=> Array<String>
-    #   resp.data.member____items[0] #=> String
+    #   resp.data.member___wrapper #=> Types::ResultWrapper
+    #   resp.data.member___wrapper.member___123next_token #=> String
+    #   resp.data.member___items #=> Array<String>
+    #   resp.data.member___items[0] #=> String
     #
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

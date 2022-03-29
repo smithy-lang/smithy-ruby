@@ -39,7 +39,6 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.OperationPredicate;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.ServicePredicate;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -107,7 +106,7 @@ public final class Middleware {
         return operationPredicate.test(model, service, operation);
     }
 
-    public void renderAdd(CodeWriter writer, GenerationContext context,
+    public void renderAdd(RubyCodeWriter writer, GenerationContext context,
                           OperationShape operation) {
         renderAdd.renderAdd(writer, this, context, operation);
     }
@@ -126,7 +125,7 @@ public final class Middleware {
          * @param context    - additional context
          * @param operation  - operation being rendered
          */
-        void renderAdd(CodeWriter writer, Middleware middleware,
+        void renderAdd(RubyCodeWriter writer, Middleware middleware,
                        GenerationContext context, OperationShape operation);
     }
 
@@ -206,7 +205,6 @@ public final class Middleware {
                 (context) -> Collections.emptyList();
 
         /**
-         *
          * @param klass the Ruby class of the Middleware
          * @return Returns the builder
          */
@@ -216,7 +214,6 @@ public final class Middleware {
         }
 
         /**
-         *
          * @param order the order within the step. Smaller values are used earlier in the stack.
          * @return Returns the builder
          */
@@ -235,7 +232,6 @@ public final class Middleware {
         }
 
         /**
-         *
          * @param config ClientConfig to be added to the Client and passed to this middleware.
          * @return Returns the builder
          */
@@ -245,7 +241,6 @@ public final class Middleware {
         }
 
         /**
-         *
          * @param config All of the client config options.
          * @return Returns the builder
          */
@@ -257,7 +252,7 @@ public final class Middleware {
         /**
          * Used to pass additional parameters (not defined by ClientConfig) to the middleware.
          *
-         * @param name the name of the parameter.
+         * @param name  the name of the parameter.
          * @param value the value (can be ruby code that uses values defined in the client or operation).
          * @return Returns the builder
          */
@@ -317,6 +312,7 @@ public final class Middleware {
          *
          * <p>By default, a middleware applies globally to a service, which thereby
          * applies to every operation when the middleware stack is copied.
+         *
          * @param p predicate to be used to test operations.
          * @return Return the Builder
          */
@@ -328,6 +324,7 @@ public final class Middleware {
         /**
          * Configure a predicate that makes this plugin only apply to
          * a set of services.
+         *
          * @param serviceNames services to apply this middleware to.
          * @return Return the Builder
          */
@@ -339,6 +336,7 @@ public final class Middleware {
         /**
          * Configure a predicate that makes this plugin only apply to
          * a set of services.
+         *
          * @param p predicate to test a service for inclusion.
          * @return Returns the Builder
          */
@@ -350,6 +348,7 @@ public final class Middleware {
         /**
          * Used to add additional parameters to the middleware
          * that require information about the operation (eg, the input/output shapes).
+         *
          * @param p Called with the operation to return a map of params/values.
          * @return Returns the Builder
          */
@@ -361,6 +360,7 @@ public final class Middleware {
         /**
          * Used to completely override and fully customize the rendering of
          * adding this middleware to the stack.
+         *
          * @param r Called to render code to add this middleware to the stack in the client operation.
          * @return Returns the Builder.
          */
@@ -371,6 +371,7 @@ public final class Middleware {
 
         /**
          * Used to write additional files required by this middleware.
+         *
          * @param w called to write additional files.
          * @return Returns the Builder.
          */

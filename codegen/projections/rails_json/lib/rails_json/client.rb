@@ -778,7 +778,7 @@ module RailsJson
     #   resp.data #=> Types::HttpPayloadWithStructureOutput
     #   resp.data.nested #=> Types::NestedPayload
     #   resp.data.nested.greeting #=> String
-    #   resp.data.nested.member_name #=> String
+    #   resp.data.nested.name #=> String
     #
     def http_payload_with_structure(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -2394,7 +2394,7 @@ module RailsJson
     #
     #   resp.data #=> Types::Struct____789BadNameOutput
     #   resp.data.member #=> Types::Struct____456efg
-    #   resp.data.member.member____123foo #=> String
+    #   resp.data.member.member___123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
