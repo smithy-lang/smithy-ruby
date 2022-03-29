@@ -165,34 +165,6 @@ public class MiddlewareBuilder {
                 })
                 .build();
 
-        //    /**
-//     * The operation builder should call this to support hostPrefix trait.
-//     * @param operation the operation to prefix with the host prefix trait.
-//     */
-//    protected void prefixHost(OperationShape operation) {
-//        if (operation.hasTrait(EndpointTrait.class)) {
-//            SmithyPattern pattern = operation.getTrait(EndpointTrait.class).get().getHostPrefix();
-//            StringBuffer prefix = new StringBuffer();
-//            for (SmithyPattern.Segment segment : pattern.getSegments()) {
-//                if (segment.isLabel()) {
-//                    String paramName = RubyFormatter.asSymbol(symbolProvider.toMemberName(segment.getContent()));
-//                    String inputGetter = "input[" + paramName + "]";
-//                    writer
-//                            .openBlock("if !disable_host_prefix && ($1L.nil? || $1L.empty?)", inputGetter)
-//                            .write("raise ArgumentError, \"Host label #{$L} cannot be nil or empty.\"", paramName)
-//                            .closeBlock("end");
-//                    prefix.append("#{" + inputGetter + "}");
-//                } else {
-//                    prefix.append(segment.getContent());
-//                }
-//            }
-//            writer
-//                    .openBlock("unless disable_host_prefix")
-//                    .write("http_req.prefix_host(\"$L\")", prefix.toString())
-//                    .closeBlock("end");
-//        }
-//    }
-
         Middleware build = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Build")
                 .step(MiddlewareStackStep.SERIALIZE)
