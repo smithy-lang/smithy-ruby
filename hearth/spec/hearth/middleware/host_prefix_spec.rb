@@ -34,7 +34,7 @@ module Hearth
 
           it 'prefixes the host then calls the next middleware' do
             expect(request).to receive(:prefix_host)
-                                 .with(host_prefix).ordered.and_call_original
+              .with(host_prefix).ordered.and_call_original
             expect(app).to receive(:call).with(input, context).ordered
 
             resp = subject.call(input, context)
