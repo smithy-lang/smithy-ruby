@@ -213,7 +213,7 @@ module RailsJson
         visited = visited + ['NestedPayload']
         {
           greeting: 'greeting',
-          member_name: 'member_name',
+          name: 'name',
         }
       end
 
@@ -221,7 +221,7 @@ module RailsJson
         stub ||= Types::NestedPayload.new
         data = {}
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
-        data[:name] = stub[:member_name] unless stub[:member_name].nil?
+        data[:name] = stub[:name] unless stub[:name].nil?
         data
       end
     end
@@ -1526,14 +1526,14 @@ module RailsJson
         return nil if visited.include?('Struct____456efg')
         visited = visited + ['Struct____456efg']
         {
-          member____123foo: 'member____123foo',
+          member___123foo: 'member___123foo',
         }
       end
 
       def self.stub(stub)
         stub ||= Types::Struct____456efg.new
         data = {}
-        data[:__123foo] = stub[:member____123foo] unless stub[:member____123foo].nil?
+        data[:__123foo] = stub[:member___123foo] unless stub[:member___123foo].nil?
         data
       end
     end

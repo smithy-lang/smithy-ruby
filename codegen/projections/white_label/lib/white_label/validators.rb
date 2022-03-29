@@ -143,7 +143,7 @@ module WhiteLabel
     class ResultWrapper
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::ResultWrapper, context: context)
-        Hearth::Validator.validate!(input[:member____123next_token], ::String, context: "#{context}[:member____123next_token]")
+        Hearth::Validator.validate!(input[:member___123next_token], ::String, context: "#{context}[:member___123next_token]")
       end
     end
 
@@ -213,15 +213,15 @@ module WhiteLabel
     class Struct____PaginatorsTestWithBadNamesInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
-        Hearth::Validator.validate!(input[:member____next_token], ::String, context: "#{context}[:member____next_token]")
+        Hearth::Validator.validate!(input[:member___next_token], ::String, context: "#{context}[:member___next_token]")
       end
     end
 
     class Struct____PaginatorsTestWithBadNamesOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesOutput, context: context)
-        Validators::ResultWrapper.validate!(input[:member____wrapper], context: "#{context}[:member____wrapper]") unless input[:member____wrapper].nil?
-        Validators::Items.validate!(input[:member____items], context: "#{context}[:member____items]") unless input[:member____items].nil?
+        Validators::ResultWrapper.validate!(input[:member___wrapper], context: "#{context}[:member___wrapper]") unless input[:member___wrapper].nil?
+        Validators::Items.validate!(input[:member___items], context: "#{context}[:member___items]") unless input[:member___items].nil?
       end
     end
 

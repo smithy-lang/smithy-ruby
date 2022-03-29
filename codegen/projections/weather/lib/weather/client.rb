@@ -434,9 +434,9 @@ module Weather
     # @example Request syntax with placeholder values
     #
     #   resp = client.operation____789_bad_name(
-    #     member____123abc: '__123abc', # required
+    #     member___123abc: '__123abc', # required
     #     member: {
-    #       member____123foo: '__123foo'
+    #       member___123foo: '__123foo'
     #     }
     #   )
     #

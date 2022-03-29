@@ -74,7 +74,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::CitySummary, context: context)
         Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
-        Hearth::Validator.validate!(input[:member_name], ::String, context: "#{context}[:member_name]")
+        Hearth::Validator.validate!(input[:name], ::String, context: "#{context}[:name]")
         Hearth::Validator.validate!(input[:number], ::String, context: "#{context}[:number]")
         Hearth::Validator.validate!(input[:case], ::String, context: "#{context}[:case]")
       end
@@ -128,7 +128,7 @@ module Weather
     class GetCityOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetCityOutput, context: context)
-        Hearth::Validator.validate!(input[:member_name], ::String, context: "#{context}[:member_name]")
+        Hearth::Validator.validate!(input[:name], ::String, context: "#{context}[:name]")
         Validators::CityCoordinates.validate!(input[:coordinates], context: "#{context}[:coordinates]") unless input[:coordinates].nil?
         Validators::CitySummary.validate!(input[:city], context: "#{context}[:city]") unless input[:city].nil?
       end
@@ -353,14 +353,14 @@ module Weather
     class Struct____456efg
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____456efg, context: context)
-        Hearth::Validator.validate!(input[:member____123foo], ::String, context: "#{context}[:member____123foo]")
+        Hearth::Validator.validate!(input[:member___123foo], ::String, context: "#{context}[:member___123foo]")
       end
     end
 
     class Struct____789BadNameInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____789BadNameInput, context: context)
-        Hearth::Validator.validate!(input[:member____123abc], ::String, context: "#{context}[:member____123abc]")
+        Hearth::Validator.validate!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
         Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end
@@ -368,7 +368,7 @@ module Weather
     class Struct____789BadNameOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____789BadNameOutput, context: context)
-        Hearth::Validator.validate!(input[:member____123abc], ::String, context: "#{context}[:member____123abc]")
+        Hearth::Validator.validate!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
         Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end

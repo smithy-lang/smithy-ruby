@@ -483,7 +483,7 @@ module WhiteLabel
     # @example Request syntax with placeholder values
     #
     #   resp = client.operation____paginators_test_with_bad_names(
-    #     member____next_token: '__nextToken'
+    #     member___next_token: '__nextToken'
     #   )
     #
     # @example Response structure

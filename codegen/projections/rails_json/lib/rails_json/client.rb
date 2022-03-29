@@ -769,7 +769,7 @@ module RailsJson
     #   resp = client.http_payload_with_structure(
     #     nested: {
     #       greeting: 'greeting',
-    #       member_name: 'name'
+    #       name: 'name'
     #     }
     #   )
     #
@@ -2384,9 +2384,9 @@ module RailsJson
     # @example Request syntax with placeholder values
     #
     #   resp = client.operation____789_bad_name(
-    #     member____123abc: '__123abc', # required
+    #     member___123abc: '__123abc', # required
     #     member: {
-    #       member____123foo: '__123foo'
+    #       member___123foo: '__123foo'
     #     }
     #   )
     #

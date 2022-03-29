@@ -104,14 +104,14 @@ module WhiteLabel
       subject { Operation____PaginatorsTestWithBadNames.new(client, params, options) }
       let(:response_1) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member____wrapper: Types::ResultWrapper.new(member____123next_token: 'foo'), member____items: ['a', 'b', 'c'])
+          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'foo'), member___items: ['a', 'b', 'c'])
       end
       let(:response_2) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member____wrapper: Types::ResultWrapper.new(member____123next_token: 'bar'), member____items: ['1', '2', '3'])
+          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'bar'), member___items: ['1', '2', '3'])
       end
       let(:response_3) do
-        Types::Struct____PaginatorsTestWithBadNamesOutput.new(member____items: ['the end'])
+        Types::Struct____PaginatorsTestWithBadNamesOutput.new(member___items: ['the end'])
       end
 
       describe '.pages' do
@@ -123,9 +123,9 @@ module WhiteLabel
           expect(client).to receive(:operation____paginators_test_with_bad_names)
                               .with({ param: 'param' }, options).and_return(response_1)
           expect(client).to receive(:operation____paginators_test_with_bad_names)
-                              .with({ param: 'param', member____next_token: 'foo' }, options).and_return(response_2)
+                              .with({ param: 'param', member___next_token: 'foo' }, options).and_return(response_2)
           expect(client).to receive(:operation____paginators_test_with_bad_names)
-                              .with({ param: 'param', member____next_token: 'bar' }, options).and_return(response_3)
+                              .with({ param: 'param', member___next_token: 'bar' }, options).and_return(response_3)
 
           paginator = subject.items
           expect(paginator).to be_a(Enumerator)

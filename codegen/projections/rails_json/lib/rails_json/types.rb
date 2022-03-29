@@ -1654,13 +1654,13 @@ module RailsJson
     #
     #   @return [String]
     #
-    # @!attribute member_name
+    # @!attribute name
     #
     #   @return [String]
     #
     NestedPayload = ::Struct.new(
       :greeting,
-      :member_name,
+      :name,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -1940,18 +1940,18 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # @!attribute member____123foo
+    # @!attribute member___123foo
     #
     #   @return [String]
     #
     Struct____456efg = ::Struct.new(
-      :member____123foo,
+      :member___123foo,
       keyword_init: true
     ) do
       include Hearth::Structure
     end
 
-    # @!attribute member____123abc
+    # @!attribute member___123abc
     #
     #   @return [String]
     #
@@ -1960,7 +1960,7 @@ module RailsJson
     #   @return [Struct____456efg]
     #
     Struct____789BadNameInput = ::Struct.new(
-      :member____123abc,
+      :member___123abc,
       :member,
       keyword_init: true
     ) do

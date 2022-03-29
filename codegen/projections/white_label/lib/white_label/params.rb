@@ -152,7 +152,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::ResultWrapper, context: context)
         type = Types::ResultWrapper.new
-        type.member____123next_token = params[:member____123next_token]
+        type.member___123next_token = params[:member___123next_token]
         type
       end
     end
@@ -232,7 +232,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesInput.new
-        type.member____next_token = params[:member____next_token]
+        type.member___next_token = params[:member___next_token]
         type
       end
     end
@@ -241,8 +241,8 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesOutput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesOutput.new
-        type.member____wrapper = ResultWrapper.build(params[:member____wrapper], context: "#{context}[:member____wrapper]") unless params[:member____wrapper].nil?
-        type.member____items = Items.build(params[:member____items], context: "#{context}[:member____items]") unless params[:member____items].nil?
+        type.member___wrapper = ResultWrapper.build(params[:member___wrapper], context: "#{context}[:member___wrapper]") unless params[:member___wrapper].nil?
+        type.member___items = Items.build(params[:member___items], context: "#{context}[:member___items]") unless params[:member___items].nil?
         type
       end
     end

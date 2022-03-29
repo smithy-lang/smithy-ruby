@@ -334,7 +334,7 @@ module RailsJson
       def self.build(input)
         data = {}
         data[:greeting] = input[:greeting] unless input[:greeting].nil?
-        data[:name] = input[:member_name] unless input[:member_name].nil?
+        data[:name] = input[:name] unless input[:name].nil?
         data
       end
     end
@@ -1117,7 +1117,7 @@ module RailsJson
         http_req.http_method = 'POST'
         http_req.append_path(format(
             '/BadName/%<__123abc>s',
-            __123abc: Hearth::HTTP.uri_escape(input[:member____123abc].to_s)
+            __123abc: Hearth::HTTP.uri_escape(input[:member___123abc].to_s)
           )
         )
         params = Hearth::Query::ParamList.new
@@ -1134,7 +1134,7 @@ module RailsJson
     class Struct____456efg
       def self.build(input)
         data = {}
-        data[:__123foo] = input[:member____123foo] unless input[:member____123foo].nil?
+        data[:__123foo] = input[:member___123foo] unless input[:member___123foo].nil?
         data
       end
     end

@@ -99,7 +99,7 @@ module Weather
             },
             city: {
               city_id: "123",
-              member_name: "Seattle",
+              name: "Seattle",
               number: "One",
               case: "Upper"
             }
@@ -117,14 +117,14 @@ module Weather
           end
           middleware.remove_build
           client.stub_responses(:get_city, {
-            member_name: "Seattle",
+            name: "Seattle",
             coordinates: {
               latitude: 12.34,
               longitude: -56.78
             },
             city: {
               city_id: "123",
-              member_name: "Seattle",
+              name: "Seattle",
               number: "One",
               case: "Upper"
             }
@@ -138,7 +138,7 @@ module Weather
             },
             city: {
               city_id: "123",
-              member_name: "Seattle",
+              name: "Seattle",
               number: "One",
               case: "Upper"
             }

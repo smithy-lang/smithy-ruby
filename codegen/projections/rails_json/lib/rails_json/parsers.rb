@@ -162,7 +162,7 @@ module RailsJson
       def self.parse(map)
         data = Types::NestedPayload.new
         data.greeting = map['greeting']
-        data.member_name = map['name']
+        data.name = map['name']
         return data
       end
     end
@@ -898,7 +898,7 @@ module RailsJson
     class Struct____456efg
       def self.parse(map)
         data = Types::Struct____456efg.new
-        data.member____123foo = map['__123foo']
+        data.member___123foo = map['__123foo']
         return data
       end
     end

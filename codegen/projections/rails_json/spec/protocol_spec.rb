@@ -35,9 +35,9 @@ module RailsJson
           end
           opts = {middleware: middleware}
           client.operation____789_bad_name({
-            member____123abc: "abc_value",
+            member___123abc: "abc_value",
             member: {
-              member____123foo: "foo value"
+              member___123foo: "foo value"
             }
           }, **opts)
         end
@@ -58,7 +58,7 @@ module RailsJson
           output = client.operation____789_bad_name({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             member: {
-              member____123foo: "foo value"
+              member___123foo: "foo value"
             }
           })
         end
@@ -75,13 +75,13 @@ module RailsJson
           middleware.remove_build
           client.stub_responses(:operation____789_bad_name, {
             member: {
-              member____123foo: "foo value"
+              member___123foo: "foo value"
             }
           })
           output = client.operation____789_bad_name({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             member: {
-              member____123foo: "foo value"
+              member___123foo: "foo value"
             }
           })
         end
@@ -1162,7 +1162,7 @@ module RailsJson
           client.http_payload_with_structure({
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           }, **opts)
         end
@@ -1187,7 +1187,7 @@ module RailsJson
           expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           })
         end
@@ -1205,14 +1205,14 @@ module RailsJson
           client.stub_responses(:http_payload_with_structure, {
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           })
           output = client.http_payload_with_structure({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
-              member_name: "Phreddy"
+              name: "Phreddy"
             }
           })
         end
