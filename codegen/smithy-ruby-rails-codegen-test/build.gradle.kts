@@ -18,6 +18,11 @@ extra["moduleName"] = "software.amazon.smithy.ruby.rails.codegen.test"
 
 tasks["jar"].enabled = false
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 plugins {
     id("software.amazon.smithy").version("0.5.3")
 }
