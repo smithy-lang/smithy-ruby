@@ -260,18 +260,24 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
             for (MemberShape m : labelMembers) {
                 Shape target = model.expectShape(m.getTarget());
+                String getter = target.accept(new LabelMemberSerializer(m));
                 if (greedyLabel.isPresent() && greedyLabel.get().equals(m.getMemberName())) {
                     formatArgs.append(
-                            ",\n  " + m.getMemberName() + ": (" + target.accept(new LabelMemberSerializer(m))
+                            ",\n  " + m.getMemberName() + ": (" + getter
                                     + ").split('/').map "
                                     + "{ |s| Hearth::HTTP.uri_escape(s) }.join('/')"
                     );
                 } else {
                     formatArgs.append(
                             ",\n  " + m.getMemberName() + ": Hearth::HTTP.uri_escape("
-                                    + target.accept(new LabelMemberSerializer(m)) + ")"
+                                    + getter + ")"
                     );
                 }
+                writer
+                        .openBlock("if $1L.empty?", getter)
+                        .write("raise ArgumentError, \"HTTP label :$L cannot be nil or empty.\"",
+                                symbolProvider.toMemberName(m))
+                        .closeBlock("end");
                 LOGGER.finest("Generated label for " + m.getMemberName());
             }
             writer.openBlock("http_req.append_path(format(");

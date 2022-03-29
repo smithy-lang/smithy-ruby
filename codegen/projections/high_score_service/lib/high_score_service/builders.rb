@@ -41,6 +41,9 @@ module HighScoreService
     class DeleteHighScore
       def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'DELETE'
+        if input[:id].to_s.empty?
+          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+        end
         http_req.append_path(format(
             '/high_scores/%<id>s',
             id: Hearth::HTTP.uri_escape(input[:id].to_s)
@@ -55,6 +58,9 @@ module HighScoreService
     class GetHighScore
       def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'GET'
+        if input[:id].to_s.empty?
+          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+        end
         http_req.append_path(format(
             '/high_scores/%<id>s',
             id: Hearth::HTTP.uri_escape(input[:id].to_s)
@@ -79,6 +85,9 @@ module HighScoreService
     class UpdateHighScore
       def self.build(http_req, input:, disable_host_prefix:)
         http_req.http_method = 'PUT'
+        if input[:id].to_s.empty?
+          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+        end
         http_req.append_path(format(
             '/high_scores/%<id>s',
             id: Hearth::HTTP.uri_escape(input[:id].to_s)
