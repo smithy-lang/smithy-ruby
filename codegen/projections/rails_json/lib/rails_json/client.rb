@@ -122,8 +122,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::AllQueryStringTypes,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::AllQueryStringTypes
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -182,8 +181,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::ConstantAndVariableQueryString,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::ConstantAndVariableQueryString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -242,8 +240,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::ConstantQueryString,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::ConstantQueryString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -309,8 +306,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::DocumentType,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::DocumentType
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -374,8 +370,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::DocumentTypeAsPayload,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::DocumentTypeAsPayload
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -427,8 +422,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::EmptyOperation,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::EmptyOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -479,9 +473,12 @@ module RailsJson
         validator: Validators::EndpointOperationInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointOperation,
+      stack.use(Hearth::Middleware::HostPrefix,
+        host_prefix: "foo.",
         disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::EndpointOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -534,9 +531,12 @@ module RailsJson
         validator: Validators::EndpointWithHostLabelOperationInput,
         validate_input: options.fetch(:validate_input, @validate_input)
       )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointWithHostLabelOperation,
+      stack.use(Hearth::Middleware::HostPrefix,
+        host_prefix: "foo.{label}.",
         disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -598,8 +598,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::GreetingWithErrors,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::GreetingWithErrors
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -661,8 +660,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPayloadTraits,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpPayloadTraits
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -722,8 +720,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPayloadTraitsWithMediaType,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpPayloadTraitsWithMediaType
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -788,8 +785,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPayloadWithStructure,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpPayloadWithStructure
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -853,8 +849,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPrefixHeaders,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpPrefixHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -910,8 +905,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPrefixHeadersInResponse,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpPrefixHeadersInResponse
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -966,8 +960,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithFloatLabels,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpRequestWithFloatLabels
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1022,8 +1015,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithGreedyLabelInPath,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpRequestWithGreedyLabelInPath
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1093,8 +1085,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithLabels,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpRequestWithLabels
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1157,8 +1148,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithLabelsAndTimestampFormat,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpRequestWithLabelsAndTimestampFormat
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1211,8 +1201,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpResponseCode,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::HttpResponseCode
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1269,8 +1258,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::IgnoreQueryParamsInResponse,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::IgnoreQueryParamsInResponse
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1376,8 +1364,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::InputAndOutputWithHeaders,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::InputAndOutputWithHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1453,8 +1440,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::JsonEnums,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::JsonEnums
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1557,8 +1543,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::JsonMaps,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::JsonMaps
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1635,8 +1620,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::JsonUnions,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::JsonUnions
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1796,8 +1780,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::KitchenSinkOperation,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::KitchenSinkOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1854,8 +1837,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::MediaTypeHeader,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::MediaTypeHeader
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1912,8 +1894,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::NestedAttributesOperation,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::NestedAttributesOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -1977,8 +1958,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::NullAndEmptyHeadersClient,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::NullAndEmptyHeadersClient
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2043,8 +2023,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::NullOperation,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::NullOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2101,8 +2080,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::OmitsNullSerializesEmptyString,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::OmitsNullSerializesEmptyString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2157,8 +2135,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::OperationWithOptionalInputOutput,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::OperationWithOptionalInputOutput
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2214,8 +2191,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::QueryIdempotencyTokenAutoFill,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::QueryIdempotencyTokenAutoFill
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2274,8 +2250,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::QueryParamsAsStringListMap,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::QueryParamsAsStringListMap
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2344,8 +2319,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::TimestampFormatHeaders,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::TimestampFormatHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
@@ -2404,8 +2378,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::Operation____789BadName,
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        builder: Builders::Operation____789BadName
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,

@@ -14,19 +14,19 @@ module Weather
 
     # Operation Builder for GetCity
     class GetCity
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 
     # Operation Builder for GetCityAnnouncements
     class GetCityAnnouncements
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 
     # Operation Builder for GetCityImage
     class GetCityImage
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 
@@ -40,25 +40,25 @@ module Weather
 
     # Operation Builder for GetCurrentTime
     class GetCurrentTime
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 
     # Operation Builder for GetForecast
     class GetForecast
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 
     # Operation Builder for ListCities
     class ListCities
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 
     # Operation Builder for __789BadName
     class Operation____789BadName
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
       end
     end
 

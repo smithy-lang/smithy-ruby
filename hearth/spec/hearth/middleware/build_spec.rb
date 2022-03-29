@@ -9,8 +9,7 @@ module Hearth
       subject do
         Build.new(
           app,
-          builder: builder,
-          disable_host_prefix: false
+          builder: builder
         )
       end
 
@@ -28,7 +27,7 @@ module Hearth
 
         it 'builds then calls the next middleware' do
           expect(builder).to receive(:build)
-            .with(request, input: input, disable_host_prefix: false).ordered
+            .with(request, input: input).ordered
           expect(app).to receive(:call)
             .with(input, context).ordered
 

@@ -14,7 +14,7 @@ module RailsJson
 
     # Operation Builder for AllQueryStringTypes
     class AllQueryStringTypes
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/AllQueryStringTypesInput')
         params = Hearth::Query::ParamList.new
@@ -178,7 +178,7 @@ module RailsJson
 
     # Operation Builder for ConstantAndVariableQueryString
     class ConstantAndVariableQueryString
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         CGI.parse('foo=bar').each do |k,v|
           v.each { |q_v| http_req.append_query_param(k, q_v) }
@@ -193,7 +193,7 @@ module RailsJson
 
     # Operation Builder for ConstantQueryString
     class ConstantQueryString
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         CGI.parse('foo=bar&hello').each do |k,v|
           v.each { |q_v| http_req.append_query_param(k, q_v) }
@@ -213,7 +213,7 @@ module RailsJson
 
     # Operation Builder for DocumentType
     class DocumentType
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentType')
         params = Hearth::Query::ParamList.new
@@ -229,7 +229,7 @@ module RailsJson
 
     # Operation Builder for DocumentTypeAsPayload
     class DocumentTypeAsPayload
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentTypeAsPayload')
         params = Hearth::Query::ParamList.new
@@ -241,7 +241,7 @@ module RailsJson
 
     # Operation Builder for EmptyOperation
     class EmptyOperation
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/emptyoperation')
         params = Hearth::Query::ParamList.new
@@ -251,11 +251,8 @@ module RailsJson
 
     # Operation Builder for EndpointOperation
     class EndpointOperation
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        unless disable_host_prefix
-          http_req.prefix_host("foo.")
-        end
         http_req.append_path('/endpoint')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
@@ -264,14 +261,8 @@ module RailsJson
 
     # Operation Builder for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        if !disable_host_prefix && (input[:label].nil? || input[:label].empty?)
-          raise ArgumentError, "Host label #{:label} cannot be nil or empty."
-        end
-        unless disable_host_prefix
-          http_req.prefix_host("foo.#{input[:label]}.")
-        end
         http_req.append_path('/endpointwithhostlabel')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
@@ -285,7 +276,7 @@ module RailsJson
 
     # Operation Builder for GreetingWithErrors
     class GreetingWithErrors
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/greetingwitherrors')
         params = Hearth::Query::ParamList.new
@@ -295,7 +286,7 @@ module RailsJson
 
     # Operation Builder for HttpPayloadTraits
     class HttpPayloadTraits
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraits')
         params = Hearth::Query::ParamList.new
@@ -308,7 +299,7 @@ module RailsJson
 
     # Operation Builder for HttpPayloadTraitsWithMediaType
     class HttpPayloadTraitsWithMediaType
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraitsWithMediaType')
         params = Hearth::Query::ParamList.new
@@ -321,7 +312,7 @@ module RailsJson
 
     # Operation Builder for HttpPayloadWithStructure
     class HttpPayloadWithStructure
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/HttpPayloadWithStructure')
         params = Hearth::Query::ParamList.new
@@ -344,7 +335,7 @@ module RailsJson
 
     # Operation Builder for HttpPrefixHeaders
     class HttpPrefixHeaders
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeaders')
         params = Hearth::Query::ParamList.new
@@ -358,7 +349,7 @@ module RailsJson
 
     # Operation Builder for HttpPrefixHeadersInResponse
     class HttpPrefixHeadersInResponse
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeadersResponse')
         params = Hearth::Query::ParamList.new
@@ -368,7 +359,7 @@ module RailsJson
 
     # Operation Builder for HttpRequestWithFloatLabels
     class HttpRequestWithFloatLabels
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:float].to_s.empty?
           raise ArgumentError, "HTTP label :float cannot be nil or empty."
@@ -389,7 +380,7 @@ module RailsJson
 
     # Operation Builder for HttpRequestWithGreedyLabelInPath
     class HttpRequestWithGreedyLabelInPath
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:foo].to_s.empty?
           raise ArgumentError, "HTTP label :foo cannot be nil or empty."
@@ -410,7 +401,7 @@ module RailsJson
 
     # Operation Builder for HttpRequestWithLabels
     class HttpRequestWithLabels
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:string].to_s.empty?
           raise ArgumentError, "HTTP label :string cannot be nil or empty."
@@ -455,7 +446,7 @@ module RailsJson
 
     # Operation Builder for HttpRequestWithLabelsAndTimestampFormat
     class HttpRequestWithLabelsAndTimestampFormat
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i.to_s.empty?
           raise ArgumentError, "HTTP label :member_epoch_seconds cannot be nil or empty."
@@ -496,7 +487,7 @@ module RailsJson
 
     # Operation Builder for HttpResponseCode
     class HttpResponseCode
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/HttpResponseCode')
         params = Hearth::Query::ParamList.new
@@ -506,7 +497,7 @@ module RailsJson
 
     # Operation Builder for IgnoreQueryParamsInResponse
     class IgnoreQueryParamsInResponse
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/IgnoreQueryParamsInResponse')
         params = Hearth::Query::ParamList.new
@@ -516,7 +507,7 @@ module RailsJson
 
     # Operation Builder for InputAndOutputWithHeaders
     class InputAndOutputWithHeaders
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/InputAndOutputWithHeaders')
         params = Hearth::Query::ParamList.new
@@ -573,7 +564,7 @@ module RailsJson
 
     # Operation Builder for JsonEnums
     class JsonEnums
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/jsonenums')
         params = Hearth::Query::ParamList.new
@@ -615,7 +606,7 @@ module RailsJson
 
     # Operation Builder for JsonMaps
     class JsonMaps
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/JsonMaps')
         params = Hearth::Query::ParamList.new
@@ -758,7 +749,7 @@ module RailsJson
 
     # Operation Builder for JsonUnions
     class JsonUnions
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/jsonunions')
         params = Hearth::Query::ParamList.new
@@ -805,7 +796,7 @@ module RailsJson
 
     # Operation Builder for KitchenSinkOperation
     class KitchenSinkOperation
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
         params = Hearth::Query::ParamList.new
@@ -1015,7 +1006,7 @@ module RailsJson
 
     # Operation Builder for MediaTypeHeader
     class MediaTypeHeader
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/MediaTypeHeader')
         params = Hearth::Query::ParamList.new
@@ -1026,7 +1017,7 @@ module RailsJson
 
     # Operation Builder for NestedAttributesOperation
     class NestedAttributesOperation
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/nestedattributes')
         params = Hearth::Query::ParamList.new
@@ -1041,7 +1032,7 @@ module RailsJson
 
     # Operation Builder for NullAndEmptyHeadersClient
     class NullAndEmptyHeadersClient
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/NullAndEmptyHeadersClient')
         params = Hearth::Query::ParamList.new
@@ -1059,7 +1050,7 @@ module RailsJson
 
     # Operation Builder for NullOperation
     class NullOperation
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/nulloperation')
         params = Hearth::Query::ParamList.new
@@ -1087,7 +1078,7 @@ module RailsJson
 
     # Operation Builder for OmitsNullSerializesEmptyString
     class OmitsNullSerializesEmptyString
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/OmitsNullSerializesEmptyString')
         params = Hearth::Query::ParamList.new
@@ -1099,7 +1090,7 @@ module RailsJson
 
     # Operation Builder for OperationWithOptionalInputOutput
     class OperationWithOptionalInputOutput
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/operationwithoptionalinputoutput')
         params = Hearth::Query::ParamList.new
@@ -1114,7 +1105,7 @@ module RailsJson
 
     # Operation Builder for QueryIdempotencyTokenAutoFill
     class QueryIdempotencyTokenAutoFill
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/QueryIdempotencyTokenAutoFill')
         params = Hearth::Query::ParamList.new
@@ -1125,7 +1116,7 @@ module RailsJson
 
     # Operation Builder for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/StringListMap')
         params = Hearth::Query::ParamList.new
@@ -1156,7 +1147,7 @@ module RailsJson
 
     # Operation Builder for TimestampFormatHeaders
     class TimestampFormatHeaders
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/TimestampFormatHeaders')
         params = Hearth::Query::ParamList.new
@@ -1173,7 +1164,7 @@ module RailsJson
 
     # Operation Builder for __789BadName
     class Operation____789BadName
-      def self.build(http_req, input:, disable_host_prefix:)
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
         if input[:member____123abc].to_s.empty?
           raise ArgumentError, "HTTP label :member____123abc cannot be nil or empty."

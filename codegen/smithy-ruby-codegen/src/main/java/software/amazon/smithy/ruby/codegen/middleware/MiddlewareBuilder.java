@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -107,7 +108,7 @@ public class MiddlewareBuilder {
 
     public void addDefaultMiddleware(GenerationContext context) {
         ApplicationTransport transport = context.applicationTransport();
-        SymbolProvider symbolProvider =
+        RubySymbolProvider symbolProvider =
                 new RubySymbolProvider(context.model(), context.settings(), "Client", false);
 
         ClientConfig validateInput = (new ClientConfig.Builder())
@@ -140,6 +141,58 @@ public class MiddlewareBuilder {
                         "When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.")
                 .build();
 
+        Middleware hostPrefix = (new Middleware.Builder())
+                .klass("Hearth::Middleware::HostPrefix")
+                .step(MiddlewareStackStep.INITIALIZE)
+                .addConfig(disableHostPrefix)
+                .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
+                .operationParams((ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    SmithyPattern pattern = operation.getTrait(EndpointTrait.class).get().getHostPrefix();
+                    StringBuffer prefix = new StringBuffer();
+                    for (SmithyPattern.Segment segment : pattern.getSegments()) {
+                        if (segment.isLabel()) {
+                            // Here, we rebuild the smithy pattern with reserved word support.
+                            // Otherwise we could use pattern.toString()
+                            String label = symbolProvider.toMemberName(segment.getContent());
+                            prefix.append("{" + label + "}");
+                        } else {
+                            prefix.append(segment);
+                        }
+                    }
+                    params.put("host_prefix", "\"" + pattern + "\"");
+                    return params;
+                })
+                .build();
+
+        //    /**
+//     * The operation builder should call this to support hostPrefix trait.
+//     * @param operation the operation to prefix with the host prefix trait.
+//     */
+//    protected void prefixHost(OperationShape operation) {
+//        if (operation.hasTrait(EndpointTrait.class)) {
+//            SmithyPattern pattern = operation.getTrait(EndpointTrait.class).get().getHostPrefix();
+//            StringBuffer prefix = new StringBuffer();
+//            for (SmithyPattern.Segment segment : pattern.getSegments()) {
+//                if (segment.isLabel()) {
+//                    String paramName = RubyFormatter.asSymbol(symbolProvider.toMemberName(segment.getContent()));
+//                    String inputGetter = "input[" + paramName + "]";
+//                    writer
+//                            .openBlock("if !disable_host_prefix && ($1L.nil? || $1L.empty?)", inputGetter)
+//                            .write("raise ArgumentError, \"Host label #{$L} cannot be nil or empty.\"", paramName)
+//                            .closeBlock("end");
+//                    prefix.append("#{" + inputGetter + "}");
+//                } else {
+//                    prefix.append(segment.getContent());
+//                }
+//            }
+//            writer
+//                    .openBlock("unless disable_host_prefix")
+//                    .write("http_req.prefix_host(\"$L\")", prefix.toString())
+//                    .closeBlock("end");
+//        }
+//    }
+
         Middleware build = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Build")
                 .step(MiddlewareStackStep.SERIALIZE)
@@ -147,10 +200,8 @@ public class MiddlewareBuilder {
                     Map<String, String> params = new HashMap<>();
                     params.put("builder",
                             "Builders::" + symbolProvider.toSymbol(operation).getName());
-                    params.put("disable_host_prefix", "@disable_host_prefix");
                     return params;
                 })
-                .addConfig(disableHostPrefix)
                 .build();
 
         ClientConfig stubResponses = (new ClientConfig.Builder())
@@ -185,6 +236,7 @@ public class MiddlewareBuilder {
                 .build();
 
         register(validate);
+        register(hostPrefix);
         register(build);
         register(send);
 

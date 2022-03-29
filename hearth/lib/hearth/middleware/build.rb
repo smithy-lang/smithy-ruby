@@ -9,12 +9,9 @@ module Hearth
       # @param [Class] builder A builder object responsible for building the
       #  request. It must respond to #build and take the request and input as
       #  arguments.
-      # @param [Boolean] disable_host_prefix When true, does not perform
-      #   host prefix injection using @endpoint's hostPrefix property.
-      def initialize(app, builder:, disable_host_prefix:)
+      def initialize(app, builder:)
         @app = app
         @builder = builder
-        @disable_host_prefix = disable_host_prefix
       end
 
       # @param input
@@ -23,8 +20,7 @@ module Hearth
       def call(input, context)
         @builder.build(
           context.request,
-          input: input,
-          disable_host_prefix: @disable_host_prefix
+          input: input
         )
         @app.call(input, context)
       end

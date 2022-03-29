@@ -25,9 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
@@ -137,12 +134,8 @@ public final class ApplicationTransport {
             middleware.add((new Middleware.Builder())
                     .klass("Hearth::HTTP::Middleware::ContentMD5")
                     .step(MiddlewareStackStep.BUILD)
-                    .operationPredicate(new OperationPredicate() {
-                        @Override
-                        public boolean test(Model model, ServiceShape service, OperationShape operation) {
-                            return operation.hasTrait(HttpChecksumRequiredTrait.class);
-                        }
-                    })
+                    .operationPredicate(
+                            (model, service, operation) -> operation.hasTrait(HttpChecksumRequiredTrait.class))
                     .build()
             );
 
