@@ -44,6 +44,7 @@ module Hearth
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def apply_stub(stub, context, output)
         case stub
         when Proc
@@ -73,6 +74,7 @@ module Hearth
           raise ArgumentError, 'Unsupported stub type'
         end
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

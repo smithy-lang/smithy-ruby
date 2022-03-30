@@ -5,9 +5,6 @@ module Hearth
     # A middleware that retries the request.
     # @api private
     class Retry
-      #
-      class RetryableError < StandardError; end
-
       # @param [Class] app The next middleware in the stack.
       # @param [Integer] max_attempts The maximum number of attempts to make
       #  before giving up.
@@ -21,6 +18,7 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
+      # rubocop:disable Metrics/MethodLength
       def call(input, context)
         attempt = 1
         begin
@@ -42,6 +40,7 @@ module Hearth
           retry
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 
