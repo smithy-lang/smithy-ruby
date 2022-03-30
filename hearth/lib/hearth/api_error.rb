@@ -15,5 +15,15 @@ module Hearth
 
     # @return [Hash]
     attr_reader :metadata
+
+    # @return [Boolean]
+    def retryable?
+      false
+    end
+
+    # @return [Boolean]
+    def throttling?
+      false
+    end
   end
 end

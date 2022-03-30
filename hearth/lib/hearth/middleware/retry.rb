@@ -5,6 +5,9 @@ module Hearth
     # A middleware that retries the request.
     # @api private
     class Retry
+      #
+      class RetryableError < StandardError; end
+
       # @param [Class] app The next middleware in the stack.
       # @param [Integer] max_attempts The maximum number of attempts to make
       #  before giving up.
@@ -21,7 +24,16 @@ module Hearth
       def call(input, context)
         attempt = 1
         begin
-          @app.call(input, context)
+          output = @app.call(input, context)
+          raise output.error if output.error
+
+          output
+        rescue Hearth::ApiError => e
+          return output if !e.retryable? || attempt >= @max_attempts
+
+          Kernel.sleep(backoff_with_jitter(attempt)) if e.throttling?
+          attempt += 1
+          retry
         rescue Hearth::HTTP::NetworkingError => e
           raise e if attempt >= @max_attempts
 

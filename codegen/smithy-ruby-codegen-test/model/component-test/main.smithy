@@ -75,9 +75,11 @@ union Union {
 }
 
 @error("client")
+@retryable
 structure ClientError {
   Message: String
 }
 
 @error("server")
+@retryable(throttling: true)
 structure ServerError {}

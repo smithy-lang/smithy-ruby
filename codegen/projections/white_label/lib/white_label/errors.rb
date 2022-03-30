@@ -53,6 +53,10 @@ module WhiteLabel
       # @return [Types::ClientError]
       #
       attr_reader :data
+
+      def retryable?
+        true
+      end
     end
 
     class ServerError < ApiServerError
@@ -72,6 +76,14 @@ module WhiteLabel
       # @return [Types::ServerError]
       #
       attr_reader :data
+
+      def retryable?
+        true
+      end
+
+      def throttling?
+        true
+      end
     end
 
   end
