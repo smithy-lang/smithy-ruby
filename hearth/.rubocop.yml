@@ -15,8 +15,6 @@ Metrics/BlockLength:
 
 Metrics/MethodLength:
   Max: 15
-  Exclude:
-    - 'lib/hearth/middleware/send.rb'
 
 Metrics/ModuleLength:
   Exclude:

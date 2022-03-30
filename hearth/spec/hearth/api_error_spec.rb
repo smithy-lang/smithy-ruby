@@ -33,5 +33,17 @@ module Hearth
         expect(subject.metadata).to eq(metadata)
       end
     end
+
+    describe '#retryable?' do
+      it 'defaults to false' do
+        expect(subject.retryable?).to eq(false)
+      end
+    end
+
+    describe '#throttling?' do
+      it 'defaults to false' do
+        expect(subject.throttling?).to eq(false)
+      end
+    end
   end
 end
