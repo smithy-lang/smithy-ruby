@@ -17,6 +17,26 @@ module WhiteLabel
       end
     end
 
+    class DefaultsTestInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::DefaultsTestInput, context: context)
+        Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
+        Hearth::Validator.validate!(input[:boxed_number], ::Integer, context: "#{context}[:boxed_number]")
+        Hearth::Validator.validate!(input[:default_number], ::Integer, context: "#{context}[:default_number]")
+        Hearth::Validator.validate!(input[:default_bool], ::TrueClass, ::FalseClass, context: "#{context}[:default_bool]")
+      end
+    end
+
+    class DefaultsTestOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::DefaultsTestOutput, context: context)
+        Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
+        Hearth::Validator.validate!(input[:boxed_number], ::Integer, context: "#{context}[:boxed_number]")
+        Hearth::Validator.validate!(input[:default_number], ::Integer, context: "#{context}[:default_number]")
+        Hearth::Validator.validate!(input[:default_bool], ::TrueClass, ::FalseClass, context: "#{context}[:default_bool]")
+      end
+    end
+
     class Document
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)

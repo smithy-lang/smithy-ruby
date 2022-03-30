@@ -85,6 +85,11 @@ module Weather
       keyword_init: true
     ) do
       include Hearth::Structure
+      def initialize(*)
+        super
+        self.latitude ||= 0
+      end
+
     end
 
     # @!attribute city_id
@@ -341,6 +346,12 @@ module Weather
       keyword_init: true
     ) do
       include Hearth::Structure
+      def initialize(*)
+        super
+        self.default_bool ||= false
+        self.default_number ||= 0
+      end
+
     end
 
     # @!attribute next_token
@@ -392,6 +403,12 @@ module Weather
       keyword_init: true
     ) do
       include Hearth::Structure
+      def initialize(*)
+        super
+        self.default_bool ||= false
+        self.default_number ||= 0
+      end
+
     end
 
     # @!attribute message

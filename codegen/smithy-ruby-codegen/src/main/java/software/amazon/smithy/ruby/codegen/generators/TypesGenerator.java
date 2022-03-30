@@ -17,13 +17,16 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -157,6 +160,7 @@ public class TypesGenerator {
                     .closeBlock(") do")
                     .indent()
                     .write("include Hearth::Structure")
+                    .call(() -> renderStructureInitializeMethod(shape))
                     .call(() -> renderStructureToSMethod(shape))
                     .closeBlock("end\n");
 
@@ -200,6 +204,28 @@ public class TypesGenerator {
             writer.closeBlock("end\n");
 
             return null;
+        }
+
+        private void renderStructureInitializeMethod(StructureShape structureShape) {
+            NullableIndex nullableIndex = new NullableIndex(model);
+            List<MemberShape> defaultMembers = structureShape.members().stream()
+                    .filter((m) -> !nullableIndex.isNullable(m))
+                    .collect(Collectors.toList());
+            if (!defaultMembers.isEmpty()) {
+                writer
+                        .openBlock("def initialize(*)")
+                        .write("super")
+                        .call(() -> {
+                            defaultMembers.forEach((m) -> {
+                                String attribute = symbolProvider.toMemberName(m);
+                                Shape target = model.expectShape(m.getTarget());
+                                writer.write("self.$L ||= $L",
+                                        attribute,
+                                        target.accept(new MemberDefaultVisitor()));
+                            });
+                        })
+                        .closeBlock("end\n");
+            }
         }
 
         private void renderStructureToSMethod(StructureShape structureShape) {
@@ -264,6 +290,19 @@ public class TypesGenerator {
             }
 
             writer.closeBlock("end");
+        }
+    }
+
+    private class MemberDefaultVisitor extends ShapeVisitor.Default<String> {
+
+        @Override
+        protected String getDefault(Shape shape) {
+            return "0";
+        }
+
+        @Override
+        public String booleanShape(BooleanShape s) {
+            return "false";
         }
     }
 

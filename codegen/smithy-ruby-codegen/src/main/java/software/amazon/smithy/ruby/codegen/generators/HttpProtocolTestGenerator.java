@@ -345,7 +345,6 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderRequestMiddlewareBody(Optional<String> body, Optional<String> bodyMediaType) {
-        // TODO: expand support for different body media types (eg xml).
         if (body.isPresent()) {
             if (bodyMediaType.isPresent()) {
                 switch (bodyMediaType.get()) {
