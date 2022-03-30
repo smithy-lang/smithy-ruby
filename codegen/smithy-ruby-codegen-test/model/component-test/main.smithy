@@ -12,7 +12,8 @@ service WhiteLabel {
         PaginatorsTest,
         PaginatorsTestWithItems,
         __PaginatorsTestWithBadNames,
-        WaitersTest
+        WaitersTest,
+        DefaultsTest
     ]
 }
 
@@ -73,6 +74,7 @@ union Union {
     String: String,
     Struct: Struct,
 }
+
 
 @error("client")
 @retryable

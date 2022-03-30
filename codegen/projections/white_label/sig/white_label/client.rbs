@@ -14,6 +14,7 @@ module WhiteLabel
     def self.middleware: () -> untyped
 
     def initialize: (?::Hash[untyped, untyped] options) -> void
+    def defaults_test: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def kitchen_sink: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def paginators_test: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def paginators_test_with_items: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped

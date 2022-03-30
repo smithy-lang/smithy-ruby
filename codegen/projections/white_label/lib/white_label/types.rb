@@ -22,6 +22,70 @@ module WhiteLabel
     end
 
     # @!attribute string
+    #
+    #   @return [String]
+    #
+    # @!attribute boxed_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute default_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute default_bool
+    #
+    #   @return [Boolean]
+    #
+    DefaultsTestInput = ::Struct.new(
+      :string,
+      :boxed_number,
+      :default_number,
+      :default_bool,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+      def initialize(*)
+        super
+        self.default_number ||= 0
+        self.default_bool ||= false
+      end
+
+    end
+
+    # @!attribute string
+    #
+    #   @return [String]
+    #
+    # @!attribute boxed_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute default_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute default_bool
+    #
+    #   @return [Boolean]
+    #
+    DefaultsTestOutput = ::Struct.new(
+      :string,
+      :boxed_number,
+      :default_number,
+      :default_bool,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+      def initialize(*)
+        super
+        self.default_number ||= 0
+        self.default_bool ||= false
+      end
+
+    end
+
+    # @!attribute string
     #   This is some member
     #   documentation of String.
     #
