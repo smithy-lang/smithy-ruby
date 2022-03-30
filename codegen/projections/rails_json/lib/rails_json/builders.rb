@@ -1166,8 +1166,8 @@ module RailsJson
     class Operation____789BadName
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        if input[:member____123abc].to_s.empty?
-          raise ArgumentError, "HTTP label :member____123abc cannot be nil or empty."
+        if input[:member___123abc].to_s.empty?
+          raise ArgumentError, "HTTP label :member___123abc cannot be nil or empty."
         end
         http_req.append_path(format(
             '/BadName/%<__123abc>s',

@@ -12,6 +12,10 @@ module WhiteLabel
 
     ClientError: untyped
 
+    DefaultsTestInput: untyped
+
+    DefaultsTestOutput: untyped
+
     KitchenSinkInput: untyped
 
     KitchenSinkOutput: untyped

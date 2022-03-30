@@ -12,6 +12,12 @@ require 'base64'
 module WhiteLabel
   module Builders
 
+    # Operation Builder for DefaultsTest
+    class DefaultsTest
+      def self.build(http_req, input:)
+      end
+    end
+
     # Operation Builder for KitchenSink
     class KitchenSink
       def self.build(http_req, input:)

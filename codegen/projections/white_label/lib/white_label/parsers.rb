@@ -12,6 +12,14 @@ require 'base64'
 module WhiteLabel
   module Parsers
 
+    # Operation Parser for DefaultsTest
+    class DefaultsTest
+      def self.parse(http_resp)
+        data = Types::DefaultsTestOutput.new
+        data
+      end
+    end
+
     # Operation Parser for KitchenSink
     class KitchenSink
       def self.parse(http_resp)

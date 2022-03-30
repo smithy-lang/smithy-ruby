@@ -58,5 +58,20 @@ module WhiteLabel
         expect(unknown_union.to_h).to eq({ unknown: { key: 'key', value: 'value' } })
       end
     end
+
+    describe DefaultsTestInput do
+
+      it 'has a default value for default_number' do
+        expect(subject.default_number).to be 0
+      end
+
+      it 'has a default value for default_bool' do
+        expect(subject.default_bool).to be false
+      end
+
+      it 'unboxed_number defaults to nil' do
+        expect(subject.boxed_number).to be nil
+      end
+    end
   end
 end

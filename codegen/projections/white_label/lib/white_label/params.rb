@@ -21,6 +21,30 @@ module WhiteLabel
       end
     end
 
+    module DefaultsTestInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::DefaultsTestInput, context: context)
+        type = Types::DefaultsTestInput.new
+        type.string = params[:string]
+        type.boxed_number = params[:boxed_number]
+        type.default_number = params[:default_number]
+        type.default_bool = params[:default_bool]
+        type
+      end
+    end
+
+    module DefaultsTestOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::DefaultsTestOutput, context: context)
+        type = Types::DefaultsTestOutput.new
+        type.string = params[:string]
+        type.boxed_number = params[:boxed_number]
+        type.default_number = params[:default_number]
+        type.default_bool = params[:default_bool]
+        type
+      end
+    end
+
     module Items
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Array, context: context)
