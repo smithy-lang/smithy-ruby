@@ -27,7 +27,10 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.RetryableTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -65,6 +68,18 @@ public abstract class ErrorsGeneratorBase {
         this.errorShapes = getErrorShapes();
     }
 
+    protected List<Shape> getErrorShapes() {
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+
+        return topDownIndex.getContainedOperations(context.service()).stream()
+                .map(OperationShape::getErrors)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet()).stream() // for uniqueness
+                .sorted(Comparator.comparing((o) -> o.getName()))
+                .map(model::expectShape)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public void render(FileManifest fileManifest) {
         writer
                 .writePreamble()
@@ -74,7 +89,7 @@ public abstract class ErrorsGeneratorBase {
                 .call(() -> renderErrorCodeBody())
                 .closeBlock("end")
                 .call(() -> renderBaseErrors())
-                .call(() -> renderServiceModelErrors())
+                .call(() -> renderServiceModelErrors(new ErrorsVisitor()))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -92,7 +107,7 @@ public abstract class ErrorsGeneratorBase {
                 .write("")
                 .call(() -> renderRbsErrorCode())
                 .call(() -> renderRbsBaseErrors())
-                .call(() -> renderRbsServiceModelErrors())
+                .call(() -> renderServiceModelErrors(new ErrorsRbsVisitor()))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -124,7 +139,6 @@ public abstract class ErrorsGeneratorBase {
                 .write("# @return [String] location")
                 .write("attr_reader :location")
                 .closeBlock("end");
-        LOGGER.fine("Generated base errors");
     }
 
     private void renderRbsBaseErrors() {
@@ -160,78 +174,8 @@ public abstract class ErrorsGeneratorBase {
         rbsWriter.write("def self.error_code: (untyped resp) -> untyped");
     }
 
-    protected List<Shape> getErrorShapes() {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-
-        return topDownIndex.getContainedOperations(context.service()).stream()
-                .map(OperationShape::getErrors)
-                .flatMap(Collection::stream)
-                .map(model::expectShape)
-                .collect(Collectors.toSet())
-                .stream()
-                .sorted()
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private void renderServiceModelErrors() {
-        errorShapes
-                .stream()
-                .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(error -> {
-                    String errorName = symbolProvider.toSymbol(error).getName();
-                    ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
-                    String apiErrorType = getApiErrorType(errorTrait);
-
-                    renderServiceModelError(errorName, apiErrorType);
-                });
-    }
-
-    private void renderRbsServiceModelErrors() {
-        errorShapes
-                .stream()
-                .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(error -> {
-                    String errorName = symbolProvider.toSymbol(error).getName();
-                    ErrorTrait errorTrait = error.getTrait(ErrorTrait.class).get();
-                    String apiErrorType = getApiErrorType(errorTrait);
-
-                    renderRbsServiceModelError(errorName, apiErrorType);
-                });
-    }
-
-    private void renderServiceModelError(String errorName, String apiErrorType) {
-        writer
-                .write("")
-                .openBlock("class $L < $L", errorName, apiErrorType);
-
-        writer
-                .writeYardParam("Hearth::HTTP::Response", "http_resp", "")
-                .writeYardParam("String", "error_code", "")
-                .writeYardParam("String", "message", "");
-
-        writer
-                .openBlock("def initialize(http_resp:, **kwargs)")
-                .write("@data = Parsers::$L.parse(http_resp)", errorName)
-                .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                .write("super(http_resp: http_resp, **kwargs)")
-                .closeBlock("end")
-                .write("");
-
-        writer
-                .writeYardReturn("Types::" + errorName, "")
-                .write("attr_reader :data")
-                .closeBlock("end");
-
-        LOGGER.finest("Generated service model error: " + errorName + " type: " + apiErrorType);
-    }
-
-    private void renderRbsServiceModelError(String errorName, String apiErrorType) {
-        rbsWriter
-                .write("")
-                .openBlock("class $L < $L", errorName, apiErrorType)
-                .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
-                .write("attr_reader data: untyped")
-                .closeBlock("end");
+    private void renderServiceModelErrors(ShapeVisitor<Void> visitor) {
+        errorShapes.forEach(error -> error.accept(visitor));
     }
 
     private String getApiErrorType(ErrorTrait errorTrait) {
@@ -247,6 +191,89 @@ public abstract class ErrorsGeneratorBase {
         }
 
         return apiErrorType;
+    }
+
+    private class ErrorsVisitor extends ShapeVisitor.Default<Void> {
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            String errorName = symbolProvider.toSymbol(shape).getName();
+            String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
+            boolean retryable = shape.hasTrait(RetryableTrait.class);
+            boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
+
+            writer
+                    .write("")
+                    .openBlock("class $L < $L", errorName, apiErrorType)
+                    .writeYardParam("Hearth::HTTP::Response", "http_resp", "")
+                    .writeYardParam("String", "error_code", "")
+                    .writeYardParam("String", "message", "")
+                    .openBlock("def initialize(http_resp:, **kwargs)")
+                    .write("@data = Parsers::$L.parse(http_resp)", errorName)
+                    .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
+                    .write("super(http_resp: http_resp, **kwargs)")
+                    .closeBlock("end")
+                    .write("")
+                    .writeYardReturn("Types::" + errorName, "")
+                    .write("attr_reader :data")
+                    .call(() -> {
+                        if (retryable) {
+                            writer
+                                    .write("")
+                                    .openBlock("def retryable?")
+                                    .write("true")
+                                    .closeBlock("end");
+                        }
+                    })
+                    .call(() -> {
+                        if (throttling) {
+                            writer
+                                    .write("")
+                                    .openBlock("def throttling?")
+                                    .write("true")
+                                    .closeBlock("end");
+                        }
+                    })
+                    .closeBlock("end");
+            return null;
+        }
+    }
+
+    private class ErrorsRbsVisitor extends ShapeVisitor.Default<Void> {
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+
+        @Override
+        public Void structureShape(StructureShape shape) {
+            String errorName = symbolProvider.toSymbol(shape).getName();
+            String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
+            boolean retryable = shape.hasTrait(RetryableTrait.class);
+            boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
+
+            rbsWriter
+                    .write("")
+                    .openBlock("class $L < $L", errorName, apiErrorType)
+                    .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
+                    .write("attr_reader data: untyped")
+                    .call(() -> {
+                        if (retryable) {
+                            rbsWriter.write("def retryable?: () -> true");
+                        }
+                    })
+                    .call(() -> {
+                        if (throttling) {
+                            rbsWriter.write("def throttling?: () -> true");
+                        }
+                    })
+                    .closeBlock("end");
+            return null;
+        }
     }
 }
 

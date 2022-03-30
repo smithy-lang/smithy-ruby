@@ -13,9 +13,6 @@ module Hearth
 
       # @return [String]
       attr_reader http_body: String
-
-      # @return [String]
-      attr_reader request_id: String
     end
   end
 end

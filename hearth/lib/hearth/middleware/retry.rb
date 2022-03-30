@@ -18,10 +18,20 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
+      # rubocop:disable Metrics/MethodLength
       def call(input, context)
         attempt = 1
         begin
-          @app.call(input, context)
+          output = @app.call(input, context)
+          raise output.error if output.error
+
+          output
+        rescue Hearth::ApiError => e
+          return output if !e.retryable? || attempt >= @max_attempts
+
+          Kernel.sleep(backoff_with_jitter(attempt))
+          attempt += 1
+          retry
         rescue Hearth::HTTP::NetworkingError => e
           raise e if attempt >= @max_attempts
 
@@ -30,6 +40,7 @@ module Hearth
           retry
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 
