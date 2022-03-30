@@ -71,7 +71,7 @@ module WhiteLabel
       end
 
       it 'unboxed_number defaults to nil' do
-        expect(subject.unboxed_number).to be nil
+        expect(subject.boxed_number).to be nil
       end
     end
   end
