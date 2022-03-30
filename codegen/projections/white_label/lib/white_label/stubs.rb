@@ -10,6 +10,22 @@
 module WhiteLabel
   module Stubs
 
+    # Operation Stubber for DefaultsTest
+    class DefaultsTest
+      def self.default(visited=[])
+        {
+          string: 'string',
+          boxed_number: 1,
+          default_number: 1,
+          default_bool: false,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+      end
+    end
+
     # Operation Stubber for KitchenSink
     class KitchenSink
       def self.default(visited=[])

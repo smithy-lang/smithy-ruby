@@ -78,6 +78,66 @@ module WhiteLabel
 
     end
 
+    # @param [Hash] params
+    #   See {Types::DefaultsTestInput}.
+    #
+    # @return [Types::DefaultsTestOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.defaults_test(
+    #     string: 'String',
+    #     boxed_number: 1,
+    #     default_number: 1,
+    #     default_bool: false
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::DefaultsTestOutput
+    #   resp.data.string #=> String
+    #   resp.data.boxed_number #=> Integer
+    #   resp.data.default_number #=> Integer
+    #   resp.data.default_bool #=> Boolean
+    #
+    def defaults_test(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::DefaultsTestInput.build(params)
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::DefaultsTestInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::DefaultsTest
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::DefaultsTest
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::DefaultsTest,
+        params_class: Params::DefaultsTestOutput,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          params: params,
+          logger: @logger,
+          operation_name: :defaults_test
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
     # The kitchen sink operation.
     # It is kinda useless.
     #

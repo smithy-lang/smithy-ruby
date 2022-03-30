@@ -12,7 +12,8 @@ service WhiteLabel {
         PaginatorsTest,
         PaginatorsTestWithItems,
         __PaginatorsTestWithBadNames,
-        WaitersTest
+        WaitersTest,
+        DefaultsTest
     ]
 }
 
@@ -74,6 +75,7 @@ union Union {
     Struct: Struct,
 }
 
+
 @error("client")
 structure ClientError {
   Message: String
@@ -81,3 +83,26 @@ structure ClientError {
 
 @error("server")
 structure ServerError {}
+
+operation DefaultsTest {
+    input: DefaultsTestInputOutput,
+    output: DefaultsTestInputOutput,
+}
+
+structure DefaultsTestInputOutput {
+    // simple member
+    String: String,
+
+    // boxed
+    boxedNumber: BoxedInteger,
+
+    // members with defaults (unboxed)
+    defaultNumber: DefaultInteger,
+    defaultBool: DefaultBool
+}
+
+integer DefaultInteger
+boolean DefaultBool
+
+@box
+integer BoxedInteger

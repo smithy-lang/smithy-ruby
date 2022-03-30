@@ -59,8 +59,8 @@ module WhiteLabel
       end
     end
 
-    describe ListCitiesInput do
-      subject { ListCitiesInput.new }
+    describe DefaultsTestInput do
+      subject { DefaultsTestInput.new }
 
       it 'has a default value for default_number' do
         expect(subject.default_number).to be 0
@@ -68,6 +68,10 @@ module WhiteLabel
 
       it 'has a default value for default_bool' do
         expect(subject.default_bool).to be false
+      end
+
+      it 'unboxed_number defaults to nil' do
+        expect(subject.boxed_number).to be nil
       end
     end
   end
