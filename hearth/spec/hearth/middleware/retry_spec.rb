@@ -107,44 +107,37 @@ module Hearth
               expect(app).to receive(:call).with(
                 input, context
               ).and_return(output).exactly(4).times
-              expect(Kernel).not_to receive(:sleep)
+              allow(Kernel).to receive(:sleep)
 
               resp = subject.call(input, context)
               expect(resp).to eq(output)
             end
 
-            context 'error is throttling' do
-              before do
-                allow(error).to receive(:retryable?).and_return(true)
-                allow(error).to receive(:throttling?).and_return(true)
-              end
+            it 'retries with exponential backoff and jitter' do
+              expect(app).to receive(:call).with(
+                input, context
+              ).and_return(output).exactly(4).times
+              allow(Kernel).to receive(:rand).and_return(1)
+              expect(Kernel).to receive(:sleep).with(1)
+              expect(Kernel).to receive(:sleep).with(2)
+              expect(Kernel).to receive(:sleep).with(4)
 
-              it 'retries with exponential backoff and jitter' do
+              resp = subject.call(input, context)
+              expect(resp).to eq(output)
+            end
+
+            context 'max_delay' do
+              let(:max_delay) { 1 }
+
+              it 'backoff is bounded by max_delay' do
                 expect(app).to receive(:call).with(
                   input, context
                 ).and_return(output).exactly(4).times
                 allow(Kernel).to receive(:rand).and_return(1)
-                expect(Kernel).to receive(:sleep).with(1)
-                expect(Kernel).to receive(:sleep).with(2)
-                expect(Kernel).to receive(:sleep).with(4)
+                expect(Kernel).to receive(:sleep).with(1).exactly(3).times
 
                 resp = subject.call(input, context)
                 expect(resp).to eq(output)
-              end
-
-              context 'max_delay' do
-                let(:max_delay) { 1 }
-
-                it 'backoff is bounded by max_delay' do
-                  expect(app).to receive(:call).with(
-                    input, context
-                  ).and_return(output).exactly(4).times
-                  allow(Kernel).to receive(:rand).and_return(1)
-                  expect(Kernel).to receive(:sleep).with(1).exactly(3).times
-
-                  resp = subject.call(input, context)
-                  expect(resp).to eq(output)
-                end
               end
             end
           end

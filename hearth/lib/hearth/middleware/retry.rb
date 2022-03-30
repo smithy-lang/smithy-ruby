@@ -29,7 +29,7 @@ module Hearth
         rescue Hearth::ApiError => e
           return output if !e.retryable? || attempt >= @max_attempts
 
-          Kernel.sleep(backoff_with_jitter(attempt)) if e.throttling?
+          Kernel.sleep(backoff_with_jitter(attempt))
           attempt += 1
           retry
         rescue Hearth::HTTP::NetworkingError => e

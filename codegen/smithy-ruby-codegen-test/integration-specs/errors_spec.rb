@@ -67,9 +67,6 @@ module WhiteLabel
 
       it 'is retryable without throttling' do
         http_resp = Hearth::HTTP::Response.new
-        data = Types::ClientError.new
-        # don't test fakeProtocol parsers
-        expect(Parsers::ClientError).to receive(:parse).with(http_resp).and_return(data)
         error = ClientError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.retryable?).to be true
         expect(error.throttling?).to be false
@@ -90,9 +87,6 @@ module WhiteLabel
 
       it 'is retryable with throttling' do
         http_resp = Hearth::HTTP::Response.new
-        data = Types::ServerError.new
-        # don't test fakeProtocol parsers
-        expect(Parsers::ServerError).to receive(:parse).with(http_resp).and_return(data)
         error = ServerError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.retryable?).to be true
         expect(error.throttling?).to be true
