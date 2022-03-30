@@ -1229,6 +1229,24 @@ module RailsJson
       end
     end
 
+    module StreamingOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::StreamingOperationInput, context: context)
+        type = Types::StreamingOperationInput.new
+        type.output = params[:output]
+        type
+      end
+    end
+
+    module StreamingOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::StreamingOperationOutput, context: context)
+        type = Types::StreamingOperationOutput.new
+        type.output = params[:output]
+        type
+      end
+    end
+
     module StringList
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Array, context: context)

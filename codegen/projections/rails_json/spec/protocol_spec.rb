@@ -5676,6 +5676,10 @@ module RailsJson
 
     end
 
+    describe '#streaming_operation' do
+
+    end
+
     describe '#timestamp_format_headers' do
 
       describe 'requests' do

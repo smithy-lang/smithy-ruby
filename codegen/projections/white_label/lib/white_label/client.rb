@@ -103,6 +103,7 @@ module WhiteLabel
     def defaults_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DefaultsTestInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -128,7 +129,7 @@ module WhiteLabel
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :defaults_test
@@ -330,6 +331,7 @@ module WhiteLabel
     def kitchen_sink(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -355,7 +357,7 @@ module WhiteLabel
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :kitchen_sink
@@ -386,6 +388,7 @@ module WhiteLabel
     def paginators_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestOperationInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -411,7 +414,7 @@ module WhiteLabel
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :paginators_test
@@ -442,6 +445,7 @@ module WhiteLabel
     def paginators_test_with_items(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestWithItemsInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -467,7 +471,7 @@ module WhiteLabel
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :paginators_test_with_items
@@ -496,6 +500,7 @@ module WhiteLabel
     def waiters_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::WaitersTestInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -521,7 +526,7 @@ module WhiteLabel
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :waiters_test
@@ -553,6 +558,7 @@ module WhiteLabel
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -578,7 +584,7 @@ module WhiteLabel
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :operation____paginators_test_with_bad_names

@@ -89,7 +89,7 @@ public final class ApplicationTransport {
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
-                .render((self, ctx) -> "Hearth::HTTP::Response.new(body: output_stream(options, &block))")
+                .render((self, ctx) -> "Hearth::HTTP::Response.new(body: response_body)")
                 .build();
 
         ClientConfig wireTrace = (new ClientConfig.Builder())

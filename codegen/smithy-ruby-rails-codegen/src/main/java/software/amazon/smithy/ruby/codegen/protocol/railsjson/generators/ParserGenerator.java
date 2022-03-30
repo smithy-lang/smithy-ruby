@@ -37,6 +37,7 @@ import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -316,9 +317,13 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer
-                    .write("payload = http_resp.body.read")
-                    .write("$Lpayload unless payload.empty?", dataSetter);
+            if (shape.hasTrait(StreamingTrait.class)) {
+                writer.write("$Lhttp_resp.body", dataSetter); // do NOT read the body when streaming
+            } else {
+                writer
+                        .write("payload = http_resp.body.read")
+                        .write("$Lpayload unless payload.empty?", dataSetter);
+            }
             return null;
         }
 

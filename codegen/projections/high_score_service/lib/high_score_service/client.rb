@@ -95,6 +95,7 @@ module HighScoreService
     def create_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -121,7 +122,7 @@ module HighScoreService
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :create_high_score
@@ -154,6 +155,7 @@ module HighScoreService
     def delete_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -180,7 +182,7 @@ module HighScoreService
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :delete_high_score
@@ -219,6 +221,7 @@ module HighScoreService
     def get_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -245,7 +248,7 @@ module HighScoreService
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :get_high_score
@@ -280,6 +283,7 @@ module HighScoreService
     def list_high_scores(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -306,7 +310,7 @@ module HighScoreService
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :list_high_scores
@@ -352,6 +356,7 @@ module HighScoreService
     def update_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -378,7 +383,7 @@ module HighScoreService
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :update_high_score
