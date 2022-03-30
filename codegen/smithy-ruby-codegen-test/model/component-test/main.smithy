@@ -13,7 +13,8 @@ service WhiteLabel {
         PaginatorsTestWithItems,
         __PaginatorsTestWithBadNames,
         WaitersTest,
-        DefaultsTest
+        DefaultsTest,
+        StreamingOperation
     ]
 }
 

@@ -82,7 +82,9 @@ module WhiteLabel
 
         client.kitchen_sink
       end
+    end
 
+    describe '#streaming_operation' do
       context 'block is provided' do
         let(:block_io) { double("BlockIO") }
         it 'creates and uses a blockIO as the body' do
@@ -95,7 +97,7 @@ module WhiteLabel
                   .with(hash_including(body: block_io))
                   .and_call_original
 
-          client.kitchen_sink { |resp| resp }
+          client.streaming_operation { |resp| resp }
         end
       end
 
@@ -109,7 +111,7 @@ module WhiteLabel
                   .with(hash_including(body: output_stream))
                   .and_call_original
 
-          client.kitchen_sink({}, output_stream: output_stream)
+          client.streaming_operation({}, output_stream: output_stream)
         end
       end
     end
