@@ -58,5 +58,17 @@ module WhiteLabel
         expect(unknown_union.to_h).to eq({ unknown: { key: 'key', value: 'value' } })
       end
     end
+
+    describe ListCitiesInput do
+      subject { ListCitiesInput.new }
+
+      it 'has a default value for default_number' do
+        expect(subject.default_number).to be 0
+      end
+
+      it 'has a default value for default_bool' do
+        expect(subject.default_bool).to be false
+      end
+    end
   end
 end
