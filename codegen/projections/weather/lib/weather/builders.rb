@@ -18,12 +18,6 @@ module Weather
       end
     end
 
-    # Operation Builder for GetCityAnnouncements
-    class GetCityAnnouncements
-      def self.build(http_req, input:)
-      end
-    end
-
     # Operation Builder for GetCityImage
     class GetCityImage
       def self.build(http_req, input:)

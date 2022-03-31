@@ -508,7 +508,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::StreamingOperation

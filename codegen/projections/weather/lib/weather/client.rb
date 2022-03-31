@@ -124,62 +124,6 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::GetCityAnnouncementsInput}.
-    #
-    # @return [Types::GetCityAnnouncementsOutput]
-    #
-    # @example Request syntax with placeholder values
-    #
-    #   resp = client.get_city_announcements(
-    #     city_id: 'cityId' # required
-    #   )
-    #
-    # @example Response structure
-    #
-    #   resp.data #=> Types::GetCityAnnouncementsOutput
-    #   resp.data.last_updated #=> Time
-    #   resp.data.announcements #=> Announcements
-    #
-    def get_city_announcements(params = {}, options = {}, &block)
-      stack = Hearth::MiddlewareStack.new
-      input = Params::GetCityAnnouncementsInput.build(params)
-      response_body = output_stream(options, &block)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::GetCityAnnouncementsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::GetCityAnnouncements
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
-        data_parser: Parsers::GetCityAnnouncements
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
-        stub_class: Stubs::GetCityAnnouncements,
-        params_class: Params::GetCityAnnouncementsOutput,
-        stubs: options.fetch(:stubs, @stubs)
-      )
-      apply_middleware(stack, options[:middleware])
-
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: @logger,
-          operation_name: :get_city_announcements
-        )
-      )
-      raise resp.error if resp.error
-      resp
-    end
-
-    # @param [Hash] params
     #   See {Types::GetCityImageInput}.
     #
     # @return [Types::GetCityImageOutput]

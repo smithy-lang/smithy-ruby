@@ -268,6 +268,10 @@ public abstract class BuilderGeneratorBase {
         LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
     }
 
+    protected void renderStubBodyBuilder(String dataGetter) {
+
+    }
+
     protected class BuilderClassGenerator extends ShapeVisitor.Default<Void> {
 
         @Override

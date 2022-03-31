@@ -44,7 +44,6 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
-import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 public class StubsGenerator extends RestStubsGeneratorBase {
@@ -322,7 +321,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         @Override
         public Void blobShape(BlobShape shape) {
             if (shape.hasTrait(StreamingTrait.class)) {
-                Streaming.renderStreamingStub(writer, inputGetter);
+                renderStreamingStub(inputGetter);
             } else {
                 Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
                 String mediaType = "application/octet-stream";

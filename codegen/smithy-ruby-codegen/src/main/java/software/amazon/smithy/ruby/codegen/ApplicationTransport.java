@@ -25,10 +25,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 
@@ -127,6 +129,15 @@ public final class ApplicationTransport {
             List<Middleware> middleware = new ArrayList();
             middleware.add((new Middleware.Builder())
                     .klass("Hearth::HTTP::Middleware::ContentLength")
+                    .operationPredicate(
+                            (model, service, operation) ->
+                                    !Streaming.isNonFiniteStreaming(model,
+                                            model.expectShape(
+                                                    operation.getInputShape(),
+                                                    StructureShape.class
+                                            )
+                                    )
+                    )
                     .step(MiddlewareStackStep.BUILD)
                     .build()
             );

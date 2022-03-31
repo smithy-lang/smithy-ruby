@@ -194,7 +194,8 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
-        stub_io = String === stub[:output] ? StringIO.new(stub[:output]) : stub[:output]
+        stub_io = stub[:output] || ''
+        stub_io = String === stub_io ? StringIO.new(stub_io) : stub_io
         IO.copy_stream(stub_io, http_resp.body)
       end
     end

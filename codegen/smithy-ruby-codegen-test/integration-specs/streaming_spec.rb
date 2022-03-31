@@ -59,6 +59,29 @@ module WhiteLabel
           expect(resp.data.output).to be(output_stream)
         end
       end
+
+      context 'stubs' do
+        let(:output_stream) { double("OutputStream") }
+
+        it 'copies the stub to the output stream' do
+          middleware = Hearth::MiddlewareBuilder.after_send do |_, context|
+            expect(context.response.body).to be(output_stream)
+          end
+          expect(output_stream).to receive(:write).with(output).and_return(0)
+          client.streaming_operation({}, output_stream: output_stream, middleware: middleware)
+        end
+
+        context('nil stub value') do
+          let(:output) { nil }
+
+          it 'streams an empty body' do
+            expect(output_stream).not_to receive(:write)
+            client.streaming_operation({}, output_stream: output_stream)
+          end
+        end
+
+      end
+
     end
   end
 end

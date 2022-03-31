@@ -318,7 +318,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
         @Override
         public Void blobShape(BlobShape shape) {
             if (shape.hasTrait(StreamingTrait.class)) {
-                writer.write("$Lhttp_resp.body", dataSetter); // do NOT read the body when streaming
+                renderStreamingBodyParser(dataSetter);
             } else {
                 writer
                         .write("payload = http_resp.body.read")

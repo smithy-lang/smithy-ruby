@@ -17,8 +17,10 @@ package software.amazon.smithy.ruby.codegen.util;
 
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
-import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -30,23 +32,31 @@ public final class Streaming {
     }
 
     public static boolean isEventStreaming(Model model, OperationShape operationShape) {
-        return operationShape.members()
+        StructureShape input = model.expectShape(operationShape.getInputShape(), StructureShape.class);
+        StructureShape output = model.expectShape(operationShape.getOutputShape(), StructureShape.class);
+        return isEventStreaming(model, input) || isEventStreaming(model, output);
+    }
+
+    public static boolean isEventStreaming(Model model, Shape inputOrOutput) {
+        return inputOrOutput.members()
                 .stream()
                 .anyMatch((m) ->
                         m.getMemberTrait(model, StreamingTrait.class).isPresent()
                                 && model.expectShape(m.getTarget()).isUnionShape());
     }
 
-    public static boolean isStreaming(Model model, OperationShape operationShape) {
-        return operationShape.members()
+    public static boolean isStreaming(Model model, Shape inputOrOutput) {
+        return inputOrOutput.members()
                 .stream()
                 .anyMatch((m) ->
                         m.getMemberTrait(model, StreamingTrait.class).isPresent());
     }
 
-    public static void renderStreamingStub(RubyCodeWriter writer, String dataGetter) {
-        writer
-                .write("stub_io = String === $1L ? StringIO.new($1L) : $1L", dataGetter)
-                .write("IO.copy_stream(stub_io, http_resp.body)");
+    public static boolean isNonFiniteStreaming(Model model, Shape inputOrOutput) {
+        return inputOrOutput.members()
+                .stream()
+                .anyMatch((m) ->
+                        m.getMemberTrait(model, StreamingTrait.class).isPresent()
+                                && !m.getMemberTrait(model, RequiresLengthTrait.class).isPresent());
     }
 }

@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
-import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class StubsGenerator extends RestStubsGeneratorBase {
 
@@ -65,7 +64,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         if (target.hasTrait(StreamingTrait.class)) {
             String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
             String inputGetter = "stub[" + symbolName + "]";
-            Streaming.renderStreamingStub(writer, inputGetter);
+            renderStreamingStub(inputGetter);
         }
     }
 
