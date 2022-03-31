@@ -1487,7 +1487,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        stub_io = stub[:output] === String ? StringIO.new(stub[:output]) : stub[:output]
+        stub_io = String === stub[:output] ? StringIO.new(stub[:output]) : stub[:output]
         IO.copy_stream(stub_io, http_resp.body)
       end
     end

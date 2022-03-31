@@ -83,37 +83,5 @@ module WhiteLabel
         client.kitchen_sink
       end
     end
-
-    describe '#streaming_operation' do
-      context 'block is provided' do
-        let(:block_io) { double("BlockIO") }
-        it 'creates and uses a blockIO as the body' do
-          client = Client.new(stub_responses: true)
-
-          expect(Hearth::BlockIO).to receive(:new).and_return(block_io)
-
-          expect(Hearth::HTTP::Response)
-            .to receive(:new)
-                  .with(hash_including(body: block_io))
-                  .and_call_original
-
-          client.streaming_operation { |resp| resp }
-        end
-      end
-
-      context 'output_stream is set' do
-        let(:output_stream) { double("OutputStream") }
-        it 'uses the output_stream as the body' do
-          client = Client.new(stub_responses: true)
-
-          expect(Hearth::HTTP::Response)
-            .to receive(:new)
-                  .with(hash_including(body: output_stream))
-                  .and_call_original
-
-          client.streaming_operation({}, output_stream: output_stream)
-        end
-      end
-    end
   end
 end

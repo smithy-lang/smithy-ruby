@@ -46,7 +46,7 @@ public final class Streaming {
 
     public static void renderStreamingStub(RubyCodeWriter writer, String dataGetter) {
         writer
-                .write("stub_io = $1L === String ? StringIO.new($1L) : $1L", dataGetter)
+                .write("stub_io = String === $1L ? StringIO.new($1L) : $1L", dataGetter)
                 .write("IO.copy_stream(stub_io, http_resp.body)");
     }
 }
