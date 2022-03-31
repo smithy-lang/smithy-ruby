@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 
@@ -33,7 +34,9 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     @Override
     protected void renderPayloadBodyParser(Shape outputShape, MemberShape payloadMember, Shape target) {
-
+        if (target.hasTrait(StreamingTrait.class)) {
+            writer.write("data.$L = http_resp.body", symbolProvider.toMemberName(payloadMember));
+        }
     }
 
     @Override

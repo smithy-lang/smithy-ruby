@@ -67,6 +67,8 @@ module Weather
         data = {}
         http_resp.status = 200
         http_resp.headers['x-last-updated'] = Hearth::TimeHelper.to_date_time(stub[:last_updated]) unless stub[:last_updated].nil?
+        stub_io = stub[:announcements] === String ? StringIO.new(stub[:announcements]) : stub[:announcements]
+        IO.copy_stream(stub_io, http_resp.body)
       end
     end
 
@@ -106,6 +108,8 @@ module Weather
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
+        stub_io = stub[:image] === String ? StringIO.new(stub[:image]) : stub[:image]
+        IO.copy_stream(stub_io, http_resp.body)
       end
     end
 

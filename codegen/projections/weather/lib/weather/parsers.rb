@@ -39,6 +39,7 @@ module Weather
       def self.parse(http_resp)
         data = Types::GetCityAnnouncementsOutput.new
         data.last_updated = Time.parse(http_resp.headers['x-last-updated']) if http_resp.headers['x-last-updated']
+        data.announcements = http_resp.body
         data
       end
     end
@@ -53,6 +54,7 @@ module Weather
     class GetCityImage
       def self.parse(http_resp)
         data = Types::GetCityImageOutput.new
+        data.image = http_resp.body
         data
       end
     end

@@ -1487,8 +1487,8 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/octet-stream'
-        http_resp.body = StringIO.new(stub[:output] || '')
+        stub_io = stub[:output] === String ? StringIO.new(stub[:output]) : stub[:output]
+        IO.copy_stream(stub_io, http_resp.body)
       end
     end
 

@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.util;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -41,5 +42,11 @@ public final class Streaming {
                 .stream()
                 .anyMatch((m) ->
                         m.getMemberTrait(model, StreamingTrait.class).isPresent());
+    }
+
+    public static void renderStreamingStub(RubyCodeWriter writer, String dataGetter) {
+        writer
+                .write("stub_io = $1L === String ? StringIO.new($1L) : $1L", dataGetter)
+                .write("IO.copy_stream(stub_io, http_resp.body)");
     }
 }
