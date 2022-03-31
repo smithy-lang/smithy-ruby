@@ -124,6 +124,12 @@ module Weather
       end
     end
 
+    module TypedYesNo
+      YES: ::String
+
+      NO: ::String
+    end
+
     Struct____456efg: untyped
 
     Struct____789BadNameInput: untyped

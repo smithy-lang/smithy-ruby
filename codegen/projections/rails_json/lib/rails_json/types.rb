@@ -75,6 +75,7 @@ module RailsJson
     #   @return [Array<Time>]
     #
     # @!attribute query_enum
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
@@ -342,6 +343,30 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
+    #
+    module FooEnum
+      # No documentation available.
+      #
+      FOO = "Foo"
+
+      # No documentation available.
+      #
+      BAZ = "Baz"
+
+      # No documentation available.
+      #
+      BAR = "Bar"
+
+      # No documentation available.
+      #
+      ONE = "1"
+
+      # No documentation available.
+      #
+      ZERO = "0"
     end
 
     # @!attribute hi
@@ -751,6 +776,7 @@ module RailsJson
     #   @return [Array<Time>]
     #
     # @!attribute header_enum
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
@@ -837,6 +863,7 @@ module RailsJson
     #   @return [Array<Time>]
     #
     # @!attribute header_enum
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
@@ -880,14 +907,17 @@ module RailsJson
     end
 
     # @!attribute foo_enum1
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
     # @!attribute foo_enum2
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
     # @!attribute foo_enum3
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
@@ -916,14 +946,17 @@ module RailsJson
     end
 
     # @!attribute foo_enum1
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
     # @!attribute foo_enum2
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
     # @!attribute foo_enum3
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
     #   @return [String]
     #
@@ -1575,6 +1608,8 @@ module RailsJson
         end
       end
 
+      # Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
+      #
       class EnumValue < MyUnion
         def to_h
           { enum_value: super(__getobj__) }

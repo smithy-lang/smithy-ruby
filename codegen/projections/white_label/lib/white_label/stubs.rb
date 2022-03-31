@@ -31,6 +31,8 @@ module WhiteLabel
       def self.default(visited=[])
         {
           string: 'string',
+          simple_enum: 'simple_enum',
+          typed_enum: 'typed_enum',
           struct: Stubs::Struct.default(visited),
           document: nil,
           list_of_strings: Stubs::ListOfStrings.default(visited),

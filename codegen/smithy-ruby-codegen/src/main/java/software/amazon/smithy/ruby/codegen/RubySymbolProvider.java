@@ -206,7 +206,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol stringShape(StringShape shape) {
-        return createSymbolBuilder(shape, "", "String", "String").build();
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "String__"), "String", "String").build();
     }
 
     @Override

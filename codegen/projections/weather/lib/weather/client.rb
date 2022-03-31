@@ -360,7 +360,7 @@ module Weather
     #     boxed_bool: false,
     #     default_number: 1,
     #     boxed_number: 1,
-    #     some_enum: 'YES', # accepts YES, NO
+    #     some_enum: 'YES', # accepts ["YES", "NO"]
     #     page_size: 1
     #   )
     #
@@ -368,7 +368,7 @@ module Weather
     #
     #   resp.data #=> Types::ListCitiesOutput
     #   resp.data.next_token #=> String
-    #   resp.data.some_enum #=> String, one of YES, NO
+    #   resp.data.some_enum #=> String, one of ["YES", "NO"]
     #   resp.data.a_string #=> String
     #   resp.data.default_bool #=> Boolean
     #   resp.data.boxed_bool #=> Boolean

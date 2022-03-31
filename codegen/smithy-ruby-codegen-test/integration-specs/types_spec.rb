@@ -73,5 +73,19 @@ module WhiteLabel
         expect(subject.boxed_number).to be nil
       end
     end
+
+    describe 'SimpleEnum' do
+      it 'is not defined' do
+        expect(defined?(Types::SimpleEnum)).to be false
+      end
+    end
+
+    describe TypedEnum do
+      it 'has typed enums' do
+        expect(Types::TypedEnum::YES).to be "YES"
+        expect(Types::TypedEnum::NO).to be "NO"
+        expect(Types::TypedEnum::MAYBE).to be "MAYBE"
+      end
+    end
   end
 end

@@ -52,6 +52,18 @@ module RailsJson
 
     ErrorWithoutMembers: untyped
 
+    module FooEnum
+      FOO: ::String
+
+      BAZ: ::String
+
+      BAR: ::String
+
+      ONE: ::String
+
+      ZERO: ::String
+    end
+
     GreetingStruct: untyped
 
     GreetingWithErrorsInput: untyped

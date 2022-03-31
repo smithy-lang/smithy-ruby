@@ -178,12 +178,13 @@ public class PlaceholderExampleGenerator {
             if (shape.hasTrait(EnumTrait.class)) {
                 EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
                 String defaultValue = enumTrait.getValues().get(0).getValue();
-                String accepts =
-                        enumTrait.getValues().stream().map((v) -> v.getValue()).collect(Collectors.joining(", "));
+                String accepts = enumTrait.getEnumDefinitionValues().stream()
+                        .map((value) -> "\"" + value + "\"")
+                        .collect(Collectors.joining(", "));
                 if (memberShape.hasTrait(RequiredTrait.class)) {
-                    accepts = " - accepts " + accepts;
+                    accepts = " - accepts [" + accepts + "]";
                 } else {
-                    accepts = " # accepts " + accepts;
+                    accepts = " # accepts [" + accepts + "]";
                 }
                 writer.write("$L'$L'$L", dataSetter, defaultValue, eol + accepts);
             } else {

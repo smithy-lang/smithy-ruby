@@ -66,6 +66,8 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::KitchenSinkInput, context: context)
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
+        Hearth::Validator.validate!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
+        Hearth::Validator.validate!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
         Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
         Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
@@ -81,6 +83,8 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::KitchenSinkOutput, context: context)
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
+        Hearth::Validator.validate!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
+        Hearth::Validator.validate!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
         Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
         Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?

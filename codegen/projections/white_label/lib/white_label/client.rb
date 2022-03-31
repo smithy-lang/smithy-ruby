@@ -179,6 +179,8 @@ module WhiteLabel
     #
     #   resp = client.kitchen_sink(
     #     string: 'String',
+    #     simple_enum: 'YES', # accepts ["YES", "NO", "Maybe"]
+    #     typed_enum: 'YES', # accepts ["YES", "NO", "Maybe"]
     #     struct: {
     #       value: 'value'
     #     },
@@ -209,6 +211,8 @@ module WhiteLabel
     #
     #   resp.data #=> Types::KitchenSinkOutput
     #   resp.data.string #=> String
+    #   resp.data.simple_enum #=> String, one of ["YES", "NO", "Maybe"]
+    #   resp.data.typed_enum #=> String, one of ["YES", "NO", "Maybe"]
     #   resp.data.struct #=> Types::Struct
     #   resp.data.struct.value #=> String
     #   resp.data.document #=> Hash,Array,String,Boolean,Numeric

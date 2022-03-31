@@ -117,3 +117,15 @@ apply Union$String @internal
 apply Union$String @since("today")
 apply Union$String @unstable
 apply Union$String @sensitive
+
+// test enum documentation
+apply TypedEnum @enum(
+  [
+    {value: "Maybe", name: "MAYBE", documentation: "This documentation should be applied.", deprecated: true, tags: ["Test"]}
+  ]
+)
+apply SimpleEnum @enum(
+  [
+    {value: "Maybe", documentation: "This documentation should exist in an empty module.", deprecated: true, tags: ["Test"]}
+  ]
+)
