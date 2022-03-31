@@ -32,7 +32,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
@@ -145,7 +144,13 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(params, context: '')")
                 .write("Hearth::Validator.validate!(params, ::Array, context: context)")
                 .write("data = []")
-                .openBlock("params.each_with_index do |element, index|")
+                .call(() -> {
+                    if (isComplexShape(memberTarget)) {
+                        writer.openBlock("params.each_with_index do |element, index|");
+                    } else {
+                        writer.openBlock("params.each do |element|");
+                    }
+                })
                 .call(() -> memberTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
                                 "\"#{context}[#{index}]\"",
@@ -170,7 +175,13 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("def self.build(params, context: '')")
                 .write("Hearth::Validator.validate!(params, ::Set, ::Array, context: context)")
                 .write("data = Set.new")
-                .openBlock("params.each_with_index do |element, index|")
+                .call(() -> {
+                    if (isComplexShape(memberTarget)) {
+                        writer.openBlock("params.each_with_index do |element, index|");
+                    } else {
+                        writer.openBlock("params.each do |element|");
+                    }
+                })
                 .call(() -> memberTarget
                         .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
                                 "\"#{context}[#{index}]\"", setShape.getMember(), true)))
@@ -252,6 +263,11 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         return null;
     }
 
+    private boolean isComplexShape(Shape shape) {
+        return shape.isStructureShape() || shape.isListShape() || shape.isMapShape()
+                || shape.isSetShape() || shape.isUnionShape() || shape.isOperationShape();
+    }
+
     private static class MemberBuilder extends ShapeVisitor.Default<Void> {
         private final RubyCodeWriter writer;
         private final SymbolProvider symbolProvider;
@@ -270,14 +286,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             this.context = context;
             this.memberShape = memberShape;
             this.checkRequired = checkRequired;
-        }
-
-        private String checkRequired() {
-            if (this.checkRequired) {
-                return " unless " + input + ".nil?";
-            } else {
-                return "";
-            }
         }
 
         @Override
@@ -336,12 +344,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 writer.write("$1L($2L.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
                         shapeName, input, context);
             }
-        }
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            writer.write(memberSetter + input);
-            return null;
         }
     }
 }
