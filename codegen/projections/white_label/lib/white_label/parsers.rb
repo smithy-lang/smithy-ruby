@@ -84,6 +84,14 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for StreamingOperation
+    class StreamingOperation
+      def self.parse(http_resp)
+        data = Types::StreamingOperationOutput.new
+        data
+      end
+    end
+
     # Operation Parser for WaitersTest
     class WaitersTest
       def self.parse(http_resp)

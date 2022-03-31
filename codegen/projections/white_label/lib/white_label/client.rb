@@ -482,6 +482,61 @@ module WhiteLabel
     end
 
     # @param [Hash] params
+    #   See {Types::StreamingOperationInput}.
+    #
+    # @return [Types::StreamingOperationOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.streaming_operation(
+    #     output: 'output'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::StreamingOperationOutput
+    #   resp.data.output #=> String
+    #
+    def streaming_operation(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::StreamingOperationInput.build(params)
+      response_body = output_stream(options, &block)
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::StreamingOperationInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::StreamingOperation
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::StreamingOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::StreamingOperation,
+        params_class: Params::StreamingOperationOutput,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: @logger,
+          operation_name: :streaming_operation
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
     #   See {Types::WaitersTestInput}.
     #
     # @return [Types::WaitersTestOutput]

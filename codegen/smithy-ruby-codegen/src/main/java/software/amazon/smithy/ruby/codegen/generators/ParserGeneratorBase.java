@@ -40,6 +40,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -255,6 +256,7 @@ public abstract class ParserGeneratorBase {
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape outputShape = model.expectShape(o.getOutputShape());

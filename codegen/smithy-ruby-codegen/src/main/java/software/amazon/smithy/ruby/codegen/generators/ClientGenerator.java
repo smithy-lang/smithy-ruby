@@ -39,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -228,6 +229,7 @@ public class ClientGenerator {
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(o));
     }

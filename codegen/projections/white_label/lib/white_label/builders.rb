@@ -64,6 +64,12 @@ module WhiteLabel
       end
     end
 
+    # Operation Builder for StreamingOperation
+    class StreamingOperation
+      def self.build(http_req, input:)
+      end
+    end
+
     # Operation Builder for WaitersTest
     class WaitersTest
       def self.build(http_req, input:)

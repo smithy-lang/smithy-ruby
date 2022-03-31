@@ -37,6 +37,10 @@ module WhiteLabel
 
     end
 
+    describe '#streaming_operation' do
+
+    end
+
     describe '#waiters_test' do
 
     end

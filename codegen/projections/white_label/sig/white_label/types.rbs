@@ -32,6 +32,10 @@ module WhiteLabel
 
     ServerError: untyped
 
+    StreamingOperationInput: untyped
+
+    StreamingOperationOutput: untyped
+
     Struct: untyped
 
     class Union < Hearth::Union

@@ -182,6 +182,20 @@ module WhiteLabel
       end
     end
 
+    class StreamingOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::StreamingOperationInput, context: context)
+        Hearth::Validator.validate!(input[:output], ::String, context: "#{context}[:output]")
+      end
+    end
+
+    class StreamingOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::StreamingOperationOutput, context: context)
+        Hearth::Validator.validate!(input[:output], ::String, context: "#{context}[:output]")
+      end
+    end
+
     class Struct
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct, context: context)
