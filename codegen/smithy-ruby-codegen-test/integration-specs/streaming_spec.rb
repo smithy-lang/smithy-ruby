@@ -41,6 +41,24 @@ module WhiteLabel
           client.streaming_operation({}, output_stream: output_stream)
         end
       end
+
+      context 'parsers' do
+        let(:output_stream) { double("OutputStream") }
+
+        before do
+          expect(output_stream).to receive(:write).and_return(0)
+        end
+
+        it 'does not read the body' do
+          expect(output_stream).not_to receive(:read)
+          client.streaming_operation({}, output_stream: output_stream)
+        end
+
+        it 'sets the field on the output' do
+          resp = client.streaming_operation({}, output_stream: output_stream)
+          expect(resp.data.output).to be(output_stream)
+        end
+      end
     end
   end
 end
