@@ -313,28 +313,13 @@ public abstract class ParserGeneratorBase {
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
     }
 
-    @FunctionalInterface
-    public interface DataSetter {
-        /**
-         * Given a memberShape, return the appropriate data setter.
-         *
-         * @param memberShape memberShape to generate data setter for.
-         * @return dataSetter (eg `data.value = `)
-         */
-        String dataSetter(MemberShape memberShape);
-    }
-
-    protected void renderStreamingBodyParser(Shape outputShape, DataSetter p) {
+    protected void renderStreamingBodyParser(Shape outputShape) {
         MemberShape streamingMember = outputShape.members().stream()
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
                 .findFirst().get();
 
-        renderStreamingBodyParser(p.dataSetter(streamingMember));
-    }
-
-    protected void renderStreamingBodyParser(String dataSetter) {
-        writer.write("$Lhttp_resp.body", dataSetter); // do NOT read the body when streaming
-
+        writer.write("data.$L = http_resp.body",
+                symbolProvider.toMemberName(streamingMember)); // do NOT read the body when streaming
     }
 
     private class ParserClassGenerator extends ShapeVisitor.Default<Void> {

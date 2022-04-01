@@ -161,9 +161,13 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     @Override
     protected void renderPayloadBodyParser(Shape outputShape, MemberShape payloadMember, Shape target) {
-        String dataName = symbolProvider.toMemberName(payloadMember);
-        String dataSetter = "data." + dataName + " = ";
-        target.accept(new PayloadMemberDeserializer(payloadMember, dataSetter));
+        if (target.hasTrait(StreamingTrait.class)) {
+            renderStreamingBodyParser(outputShape);
+        } else {
+            String dataName = symbolProvider.toMemberName(payloadMember);
+            String dataSetter = "data." + dataName + " = ";
+            target.accept(new PayloadMemberDeserializer(payloadMember, dataSetter));
+        }
     }
 
 
@@ -317,13 +321,9 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            if (shape.hasTrait(StreamingTrait.class)) {
-                renderStreamingBodyParser(dataSetter);
-            } else {
-                writer
-                        .write("payload = http_resp.body.read")
-                        .write("$Lpayload unless payload.empty?", dataSetter);
-            }
+            writer
+                    .write("payload = http_resp.body.read")
+                    .write("$Lpayload unless payload.empty?", dataSetter);
             return null;
         }
 

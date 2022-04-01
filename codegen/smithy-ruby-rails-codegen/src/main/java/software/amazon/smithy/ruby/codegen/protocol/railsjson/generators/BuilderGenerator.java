@@ -40,7 +40,6 @@ import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
-import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -89,7 +88,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
         String inputGetter = "input[" + symbolName + "]";
         if (target.hasTrait(StreamingTrait.class)) {
-            renderStreamingBodyBuilder(inputGetter, target.hasTrait(RequiresLengthTrait.class));
+            renderStreamingBodyBuilder(inputShape);
         } else {
             target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
         }
