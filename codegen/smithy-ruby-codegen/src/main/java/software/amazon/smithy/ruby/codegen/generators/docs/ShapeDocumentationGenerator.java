@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
@@ -287,13 +286,6 @@ public class ShapeDocumentationGenerator {
 
         @Override
         public Void serviceShape(ServiceShape shape) {
-            writeAllShapeTraits();
-            return null;
-        }
-
-        @Override
-        public Void stringShape(StringShape shape) {
-            // used for enums
             writeAllShapeTraits();
             return null;
         }

@@ -345,7 +345,7 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
+    # Includes enum constants for FooEnum
     #
     module FooEnum
       # No documentation available.

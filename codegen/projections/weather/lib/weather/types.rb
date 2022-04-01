@@ -580,7 +580,7 @@ module Weather
       end
     end
 
-    # Enum, one of: ["YES", "NO"]
+    # Includes enum constants for TypedYesNo
     #
     module TypedYesNo
       # No documentation available.

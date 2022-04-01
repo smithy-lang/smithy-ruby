@@ -117,12 +117,12 @@ module WhiteLabel
     #   @return [String]
     #
     # @!attribute simple_enum
-    #   Enum, one of: ["YES", "NO", "Maybe"]
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #
     #   @return [String]
     #
     # @!attribute typed_enum
-    #   Enum, one of: ["YES", "NO", "Maybe"]
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #
     #   @return [String]
     #
@@ -266,12 +266,12 @@ module WhiteLabel
     #   @return [String]
     #
     # @!attribute simple_enum
-    #   Enum, one of: ["YES", "NO", "Maybe"]
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #
     #   @return [String]
     #
     # @!attribute typed_enum
-    #   Enum, one of: ["YES", "NO", "Maybe"]
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #
     #   @return [String]
     #
@@ -492,7 +492,7 @@ module WhiteLabel
       end
     end
 
-    # Enum, one of: ["YES", "NO", "Maybe"]
+    # Includes enum constants for TypedEnum
     #
     module TypedEnum
       # No documentation available.
@@ -510,7 +510,7 @@ module WhiteLabel
       #
       # Tags: ["Test"]
       #
-      MAYBE = "Maybe"
+      MAYBE = "MAYBE"
     end
 
     # This is some union documentation.

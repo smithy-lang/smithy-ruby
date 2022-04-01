@@ -220,10 +220,9 @@ public class TypesGenerator {
                 // only write out a module if there is at least one enum constant
                 if (enumDefinitions.size() > 0) {
                     String shapeName = symbolProvider.toSymbol(shape).getName();
-                    String shapeDocumentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
 
                     writer
-                            .writeInline("$L", shapeDocumentation)
+                            .writeDocstring("Includes enum constants for " + shapeName)
                             .openBlock("module $L", shapeName);
 
                     enumDefinitions.forEach(enumDefinition -> {
