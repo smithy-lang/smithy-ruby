@@ -15,44 +15,29 @@
 
 package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
 
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
-public class BuilderGenerator extends RestBuilderGeneratorBase {
+public class BuilderGenerator extends BuilderGeneratorBase {
     public BuilderGenerator(GenerationContext context) {
         super(context);
     }
 
     @Override
-    protected void renderBuildersForOperation(OperationShape operation, Shape inputShape) {
-        Symbol symbol = symbolProvider.toSymbol(operation);
-        writer
-                .write("")
-                .write("# Operation Builder for $L", operation.getId().getName())
-                .openBlock("class $L", symbol.getName())
-                .openBlock("def self.build(http_req, input:)")
-                .closeBlock("end")
-                .closeBlock("end");
-    }
-
-    @Override
-    protected void renderPayloadBodyBuilder(OperationShape operation, Shape inputShape, MemberShape payloadMember,
-                                            Shape target) {
-
-    }
-
-    @Override
-    protected void renderBodyBuilder(OperationShape operation, Shape inputShape) {
-
+    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
+        writer.openBlock("def self.build(http_req, input:)");
+        if (Streaming.isStreaming(model, inputShape)) {
+            renderStreamingBodyBuilder(inputShape);
+        }
+        writer.closeBlock("end");
     }
 
     @Override

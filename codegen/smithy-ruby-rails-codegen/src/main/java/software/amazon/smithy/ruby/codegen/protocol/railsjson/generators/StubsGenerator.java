@@ -38,6 +38,7 @@ import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -108,7 +109,6 @@ public class StubsGenerator extends RestStubsGeneratorBase {
                 .closeBlock("end")
                 .write("data")
                 .closeBlock("end");
-
     }
 
     @Override
@@ -320,15 +320,19 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
-            String mediaType = "application/octet-stream";
-            if (mediaTypeTrait.isPresent()) {
-                mediaType = mediaTypeTrait.get().getValue();
-            }
+            if (shape.hasTrait(StreamingTrait.class)) {
+                renderStreamingStub(inputGetter);
+            } else {
+                Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
+                String mediaType = "application/octet-stream";
+                if (mediaTypeTrait.isPresent()) {
+                    mediaType = mediaTypeTrait.get().getValue();
+                }
 
-            writer
-                    .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
-                    .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+                writer
+                        .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
+                        .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+            }
             return null;
         }
 

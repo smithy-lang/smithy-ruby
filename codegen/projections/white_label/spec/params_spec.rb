@@ -159,5 +159,29 @@ module WhiteLabel
           .to raise_error(ArgumentError, /Expected params to have one of/)
       end
     end
+
+    describe StreamingOperationInput do
+
+      it 'converts a string to StringIO' do
+        data = StreamingOperationInput.build({stream: 'string'}, context: 'params')
+        expect(data).to be_a(Types::StreamingOperationInput)
+        expect(data.stream).to be_a(StringIO)
+        expect(data.stream.read).to eq('string')
+      end
+
+      it 'converts a nil to an empty StringIO' do
+        data = StreamingOperationInput.build({stream: nil}, context: 'params')
+        expect(data).to be_a(Types::StreamingOperationInput)
+        expect(data.stream).to be_a(StringIO)
+        expect(data.stream.read).to eq('')
+      end
+
+      it 'does not convert a readable, io like object' do
+        stream = double("stream", read: 'chunk')
+        data = StreamingOperationInput.build({stream: stream}, context: 'params')
+        expect(data).to be_a(Types::StreamingOperationInput)
+        expect(data.stream).to be(stream)
+      end
+    end
   end
 end

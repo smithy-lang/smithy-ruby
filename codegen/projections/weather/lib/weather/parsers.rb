@@ -34,25 +34,11 @@ module Weather
       end
     end
 
-    # Operation Parser for GetCityAnnouncements
-    class GetCityAnnouncements
-      def self.parse(http_resp)
-        data = Types::GetCityAnnouncementsOutput.new
-        data.last_updated = Time.parse(http_resp.headers['x-last-updated']) if http_resp.headers['x-last-updated']
-        data
-      end
-    end
-
-    class Announcements
-    end
-
-    class Message
-    end
-
     # Operation Parser for GetCityImage
     class GetCityImage
       def self.parse(http_resp)
         data = Types::GetCityImageOutput.new
+        data.image = http_resp.body
         data
       end
     end

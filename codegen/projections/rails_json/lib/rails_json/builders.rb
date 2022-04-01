@@ -1145,6 +1145,18 @@ module RailsJson
       end
     end
 
+    # Operation Builder for StreamingOperation
+    class StreamingOperation
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/streamingoperation')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_params(params)
+        http_req.body = input[:output]
+        http_req.headers['Transfer-Encoding'] = 'chunked'
+      end
+    end
+
     # Operation Builder for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.build(http_req, input:)

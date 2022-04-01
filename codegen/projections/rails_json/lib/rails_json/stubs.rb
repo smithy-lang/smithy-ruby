@@ -1476,6 +1476,21 @@ module RailsJson
       end
     end
 
+    # Operation Stubber for StreamingOperation
+    class StreamingOperation
+      def self.default(visited=[])
+        {
+          output: 'output',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        IO.copy_stream(stub[:output], http_resp.body)
+      end
+    end
+
     # Operation Stubber for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.default(visited=[])

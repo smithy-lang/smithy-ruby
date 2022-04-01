@@ -869,6 +869,15 @@ module RailsJson
       end
     end
 
+    # Operation Parser for StreamingOperation
+    class StreamingOperation
+      def self.parse(http_resp)
+        data = Types::StreamingOperationOutput.new
+        data.output = http_resp.body
+        data
+      end
+    end
+
     # Operation Parser for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.parse(http_resp)

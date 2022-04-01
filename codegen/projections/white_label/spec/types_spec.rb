@@ -60,7 +60,6 @@ module WhiteLabel
     end
 
     describe DefaultsTestInput do
-      subject { DefaultsTestInput.new }
 
       it 'has a default value for default_number' do
         expect(subject.default_number).to be 0

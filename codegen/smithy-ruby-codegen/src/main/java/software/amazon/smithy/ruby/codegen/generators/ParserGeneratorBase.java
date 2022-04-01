@@ -28,6 +28,7 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -36,10 +37,12 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -255,6 +258,7 @@ public abstract class ParserGeneratorBase {
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape outputShape = model.expectShape(o.getOutputShape());
@@ -307,6 +311,30 @@ public abstract class ParserGeneratorBase {
                 .call(() -> renderErrorParseMethod(s))
                 .closeBlock("end");
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
+    }
+
+    @FunctionalInterface
+    public interface DataSetter {
+        /**
+         * Given a memberShape, return the appropriate data setter.
+         *
+         * @param memberShape memberShape to generate data setter for.
+         * @return dataSetter (eg `data.value = `)
+         */
+        String dataSetter(MemberShape memberShape);
+    }
+
+    protected void renderStreamingBodyParser(Shape outputShape, DataSetter p) {
+        MemberShape streamingMember = outputShape.members().stream()
+                .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
+                .findFirst().get();
+
+        renderStreamingBodyParser(p.dataSetter(streamingMember));
+    }
+
+    protected void renderStreamingBodyParser(String dataSetter) {
+        writer.write("$Lhttp_resp.body", dataSetter); // do NOT read the body when streaming
+
     }
 
     private class ParserClassGenerator extends ShapeVisitor.Default<Void> {

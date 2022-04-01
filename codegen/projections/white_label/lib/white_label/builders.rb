@@ -64,6 +64,21 @@ module WhiteLabel
       end
     end
 
+    # Operation Builder for StreamingOperation
+    class StreamingOperation
+      def self.build(http_req, input:)
+        http_req.body = input[:stream]
+        http_req.headers['Transfer-Encoding'] = 'chunked'
+      end
+    end
+
+    # Operation Builder for StreamingWithLength
+    class StreamingWithLength
+      def self.build(http_req, input:)
+        http_req.body = input[:stream]
+      end
+    end
+
     # Operation Builder for WaitersTest
     class WaitersTest
       def self.build(http_req, input:)

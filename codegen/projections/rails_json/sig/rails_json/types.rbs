@@ -216,6 +216,10 @@ module RailsJson
 
     SimpleStruct: untyped
 
+    StreamingOperationInput: untyped
+
+    StreamingOperationOutput: untyped
+
     StructWithLocationName: untyped
 
     TimestampFormatHeadersInput: untyped

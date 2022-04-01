@@ -114,7 +114,9 @@ module Weather
     class GetCityImageOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetCityImageOutput, context: context)
-        Hearth::Validator.validate!(input[:image], ::String, context: "#{context}[:image]")
+        unless input[:image].respond_to?(:read) || input[:image].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:image].class}"
+        end
       end
     end
 

@@ -1882,6 +1882,28 @@ module RailsJson
       include Hearth::Structure
     end
 
+    # @!attribute output
+    #
+    #   @return [String]
+    #
+    StreamingOperationInput = ::Struct.new(
+      :output,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute output
+    #
+    #   @return [String]
+    #
+    StreamingOperationOutput = ::Struct.new(
+      :output,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute value
     #
     #   @return [String]

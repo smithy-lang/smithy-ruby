@@ -40,7 +40,9 @@ import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -86,7 +88,11 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                                             Shape target) {
         String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
         String inputGetter = "input[" + symbolName + "]";
-        target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
+        if (target.hasTrait(StreamingTrait.class)) {
+            renderStreamingBodyBuilder(inputGetter, target.hasTrait(RequiresLengthTrait.class));
+        } else {
+            target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
+        }
     }
 
     @Override

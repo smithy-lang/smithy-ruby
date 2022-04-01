@@ -47,6 +47,7 @@ service RailsJson {
         HttpResponseCode,
         __789BadName,
         NestedAttributesOperation,
+        StreamingOperation
     ],
 }
 

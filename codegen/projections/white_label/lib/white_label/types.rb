@@ -455,6 +455,46 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # @!attribute stream
+    #
+    #   @return [String]
+    #
+    StreamingOperationInput = ::Struct.new(
+      :stream,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute stream
+    #
+    #   @return [String]
+    #
+    StreamingOperationOutput = ::Struct.new(
+      :stream,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute stream
+    #
+    #   @return [String]
+    #
+    StreamingWithLengthInput = ::Struct.new(
+      :stream,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    StreamingWithLengthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # This docstring should be different than KitchenSink struct member.
     #
     # @deprecated

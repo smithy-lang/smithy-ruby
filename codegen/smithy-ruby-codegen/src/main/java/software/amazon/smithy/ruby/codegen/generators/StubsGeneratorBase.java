@@ -286,6 +286,10 @@ public abstract class StubsGeneratorBase {
         writer.closeBlock("}");
     }
 
+    protected void renderStreamingStub(String dataGetter) {
+        writer.write("IO.copy_stream($L, http_resp.body)", dataGetter);
+    }
+
     private class StubClassGenerator extends ShapeVisitor.Default<Void> {
 
         @Override

@@ -186,6 +186,43 @@ module WhiteLabel
       end
     end
 
+    class StreamingOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::StreamingOperationInput, context: context)
+        unless input[:stream].respond_to?(:read) || input[:stream].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:stream].class}"
+        end
+      end
+    end
+
+    class StreamingOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::StreamingOperationOutput, context: context)
+        unless input[:stream].respond_to?(:read) || input[:stream].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:stream].class}"
+        end
+      end
+    end
+
+    class StreamingWithLengthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::StreamingWithLengthInput, context: context)
+        unless input[:stream].respond_to?(:read) || input[:stream].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:stream].class}"
+        end
+
+        unless input[:stream].respond_to?(:size)
+          raise ArgumentError, "Expected #{context} to respond_to(:size)"
+        end
+      end
+    end
+
+    class StreamingWithLengthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::StreamingWithLengthOutput, context: context)
+      end
+    end
+
     class Struct
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct, context: context)

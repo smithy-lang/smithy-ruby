@@ -30,6 +30,7 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -38,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -227,6 +229,7 @@ public class ClientGenerator {
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(o));
     }
@@ -246,6 +249,7 @@ public class ClientGenerator {
         Symbol symbol = symbolProvider.toSymbol(operation);
         ShapeId inputShapeId = operation.getInputShape();
         Shape inputShape = model.expectShape(inputShapeId);
+        Shape outputShape = model.expectShape(operation.getOutputShape());
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
 
@@ -257,6 +261,14 @@ public class ClientGenerator {
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("stack = Hearth::MiddlewareStack.new")
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
+                .call(() -> {
+                    if (outputShape.members().stream()
+                            .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())) {
+                       writer.write("response_body = output_stream(options, &block)");
+                    } else {
+                        writer.write("response_body = StringIO.new");
+                    }
+                })
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
                 .write("apply_middleware(stack, options[:middleware])\n")

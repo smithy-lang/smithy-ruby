@@ -87,6 +87,7 @@ module Weather
     def get_city(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -112,65 +113,10 @@ module Weather
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :get_city
-        )
-      )
-      raise resp.error if resp.error
-      resp
-    end
-
-    # @param [Hash] params
-    #   See {Types::GetCityAnnouncementsInput}.
-    #
-    # @return [Types::GetCityAnnouncementsOutput]
-    #
-    # @example Request syntax with placeholder values
-    #
-    #   resp = client.get_city_announcements(
-    #     city_id: 'cityId' # required
-    #   )
-    #
-    # @example Response structure
-    #
-    #   resp.data #=> Types::GetCityAnnouncementsOutput
-    #   resp.data.last_updated #=> Time
-    #   resp.data.announcements #=> Announcements
-    #
-    def get_city_announcements(params = {}, options = {}, &block)
-      stack = Hearth::MiddlewareStack.new
-      input = Params::GetCityAnnouncementsInput.build(params)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::GetCityAnnouncementsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::GetCityAnnouncements
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
-        data_parser: Parsers::GetCityAnnouncements
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
-        stub_class: Stubs::GetCityAnnouncements,
-        params_class: Params::GetCityAnnouncementsOutput,
-        stubs: options.fetch(:stubs, @stubs)
-      )
-      apply_middleware(stack, options[:middleware])
-
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
-          params: params,
-          logger: @logger,
-          operation_name: :get_city_announcements
         )
       )
       raise resp.error if resp.error
@@ -204,6 +150,7 @@ module Weather
     def get_city_image(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityImageInput.build(params)
+      response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityImageInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -229,7 +176,7 @@ module Weather
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :get_city_image
@@ -256,6 +203,7 @@ module Weather
     def get_current_time(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -281,7 +229,7 @@ module Weather
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :get_current_time
@@ -311,6 +259,7 @@ module Weather
     def get_forecast(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -336,7 +285,7 @@ module Weather
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :get_forecast
@@ -385,6 +334,7 @@ module Weather
     def list_cities(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -410,7 +360,7 @@ module Weather
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :list_cities
@@ -444,6 +394,7 @@ module Weather
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
+      response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
         validate_input: options.fetch(:validate_input, @validate_input)
@@ -469,7 +420,7 @@ module Weather
         input: input,
         context: Hearth::Context.new(
           request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
-          response: Hearth::HTTP::Response.new(body: output_stream(options, &block)),
+          response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @logger,
           operation_name: :operation____789_bad_name

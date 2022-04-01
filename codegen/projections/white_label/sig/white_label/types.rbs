@@ -32,6 +32,14 @@ module WhiteLabel
 
     ServerError: untyped
 
+    StreamingOperationInput: untyped
+
+    StreamingOperationOutput: untyped
+
+    StreamingWithLengthInput: untyped
+
+    StreamingWithLengthOutput: untyped
+
     Struct: untyped
 
     module TypedEnum

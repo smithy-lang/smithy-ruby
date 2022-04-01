@@ -28,6 +28,7 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -35,10 +36,13 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -86,7 +90,7 @@ public abstract class BuilderGeneratorBase {
      * end
      * }</pre>
      *
-     * @param operation the operation to generate for.
+     * @param operation  the operation to generate for.
      * @param inputShape the operation's input.
      */
     protected abstract void renderOperationBuildMethod(OperationShape operation, Shape inputShape);
@@ -235,6 +239,7 @@ public abstract class BuilderGeneratorBase {
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape inputShape = model.expectShape(o.getInputShape());
@@ -264,6 +269,23 @@ public abstract class BuilderGeneratorBase {
                 .closeBlock("end");
 
         LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
+    }
+
+    protected void renderStreamingBodyBuilder(Shape inputShape) {
+        MemberShape streamingMember = inputShape.members().stream()
+                .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
+                .findFirst().get();
+
+        renderStreamingBodyBuilder(
+                writer.format("input[:$L]", symbolProvider.toMemberName(streamingMember)),
+                streamingMember.getMemberTrait(model, RequiresLengthTrait.class).isPresent());
+    }
+
+    protected void renderStreamingBodyBuilder(String dataGetter, boolean requiresLength) {
+        writer.write("http_req.body = $L", dataGetter);
+        if (!requiresLength) {
+            writer.write("http_req.headers['Transfer-Encoding'] = 'chunked'");
+        }
     }
 
     protected class BuilderClassGenerator extends ShapeVisitor.Default<Void> {
