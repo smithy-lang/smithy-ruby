@@ -313,6 +313,17 @@ public abstract class ParserGeneratorBase {
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
     }
 
+    @FunctionalInterface
+    public interface DataSetter {
+        /**
+         * Given a memberShape, return the appropriate data setter.
+         *
+         * @param memberShape memberShape to generate data setter for.
+         * @return dataSetter (eg `data.value = `)
+         */
+        String dataSetter(MemberShape memberShape);
+    }
+
     protected void renderStreamingBodyParser(Shape outputShape, DataSetter p) {
         MemberShape streamingMember = outputShape.members().stream()
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
@@ -324,17 +335,6 @@ public abstract class ParserGeneratorBase {
     protected void renderStreamingBodyParser(String dataSetter) {
         writer.write("$Lhttp_resp.body", dataSetter); // do NOT read the body when streaming
 
-    }
-
-    @FunctionalInterface
-    public interface DataSetter {
-        /**
-         * Given a memberShape, return the appropriate data setter.
-         *
-         * @param memberShape memberShape to generate data setter for.
-         * @return dataSetter (eg `data.value = `)
-         */
-        String dataSetter(MemberShape memberShape);
     }
 
     private class ParserClassGenerator extends ShapeVisitor.Default<Void> {

@@ -24,6 +24,7 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
+import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -36,6 +37,7 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -283,6 +285,22 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write(memberSetter + input);
+            return null;
+        }
+
+        @Override
+        public Void blobShape(BlobShape shape) {
+            if (shape.hasTrait(StreamingTrait.class)) {
+                writer
+                        .write("io = $L || StringIO.new", input)
+                        .openBlock("unless io.respond_to?(:read) "
+                                + "|| io.respond_to?(:readpartial)")
+                        .write("io = StringIO.new(io)")
+                        .closeBlock("end")
+                        .write("$Lio", memberSetter);
+            } else {
+                getDefault(shape);
+            }
             return null;
         }
 

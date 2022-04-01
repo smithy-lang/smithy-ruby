@@ -211,5 +211,12 @@ module WhiteLabel
           )
       end
     end
+
+    describe StreamingOperationInput do
+      it 'validates io like' do
+        expect { StreamingOperationInput.validate!(Types::StreamingOperationInput.new(stream: ""), context: 'input') }
+          .to raise_error(ArgumentError, "Expected input to be an IO like object, got String")
+      end
+    end
   end
 end

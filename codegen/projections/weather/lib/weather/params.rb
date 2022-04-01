@@ -127,7 +127,11 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::GetCityImageOutput, context: context)
         type = Types::GetCityImageOutput.new
-        type.image = params[:image]
+        io = params[:image] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.image = io
         type
       end
     end

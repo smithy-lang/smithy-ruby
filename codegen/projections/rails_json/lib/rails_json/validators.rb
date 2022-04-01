@@ -1084,14 +1084,18 @@ module RailsJson
     class StreamingOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::StreamingOperationInput, context: context)
-        Hearth::Validator.validate!(input[:output], ::String, context: "#{context}[:output]")
+        unless input[:output].respond_to?(:read) || input[:output].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:output].class}"
+        end
       end
     end
 
     class StreamingOperationOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::StreamingOperationOutput, context: context)
-        Hearth::Validator.validate!(input[:output], ::String, context: "#{context}[:output]")
+        unless input[:output].respond_to?(:read) || input[:output].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:output].class}"
+        end
       end
     end
 

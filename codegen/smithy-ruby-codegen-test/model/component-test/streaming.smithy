@@ -8,13 +8,14 @@ operation StreamingOperation {
 
 @input
 structure StreamingOperationInput {
-    output: StreamingBlob,
+    @httpPayload
+    stream: StreamingBlob,
 }
 
 @output
 structure StreamingOperationOutput {
     @httpPayload
-    output: StreamingBlob,
+    stream: StreamingBlob,
 }
 
 @streaming

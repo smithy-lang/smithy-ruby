@@ -204,7 +204,11 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::StreamingOperationInput, context: context)
         type = Types::StreamingOperationInput.new
-        type.output = params[:output]
+        io = params[:stream] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.stream = io
         type
       end
     end
@@ -213,7 +217,11 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::StreamingOperationOutput, context: context)
         type = Types::StreamingOperationOutput.new
-        type.output = params[:output]
+        io = params[:stream] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.stream = io
         type
       end
     end

@@ -489,13 +489,13 @@ module WhiteLabel
     # @example Request syntax with placeholder values
     #
     #   resp = client.streaming_operation(
-    #     output: 'output'
+    #     stream: 'stream'
     #   )
     #
     # @example Response structure
     #
     #   resp.data #=> Types::StreamingOperationOutput
-    #   resp.data.output #=> String
+    #   resp.data.stream #=> String
     #
     def streaming_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

@@ -1152,8 +1152,8 @@ module RailsJson
         http_req.append_path('/streamingoperation')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
-        http_req.headers['Content-Type'] = 'application/octet-stream'
-        http_req.body = StringIO.new(input[:output] || '')
+        http_req.body = input[:output]
+        http_req.headers['Content-Type'] = 'chunked'
       end
     end
 

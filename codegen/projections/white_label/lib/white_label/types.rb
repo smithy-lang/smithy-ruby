@@ -427,23 +427,23 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    # @!attribute output
+    # @!attribute stream
     #
     #   @return [String]
     #
     StreamingOperationInput = ::Struct.new(
-      :output,
+      :stream,
       keyword_init: true
     ) do
       include Hearth::Structure
     end
 
-    # @!attribute output
+    # @!attribute stream
     #
     #   @return [String]
     #
     StreamingOperationOutput = ::Struct.new(
-      :output,
+      :stream,
       keyword_init: true
     ) do
       include Hearth::Structure

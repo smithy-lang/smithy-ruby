@@ -28,6 +28,7 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -35,6 +36,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -87,7 +89,7 @@ public abstract class BuilderGeneratorBase {
      * end
      * }</pre>
      *
-     * @param operation the operation to generate for.
+     * @param operation  the operation to generate for.
      * @param inputShape the operation's input.
      */
     protected abstract void renderOperationBuildMethod(OperationShape operation, Shape inputShape);
@@ -268,8 +270,18 @@ public abstract class BuilderGeneratorBase {
         LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
     }
 
-    protected void renderStubBodyBuilder(String dataGetter) {
+    protected void renderStreamingBodyBuilder(Shape inputShape) {
+        MemberShape streamingMember = inputShape.members().stream()
+                .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
+                .findFirst().get();
 
+        renderStreamingBodyBuilder(writer.format("input[:$L]", symbolProvider.toMemberName(streamingMember)));
+    }
+
+    protected void renderStreamingBodyBuilder(String dataGetter) {
+        writer
+                .write("http_req.body = $L", dataGetter)
+                .write("http_req.headers['Content-Type'] = 'chunked'");
     }
 
     protected class BuilderClassGenerator extends ShapeVisitor.Default<Void> {

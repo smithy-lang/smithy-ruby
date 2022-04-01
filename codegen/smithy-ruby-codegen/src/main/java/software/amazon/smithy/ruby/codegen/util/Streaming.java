@@ -40,9 +40,7 @@ public final class Streaming {
     public static boolean isEventStreaming(Model model, Shape inputOrOutput) {
         return inputOrOutput.members()
                 .stream()
-                .anyMatch((m) ->
-                        m.getMemberTrait(model, StreamingTrait.class).isPresent()
-                                && model.expectShape(m.getTarget()).isUnionShape());
+                .anyMatch((m) -> StreamingTrait.isEventStream(model, m));
     }
 
     public static boolean isStreaming(Model model, Shape inputOrOutput) {

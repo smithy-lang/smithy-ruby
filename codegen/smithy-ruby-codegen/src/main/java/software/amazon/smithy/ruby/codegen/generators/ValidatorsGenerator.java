@@ -42,6 +42,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -282,7 +283,16 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
+            if (shape.hasTrait(StreamingTrait.class)) {
+                writer
+                        .openBlock("unless $1L.respond_to?(:read) || $1L.respond_to?(:readpartial)",
+                                input)
+                        .write("raise ArgumentError, \"Expected #{context} to be an IO like object,"
+                                + " got #{$L.class}\"", input)
+                        .closeBlock("end");
+            } else {
+                writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
+            }
             return null;
         }
 

@@ -88,7 +88,7 @@ module WhiteLabel
     class StreamingOperation
       def self.parse(http_resp)
         data = Types::StreamingOperationOutput.new
-        data.output = http_resp.body
+        data.stream = http_resp.body
         data
       end
     end
