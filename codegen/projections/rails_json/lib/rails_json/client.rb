@@ -101,9 +101,9 @@ module RailsJson
     #     query_timestamp_list: [
     #       Time.now
     #     ],
-    #     query_enum: 'Foo', # accepts Foo, Baz, Bar, 1, 0
+    #     query_enum: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     query_enum_list: [
-    #       'Foo' # accepts Foo, Baz, Bar, 1, 0
+    #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     ],
     #     query_params_map_of_strings: {
     #       'key' => 'value'
@@ -1324,9 +1324,9 @@ module RailsJson
     #     header_timestamp_list: [
     #       Time.now
     #     ],
-    #     header_enum: 'Foo', # accepts Foo, Baz, Bar, 1, 0
+    #     header_enum: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     header_enum_list: [
-    #       'Foo' # accepts Foo, Baz, Bar, 1, 0
+    #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     ]
     #   )
     #
@@ -1352,9 +1352,9 @@ module RailsJson
     #   resp.data.header_boolean_list[0] #=> Boolean
     #   resp.data.header_timestamp_list #=> Array<Time>
     #   resp.data.header_timestamp_list[0] #=> Time
-    #   resp.data.header_enum #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.header_enum #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.header_enum_list #=> Array<String>
-    #   resp.data.header_enum_list[0] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.header_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #
     def input_and_output_with_headers(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1405,32 +1405,32 @@ module RailsJson
     # @example Request syntax with placeholder values
     #
     #   resp = client.json_enums(
-    #     foo_enum1: 'Foo', # accepts Foo, Baz, Bar, 1, 0
-    #     foo_enum2: 'Foo', # accepts Foo, Baz, Bar, 1, 0
-    #     foo_enum3: 'Foo', # accepts Foo, Baz, Bar, 1, 0
+    #     foo_enum1: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
+    #     foo_enum2: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
+    #     foo_enum3: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     foo_enum_list: [
-    #       'Foo' # accepts Foo, Baz, Bar, 1, 0
+    #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     ],
     #     foo_enum_set: [
-    #       'Foo' # accepts Foo, Baz, Bar, 1, 0
+    #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     ],
     #     foo_enum_map: {
-    #       'key' => 'Foo' # accepts Foo, Baz, Bar, 1, 0
+    #       'key' => 'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     }
     #   )
     #
     # @example Response structure
     #
     #   resp.data #=> Types::JsonEnumsOutput
-    #   resp.data.foo_enum1 #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.data.foo_enum2 #=> String, one of Foo, Baz, Bar, 1, 0
-    #   resp.data.foo_enum3 #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum1 #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
+    #   resp.data.foo_enum2 #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
+    #   resp.data.foo_enum3 #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_list #=> Array<String>
-    #   resp.data.foo_enum_list[0] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_set #=> Set<String>
-    #   resp.data.foo_enum_set[0] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum_set[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_map #=> Hash<String, String>
-    #   resp.data.foo_enum_map['key'] #=> String, one of Foo, Baz, Bar, 1, 0
+    #   resp.data.foo_enum_map['key'] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #
     def json_enums(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
@@ -1594,7 +1594,7 @@ module RailsJson
     #       number_value: 1,
     #       blob_value: 'blobValue',
     #       timestamp_value: Time.now,
-    #       enum_value: 'Foo', # accepts Foo, Baz, Bar, 1, 0
+    #       enum_value: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #       list_value: [
     #         'member'
     #       ],

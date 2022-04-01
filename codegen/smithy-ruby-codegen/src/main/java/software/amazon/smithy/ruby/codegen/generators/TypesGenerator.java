@@ -30,8 +30,11 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EnumDefinition;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -199,9 +202,52 @@ public class TypesGenerator {
                     .openBlock("def to_s")
                     .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", settings.getModule())
                     .closeBlock("end")
-                    .closeBlock("end");
+                    .closeBlock("end")
+                    .closeBlock("end\n");
 
-            writer.closeBlock("end\n");
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            // Only write out string shapes for enums
+            if (shape.hasTrait(EnumTrait.class)) {
+                EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
+                List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
+                                .filter(value -> value.getName().isPresent())
+                                .collect(Collectors.toList());
+
+                // only write out a module if there is at least one enum constant
+                if (enumDefinitions.size() > 0) {
+                    String shapeName = symbolProvider.toSymbol(shape).getName();
+
+                    writer
+                            .writeDocstring("Includes enum constants for " + shapeName)
+                            .openBlock("module $L", shapeName);
+
+                    enumDefinitions.forEach(enumDefinition -> {
+                        String enumName = enumDefinition.getName().get();
+                        String enumValue = enumDefinition.getValue();
+                        String enumDocumentation = enumDefinition.getDocumentation()
+                                .orElse("No documentation available.");
+                        writer.writeDocstring(enumDocumentation);
+                        if (enumDefinition.isDeprecated()) {
+                            writer.writeYardDeprecated("This enum value is deprecated.", "");
+                        }
+                        if (!enumDefinition.getTags().isEmpty()) {
+                            String enumTags = enumDefinition.getTags().stream()
+                                    .map((tag) -> "\"" + tag + "\"")
+                                    .collect(Collectors.joining(", "));
+                            writer.writeDocstring("Tags: [" + enumTags + "]");
+                        }
+                        writer.write("$L = $S\n", enumName, enumValue);
+                    });
+
+                    writer
+                            .unwrite("\n")
+                            .closeBlock("end\n");
+                }
+            }
 
             return null;
         }
@@ -341,6 +387,32 @@ public class TypesGenerator {
                     .write("def to_h: () -> { unknown: Hash[Symbol,$L] }", shapeName)
                     .closeBlock("end")
                     .closeBlock("end\n");
+
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            // Only write out string shapes for enums
+            if (shape.hasTrait(EnumTrait.class)) {
+                EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
+                List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
+                        .filter(value -> value.getName().isPresent())
+                        .collect(Collectors.toList());
+
+                // only write out a module if there is at least one enum constant
+                if (enumDefinitions.size() > 0) {
+                    String shapeName = symbolProvider.toSymbol(shape).getName();
+                    rbsWriter.openBlock("module $L", shapeName);
+                    enumDefinitions.forEach(enumDefinition -> {
+                        String enumName = enumDefinition.getName().get();
+                        rbsWriter.write("$L: ::String\n", enumName);
+                    });
+                    rbsWriter
+                            .unwrite("\n")
+                            .closeBlock("end\n");
+                }
+            }
 
             return null;
         }

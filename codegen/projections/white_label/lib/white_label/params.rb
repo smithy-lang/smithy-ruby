@@ -61,6 +61,8 @@ module WhiteLabel
         Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkInput, context: context)
         type = Types::KitchenSinkInput.new
         type.string = params[:string]
+        type.simple_enum = params[:simple_enum]
+        type.typed_enum = params[:typed_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
@@ -78,6 +80,8 @@ module WhiteLabel
         Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkOutput, context: context)
         type = Types::KitchenSinkOutput.new
         type.string = params[:string]
+        type.simple_enum = params[:simple_enum]
+        type.typed_enum = params[:typed_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?

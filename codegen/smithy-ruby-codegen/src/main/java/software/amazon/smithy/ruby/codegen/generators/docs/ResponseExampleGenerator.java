@@ -80,9 +80,10 @@ public class ResponseExampleGenerator {
         public Void stringShape(StringShape shape) {
             if (shape.hasTrait(EnumTrait.class)) {
                 EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
-                String values =
-                        enumTrait.getValues().stream().map((v) -> v.getValue()).collect(Collectors.joining(", "));
-                writer.write("$L #=> String, one of $L", dataGetter, values);
+                String values = enumTrait.getEnumDefinitionValues().stream()
+                        .map((value) -> "\"" + value + "\"")
+                        .collect(Collectors.joining(", "));
+                writer.write("$L #=> String, one of [$L]", dataGetter, values);
             } else {
                 writer.write("$L #=> String", dataGetter);
             }

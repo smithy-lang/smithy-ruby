@@ -116,6 +116,16 @@ module WhiteLabel
     #
     #   @return [String]
     #
+    # @!attribute simple_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute typed_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
     # @!attribute struct
     #   This is some member documentation of Struct.
     #   It should override Struct's documentation.
@@ -194,6 +204,8 @@ module WhiteLabel
     #
     KitchenSinkInput = ::Struct.new(
       :string,
+      :simple_enum,
+      :typed_enum,
       :struct,
       :document,
       :list_of_strings,
@@ -209,6 +221,8 @@ module WhiteLabel
       def to_s
         "#<struct WhiteLabel::Types::KitchenSinkInput "\
           "string=\"[SENSITIVE]\", "\
+          "simple_enum=#{simple_enum || 'nil'}, "\
+          "typed_enum=#{typed_enum || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "document=#{document || 'nil'}, "\
           "list_of_strings=#{list_of_strings || 'nil'}, "\
@@ -248,6 +262,16 @@ module WhiteLabel
     #
     #   @note
     #     This shape is sensitive and must be handled with care.
+    #
+    #   @return [String]
+    #
+    # @!attribute simple_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute typed_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #
     #   @return [String]
     #
@@ -329,6 +353,8 @@ module WhiteLabel
     #
     KitchenSinkOutput = ::Struct.new(
       :string,
+      :simple_enum,
+      :typed_enum,
       :struct,
       :document,
       :list_of_strings,
@@ -344,6 +370,8 @@ module WhiteLabel
       def to_s
         "#<struct WhiteLabel::Types::KitchenSinkOutput "\
           "string=\"[SENSITIVE]\", "\
+          "simple_enum=#{simple_enum || 'nil'}, "\
+          "typed_enum=#{typed_enum || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "document=#{document || 'nil'}, "\
           "list_of_strings=#{list_of_strings || 'nil'}, "\
@@ -462,6 +490,27 @@ module WhiteLabel
       def to_s
         "#<struct WhiteLabel::Types::Struct [SENSITIVE]>"
       end
+    end
+
+    # Includes enum constants for TypedEnum
+    #
+    module TypedEnum
+      # No documentation available.
+      #
+      YES = "YES"
+
+      # No documentation available.
+      #
+      NO = "NO"
+
+      # This documentation should be applied.
+      #
+      # @deprecated
+      #   This enum value is deprecated.
+      #
+      # Tags: ["Test"]
+      #
+      MAYBE = "MAYBE"
     end
 
     # This is some union documentation.

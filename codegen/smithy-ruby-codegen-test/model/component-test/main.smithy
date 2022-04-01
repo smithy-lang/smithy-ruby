@@ -27,6 +27,10 @@ structure KitchenSinkInputOutput {
     // simple member
     String: String,
 
+    // enum members
+    SimpleEnum: SimpleEnum,
+    TypedEnum: TypedEnum,
+
     // complex member
     Struct: Struct,
 
@@ -43,6 +47,12 @@ structure KitchenSinkInputOutput {
     // union member
     Union: Union,
 }
+
+@enum([{value: "YES"}, {value: "NO"}])
+string SimpleEnum
+
+@enum([{value: "YES", name: "YES"}, {value: "NO", name: "NO"}])
+string TypedEnum
 
 structure Struct {
     value: String,

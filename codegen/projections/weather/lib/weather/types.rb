@@ -327,6 +327,7 @@ module Weather
     #   @return [Integer]
     #
     # @!attribute some_enum
+    #   Enum, one of: ["YES", "NO"]
     #
     #   @return [String]
     #
@@ -359,6 +360,7 @@ module Weather
     #   @return [String]
     #
     # @!attribute some_enum
+    #   Enum, one of: ["YES", "NO"]
     #
     #   @return [String]
     #
@@ -501,6 +503,8 @@ module Weather
         end
       end
 
+      # Enum, one of: ["YES", "NO"]
+      #
       class Snow < Precipitation
         def to_h
           { snow: super(__getobj__) }
@@ -511,6 +515,8 @@ module Weather
         end
       end
 
+      # Enum, one of: ["YES", "NO"]
+      #
       class Mixed < Precipitation
         def to_h
           { mixed: super(__getobj__) }
@@ -572,6 +578,18 @@ module Weather
           "#<Weather::Types::Unknown #{__getobj__ || 'nil'}>"
         end
       end
+    end
+
+    # Includes enum constants for TypedYesNo
+    #
+    module TypedYesNo
+      # No documentation available.
+      #
+      YES = "YES"
+
+      # No documentation available.
+      #
+      NO = "NO"
     end
 
     # @!attribute member___123foo
