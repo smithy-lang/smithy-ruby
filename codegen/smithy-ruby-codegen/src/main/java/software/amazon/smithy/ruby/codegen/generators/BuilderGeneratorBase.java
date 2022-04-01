@@ -36,6 +36,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -275,13 +276,16 @@ public abstract class BuilderGeneratorBase {
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
                 .findFirst().get();
 
-        renderStreamingBodyBuilder(writer.format("input[:$L]", symbolProvider.toMemberName(streamingMember)));
+        renderStreamingBodyBuilder(
+                writer.format("input[:$L]", symbolProvider.toMemberName(streamingMember)),
+                streamingMember.getMemberTrait(model, RequiresLengthTrait.class).isPresent());
     }
 
-    protected void renderStreamingBodyBuilder(String dataGetter) {
-        writer
-                .write("http_req.body = $L", dataGetter)
-                .write("http_req.headers['Content-Type'] = 'chunked'");
+    protected void renderStreamingBodyBuilder(String dataGetter, boolean requiresLength) {
+        writer.write("http_req.body = $L", dataGetter);
+        if (!requiresLength) {
+            writer.write("http_req.headers['Transfer-Encoding'] = 'chunked'");
+        }
     }
 
     protected class BuilderClassGenerator extends ShapeVisitor.Default<Void> {

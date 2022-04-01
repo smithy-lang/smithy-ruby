@@ -223,7 +223,7 @@ module WhiteLabel
       it 'validates responds_to(:size)' do
         stream = double("stream", read: 'data')
         expect { StreamingWithLengthInput.validate!(Types::StreamingWithLengthInput.new(stream: stream), context: 'input') }
-          .to raise_error(ArgumentError, "Expected input to be an IO like object, got String")
+          .to raise_error(ArgumentError, "Expected input to respond_to(:size)")
       end
     end
   end
