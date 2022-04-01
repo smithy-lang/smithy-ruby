@@ -72,6 +72,14 @@ module WhiteLabel
       end
     end
 
+    # Operation Builder for StreamingWithLength
+    class StreamingWithLength
+      def self.build(http_req, input:)
+        http_req.body = input[:stream]
+        http_req.headers['Content-Type'] = 'chunked'
+      end
+    end
+
     # Operation Builder for WaitersTest
     class WaitersTest
       def self.build(http_req, input:)

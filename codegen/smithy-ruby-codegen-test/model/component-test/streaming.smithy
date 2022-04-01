@@ -20,3 +20,17 @@ structure StreamingOperationOutput {
 
 @streaming
 blob StreamingBlob
+
+operation StreamingWithLength {
+    input: StreamingWithLengthInput,
+}
+
+@input
+structure StreamingWithLengthInput {
+    @httpPayload
+    stream: FiniteStreamingBlob,
+}
+
+@streaming
+@requiresLength
+blob FiniteStreamingBlob

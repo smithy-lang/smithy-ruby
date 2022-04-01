@@ -81,8 +81,6 @@ module WhiteLabel
         end
       end
 
-      # TODO: create an operation with @requireLength
-
       context 'builders' do
         it 'sets the body to the streaming member' do
           streaming_input = StringIO.new("test")
@@ -102,7 +100,18 @@ module WhiteLabel
           client.streaming_operation({stream: streaming_input}, middleware: middleware)
         end
       end
+    end
 
+    describe '#streaming_with_length' do
+      let(:client) { Client.new(stub_responses:  true) }
+      let(:data) { 'test' }
+
+      it 'sets content-length' do
+        middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
+          expect(context.request.headers['Content-Length']).to eq(data.length.to_s)
+        end
+        client.streaming_with_length({stream: data}, middleware: middleware)
+      end
     end
   end
 end

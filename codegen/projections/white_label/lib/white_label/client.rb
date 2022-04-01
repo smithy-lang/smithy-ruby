@@ -536,6 +536,60 @@ module WhiteLabel
     end
 
     # @param [Hash] params
+    #   See {Types::StreamingWithLengthInput}.
+    #
+    # @return [Types::StreamingWithLengthOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.streaming_with_length(
+    #     stream: 'stream'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::StreamingWithLengthOutput
+    #
+    def streaming_with_length(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::StreamingWithLengthInput.build(params)
+      response_body = StringIO.new
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::StreamingWithLengthInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::StreamingWithLength
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::StreamingWithLength
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::StreamingWithLength,
+        params_class: Params::StreamingWithLengthOutput,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: @logger,
+          operation_name: :streaming_with_length
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
     #   See {Types::WaitersTestInput}.
     #
     # @return [Types::WaitersTestOutput]

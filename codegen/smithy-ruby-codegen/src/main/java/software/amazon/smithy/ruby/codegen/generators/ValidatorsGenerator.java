@@ -42,6 +42,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -290,6 +291,12 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                         .write("raise ArgumentError, \"Expected #{context} to be an IO like object,"
                                 + " got #{$L.class}\"", input)
                         .closeBlock("end");
+                if (shape.hasTrait(RequiresLengthTrait.class)) {
+                    writer
+                            .openBlock("\nunless $1L.respond_to?(:size)", input)
+                            .write("raise ArgumentError, \"Expected #{context} to respond_to(:size)\"")
+                            .closeBlock("end");
+                }
             } else {
                 writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
             }

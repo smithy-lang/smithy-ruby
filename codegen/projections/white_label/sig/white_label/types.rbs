@@ -36,6 +36,10 @@ module WhiteLabel
 
     StreamingOperationOutput: untyped
 
+    StreamingWithLengthInput: untyped
+
+    StreamingWithLengthOutput: untyped
+
     Struct: untyped
 
     class Union < Hearth::Union

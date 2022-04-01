@@ -218,5 +218,13 @@ module WhiteLabel
           .to raise_error(ArgumentError, "Expected input to be an IO like object, got String")
       end
     end
+
+    describe StreamingWithLengthInput do
+      it 'validates responds_to(:size)' do
+        stream = double("stream", read: 'data')
+        expect { StreamingWithLengthInput.validate!(Types::StreamingWithLengthInput.new(stream: stream), context: 'input') }
+          .to raise_error(ArgumentError, "Expected input to be an IO like object, got String")
+      end
+    end
   end
 end

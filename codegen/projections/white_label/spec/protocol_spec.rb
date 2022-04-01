@@ -41,6 +41,10 @@ module WhiteLabel
 
     end
 
+    describe '#streaming_with_length' do
+
+    end
+
     describe '#waiters_test' do
 
     end

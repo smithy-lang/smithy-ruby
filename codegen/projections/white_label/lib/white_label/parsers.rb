@@ -93,6 +93,14 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for StreamingWithLength
+    class StreamingWithLength
+      def self.parse(http_resp)
+        data = Types::StreamingWithLengthOutput.new
+        data
+      end
+    end
+
     # Operation Parser for WaitersTest
     class WaitersTest
       def self.parse(http_resp)

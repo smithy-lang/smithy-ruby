@@ -226,6 +226,27 @@ module WhiteLabel
       end
     end
 
+    module StreamingWithLengthInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::StreamingWithLengthInput, context: context)
+        type = Types::StreamingWithLengthInput.new
+        io = params[:stream] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.stream = io
+        type
+      end
+    end
+
+    module StreamingWithLengthOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::StreamingWithLengthOutput, context: context)
+        type = Types::StreamingWithLengthOutput.new
+        type
+      end
+    end
+
     module Struct
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::Struct, context: context)

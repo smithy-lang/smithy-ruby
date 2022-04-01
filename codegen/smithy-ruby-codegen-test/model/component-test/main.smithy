@@ -14,7 +14,8 @@ service WhiteLabel {
         __PaginatorsTestWithBadNames,
         WaitersTest,
         DefaultsTest,
-        StreamingOperation
+        StreamingOperation,
+        StreamingWithLength,
     ]
 }
 

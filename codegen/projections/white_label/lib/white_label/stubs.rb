@@ -198,6 +198,18 @@ module WhiteLabel
       end
     end
 
+    # Operation Stubber for StreamingWithLength
+    class StreamingWithLength
+      def self.default(visited=[])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+      end
+    end
+
     # Operation Stubber for WaitersTest
     class WaitersTest
       def self.default(visited=[])
