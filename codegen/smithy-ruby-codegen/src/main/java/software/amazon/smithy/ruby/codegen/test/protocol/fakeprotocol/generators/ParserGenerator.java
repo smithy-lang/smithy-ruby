@@ -35,8 +35,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
     @Override
     protected void renderPayloadBodyParser(Shape outputShape, MemberShape payloadMember, Shape target) {
         if (target.hasTrait(StreamingTrait.class)) {
-            String dataSetter = writer.format("data.$L = ", symbolProvider.toMemberName(payloadMember));
-            renderStreamingBodyParser(dataSetter);
+            renderStreamingBodyParser(outputShape);
         }
     }
 

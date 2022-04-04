@@ -136,7 +136,11 @@ public class StubsGenerator extends RestStubsGeneratorBase {
                                          Shape target) {
         String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
         String inputGetter = "stub[" + symbolName + "]";
-        target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
+        if (target.hasTrait(StreamingTrait.class)) {
+            renderStreamingStub(outputShape);
+        } else {
+            target.accept(new PayloadMemberSerializer(payloadMember, inputGetter));
+        }
     }
 
     @Override
@@ -320,19 +324,16 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            if (shape.hasTrait(StreamingTrait.class)) {
-                renderStreamingStub(inputGetter);
-            } else {
-                Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
-                String mediaType = "application/octet-stream";
-                if (mediaTypeTrait.isPresent()) {
-                    mediaType = mediaTypeTrait.get().getValue();
-                }
-
-                writer
-                        .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
-                        .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+            Optional<MediaTypeTrait> mediaTypeTrait = shape.getTrait(MediaTypeTrait.class);
+            String mediaType = "application/octet-stream";
+            if (mediaTypeTrait.isPresent()) {
+                mediaType = mediaTypeTrait.get().getValue();
             }
+
+            writer
+                    .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
+                    .write("http_resp.body = StringIO.new($L || '')", inputGetter);
+
             return null;
         }
 

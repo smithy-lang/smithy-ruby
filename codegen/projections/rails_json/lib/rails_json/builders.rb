@@ -1154,6 +1154,7 @@ module RailsJson
         http_req.append_query_params(params)
         http_req.body = input[:output]
         http_req.headers['Transfer-Encoding'] = 'chunked'
+        http_req.headers['Content-Type'] = 'application/octet-stream'
       end
     end
 

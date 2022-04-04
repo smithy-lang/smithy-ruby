@@ -36,6 +36,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -276,15 +277,18 @@ public abstract class BuilderGeneratorBase {
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
                 .findFirst().get();
 
-        renderStreamingBodyBuilder(
-                writer.format("input[:$L]", symbolProvider.toMemberName(streamingMember)),
-                streamingMember.getMemberTrait(model, RequiresLengthTrait.class).isPresent());
-    }
+        Shape target = model.expectShape(streamingMember.getTarget());
 
-    protected void renderStreamingBodyBuilder(String dataGetter, boolean requiresLength) {
-        writer.write("http_req.body = $L", dataGetter);
-        if (!requiresLength) {
+        writer.write("http_req.body = input[:$L]", symbolProvider.toMemberName(streamingMember));
+        if (!target.hasTrait(RequiresLengthTrait.class)) {
             writer.write("http_req.headers['Transfer-Encoding'] = 'chunked'");
+        }
+
+        if (target.hasTrait(MediaTypeTrait.class)) {
+            writer.write("http_req.headers['Content-Type'] = '$L'",
+                    target.expectTrait(MediaTypeTrait.class).getValue());
+        } else {
+            writer.write("http_req.headers['Content-Type'] = 'application/octet-stream'");
         }
     }
 

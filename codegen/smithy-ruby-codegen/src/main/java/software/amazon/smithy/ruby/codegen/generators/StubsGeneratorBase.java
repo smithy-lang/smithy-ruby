@@ -49,6 +49,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -286,8 +287,13 @@ public abstract class StubsGeneratorBase {
         writer.closeBlock("}");
     }
 
-    protected void renderStreamingStub(String dataGetter) {
-        writer.write("IO.copy_stream($L, http_resp.body)", dataGetter);
+    protected void renderStreamingStub(Shape inputShape) {
+        MemberShape streamingMember = inputShape.members().stream()
+                .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
+                .findFirst().get();
+
+        writer.write("IO.copy_stream(stub[:$L], http_resp.body)",
+                symbolProvider.toMemberName(streamingMember));
     }
 
     private class StubClassGenerator extends ShapeVisitor.Default<Void> {

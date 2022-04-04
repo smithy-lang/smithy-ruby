@@ -69,6 +69,7 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.body = input[:stream]
         http_req.headers['Transfer-Encoding'] = 'chunked'
+        http_req.headers['Content-Type'] = 'application/octet-stream'
       end
     end
 
@@ -76,6 +77,7 @@ module WhiteLabel
     class StreamingWithLength
       def self.build(http_req, input:)
         http_req.body = input[:stream]
+        http_req.headers['Content-Type'] = 'application/octet-stream'
       end
     end
 
