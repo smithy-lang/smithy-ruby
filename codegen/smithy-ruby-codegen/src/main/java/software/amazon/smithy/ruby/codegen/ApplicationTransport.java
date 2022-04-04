@@ -84,7 +84,7 @@ public final class ApplicationTransport {
                 .type("string")
                 .documentation("Endpoint of the service")
                 .initializationCustomization("@endpoint = options.fetch(:endpoint, options[:stub_responses] "
-                        + "? 'https://example.com' : nil)")
+                        + "? 'http://localhost' : nil)")
                 .build();
 
         ClientFragment request = (new ClientFragment.Builder())
