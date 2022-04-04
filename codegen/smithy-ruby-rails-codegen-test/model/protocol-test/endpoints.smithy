@@ -36,17 +36,17 @@ operation EndpointOperation {}
         protocol: railsJson,
         method: "POST",
         uri: "/endpointwithhostlabel",
-        body: "{\"label\": \"bar\"}",
+        body: "{\"label_member\": \"bar\"}",
         bodyMediaType: "application/json",
         host: "example.com",
         resolvedHost: "foo.bar.example.com",
         params: {
-            label: "bar",
+            labelMember: "bar",
         },
     }
 ])
 @http(method: "POST", uri: "/endpointwithhostlabel")
-@endpoint(hostPrefix: "foo.{label}.")
+@endpoint(hostPrefix: "foo.{labelMember}.")
 operation EndpointWithHostLabelOperation {
     input: HostLabelInput,
 }
@@ -54,5 +54,5 @@ operation EndpointWithHostLabelOperation {
 structure HostLabelInput {
     @required
     @hostLabel
-    label: String,
+    labelMember: String,
 }

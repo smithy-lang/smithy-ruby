@@ -260,7 +260,7 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
         type = Types::EndpointWithHostLabelOperationInput.new
-        type.label = params[:label]
+        type.label_member = params[:label_member]
         type
       end
     end

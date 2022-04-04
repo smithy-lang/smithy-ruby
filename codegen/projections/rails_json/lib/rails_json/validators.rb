@@ -230,7 +230,7 @@ module RailsJson
     class EndpointWithHostLabelOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::EndpointWithHostLabelOperationInput, context: context)
-        Hearth::Validator.validate!(input[:label], ::String, context: "#{context}[:label]")
+        Hearth::Validator.validate!(input[:label_member], ::String, context: "#{context}[:label_member]")
       end
     end
 

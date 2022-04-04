@@ -45,6 +45,39 @@ module WhiteLabel
       end
     end
 
+    module EndpointOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EndpointOperationInput, context: context)
+        type = Types::EndpointOperationInput.new
+        type
+      end
+    end
+
+    module EndpointOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EndpointOperationOutput, context: context)
+        type = Types::EndpointOperationOutput.new
+        type
+      end
+    end
+
+    module EndpointWithHostLabelOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
+        type = Types::EndpointWithHostLabelOperationInput.new
+        type.label_member = params[:label_member]
+        type
+      end
+    end
+
+    module EndpointWithHostLabelOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
+        type = Types::EndpointWithHostLabelOperationOutput.new
+        type
+      end
+    end
+
     module Items
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Array, context: context)
