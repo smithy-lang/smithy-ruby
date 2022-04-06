@@ -118,7 +118,12 @@ public class ShapeDocumentationGenerator {
     }
 
     private void writeTagsTrait(Optional<TagsTrait> optionalTagsTrait) {
-        // does nothing right now
+        if (optionalTagsTrait.isPresent()) {
+            String tags = optionalTagsTrait.get().getValues()
+                    .stream().map((tag) -> "\"" + tag + "\"")
+                    .collect(Collectors.joining(", "));
+            writer.writeDocstring("Tags: [" + tags + "]");
+        }
     }
 
     private void writeExamplesTrait(Optional<ExamplesTrait> optionalExamplesTrait) {
@@ -161,9 +166,8 @@ public class ShapeDocumentationGenerator {
                 shape.getTrait(InternalTrait.class);
         Optional<SinceTrait> optionalSinceTrait =
                 shape.getTrait(SinceTrait.class);
-        // TODO - implement tags trait
-        // Optional<TagsTrait> optionalTagsTrait =
-        //         shape.getTrait(TagsTrait.class);
+        Optional<TagsTrait> optionalTagsTrait =
+                shape.getTrait(TagsTrait.class);
         Optional<UnstableTrait> optionalUnstableTrait =
                 shape.getTrait(UnstableTrait.class);
         Optional<SensitiveTrait> optionalSensitiveTrait =
@@ -179,6 +183,7 @@ public class ShapeDocumentationGenerator {
         writeInternalTrait(optionalInternalTrait);
         writeSinceTrait(optionalSinceTrait);
         writeSensitiveTrait(optionalSensitiveTrait);
+        writeTagsTrait(optionalTagsTrait);
     }
 
     private class ShapeDocumentationVisitor extends ShapeVisitor.Default<Void> {
@@ -215,9 +220,8 @@ public class ShapeDocumentationGenerator {
                     shape.getMemberTrait(model, RecommendedTrait.class);
             Optional<SinceTrait> optionalMemberSinceTrait =
                     shape.getMemberTrait(model, SinceTrait.class);
-            // TODO - implement tags trait
-            // Optional<TagsTrait> optionalMemberTagsTrait =
-            //        memberShape.getMemberTrait(model, TagsTrait.class);
+            Optional<TagsTrait> optionalMemberTagsTrait =
+                    shape.getMemberTrait(model, TagsTrait.class);
             Optional<UnstableTrait> optionalMemberUnstableTrait =
                     shape.getMemberTrait(model, UnstableTrait.class);
             Optional<SensitiveTrait> optionalMemberSensitiveTrait =
@@ -232,6 +236,7 @@ public class ShapeDocumentationGenerator {
             writeRecommendedTrait(optionalMemberRecommendedTrait);
             writeSinceTrait(optionalMemberSinceTrait);
             writeSensitiveTrait(optionalMemberSensitiveTrait);
+            writeTagsTrait(optionalMemberTagsTrait);
 
             return null;
         }

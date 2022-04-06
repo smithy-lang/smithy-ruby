@@ -51,7 +51,7 @@ module HighScoreService
     #
     def initialize(options = {})
       @disable_host_prefix = options.fetch(:disable_host_prefix, false)
-      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'https://localhost' : nil)
+      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'http://localhost' : nil)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
       @log_level = options.fetch(:log_level, :info)
       @logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))
