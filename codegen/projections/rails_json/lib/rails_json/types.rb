@@ -278,12 +278,12 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # @!attribute label
+    # @!attribute label_member
     #
     #   @return [String]
     #
     EndpointWithHostLabelOperationInput = ::Struct.new(
-      :label,
+      :label_member,
       keyword_init: true
     ) do
       include Hearth::Structure

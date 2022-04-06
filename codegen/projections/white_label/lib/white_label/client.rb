@@ -67,7 +67,7 @@ module WhiteLabel
     #
     def initialize(options = {})
       @disable_host_prefix = options.fetch(:disable_host_prefix, false)
-      @endpoint = options[:endpoint]
+      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'https://localhost' : nil)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
       @log_level = options.fetch(:log_level, :info)
       @logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))
@@ -133,6 +133,120 @@ module WhiteLabel
           params: params,
           logger: @logger,
           operation_name: :defaults_test
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
+    #   See {Types::EndpointOperationInput}.
+    #
+    # @return [Types::EndpointOperationOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.endpoint_operation()
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::EndpointOperationOutput
+    #
+    def endpoint_operation(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::EndpointOperationInput.build(params)
+      response_body = StringIO.new
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::EndpointOperationInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Hearth::Middleware::HostPrefix,
+        host_prefix: "foo.",
+        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::EndpointOperation
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::EndpointOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::EndpointOperation,
+        params_class: Params::EndpointOperationOutput,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: @logger,
+          operation_name: :endpoint_operation
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
+    #   See {Types::EndpointWithHostLabelOperationInput}.
+    #
+    # @return [Types::EndpointWithHostLabelOperationOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.endpoint_with_host_label_operation(
+    #     label_member: 'labelMember' # required
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
+    #
+    def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::EndpointWithHostLabelOperationInput.build(params)
+      response_body = StringIO.new
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::EndpointWithHostLabelOperationInput,
+        validate_input: options.fetch(:validate_input, @validate_input)
+      )
+      stack.use(Hearth::Middleware::HostPrefix,
+        host_prefix: "foo.{label_member}.",
+        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::EndpointWithHostLabelOperation
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::EndpointWithHostLabelOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: options.fetch(:stub_responses, @stub_responses),
+        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_class: Stubs::EndpointWithHostLabelOperation,
+        params_class: Params::EndpointWithHostLabelOperationOutput,
+        stubs: options.fetch(:stubs, @stubs)
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: @logger,
+          operation_name: :endpoint_with_host_label_operation
         )
       )
       raise resp.error if resp.error

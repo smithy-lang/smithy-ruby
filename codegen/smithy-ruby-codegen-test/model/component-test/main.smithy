@@ -16,6 +16,8 @@ service WhiteLabel {
         DefaultsTest,
         StreamingOperation,
         StreamingWithLength,
+        EndpointOperation,
+        EndpointWithHostLabelOperation
     ]
 }
 

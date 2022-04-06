@@ -85,6 +85,38 @@ module WhiteLabel
 
     end
 
+    EndpointOperationInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    EndpointOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute label_member
+    #
+    #   @return [String]
+    #
+    EndpointWithHostLabelOperationInput = ::Struct.new(
+      :label_member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    EndpointWithHostLabelOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute string
     #   This is some member
     #   documentation of String.

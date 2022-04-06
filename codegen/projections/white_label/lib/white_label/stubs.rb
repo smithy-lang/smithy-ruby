@@ -26,6 +26,30 @@ module WhiteLabel
       end
     end
 
+    # Operation Stubber for EndpointOperation
+    class EndpointOperation
+      def self.default(visited=[])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+      end
+    end
+
+    # Operation Stubber for EndpointWithHostLabelOperation
+    class EndpointWithHostLabelOperation
+      def self.default(visited=[])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+      end
+    end
+
     # Operation Stubber for KitchenSink
     class KitchenSink
       def self.default(visited=[])

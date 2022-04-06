@@ -18,6 +18,18 @@ module WhiteLabel
       end
     end
 
+    # Operation Builder for EndpointOperation
+    class EndpointOperation
+      def self.build(http_req, input:)
+      end
+    end
+
+    # Operation Builder for EndpointWithHostLabelOperation
+    class EndpointWithHostLabelOperation
+      def self.build(http_req, input:)
+      end
+    end
+
     # Operation Builder for KitchenSink
     class KitchenSink
       def self.build(http_req, input:)

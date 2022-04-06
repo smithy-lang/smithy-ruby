@@ -25,6 +25,14 @@ module WhiteLabel
 
     end
 
+    describe '#endpoint_operation' do
+
+    end
+
+    describe '#endpoint_with_host_label_operation' do
+
+    end
+
     describe '#kitchen_sink' do
 
     end

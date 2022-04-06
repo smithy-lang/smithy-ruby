@@ -20,6 +20,22 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for EndpointOperation
+    class EndpointOperation
+      def self.parse(http_resp)
+        data = Types::EndpointOperationOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for EndpointWithHostLabelOperation
+    class EndpointWithHostLabelOperation
+      def self.parse(http_resp)
+        data = Types::EndpointWithHostLabelOperationOutput.new
+        data
+      end
+    end
+
     # Operation Parser for KitchenSink
     class KitchenSink
       def self.parse(http_resp)

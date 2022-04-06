@@ -865,13 +865,13 @@ module RailsJson
             expect(request.http_method).to eq('POST')
             expect(request_uri.host).to eq('foo.bar.example.com')
             expect(request_uri.path).to eq('/endpointwithhostlabel')
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label_member": "bar"}'))
             Hearth::Output.new
           end
           opts = {middleware: middleware}
           opts[:endpoint] = 'http://example.com'
           client.endpoint_with_host_label_operation({
-            label: "bar"
+            label_member: "bar"
           }, **opts)
         end
       end

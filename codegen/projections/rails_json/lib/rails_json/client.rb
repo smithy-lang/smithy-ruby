@@ -50,7 +50,7 @@ module RailsJson
     #
     def initialize(options = {})
       @disable_host_prefix = options.fetch(:disable_host_prefix, false)
-      @endpoint = options[:endpoint]
+      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'https://localhost' : nil)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
       @log_level = options.fetch(:log_level, :info)
       @logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))
@@ -524,7 +524,7 @@ module RailsJson
     # @example Request syntax with placeholder values
     #
     #   resp = client.endpoint_with_host_label_operation(
-    #     label: 'label' # required
+    #     label_member: 'labelMember' # required
     #   )
     #
     # @example Response structure
@@ -540,7 +540,7 @@ module RailsJson
         validate_input: options.fetch(:validate_input, @validate_input)
       )
       stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.{label}.",
+        host_prefix: "foo.{label_member}.",
         disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
       )
       stack.use(Hearth::Middleware::Build,

@@ -16,6 +16,14 @@ module WhiteLabel
 
     DefaultsTestOutput: untyped
 
+    EndpointOperationInput: untyped
+
+    EndpointOperationOutput: untyped
+
+    EndpointWithHostLabelOperationInput: untyped
+
+    EndpointWithHostLabelOperationOutput: untyped
+
     KitchenSinkInput: untyped
 
     KitchenSinkOutput: untyped

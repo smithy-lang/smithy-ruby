@@ -53,6 +53,31 @@ module WhiteLabel
       end
     end
 
+    class EndpointOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::EndpointOperationInput, context: context)
+      end
+    end
+
+    class EndpointOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::EndpointOperationOutput, context: context)
+      end
+    end
+
+    class EndpointWithHostLabelOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::EndpointWithHostLabelOperationInput, context: context)
+        Hearth::Validator.validate!(input[:label_member], ::String, context: "#{context}[:label_member]")
+      end
+    end
+
+    class EndpointWithHostLabelOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate!(input, Types::EndpointWithHostLabelOperationOutput, context: context)
+      end
+    end
+
     class Items
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)

@@ -269,7 +269,7 @@ module RailsJson
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:label] = input[:label] unless input[:label].nil?
+        data[:label_member] = input[:label_member] unless input[:label_member].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end

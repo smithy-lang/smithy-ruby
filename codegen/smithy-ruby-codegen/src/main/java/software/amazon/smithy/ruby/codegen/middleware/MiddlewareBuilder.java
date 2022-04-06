@@ -160,7 +160,7 @@ public class MiddlewareBuilder {
                             prefix.append(segment);
                         }
                     }
-                    params.put("host_prefix", "\"" + pattern + "\"");
+                    params.put("host_prefix", "\"" + prefix + "\"");
                     return params;
                 })
                 .build();
