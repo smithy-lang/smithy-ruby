@@ -89,7 +89,6 @@ apply KitchenSinkInputOutput$String @internal
 apply KitchenSinkInputOutput$String @since("today")
 apply KitchenSinkInputOutput$String @unstable
 apply KitchenSinkInputOutput$String @recommended(reason: "This structure member is\ncool AF.")
-apply KitchenSinkInputOutput$String @sensitive
 
 // test structure member documentation resolution
 apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
@@ -116,7 +115,6 @@ apply Union$String @externalDocumentation(
 apply Union$String @internal
 apply Union$String @since("today")
 apply Union$String @unstable
-apply Union$String @sensitive
 
 // test enum documentation
 apply TypedEnum @enum(

@@ -224,8 +224,6 @@ public class ShapeDocumentationGenerator {
                     shape.getMemberTrait(model, TagsTrait.class);
             Optional<UnstableTrait> optionalMemberUnstableTrait =
                     shape.getMemberTrait(model, UnstableTrait.class);
-            Optional<SensitiveTrait> optionalMemberSensitiveTrait =
-                    shape.getMemberTrait(model, SensitiveTrait.class);
 
             writeDocumentationTrait(optionalMemberDocumentationTrait);
             writeEnumTrait(optionalEnumTrait);
@@ -235,7 +233,6 @@ public class ShapeDocumentationGenerator {
             writeInternalTrait(optionalMemberInternalTrait);
             writeRecommendedTrait(optionalMemberRecommendedTrait);
             writeSinceTrait(optionalMemberSinceTrait);
-            writeSensitiveTrait(optionalMemberSensitiveTrait);
             writeTagsTrait(optionalMemberTagsTrait);
 
             return null;

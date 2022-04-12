@@ -143,9 +143,6 @@ module WhiteLabel
     #
     #   @since today
     #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
-    #
     #   @return [String]
     #
     # @!attribute simple_enum
@@ -178,9 +175,6 @@ module WhiteLabel
     #     This shape is meant for internal use only.
     #
     #   @since today
-    #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
     #
     #   @return [Struct]
     #
@@ -229,9 +223,6 @@ module WhiteLabel
     #
     #   @since today
     #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
-    #
     #   @return [Union]
     #
     KitchenSinkInput = ::Struct.new(
@@ -252,7 +243,7 @@ module WhiteLabel
 
       def to_s
         "#<struct WhiteLabel::Types::KitchenSinkInput "\
-          "string=\"[SENSITIVE]\", "\
+          "string=#{string || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
           "typed_enum=#{typed_enum || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
@@ -292,9 +283,6 @@ module WhiteLabel
     #
     #   @since today
     #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
-    #
     #   @return [String]
     #
     # @!attribute simple_enum
@@ -327,9 +315,6 @@ module WhiteLabel
     #     This shape is meant for internal use only.
     #
     #   @since today
-    #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
     #
     #   @return [Struct]
     #
@@ -378,9 +363,6 @@ module WhiteLabel
     #
     #   @since today
     #
-    #   @note
-    #     This shape is sensitive and must be handled with care.
-    #
     #   @return [Union]
     #
     KitchenSinkOutput = ::Struct.new(
@@ -401,7 +383,7 @@ module WhiteLabel
 
       def to_s
         "#<struct WhiteLabel::Types::KitchenSinkOutput "\
-          "string=\"[SENSITIVE]\", "\
+          "string=#{string || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
           "typed_enum=#{typed_enum || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
@@ -629,16 +611,13 @@ module WhiteLabel
       #
       # @since today
       #
-      # @note
-      #   This shape is sensitive and must be handled with care.
-      #
       class String < Union
         def to_h
           { string: super(__getobj__) }
         end
 
         def to_s
-          "#<WhiteLabel::Types::String [SENSITIVE]>"
+          "#<WhiteLabel::Types::String #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -660,9 +639,6 @@ module WhiteLabel
       #   This shape is meant for internal use only.
       #
       # @since today
-      #
-      # @note
-      #   This shape is sensitive and must be handled with care.
       #
       class Struct < Union
         def to_h
