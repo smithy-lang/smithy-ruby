@@ -10,6 +10,8 @@
 module Weather
   module Waiters
 
+    # Waits until a city has been created
+    #
     class CityExists
       # @param [Client] client
       #
@@ -93,6 +95,8 @@ module Weather
       end
     end
 
+    # Wait until ListCities operation response matches a given state
+    #
     class ListContainsCity
       # @param [Client] client
       #

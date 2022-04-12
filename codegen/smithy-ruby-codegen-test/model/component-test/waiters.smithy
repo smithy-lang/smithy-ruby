@@ -3,6 +3,7 @@ namespace smithy.ruby.tests
 
 use smithy.waiters#waitable
 
+@suppress(["WaitableTraitInvalidErrorType"])
 @waitable(
     ResourceExists: {
         documentation: "Test that this waiter exists",

@@ -52,6 +52,7 @@ structure KitchenSinkInputOutput {
     Union: Union,
 }
 
+@suppress(["EnumNamesPresent"])
 @enum([{value: "YES"}, {value: "NO"}])
 string SimpleEnum
 
