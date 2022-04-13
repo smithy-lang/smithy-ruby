@@ -32,6 +32,15 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        "classpath"("software.amazon.smithy:smithy-cli:${rootProject.extra["smithyVersion"]}")
+    }
+}
+
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
 }

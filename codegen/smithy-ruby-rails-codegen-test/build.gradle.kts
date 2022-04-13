@@ -18,13 +18,13 @@ extra["moduleName"] = "software.amazon.smithy.ruby.rails.codegen.test"
 
 tasks["jar"].enabled = false
 
+plugins {
+    id("software.amazon.smithy").version("0.5.3")
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-}
-
-plugins {
-    id("software.amazon.smithy").version("0.5.3")
 }
 
 repositories {
@@ -32,8 +32,17 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        "classpath"("software.amazon.smithy:smithy-cli:${rootProject.extra["smithyVersion"]}")
+    }
+}
+
 dependencies {
-    implementation("software.amazon.smithy:smithy-aws-protocol-tests:[1.12.0, 1.20.0[")
+    implementation("software.amazon.smithy:smithy-aws-protocol-tests:${rootProject.extra["smithyVersion"]}")
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-rails-codegen"))
 }

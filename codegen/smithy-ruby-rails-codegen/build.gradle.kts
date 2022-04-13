@@ -28,6 +28,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        "classpath"("software.amazon.smithy:smithy-cli:${rootProject.extra["smithyVersion"]}")
+    }
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }

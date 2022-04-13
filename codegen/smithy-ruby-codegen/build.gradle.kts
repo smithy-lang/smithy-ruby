@@ -22,8 +22,17 @@ plugins {
     id("software.amazon.smithy").version("0.5.3")
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        "classpath"("software.amazon.smithy:smithy-cli:${rootProject.extra["smithyVersion"]}")
+    }
+}
+
 dependencies {
-    api("software.amazon.smithy:smithy-codegen-core:[1.19.0,1.20.0[")
-    implementation("software.amazon.smithy:smithy-waiters:[1.4.0,1.20.0[")
-    implementation("software.amazon.smithy:smithy-protocol-test-traits:[1.9.0,1.20.0[")
+    api("software.amazon.smithy:smithy-codegen-core:${rootProject.extra["smithyVersion"]}")
+    implementation("software.amazon.smithy:smithy-waiters:${rootProject.extra["smithyVersion"]}")
+    implementation("software.amazon.smithy:smithy-protocol-test-traits:${rootProject.extra["smithyVersion"]}")
 }
