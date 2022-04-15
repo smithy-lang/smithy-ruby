@@ -60,6 +60,11 @@ module Hearth
         @headers.size
       end
 
+      # @return [Hash]
+      def clear
+        @headers = {}
+      end
+
       private
 
       def normalize(key)

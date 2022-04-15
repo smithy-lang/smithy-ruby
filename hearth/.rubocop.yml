@@ -26,6 +26,7 @@ Metrics/ClassLength:
 
 Metrics/ParameterLists:
   Exclude:
+    - 'lib/hearth/middleware/retry.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Style/Documentation:

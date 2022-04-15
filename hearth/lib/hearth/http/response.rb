@@ -10,7 +10,7 @@ module Hearth
       # @param [Integer] status
       # @param [Headers] headers
       # @param [IO] body
-      def initialize(status: 200, headers: Headers.new, body: StringIO.new)
+      def initialize(status: 0, headers: Headers.new, body: StringIO.new)
         @status = status
         @headers = headers
         @body = body
@@ -24,6 +24,15 @@ module Hearth
 
       # @return [IO]
       attr_accessor :body
+
+      # Resets the HTTP response.
+      # @return [Response]
+      def reset
+        @status = 0
+        @headers.clear
+        @body.truncate(0)
+        self
+      end
     end
   end
 end
