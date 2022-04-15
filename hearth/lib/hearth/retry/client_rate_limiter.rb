@@ -2,13 +2,8 @@
 
 module Hearth
   module Retry
-    # Raised when CLientRateLimiter doesn't have capacity.
-    class CapacityNotAvailableError < RuntimeError
-      def initialize(*args)
-        msg = 'Insufficient client side capacity to retry the request.'
-        super(msg)
-      end
-    end
+    # Raised when ClientRateLimiter doesn't have capacity.
+    class CapacityNotAvailableError < RuntimeError; end
 
     # @api private
     # Used only in 'adaptive' retry mode

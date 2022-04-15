@@ -48,7 +48,6 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
-      # rubocop:disable Metrics/MethodLength
       def call(input, context)
         acquire_token
         output = @app.call(input, context)
@@ -61,10 +60,9 @@ module Hearth
         @capacity_amount = @retry_quota.checkout_capacity(@error_inspector)
         return output unless @capacity_amount.positive?
 
-        Kernel.sleep([Kernel.rand * 2**@retries, MAX_BACKOFF].min)
+        Kernel.sleep([Kernel.rand * (2**@retries), MAX_BACKOFF].min)
         retry_request(input, context, output)
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
