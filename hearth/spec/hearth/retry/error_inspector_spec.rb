@@ -129,7 +129,6 @@ module Hearth
           end
         end
       end
-
     end
   end
 end

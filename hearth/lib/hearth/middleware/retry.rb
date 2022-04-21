@@ -48,6 +48,7 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
+      # rubocop:disable Metrics/AbcSize
       def call(input, context)
         acquire_token
         output = @app.call(input, context)
@@ -66,6 +67,7 @@ module Hearth
         Kernel.sleep([Kernel.rand * (2**@retries), MAX_BACKOFF].min)
         retry_request(input, context, output)
       end
+      # rubocop:enable Metrics/AbcSize
 
       private
 

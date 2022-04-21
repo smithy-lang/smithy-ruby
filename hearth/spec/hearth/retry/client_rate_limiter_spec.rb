@@ -123,7 +123,7 @@ module Hearth
         expect(mutex).not_to receive(:sleep)
         (0..20).each do |t|
           allow(Process).to receive(:clock_gettime)
-            .with(Process::CLOCK_MONOTONIC).and_return(1 + 0.1 * t)
+            .with(Process::CLOCK_MONOTONIC).and_return(1 + (0.1 * t))
           subject.token_bucket_acquire(1)
         end
       end
@@ -156,74 +156,72 @@ module Hearth
       #   expect(subject.instance_variable_get(:@enabled)).to be(false)
       # end
 
-      if ENV['HEARTH_RETRY_STRESS_TEST']
-        context 'thread safety' do
-          it 'can change max rate while blocking' do
+      context 'thread safety' do
+        it 'can change max rate while blocking' do
           # This isn't a stress test - we just verify we can change the
           # rate while we acquire a token
-            subject.instance_variable_set(:@enabled, true)
-            # Set a rate to 0.5 (the min rate).  This means it will take
-            # 2 seconds to acquire a single token
-            subject.send(:token_bucket_update_rate, 0.5)
+          subject.instance_variable_set(:@enabled, true)
+          # Set a rate to 0.5 (the min rate).  This means it will take
+          # 2 seconds to acquire a single token
+          subject.send(:token_bucket_update_rate, 0.5)
 
-            # Start a thread to acquire a token
-            test_thread = Thread.new do
-              subject.token_bucket_acquire(1)
-            end
-
-            # ensure the new thread has a chance to start
-            sleep(0.1)
-
-            # Now in the main thread, update the rate to something really quick.
-            # This should let us get a token back very quickly (~0.01 seconds)
-            mutex.synchronize do
-              subject.send(:token_bucket_update_rate, 100)
-            end
-            start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          # Start a thread to acquire a token
+          test_thread = Thread.new do
             subject.token_bucket_acquire(1)
-            main_thread_time =
-              Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
-
-            test_thread.join # wait for the first thread to finish
-            test_thread_time =
-              Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
-
-            expect(main_thread_time).to be < 0.1
-            expect(test_thread_time).to be > 1.0
           end
 
-          it 'doesnt starve any threads during a stress test' do
-            subject.instance_variable_set(:@enabled, true)
-            subject.send(:token_bucket_update_rate, 500)
+          # ensure the new thread has a chance to start
+          sleep(0.1)
 
-            shutdown_threads = false
-            threads = []
-            n_test_threads = 5
-            acquisitions = Array.new(n_test_threads, 0)
+          # Now in the main thread, update the rate to something really quick.
+          # This should let us get a token back very quickly (~0.01 seconds)
+          mutex.synchronize do
+            subject.send(:token_bucket_update_rate, 100)
+          end
+          start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          subject.token_bucket_acquire(1)
+          main_thread_time =
+            Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
 
-            n_test_threads.times do |i|
-              threads << Thread.new do
-                until shutdown_threads
-                  subject.token_bucket_acquire(1)
-                  acquisitions[i] += 1
-                end
+          test_thread.join # wait for the first thread to finish
+          test_thread_time =
+            Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
+
+          expect(main_thread_time).to be < 0.1
+          expect(test_thread_time).to be > 1.0
+        end
+
+        it 'doesnt starve any threads during a stress test' do
+          subject.instance_variable_set(:@enabled, true)
+          subject.send(:token_bucket_update_rate, 500)
+
+          shutdown_threads = false
+          threads = []
+          n_test_threads = 5
+          acquisitions = Array.new(n_test_threads, 0)
+
+          n_test_threads.times do |i|
+            threads << Thread.new do
+              until shutdown_threads
+                subject.token_bucket_acquire(1)
+                acquisitions[i] += 1
               end
             end
-
-            # run a stress test for a few seconds.
-            # Increase this to stress test more locally
-            sleep(3)
-            shutdown_threads = true
-            threads.each(&:join)
-
-            # We can't really rely on any guarantees about evenly distributing
-            # thread acquisitions. But we can sanity check that our
-            # implementation isn't drastically starving a thread.
-            # Check that no thread has at least one acquisition
-            # mean = acquisitions.reduce(:+).to_f / acquisitions.size
-            # expect(acquisitions.all? { |x| x > 0.1 * mean }).to be true
-            expect(acquisitions.all? { |x| x > 0 }).to be true
           end
+
+          # run a stress test for a few seconds.
+          # Increase this to stress test more locally
+          sleep(3)
+          shutdown_threads = true
+          threads.each(&:join)
+
+          # We can't really rely on any guarantees about evenly distributing
+          # thread acquisitions. But we can sanity check that our implementation
+          # isn't drastically starving a thread.
+          # Check that no thread has at least one acquisition
+          # mean = acquisitions.reduce(:+).to_f / acquisitions.size
+          # expect(acquisitions.all? { |x| x > 0.1 * mean }).to be true
+          expect(acquisitions.all? { |x| x > 0 }).to be true
         end
       end
     end
