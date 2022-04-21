@@ -51,13 +51,16 @@ module Hearth
       def call(input, context)
         acquire_token
         output = @app.call(input, context)
-        request_bookkeeping(output)
+        error_inspector = ErrorInspector.new(
+          output.error, context.response.status
+        )
+        request_bookkeeping(output, error_inspector)
 
-        return output unless retryable?(output)
+        return output unless retryable?(output, error_inspector)
 
         return output if @retries >= @max_attempts - 1
 
-        @capacity_amount = @retry_quota.checkout_capacity(@error_inspector)
+        @capacity_amount = @retry_quota.checkout_capacity(error_inspector)
         return output unless @capacity_amount.positive?
 
         Kernel.sleep([Kernel.rand * (2**@retries), MAX_BACKOFF].min)
@@ -80,20 +83,20 @@ module Hearth
 
       # max_send_rate is updated if on adaptive mode and based on response
       # retry quota is updated if the request is successful (both modes)
-      def request_bookkeeping(output)
+      def request_bookkeeping(output, error_inspector)
         @retry_quota.release(@capacity_amount) unless output.error
 
         return unless @retry_mode == 'adaptive'
 
         @client_rate_limiter.update_sending_rate(
-          @error_inspector.error_type(output.error) == 'Throttling'
+          error_inspector.error_type == 'Throttling'
         )
       end
 
-      def retryable?(output)
+      def retryable?(output, error_inspector)
         return false unless output.error
 
-        @error_inspector.retryable?(output.error) &&
+        error_inspector.retryable? &&
           context.response.body.respond_to?(:truncate)
       end
 

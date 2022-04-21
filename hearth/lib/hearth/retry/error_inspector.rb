@@ -4,21 +4,26 @@ module Hearth
   module Retry
     # @api private
     class ErrorInspector
-      def retryable?(error)
-        server?(error) ||
-          modeled_retryable?(error) ||
-          throttling?(error) ||
-          networking?(error)
+      def initialize(error, http_status)
+        @error = error
+        @http_status = http_status
       end
 
-      def error_type(error)
-        if throttling?(error)
-          'Throttling'
-        elsif networking?(error)
+      def retryable?
+        modeled_retryable? ||
+          throttling? ||
+          networking? ||
+          server?
+      end
+
+      def error_type
+        if networking?
           'Transient'
-        elsif server?(error)
+        elsif throttling?
+          'Throttling'
+        elsif server?
           'ServerError'
-        elsif (400..499).cover?(error.status_code)
+        elsif client?
           'ClientError'
         else
           'Unknown'
@@ -27,24 +32,28 @@ module Hearth
 
       private
 
-      def throttling?(error)
-        error.status_code == 429 || modeled_throttling?(error)
+      def throttling?
+        @http_status == 429 || modeled_throttling?
       end
 
-      def networking?(error)
-        error.is_a?(Hearth::HTTP::NetworkingError)
+      def networking?
+        @error.is_a?(Hearth::HTTP::NetworkingError)
       end
 
-      def server?(error)
-        (500..599).cover?(error.http_status)
+      def server?
+        (500..599).cover?(@http_status)
       end
 
-      def modeled_retryable?(error)
-        error.is_a?(Hearth::ApiError) && error.retryable?
+      def client?
+        (400..499).cover?(@http_status)
       end
 
-      def modeled_throttling?(error)
-        error.is_a?(Hearth::ApiError) && error.throttling?
+      def modeled_retryable?
+        @error.is_a?(Hearth::ApiError) && @error.retryable?
+      end
+
+      def modeled_throttling?
+        @error.is_a?(Hearth::ApiError) && @error.throttling?
       end
     end
   end
