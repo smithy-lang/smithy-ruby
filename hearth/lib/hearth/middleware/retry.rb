@@ -74,7 +74,7 @@ module Hearth
       private
 
       def acquire_token
-        return unless @retry_mode != 'adaptive'
+        return if @retry_mode == 'standard'
 
         # either fail fast or block until a token becomes available
         # must be configurable

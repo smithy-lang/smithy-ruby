@@ -216,16 +216,6 @@ public class MiddlewareBuilder {
                 )
                 .build();
 
-        ClientConfig retryQuota = (new ClientConfig.Builder())
-                .name("retry_quota")
-                .initializationCustomization("@retry_quota = Hearth::Retry::RetryQuota.new")
-                .build();
-
-        ClientConfig clientRateLimiter = (new ClientConfig.Builder())
-                .name("client_rate_limiter")
-                .initializationCustomization("@client_rate_limiter = Hearth::Retry::ClientRateLimiter.new")
-                .build();
-
         Middleware retry = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Retry")
                 .step(MiddlewareStackStep.RETRY)
@@ -233,8 +223,8 @@ public class MiddlewareBuilder {
                 .addConfig(retryMode)
                 .addConfig(adaptiveRetryWaitToFill)
                 .addParam("error_inspector_class", "Hearth::Retry::ErrorInspector")
-                .addConfig(retryQuota)
-                .addConfig(clientRateLimiter)
+                .addParam("retry_quota", "@retry_quota")
+                .addParam("client_rate_limiter", "@client_rate_limiter")
                 .build();
 
         Middleware send = (new Middleware.Builder())

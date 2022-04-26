@@ -61,7 +61,6 @@ module RailsJson
     #
     def initialize(options = {})
       @adaptive_retry_wait_to_fill = options.fetch(:adaptive_retry_wait_to_fill, true)
-      @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
       @disable_host_prefix = options.fetch(:disable_host_prefix, false)
       @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'http://localhost' : nil)
       @http_wire_trace = options.fetch(:http_wire_trace, false)
@@ -70,11 +69,12 @@ module RailsJson
       @max_attempts = options.fetch(:max_attempts, 3)
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @retry_mode = options.fetch(:retry_mode, 'standard')
-      @retry_quota = Hearth::Retry::RetryQuota.new
       @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Hearth::Stubbing::Stubs.new
       @validate_input = options.fetch(:validate_input, true)
 
+      @retry_quota = Hearth::Retry::RetryQuota.new
+      @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
     end
 
     # This example uses all query string types.
@@ -145,9 +145,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -213,9 +213,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -281,9 +281,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -356,9 +356,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -429,9 +429,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -490,9 +490,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -555,9 +555,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -622,9 +622,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -693,9 +693,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -764,9 +764,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -833,9 +833,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -907,9 +907,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -980,9 +980,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1045,9 +1045,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1109,9 +1109,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1173,9 +1173,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1252,9 +1252,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1324,9 +1324,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1386,9 +1386,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1452,9 +1452,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1567,9 +1567,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1652,9 +1652,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1764,9 +1764,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1850,9 +1850,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2019,9 +2019,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2085,9 +2085,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2151,9 +2151,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2226,9 +2226,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2300,9 +2300,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2366,9 +2366,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2430,9 +2430,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2497,9 +2497,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2565,9 +2565,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2628,9 +2628,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2706,9 +2706,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2774,9 +2774,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_mode: options.fetch(:retry_mode, @retry_mode),
         error_inspector_class: Hearth::Retry::ErrorInspector,
-        retry_quota: options.fetch(:retry_quota, @retry_quota),
+        retry_quota: @retry_quota,
         max_attempts: options.fetch(:max_attempts, @max_attempts),
-        client_rate_limiter: options.fetch(:client_rate_limiter, @client_rate_limiter),
+        client_rate_limiter: @client_rate_limiter,
         adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
       )
       stack.use(Hearth::Middleware::Parse,
