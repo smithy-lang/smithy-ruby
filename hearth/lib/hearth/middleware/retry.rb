@@ -26,22 +26,20 @@ module Hearth
       #   sufficient client side capacity to retry the request. When false,
       #   the request will raise a `CapacityNotAvailableError` and will not
       #   retry instead of sleeping.
-      def initialize(app,
-                     max_attempts:, retry_mode:, adaptive_retry_wait_to_fill:,
-                     error_inspector_class:)
+      def initialize(app, max_attempts:, retry_mode:,
+                     adaptive_retry_wait_to_fill:, error_inspector_class:)
         @app = app
         # public config
         @max_attempts = max_attempts
         @retry_mode = retry_mode
         @adaptive_retry_wait_to_fill = adaptive_retry_wait_to_fill
 
-        # overrides
-        # TODO: Apply arguments back?
-        @retry_quota = Hearth::Retry::RetryQuota.new
-        @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
+        # protocol override
         @error_inspector_class = error_inspector_class
 
         # instance state
+        @retry_quota = Hearth::Retry::RetryQuota.new
+        @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
         @capacity_amount = nil
         @retries = 0
       end
@@ -53,8 +51,7 @@ module Hearth
       def call(input, context)
         acquire_token
         output = @app.call(input, context)
-        # TODO: This needs to use the error inspector class
-        error_inspector = Hearth::Retry::ErrorInspector.new(
+        error_inspector = @error_inspector_class.new(
           output.error, context.response.status
         )
         request_bookkeeping(output, error_inspector)

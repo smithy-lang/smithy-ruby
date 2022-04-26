@@ -10,9 +10,9 @@ module Hearth
       NO_RETRY_INCREMENT = 1
       TIMEOUT_RETRY_COST = 10
 
-      def initialize(options = {})
+      def initialize
         @mutex              = Mutex.new
-        @max_capacity       = options[:max_capacity] || INITIAL_RETRY_TOKENS
+        @max_capacity       = INITIAL_RETRY_TOKENS
         @available_capacity = @max_capacity
       end
 
@@ -21,7 +21,7 @@ module Hearth
       # @return [Integer] The amount of capacity checked out
       def checkout_capacity(error_inspector)
         @mutex.synchronize do
-          capacity_amount = if error_inspector.networking?
+          capacity_amount = if error_inspector.error_type == 'Transient'
                               TIMEOUT_RETRY_COST
                             else
                               RETRY_COST
