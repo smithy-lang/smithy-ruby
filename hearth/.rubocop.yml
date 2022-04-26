@@ -6,6 +6,11 @@ Metrics:
   Exclude:
     - 'spec/**/*.rb'
 
+# For some reason, Metrics disable doesn't cover this
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Gemspec/RequireMFA:
   Exclude:
     - '**/*.gemspec'

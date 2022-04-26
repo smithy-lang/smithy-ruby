@@ -34,7 +34,9 @@ def handle_with_retry(test_cases, middleware_args = {}, overrides = {})
     max_attempts: middleware_args[:max_attempts],
     retry_mode: middleware_args[:retry_mode],
     adaptive_retry_wait_to_fill: middleware_args[:adaptive_retry_wait_to_fill],
-    error_inspector_class: Hearth::Retry::ErrorInspector
+    error_inspector_class: Hearth::Retry::ErrorInspector,
+    retry_quota: retry_quota,
+    client_rate_limiter: client_rate_limiter
   )
   apply_overrides(subject, overrides)
   subject.call(input, context)
@@ -122,6 +124,9 @@ end
 module Hearth
   module Middleware
     describe Retry do
+      let(:retry_quota) { Hearth::Retry::RetryQuota.new }
+      let(:client_rate_limiter) { Hearth::Retry::ClientRateLimiter.new }
+
       let(:input) { double('Type::OperationInput') }
       let(:error) do
         Hearth::ApiError.new(
@@ -367,25 +372,25 @@ module Hearth
           end
 
           handle_with_retry success(0.2, 0.0, 0.5), middleware_args, overrides
-          handle_with_retry success(0.4, 0.0, 0.5), middleware_args, overrides
-          handle_with_retry success(0.6, 4.8, 0.5), middleware_args, overrides
-          handle_with_retry success(0.8, 4.8, 0.5), middleware_args, overrides
-          handle_with_retry success(1.0, 4.16, 0.5), middleware_args, overrides
-          handle_with_retry success(1.2, 4.16, 0.69), middleware_args, overrides
-          handle_with_retry success(1.4, 4.16, 1.10), middleware_args, overrides
-          handle_with_retry success(1.6, 5.63, 1.63), middleware_args, overrides
-          handle_with_retry success(1.8, 5.63, 2.33), middleware_args, overrides
+          handle_with_retry success(0.4, 0.0, 0.5), middleware_args
+          handle_with_retry success(0.6, 4.8, 0.5), middleware_args
+          handle_with_retry success(0.8, 4.8, 0.5), middleware_args
+          handle_with_retry success(1.0, 4.16, 0.5), middleware_args
+          handle_with_retry success(1.2, 4.16, 0.69), middleware_args
+          handle_with_retry success(1.4, 4.16, 1.10), middleware_args
+          handle_with_retry success(1.6, 5.63, 1.63), middleware_args
+          handle_with_retry success(1.8, 5.63, 2.33), middleware_args
           handle_with_retry throttle(2.0, 4.32, 3.02) +
-                            success(2.2, 4.32, 3.48), middleware_args, overrides
-          handle_with_retry success(2.4, 4.32, 3.82), middleware_args, overrides
+                            success(2.2, 4.32, 3.48), middleware_args
+          handle_with_retry success(2.4, 4.32, 3.82), middleware_args
 
           # The token bucket need additional capacity to fulfill this request
           overrides[:current_capacity] = 10
-          handle_with_retry success(2.6, 5.66, 4.05), middleware_args, overrides
-          handle_with_retry success(2.8, 5.66, 4.20), middleware_args, overrides
-          handle_with_retry success(3.0, 4.33, 4.28), middleware_args, overrides
+          handle_with_retry success(2.6, 5.66, 4.05), middleware_args
+          handle_with_retry success(2.8, 5.66, 4.20), middleware_args
+          handle_with_retry success(3.0, 4.33, 4.28), middleware_args
           handle_with_retry throttle(3.2, 4.33, 2.99) +
-                            success(3.4, 4.32, 3.45), middleware_args, overrides
+                            success(3.4, 4.32, 3.45), middleware_args
         end
       end
     end

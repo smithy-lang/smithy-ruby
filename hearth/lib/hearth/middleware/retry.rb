@@ -27,19 +27,21 @@ module Hearth
       #   the request will raise a `CapacityNotAvailableError` and will not
       #   retry instead of sleeping.
       def initialize(app, max_attempts:, retry_mode:,
-                     adaptive_retry_wait_to_fill:, error_inspector_class:)
+                     adaptive_retry_wait_to_fill:, error_inspector_class:,
+                     retry_quota:, client_rate_limiter:)
         @app = app
+
         # public config
         @max_attempts = max_attempts
         @retry_mode = retry_mode
         @adaptive_retry_wait_to_fill = adaptive_retry_wait_to_fill
 
-        # protocol override
+        # undocumented options
         @error_inspector_class = error_inspector_class
+        @retry_quota = retry_quota
+        @client_rate_limiter = client_rate_limiter
 
         # instance state
-        @retry_quota = Hearth::Retry::RetryQuota.new
-        @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
         @capacity_amount = nil
         @retries = 0
       end
