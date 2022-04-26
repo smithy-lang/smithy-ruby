@@ -2,6 +2,10 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.5
 
+Metrics:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Gemspec/RequireMFA:
   Exclude:
     - '**/*.gemspec'
@@ -9,16 +13,8 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Max: 80
 
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*.rb'
-
 Metrics/MethodLength:
   Max: 15
-
-Metrics/ModuleLength:
-  Exclude:
-    - 'spec/**/*.rb'
 
 Metrics/ClassLength:
   Exclude:

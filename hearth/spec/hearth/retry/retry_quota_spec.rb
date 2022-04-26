@@ -4,7 +4,7 @@ module Hearth
   module Retry
     describe RetryQuota do
       describe '#checkout_capacity' do
-        let(:error) { double('ErrorInspector', networking?: false) }
+        let(:error) { double('ErrorInspector', error_type: 'ServerError') }
 
         it 'returns the requested capacity when available' do
           initial_capacity = subject.instance_variable_get(:@available_capacity)
@@ -17,7 +17,7 @@ module Hearth
         end
 
         it 'checks out the timeout cost when the error is a networking error' do
-          error = double('ErrorInspector', networking?: true)
+          error = double('ErrorInspector', error_type: 'Transient')
 
           checked_out_capacity = subject.checkout_capacity(error)
           expect(checked_out_capacity)
