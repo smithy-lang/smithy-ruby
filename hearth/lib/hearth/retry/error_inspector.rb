@@ -30,8 +30,6 @@ module Hearth
         end
       end
 
-      private
-
       def throttling?
         @http_status == 429 || modeled_throttling?
       end
