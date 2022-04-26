@@ -28,7 +28,7 @@ module Hearth
       #   retry instead of sleeping.
       def initialize(app,
                      max_attempts:, retry_mode:, adaptive_retry_wait_to_fill:,
-                     retry_quota:, client_rate_limiter:, error_inspector:)
+                     error_inspector_class:)
         @app = app
         # public config
         @max_attempts = max_attempts
@@ -36,9 +36,10 @@ module Hearth
         @adaptive_retry_wait_to_fill = adaptive_retry_wait_to_fill
 
         # overrides
-        @retry_quota = retry_quota
-        @client_rate_limiter = client_rate_limiter
-        @error_inspector = error_inspector
+        # TODO: Apply arguments back?
+        @retry_quota = Hearth::Retry::RetryQuota.new
+        @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
+        @error_inspector_class = error_inspector_class
 
         # instance state
         @capacity_amount = nil
@@ -52,19 +53,21 @@ module Hearth
       def call(input, context)
         acquire_token
         output = @app.call(input, context)
-        error_inspector = ErrorInspector.new(
+        # TODO: This needs to use the error inspector class
+        error_inspector = Hearth::Retry::ErrorInspector.new(
           output.error, context.response.status
         )
         request_bookkeeping(output, error_inspector)
 
-        return output unless retryable?(output, error_inspector)
+        return output unless retryable?(context, output, error_inspector)
 
         return output if @retries >= @max_attempts - 1
 
         @capacity_amount = @retry_quota.checkout_capacity(error_inspector)
         return output unless @capacity_amount.positive?
 
-        Kernel.sleep([Kernel.rand * (2**@retries), MAX_BACKOFF].min)
+        delay = [Kernel.rand * (2**@retries), MAX_BACKOFF].min
+        Kernel.sleep(delay)
         retry_request(input, context, output)
       end
       # rubocop:enable Metrics/AbcSize
@@ -95,7 +98,7 @@ module Hearth
         )
       end
 
-      def retryable?(output, error_inspector)
+      def retryable?(context, output, error_inspector)
         return false unless output.error
 
         error_inspector.retryable? &&
