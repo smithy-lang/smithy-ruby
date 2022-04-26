@@ -5,7 +5,7 @@
 # response: Hash with status_code and error
 # expect: delay, available_capacity, retries, calculated_rate,
 #   measured_tx_rate, fill_rate
-def handle_with_retry(test_cases, middleware_args = {}, overrides = {})
+def handle_with_retry(test_cases, middleware_args = {})
   # Apply delay expectations first
   test_cases.each do |test_case|
     if test_case[:expect][:delay]
@@ -38,7 +38,6 @@ def handle_with_retry(test_cases, middleware_args = {}, overrides = {})
     retry_quota: retry_quota,
     client_rate_limiter: client_rate_limiter
   )
-  apply_overrides(subject, overrides)
   subject.call(input, context)
 
   expect(i).to(
@@ -51,42 +50,11 @@ def handle_with_retry(test_cases, middleware_args = {}, overrides = {})
   apply_expectations(subject, test_cases[i - 1])
 end
 
-def apply_overrides(retry_class, overrides)
-  retry_quota = retry_class.instance_variable_get(:@retry_quota)
-  client_rate_limiter = retry_class.instance_variable_get(:@client_rate_limiter)
-
-  if overrides[:available_capacity]
-    retry_quota.instance_variable_set(
-      :@available_capacity, overrides[:available_capacity]
-    )
-  end
-  if overrides[:current_capacity]
-    client_rate_limiter.instance_variable_set(
-      :@current_capacity, overrides[:current_capacity]
-    )
-  end
-  if overrides[:last_throttle_time]
-    client_rate_limiter.instance_variable_set(
-      :@last_throttle_time, overrides[:last_throttle_time]
-    )
-  end
-  if overrides[:last_tx_rate_bucket]
-    client_rate_limiter.instance_variable_set(
-      :@last_tx_rate_bucket, overrides[:last_tx_rate_bucket]
-    )
-  end
-  if overrides[:last_max_rate]
-    client_rate_limiter.instance_variable_set(
-      :@last_max_rate, overrides[:last_max_rate]
-    )
-  end
-  nil
-end
-
 def apply_expectations(retry_class, test_case)
   expected = test_case[:expect]
-  retry_quota = retry_class.instance_variable_get(:@retry_quota)
-  client_rate_limiter = retry_class.instance_variable_get(:@client_rate_limiter)
+
+  # Don't actually sleep
+  allow(Kernel).to receive(:sleep)
 
   if expected[:retries]
     expect(retry_class.instance_variable_get(:@retries))
@@ -195,6 +163,8 @@ module Hearth
         end
 
         it 'fails due to retry quota reached after a single retry' do
+          retry_quota.instance_variable_set(:@available_capacity, 5)
+
           test_cases = [
             {
               response: { status_code: 500, error: error },
@@ -206,14 +176,12 @@ module Hearth
             }
           ]
 
-          handle_with_retry(
-            test_cases,
-            middleware_args,
-            { available_capacity: 5 }
-          )
+          handle_with_retry(test_cases, middleware_args)
         end
 
         it 'does not retry if the retry quota is 0' do
+          retry_quota.instance_variable_set(:@available_capacity, 0)
+
           test_cases = [
             {
               response: { status_code: 500, error: error },
@@ -221,11 +189,7 @@ module Hearth
             }
           ]
 
-          handle_with_retry(
-            test_cases,
-            middleware_args,
-            { available_capacity: 0 }
-          )
+          handle_with_retry(test_cases, middleware_args)
         end
 
         it 'uses exponential backoff timing' do
@@ -295,6 +259,10 @@ module Hearth
         end
 
         it 'verifies cubic calculations for successes' do
+          client_rate_limiter.instance_variable_set(:@last_throttle_time, 5)
+          client_rate_limiter.instance_variable_set(:@last_tx_rate_bucket, 4.5)
+          client_rate_limiter.instance_variable_set(:@last_max_rate, 10)
+
           successes = [
             {
               response: { status_code: 200, error: nil, timestamp: 5 },
@@ -328,26 +296,14 @@ module Hearth
 
           # Have to run the method each time because there are no failures
           successes.each do |success|
-            handle_with_retry(
-              [success],
-              middleware_args,
-              {
-                last_throttle_time: 5,
-                # Needs to be smaller than 't' in the iterations
-                last_tx_rate_bucket: 4.5,
-                last_max_rate: 10
-              }
-            )
+            handle_with_retry([success], middleware_args)
           end
         end
 
         it 'verifies success and throttling behavior' do
-          overrides = {
-            last_throttle_time: 0,
-            # Needs to be smaller than 't' in the iterations
-            last_tx_rate_bucket: 0,
-            last_max_rate: 0
-          }
+          client_rate_limiter.instance_variable_set(:@last_throttle_time, 0)
+          client_rate_limiter.instance_variable_set(:@last_tx_rate_bucket, 0)
+          client_rate_limiter.instance_variable_set(:@last_max_rate, 0)
 
           def success(timestamp, measured_tx_rate, fill_rate)
             [{
@@ -371,7 +327,7 @@ module Hearth
             }]
           end
 
-          handle_with_retry success(0.2, 0.0, 0.5), middleware_args, overrides
+          handle_with_retry success(0.2, 0.0, 0.5), middleware_args
           handle_with_retry success(0.4, 0.0, 0.5), middleware_args
           handle_with_retry success(0.6, 4.8, 0.5), middleware_args
           handle_with_retry success(0.8, 4.8, 0.5), middleware_args
@@ -385,7 +341,7 @@ module Hearth
           handle_with_retry success(2.4, 4.32, 3.82), middleware_args
 
           # The token bucket need additional capacity to fulfill this request
-          overrides[:current_capacity] = 10
+          client_rate_limiter.instance_variable_set(:@current_capacity, 10)
           handle_with_retry success(2.6, 5.66, 4.05), middleware_args
           handle_with_retry success(2.8, 5.66, 4.20), middleware_args
           handle_with_retry success(3.0, 4.33, 4.28), middleware_args
