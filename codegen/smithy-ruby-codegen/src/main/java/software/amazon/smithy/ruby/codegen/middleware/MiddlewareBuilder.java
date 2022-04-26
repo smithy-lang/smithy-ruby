@@ -165,20 +165,9 @@ public class MiddlewareBuilder {
                 })
                 .build();
 
-        Middleware build = (new Middleware.Builder())
-                .klass("Hearth::Middleware::Build")
-                .step(MiddlewareStackStep.SERIALIZE)
-                .operationParams((ctx, operation) -> {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("builder",
-                            "Builders::" + symbolProvider.toSymbol(operation).getName());
-                    return params;
-                })
-                .build();
-
         ClientConfig stubResponses = (new ClientConfig.Builder())
                 .name("stub_responses")
-                .type("Bool")
+                .type("Boolean")
                 .defaultValue("false")
                 .documentation(
                         "Enable response stubbing. See documentation for {#stub_responses}")
@@ -189,6 +178,53 @@ public class MiddlewareBuilder {
                 .type("Hearth::Stubbing::Stubs")
                 .initializationCustomization(
                         "@stubs = Hearth::Stubbing::Stubs.new")
+                .build();
+
+        ClientConfig maxAttempts = (new ClientConfig.Builder())
+                .name("max_attempts")
+                .type("Integer")
+                .defaultValue("3")
+                .documentation(
+                        "An integer representing the maximum number of attempts that will be made for a "
+                        + "single request, including the initial attempt."
+                )
+                .build();
+
+        ClientConfig retryMode = (new ClientConfig.Builder())
+                .name("retry_mode")
+                .type("String")
+                .defaultValue("'standard'")
+                .documentation(
+                        "Specifies which retry algorithm to use. Values are: \n"
+                        + " * `standard` - A standardized set of retry rules across the AWS SDKs. This includes support"
+                        + " for retry quotas, which limit the number of unsuccessful retries a client can make.\n"
+                        + " * `adaptive` - An experimental retry mode that includes all the"
+                        + " functionality of `standard` mode along with automatic client side"
+                        + " throttling.  This is a provisional mode that may change behavior"
+                        + " in the future."
+                )
+                .build();
+
+        ClientConfig adaptiveRetryWaitToFill = (new ClientConfig.Builder())
+                .name("adaptive_retry_wait_to_fill")
+                .type("Boolean")
+                .defaultValue("true")
+                .documentation(
+                       "Used only in `adaptive` retry mode. When true, the request will sleep until there is"
+                       + " sufficient client side capacity to retry the request. When false, the request will"
+                       + " raise a `CapacityNotAvailableError` and will not retry instead of sleeping."
+                )
+                .build();
+
+        Middleware retry = (new Middleware.Builder())
+                .klass("Hearth::Middleware::Retry")
+                .step(MiddlewareStackStep.RETRY)
+                .addConfig(maxAttempts)
+                .addConfig(retryMode)
+                .addConfig(adaptiveRetryWaitToFill)
+                .addParam("error_inspector_class", "Hearth::Retry::ErrorInspector")
+                .addParam("retry_quota", "@retry_quota")
+                .addParam("client_rate_limiter", "@client_rate_limiter")
                 .build();
 
         Middleware send = (new Middleware.Builder())
@@ -209,7 +245,7 @@ public class MiddlewareBuilder {
 
         register(validate);
         register(hostPrefix);
-        register(build);
+        register(retry);
         register(send);
 
         register(transport.defaultMiddleware(context));

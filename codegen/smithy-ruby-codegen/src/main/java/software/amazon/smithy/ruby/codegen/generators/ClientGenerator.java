@@ -201,6 +201,8 @@ public class ClientGenerator {
                         }
                     });
                 })
+                .write("@retry_quota = Hearth::Retry::RetryQuota.new")
+                .write("@client_rate_limiter = Hearth::Retry::ClientRateLimiter.new")
                 .closeBlock("end");
     }
 

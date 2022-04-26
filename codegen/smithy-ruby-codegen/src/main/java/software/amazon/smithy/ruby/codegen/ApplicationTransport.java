@@ -129,6 +129,22 @@ public final class ApplicationTransport {
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
             List<Middleware> middleware = new ArrayList();
+
+            middleware.add(new Middleware.Builder()
+                    .klass("Hearth::Middleware::Build")
+                    .step(MiddlewareStackStep.SERIALIZE)
+                    .operationParams((ctx, operation) -> {
+                        SymbolProvider symbolProvider =
+                                new RubySymbolProvider(ctx.model(), ctx.settings(), "Client", false);
+
+                        Map<String, String> params = new HashMap<>();
+                        params.put("builder",
+                                "Builders::" + symbolProvider.toSymbol(operation).getName());
+                        return params;
+                    })
+                    .build()
+            );
+
             middleware.add((new Middleware.Builder())
                     .klass("Hearth::HTTP::Middleware::ContentLength")
                     .operationPredicate(

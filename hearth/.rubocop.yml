@@ -2,6 +2,15 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.5
 
+Metrics:
+  Exclude:
+    - 'spec/**/*.rb'
+
+# For some reason, Metrics disable doesn't cover this
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Gemspec/RequireMFA:
   Exclude:
     - '**/*.gemspec'
@@ -9,16 +18,8 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Max: 80
 
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*.rb'
-
 Metrics/MethodLength:
   Max: 15
-
-Metrics/ModuleLength:
-  Exclude:
-    - 'spec/**/*.rb'
 
 Metrics/ClassLength:
   Exclude:
@@ -26,6 +27,7 @@ Metrics/ClassLength:
 
 Metrics/ParameterLists:
   Exclude:
+    - 'lib/hearth/middleware/retry.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Style/Documentation:
