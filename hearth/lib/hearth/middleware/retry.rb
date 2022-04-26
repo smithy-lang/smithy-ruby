@@ -9,7 +9,7 @@ module Hearth
       MAX_BACKOFF = 20
 
       # @param [Class] app The next middleware in the stack.
-      # @param [Boolean] max_attempts Specifies which retry algorithm to use.
+      # @param [Boolean] retry_mode Specifies which retry algorithm to use.
       #   Values are:
       #   * `standard` - A standardized set of retry rules across the AWS SDKs.
       #     This includes support for retry quotas, which limit the number of
@@ -18,7 +18,7 @@ module Hearth
       #     functionality of `standard` mode along with automatic client side
       #     throttling.  This is a provisional mode that may change behavior
       #     in the future.
-      # @param [String] retry_mode An integer representing the maximum number
+      # @param [String] max_attempts An integer representing the maximum number
       #   of attempts that will be made for a single request, including the
       #   initial attempt.
       # @param [Boolean] adaptive_retry_wait_to_fill Used only in `adaptive`
@@ -26,14 +26,14 @@ module Hearth
       #   sufficient client side capacity to retry the request. When false,
       #   the request will raise a `CapacityNotAvailableError` and will not
       #   retry instead of sleeping.
-      def initialize(app, max_attempts:, retry_mode:,
+      def initialize(app, retry_mode:, max_attempts:,
                      adaptive_retry_wait_to_fill:, error_inspector_class:,
                      retry_quota:, client_rate_limiter:)
         @app = app
 
         # public config
-        @max_attempts = max_attempts
         @retry_mode = retry_mode
+        @max_attempts = max_attempts
         @adaptive_retry_wait_to_fill = adaptive_retry_wait_to_fill
 
         # undocumented options

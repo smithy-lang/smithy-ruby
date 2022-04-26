@@ -31,8 +31,8 @@ def handle_with_retry(test_cases, middleware_args = {})
 
   subject = Hearth::Middleware::Retry.new(
     app,
-    max_attempts: middleware_args[:max_attempts],
     retry_mode: middleware_args[:retry_mode],
+    max_attempts: middleware_args[:max_attempts],
     adaptive_retry_wait_to_fill: middleware_args[:adaptive_retry_wait_to_fill],
     error_inspector_class: Hearth::Retry::ErrorInspector,
     retry_quota: retry_quota,
