@@ -5,7 +5,7 @@ module Hearth
     describe Request do
       let(:http_method) { :get }
       let(:url) { 'http://example.com' }
-      let(:headers) { Headers.new(headers: { 'key' => 'value' }) }
+      let(:headers) { Headers.new({ 'key' => 'value' }) }
       let(:body) { 'body' }
 
       subject do

@@ -16,7 +16,7 @@ module Hearth
         it 'resets to defaults' do
           response = Response.new(
             status: 200,
-            headers: Headers.new(headers: { 'key' => 'value' })
+            headers: Headers.new({ 'key' => 'value' })
           )
           response.body << 'foo bar' # frozen string literal, cannot pass in
           response.reset

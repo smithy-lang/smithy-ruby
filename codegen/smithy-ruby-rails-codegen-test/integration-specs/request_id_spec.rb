@@ -12,7 +12,7 @@ module RailsJson
         middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
           response = context.response
           response.status = 200
-          response.headers = Hearth::HTTP::Headers.new(headers: { 'x-request-id' => '123' })
+          response.headers = Hearth::HTTP::Headers.new({ 'x-request-id' => '123' })
           response.body = StringIO.new('{}')
           Hearth::Output.new
         end
@@ -28,7 +28,7 @@ module RailsJson
           response = context.response
           response.status = 400
           response.headers = Hearth::HTTP::Headers.new(
-            headers: { 'x-smithy-rails-error' => 'InvalidGreeting', 'x-request-id' => '123' }
+            { 'x-smithy-rails-error' => 'InvalidGreeting', 'x-request-id' => '123' }
           )
           response.body = StringIO.new('{}')
           Hearth::Output.new

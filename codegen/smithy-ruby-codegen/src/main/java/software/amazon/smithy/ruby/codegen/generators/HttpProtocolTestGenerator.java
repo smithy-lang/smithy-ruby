@@ -327,7 +327,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
-            writer.write("response.headers = Hearth::HTTP::Headers.new(headers: $L)", getRubyHashFromMap(headers));
+            writer.write("response.headers = Hearth::HTTP::Headers.new($L)", getRubyHashFromMap(headers));
         }
     }
 

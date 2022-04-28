@@ -50,7 +50,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"member":{"__123foo":"foo value"}}')
             Hearth::Output.new
           end
@@ -387,7 +387,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": {
@@ -409,7 +409,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": "hello"
@@ -429,7 +429,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": 10
@@ -449,7 +449,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": false
@@ -469,7 +469,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string_value": "string",
                 "document_value": [
@@ -631,7 +631,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "foo": "bar"
             }')
@@ -649,7 +649,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('"hello"')
             Hearth::Output.new
           end
@@ -710,7 +710,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
@@ -729,7 +729,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "foo": true
             }')
@@ -751,7 +751,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -887,7 +887,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 400
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'InvalidGreeting' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'InvalidGreeting' })
             response.body = StringIO.new('{
                 "message": "Hi"
             }')
@@ -911,7 +911,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 400
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
             response.body = StringIO.new('{
                 "top_level": "Top level",
                 "nested": {
@@ -938,7 +938,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 400
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json', 'x-smithy-rails-error' => 'ComplexError' })
             response.body = StringIO.new('{
             }')
             Hearth::Output.new
@@ -1004,7 +1004,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Foo' => 'Foo' })
             response.body = StringIO.new('blobby blob blob')
             Hearth::Output.new
           end
@@ -1021,7 +1021,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Foo' => 'Foo' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -1103,7 +1103,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' })
             response.body = StringIO.new('blobby blob blob')
             Hearth::Output.new
           end
@@ -1175,7 +1175,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "greeting": "hello",
                 "name": "Phreddy"
@@ -1273,7 +1273,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' })
             Hearth::Output.new
           end
           middleware.remove_send.remove_build
@@ -1326,7 +1326,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Hello' => 'Hello', 'X-Foo' => 'Foo' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Hello' => 'Hello', 'X-Foo' => 'Foo' })
             Hearth::Output.new
           end
           middleware.remove_send.remove_build
@@ -1544,7 +1544,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 201
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
@@ -1628,7 +1628,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
@@ -1810,7 +1810,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -1836,7 +1836,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-StringList' => '"b,c", "\"def\"", a' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-StringList' => '"b,c", "\"def\"", a' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -1856,7 +1856,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -1882,7 +1882,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -1904,7 +1904,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -2135,7 +2135,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "foo_enum1": "Foo",
                 "foo_enum2": "0",
@@ -2461,7 +2461,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_struct_map": {
                     "foo": {
@@ -2509,7 +2509,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_boolean_map": {
                     "x": null
@@ -2549,7 +2549,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_number_map": {
                     "x": 0
@@ -2589,7 +2589,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_set_map": {
                     "x": [],
@@ -2618,7 +2618,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_set_map": {
                     "x": [],
@@ -2647,7 +2647,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_set_map": {
                     "x": [],
@@ -2679,7 +2679,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "dense_set_map": {
                     "x": [],
@@ -3195,7 +3195,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "string_value": "foo"
@@ -3217,7 +3217,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "boolean_value": true
@@ -3239,7 +3239,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "number_value": 1
@@ -3261,7 +3261,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "blob_value": "Zm9v"
@@ -3283,7 +3283,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "timestamp_value": "2014-04-29T18:30:38Z"
@@ -3305,7 +3305,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "enum_value": "Foo"
@@ -3327,7 +3327,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "list_value": ["foo", "bar"]
@@ -3352,7 +3352,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "map_value": {
@@ -3380,7 +3380,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "contents": {
                     "structure_value": {
@@ -4216,7 +4216,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
@@ -4232,7 +4232,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"string":"string-value"}')
             Hearth::Output.new
           end
@@ -4248,7 +4248,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"integer":1234}')
             Hearth::Output.new
           end
@@ -4264,7 +4264,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"long":1234567890123456789}')
             Hearth::Output.new
           end
@@ -4280,7 +4280,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"float":1234.5}')
             Hearth::Output.new
           end
@@ -4296,7 +4296,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"double":123456789.12345679}')
             Hearth::Output.new
           end
@@ -4312,7 +4312,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"boolean":true}')
             Hearth::Output.new
           end
@@ -4328,7 +4328,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"boolean":false}')
             Hearth::Output.new
           end
@@ -4344,7 +4344,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"blob":"YmluYXJ5LXZhbHVl"}')
             Hearth::Output.new
           end
@@ -4360,7 +4360,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"timestamp":"2000-01-02T20:34:56Z"}')
             Hearth::Output.new
           end
@@ -4376,7 +4376,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
             Hearth::Output.new
           end
@@ -4392,7 +4392,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
             Hearth::Output.new
           end
@@ -4408,7 +4408,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_strings":["abc","mno","xyz"]}')
             Hearth::Output.new
           end
@@ -4428,7 +4428,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
             Hearth::Output.new
           end
@@ -4451,7 +4451,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
             Hearth::Output.new
           end
@@ -4478,7 +4478,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
             Hearth::Output.new
           end
@@ -4501,7 +4501,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
             Hearth::Output.new
           end
@@ -4529,7 +4529,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_strings":{"size":"large","color":"red"}}')
             Hearth::Output.new
           end
@@ -4548,7 +4548,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
             Hearth::Output.new
           end
@@ -4573,7 +4573,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
             Hearth::Output.new
           end
@@ -4598,7 +4598,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
             Hearth::Output.new
           end
@@ -4621,7 +4621,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
             Hearth::Output.new
           end
@@ -4649,7 +4649,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json', 'X-Amzn-Requestid' => 'amazon-uniq-request-id' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json', 'X-Amzn-Requestid' => 'amazon-uniq-request-id' })
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
@@ -5225,7 +5225,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-Json' => 'dHJ1ZQ==' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-Json' => 'dHJ1ZQ==' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end
@@ -5387,7 +5387,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "string": null
             }')
@@ -5405,7 +5405,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_string_map": {
                     "foo": null
@@ -5427,7 +5427,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'Content-Type' => 'application/json' })
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
             response.body = StringIO.new('{
                 "sparse_string_list": [
                     null
@@ -5715,7 +5715,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new(headers: { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' })
+            response.headers = Hearth::HTTP::Headers.new({ 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' })
             response.body = StringIO.new('')
             Hearth::Output.new
           end

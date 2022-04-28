@@ -4,7 +4,7 @@ module Hearth
     # @api private
     class Headers
       # @param [Hash<String,String>] headers
-      def initialize: (?headers: ::Hash[String, String] headers) -> Headers
+      def initialize: (?::Hash[String, String] headers) -> Headers
 
       # @param [String] key
       def []: (String key) -> String
