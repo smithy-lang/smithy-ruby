@@ -147,15 +147,6 @@ module Hearth
         expect(subject.instance_variable_get(:@enabled)).to be(true)
       end
 
-      # TODO: need tests on throttling: -> [measured_rate, fill_rate].min
-      it 'uses a minimum rate when already enabled'
-
-      # TODO: need test on calculate time window with cubic_success branch
-      it 'does not use the token bucket on non-throttling errors' # do
-      #   subject.update_sending_rate(false)
-      #   expect(subject.instance_variable_get(:@enabled)).to be(false)
-      # end
-
       context 'thread safety' do
         it 'can change max rate while blocking' do
           # This isn't a stress test - we just verify we can change the

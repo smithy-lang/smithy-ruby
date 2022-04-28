@@ -13,7 +13,7 @@ module Hearth
 
       let(:headers_hash) { { header1 => value1, header2 => value2 } }
 
-      subject { Headers.new(headers: headers_hash) }
+      subject { Headers.new(headers_hash) }
 
       describe '#initialize' do
         it 'sets and normalizes the headers' do
@@ -71,6 +71,13 @@ module Hearth
       describe '#size' do
         it 'returns the size' do
           expect(subject.size).to eq(headers_hash.size)
+        end
+      end
+
+      describe '#clear' do
+        it 'clears the headers' do
+          subject.clear
+          expect(subject.size).to eq(0)
         end
       end
     end

@@ -6,7 +6,7 @@ module Hearth
     # @api private
     class Headers
       # @param [Hash<String,String>] headers
-      def initialize(headers: {})
+      def initialize(headers = {})
         @headers = {}
         headers.each_pair do |key, value|
           self[key] = value
