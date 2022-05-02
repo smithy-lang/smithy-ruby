@@ -6,8 +6,8 @@ module Hearth
   module Waiters
     # Abstract Poller used by generated service Waiters. This class handles
     # sending the request and matching input or output.
+    # @api private
     class Poller
-      # @api private
       def initialize(options = {})
         @operation_name = options[:operation_name]
         @acceptors = options[:acceptors]

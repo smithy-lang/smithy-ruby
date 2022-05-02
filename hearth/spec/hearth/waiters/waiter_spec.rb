@@ -2,6 +2,30 @@
 
 module Hearth
   module Waiters
+    describe WaiterFailed do
+      it 'subclasses StandardError' do
+        expect(WaiterFailed.new).to be_a StandardError
+      end
+    end
+
+    describe FailureStateError do
+      it 'subclasses WaiterFailed' do
+        expect(FailureStateError.new).to be_a WaiterFailed
+      end
+    end
+
+    describe UnexpectedError do
+      it 'subclasses WaiterFailed' do
+        expect(UnexpectedError.new).to be_a WaiterFailed
+      end
+    end
+
+    describe MaxWaitTimeExceeded do
+      it 'subclasses WaiterFailed' do
+        expect(MaxWaitTimeExceeded.new).to be_a WaiterFailed
+      end
+    end
+
     describe Waiter do
       subject do
         Waiter.new(
@@ -48,7 +72,7 @@ module Hearth
               .exactly(13 + 1).times
 
             expect { subject.wait(client) }
-              .to raise_error(Errors::MaxWaitTimeExceeded)
+              .to raise_error(MaxWaitTimeExceeded)
           end
         end
 
@@ -68,7 +92,7 @@ module Hearth
                 .with(client, {}, {}).and_return([:failure, response])
 
               expect { subject.wait(client) }
-                .to raise_error(Errors::FailureStateError, response.to_s)
+                .to raise_error(FailureStateError, response.to_s)
             end
           end
 
@@ -78,7 +102,7 @@ module Hearth
                 .with(client, {}, {}).and_return([:failure, error])
 
               expect { subject.wait(client) }
-                .to raise_error(Errors::FailureStateError, error.to_s)
+                .to raise_error(FailureStateError, error.to_s)
             end
           end
         end
@@ -89,7 +113,7 @@ module Hearth
               .with(client, {}, {}).and_return([:error, error])
 
             expect { subject.wait(client) }
-              .to raise_error(Errors::UnexpectedError, error.to_s)
+              .to raise_error(UnexpectedError, error.to_s)
           end
         end
       end

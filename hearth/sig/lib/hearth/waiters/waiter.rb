@@ -1,0 +1,15 @@
+module Hearth
+  module Waiters
+    class WaiterFailed < StandardError
+    end
+
+    class FailureStateError < WaiterFailed
+    end
+
+    class MaxWaitTimeExceeded < WaiterFailed
+    end
+
+    class UnexpectedError < WaiterFailed
+    end
+  end
+end

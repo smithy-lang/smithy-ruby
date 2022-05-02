@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
+  # @api private
   module Query
     # A class used to represent a query parameter before serialization.
     # @api private

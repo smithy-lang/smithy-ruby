@@ -2,9 +2,22 @@
 
 module Hearth
   module Waiters
+    # A super class error that is raised when a waiter detects a condition
+    # where the waiter can never succeed.
+    class WaiterFailed < StandardError; end
+
+    # Raised when the waiter reached an expected failure state.
+    class FailureStateError < WaiterFailed; end
+
+    # Raised when the waiter has reached the maximum waiting time.
+    class MaxWaitTimeExceeded < WaiterFailed; end
+
+    # Raised when the waiter received an unexpected error.
+    class UnexpectedError < WaiterFailed; end
+
     # Abstract waiter class with high level logic for polling and waiting.
+    # @api private
     class Waiter
-      # @api private
       def initialize(options = {})
         unless options[:max_wait_time].is_a?(Integer)
           raise ArgumentError,
@@ -42,11 +55,11 @@ module Hearth
           case state
           when :retry then nil
           when :success then return
-          when :failure then raise Errors::FailureStateError, resp_or_error
-          when :error   then raise Errors::UnexpectedError, resp_or_error
+          when :failure then raise FailureStateError, resp_or_error
+          when :error   then raise UnexpectedError, resp_or_error
           end
 
-          raise Errors::MaxWaitTimeExceeded if @one_more_retry
+          raise MaxWaitTimeExceeded if @one_more_retry
 
           delay = delay(n)
           @remaining_time -= delay

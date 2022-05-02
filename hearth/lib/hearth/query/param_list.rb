@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
+  # @api private
   module Query
     # A class used to collect query params before serialization.
     # @api private

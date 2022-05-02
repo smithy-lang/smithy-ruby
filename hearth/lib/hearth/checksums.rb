@@ -4,6 +4,7 @@ require 'tempfile'
 
 module Hearth
   # A utility module for calculating checksums.
+  # @api private
   module Checksums
     CHUNK_SIZE = 1 * 1024 * 1024 # one MB
 
