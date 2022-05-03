@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen;
+package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Objects;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -28,17 +28,19 @@ public class ClientConfig {
     private final String name;
     private final String type;
     private final String documentation;
-    private final String defaultValue;
-    private final String initializationCustomization;
+    private final String documentationDefaultValue;
+    private final ConfigProviderChain defaults;
     private final String postInitializeCustomization;
+    private final boolean allowOperationOverride;
 
     public ClientConfig(Builder builder) {
         this.name = builder.name;
         this.type = builder.type;
         this.documentation = builder.documentation;
-        this.defaultValue = builder.defaultValue;
-        this.initializationCustomization = builder.initializationCustomization;
+        this.documentationDefaultValue = builder.documentationDefaultValue;
+        this.defaults = builder.defaults;
         this.postInitializeCustomization = builder.postInitializeCustomization;
+        this.allowOperationOverride = builder.allowOperationOverride;
     }
 
     /**
@@ -64,19 +66,13 @@ public class ClientConfig {
     }
 
     /**
-     * @return Ruby code (as a String) that is used to set the default value.
+     * @return Documented default value.
      */
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    /**
-     * Allows customization of initialization.
-     * If set, this is used instead of the defaultValue.
-     * @return initialization customization
-     */
-    public String getInitializationCustomization() {
-        return initializationCustomization;
+    public String getDocumentationDefaultValue() {
+        if (documentationDefaultValue != null) {
+            return documentationDefaultValue;
+        }
+        return defaults.getDocumentationDefault().orElse("");
     }
 
     /**
@@ -85,7 +81,17 @@ public class ClientConfig {
      * @return post initialize customization
      */
     public String getPostInitializeCustomization() {
+
         return postInitializeCustomization;
+    }
+
+    /**
+     * If true, this config can be overridden
+     * per operation.
+     * @return allowOperationOverride
+     */
+    public boolean allowOperationOverride() {
+        return allowOperationOverride;
     }
 
     @Override
@@ -110,9 +116,10 @@ public class ClientConfig {
         private String name;
         private String type;
         private String documentation;
-        private String defaultValue;
-        private String initializationCustomization;
+        private String documentationDefaultValue;
+        private ConfigProviderChain defaults;
         private String postInitializeCustomization;
+        private boolean allowOperationOverride = false;
 
         public Builder name(String name) {
             this.name = name;
@@ -129,14 +136,8 @@ public class ClientConfig {
             return this;
         }
 
-        public Builder defaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
-
-        public Builder initializationCustomization(
-                String initializationCustomization) {
-            this.initializationCustomization = initializationCustomization;
+        public Builder documentationDefaultValue(String defaultValue) {
+            this.documentationDefaultValue = defaultValue;
             return this;
         }
 
@@ -146,6 +147,15 @@ public class ClientConfig {
             return this;
         }
 
+        public Builder allowOperationOverride() {
+            this.allowOperationOverride = true;
+            return this;
+        }
+
+        public Builder defaults(ConfigProviderChain defaults) {
+            this.defaults = defaults;
+            return this;
+        }
 
         @Override
         public ClientConfig build() {

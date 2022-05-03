@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
