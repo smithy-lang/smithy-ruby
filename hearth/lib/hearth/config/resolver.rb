@@ -26,8 +26,8 @@ module Hearth
 
       private
 
-      def resolve_value(k)
-        @defaults[k]&.each do |default|
+      def resolve_value(key)
+        @defaults[key]&.each do |default|
           value = if default.respond_to?(:call)
                     default.call(self)
                   else

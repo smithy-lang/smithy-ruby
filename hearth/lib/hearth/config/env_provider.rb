@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hearth
   module Config
     # Parses and validates values provided in ENV
@@ -9,7 +11,7 @@ module Hearth
       end
 
       def call(_provider)
-        return unless value = ENV[@env_key]
+        return unless (value = ENV.fetch(@env_key))
 
         case @type
         when 'Float' then parse_float(value)
@@ -49,4 +51,3 @@ module Hearth
     end
   end
 end
-
