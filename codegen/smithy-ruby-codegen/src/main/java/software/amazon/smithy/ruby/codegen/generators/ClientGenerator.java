@@ -141,30 +141,6 @@ public class ClientGenerator {
                 .call(() -> renderInitializeDocumentation())
                 .openBlock("def initialize(config = $L::Config.build, options = {})", settings.getModule())
                 .write("@config = config")
-//                .call(() -> {
-//                    clientConfig.forEach((cfg) -> {
-//                        if (StringUtils.isNotBlank(
-//                                cfg.getInitializationCustomization())) {
-//                            writer.writeWithNoFormatting(
-//                                    cfg.getInitializationCustomization());
-//                        } else if (StringUtils.isEmpty(cfg.getDefaultValue())) {
-//                            writer.write("@$1L = options[:$1L]", cfg.getName());
-//                        } else {
-//                            writer.write("@$1L = options.fetch(:$1L, $2L)",
-//                                    cfg.getName(), cfg.getDefaultValue());
-//                        }
-//                    });
-//                })
-//                .write("")
-//                .call(() -> {
-//                    clientConfig.forEach((cfg) -> {
-//                        if (StringUtils.isNotBlank(
-//                                cfg.getPostInitializeCustomization())) {
-//                            writer.writeWithNoFormatting(
-//                                    cfg.getPostInitializeCustomization());
-//                        }
-//                    });
-//                })
                 .write("@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
                 .write("@stubs = Hearth::Stubbing::Stubs.new")
                 .write("@retry_quota = Hearth::Retry::RetryQuota.new")
@@ -238,7 +214,7 @@ public class ClientGenerator {
                         context.applicationTransport().getResponse()
                                 .render(context))
                 .write("params: params,")
-                .write("logger: @logger,")
+                .write("logger: @config.logger,")
                 .write("operation_name: :$L", operationName)
                 .closeBlock(")")
                 .closeBlock(")")

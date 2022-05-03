@@ -15,7 +15,8 @@ require 'hearth/query/param_matcher'
 module HighScoreService
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
-    let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
+    let(:config) { Config.build(stub_responses: true, endpoint: endpoint) }
+    let(:client) { Client.new(config) }
 
     describe '#create_high_score' do
 

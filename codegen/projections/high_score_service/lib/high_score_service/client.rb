@@ -68,19 +68,19 @@ module HighScoreService
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::CreateHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 201, errors: [Errors::UnprocessableEntityError]),
@@ -88,8 +88,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::CreateHighScore,
         stubs: @stubs,
         params_class: Params::CreateHighScoreOutput
@@ -99,10 +99,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :create_high_score
         )
       )
@@ -136,19 +136,19 @@ module HighScoreService
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DeleteHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -156,8 +156,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::DeleteHighScore,
         stubs: @stubs,
         params_class: Params::DeleteHighScoreOutput
@@ -167,10 +167,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :delete_high_score
         )
       )
@@ -210,19 +210,19 @@ module HighScoreService
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -230,8 +230,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::GetHighScore,
         stubs: @stubs,
         params_class: Params::GetHighScoreOutput
@@ -241,10 +241,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :get_high_score
         )
       )
@@ -280,19 +280,19 @@ module HighScoreService
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ListHighScores
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -300,8 +300,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::ListHighScores,
         stubs: @stubs,
         params_class: Params::ListHighScoresOutput
@@ -311,10 +311,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :list_high_scores
         )
       )
@@ -361,19 +361,19 @@ module HighScoreService
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::UpdateHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::UnprocessableEntityError]),
@@ -381,8 +381,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::UpdateHighScore,
         stubs: @stubs,
         params_class: Params::UpdateHighScoreOutput
@@ -392,10 +392,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :update_high_score
         )
       )

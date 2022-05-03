@@ -76,27 +76,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DefaultsTestInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DefaultsTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::DefaultsTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::DefaultsTest,
         stubs: @stubs,
         params_class: Params::DefaultsTestOutput
@@ -106,10 +106,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :defaults_test
         )
       )
@@ -136,31 +136,31 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        disable_host_prefix: @config.disable_host_prefix
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::EndpointOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::EndpointOperation,
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
@@ -170,10 +170,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :endpoint_operation
         )
       )
@@ -202,31 +202,31 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        disable_host_prefix: @config.disable_host_prefix
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
@@ -236,10 +236,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :endpoint_with_host_label_operation
         )
       )
@@ -446,27 +446,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSink
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::ClientError, Errors::ServerError]),
         data_parser: Parsers::KitchenSink
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::KitchenSink,
         stubs: @stubs,
         params_class: Params::KitchenSinkOutput
@@ -476,10 +476,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :kitchen_sink
         )
       )
@@ -511,27 +511,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::PaginatorsTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::PaginatorsTest,
         stubs: @stubs,
         params_class: Params::PaginatorsTestOperationOutput
@@ -541,10 +541,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :paginators_test
         )
       )
@@ -576,27 +576,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestWithItemsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTestWithItems
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::PaginatorsTestWithItems
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::PaginatorsTestWithItems,
         stubs: @stubs,
         params_class: Params::PaginatorsTestWithItemsOutput
@@ -606,10 +606,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :paginators_test_with_items
         )
       )
@@ -639,26 +639,26 @@ module WhiteLabel
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
       )
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::StreamingOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::StreamingOperation,
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
@@ -668,10 +668,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :streaming_operation
         )
       )
@@ -700,27 +700,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingWithLengthInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingWithLength
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::StreamingWithLength
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::StreamingWithLength,
         stubs: @stubs,
         params_class: Params::StreamingWithLengthOutput
@@ -730,10 +730,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :streaming_with_length
         )
       )
@@ -763,27 +763,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::WaitersTestInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::WaitersTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::WaitersTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::WaitersTest,
         stubs: @stubs,
         params_class: Params::WaitersTestOutput
@@ -793,10 +793,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :waiters_test
         )
       )
@@ -829,27 +829,27 @@ module WhiteLabel
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: @stubs,
         params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
@@ -859,10 +859,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: @config.endpoint),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :operation____paginators_test_with_bad_names
         )
       )
