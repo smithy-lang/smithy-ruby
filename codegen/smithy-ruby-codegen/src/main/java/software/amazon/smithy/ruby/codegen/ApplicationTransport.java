@@ -106,6 +106,7 @@ public final class ApplicationTransport {
                 .type("Boolean")
                 .defaultValue("false")
                 .documentation("Enable debug wire trace on http requests.")
+                .allowOperationOverride()
                 .build();
 
         ClientConfig logger = (new ClientConfig.Builder())
