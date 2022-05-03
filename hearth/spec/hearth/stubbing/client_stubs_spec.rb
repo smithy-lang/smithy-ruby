@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 module Hearth
+  Config = Struct.new(:stub_responses, keyword_init: true)
+
   class TestClient
     include ClientStubs
 
     def initialize(stub_responses: false)
-      @stub_responses = stub_responses
+      @config = Config.new(stub_responses: stub_responses)
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
