@@ -3,16 +3,17 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
+    let(:config) { Config.build(stub_responses: true) }
+    let(:client) { Client.new(config) }
+
     describe '#streaming_operation' do
-      let(:client) { Client.new(stub_responses:  true) }
       let(:output) { 'test' }
 
       before do
-        client.stub_responses(:streaming_operation, { stream: output} )
+        client.stub_responses(:streaming_operation, { stream: output } )
       end
 
       context 'block is provided' do
-
         let(:block_io) { double("BlockIO") }
 
         it 'creates and uses a blockIO as the body' do
@@ -30,8 +31,8 @@ module WhiteLabel
 
       context 'output_stream is set' do
         let(:output_stream) { double("OutputStream") }
-        it 'uses the output_stream as the body' do
 
+        it 'uses the output_stream as the body' do
           expect(Hearth::HTTP::Response)
             .to receive(:new)
                   .with(hash_including(body: output_stream))
@@ -104,7 +105,6 @@ module WhiteLabel
     end
 
     describe '#streaming_with_length' do
-      let(:client) { Client.new(stub_responses:  true) }
       let(:data) { 'test' }
 
       it 'sets content-length and does not set Transfer-Encoding' do

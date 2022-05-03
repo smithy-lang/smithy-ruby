@@ -4,62 +4,58 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
-
-    describe '#initialize' do
-      let(:logger) { double('logger') }
-      it 'sets member values' do
-        client = Client.new(
-          endpoint: 'endpoint',
-          http_wire_trace: true,
-          log_level: :debug,
-          logger: logger,
-          stub_responses: true,
-          validate_input: false
-        )
-        expect(client.instance_variable_get('@endpoint')).to eq('endpoint')
-        expect(client.instance_variable_get('@http_wire_trace')).to eq(true)
-        expect(client.instance_variable_get('@log_level')).to eq(:debug)
-        expect(client.instance_variable_get('@logger')).to eq(logger)
-        expect(client.instance_variable_get('@stub_responses')).to eq(true)
-        expect(client.instance_variable_get('@validate_input')).to eq(false)
-      end
-    end
+    let(:config) { Config.build(stub_responses: true) }
+    let(:client) { Client.new(config) }
 
     describe '#kitchen_sink' do
-      let(:logger) { Logger.new($stdout) }
-
-      it 'uses validate_input from initialize' do
-        client = Client.new(validate_input: false, stub_responses: true)
+      it 'uses validate_input' do
         expect(Hearth::Middleware::Validate)
           .to receive(:new)
-                .with(anything, validator: Validators::KitchenSinkInput, validate_input: false)
+                .with(anything, validate_input: config.validate_input, validator: anything)
                 .and_call_original
 
         client.kitchen_sink
       end
 
-      it 'uses validate_input from options' do
-        client = Client.new(stub_responses: true)
-        expect(Hearth::Middleware::Validate)
+      it 'uses retry_mode, max_attempts, and adaptive_retry_wait_to_fill' do
+        expect(Hearth::Middleware::Retry)
           .to receive(:new)
-                .with(anything, validator: Validators::KitchenSinkInput, validate_input: false)
+                .with(anything,
+                      retry_mode: config.retry_mode,
+                      max_attempts: config.max_attempts,
+                      adaptive_retry_wait_to_fill: config.adaptive_retry_wait_to_fill,
+                      error_inspector_class: anything,
+                      client_rate_limiter: anything,
+                      retry_quota: anything)
                 .and_call_original
 
-        client.kitchen_sink({}, validate_input: false)
+        client.kitchen_sink
       end
 
-      it 'uses http_wire_trace from initialize' do
-        client = Client.new(http_wire_trace: true, stub_responses: true)
+      it 'uses logger' do
         expect(Hearth::HTTP::Client)
           .to receive(:new)
-                .with(hash_including(http_wire_trace: true))
+                .with(hash_including(logger: config.logger))
+                .and_call_original
+
+        expect(Hearth::Context)
+          .to receive(:new)
+                .with(hash_including(logger: config.logger))
+                .and_call_original
+
+        client.kitchen_sink
+      end
+
+      it 'uses http_wire_trace from config' do
+        expect(Hearth::HTTP::Client)
+          .to receive(:new)
+                .with(hash_including(http_wire_trace: config.http_wire_trace))
                 .and_call_original
 
         client.kitchen_sink
       end
 
       it 'uses http_wire_trace from options' do
-        client = Client.new(stub_responses: true)
         expect(Hearth::HTTP::Client)
           .to receive(:new)
                 .with(hash_including(http_wire_trace: true))
@@ -68,19 +64,22 @@ module WhiteLabel
         client.kitchen_sink({}, http_wire_trace: true)
       end
 
-      it 'uses logger' do
-        client = Client.new(logger: logger, stub_responses: true)
-        expect(Hearth::HTTP::Client)
+      it 'uses endpoint from config' do
+        expect(Hearth::HTTP::Request)
           .to receive(:new)
-                .with(hash_including(logger: logger))
-                .and_call_original
-
-        expect(Hearth::Context)
-          .to receive(:new)
-                .with(hash_including(logger: logger))
+                .with(hash_including(url: config.endpoint))
                 .and_call_original
 
         client.kitchen_sink
+      end
+
+      it 'uses endpoint from options' do
+        expect(Hearth::HTTP::Request)
+          .to receive(:new)
+                .with(hash_including(url: 'endpoint'))
+                .and_call_original
+
+        client.kitchen_sink({}, endpoint: 'endpoint')
       end
     end
   end
