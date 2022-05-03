@@ -13,7 +13,7 @@ module HighScoreService
 
     def self.middleware: () -> untyped
 
-    def initialize: (?::Hash[untyped, untyped] options) -> void
+    def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void
     def create_high_score: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def delete_high_score: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def get_high_score: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped

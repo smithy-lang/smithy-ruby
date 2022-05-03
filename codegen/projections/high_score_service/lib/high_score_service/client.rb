@@ -24,6 +24,8 @@ module HighScoreService
     end
 
     # @param [Config] config
+    #   An instance of {Config}
+    #
     def initialize(config = HighScoreService::Config.build, options = {})
       @config = config
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])

@@ -98,11 +98,11 @@ public class TypesGenerator {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String typesFile =
+        String fileName =
                 settings.getGemName() + "/sig/" + settings.getGemName()
                         + "/types.rbs";
-        fileManifest.writeFile(typesFile, rbsWriter.toString());
-        LOGGER.fine("Wrote types rbs to " + typesFile);
+        fileManifest.writeFile(fileName, rbsWriter.toString());
+        LOGGER.fine("Wrote types rbs to " + fileName);
     }
 
     private void renderTypes(ShapeVisitor<Void> visitor) {

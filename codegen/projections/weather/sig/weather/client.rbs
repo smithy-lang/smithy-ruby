@@ -13,7 +13,7 @@ module Weather
 
     def self.middleware: () -> untyped
 
-    def initialize: (?::Hash[untyped, untyped] options) -> void
+    def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void
     def get_city: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def get_city_announcements: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def get_city_image: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
