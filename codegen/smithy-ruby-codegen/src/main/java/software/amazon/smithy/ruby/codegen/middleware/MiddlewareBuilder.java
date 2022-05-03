@@ -173,13 +173,6 @@ public class MiddlewareBuilder {
                         "Enable response stubbing. See documentation for {#stub_responses}")
                 .build();
 
-        ClientConfig stubs = (new ClientConfig.Builder())
-                .name("stubs")
-                .type("Hearth::Stubbing::Stubs")
-                .initializationCustomization(
-                        "@stubs = Hearth::Stubbing::Stubs.new")
-                .build();
-
         ClientConfig maxAttempts = (new ClientConfig.Builder())
                 .name("max_attempts")
                 .type("Integer")
@@ -232,6 +225,7 @@ public class MiddlewareBuilder {
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client",
                         transport.getTransportClient().render(context))
+                .addParam("stubs", "@stubs")
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     Shape outputShape = ctx.model().expectShape(operation.getOutputShape());
@@ -240,7 +234,6 @@ public class MiddlewareBuilder {
                     return params;
                 })
                 .addConfig(stubResponses)
-                .addConfig(stubs)
                 .build();
 
         register(validate);

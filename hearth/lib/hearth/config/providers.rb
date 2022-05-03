@@ -66,6 +66,7 @@ module Service
     :use_arn_region, # service specific middleware
     keyword_init: true
   ) do
+
     def self.build(options = {})
       config = Hearth::Config::Resolver.new(
         ::Service::Config, defaults

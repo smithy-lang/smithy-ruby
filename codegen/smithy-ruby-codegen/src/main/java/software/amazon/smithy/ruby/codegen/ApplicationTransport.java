@@ -81,7 +81,7 @@ public final class ApplicationTransport {
 
         ClientConfig endpoint = (new ClientConfig.Builder())
                 .name("endpoint")
-                .type("string")
+                .type("String")
                 .documentation("Endpoint of the service")
                 .initializationCustomization("@endpoint = options.fetch(:endpoint, options[:stub_responses] "
                         + "? 'http://localhost' : nil)")
@@ -98,7 +98,7 @@ public final class ApplicationTransport {
 
         ClientConfig wireTrace = (new ClientConfig.Builder())
                 .name("http_wire_trace")
-                .type("bool")
+                .type("Boolean")
                 .defaultValue("false")
                 .documentation("Enable debug wire trace on http requests.")
                 .build();
@@ -106,7 +106,7 @@ public final class ApplicationTransport {
         ClientConfig logger = (new ClientConfig.Builder())
                 .name("logger")
                 .type("Logger")
-                .defaultValue("stdout")
+                .defaultValue("$stdout")
                 .initializationCustomization(
                         "@logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))")
                 .documentation("Logger to use for output")
@@ -114,7 +114,7 @@ public final class ApplicationTransport {
 
         ClientConfig logLevel = (new ClientConfig.Builder())
                 .name("log_level")
-                .type("symbol")
+                .type("Symbol")
                 .defaultValue(":info")
                 .documentation("Default log level to use")
                 .build();

@@ -39,57 +39,11 @@ module WhiteLabel
       @middleware
     end
 
-    # @overload initialize(options)
-    # @param [Hash] options
-    # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
-    #   Used only in `adaptive` retry mode. When true, the request will sleep until there is sufficient client side capacity to retry the request. When false, the request will raise a `CapacityNotAvailableError` and will not retry instead of sleeping.
-    #
-    # @option options [Boolean] :disable_host_prefix (false)
-    #   When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.
-    #
-    # @option options [string] :endpoint
-    #   Endpoint of the service
-    #
-    # @option options [bool] :http_wire_trace (false)
-    #   Enable debug wire trace on http requests.
-    #
-    # @option options [symbol] :log_level (:info)
-    #   Default log level to use
-    #
-    # @option options [Logger] :logger (stdout)
-    #   Logger to use for output
-    #
-    # @option options [Integer] :max_attempts (3)
-    #   An integer representing the maximum number of attempts that will be made for a single request, including the initial attempt.
-    #
-    # @option options [MiddlewareBuilder] :middleware
-    #   Additional Middleware to be applied for every operation
-    #
-    # @option options [String] :retry_mode ('standard')
-    #   Specifies which retry algorithm to use. Values are:
-    #  * `standard` - A standardized set of retry rules across the AWS SDKs. This includes support for retry quotas, which limit the number of unsuccessful retries a client can make.
-    #  * `adaptive` - An experimental retry mode that includes all the functionality of `standard` mode along with automatic client side throttling.  This is a provisional mode that may change behavior in the future.
-    #
-    # @option options [Boolean] :stub_responses (false)
-    #   Enable response stubbing. See documentation for {#stub_responses}
-    #
-    # @option options [Boolean] :validate_input (true)
-    #   When `true`, request parameters are validated using the modeled shapes.
-    #
-    def initialize(options = {})
-      @adaptive_retry_wait_to_fill = options.fetch(:adaptive_retry_wait_to_fill, true)
-      @disable_host_prefix = options.fetch(:disable_host_prefix, false)
-      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'http://localhost' : nil)
-      @http_wire_trace = options.fetch(:http_wire_trace, false)
-      @log_level = options.fetch(:log_level, :info)
-      @logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))
-      @max_attempts = options.fetch(:max_attempts, 3)
+    # @param [Config] config
+    def initialize(config = WhiteLabel::Config.build, options = {})
+      @config = config
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
-      @retry_mode = options.fetch(:retry_mode, 'standard')
-      @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Hearth::Stubbing::Stubs.new
-      @validate_input = options.fetch(:validate_input, true)
-
       @retry_quota = Hearth::Retry::RetryQuota.new
       @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
     end
@@ -144,8 +98,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::DefaultsTest,
-        params_class: Params::DefaultsTestOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::DefaultsTestOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -208,8 +162,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::EndpointOperation,
-        params_class: Params::EndpointOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::EndpointOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -274,8 +228,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::EndpointWithHostLabelOperation,
-        params_class: Params::EndpointWithHostLabelOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::EndpointWithHostLabelOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -514,8 +468,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::KitchenSink,
-        params_class: Params::KitchenSinkOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::KitchenSinkOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -579,8 +533,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::PaginatorsTest,
-        params_class: Params::PaginatorsTestOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::PaginatorsTestOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -644,8 +598,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::PaginatorsTestWithItems,
-        params_class: Params::PaginatorsTestWithItemsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::PaginatorsTestWithItemsOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -706,8 +660,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::StreamingOperation,
-        params_class: Params::StreamingOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::StreamingOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -768,8 +722,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::StreamingWithLength,
-        params_class: Params::StreamingWithLengthOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::StreamingWithLengthOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -831,8 +785,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::WaitersTest,
-        params_class: Params::WaitersTestOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::WaitersTestOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -897,8 +851,8 @@ module WhiteLabel
         stub_responses: options.fetch(:stub_responses, @stub_responses),
         client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
         stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
-        params_class: Params::Struct____PaginatorsTestWithBadNamesOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
       )
       apply_middleware(stack, options[:middleware])
 

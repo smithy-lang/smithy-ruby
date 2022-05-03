@@ -43,8 +43,8 @@ public class ModuleGenerator {
         writer.write("require 'hearth'\n");
 
         String[] requires = {
-                "builders", "client", "errors", "parsers", "types",
-                "params", "validators", "stubs", "waiters", "paginators"
+                "builders", "client", "config", "errors", "paginators", "params",
+                "parsers", "stubs", "types", "validators", "waiters"
         };
 
         for (String require : requires) {

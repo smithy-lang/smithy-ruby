@@ -15,13 +15,11 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -31,7 +29,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StreamingTrait;
-import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -41,7 +38,6 @@ import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGen
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
-import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
 public class ClientGenerator {
@@ -50,8 +46,6 @@ public class ClientGenerator {
 
     private final GenerationContext context;
     private final RubySettings settings;
-    private final MiddlewareBuilder middlewareBuilder;
-    private final List<ClientConfig> clientConfig;
     private final SymbolProvider symbolProvider;
     private final Model model;
     private final RubyCodeWriter writer;
@@ -63,41 +57,10 @@ public class ClientGenerator {
         this.model = context.model();
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
-
-        // Register all middleware
-        this.middlewareBuilder = new MiddlewareBuilder();
-        middlewareBuilder.addDefaultMiddleware(context);
-
-        context.integrations().forEach((integration) -> {
-            integration.modifyClientMiddleware(middlewareBuilder, context);
-        });
-
-        context.protocolGenerator().ifPresent((g) -> g.modifyClientMiddleware(middlewareBuilder, context));
-
-        // get all config
-        Set<ClientConfig> unorderedConfig = ClientConfig.defaultConfig();
-        unorderedConfig
-                .addAll(context.applicationTransport().getClientConfig());
-        unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));
-        unorderedConfig.addAll(context.integrations()
-                .stream()
-                .map((i) -> i.getAdditionalClientConfig(context))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList())
-        );
-        context.protocolGenerator().ifPresent((g) -> unorderedConfig.addAll(g.getAdditionalClientConfig(context)));
-
-        clientConfig = unorderedConfig.stream()
-                .sorted(Comparator.comparing(ClientConfig::getName))
-                .collect(Collectors.toList());
-
-        LOGGER.fine("Client config: "
-                + clientConfig.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
-
         this.symbolProvider = new RubySymbolProvider(model, context.settings(), "Client", false);
     }
 
-    public void render() {
+    public void render(MiddlewareBuilder middlewareBuilder) {
         FileManifest fileManifest = context.fileManifest();
 
         writer.writePreamble();
@@ -128,9 +91,9 @@ public class ClientGenerator {
                 .write("\n@middleware = Hearth::MiddlewareBuilder.new")
                 .openBlock("\ndef self.middleware")
                 .write("@middleware")
-                .closeBlock("end")
+                .closeBlock("end\n")
                 .call(() -> renderInitializeMethod())
-                .call(() -> renderOperations())
+                .call(() -> renderOperations(middlewareBuilder))
                 .write("\nprivate")
                 .call(() -> renderApplyMiddlewareMethod())
                 .call(() -> renderOutputStreamMethod())
@@ -159,11 +122,11 @@ public class ClientGenerator {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String typesFile =
+        String fileName =
                 settings.getGemName() + "/sig/" + settings.getGemName()
                         + "/client.rbs";
-        fileManifest.writeFile(typesFile, rbsWriter.toString());
-        LOGGER.fine("Wrote client rbs to " + typesFile);
+        fileManifest.writeFile(fileName, rbsWriter.toString());
+        LOGGER.fine("Wrote client rbs to " + fileName);
     }
 
     private Object removeRbExtension(String s) {
@@ -176,55 +139,46 @@ public class ClientGenerator {
     private void renderInitializeMethod() {
         writer
                 .call(() -> renderInitializeDocumentation())
-                .openBlock("def initialize(options = {})")
-                .call(() -> {
-                    clientConfig.forEach((cfg) -> {
-                        if (StringUtils.isNotBlank(
-                                cfg.getInitializationCustomization())) {
-                            writer.writeWithNoFormatting(
-                                    cfg.getInitializationCustomization());
-                        } else if (StringUtils.isEmpty(cfg.getDefaultValue())) {
-                            writer.write("@$1L = options[:$1L]", cfg.getName());
-                        } else {
-                            writer.write("@$1L = options.fetch(:$1L, $2L)",
-                                    cfg.getName(), cfg.getDefaultValue());
-                        }
-                    });
-                })
-                .write("")
-                .call(() -> {
-                    clientConfig.forEach((cfg) -> {
-                        if (StringUtils.isNotBlank(
-                                cfg.getPostInitializeCustomization())) {
-                            writer.writeWithNoFormatting(
-                                    cfg.getPostInitializeCustomization());
-                        }
-                    });
-                })
+                .openBlock("def initialize(config = $L::Config.build, options = {})", settings.getModule())
+                .write("@config = config")
+//                .call(() -> {
+//                    clientConfig.forEach((cfg) -> {
+//                        if (StringUtils.isNotBlank(
+//                                cfg.getInitializationCustomization())) {
+//                            writer.writeWithNoFormatting(
+//                                    cfg.getInitializationCustomization());
+//                        } else if (StringUtils.isEmpty(cfg.getDefaultValue())) {
+//                            writer.write("@$1L = options[:$1L]", cfg.getName());
+//                        } else {
+//                            writer.write("@$1L = options.fetch(:$1L, $2L)",
+//                                    cfg.getName(), cfg.getDefaultValue());
+//                        }
+//                    });
+//                })
+//                .write("")
+//                .call(() -> {
+//                    clientConfig.forEach((cfg) -> {
+//                        if (StringUtils.isNotBlank(
+//                                cfg.getPostInitializeCustomization())) {
+//                            writer.writeWithNoFormatting(
+//                                    cfg.getPostInitializeCustomization());
+//                        }
+//                    });
+//                })
+                .write("@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
+                .write("@stubs = Hearth::Stubbing::Stubs.new")
                 .write("@retry_quota = Hearth::Retry::RetryQuota.new")
                 .write("@client_rate_limiter = Hearth::Retry::ClientRateLimiter.new")
                 .closeBlock("end");
     }
 
     private void renderInitializeDocumentation() {
-        writer.write("");
         writer.writeDocs((w) -> {
-            w.write("@overload initialize(options)");
-            w.write("@param [Hash] options");
-            clientConfig.forEach((cfg) -> {
-                if (StringUtils.isNotBlank(cfg.getDocumentation())) {
-                    w.write("@option options [$L] :$L $L", cfg.getType(),
-                            cfg.getName(),
-                            StringUtils.isNotBlank(cfg.getDefaultValue())
-                                    ? "(" + cfg.getDefaultValue() + ")" : "");
-                    w.write("  $L", cfg.getDocumentation());
-                    w.write("");
-                }
-            });
+            w.write("@param [Config] config");
         });
     }
 
-    private void renderOperations() {
+    private void renderOperations(MiddlewareBuilder middlewareBuilder) {
         // Generate each operation for the service. We do this here instead of via the operation visitor method to
         // limit it to the operations bound to the service.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
@@ -233,7 +187,7 @@ public class ClientGenerator {
         containedOperations.stream()
                 .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(o -> renderOperation(o));
+                .forEach(o -> renderOperation(o, middlewareBuilder));
     }
 
     private void renderRbsOperations() {
@@ -247,7 +201,7 @@ public class ClientGenerator {
                 .forEach(o -> renderRbsOperation(o));
     }
 
-    private void renderOperation(OperationShape operation) {
+    private void renderOperation(OperationShape operation, MiddlewareBuilder middlewareBuilder) {
         Symbol symbol = symbolProvider.toSymbol(operation);
         ShapeId inputShapeId = operation.getInputShape();
         Shape inputShape = model.expectShape(inputShapeId);

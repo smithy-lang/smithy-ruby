@@ -15,9 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -41,28 +39,6 @@ public class ClientConfig {
         this.defaultValue = builder.defaultValue;
         this.initializationCustomization = builder.initializationCustomization;
         this.postInitializeCustomization = builder.postInitializeCustomization;
-    }
-
-    /**
-     * Get a set of default configs. These should be added to every generated client.
-     *
-     * @return Set of default configs to be applied to generated clients
-     */
-    public static Set<ClientConfig> defaultConfig() {
-        Set<ClientConfig> configs = new HashSet();
-
-        ClientConfig middleware = (new Builder())
-                .name("middleware")
-                .type("MiddlewareBuilder")
-                .documentation(
-                        "Additional Middleware to be applied for every operation")
-                .initializationCustomization(
-                        "@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
-                .build();
-
-        configs.add(middleware);
-
-        return configs;
     }
 
     /**
