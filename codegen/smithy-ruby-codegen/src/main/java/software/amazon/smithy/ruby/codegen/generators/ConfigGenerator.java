@@ -20,12 +20,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -103,7 +103,7 @@ public class ConfigGenerator {
         writer.writeDocs((w) -> {
             clientConfigList.forEach((clientConfig) -> {
                 String member = RubyFormatter.asSymbol(symbolProvider.toMemberName(clientConfig.getName()));
-                String defaultValue = clientConfig.getDefaultValue();
+                String defaultValue = clientConfig.getDocumentationDefaultValue();
                 if (defaultValue == null) {
                     defaultValue = "";
                 }

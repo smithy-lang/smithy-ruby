@@ -17,9 +17,7 @@ package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -43,16 +41,16 @@ public class ConfigProviderChain {
     }
 
     public Optional<String> getDocumentationDefault() {
-        return providers.stream().map( (p) -> p.getDocumentationDefault() )
-                .filter( (d) -> d.isPresent() )
-                .map( (d) -> d.get() )
+        return providers.stream().map((p) -> p.getDocumentationDefault())
+                .filter((d) -> d.isPresent())
+                .map((d) -> d.get())
                 .findFirst();
     }
 
     public static class Builder implements SmithyBuilder<ConfigProviderChain> {
-        private List<ConfigProvider> providers;
+        private final List<ConfigProvider> providers;
 
-        private Builder() {
+        public Builder() {
             providers = new ArrayList<>();
         }
 
@@ -62,12 +60,12 @@ public class ConfigProviderChain {
         }
 
         public Builder staticProvider(String value) {
-            this.providers.add( new StaticConfigProvider(value) );
+            this.providers.add(new StaticConfigProvider(value));
             return this;
         }
 
         public Builder dynamicProvider(String rubyDefaultBlock) {
-            this.providers.add( new DynamicConfigProvider(rubyDefaultBlock) );
+            this.providers.add(new DynamicConfigProvider(rubyDefaultBlock));
             return this;
         }
 

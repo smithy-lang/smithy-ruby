@@ -17,7 +17,7 @@ package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Optional;
 
-public class StaticConfigProvider implements ConfigProvider{
+public class StaticConfigProvider implements ConfigProvider {
     private final String value;
 
     public StaticConfigProvider(String value) {

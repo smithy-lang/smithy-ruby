@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -84,8 +85,10 @@ public final class ApplicationTransport {
                 .name("endpoint")
                 .type("String")
                 .documentation("Endpoint of the service")
-                .initializationCustomization("@endpoint = options.fetch(:endpoint, options[:stub_responses] "
-                        + "? 'http://localhost' : nil)")
+                .defaults(new ConfigProviderChain.Builder()
+                        .dynamicProvider(" { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil) } ")
+                        .build()
+                )
                 .build();
 
         ClientFragment request = (new ClientFragment.Builder())
@@ -107,9 +110,11 @@ public final class ApplicationTransport {
         ClientConfig logger = (new ClientConfig.Builder())
                 .name("logger")
                 .type("Logger")
-                .defaultValue("$stdout")
-                .initializationCustomization(
-                        "@logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))")
+                .documentationDefaultValue("$stdout")
+                .defaults(new ConfigProviderChain.Builder()
+                        .dynamicProvider(" { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .build()
+                )
                 .documentation("Logger to use for output")
                 .build();
 

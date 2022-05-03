@@ -78,6 +78,7 @@ public class ClientConfig {
     /**
      * Allows post initialization customization.
      * Added after all config is initialized.
+     *
      * @return post initialize customization
      */
     public String getPostInitializeCustomization() {
@@ -88,6 +89,7 @@ public class ClientConfig {
     /**
      * If true, this config can be overridden
      * per operation.
+     *
      * @return allowOperationOverride
      */
     public boolean allowOperationOverride() {
@@ -149,6 +151,11 @@ public class ClientConfig {
 
         public Builder allowOperationOverride() {
             this.allowOperationOverride = true;
+            return this;
+        }
+
+        public Builder defaultValue(String value) {
+            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
             return this;
         }
 
