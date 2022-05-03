@@ -4,10 +4,10 @@ module Hearth
   module Config
     # @api private
     class Resolver
-      def initialize(klass, providers = nil)
+      def initialize(klass, defaults = nil)
         @values = {}
         @config_class = klass
-        @config_providers = providers
+        @defaults = defaults
       end
 
       def build(options = {})
@@ -27,8 +27,12 @@ module Hearth
       private
 
       def resolve_value(k)
-        @config_providers[k]&.each do |provider|
-          value = provider.call(self)
+        @defaults[k]&.each do |default|
+          value = if default.respond_to?(:call)
+                    default.call(self)
+                  else
+                    default
+                  end
           return value unless value.nil?
         end
         nil

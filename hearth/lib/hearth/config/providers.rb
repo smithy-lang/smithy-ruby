@@ -85,10 +85,8 @@ module Service
 
     def self.defaults
       defaults = {}
-      # static value, as a block
-      defaults[:log_level] = [
-        proc { |_cfg| :info }
-      ]
+      # static value, as a single value
+      defaults[:log_level] = [ :info ]
       # dynamic value, as a block
       defaults[:logger] = [
         proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }
@@ -96,7 +94,7 @@ module Service
       # env value, fallback to static value
       defaults[:stub_responses] = [
         Hearth::Config::EnvProvider.new('STUB_RESPONSES', type: 'Boolean'),
-        proc { |_cfg| false }
+        false
       ]
       # ... more defaults
       defaults
