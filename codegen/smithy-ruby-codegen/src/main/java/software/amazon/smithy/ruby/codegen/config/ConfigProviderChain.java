@@ -69,6 +69,11 @@ public class ConfigProviderChain {
             return this;
         }
 
+        public Builder envProvider(String environmentKey, String type) {
+            this.providers.add(new EnvConfigProvider(environmentKey, type));
+            return this;
+        }
+
         @Override
         public ConfigProviderChain build() {
             return new ConfigProviderChain(this);
