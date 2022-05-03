@@ -133,11 +133,15 @@ public class ConfigGenerator {
     private void renderDefaultsMethod(List<ClientConfig> clientConfigList) {
         writer
                 .openBlock("def self.defaults")
-                .write("defaults = {}")
-                .write("# TODO");
-        clientConfigList.stream().forEach(clientConfig -> {
-            // TODO
+                .write("defaults = {}");
+
+        clientConfigList.forEach(clientConfig -> {
+            String defaults = clientConfig.getDefaults().getProviders().stream()
+                    .map((p) -> p.render())
+                    .collect(Collectors.joining(","));
+            writer.write("defaults[:$L] = [$L]", clientConfig.getName(), defaults);
         });
+
         writer
                 .write("defaults")
                 .closeBlock("end");

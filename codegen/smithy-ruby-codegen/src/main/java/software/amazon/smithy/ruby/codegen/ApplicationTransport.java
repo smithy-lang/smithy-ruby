@@ -86,14 +86,14 @@ public final class ApplicationTransport {
                 .type("String")
                 .documentation("Endpoint of the service")
                 .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider(" { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil) } ")
+                        .dynamicProvider("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ")
                         .build()
                 )
                 .build();
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: @config.endpoint)")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
@@ -105,6 +105,7 @@ public final class ApplicationTransport {
                 .type("Boolean")
                 .defaultValue("false")
                 .documentation("Enable debug wire trace on http requests.")
+                .allowOperationOverride()
                 .build();
 
         ClientConfig logger = (new ClientConfig.Builder())
@@ -112,7 +113,7 @@ public final class ApplicationTransport {
                 .type("Logger")
                 .documentationDefaultValue("$stdout")
                 .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider(" { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
                         .build()
                 )
                 .documentation("Logger to use for output")
@@ -129,8 +130,8 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: "
-                        + "options.fetch(:http_wire_trace, @http_wire_trace))")
+                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: "
+                        + "options.fetch(:http_wire_trace, @config.http_wire_trace))")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {

@@ -30,7 +30,6 @@ public class ClientConfig {
     private final String documentation;
     private final String documentationDefaultValue;
     private final ConfigProviderChain defaults;
-    private final String postInitializeCustomization;
     private final boolean allowOperationOverride;
 
     public ClientConfig(Builder builder) {
@@ -39,7 +38,6 @@ public class ClientConfig {
         this.documentation = builder.documentation;
         this.documentationDefaultValue = builder.documentationDefaultValue;
         this.defaults = builder.defaults;
-        this.postInitializeCustomization = builder.postInitializeCustomization;
         this.allowOperationOverride = builder.allowOperationOverride;
     }
 
@@ -75,15 +73,8 @@ public class ClientConfig {
         return defaults.getDocumentationDefault().orElse("");
     }
 
-    /**
-     * Allows post initialization customization.
-     * Added after all config is initialized.
-     *
-     * @return post initialize customization
-     */
-    public String getPostInitializeCustomization() {
-
-        return postInitializeCustomization;
+    public ConfigProviderChain getDefaults() {
+        return defaults;
     }
 
     /**
@@ -120,7 +111,6 @@ public class ClientConfig {
         private String documentation;
         private String documentationDefaultValue;
         private ConfigProviderChain defaults;
-        private String postInitializeCustomization;
         private boolean allowOperationOverride = false;
 
         public Builder name(String name) {
@@ -140,12 +130,6 @@ public class ClientConfig {
 
         public Builder documentationDefaultValue(String defaultValue) {
             this.documentationDefaultValue = defaultValue;
-            return this;
-        }
-
-        public Builder postInitializeCustomization(
-                String postInitializeCustomization) {
-            this.postInitializeCustomization = postInitializeCustomization;
             return this;
         }
 

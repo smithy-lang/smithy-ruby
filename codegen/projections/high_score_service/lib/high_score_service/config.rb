@@ -76,7 +76,16 @@ module HighScoreService
 
     def self.defaults
       defaults = {}
-      # TODO
+      defaults[:adaptive_retry_wait_to_fill] = [true]
+      defaults[:disable_host_prefix] = [false]
+      defaults[:endpoint] = [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ]
+      defaults[:http_wire_trace] = [false]
+      defaults[:log_level] = [:info]
+      defaults[:logger] = [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ]
+      defaults[:max_attempts] = [3]
+      defaults[:retry_mode] = ['standard']
+      defaults[:stub_responses] = [false]
+      defaults[:validate_input] = [true]
       defaults
     end
   end
