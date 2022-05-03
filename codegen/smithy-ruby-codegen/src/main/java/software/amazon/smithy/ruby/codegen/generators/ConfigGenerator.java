@@ -85,7 +85,18 @@ public class ConfigGenerator {
     }
 
     public void renderRbs() {
+        FileManifest fileManifest = context.fileManifest();
 
+        rbsWriter
+                .openBlock("module $L", settings.getModule())
+                .write("Config: untyped")
+                .closeBlock("end");
+
+        String fileName =
+                settings.getGemName() + "/sig/" + settings.getGemName()
+                        + "/config.rbs";
+        fileManifest.writeFile(fileName, rbsWriter.toString());
+        LOGGER.fine("Wrote config rbs to " + fileName);
     }
 
     private void renderBuildMethod(List<ClientConfig> clientConfigList) {

@@ -40,6 +40,8 @@ module WhiteLabel
     end
 
     # @param [Config] config
+    #   An instance of {Config}
+    #
     def initialize(config = WhiteLabel::Config.build, options = {})
       @config = config
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])

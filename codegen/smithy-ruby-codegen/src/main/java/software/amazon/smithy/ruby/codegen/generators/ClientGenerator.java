@@ -116,7 +116,7 @@ public class ClientGenerator {
                 .openBlock("class Client")
                 .write("include Hearth::ClientStubs\n")
                 .write("def self.middleware: () -> untyped\n")
-                .write("def initialize: (?::Hash[untyped, untyped] options) -> void")
+                .write("def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void")
                 .call(() -> renderRbsOperations())
                 .write("")
                 .closeBlock("end")
@@ -138,7 +138,7 @@ public class ClientGenerator {
 
     private void renderInitializeMethod() {
         writer
-                .call(() -> renderInitializeDocumentation())
+                .writeYardParam("Config", "config", "An instance of {Config}")
                 .openBlock("def initialize(config = $L::Config.build, options = {})", settings.getModule())
                 .write("@config = config")
                 .write("@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
@@ -146,12 +146,6 @@ public class ClientGenerator {
                 .write("@retry_quota = Hearth::Retry::RetryQuota.new")
                 .write("@client_rate_limiter = Hearth::Retry::ClientRateLimiter.new")
                 .closeBlock("end");
-    }
-
-    private void renderInitializeDocumentation() {
-        writer.writeDocs((w) -> {
-            w.write("@param [Config] config");
-        });
     }
 
     private void renderOperations(MiddlewareBuilder middlewareBuilder) {

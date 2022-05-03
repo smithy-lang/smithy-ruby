@@ -1,0 +1,3 @@
+module WhiteLabel
+  Config: untyped
+end
