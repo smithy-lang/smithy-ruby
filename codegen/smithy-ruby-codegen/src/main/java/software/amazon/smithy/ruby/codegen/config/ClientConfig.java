@@ -87,6 +87,14 @@ public class ClientConfig {
         return allowOperationOverride;
     }
 
+    public String renderGetConfigValue() {
+        String getConfigValue = "@config." + getName();
+        if (allowOperationOverride()) {
+            getConfigValue = "options.fetch(:" + getName() + ", @config." + getName() + ")";
+        }
+        return getConfigValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

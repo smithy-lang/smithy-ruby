@@ -169,11 +169,7 @@ public final class Middleware {
 
                     config.stream()
                             .forEach((c) -> {
-                                String getConfigValue = writer.format("@config.$L", c.getName());
-                                if (c.allowOperationOverride()) {
-                                    getConfigValue = writer.format("options.fetch(:$1L, @config.$1L)", c.getName());
-                                }
-                                params.put(c.getName(), getConfigValue);
+                                params.put(c.getName(), c.renderGetConfigValue());
                             });
 
                     if (params.isEmpty()) {

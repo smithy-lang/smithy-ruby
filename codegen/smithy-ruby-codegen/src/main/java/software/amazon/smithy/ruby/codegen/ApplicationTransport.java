@@ -94,7 +94,7 @@ public final class ApplicationTransport {
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: " + endpoint.renderGetConfigValue() + ")")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
@@ -131,8 +131,9 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: "
-                        + "options.fetch(:http_wire_trace, @config.http_wire_trace))")
+                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: " + logger.renderGetConfigValue()
+                        + ", http_wire_trace: "
+                        + wireTrace.renderGetConfigValue() + ")")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
