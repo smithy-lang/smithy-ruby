@@ -22,6 +22,8 @@ module WhiteLabel
         config = Config.build(**config_keys)
 
         config_keys.each do |key, value|
+          puts "key is #{key} and value is #{value}"
+          puts "config key is #{config.send(key)}"
           expect(config.send(key)).to eq(value)
         end
 
