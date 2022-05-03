@@ -85,6 +85,7 @@ public final class ApplicationTransport {
                 .name("endpoint")
                 .type("String")
                 .documentation("Endpoint of the service")
+                .allowOperationOverride()
                 .defaults(new ConfigProviderChain.Builder()
                         .dynamicProvider("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ")
                         .build()
@@ -93,7 +94,7 @@ public final class ApplicationTransport {
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: @config.endpoint)")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint))")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())

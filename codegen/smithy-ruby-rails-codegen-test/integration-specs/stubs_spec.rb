@@ -5,7 +5,7 @@ require 'rails_json'
 module RailsJson
   module Stubs
     describe KitchenSinkOperation do
-      let(:client) { RailsJson::Client.new(stub_responses: true, endpoint: 'https://example.com')}
+      let(:client) { RailsJson::Client.new(Config.build(stub_responses: true, endpoint: 'https://example.com')) }
 
       it 'returns a default with recursive values' do
         resp = client.kitchen_sink_operation()
