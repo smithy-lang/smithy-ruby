@@ -5,12 +5,12 @@ module Hearth
     # Parses and validates values provided in ENV
     # @api private
     class EnvProvider
-      def initialize(env_key, type:)
+      def initialize(env_key, type: 'String')
         @env_key = env_key
         @type = type
       end
 
-      def call(_provider)
+      def call(_cfg)
         return unless (value = ENV.fetch(@env_key))
 
         case @type
