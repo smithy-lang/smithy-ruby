@@ -25,7 +25,7 @@ module RailsJson
     # @param [Config] config
     #   An instance of {Config}
     #
-    def initialize(config = RailsJson::Config.build, options = {})
+    def initialize(config = RailsJson::Config.new, options = {})
       @config = config
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new

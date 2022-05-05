@@ -36,7 +36,7 @@ module HighScoreService
   #      * `adaptive` - An experimental retry mode that includes all the functionality of `standard` mode along with automatic client side throttling.  This is a provisional mode that may change behavior in the future.
   #
   #   @option args [Boolean] :stub_responses (false)
-  #     Enable response stubbing. See documentation for { stub_responses}
+  #     Enable response stubbing for testing. See {Hearth::ClientStubs stub_responses}.
   #
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
@@ -89,16 +89,16 @@ module HighScoreService
     private
 
     def validate!
-      Hearth::Validator.validate!(adaptive_retry_wait_to_fill, TrueClass, FalseClass, context: 'options[adaptive_retry_wait_to_fill]')
-      Hearth::Validator.validate!(disable_host_prefix, TrueClass, FalseClass, context: 'options[disable_host_prefix]')
-      Hearth::Validator.validate!(endpoint, String, context: 'options[endpoint]')
-      Hearth::Validator.validate!(http_wire_trace, TrueClass, FalseClass, context: 'options[http_wire_trace]')
-      Hearth::Validator.validate!(log_level, Symbol, context: 'options[log_level]')
-      Hearth::Validator.validate!(logger, Logger, context: 'options[logger]')
-      Hearth::Validator.validate!(max_attempts, Integer, context: 'options[max_attempts]')
-      Hearth::Validator.validate!(retry_mode, String, context: 'options[retry_mode]')
-      Hearth::Validator.validate!(stub_responses, TrueClass, FalseClass, context: 'options[stub_responses]')
-      Hearth::Validator.validate!(validate_input, TrueClass, FalseClass, context: 'options[validate_input]')
+      Hearth::Validator.validate!(adaptive_retry_wait_to_fill, TrueClass, FalseClass, context: 'options[:adaptive_retry_wait_to_fill]')
+      Hearth::Validator.validate!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
+      Hearth::Validator.validate!(endpoint, String, context: 'options[:endpoint]')
+      Hearth::Validator.validate!(http_wire_trace, TrueClass, FalseClass, context: 'options[:http_wire_trace]')
+      Hearth::Validator.validate!(log_level, Symbol, context: 'options[:log_level]')
+      Hearth::Validator.validate!(logger, Logger, context: 'options[:logger]')
+      Hearth::Validator.validate!(max_attempts, Integer, context: 'options[:max_attempts]')
+      Hearth::Validator.validate!(retry_mode, String, context: 'options[:retry_mode]')
+      Hearth::Validator.validate!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
+      Hearth::Validator.validate!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
     end
 
     def self.defaults

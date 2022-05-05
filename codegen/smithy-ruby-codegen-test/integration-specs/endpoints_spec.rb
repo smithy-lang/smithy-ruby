@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
-    let(:config) { Config.build(stub_responses: true) }
+    let(:config) { Config.new(stub_responses: true) }
     let(:client) { Client.new(config) }
 
     describe '#endpoint_operation' do

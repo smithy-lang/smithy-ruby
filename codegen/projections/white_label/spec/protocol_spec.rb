@@ -15,7 +15,7 @@ require 'hearth/query/param_matcher'
 module WhiteLabel
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
-    let(:config) { Config.build(stub_responses: true, endpoint: endpoint) }
+    let(:config) { Config.new(stub_responses: true, endpoint: endpoint) }
     let(:client) { Client.new(config) }
 
     describe '#operation____paginators_test_with_bad_names' do

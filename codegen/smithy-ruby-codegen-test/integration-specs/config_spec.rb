@@ -19,7 +19,7 @@ module WhiteLabel
           validate_input: false
         }
 
-        config = Config.build(**config_keys)
+        config = Config.new(**config_keys)
 
         config_keys.each do |key, value|
           expect(config.send(key)).to eq(value)
@@ -30,8 +30,8 @@ module WhiteLabel
       end
 
       it 'validates types' do
-        expect { Config.build(logger: 'foo') }
-          .to raise_error(ArgumentError, /config\[:logger\]/)
+        expect { Config.new(logger: 'foo') }
+          .to raise_error(ArgumentError, /options\[:logger\]/)
       end
     end
   end

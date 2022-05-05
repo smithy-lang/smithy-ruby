@@ -139,7 +139,7 @@ public class ClientGenerator {
     private void renderInitializeMethod() {
         writer
                 .writeYardParam("Config", "config", "An instance of {Config}")
-                .openBlock("def initialize(config = $L::Config.build, options = {})", settings.getModule())
+                .openBlock("def initialize(config = $L::Config.new, options = {})", settings.getModule())
                 .write("@config = config")
                 .write("@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
                 .write("@stubs = Hearth::Stubbing::Stubs.new")

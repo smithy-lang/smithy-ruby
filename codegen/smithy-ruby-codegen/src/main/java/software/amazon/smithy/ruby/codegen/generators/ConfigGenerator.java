@@ -126,7 +126,7 @@ public class ConfigGenerator {
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";
             }
-            writer.write("Hearth::Validator.validate!($1L, $2L, context: 'options[$1L]')", member, type);
+            writer.write("Hearth::Validator.validate!($1L, $2L, context: 'options[:$1L]')", member, type);
             // TODO - add constraints here
         });
         writer.closeBlock("end");

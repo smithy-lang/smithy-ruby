@@ -170,7 +170,7 @@ public class MiddlewareBuilder {
                 .type("Boolean")
                 .defaultValue("false")
                 .documentation(
-                        "Enable response stubbing. See documentation for {#stub_responses}")
+                        "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
                 .build();
 
         ClientConfig maxAttempts = (new ClientConfig.Builder())
