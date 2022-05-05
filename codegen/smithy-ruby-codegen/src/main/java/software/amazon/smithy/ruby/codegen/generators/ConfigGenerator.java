@@ -101,7 +101,7 @@ public class ConfigGenerator {
     }
 
     private void renderConfigDocumentation(List<ClientConfig> clientConfigList) {
-        writer.writeYardMethod("initialize(*args)", () -> {
+        writer.writeYardMethod("initialize(*options)", () -> {
             clientConfigList.forEach((clientConfig) -> {
                 String member = RubyFormatter.asSymbol(symbolProvider.toMemberName(clientConfig.getName()));
                 String returnType = clientConfig.getType();

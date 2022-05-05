@@ -3,8 +3,8 @@
 module Hearth
   # A module mixed into Config structs that resolves default value providers.
   module Configuration
-    def initialize(*args)
-      Hearth::Config::Resolver.resolve(self, *args, self.class.defaults)
+    def initialize(*options)
+      Hearth::Config::Resolver.resolve(self, *options, self.class.defaults)
       validate!
     end
   end
