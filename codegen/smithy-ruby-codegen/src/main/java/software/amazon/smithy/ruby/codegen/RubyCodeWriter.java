@@ -68,6 +68,23 @@ public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
      */
 
     /**
+     * Writes a yard method tag.
+     *
+     * @param methodSignature method signature to document
+     * @param task            lines written by the task are properly indented
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter writeYardMethod(String methodSignature, Runnable task) {
+        writeDocs((w) -> {
+            w.write("@!method $L", methodSignature);
+            w.pushFilteredState(s -> s.replace("#", " "));
+            task.run();
+            w.popState();
+        });
+        return this;
+    }
+
+    /**
      * Writes a yard attribute tag.
      *
      * @param attribute name of the attribute

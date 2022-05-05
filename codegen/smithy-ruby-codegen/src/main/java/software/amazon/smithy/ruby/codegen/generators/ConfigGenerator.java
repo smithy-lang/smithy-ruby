@@ -64,12 +64,13 @@ public class ConfigGenerator {
         writer
                 .writePreamble()
                 .openBlock("module $L", settings.getModule())
+                .call(() -> renderConfigDocumentation(clientConfigList))
                 .openBlock("Config = ::Struct.new(")
                 .write(membersBlock)
                 .write("keyword_init: true")
                 .closeBlock(") do")
                 .indent()
-                .call(() -> renderBuildMethod(clientConfigList))
+                .write("include Hearth::Configuration")
                 .write("\nprivate\n")
                 .call(() -> renderValidateMethod(clientConfigList))
                 .write("")
@@ -99,44 +100,34 @@ public class ConfigGenerator {
         LOGGER.fine("Wrote config rbs to " + fileName);
     }
 
-    private void renderBuildMethod(List<ClientConfig> clientConfigList) {
-        writer
-                .call(() -> renderBuildMethodDocumentation(clientConfigList))
-                .openBlock("def self.build(options = {})")
-                .write("config = Hearth::Config::Resolver.new($L::Config, defaults).build(options)",
-                        settings.getModule())
-                .write("validate!(config)")
-                .write("config")
-                .closeBlock("end");
-    }
-
-    private void renderBuildMethodDocumentation(List<ClientConfig> clientConfigList) {
-        writer.writeDocs((w) -> {
+    private void renderConfigDocumentation(List<ClientConfig> clientConfigList) {
+        writer.writeYardMethod("initialize(*args)", () -> {
             clientConfigList.forEach((clientConfig) -> {
                 String member = RubyFormatter.asSymbol(symbolProvider.toMemberName(clientConfig.getName()));
+                String returnType = clientConfig.getType();
                 String defaultValue = clientConfig.getDocumentationDefaultValue();
-                if (defaultValue == null) {
-                    defaultValue = "";
-                }
                 String documentation = clientConfig.getDocumentation();
-                if (documentation == null) {
-                    documentation = "";
-                }
-
-                w.writeYardOption("options", clientConfig.getType(), member, defaultValue, documentation);
+                writer.writeYardOption("args", returnType, member, defaultValue, documentation);
+            });
+        });
+        clientConfigList.forEach((clientConfig) -> {
+            String member = symbolProvider.toMemberName(clientConfig.getName());
+            writer.writeYardAttribute(member, () -> {
+                writer.writeYardReturn(clientConfig.getType(), "");
             });
         });
     }
 
     private void renderValidateMethod(List<ClientConfig> clientConfigList) {
-        writer.openBlock("def self.validate!(config)");
+        writer.openBlock("def validate!");
         clientConfigList.stream().forEach(clientConfig -> {
-            String member = RubyFormatter.asSymbol(symbolProvider.toMemberName(clientConfig.getName()));
+            String member = symbolProvider.toMemberName(clientConfig.getName());
             String type = clientConfig.getType();
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";
             }
-            writer.write("Hearth::Validator.validate!(config[$1L], $2L, context: 'config[$1L]')", member, type);
+            writer.write("Hearth::Validator.validate!($1L, $2L, context: 'options[$1L]')", member, type);
+            // TODO - add constraints here
         });
         writer.closeBlock("end");
     }
@@ -144,17 +135,18 @@ public class ConfigGenerator {
     private void renderDefaultsMethod(List<ClientConfig> clientConfigList) {
         writer
                 .openBlock("def self.defaults")
-                .write("defaults = {}");
+                .openBlock("@defaults ||= {");
 
         clientConfigList.forEach(clientConfig -> {
             String defaults = clientConfig.getDefaults().getProviders().stream()
                     .map((p) -> p.render())
                     .collect(Collectors.joining(","));
-            writer.write("defaults[:$L] = [$L]", clientConfig.getName(), defaults);
+            writer.write("$L: [$L],", clientConfig.getName(), defaults);
         });
 
         writer
-                .write("defaults")
+                .unwrite(",\n")
+                .closeBlock("\n}.freeze")
                 .closeBlock("end");
     }
 }

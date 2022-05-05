@@ -50,7 +50,7 @@ public class ClientConfig {
     }
 
     /**
-     * @return The Ruby type of the config (eg String, Number, ect).
+     * @return The Ruby type of the config (eg String, Integer, Boolean, ect).
      */
     public String getType() {
         return type;
@@ -60,7 +60,10 @@ public class ClientConfig {
      * @return Documentation string to be added to the initialize method.
      */
     public String getDocumentation() {
-        return documentation;
+        if (documentation != null) {
+            return documentation;
+        }
+        return "";
     }
 
     /**
