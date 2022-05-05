@@ -6,7 +6,6 @@ module Hearth
     def initialize(*args)
       Hearth::Config::Resolver.resolve(self, *args, self.class.defaults)
       validate!
-      self
     end
   end
 end

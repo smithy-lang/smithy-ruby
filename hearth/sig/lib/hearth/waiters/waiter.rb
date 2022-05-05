@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hearth
   module Waiters
     class WaiterFailed < StandardError
