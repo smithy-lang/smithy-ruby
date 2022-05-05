@@ -13,11 +13,9 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen;
+package software.amazon.smithy.ruby.codegen.config;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -30,39 +28,17 @@ public class ClientConfig {
     private final String name;
     private final String type;
     private final String documentation;
-    private final String defaultValue;
-    private final String initializationCustomization;
-    private final String postInitializeCustomization;
+    private final String documentationDefaultValue;
+    private final ConfigProviderChain defaults;
+    private final boolean allowOperationOverride;
 
     public ClientConfig(Builder builder) {
         this.name = builder.name;
         this.type = builder.type;
         this.documentation = builder.documentation;
-        this.defaultValue = builder.defaultValue;
-        this.initializationCustomization = builder.initializationCustomization;
-        this.postInitializeCustomization = builder.postInitializeCustomization;
-    }
-
-    /**
-     * Get a set of default configs. These should be added to every generated client.
-     *
-     * @return Set of default configs to be applied to generated clients
-     */
-    public static Set<ClientConfig> defaultConfig() {
-        Set<ClientConfig> configs = new HashSet();
-
-        ClientConfig middleware = (new Builder())
-                .name("middleware")
-                .type("MiddlewareBuilder")
-                .documentation(
-                        "Additional Middleware to be applied for every operation")
-                .initializationCustomization(
-                        "@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
-                .build();
-
-        configs.add(middleware);
-
-        return configs;
+        this.documentationDefaultValue = builder.documentationDefaultValue;
+        this.defaults = builder.defaults;
+        this.allowOperationOverride = builder.allowOperationOverride;
     }
 
     /**
@@ -74,7 +50,7 @@ public class ClientConfig {
     }
 
     /**
-     * @return The Ruby type of the config (eg String, Number, ect).
+     * @return The Ruby type of the config (eg String, Integer, Boolean, ect).
      */
     public String getType() {
         return type;
@@ -84,32 +60,42 @@ public class ClientConfig {
      * @return Documentation string to be added to the initialize method.
      */
     public String getDocumentation() {
-        return documentation;
+        if (documentation != null) {
+            return documentation;
+        }
+        return "";
     }
 
     /**
-     * @return Ruby code (as a String) that is used to set the default value.
+     * @return Documented default value.
      */
-    public String getDefaultValue() {
-        return defaultValue;
+    public String getDocumentationDefaultValue() {
+        if (documentationDefaultValue != null) {
+            return documentationDefaultValue;
+        }
+        return defaults.getDocumentationDefault().orElse("");
+    }
+
+    public ConfigProviderChain getDefaults() {
+        return defaults;
     }
 
     /**
-     * Allows customization of initialization.
-     * If set, this is used instead of the defaultValue.
-     * @return initialization customization
+     * If true, this config can be overridden
+     * per operation.
+     *
+     * @return allowOperationOverride
      */
-    public String getInitializationCustomization() {
-        return initializationCustomization;
+    public boolean allowOperationOverride() {
+        return allowOperationOverride;
     }
 
-    /**
-     * Allows post initialization customization.
-     * Added after all config is initialized.
-     * @return post initialize customization
-     */
-    public String getPostInitializeCustomization() {
-        return postInitializeCustomization;
+    public String renderGetConfigValue() {
+        String getConfigValue = "@config." + getName();
+        if (allowOperationOverride()) {
+            getConfigValue = "options.fetch(:" + getName() + ", @config." + getName() + ")";
+        }
+        return getConfigValue;
     }
 
     @Override
@@ -134,9 +120,9 @@ public class ClientConfig {
         private String name;
         private String type;
         private String documentation;
-        private String defaultValue;
-        private String initializationCustomization;
-        private String postInitializeCustomization;
+        private String documentationDefaultValue;
+        private ConfigProviderChain defaults;
+        private boolean allowOperationOverride = false;
 
         public Builder name(String name) {
             this.name = name;
@@ -153,23 +139,25 @@ public class ClientConfig {
             return this;
         }
 
-        public Builder defaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
+        public Builder documentationDefaultValue(String defaultValue) {
+            this.documentationDefaultValue = defaultValue;
             return this;
         }
 
-        public Builder initializationCustomization(
-                String initializationCustomization) {
-            this.initializationCustomization = initializationCustomization;
+        public Builder allowOperationOverride() {
+            this.allowOperationOverride = true;
             return this;
         }
 
-        public Builder postInitializeCustomization(
-                String postInitializeCustomization) {
-            this.postInitializeCustomization = postInitializeCustomization;
+        public Builder defaultValue(String value) {
+            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
             return this;
         }
 
+        public Builder defaults(ConfigProviderChain defaults) {
+            this.defaults = defaults;
+            return this;
+        }
 
         @Override
         public ClientConfig build() {

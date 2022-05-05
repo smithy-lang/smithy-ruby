@@ -33,10 +33,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
-import software.amazon.smithy.ruby.codegen.ClientConfig;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -170,14 +170,7 @@ public class MiddlewareBuilder {
                 .type("Boolean")
                 .defaultValue("false")
                 .documentation(
-                        "Enable response stubbing. See documentation for {#stub_responses}")
-                .build();
-
-        ClientConfig stubs = (new ClientConfig.Builder())
-                .name("stubs")
-                .type("Hearth::Stubbing::Stubs")
-                .initializationCustomization(
-                        "@stubs = Hearth::Stubbing::Stubs.new")
+                        "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
                 .build();
 
         ClientConfig maxAttempts = (new ClientConfig.Builder())
@@ -186,7 +179,7 @@ public class MiddlewareBuilder {
                 .defaultValue("3")
                 .documentation(
                         "An integer representing the maximum number of attempts that will be made for a "
-                        + "single request, including the initial attempt."
+                                + "single request, including the initial attempt."
                 )
                 .build();
 
@@ -196,12 +189,16 @@ public class MiddlewareBuilder {
                 .defaultValue("'standard'")
                 .documentation(
                         "Specifies which retry algorithm to use. Values are: \n"
-                        + " * `standard` - A standardized set of retry rules across the AWS SDKs. This includes support"
-                        + " for retry quotas, which limit the number of unsuccessful retries a client can make.\n"
-                        + " * `adaptive` - An experimental retry mode that includes all the"
-                        + " functionality of `standard` mode along with automatic client side"
-                        + " throttling.  This is a provisional mode that may change behavior"
-                        + " in the future."
+                                +
+                                " * `standard` - A standardized set of retry rules across the AWS SDKs. "
+                                +
+                                "This includes support"
+                                +
+                                " for retry quotas, which limit the number of unsuccessful retries a client can make.\n"
+                                + " * `adaptive` - An experimental retry mode that includes all the"
+                                + " functionality of `standard` mode along with automatic client side"
+                                + " throttling.  This is a provisional mode that may change behavior"
+                                + " in the future."
                 )
                 .build();
 
@@ -210,9 +207,9 @@ public class MiddlewareBuilder {
                 .type("Boolean")
                 .defaultValue("true")
                 .documentation(
-                       "Used only in `adaptive` retry mode. When true, the request will sleep until there is"
-                       + " sufficient client side capacity to retry the request. When false, the request will"
-                       + " raise a `CapacityNotAvailableError` and will not retry instead of sleeping."
+                        "Used only in `adaptive` retry mode. When true, the request will sleep until there is"
+                                + " sufficient client side capacity to retry the request. When false, the request will"
+                                + " raise a `CapacityNotAvailableError` and will not retry instead of sleeping."
                 )
                 .build();
 
@@ -232,6 +229,7 @@ public class MiddlewareBuilder {
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client",
                         transport.getTransportClient().render(context))
+                .addParam("stubs", "@stubs")
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     Shape outputShape = ctx.model().expectShape(operation.getOutputShape());
@@ -240,7 +238,6 @@ public class MiddlewareBuilder {
                     return params;
                 })
                 .addConfig(stubResponses)
-                .addConfig(stubs)
                 .build();
 
         register(validate);

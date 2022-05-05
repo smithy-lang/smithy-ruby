@@ -103,10 +103,10 @@ module Hearth
     #   on a client that has not enabled response stubbing via
     #   `:stub_responses => true`.
     def stub_responses(operation_name, *stubs)
-      if @stub_responses
+      if @config.stub_responses
         @stubs.add_stubs(operation_name, stubs.flatten)
       else
-        msg = 'Stubbing is not enabled. Enable stubbing in the constructor '\
+        msg = 'Stubbing is not enabled. Enable stubbing in Config '\
               'with `stub_responses: true`'
         raise ArgumentError, msg
       end

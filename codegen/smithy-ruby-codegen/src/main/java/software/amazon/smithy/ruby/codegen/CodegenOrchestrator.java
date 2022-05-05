@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,9 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
+import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
@@ -42,7 +45,7 @@ import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
-import software.amazon.smithy.utils.CodeWriter;
+import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -167,15 +170,19 @@ public class CodegenOrchestrator {
     }
 
     public void execute() {
-
         // Integration hook - processFinalizedModel
         context.integrations().forEach(
                 (integration) -> integration.processFinalizedModel(context));
 
+        generateModule();
+        generateGemSpec();
+        generateYardOpts();
+
         generateTypes();
         generateParams();
         generateValidators();
-        generateProtocolTests();
+
+        generateConfigAndClient();
 
         if (context.protocolGenerator().isPresent()) {
             ProtocolGenerator protocolGenerator =
@@ -187,52 +194,14 @@ public class CodegenOrchestrator {
             protocolGenerator.generateStubs(context);
         }
 
-        generateClient();
         generateWaiters();
         generatePaginators();
 
-        generateModule();
-        generateGemSpec();
-        generateYardOpts();
+        generateProtocolTests();
 
+        // Integration hook - customize
         context.integrations().forEach(
                 (integration) -> integration.customize(context));
-    }
-
-    private void generateTypes() {
-        TypesGenerator typesGenerator = new TypesGenerator(context);
-        typesGenerator.render();
-        typesGenerator.renderRbs();
-        LOGGER.info("generated types");
-    }
-
-    private void generateParams() {
-        ParamsGenerator paramsGenerator = new ParamsGenerator(context);
-        paramsGenerator.render();
-        LOGGER.info("generated params");
-    }
-
-    private void generateValidators() {
-        ValidatorsGenerator validatorsGenerator =
-                new ValidatorsGenerator(context);
-        validatorsGenerator.render();
-        LOGGER.info("generated validators");
-    }
-
-    private void generateProtocolTests() {
-        if (context.applicationTransport().isHttpTransport()) {
-            HttpProtocolTestGenerator testGenerator =
-                    new HttpProtocolTestGenerator(context);
-            testGenerator.render();
-            LOGGER.info("generated protocol tests");
-        }
-    }
-
-    private void generateClient() {
-        ClientGenerator clientGenerator = new ClientGenerator(context);
-        clientGenerator.render();
-        clientGenerator.renderRbs();
-        LOGGER.info("generated client");
     }
 
     private void generateModule() {
@@ -264,12 +233,74 @@ public class CodegenOrchestrator {
         Optional<TitleTrait> title = context.service().getTrait(TitleTrait.class);
         if (title.isPresent()) {
             FileManifest fileManifest = context.fileManifest();
-            CodeWriter writer = new CodeWriter();
+            RubyCodeWriter writer = new RubyCodeWriter();
             writer.write("--title \"$L\"", title.get().getValue());
             writer.write("--hide-api private");
             String fileName = context.settings().getGemName() + "/.yardopts";
             fileManifest.writeFile(fileName, writer.toString());
         }
+    }
+
+    private void generateTypes() {
+        TypesGenerator typesGenerator = new TypesGenerator(context);
+        typesGenerator.render();
+        typesGenerator.renderRbs();
+        LOGGER.info("generated types");
+    }
+
+    private void generateParams() {
+        ParamsGenerator paramsGenerator = new ParamsGenerator(context);
+        paramsGenerator.render();
+        LOGGER.info("generated params");
+    }
+
+    private void generateValidators() {
+        ValidatorsGenerator validatorsGenerator =
+                new ValidatorsGenerator(context);
+        validatorsGenerator.render();
+        LOGGER.info("generated validators");
+    }
+
+    private void generateConfigAndClient() {
+        // Register all middleware
+        MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder();
+        middlewareBuilder.addDefaultMiddleware(context);
+
+        context.integrations().forEach((integration) -> {
+            integration.modifyClientMiddleware(middlewareBuilder, context);
+        });
+
+        context.protocolGenerator().ifPresent((g) -> g.modifyClientMiddleware(middlewareBuilder, context));
+
+        // get all config
+        Set<ClientConfig> unorderedConfig = new HashSet();
+        unorderedConfig
+                .addAll(context.applicationTransport().getClientConfig());
+        unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));
+        unorderedConfig.addAll(context.integrations()
+                .stream()
+                .map((i) -> i.getAdditionalClientConfig(context))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList())
+        );
+        context.protocolGenerator().ifPresent((g) -> unorderedConfig.addAll(g.getAdditionalClientConfig(context)));
+
+        List<ClientConfig> clientConfigList = unorderedConfig.stream()
+                .sorted(Comparator.comparing(ClientConfig::getName))
+                .collect(Collectors.toList());
+
+        LOGGER.fine("Client config: "
+                + clientConfigList.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
+
+        ConfigGenerator configGenerator = new ConfigGenerator(context);
+        configGenerator.render(clientConfigList);
+        configGenerator.renderRbs();
+        LOGGER.info("generated config");
+
+        ClientGenerator clientGenerator = new ClientGenerator(context);
+        clientGenerator.render(middlewareBuilder);
+        clientGenerator.renderRbs();
+        LOGGER.info("generated client");
     }
 
     private void generateWaiters() {
@@ -284,5 +315,14 @@ public class CodegenOrchestrator {
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
         LOGGER.info("generated paginators");
+    }
+
+    private void generateProtocolTests() {
+        if (context.applicationTransport().isHttpTransport()) {
+            HttpProtocolTestGenerator testGenerator =
+                    new HttpProtocolTestGenerator(context);
+            testGenerator.render();
+            LOGGER.info("generated protocol tests");
+        }
     }
 }

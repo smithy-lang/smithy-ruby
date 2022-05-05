@@ -1,20 +1,25 @@
 # frozen_string_literal: true
 
 module Hearth
-  class TestClient
-    include ClientStubs
+  module Test
+    Config = Struct.new(:stub_responses, keyword_init: true)
 
-    def initialize(stub_responses: false)
-      @stub_responses = stub_responses
-      @stubs = Hearth::Stubbing::Stubs.new
+    class Client
+      include ClientStubs
+
+      def initialize(config = Config.new)
+        @config = config
+        @stubs = Hearth::Stubbing::Stubs.new
+      end
+
+      # for testing
+      attr_reader :stubs
     end
-
-    # for testing
-    attr_reader :stubs
   end
 
   describe ClientStubs do
-    subject { TestClient.new(stub_responses: stub_responses) }
+    let(:config) { Test::Config.new(stub_responses: stub_responses) }
+    subject { Test::Client.new(config) }
 
     describe '#stub_responses' do
       context 'stub_responses is true' do

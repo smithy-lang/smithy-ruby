@@ -21,57 +21,13 @@ module Weather
       @middleware
     end
 
-    # @overload initialize(options)
-    # @param [Hash] options
-    # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
-    #   Used only in `adaptive` retry mode. When true, the request will sleep until there is sufficient client side capacity to retry the request. When false, the request will raise a `CapacityNotAvailableError` and will not retry instead of sleeping.
+    # @param [Config] config
+    #   An instance of {Config}
     #
-    # @option options [Boolean] :disable_host_prefix (false)
-    #   When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.
-    #
-    # @option options [string] :endpoint
-    #   Endpoint of the service
-    #
-    # @option options [bool] :http_wire_trace (false)
-    #   Enable debug wire trace on http requests.
-    #
-    # @option options [symbol] :log_level (:info)
-    #   Default log level to use
-    #
-    # @option options [Logger] :logger (stdout)
-    #   Logger to use for output
-    #
-    # @option options [Integer] :max_attempts (3)
-    #   An integer representing the maximum number of attempts that will be made for a single request, including the initial attempt.
-    #
-    # @option options [MiddlewareBuilder] :middleware
-    #   Additional Middleware to be applied for every operation
-    #
-    # @option options [String] :retry_mode ('standard')
-    #   Specifies which retry algorithm to use. Values are:
-    #  * `standard` - A standardized set of retry rules across the AWS SDKs. This includes support for retry quotas, which limit the number of unsuccessful retries a client can make.
-    #  * `adaptive` - An experimental retry mode that includes all the functionality of `standard` mode along with automatic client side throttling.  This is a provisional mode that may change behavior in the future.
-    #
-    # @option options [Boolean] :stub_responses (false)
-    #   Enable response stubbing. See documentation for {#stub_responses}
-    #
-    # @option options [Boolean] :validate_input (true)
-    #   When `true`, request parameters are validated using the modeled shapes.
-    #
-    def initialize(options = {})
-      @adaptive_retry_wait_to_fill = options.fetch(:adaptive_retry_wait_to_fill, true)
-      @disable_host_prefix = options.fetch(:disable_host_prefix, false)
-      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'http://localhost' : nil)
-      @http_wire_trace = options.fetch(:http_wire_trace, false)
-      @log_level = options.fetch(:log_level, :info)
-      @logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))
-      @max_attempts = options.fetch(:max_attempts, 3)
+    def initialize(config = Weather::Config.new, options = {})
+      @config = config
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
-      @retry_mode = options.fetch(:retry_mode, 'standard')
-      @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Hearth::Stubbing::Stubs.new
-      @validate_input = options.fetch(:validate_input, true)
-
       @retry_quota = Hearth::Retry::RetryQuota.new
       @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
     end
@@ -106,40 +62,40 @@ module Weather
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCity
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::GetCity
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::GetCity,
-        params_class: Params::GetCityOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::GetCityOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :get_city
         )
       )
@@ -177,40 +133,40 @@ module Weather
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityImageInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCityImage
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::GetCityImage
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::GetCityImage,
-        params_class: Params::GetCityImageOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::GetCityImageOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :get_city_image
         )
       )
@@ -238,40 +194,40 @@ module Weather
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCurrentTime
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::GetCurrentTime
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::GetCurrentTime,
-        params_class: Params::GetCurrentTimeOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::GetCurrentTimeOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :get_current_time
         )
       )
@@ -302,40 +258,40 @@ module Weather
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetForecast
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::GetForecast
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::GetForecast,
-        params_class: Params::GetForecastOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::GetForecastOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :get_forecast
         )
       )
@@ -385,40 +341,40 @@ module Weather
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ListCities
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
         data_parser: Parsers::ListCities
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::ListCities,
-        params_class: Params::ListCitiesOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::ListCitiesOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :list_cities
         )
       )
@@ -453,40 +409,40 @@ module Weather
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____789BadName
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::NoSuchResource]),
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::Operation____789BadName,
-        params_class: Params::Struct____789BadNameOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::Struct____789BadNameOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :operation____789_bad_name
         )
       )

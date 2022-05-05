@@ -84,12 +84,6 @@ module HighScoreService
     end
 
     class UnprocessableEntityError < ApiClientError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)

@@ -1,0 +1,5 @@
+module Hearth
+  module Configuration
+    def initialize: (*untyped args) -> void
+  end
+end

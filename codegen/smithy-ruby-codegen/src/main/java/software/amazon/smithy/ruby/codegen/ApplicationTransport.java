@@ -28,6 +28,8 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -81,15 +83,18 @@ public final class ApplicationTransport {
 
         ClientConfig endpoint = (new ClientConfig.Builder())
                 .name("endpoint")
-                .type("string")
+                .type("String")
                 .documentation("Endpoint of the service")
-                .initializationCustomization("@endpoint = options.fetch(:endpoint, options[:stub_responses] "
-                        + "? 'http://localhost' : nil)")
+                .allowOperationOverride()
+                .defaults(new ConfigProviderChain.Builder()
+                        .dynamicProvider("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ")
+                        .build()
+                )
                 .build();
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: " + endpoint.renderGetConfigValue() + ")")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
@@ -98,23 +103,26 @@ public final class ApplicationTransport {
 
         ClientConfig wireTrace = (new ClientConfig.Builder())
                 .name("http_wire_trace")
-                .type("bool")
+                .type("Boolean")
                 .defaultValue("false")
                 .documentation("Enable debug wire trace on http requests.")
+                .allowOperationOverride()
                 .build();
 
         ClientConfig logger = (new ClientConfig.Builder())
                 .name("logger")
                 .type("Logger")
-                .defaultValue("stdout")
-                .initializationCustomization(
-                        "@logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))")
+                .documentationDefaultValue("$stdout")
+                .defaults(new ConfigProviderChain.Builder()
+                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .build()
+                )
                 .documentation("Logger to use for output")
                 .build();
 
         ClientConfig logLevel = (new ClientConfig.Builder())
                 .name("log_level")
-                .type("symbol")
+                .type("Symbol")
                 .defaultValue(":info")
                 .documentation("Default log level to use")
                 .build();
@@ -123,8 +131,9 @@ public final class ApplicationTransport {
                 .addConfig(wireTrace)
                 .addConfig(logger)
                 .addConfig(logLevel)
-                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: "
-                        + "options.fetch(:http_wire_trace, @http_wire_trace))")
+                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: " + logger.renderGetConfigValue()
+                        + ", http_wire_trace: "
+                        + wireTrace.renderGetConfigValue() + ")")
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {

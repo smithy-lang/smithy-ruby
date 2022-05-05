@@ -1,0 +1,3 @@
+module HighScoreService
+  Config: untyped
+end

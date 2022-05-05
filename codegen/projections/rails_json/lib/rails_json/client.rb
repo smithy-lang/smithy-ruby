@@ -22,57 +22,13 @@ module RailsJson
       @middleware
     end
 
-    # @overload initialize(options)
-    # @param [Hash] options
-    # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
-    #   Used only in `adaptive` retry mode. When true, the request will sleep until there is sufficient client side capacity to retry the request. When false, the request will raise a `CapacityNotAvailableError` and will not retry instead of sleeping.
+    # @param [Config] config
+    #   An instance of {Config}
     #
-    # @option options [Boolean] :disable_host_prefix (false)
-    #   When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.
-    #
-    # @option options [string] :endpoint
-    #   Endpoint of the service
-    #
-    # @option options [bool] :http_wire_trace (false)
-    #   Enable debug wire trace on http requests.
-    #
-    # @option options [symbol] :log_level (:info)
-    #   Default log level to use
-    #
-    # @option options [Logger] :logger (stdout)
-    #   Logger to use for output
-    #
-    # @option options [Integer] :max_attempts (3)
-    #   An integer representing the maximum number of attempts that will be made for a single request, including the initial attempt.
-    #
-    # @option options [MiddlewareBuilder] :middleware
-    #   Additional Middleware to be applied for every operation
-    #
-    # @option options [String] :retry_mode ('standard')
-    #   Specifies which retry algorithm to use. Values are:
-    #  * `standard` - A standardized set of retry rules across the AWS SDKs. This includes support for retry quotas, which limit the number of unsuccessful retries a client can make.
-    #  * `adaptive` - An experimental retry mode that includes all the functionality of `standard` mode along with automatic client side throttling.  This is a provisional mode that may change behavior in the future.
-    #
-    # @option options [Boolean] :stub_responses (false)
-    #   Enable response stubbing. See documentation for {#stub_responses}
-    #
-    # @option options [Boolean] :validate_input (true)
-    #   When `true`, request parameters are validated using the modeled shapes.
-    #
-    def initialize(options = {})
-      @adaptive_retry_wait_to_fill = options.fetch(:adaptive_retry_wait_to_fill, true)
-      @disable_host_prefix = options.fetch(:disable_host_prefix, false)
-      @endpoint = options.fetch(:endpoint, options[:stub_responses] ? 'http://localhost' : nil)
-      @http_wire_trace = options.fetch(:http_wire_trace, false)
-      @log_level = options.fetch(:log_level, :info)
-      @logger = options.fetch(:logger, Logger.new($stdout, level: @log_level))
-      @max_attempts = options.fetch(:max_attempts, 3)
+    def initialize(config = RailsJson::Config.new, options = {})
+      @config = config
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
-      @retry_mode = options.fetch(:retry_mode, 'standard')
-      @stub_responses = options.fetch(:stub_responses, false)
       @stubs = Hearth::Stubbing::Stubs.new
-      @validate_input = options.fetch(:validate_input, true)
-
       @retry_quota = Hearth::Retry::RetryQuota.new
       @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
     end
@@ -136,19 +92,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::AllQueryStringTypesInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::AllQueryStringTypes
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -156,21 +112,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::AllQueryStringTypes,
-        params_class: Params::AllQueryStringTypesOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::AllQueryStringTypesOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :all_query_string_types
         )
       )
@@ -204,19 +160,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ConstantAndVariableQueryStringInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ConstantAndVariableQueryString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -224,21 +180,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::ConstantAndVariableQueryString,
-        params_class: Params::ConstantAndVariableQueryStringOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::ConstantAndVariableQueryStringOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :constant_and_variable_query_string
         )
       )
@@ -272,19 +228,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ConstantQueryStringInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ConstantQueryString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -292,21 +248,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::ConstantQueryString,
-        params_class: Params::ConstantQueryStringOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::ConstantQueryStringOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :constant_query_string
         )
       )
@@ -347,19 +303,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DocumentTypeInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DocumentType
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -367,21 +323,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::DocumentType,
-        params_class: Params::DocumentTypeOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::DocumentTypeOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :document_type
         )
       )
@@ -420,19 +376,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DocumentTypeAsPayloadInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DocumentTypeAsPayload
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -440,21 +396,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::DocumentTypeAsPayload,
-        params_class: Params::DocumentTypeAsPayloadOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::DocumentTypeAsPayloadOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :document_type_as_payload
         )
       )
@@ -481,19 +437,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EmptyOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EmptyOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -501,21 +457,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::EmptyOperation,
-        params_class: Params::EmptyOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::EmptyOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :empty_operation
         )
       )
@@ -542,23 +498,23 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        disable_host_prefix: @config.disable_host_prefix
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -566,21 +522,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::EndpointOperation,
-        params_class: Params::EndpointOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::EndpointOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :endpoint_operation
         )
       )
@@ -609,23 +565,23 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
-        disable_host_prefix: options.fetch(:disable_host_prefix, @disable_host_prefix)
+        disable_host_prefix: @config.disable_host_prefix
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -633,21 +589,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::EndpointWithHostLabelOperation,
-        params_class: Params::EndpointWithHostLabelOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::EndpointWithHostLabelOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :endpoint_with_host_label_operation
         )
       )
@@ -684,19 +640,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GreetingWithErrorsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GreetingWithErrors
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::InvalidGreeting, Errors::ComplexError]),
@@ -704,21 +660,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::GreetingWithErrors,
-        params_class: Params::GreetingWithErrorsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::GreetingWithErrorsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :greeting_with_errors
         )
       )
@@ -755,19 +711,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadTraitsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPayloadTraits
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -775,21 +731,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpPayloadTraits,
-        params_class: Params::HttpPayloadTraitsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpPayloadTraitsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_payload_traits
         )
       )
@@ -824,19 +780,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadTraitsWithMediaTypeInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPayloadTraitsWithMediaType
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -844,21 +800,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpPayloadTraitsWithMediaType,
-        params_class: Params::HttpPayloadTraitsWithMediaTypeOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpPayloadTraitsWithMediaTypeOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_payload_traits_with_media_type
         )
       )
@@ -898,19 +854,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadWithStructureInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPayloadWithStructure
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -918,21 +874,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpPayloadWithStructure,
-        params_class: Params::HttpPayloadWithStructureOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpPayloadWithStructureOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_payload_with_structure
         )
       )
@@ -971,19 +927,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPrefixHeadersInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPrefixHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -991,21 +947,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpPrefixHeaders,
-        params_class: Params::HttpPrefixHeadersOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpPrefixHeadersOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_prefix_headers
         )
       )
@@ -1036,19 +992,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPrefixHeadersInResponseInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPrefixHeadersInResponse
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1056,21 +1012,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpPrefixHeadersInResponse,
-        params_class: Params::HttpPrefixHeadersInResponseOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpPrefixHeadersInResponseOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_prefix_headers_in_response
         )
       )
@@ -1100,19 +1056,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithFloatLabelsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithFloatLabels
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1120,21 +1076,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpRequestWithFloatLabels,
-        params_class: Params::HttpRequestWithFloatLabelsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpRequestWithFloatLabelsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_request_with_float_labels
         )
       )
@@ -1164,19 +1120,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithGreedyLabelInPathInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithGreedyLabelInPath
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1184,21 +1140,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpRequestWithGreedyLabelInPath,
-        params_class: Params::HttpRequestWithGreedyLabelInPathOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpRequestWithGreedyLabelInPathOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_request_with_greedy_label_in_path
         )
       )
@@ -1243,19 +1199,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithLabelsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithLabels
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1263,21 +1219,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpRequestWithLabels,
-        params_class: Params::HttpRequestWithLabelsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpRequestWithLabelsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_request_with_labels
         )
       )
@@ -1315,19 +1271,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithLabelsAndTimestampFormatInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithLabelsAndTimestampFormat
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1335,21 +1291,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
-        params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_request_with_labels_and_timestamp_format
         )
       )
@@ -1377,19 +1333,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpResponseCodeInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpResponseCode
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1397,21 +1353,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::HttpResponseCode,
-        params_class: Params::HttpResponseCodeOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::HttpResponseCodeOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :http_response_code
         )
       )
@@ -1443,19 +1399,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::IgnoreQueryParamsInResponseInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::IgnoreQueryParamsInResponse
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1463,21 +1419,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::IgnoreQueryParamsInResponse,
-        params_class: Params::IgnoreQueryParamsInResponseOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::IgnoreQueryParamsInResponseOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :ignore_query_params_in_response
         )
       )
@@ -1558,19 +1514,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::InputAndOutputWithHeadersInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::InputAndOutputWithHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1578,21 +1534,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::InputAndOutputWithHeaders,
-        params_class: Params::InputAndOutputWithHeadersOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::InputAndOutputWithHeadersOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :input_and_output_with_headers
         )
       )
@@ -1643,19 +1599,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonEnumsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::JsonEnums
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1663,21 +1619,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::JsonEnums,
-        params_class: Params::JsonEnumsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::JsonEnumsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :json_enums
         )
       )
@@ -1755,19 +1711,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonMapsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::JsonMaps
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1775,21 +1731,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::JsonMaps,
-        params_class: Params::JsonMapsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::JsonMapsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :json_maps
         )
       )
@@ -1841,19 +1797,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonUnionsInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::JsonUnions
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -1861,21 +1817,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::JsonUnions,
-        params_class: Params::JsonUnionsOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::JsonUnionsOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :json_unions
         )
       )
@@ -2010,19 +1966,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSinkOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::ErrorWithMembers, Errors::ErrorWithoutMembers]),
@@ -2030,21 +1986,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::KitchenSinkOperation,
-        params_class: Params::KitchenSinkOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::KitchenSinkOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :kitchen_sink_operation
         )
       )
@@ -2076,19 +2032,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::MediaTypeHeaderInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MediaTypeHeader
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2096,21 +2052,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::MediaTypeHeader,
-        params_class: Params::MediaTypeHeaderOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::MediaTypeHeaderOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :media_type_header
         )
       )
@@ -2142,19 +2098,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NestedAttributesOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NestedAttributesOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2162,21 +2118,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::NestedAttributesOperation,
-        params_class: Params::NestedAttributesOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::NestedAttributesOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :nested_attributes_operation
         )
       )
@@ -2217,19 +2173,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NullAndEmptyHeadersClientInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NullAndEmptyHeadersClient
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2237,21 +2193,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::NullAndEmptyHeadersClient,
-        params_class: Params::NullAndEmptyHeadersClientOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::NullAndEmptyHeadersClientOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :null_and_empty_headers_client
         )
       )
@@ -2291,19 +2247,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NullOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NullOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2311,21 +2267,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::NullOperation,
-        params_class: Params::NullOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::NullOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :null_operation
         )
       )
@@ -2357,19 +2313,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::OmitsNullSerializesEmptyStringInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OmitsNullSerializesEmptyString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2377,21 +2333,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::OmitsNullSerializesEmptyString,
-        params_class: Params::OmitsNullSerializesEmptyStringOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::OmitsNullSerializesEmptyStringOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :omits_null_serializes_empty_string
         )
       )
@@ -2421,19 +2377,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::OperationWithOptionalInputOutputInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OperationWithOptionalInputOutput
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2441,21 +2397,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::OperationWithOptionalInputOutput,
-        params_class: Params::OperationWithOptionalInputOutputOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::OperationWithOptionalInputOutputOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :operation_with_optional_input_output
         )
       )
@@ -2488,19 +2444,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::QueryIdempotencyTokenAutoFillInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::QueryIdempotencyTokenAutoFill
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2508,21 +2464,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::QueryIdempotencyTokenAutoFill,
-        params_class: Params::QueryIdempotencyTokenAutoFillOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::QueryIdempotencyTokenAutoFillOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :query_idempotency_token_auto_fill
         )
       )
@@ -2556,19 +2512,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::QueryParamsAsStringListMapInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::QueryParamsAsStringListMap
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2576,21 +2532,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::QueryParamsAsStringListMap,
-        params_class: Params::QueryParamsAsStringListMapOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::QueryParamsAsStringListMapOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :query_params_as_string_list_map
         )
       )
@@ -2620,18 +2576,18 @@ module RailsJson
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
       )
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2639,21 +2595,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::StreamingOperation,
-        params_class: Params::StreamingOperationOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::StreamingOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :streaming_operation
         )
       )
@@ -2697,19 +2653,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::TimestampFormatHeadersInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::TimestampFormatHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2717,21 +2673,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::TimestampFormatHeaders,
-        params_class: Params::TimestampFormatHeadersOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::TimestampFormatHeadersOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :timestamp_format_headers
         )
       )
@@ -2765,19 +2721,19 @@ module RailsJson
       response_body = StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
-        validate_input: options.fetch(:validate_input, @validate_input)
+        validate_input: @config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____789BadName
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_mode: options.fetch(:retry_mode, @retry_mode),
+        retry_mode: @config.retry_mode,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: options.fetch(:max_attempts, @max_attempts),
+        max_attempts: @config.max_attempts,
         client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: options.fetch(:adaptive_retry_wait_to_fill, @adaptive_retry_wait_to_fill)
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -2785,21 +2741,21 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: options.fetch(:stub_responses, @stub_responses),
-        client: Hearth::HTTP::Client.new(logger: @logger, http_wire_trace: options.fetch(:http_wire_trace, @http_wire_trace)),
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
         stub_class: Stubs::Operation____789BadName,
-        params_class: Params::Struct____789BadNameOutput,
-        stubs: options.fetch(:stubs, @stubs)
+        stubs: @stubs,
+        params_class: Params::Struct____789BadNameOutput
       )
       apply_middleware(stack, options[:middleware])
 
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @endpoint)),
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @logger,
+          logger: @config.logger,
           operation_name: :operation____789_bad_name
         )
       )

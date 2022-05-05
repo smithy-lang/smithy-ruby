@@ -3,8 +3,10 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
+    let(:config) { Config.new(stub_responses:  true) }
+    let(:client) { Client.new(config) }
+
     describe '#streaming_operation' do
-      let(:client) { Client.new(stub_responses:  true) }
       let(:output) { 'test' }
 
       before do
@@ -104,7 +106,6 @@ module WhiteLabel
     end
 
     describe '#streaming_with_length' do
-      let(:client) { Client.new(stub_responses:  true) }
       let(:data) { 'test' }
 
       it 'sets content-length and does not set Transfer-Encoding' do

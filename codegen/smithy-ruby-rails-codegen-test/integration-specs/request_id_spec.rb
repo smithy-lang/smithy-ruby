@@ -5,7 +5,8 @@ require 'rails_json'
 module RailsJson
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
-    let(:client) { Client.new(stub_responses: true, endpoint: endpoint) }
+    let(:config) { Config.new(stub_responses: true, endpoint: endpoint) }
+    let(:client) { Client.new(config) }
 
     context 'success' do
       it 'puts request_id onto output metadata' do
