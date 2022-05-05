@@ -50,6 +50,7 @@ public class ClientGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
+    private boolean hasStreamingOperation;
 
     public ClientGenerator(GenerationContext context) {
         this.context = context;
@@ -58,6 +59,7 @@ public class ClientGenerator {
         this.writer = new RubyCodeWriter();
         this.rbsWriter = new RubyCodeWriter();
         this.symbolProvider = new RubySymbolProvider(model, context.settings(), "Client", false);
+        this.hasStreamingOperation = false;
     }
 
     public void render(MiddlewareBuilder middlewareBuilder) {
@@ -96,7 +98,11 @@ public class ClientGenerator {
                 .call(() -> renderOperations(middlewareBuilder))
                 .write("\nprivate")
                 .call(() -> renderApplyMiddlewareMethod())
-                .call(() -> renderOutputStreamMethod())
+                .call(() -> {
+                    if (hasStreamingOperation) {
+                        renderOutputStreamMethod();
+                    }
+                })
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -190,6 +196,7 @@ public class ClientGenerator {
                 .call(() -> {
                     if (outputShape.members().stream()
                             .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())) {
+                        hasStreamingOperation = true;
                        writer.write("response_body = output_stream(options, &block)");
                     } else {
                         writer.write("response_body = StringIO.new");

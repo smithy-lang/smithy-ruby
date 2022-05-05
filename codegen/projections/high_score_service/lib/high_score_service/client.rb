@@ -412,12 +412,5 @@ module HighScoreService
       @middleware.apply(middleware_stack)
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
     end
-
-    def output_stream(options = {}, &block)
-      return options[:output_stream] if options[:output_stream]
-      return Hearth::BlockIO.new(block) if block
-
-      StringIO.new
-    end
   end
 end
