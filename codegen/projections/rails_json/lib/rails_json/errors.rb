@@ -37,12 +37,6 @@ module RailsJson
     end
 
     class ComplexError < ApiClientError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ComplexError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
@@ -56,12 +50,6 @@ module RailsJson
     end
 
     class ErrorWithMembers < ApiClientError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ErrorWithMembers.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
@@ -75,12 +63,6 @@ module RailsJson
     end
 
     class ErrorWithoutMembers < ApiServerError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ErrorWithoutMembers.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
@@ -94,12 +76,6 @@ module RailsJson
     end
 
     class InvalidGreeting < ApiClientError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::InvalidGreeting.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)

@@ -37,12 +37,6 @@ module WhiteLabel
     end
 
     class ClientError < ApiClientError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ClientError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
@@ -60,12 +54,6 @@ module WhiteLabel
     end
 
     class ServerError < ApiServerError
-      # @param [Hearth::HTTP::Response] http_resp
-      #
-      # @param [String] error_code
-      #
-      # @param [String] message
-      #
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ServerError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)

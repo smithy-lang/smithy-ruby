@@ -209,9 +209,6 @@ public abstract class ErrorsGeneratorBase {
             writer
                     .write("")
                     .openBlock("class $L < $L", errorName, apiErrorType)
-                    .writeYardParam("Hearth::HTTP::Response", "http_resp", "")
-                    .writeYardParam("String", "error_code", "")
-                    .writeYardParam("String", "message", "")
                     .openBlock("def initialize(http_resp:, **kwargs)")
                     .write("@data = Parsers::$L.parse(http_resp)", errorName)
                     .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")

@@ -8,7 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module HighScoreService
-  # @!method initialize(*args)
+  # @!method initialize(*options)
   #   @option args [Boolean] :adaptive_retry_wait_to_fill (true)
   #     Used only in `adaptive` retry mode. When true, the request will sleep until there is sufficient client side capacity to retry the request. When false, the request will raise a `CapacityNotAvailableError` and will not retry instead of sleeping.
   #
