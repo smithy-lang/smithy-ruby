@@ -127,12 +127,12 @@ public class HttpProtocolTestGenerator {
                     .writeDocstring(documentation)
                     .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseMiddleware(testCase))
-                    .write("middleware.remove_send.remove_build")
+                    .write("middleware.remove_send.remove_build.remove_retry")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     .call(() -> {
-                        if (Streaming.isStreaming(model, outputShape)) {
-                            renderStreamingParamReader(outputShape);
-                        }
+//                        if (Streaming.isStreaming(model, outputShape)) {
+//                            renderStreamingParamReader(outputShape);
+//                        }
                     })
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
@@ -161,15 +161,15 @@ public class HttpProtocolTestGenerator {
                     .openBlock("it 'stubs $L'$L do", testCase.getId(),
                             skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubMiddleware(testCase))
-                    .write("middleware.remove_build")
+                    .write("middleware.remove_build.remove_retry")
                     .write("client.stub_responses(:$L, $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, middleware: middleware)", operationName)
                     // Note: This part is not required, but its an additional check on parsers
                     .call(() -> {
-                        if (Streaming.isStreaming(model, outputShape)) {
-                            renderStreamingParamReader(outputShape);
-                        }
+//                        if (Streaming.isStreaming(model, outputShape)) {
+//                            renderStreamingParamReader(outputShape);
+//                        }
                     })
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
@@ -251,7 +251,7 @@ public class HttpProtocolTestGenerator {
                             .writeDocstring(documentation)
                             .openBlock("it '$L' do", testCase.getId())
                             .call(() -> renderResponseMiddleware(testCase))
-                            .write("middleware.remove_send.remove_build")
+                            .write("middleware.remove_send.remove_build.remove_retry")
                             .openBlock("begin")
                             .write("client.$L({}, middleware: middleware)", operationName)
                             .dedent()
@@ -272,7 +272,7 @@ public class HttpProtocolTestGenerator {
     }
 
     private String getRubyHashFromParams(Shape ioShape, ObjectNode params) {
-        return ioShape.accept(new ParamsToHash(model, params, symbolProvider));
+        return ioShape.accept(new ParamsToHash(model, params, symbolProvider, Streaming.isStreaming(model, ioShape)));
     }
 
     private String getRubyHashFromMap(Map<String, String> map) {

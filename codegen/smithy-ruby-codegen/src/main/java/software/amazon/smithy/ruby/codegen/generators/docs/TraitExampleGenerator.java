@@ -25,12 +25,12 @@ import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public class TraitExampleGenerator {
 
-    private final OperationShape operation;
     private final SymbolProvider symbolProvider;
     private final Model model;
     private final RubyCodeWriter writer;
@@ -44,7 +44,6 @@ public class TraitExampleGenerator {
 
     public TraitExampleGenerator(OperationShape operation, SymbolProvider symbolProvider,
                                  Model model, ExamplesTrait.Example example) {
-        this.operation = operation;
         this.symbolProvider = symbolProvider;
         this.model = model;
         this.writer = new RubyCodeWriter();
@@ -53,8 +52,7 @@ public class TraitExampleGenerator {
         this.output = example.getOutput();
         this.error = example.getError();
 
-        this.operationName =
-                RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        this.operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
         this.operationInput = model.expectShape(operation.getInputShape());
         this.operationOutput = model.expectShape(operation.getOutputShape());
     }
@@ -74,7 +72,9 @@ public class TraitExampleGenerator {
         writer
                 .write("")
                 .write("# resp.to_h outputs the following:")
-                .write(operationOutput.accept(new ParamsToHash(model, output, symbolProvider)));
+                .write(operationOutput.accept(
+                        new ParamsToHash(
+                                model, output, symbolProvider, Streaming.isStreaming(model, operationOutput))));
     }
 
     private void generateExampleWithError(ExamplesTrait.ErrorExample errorExample) {
@@ -82,6 +82,7 @@ public class TraitExampleGenerator {
         Shape errorShape = model.expectShape(errorExample.getShapeId());
         writer.openBlock("begin");
         generateExampleInput();
+        ObjectNode content = errorExample.getContent();
 
         writer
                 .dedent()
@@ -92,8 +93,8 @@ public class TraitExampleGenerator {
                 .closeBlock("end")
                 .write("")
                 .write("# e.data.to_h outputs the following:")
-                .write(errorShape
-                        .accept(new ParamsToHash(model, errorExample.getContent(), symbolProvider)));
+                .write(errorShape.accept(
+                        new ParamsToHash(model, content, symbolProvider, Streaming.isStreaming(model, errorShape))));
     }
 
     private void generateExampleInput() {
@@ -105,7 +106,9 @@ public class TraitExampleGenerator {
             }
             writer
                     .writeInline("resp = client.$L(", operationName)
-                    .writeInline(operationInput.accept(new ParamsToHash(model, input, symbolProvider)))
+                    .writeInline(operationInput.accept(
+                            new ParamsToHash(
+                                    model, input, symbolProvider, Streaming.isStreaming(model, operationInput))))
                     .write(")");
         }
     }

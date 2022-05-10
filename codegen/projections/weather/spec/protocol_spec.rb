@@ -33,7 +33,7 @@ module Weather
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.__789_bad_name({}, middleware: middleware)
           rescue Errors::NoSuchResource => e
@@ -90,7 +90,7 @@ module Weather
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.get_city({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             name: "Seattle",
@@ -116,7 +116,7 @@ module Weather
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:get_city, {
             name: "Seattle",
             coordinates: {
@@ -160,7 +160,7 @@ module Weather
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.get_city({}, middleware: middleware)
           rescue Errors::NoSuchResource => e
@@ -189,7 +189,7 @@ module Weather
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.get_city_announcements({}, middleware: middleware)
           rescue Errors::NoSuchResource => e
@@ -218,7 +218,7 @@ module Weather
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.get_city_image({}, middleware: middleware)
           rescue Errors::NoSuchResource => e

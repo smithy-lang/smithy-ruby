@@ -58,12 +58,13 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
     private final Node node;
     private final Model model;
     private final SymbolProvider symbolProvider;
+    private final boolean isStreaming;
 
-    public ParamsToHash(Model model, Node node,
-                        SymbolProvider symbolProvider) {
+    public ParamsToHash(Model model, Node node, SymbolProvider symbolProvider, boolean isStreaming) {
         this.node = node;
         this.model = model;
         this.symbolProvider = symbolProvider;
+        this.isStreaming = isStreaming;
     }
 
     @Override
@@ -86,7 +87,11 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
             return "nil";
         }
         StringNode stringNode = node.expectStringNode();
-        return "'" + stringNode.getValue() + "'";
+        if (isStreaming) {
+            return "StringIO.new('" + stringNode.getValue() + "')";
+        } else {
+            return "'" + stringNode.getValue() + "'";
+        }
     }
 
     @Override
@@ -208,7 +213,7 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
 
         String elements = arrayNode.getElements().stream()
                 .map((element) -> target
-                        .accept(new ParamsToHash(model, element, symbolProvider)))
+                        .accept(new ParamsToHash(model, element, symbolProvider, Streaming.isStreaming(model, target))))
                 .collect(Collectors.joining(",\n"));
 
         return "[\n" + indent(elements) + "\n]";
@@ -224,7 +229,7 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
 
         String elements = arrayNode.getElements().stream()
                 .map((element) -> target
-                        .accept(new ParamsToHash(model, element, symbolProvider)))
+                        .accept(new ParamsToHash(model, element, symbolProvider, Streaming.isStreaming(model, target))))
                 .collect(Collectors.joining(",\n"));
 
         return "[\n" + indent(elements) + "\n]";
@@ -243,7 +248,8 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
                 .map((k) -> "'" + k.toString() + "' => "
                         +
                         target.accept(
-                                new ParamsToHash(model, members.get(k), symbolProvider)))
+                                new ParamsToHash(
+                                        model, members.get(k), symbolProvider, Streaming.isStreaming(model, target))))
                 .collect(Collectors.joining(",\n"));
 
         return "{\n" + indent(memberStr) + "\n}";
@@ -264,7 +270,8 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
                     MemberShape member = shapeMembers.get(k.toString());
                     return symbolProvider.toMemberName(member) + ": "
                             + (model.expectShape(member.getTarget()))
-                            .accept(new ParamsToHash(model, members.get(k), symbolProvider));
+                            .accept(new ParamsToHash(
+                                    model, members.get(k), symbolProvider, Streaming.isStreaming(model, member)));
                 })
                 .collect(Collectors.joining(",\n"));
 
@@ -285,7 +292,8 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
                     MemberShape member = shapeMembers.get(k.toString());
                     return RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member)) + ": "
                             + (model.expectShape(member.getTarget()))
-                            .accept(new ParamsToHash(model, members.get(k), symbolProvider));
+                            .accept(new ParamsToHash(
+                                    model, members.get(k), symbolProvider, Streaming.isStreaming(model, member)));
                 })
                 .collect(Collectors.joining(", "));
         return "{\n" + indent(memberStr) + "\n}";

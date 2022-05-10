@@ -55,7 +55,7 @@ module RailsJson
             response.body = StringIO.new('{"member":{"__123foo":"foo value"}}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.operation____789_bad_name({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             member: {
@@ -73,7 +73,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:operation____789_bad_name, {
             member: {
               member___123foo: "foo value"
@@ -397,7 +397,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             string_value: "string",
@@ -417,7 +417,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             string_value: "string",
@@ -437,7 +437,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             string_value: "string",
@@ -457,7 +457,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             string_value: "string",
@@ -480,7 +480,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             string_value: "string",
@@ -497,7 +497,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: {'foo' => 'bar'}
@@ -515,7 +515,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: 'hello'
@@ -533,7 +533,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: 10
@@ -551,7 +551,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: false
@@ -569,7 +569,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: [true, false]
@@ -638,7 +638,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type_as_payload({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
@@ -654,7 +654,7 @@ module RailsJson
             response.body = StringIO.new('"hello"')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.document_type_as_payload({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             document_value: 'hello'
@@ -670,7 +670,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type_as_payload, {
             document_value: {'foo' => 'bar'}
           })
@@ -686,7 +686,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:document_type_as_payload, {
             document_value: 'hello'
           })
@@ -715,7 +715,7 @@ module RailsJson
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.empty_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -736,7 +736,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.empty_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -756,7 +756,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.empty_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -775,7 +775,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:empty_operation, {
 
           })
@@ -794,7 +794,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:empty_operation, {
 
           })
@@ -814,7 +814,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:empty_operation, {
 
           })
@@ -894,7 +894,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.greeting_with_errors({}, middleware: middleware)
           rescue Errors::InvalidGreeting => e
@@ -921,7 +921,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.greeting_with_errors({}, middleware: middleware)
           rescue Errors::ComplexError => e
@@ -944,7 +944,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           begin
             client.greeting_with_errors({}, middleware: middleware)
           rescue Errors::ComplexError => e
@@ -1009,7 +1009,7 @@ module RailsJson
             response.body = StringIO.new('blobby blob blob')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_payload_traits({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             foo: "Foo",
@@ -1026,7 +1026,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_payload_traits({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             foo: "Foo"
@@ -1042,7 +1042,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_payload_traits, {
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1060,7 +1060,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_payload_traits, {
             foo: "Foo"
           })
@@ -1108,7 +1108,7 @@ module RailsJson
             response.body = StringIO.new('blobby blob blob')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_payload_traits_with_media_type({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             foo: "Foo",
@@ -1125,7 +1125,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_payload_traits_with_media_type, {
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1183,7 +1183,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_payload_with_structure({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             nested: {
@@ -1202,7 +1202,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_payload_with_structure, {
             nested: {
               greeting: "hello",
@@ -1277,7 +1277,7 @@ module RailsJson
             response.headers = Hearth::HTTP::Headers.new({ 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' })
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_prefix_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             foo: "Foo",
@@ -1297,7 +1297,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_prefix_headers, {
             foo: "Foo",
             foo_map: {
@@ -1330,7 +1330,7 @@ module RailsJson
             response.headers = Hearth::HTTP::Headers.new({ 'Hello' => 'Hello', 'X-Foo' => 'Foo' })
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_prefix_headers_in_response({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             prefix_headers: {
@@ -1349,7 +1349,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_prefix_headers_in_response, {
             prefix_headers: {
               'X-Foo' => "Foo",
@@ -1549,7 +1549,7 @@ module RailsJson
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_response_code({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             status: 201
@@ -1566,7 +1566,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.http_response_code({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             status: 201
@@ -1586,7 +1586,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(201)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_response_code, {
             status: 201
           })
@@ -1604,7 +1604,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(201)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:http_response_code, {
             status: 201
           })
@@ -1633,7 +1633,7 @@ module RailsJson
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.ignore_query_params_in_response({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -1650,7 +1650,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.ignore_query_params_in_response({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -1669,7 +1669,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:ignore_query_params_in_response, {
 
           })
@@ -1687,7 +1687,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:ignore_query_params_in_response, {
 
           })
@@ -1815,7 +1815,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.input_and_output_with_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             header_string: "Hello",
@@ -1841,7 +1841,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.input_and_output_with_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             header_string_list: [
@@ -1861,7 +1861,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.input_and_output_with_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             header_byte: 1,
@@ -1887,7 +1887,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.input_and_output_with_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             header_true_bool: true,
@@ -1909,7 +1909,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.input_and_output_with_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             header_enum: "Foo",
@@ -1930,7 +1930,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:input_and_output_with_headers, {
             header_string: "Hello",
             header_string_list: [
@@ -1966,7 +1966,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:input_and_output_with_headers, {
             header_string_list: [
               "b,c",
@@ -1990,7 +1990,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:input_and_output_with_headers, {
             header_byte: 1,
             header_short: 123,
@@ -2026,7 +2026,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:input_and_output_with_headers, {
             header_true_bool: true,
             header_false_bool: false,
@@ -2054,7 +2054,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:input_and_output_with_headers, {
             header_enum: "Foo",
             header_enum_list: [
@@ -2156,7 +2156,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_enums({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
@@ -2186,7 +2186,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_enums, {
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2483,7 +2483,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             dense_struct_map: {
@@ -2527,7 +2527,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             sparse_boolean_map: {
@@ -2567,7 +2567,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             dense_number_map: {
@@ -2599,7 +2599,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             sparse_set_map: {
@@ -2628,7 +2628,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             dense_set_map: {
@@ -2658,7 +2658,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             sparse_set_map: {
@@ -2690,7 +2690,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_maps({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             dense_set_map: {
@@ -2714,7 +2714,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             dense_struct_map: {
               'foo' => {
@@ -2760,7 +2760,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             sparse_boolean_map: {
               'x' => nil
@@ -2798,7 +2798,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             dense_number_map: {
               'x' => 0
@@ -2836,7 +2836,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             sparse_set_map: {
               'x' => [
@@ -2868,7 +2868,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             dense_set_map: {
               'x' => [
@@ -2900,7 +2900,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             sparse_set_map: {
               'x' => [
@@ -2935,7 +2935,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_maps, {
             dense_set_map: {
               'x' => [
@@ -3204,7 +3204,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3226,7 +3226,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3248,7 +3248,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3270,7 +3270,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3292,7 +3292,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3314,7 +3314,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3336,7 +3336,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3364,7 +3364,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3391,7 +3391,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.json_unions({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             contents: {
@@ -3411,7 +3411,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               string_value: "foo"
@@ -3431,7 +3431,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               boolean_value: true
@@ -3451,7 +3451,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               number_value: 1
@@ -3471,7 +3471,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               blob_value: 'foo'
@@ -3491,7 +3491,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               timestamp_value: Time.at(1398796238)
@@ -3511,7 +3511,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               enum_value: "Foo"
@@ -3531,7 +3531,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               list_value: [
@@ -3557,7 +3557,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               map_value: {
@@ -3583,7 +3583,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:json_unions, {
             contents: {
               structure_value: {
@@ -4221,7 +4221,7 @@ module RailsJson
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -4237,7 +4237,7 @@ module RailsJson
             response.body = StringIO.new('{"string":"string-value"}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             string: "string-value"
@@ -4253,7 +4253,7 @@ module RailsJson
             response.body = StringIO.new('{"integer":1234}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             integer: 1234
@@ -4269,7 +4269,7 @@ module RailsJson
             response.body = StringIO.new('{"long":1234567890123456789}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             long: 1234567890123456789
@@ -4285,7 +4285,7 @@ module RailsJson
             response.body = StringIO.new('{"float":1234.5}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             float: 1234.5
@@ -4301,7 +4301,7 @@ module RailsJson
             response.body = StringIO.new('{"double":123456789.12345679}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
@@ -4317,7 +4317,7 @@ module RailsJson
             response.body = StringIO.new('{"boolean":true}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             boolean: true
@@ -4333,7 +4333,7 @@ module RailsJson
             response.body = StringIO.new('{"boolean":false}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             boolean: false
@@ -4349,7 +4349,7 @@ module RailsJson
             response.body = StringIO.new('{"blob":"YmluYXJ5LXZhbHVl"}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             blob: 'binary-value'
@@ -4365,7 +4365,7 @@ module RailsJson
             response.body = StringIO.new('{"timestamp":"2000-01-02T20:34:56Z"}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
@@ -4381,7 +4381,7 @@ module RailsJson
             response.body = StringIO.new('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
@@ -4397,7 +4397,7 @@ module RailsJson
             response.body = StringIO.new('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
@@ -4413,7 +4413,7 @@ module RailsJson
             response.body = StringIO.new('{"list_of_strings":["abc","mno","xyz"]}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             list_of_strings: [
@@ -4433,7 +4433,7 @@ module RailsJson
             response.body = StringIO.new('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
@@ -4456,7 +4456,7 @@ module RailsJson
             response.body = StringIO.new('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             list_of_lists: [
@@ -4483,7 +4483,7 @@ module RailsJson
             response.body = StringIO.new('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             list_of_structs: [
@@ -4506,7 +4506,7 @@ module RailsJson
             response.body = StringIO.new('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             recursive_list: [
@@ -4534,7 +4534,7 @@ module RailsJson
             response.body = StringIO.new('{"map_of_strings":{"size":"large","color":"red"}}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             map_of_strings: {
@@ -4553,7 +4553,7 @@ module RailsJson
             response.body = StringIO.new('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
@@ -4578,7 +4578,7 @@ module RailsJson
             response.body = StringIO.new('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             map_of_maps: {
@@ -4603,7 +4603,7 @@ module RailsJson
             response.body = StringIO.new('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             map_of_structs: {
@@ -4626,7 +4626,7 @@ module RailsJson
             response.body = StringIO.new('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             recursive_map: {
@@ -4654,7 +4654,7 @@ module RailsJson
             response.body = StringIO.new('{}')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -4670,7 +4670,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
 
           })
@@ -4686,7 +4686,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             string: "string-value"
           })
@@ -4702,7 +4702,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             integer: 1234
           })
@@ -4718,7 +4718,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             long: 1234567890123456789
           })
@@ -4734,7 +4734,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             float: 1234.5
           })
@@ -4750,7 +4750,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             double: 1.2345678912345679E8
           })
@@ -4766,7 +4766,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             boolean: true
           })
@@ -4782,7 +4782,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             boolean: false
           })
@@ -4798,7 +4798,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             blob: 'binary-value'
           })
@@ -4814,7 +4814,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             timestamp: Time.at(946845296)
           })
@@ -4830,7 +4830,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             iso8601_timestamp: Time.at(946845296)
           })
@@ -4846,7 +4846,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             httpdate_timestamp: Time.at(946845296)
           })
@@ -4862,7 +4862,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             list_of_strings: [
               "abc",
@@ -4886,7 +4886,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             list_of_maps_of_strings: [
               {
@@ -4916,7 +4916,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             list_of_lists: [
               [
@@ -4954,7 +4954,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             list_of_structs: [
               {
@@ -4984,7 +4984,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             recursive_list: [
               {
@@ -5024,7 +5024,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             map_of_strings: {
               'size' => "large",
@@ -5046,7 +5046,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             map_of_lists_of_strings: {
               'sizes' => [
@@ -5080,7 +5080,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             map_of_maps: {
               'sizes' => {
@@ -5114,7 +5114,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             map_of_structs: {
               'size' => {
@@ -5144,7 +5144,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
             recursive_map: {
               'key-1' => {
@@ -5184,7 +5184,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:kitchen_sink_operation, {
 
           })
@@ -5230,7 +5230,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.media_type_header({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             json: "true"
@@ -5246,7 +5246,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:media_type_header, {
             json: "true"
           })
@@ -5394,7 +5394,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.null_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
 
@@ -5414,7 +5414,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.null_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             sparse_string_map: {
@@ -5436,7 +5436,7 @@ module RailsJson
             }')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.null_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             sparse_string_list: [
@@ -5454,7 +5454,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:null_operation, {
 
           })
@@ -5470,7 +5470,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:null_operation, {
             sparse_string_map: {
               'foo' => nil
@@ -5490,7 +5490,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:null_operation, {
             sparse_string_list: [
               nil
@@ -5720,7 +5720,7 @@ module RailsJson
             response.body = StringIO.new('')
             Hearth::Output.new
           end
-          middleware.remove_send.remove_build
+          middleware.remove_send.remove_build.remove_retry
           output = client.timestamp_format_headers({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
@@ -5742,7 +5742,7 @@ module RailsJson
             response = context.response
             expect(response.status).to eq(200)
           end
-          middleware.remove_build
+          middleware.remove_build.remove_retry
           client.stub_responses(:timestamp_format_headers, {
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
