@@ -99,33 +99,47 @@ def get_high_score(params = {}, options = {})
   # Creates the stack.
   stack = Hearth::MiddlewareStack.new
   input = Params::GetHighScoreInput.build(params)
+  response_body = StringIO.new
+  # This middleware will validate the input.
+  # Takes the validator and the config option as an argument.
+  stack.use(Hearth::Middleware::Validate,
+    validator: Validators::GetHighScoreInput,
+    validate_input: @config.validate_input
+  )
   # This middleware will build a request.
   # Takes a builder object as an argument.
-  stack.use(
-    Hearth::Middleware::Build,
+  stack.use(Hearth::Middleware::Build,
     builder: Builders::GetHighScore
+  )
+  # This middleware will add the Content-Length header.
+  stack.use(Hearth::HTTP::Middleware::ContentLength)
+  # This middleware is responsible for retrying requests.
+  # It takes config options and instance state.
+  stack.use(Hearth::Middleware::Retry,
+    retry_mode: @config.retry_mode,
+    error_inspector_class: Hearth::Retry::ErrorInspector,
+    retry_quota: @retry_quota,
+    max_attempts: @config.max_attempts,
+    client_rate_limiter: @client_rate_limiter,
+    adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
   )
   # This middleware will parse a response.
   # Takes a data parser and error parser as arguments.
-  stack.use(
-    Hearth::Middleware::Parse,
+  stack.use(Hearth::Middleware::Parse,
     error_parser: Hearth::HTTP::ErrorParser.new(
-      error_module: Errors,
-      success_status: 200, errors: [],
-      error_code_fn: Errors.method(:error_code)),
+            error_module: Errors, success_status: 200, errors: []),
     data_parser: Parsers::GetHighScore
   )
+  # This middleware adds a request ID header and context.
+  stack.use(Middleware::RequestId)
   # This middleware sends the request.
   # Takes a protocol specific client and stubbing information as arguments.
-  stack.use(
-    Hearth::Middleware::Send,
-    client: Hearth::HTTP::Client.new(
-      logger: @logger,
-      http_wire_trace: @http_wire_trace
-    ),
-    stub_responses: options.fetch(:stub_responses, @stub_responses),
+  stack.use(Hearth::Middleware::Send,
+    stub_responses: @config.stub_responses,
+    client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
     stub_class: Stubs::GetHighScore,
-    stubs: @stubs
+    stubs: @stubs,
+    params_class: Params::GetHighScoreOutput
   )
   # Merges any dynamic/runtime middleware into the stack
   apply_middleware(stack, options[:middleware])
@@ -137,17 +151,15 @@ def get_high_score(params = {}, options = {})
   resp = stack.run(
     input: input,
     context: Hearth::Context.new(
-      request: Hearth::HTTP::Request.new(
-        url: options.fetch(:endpoint, @endpoint)
-      ),
-      response: Hearth::HTTP::Response.new,
+      request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
+      response: Hearth::HTTP::Response.new(body: response_body),
       params: params,
-      logger: @logger,
+      logger: @config.logger,
       operation_name: :get_high_score
     )
   )
   raise resp.error if resp.error
-  resp.data
+  resp
 end
 ```
 
