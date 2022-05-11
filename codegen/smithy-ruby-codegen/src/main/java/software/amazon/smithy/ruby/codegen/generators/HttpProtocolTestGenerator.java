@@ -26,12 +26,10 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
-import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
@@ -129,11 +127,6 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseMiddleware(testCase))
                     .write("middleware.remove_send.remove_build.remove_retry")
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    .call(() -> {
-//                        if (Streaming.isStreaming(model, outputShape)) {
-//                            renderStreamingParamReader(outputShape);
-//                        }
-                    })
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
@@ -165,12 +158,6 @@ public class HttpProtocolTestGenerator {
                     .write("client.stub_responses(:$L, $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, middleware: middleware)", operationName)
-                    // Note: This part is not required, but its an additional check on parsers
-                    .call(() -> {
-//                        if (Streaming.isStreaming(model, outputShape)) {
-//                            renderStreamingParamReader(outputShape);
-//                        }
-                    })
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
@@ -449,20 +436,5 @@ public class HttpProtocolTestGenerator {
                 .write("response = context.response")
                 .write("expect(response.status).to eq($L)", testCase.getCode())
                 .closeBlock("end");
-    }
-
-    private void renderStreamingParamReader(Shape outputShape) {
-        MemberShape streamingMember = outputShape.members().stream()
-                .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
-                .findFirst().get();
-
-        String memberName = symbolProvider.toMemberName(streamingMember);
-
-        // rewind and read the stream
-        // overwrite the output.data member with the string to allow string compare
-        writer
-                .write("output.data.$L.rewind", memberName)
-                .write("output.data.$1L = output.data.$1L.read", memberName)
-                .write("output.data.$1L = nil if output.data.$1L.empty?", memberName);
     }
 }

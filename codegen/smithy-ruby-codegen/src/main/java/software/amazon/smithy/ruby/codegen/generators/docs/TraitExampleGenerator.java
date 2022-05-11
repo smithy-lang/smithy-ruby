@@ -69,12 +69,8 @@ public class TraitExampleGenerator {
 
     private void generateExample() {
         generateExampleInput();
-        writer
-                .write("")
-                .write("# resp.to_h outputs the following:")
-                .write(operationOutput.accept(
-                        new ParamsToHash(
-                                model, output, symbolProvider, Streaming.isStreaming(model, operationOutput))));
+        writer.write("");
+        generateExampleOutput();
     }
 
     private void generateExampleWithError(ExamplesTrait.ErrorExample errorExample) {
@@ -111,5 +107,13 @@ public class TraitExampleGenerator {
                                     model, input, symbolProvider, Streaming.isStreaming(model, operationInput))))
                     .write(")");
         }
+    }
+
+    private void generateExampleOutput() {
+        writer
+                .write("# resp.to_h outputs the following:")
+                .write(operationOutput.accept(
+                        new ParamsToHash(
+                                model, output, symbolProvider, Streaming.isStreaming(model, operationOutput))));
     }
 }

@@ -48,6 +48,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -212,8 +213,8 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
         Shape target = model.expectShape(shape.getMember().getTarget());
 
         String elements = arrayNode.getElements().stream()
-                .map((element) -> target
-                        .accept(new ParamsToHash(model, element, symbolProvider, Streaming.isStreaming(model, target))))
+                .map((element) -> target.accept(
+                        new ParamsToHash(model, element, symbolProvider, target.hasTrait(StreamingTrait.class))))
                 .collect(Collectors.joining(",\n"));
 
         return "[\n" + indent(elements) + "\n]";
@@ -228,8 +229,8 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
         Shape target = model.expectShape(shape.getMember().getTarget());
 
         String elements = arrayNode.getElements().stream()
-                .map((element) -> target
-                        .accept(new ParamsToHash(model, element, symbolProvider, Streaming.isStreaming(model, target))))
+                .map((element) -> target.accept(
+                        new ParamsToHash(model, element, symbolProvider, target.hasTrait(StreamingTrait.class))))
                 .collect(Collectors.joining(",\n"));
 
         return "[\n" + indent(elements) + "\n]";
@@ -246,10 +247,9 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
 
         String memberStr = members.keySet().stream()
                 .map((k) -> "'" + k.toString() + "' => "
-                        +
-                        target.accept(
+                        + target.accept(
                                 new ParamsToHash(
-                                        model, members.get(k), symbolProvider, Streaming.isStreaming(model, target))))
+                                        model, members.get(k), symbolProvider, target.hasTrait(StreamingTrait.class))))
                 .collect(Collectors.joining(",\n"));
 
         return "{\n" + indent(memberStr) + "\n}";
@@ -271,7 +271,7 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
                     return symbolProvider.toMemberName(member) + ": "
                             + (model.expectShape(member.getTarget()))
                             .accept(new ParamsToHash(
-                                    model, members.get(k), symbolProvider, Streaming.isStreaming(model, member)));
+                                    model, members.get(k), symbolProvider, member.hasTrait(StreamingTrait.class)));
                 })
                 .collect(Collectors.joining(",\n"));
 
@@ -293,7 +293,7 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
                     return RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member)) + ": "
                             + (model.expectShape(member.getTarget()))
                             .accept(new ParamsToHash(
-                                    model, members.get(k), symbolProvider, Streaming.isStreaming(model, member)));
+                                    model, members.get(k), symbolProvider, member.hasTrait(StreamingTrait.class)));
                 })
                 .collect(Collectors.joining(", "));
         return "{\n" + indent(memberStr) + "\n}";
