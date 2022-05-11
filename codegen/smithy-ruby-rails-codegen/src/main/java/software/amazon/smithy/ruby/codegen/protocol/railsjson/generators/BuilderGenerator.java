@@ -339,17 +339,10 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             if (mediaTypeTrait.isPresent()) {
                 mediaType = mediaTypeTrait.get().getValue();
             }
-            writer.write("http_req.headers['Content-Type'] = '$L'", mediaType);
 
-            if (shape.hasTrait(StreamingTrait.class)) {
-                writer
-                        .openBlock("unless $1L.respond_to?(:read) || $1L.respond_to?(:readpartial)", inputGetter)
-                        .write("$1L = StringIO.new($1L)", inputGetter)
-                        .closeBlock("end")
-                        .write("http_req.body = $L", inputGetter);
-            } else {
-                writer.write("http_req.body = StringIO.new($L || '')", inputGetter);
-            }
+            writer
+                    .write("http_req.headers['Content-Type'] = '$L'", mediaType)
+                    .write("http_req.body = StringIO.new($L || '')", inputGetter);
             return null;
         }
 
