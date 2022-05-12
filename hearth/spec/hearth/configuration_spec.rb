@@ -36,7 +36,9 @@ module Hearth
 
       it 'resolves correctly when not passed any options' do
         expect(Hearth::Config::Resolver).to receive(:resolve)
-          .with(an_instance_of(config_class), { }, config_class.defaults)
+          .with(an_instance_of(config_class), {}, config_class.defaults)
+        expect_any_instance_of(config_class).to receive(:validate!)
+          .and_call_original
 
         config_class.new
       end
