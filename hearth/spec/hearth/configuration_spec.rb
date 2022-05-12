@@ -33,6 +33,13 @@ module Hearth
 
         config_class.new(**options)
       end
+
+      it 'resolves correctly when not passed any options' do
+        expect(Hearth::Config::Resolver).to receive(:resolve)
+          .with(an_instance_of(config_class), { }, config_class.defaults)
+
+        config_class.new
+      end
     end
   end
 end
