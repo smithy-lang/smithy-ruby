@@ -18,10 +18,7 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        @builder.build(
-          context.request,
-          input: input
-        )
+        @builder.build(context.request, input: input)
         @app.call(input, context)
       end
     end
