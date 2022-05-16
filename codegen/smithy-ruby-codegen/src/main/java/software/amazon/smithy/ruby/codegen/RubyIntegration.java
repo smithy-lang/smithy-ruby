@@ -22,7 +22,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -30,7 +29,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * generators, renaming shapes, modifying the model, adding custom code, etc.
  */
 @SmithyUnstableApi
-public interface RubyIntegration extends SmithyIntegration<RubySettings, CodeWriter, GenerationContext> {
+public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCodeWriter, GenerationContext> {
 
     /**
      * Should this Integration be included for the given Service.
