@@ -268,10 +268,10 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::InputAndOutputWithHeadersOutput.new
         data.header_string = http_resp.headers['X-String']
-        data.header_byte = http_resp.headers['X-Byte']&.to_i
-        data.header_short = http_resp.headers['X-Short']&.to_i
-        data.header_integer = http_resp.headers['X-Integer']&.to_i
-        data.header_long = http_resp.headers['X-Long']&.to_i
+        data.header_byte = http_resp.headers['X-Byte'].to_i unless http_resp.headers['X-Byte'].nil?
+        data.header_short = http_resp.headers['X-Short'].to_i unless http_resp.headers['X-Short'].nil?
+        data.header_integer = http_resp.headers['X-Integer'].to_i unless http_resp.headers['X-Integer'].nil?
+        data.header_long = http_resp.headers['X-Long'].to_i unless http_resp.headers['X-Long'].nil?
         data.header_float = Hearth::NumberHelper.deserialize(http_resp.headers['X-Float']) unless http_resp.headers['X-Float'].nil?
         data.header_double = Hearth::NumberHelper.deserialize(http_resp.headers['X-Double']) unless http_resp.headers['X-Double'].nil?
         data.header_true_bool = http_resp.headers['X-Boolean1'] == 'true' unless http_resp.headers['X-Boolean1'].nil?
