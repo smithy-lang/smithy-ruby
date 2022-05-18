@@ -26,9 +26,9 @@ module WhiteLabel
         Hearth::Validator.validate!(params, ::Hash, Types::DefaultsTestInput, context: context)
         type = Types::DefaultsTestInput.new
         type.string = params[:string]
-        type.boxed_number = params[:boxed_number]
-        type.default_number = params[:default_number]
-        type.default_bool = params[:default_bool]
+        type.boxed_number = params[:boxed_number] unless params[:boxed_number].nil?
+        type.default_number = params[:default_number] unless params[:default_number].nil?
+        type.default_bool = params[:default_bool] unless params[:default_bool].nil?
         type
       end
     end
@@ -38,9 +38,9 @@ module WhiteLabel
         Hearth::Validator.validate!(params, ::Hash, Types::DefaultsTestOutput, context: context)
         type = Types::DefaultsTestOutput.new
         type.string = params[:string]
-        type.boxed_number = params[:boxed_number]
-        type.default_number = params[:default_number]
-        type.default_bool = params[:default_bool]
+        type.boxed_number = params[:boxed_number] unless params[:boxed_number].nil?
+        type.default_number = params[:default_number] unless params[:default_number].nil?
+        type.default_bool = params[:default_bool] unless params[:default_bool].nil?
         type
       end
     end
@@ -97,7 +97,7 @@ module WhiteLabel
         type.simple_enum = params[:simple_enum]
         type.typed_enum = params[:typed_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
-        type.document = params[:document]
+        type.document = params[:document] unless params[:document].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
@@ -116,7 +116,7 @@ module WhiteLabel
         type.simple_enum = params[:simple_enum]
         type.typed_enum = params[:typed_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
-        type.document = params[:document]
+        type.document = params[:document] unless params[:document].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?

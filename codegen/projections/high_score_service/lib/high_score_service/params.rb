@@ -94,9 +94,9 @@ module HighScoreService
         type = Types::HighScoreAttributes.new
         type.id = params[:id]
         type.game = params[:game]
-        type.score = params[:score]
-        type.created_at = params[:created_at]
-        type.updated_at = params[:updated_at]
+        type.score = params[:score] unless params[:score].nil?
+        type.created_at = params[:created_at] unless params[:created_at].nil?
+        type.updated_at = params[:updated_at] unless params[:updated_at].nil?
         type
       end
     end
@@ -106,7 +106,7 @@ module HighScoreService
         Hearth::Validator.validate!(params, ::Hash, Types::HighScoreParams, context: context)
         type = Types::HighScoreParams.new
         type.game = params[:game]
-        type.score = params[:score]
+        type.score = params[:score] unless params[:score].nil?
         type
       end
     end

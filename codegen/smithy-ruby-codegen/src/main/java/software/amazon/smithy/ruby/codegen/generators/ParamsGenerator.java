@@ -292,7 +292,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write(memberSetter + input);
+            writer.write("$1L$2L unless $2L.nil?", memberSetter, input);
             return null;
         }
 

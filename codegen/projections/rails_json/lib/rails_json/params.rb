@@ -19,18 +19,18 @@ module RailsJson
         type.query_string = params[:query_string]
         type.query_string_list = StringList.build(params[:query_string_list], context: "#{context}[:query_string_list]") unless params[:query_string_list].nil?
         type.query_string_set = StringSet.build(params[:query_string_set], context: "#{context}[:query_string_set]") unless params[:query_string_set].nil?
-        type.query_byte = params[:query_byte]
-        type.query_short = params[:query_short]
-        type.query_integer = params[:query_integer]
+        type.query_byte = params[:query_byte] unless params[:query_byte].nil?
+        type.query_short = params[:query_short] unless params[:query_short].nil?
+        type.query_integer = params[:query_integer] unless params[:query_integer].nil?
         type.query_integer_list = IntegerList.build(params[:query_integer_list], context: "#{context}[:query_integer_list]") unless params[:query_integer_list].nil?
         type.query_integer_set = IntegerSet.build(params[:query_integer_set], context: "#{context}[:query_integer_set]") unless params[:query_integer_set].nil?
-        type.query_long = params[:query_long]
-        type.query_float = params[:query_float]
-        type.query_double = params[:query_double]
+        type.query_long = params[:query_long] unless params[:query_long].nil?
+        type.query_float = params[:query_float] unless params[:query_float].nil?
+        type.query_double = params[:query_double] unless params[:query_double].nil?
         type.query_double_list = DoubleList.build(params[:query_double_list], context: "#{context}[:query_double_list]") unless params[:query_double_list].nil?
-        type.query_boolean = params[:query_boolean]
+        type.query_boolean = params[:query_boolean] unless params[:query_boolean].nil?
         type.query_boolean_list = BooleanList.build(params[:query_boolean_list], context: "#{context}[:query_boolean_list]") unless params[:query_boolean_list].nil?
-        type.query_timestamp = params[:query_timestamp]
+        type.query_timestamp = params[:query_timestamp] unless params[:query_timestamp].nil?
         type.query_timestamp_list = TimestampList.build(params[:query_timestamp_list], context: "#{context}[:query_timestamp_list]") unless params[:query_timestamp_list].nil?
         type.query_enum = params[:query_enum]
         type.query_enum_list = FooEnumList.build(params[:query_enum_list], context: "#{context}[:query_enum_list]") unless params[:query_enum_list].nil?
@@ -52,7 +52,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -117,7 +117,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -128,7 +128,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -171,7 +171,7 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeAsPayloadInput, context: context)
         type = Types::DocumentTypeAsPayloadInput.new
-        type.document_value = params[:document_value]
+        type.document_value = params[:document_value] unless params[:document_value].nil?
         type
       end
     end
@@ -180,7 +180,7 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeAsPayloadOutput, context: context)
         type = Types::DocumentTypeAsPayloadOutput.new
-        type.document_value = params[:document_value]
+        type.document_value = params[:document_value] unless params[:document_value].nil?
         type
       end
     end
@@ -190,7 +190,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeInput, context: context)
         type = Types::DocumentTypeInput.new
         type.string_value = params[:string_value]
-        type.document_value = params[:document_value]
+        type.document_value = params[:document_value] unless params[:document_value].nil?
         type
       end
     end
@@ -200,7 +200,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::DocumentTypeOutput, context: context)
         type = Types::DocumentTypeOutput.new
         type.string_value = params[:string_value]
-        type.document_value = params[:document_value]
+        type.document_value = params[:document_value] unless params[:document_value].nil?
         type
       end
     end
@@ -210,7 +210,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -279,7 +279,7 @@ module RailsJson
         type = Types::ErrorWithMembers.new
         type.code = params[:code]
         type.complex_data = KitchenSink.build(params[:complex_data], context: "#{context}[:complex_data]") unless params[:complex_data].nil?
-        type.integer_field = params[:integer_field]
+        type.integer_field = params[:integer_field] unless params[:integer_field].nil?
         type.list_field = ListOfStrings.build(params[:list_field], context: "#{context}[:list_field]") unless params[:list_field].nil?
         type.map_field = MapOfStrings.build(params[:map_field], context: "#{context}[:map_field]") unless params[:map_field].nil?
         type.message = params[:message]
@@ -360,7 +360,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsInput, context: context)
         type = Types::HttpPayloadTraitsInput.new
         type.foo = params[:foo]
-        type.blob = params[:blob]
+        type.blob = params[:blob] unless params[:blob].nil?
         type
       end
     end
@@ -370,7 +370,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsOutput, context: context)
         type = Types::HttpPayloadTraitsOutput.new
         type.foo = params[:foo]
-        type.blob = params[:blob]
+        type.blob = params[:blob] unless params[:blob].nil?
         type
       end
     end
@@ -380,7 +380,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsWithMediaTypeInput, context: context)
         type = Types::HttpPayloadTraitsWithMediaTypeInput.new
         type.foo = params[:foo]
-        type.blob = params[:blob]
+        type.blob = params[:blob] unless params[:blob].nil?
         type
       end
     end
@@ -390,7 +390,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::HttpPayloadTraitsWithMediaTypeOutput, context: context)
         type = Types::HttpPayloadTraitsWithMediaTypeOutput.new
         type.foo = params[:foo]
-        type.blob = params[:blob]
+        type.blob = params[:blob] unless params[:blob].nil?
         type
       end
     end
@@ -454,8 +454,8 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithFloatLabelsInput, context: context)
         type = Types::HttpRequestWithFloatLabelsInput.new
-        type.float = params[:float]
-        type.double = params[:double]
+        type.float = params[:float] unless params[:float].nil?
+        type.double = params[:double] unless params[:double].nil?
         type
       end
     end
@@ -490,13 +490,13 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithLabelsAndTimestampFormatInput, context: context)
         type = Types::HttpRequestWithLabelsAndTimestampFormatInput.new
-        type.member_epoch_seconds = params[:member_epoch_seconds]
-        type.member_http_date = params[:member_http_date]
-        type.member_date_time = params[:member_date_time]
-        type.default_format = params[:default_format]
-        type.target_epoch_seconds = params[:target_epoch_seconds]
-        type.target_http_date = params[:target_http_date]
-        type.target_date_time = params[:target_date_time]
+        type.member_epoch_seconds = params[:member_epoch_seconds] unless params[:member_epoch_seconds].nil?
+        type.member_http_date = params[:member_http_date] unless params[:member_http_date].nil?
+        type.member_date_time = params[:member_date_time] unless params[:member_date_time].nil?
+        type.default_format = params[:default_format] unless params[:default_format].nil?
+        type.target_epoch_seconds = params[:target_epoch_seconds] unless params[:target_epoch_seconds].nil?
+        type.target_http_date = params[:target_http_date] unless params[:target_http_date].nil?
+        type.target_date_time = params[:target_date_time] unless params[:target_date_time].nil?
         type
       end
     end
@@ -514,13 +514,13 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::HttpRequestWithLabelsInput, context: context)
         type = Types::HttpRequestWithLabelsInput.new
         type.string = params[:string]
-        type.short = params[:short]
-        type.integer = params[:integer]
-        type.long = params[:long]
-        type.float = params[:float]
-        type.double = params[:double]
-        type.boolean = params[:boolean]
-        type.timestamp = params[:timestamp]
+        type.short = params[:short] unless params[:short].nil?
+        type.integer = params[:integer] unless params[:integer].nil?
+        type.long = params[:long] unless params[:long].nil?
+        type.float = params[:float] unless params[:float].nil?
+        type.double = params[:double] unless params[:double].nil?
+        type.boolean = params[:boolean] unless params[:boolean].nil?
+        type.timestamp = params[:timestamp] unless params[:timestamp].nil?
         type
       end
     end
@@ -545,7 +545,7 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::HttpResponseCodeOutput, context: context)
         type = Types::HttpResponseCodeOutput.new
-        type.status = params[:status]
+        type.status = params[:status] unless params[:status].nil?
         type
       end
     end
@@ -572,14 +572,14 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::InputAndOutputWithHeadersInput, context: context)
         type = Types::InputAndOutputWithHeadersInput.new
         type.header_string = params[:header_string]
-        type.header_byte = params[:header_byte]
-        type.header_short = params[:header_short]
-        type.header_integer = params[:header_integer]
-        type.header_long = params[:header_long]
-        type.header_float = params[:header_float]
-        type.header_double = params[:header_double]
-        type.header_true_bool = params[:header_true_bool]
-        type.header_false_bool = params[:header_false_bool]
+        type.header_byte = params[:header_byte] unless params[:header_byte].nil?
+        type.header_short = params[:header_short] unless params[:header_short].nil?
+        type.header_integer = params[:header_integer] unless params[:header_integer].nil?
+        type.header_long = params[:header_long] unless params[:header_long].nil?
+        type.header_float = params[:header_float] unless params[:header_float].nil?
+        type.header_double = params[:header_double] unless params[:header_double].nil?
+        type.header_true_bool = params[:header_true_bool] unless params[:header_true_bool].nil?
+        type.header_false_bool = params[:header_false_bool] unless params[:header_false_bool].nil?
         type.header_string_list = StringList.build(params[:header_string_list], context: "#{context}[:header_string_list]") unless params[:header_string_list].nil?
         type.header_string_set = StringSet.build(params[:header_string_set], context: "#{context}[:header_string_set]") unless params[:header_string_set].nil?
         type.header_integer_list = IntegerList.build(params[:header_integer_list], context: "#{context}[:header_integer_list]") unless params[:header_integer_list].nil?
@@ -596,14 +596,14 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, Types::InputAndOutputWithHeadersOutput, context: context)
         type = Types::InputAndOutputWithHeadersOutput.new
         type.header_string = params[:header_string]
-        type.header_byte = params[:header_byte]
-        type.header_short = params[:header_short]
-        type.header_integer = params[:header_integer]
-        type.header_long = params[:header_long]
-        type.header_float = params[:header_float]
-        type.header_double = params[:header_double]
-        type.header_true_bool = params[:header_true_bool]
-        type.header_false_bool = params[:header_false_bool]
+        type.header_byte = params[:header_byte] unless params[:header_byte].nil?
+        type.header_short = params[:header_short] unless params[:header_short].nil?
+        type.header_integer = params[:header_integer] unless params[:header_integer].nil?
+        type.header_long = params[:header_long] unless params[:header_long].nil?
+        type.header_float = params[:header_float] unless params[:header_float].nil?
+        type.header_double = params[:header_double] unless params[:header_double].nil?
+        type.header_true_bool = params[:header_true_bool] unless params[:header_true_bool].nil?
+        type.header_false_bool = params[:header_false_bool] unless params[:header_false_bool].nil?
         type.header_string_list = StringList.build(params[:header_string_list], context: "#{context}[:header_string_list]") unless params[:header_string_list].nil?
         type.header_string_set = StringSet.build(params[:header_string_set], context: "#{context}[:header_string_set]") unless params[:header_string_set].nil?
         type.header_integer_list = IntegerList.build(params[:header_integer_list], context: "#{context}[:header_integer_list]") unless params[:header_integer_list].nil?
@@ -620,7 +620,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -631,7 +631,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
         data = Set.new
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -732,20 +732,20 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::KitchenSink, context: context)
         type = Types::KitchenSink.new
-        type.blob = params[:blob]
-        type.boolean = params[:boolean]
-        type.double = params[:double]
+        type.blob = params[:blob] unless params[:blob].nil?
+        type.boolean = params[:boolean] unless params[:boolean].nil?
+        type.double = params[:double] unless params[:double].nil?
         type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
-        type.float = params[:float]
-        type.httpdate_timestamp = params[:httpdate_timestamp]
-        type.integer = params[:integer]
-        type.iso8601_timestamp = params[:iso8601_timestamp]
+        type.float = params[:float] unless params[:float].nil?
+        type.httpdate_timestamp = params[:httpdate_timestamp] unless params[:httpdate_timestamp].nil?
+        type.integer = params[:integer] unless params[:integer].nil?
+        type.iso8601_timestamp = params[:iso8601_timestamp] unless params[:iso8601_timestamp].nil?
         type.json_value = params[:json_value]
         type.list_of_lists = ListOfListOfStrings.build(params[:list_of_lists], context: "#{context}[:list_of_lists]") unless params[:list_of_lists].nil?
         type.list_of_maps_of_strings = ListOfMapsOfStrings.build(params[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless params[:list_of_maps_of_strings].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
-        type.long = params[:long]
+        type.long = params[:long] unless params[:long].nil?
         type.map_of_lists_of_strings = MapOfListsOfStrings.build(params[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless params[:map_of_lists_of_strings].nil?
         type.map_of_maps = MapOfMapOfStrings.build(params[:map_of_maps], context: "#{context}[:map_of_maps]") unless params[:map_of_maps].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
@@ -756,8 +756,8 @@ module RailsJson
         type.simple_struct = SimpleStruct.build(params[:simple_struct], context: "#{context}[:simple_struct]") unless params[:simple_struct].nil?
         type.string = params[:string]
         type.struct_with_location_name = StructWithLocationName.build(params[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless params[:struct_with_location_name].nil?
-        type.timestamp = params[:timestamp]
-        type.unix_timestamp = params[:unix_timestamp]
+        type.timestamp = params[:timestamp] unless params[:timestamp].nil?
+        type.unix_timestamp = params[:unix_timestamp] unless params[:unix_timestamp].nil?
         type
       end
     end
@@ -766,20 +766,20 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkOperationInput, context: context)
         type = Types::KitchenSinkOperationInput.new
-        type.blob = params[:blob]
-        type.boolean = params[:boolean]
-        type.double = params[:double]
+        type.blob = params[:blob] unless params[:blob].nil?
+        type.boolean = params[:boolean] unless params[:boolean].nil?
+        type.double = params[:double] unless params[:double].nil?
         type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
-        type.float = params[:float]
-        type.httpdate_timestamp = params[:httpdate_timestamp]
-        type.integer = params[:integer]
-        type.iso8601_timestamp = params[:iso8601_timestamp]
+        type.float = params[:float] unless params[:float].nil?
+        type.httpdate_timestamp = params[:httpdate_timestamp] unless params[:httpdate_timestamp].nil?
+        type.integer = params[:integer] unless params[:integer].nil?
+        type.iso8601_timestamp = params[:iso8601_timestamp] unless params[:iso8601_timestamp].nil?
         type.json_value = params[:json_value]
         type.list_of_lists = ListOfListOfStrings.build(params[:list_of_lists], context: "#{context}[:list_of_lists]") unless params[:list_of_lists].nil?
         type.list_of_maps_of_strings = ListOfMapsOfStrings.build(params[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless params[:list_of_maps_of_strings].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
-        type.long = params[:long]
+        type.long = params[:long] unless params[:long].nil?
         type.map_of_lists_of_strings = MapOfListsOfStrings.build(params[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless params[:map_of_lists_of_strings].nil?
         type.map_of_maps = MapOfMapOfStrings.build(params[:map_of_maps], context: "#{context}[:map_of_maps]") unless params[:map_of_maps].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
@@ -790,8 +790,8 @@ module RailsJson
         type.simple_struct = SimpleStruct.build(params[:simple_struct], context: "#{context}[:simple_struct]") unless params[:simple_struct].nil?
         type.string = params[:string]
         type.struct_with_location_name = StructWithLocationName.build(params[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless params[:struct_with_location_name].nil?
-        type.timestamp = params[:timestamp]
-        type.unix_timestamp = params[:unix_timestamp]
+        type.timestamp = params[:timestamp] unless params[:timestamp].nil?
+        type.unix_timestamp = params[:unix_timestamp] unless params[:unix_timestamp].nil?
         type
       end
     end
@@ -800,20 +800,20 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::KitchenSinkOperationOutput, context: context)
         type = Types::KitchenSinkOperationOutput.new
-        type.blob = params[:blob]
-        type.boolean = params[:boolean]
-        type.double = params[:double]
+        type.blob = params[:blob] unless params[:blob].nil?
+        type.boolean = params[:boolean] unless params[:boolean].nil?
+        type.double = params[:double] unless params[:double].nil?
         type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
-        type.float = params[:float]
-        type.httpdate_timestamp = params[:httpdate_timestamp]
-        type.integer = params[:integer]
-        type.iso8601_timestamp = params[:iso8601_timestamp]
+        type.float = params[:float] unless params[:float].nil?
+        type.httpdate_timestamp = params[:httpdate_timestamp] unless params[:httpdate_timestamp].nil?
+        type.integer = params[:integer] unless params[:integer].nil?
+        type.iso8601_timestamp = params[:iso8601_timestamp] unless params[:iso8601_timestamp].nil?
         type.json_value = params[:json_value]
         type.list_of_lists = ListOfListOfStrings.build(params[:list_of_lists], context: "#{context}[:list_of_lists]") unless params[:list_of_lists].nil?
         type.list_of_maps_of_strings = ListOfMapsOfStrings.build(params[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless params[:list_of_maps_of_strings].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
-        type.long = params[:long]
+        type.long = params[:long] unless params[:long].nil?
         type.map_of_lists_of_strings = MapOfListsOfStrings.build(params[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless params[:map_of_lists_of_strings].nil?
         type.map_of_maps = MapOfMapOfStrings.build(params[:map_of_maps], context: "#{context}[:map_of_maps]") unless params[:map_of_maps].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
@@ -824,8 +824,8 @@ module RailsJson
         type.simple_struct = SimpleStruct.build(params[:simple_struct], context: "#{context}[:simple_struct]") unless params[:simple_struct].nil?
         type.string = params[:string]
         type.struct_with_location_name = StructWithLocationName.build(params[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless params[:struct_with_location_name].nil?
-        type.timestamp = params[:timestamp]
-        type.unix_timestamp = params[:unix_timestamp]
+        type.timestamp = params[:timestamp] unless params[:timestamp].nil?
+        type.unix_timestamp = params[:unix_timestamp] unless params[:unix_timestamp].nil?
         type
       end
     end
@@ -974,19 +974,19 @@ module RailsJson
           )
         when :boolean_value
           Types::MyUnion::BooleanValue.new(
-            params[:boolean_value]
+            params[:boolean_value] unless params[:boolean_value].nil?
           )
         when :number_value
           Types::MyUnion::NumberValue.new(
-            params[:number_value]
+            params[:number_value] unless params[:number_value].nil?
           )
         when :blob_value
           Types::MyUnion::BlobValue.new(
-            params[:blob_value]
+            params[:blob_value] unless params[:blob_value].nil?
           )
         when :timestamp_value
           Types::MyUnion::TimestampValue.new(
-            params[:timestamp_value]
+            params[:timestamp_value] unless params[:timestamp_value].nil?
           )
         when :enum_value
           Types::MyUnion::EnumValue.new(
@@ -1168,7 +1168,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -1179,7 +1179,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -1312,13 +1312,13 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::TimestampFormatHeadersInput, context: context)
         type = Types::TimestampFormatHeadersInput.new
-        type.member_epoch_seconds = params[:member_epoch_seconds]
-        type.member_http_date = params[:member_http_date]
-        type.member_date_time = params[:member_date_time]
-        type.default_format = params[:default_format]
-        type.target_epoch_seconds = params[:target_epoch_seconds]
-        type.target_http_date = params[:target_http_date]
-        type.target_date_time = params[:target_date_time]
+        type.member_epoch_seconds = params[:member_epoch_seconds] unless params[:member_epoch_seconds].nil?
+        type.member_http_date = params[:member_http_date] unless params[:member_http_date].nil?
+        type.member_date_time = params[:member_date_time] unless params[:member_date_time].nil?
+        type.default_format = params[:default_format] unless params[:default_format].nil?
+        type.target_epoch_seconds = params[:target_epoch_seconds] unless params[:target_epoch_seconds].nil?
+        type.target_http_date = params[:target_http_date] unless params[:target_http_date].nil?
+        type.target_date_time = params[:target_date_time] unless params[:target_date_time].nil?
         type
       end
     end
@@ -1327,13 +1327,13 @@ module RailsJson
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::TimestampFormatHeadersOutput, context: context)
         type = Types::TimestampFormatHeadersOutput.new
-        type.member_epoch_seconds = params[:member_epoch_seconds]
-        type.member_http_date = params[:member_http_date]
-        type.member_date_time = params[:member_date_time]
-        type.default_format = params[:default_format]
-        type.target_epoch_seconds = params[:target_epoch_seconds]
-        type.target_http_date = params[:target_http_date]
-        type.target_date_time = params[:target_date_time]
+        type.member_epoch_seconds = params[:member_epoch_seconds] unless params[:member_epoch_seconds].nil?
+        type.member_http_date = params[:member_http_date] unless params[:member_http_date].nil?
+        type.member_date_time = params[:member_date_time] unless params[:member_date_time].nil?
+        type.default_format = params[:default_format] unless params[:default_format].nil?
+        type.target_epoch_seconds = params[:target_epoch_seconds] unless params[:target_epoch_seconds].nil?
+        type.target_http_date = params[:target_http_date] unless params[:target_http_date].nil?
+        type.target_date_time = params[:target_date_time] unless params[:target_date_time].nil?
         type
       end
     end
@@ -1343,7 +1343,7 @@ module RailsJson
         Hearth::Validator.validate!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
