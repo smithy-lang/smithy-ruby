@@ -8,9 +8,6 @@ gemspec
 
 gem 'rexml', '~> 3.2', '>= 3.2.4'
 
-# temporary
-gem 'activesupport', '~> 6'
-
 group :test do
   gem 'rspec'
   gem 'simplecov'
