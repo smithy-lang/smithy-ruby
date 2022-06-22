@@ -74,6 +74,11 @@ public class ConfigProviderChain {
             return this;
         }
 
+        public Builder sharedConfigProvider(String configKey, String type) {
+            this.providers.add(new SharedConfigProvider(configKey, type));
+            return this;
+        }
+
         @Override
         public ConfigProviderChain build() {
             return new ConfigProviderChain(this);

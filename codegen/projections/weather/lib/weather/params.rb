@@ -55,8 +55,8 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::CityCoordinates, context: context)
         type = Types::CityCoordinates.new
-        type.latitude = params[:latitude] unless params[:latitude].nil?
-        type.longitude = params[:longitude] unless params[:longitude].nil?
+        type.latitude = params[:latitude]
+        type.longitude = params[:longitude]
         type
       end
     end
@@ -107,7 +107,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::GetCityAnnouncementsOutput, context: context)
         type = Types::GetCityAnnouncementsOutput.new
-        type.last_updated = params[:last_updated] unless params[:last_updated].nil?
+        type.last_updated = params[:last_updated]
         type.announcements = Announcements.build(params[:announcements], context: "#{context}[:announcements]") unless params[:announcements].nil?
         type
       end
@@ -168,7 +168,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::GetCurrentTimeOutput, context: context)
         type = Types::GetCurrentTimeOutput.new
-        type.time = params[:time] unless params[:time].nil?
+        type.time = params[:time]
         type
       end
     end
@@ -186,7 +186,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::GetForecastOutput, context: context)
         type = Types::GetForecastOutput.new
-        type.chance_of_rain = params[:chance_of_rain] unless params[:chance_of_rain].nil?
+        type.chance_of_rain = params[:chance_of_rain]
         type.precipitation = Precipitation.build(params[:precipitation], context: "#{context}[:precipitation]") unless params[:precipitation].nil?
         type
       end
@@ -204,7 +204,7 @@ module Weather
         case key
         when :raw
           Types::ImageType::Raw.new(
-            params[:raw] unless params[:raw].nil?
+            params[:raw]
           )
         when :png
           Types::ImageType::Png.new(
@@ -223,12 +223,12 @@ module Weather
         type = Types::ListCitiesInput.new
         type.next_token = params[:next_token]
         type.a_string = params[:a_string]
-        type.default_bool = params[:default_bool] unless params[:default_bool].nil?
-        type.boxed_bool = params[:boxed_bool] unless params[:boxed_bool].nil?
-        type.default_number = params[:default_number] unless params[:default_number].nil?
-        type.boxed_number = params[:boxed_number] unless params[:boxed_number].nil?
+        type.default_bool = params[:default_bool]
+        type.boxed_bool = params[:boxed_bool]
+        type.default_number = params[:default_number]
+        type.boxed_number = params[:boxed_number]
         type.some_enum = params[:some_enum]
-        type.page_size = params[:page_size] unless params[:page_size].nil?
+        type.page_size = params[:page_size]
         type
       end
     end
@@ -240,10 +240,10 @@ module Weather
         type.next_token = params[:next_token]
         type.some_enum = params[:some_enum]
         type.a_string = params[:a_string]
-        type.default_bool = params[:default_bool] unless params[:default_bool].nil?
-        type.boxed_bool = params[:boxed_bool] unless params[:boxed_bool].nil?
-        type.default_number = params[:default_number] unless params[:default_number].nil?
-        type.boxed_number = params[:boxed_number] unless params[:boxed_number].nil?
+        type.default_bool = params[:default_bool]
+        type.boxed_bool = params[:boxed_bool]
+        type.default_number = params[:default_number]
+        type.boxed_number = params[:boxed_number]
         type.items = CitySummaries.build(params[:items], context: "#{context}[:items]") unless params[:items].nil?
         type.sparse_items = SparseCitySummaries.build(params[:sparse_items], context: "#{context}[:sparse_items]") unless params[:sparse_items].nil?
         type
@@ -282,8 +282,8 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate!(params, ::Hash, Types::PNGImage, context: context)
         type = Types::PNGImage.new
-        type.height = params[:height] unless params[:height].nil?
-        type.width = params[:width] unless params[:width].nil?
+        type.height = params[:height]
+        type.width = params[:width]
         type
       end
     end
@@ -300,11 +300,11 @@ module Weather
         case key
         when :rain
           Types::Precipitation::Rain.new(
-            params[:rain] unless params[:rain].nil?
+            params[:rain]
           )
         when :sleet
           Types::Precipitation::Sleet.new(
-            params[:sleet] unless params[:sleet].nil?
+            params[:sleet]
           )
         when :hail
           Types::Precipitation::Hail.new(
@@ -324,7 +324,7 @@ module Weather
           )
         when :blob
           Types::Precipitation::Blob.new(
-            params[:blob] unless params[:blob].nil?
+            params[:blob]
           )
         when :foo
           Types::Precipitation::Foo.new(

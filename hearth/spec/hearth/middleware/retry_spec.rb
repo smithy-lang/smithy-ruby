@@ -120,7 +120,7 @@ module Hearth
           }
         end
 
-        before(:each) do
+        before do
           allow(Kernel).to receive(:rand).and_return(1)
         end
 

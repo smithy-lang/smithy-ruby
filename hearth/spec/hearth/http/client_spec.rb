@@ -5,7 +5,7 @@ require 'webmock/rspec'
 module Hearth
   module HTTP
     describe Client do
-      before(:each) { WebMock.disable_net_connect! }
+      before { WebMock.disable_net_connect! }
 
       let(:wire_trace) { false }
       let(:logger) { double('logger') }
