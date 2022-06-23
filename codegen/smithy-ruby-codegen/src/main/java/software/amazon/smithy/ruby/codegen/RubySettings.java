@@ -67,7 +67,7 @@ public final class RubySettings {
         settings.setGemVersion(gemspec.expectStringMember(GEM_VERSION).getValue());
         settings.setGemSummary(gemspec.expectStringMember(GEM_SUMMARY).getValue());
 
-        LOGGER.info("Created Ruby Settings: " + settings.toString());
+        LOGGER.info("Created Ruby Settings: " + settings);
 
         return settings;
     }
@@ -112,11 +112,16 @@ public final class RubySettings {
         this.gemSummary = gemSummary;
     }
 
+    public Set<RubyDependency> getBaseDependencies() {
+        //TODO: Read from config (eg allow override of hearth version?)
+        return (Set.of(RubyDependency.HEARTH));
+    }
+
     // TODO: This assume a single protocol per service that we resolve for.  May need handling for multiple
     public ShapeId resolveServiceProtocol(ServiceShape service, Model model, Set<ShapeId> supportedProtocolTraits) {
         Map<ShapeId, Trait> resolvedProtocols = ServiceIndex.of(model).getProtocols(service);
         for (ShapeId p : resolvedProtocols.keySet()) {
-            LOGGER.fine("Service Protocol: " + p.getName() + " -> " + p.toString());
+            LOGGER.fine("Service Protocol: " + p.getName() + " -> " + p);
         }
 
         ShapeId protocol = resolvedProtocols.keySet()

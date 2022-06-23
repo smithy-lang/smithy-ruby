@@ -34,6 +34,13 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class RubyDependency
         implements SymbolDependencyContainer, Comparable<RubyDependency> {
 
+    public static final RubyDependency HEARTH = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth")
+            .gemName("hearth")
+            .version("~> 1.0.0.pre1")
+            .build();
+
     public static final RubyDependency TIME = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("time")
@@ -48,6 +55,7 @@ public final class RubyDependency
 
 
     private final Type type;
+    private final String gemName;
     private final String importPath;
     private final String version;
     private final Set<RubyDependency> dependencies;
@@ -55,6 +63,7 @@ public final class RubyDependency
 
     private RubyDependency(Builder builder) {
         this.type = SmithyBuilder.requiredState("type", builder.type);
+        this.gemName = builder.gemName;
         this.importPath =
                 SmithyBuilder.requiredState("importPath", builder.importPath);
         this.version = SmithyBuilder.requiredState("version", builder.version);
@@ -88,6 +97,15 @@ public final class RubyDependency
      */
     public Type getType() {
         return type;
+    }
+
+    /**
+     * Get the gem name.
+     *
+     * @return the gem name
+     */
+    public String getGemName() {
+        return gemName;
     }
 
     /**
@@ -176,6 +194,7 @@ public final class RubyDependency
     public static final class Builder implements SmithyBuilder<RubyDependency> {
         private final Set<RubyDependency> dependencies = new TreeSet<>();
         private Type type;
+        private String gemName;
         private String importPath;
         private String version;
 
@@ -194,9 +213,20 @@ public final class RubyDependency
         }
 
         /**
+         * Sets the name of the gem.
+         *
+         * @param gemName name of the gem
+         * @return the builder
+         */
+        public Builder gemName(String gemName) {
+            this.gemName = gemName;
+            return this;
+        }
+
+        /**
          * Set the import path.
          *
-         * @param importPath the import path
+         * @param importPath the import (require) path
          * @return the builder
          */
         public Builder importPath(String importPath) {

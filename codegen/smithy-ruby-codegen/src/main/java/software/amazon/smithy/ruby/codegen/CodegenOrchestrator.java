@@ -90,7 +90,7 @@ public class CodegenOrchestrator {
                 .createDedicatedInputAndOutput(resolvedModel, "Input", "Output");
 
         // Now that service and model are resolved, filter integrations for the service
-        Model finalResolvedModel = resolvedModel;
+        final Model finalResolvedModel = resolvedModel;
         integrations = integrations.stream()
                 .filter((integration) -> integration
                         .includeFor(service, finalResolvedModel))
@@ -140,6 +140,19 @@ public class CodegenOrchestrator {
             symbolProvider = integration.decorateSymbolProvider(resolvedModel, rubySettings, symbolProvider);
         }
 
+        Set<RubyDependency> rubyDependencies = new HashSet<>();
+        rubyDependencies.addAll(rubySettings.getBaseDependencies());
+        rubyDependencies.addAll(
+                integrations.stream()
+                        .map((integration) -> integration
+                                .additionalGemDependencies(rubySettings, finalResolvedModel, service, protocol))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toSet())
+        );
+        protocolGenerator.ifPresent((g) -> rubyDependencies.addAll(
+                g.additionalGemDependencies(rubySettings, finalResolvedModel, service, protocol))
+        );
+
         context = new GenerationContext(
                 rubySettings,
                 pluginContext.getFileManifest(),
@@ -149,6 +162,7 @@ public class CodegenOrchestrator {
                 protocol,
                 protocolGenerator,
                 applicationTransport,
+                rubyDependencies,
                 symbolProvider
         );
     }
@@ -216,16 +230,8 @@ public class CodegenOrchestrator {
     }
 
     private void generateGemSpec() {
-        List<RubyDependency> additionalDependencies =
-                context.integrations().stream()
-                        .map((integration) -> integration
-                                .additionalGemDependencies(context))
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
-        context.protocolGenerator()
-                .ifPresent((g) -> additionalDependencies.addAll(g.additionalGemDependencies(context)));
         GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
-        gemspecGenerator.render(additionalDependencies);
+        gemspecGenerator.render();
         LOGGER.info("generated .gemspec");
     }
 
