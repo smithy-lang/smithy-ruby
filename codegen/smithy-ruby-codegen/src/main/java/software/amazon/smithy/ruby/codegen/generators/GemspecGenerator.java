@@ -29,7 +29,6 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.List;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -46,7 +45,7 @@ public class GemspecGenerator {
         this.context = context;
     }
 
-    public void render(List<RubyDependency> additionalDependencies) {
+    public void render() {
         FileManifest fileManifest = context.fileManifest();
         RubySettings settings = context.settings();
         RubyCodeWriter writer = new RubyCodeWriter();
@@ -60,8 +59,14 @@ public class GemspecGenerator {
                 .write("spec.summary       = '$L'", settings.getGemSummary())
                 .write("spec.files         = Dir['lib/**/*.rb']")
                 .write("")
-                .write("spec.add_runtime_dependency 'hearth', '~> 1.0.0.pre1'")
-                // TODO: Add additionalDependencies!
+                .call(() -> {
+                    context.getRubyDependencies().forEach((rubyDependency -> {
+                        if (rubyDependency.getType() != RubyDependency.Type.STANDARD_LIBRARY) {
+                            writer.write("spec.add_runtime_dependency '$L', '$L'",
+                                    rubyDependency.getGemName(), rubyDependency.getVersion());
+                        }
+                    }));
+                })
                 .closeBlock("end");
 
         String fileName = settings.getGemName() + "/" + settings.getGemName()

@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -42,14 +43,18 @@ public class GenerationContext implements CodegenContext<RubySettings> {
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
+    private final Set<RubyDependency> rubyDependencies;
     private final SymbolProvider symbolProvider;
 
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
-                             List<RubyIntegration> integrations, Model model,
-                             ServiceShape service, ShapeId protocol,
+                             List<RubyIntegration> integrations,
+                             Model model,
+                             ServiceShape service,
+                             ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
                              ApplicationTransport applicationTransport,
+                             Set<RubyDependency> rubyDependencies,
                              SymbolProvider symbolProvider) {
 
         this.rubySettings = rubySettings;
@@ -60,6 +65,7 @@ public class GenerationContext implements CodegenContext<RubySettings> {
         this.protocol = protocol;
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
+        this.rubyDependencies = rubyDependencies;
         this.symbolProvider = symbolProvider;
     }
 
@@ -103,5 +109,7 @@ public class GenerationContext implements CodegenContext<RubySettings> {
         return protocolGenerator;
     }
 
-
+    public Set<RubyDependency> getRubyDependencies() {
+        return rubyDependencies;
+    }
 }

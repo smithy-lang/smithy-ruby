@@ -40,7 +40,10 @@ public class ModuleGenerator {
         RubyCodeWriter writer = new RubyCodeWriter();
 
         writer.writePreamble();
-        writer.write("require 'hearth'\n");
+        context.getRubyDependencies().forEach((rubyDependency -> {
+            writer.write("require '$L'", rubyDependency.getImportPath());
+        }));
+        writer.write("\n");
 
         String[] requires = {
                 "builders", "client", "config", "errors", "paginators", "params",

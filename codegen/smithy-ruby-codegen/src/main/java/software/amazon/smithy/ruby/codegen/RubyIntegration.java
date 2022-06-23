@@ -17,9 +17,11 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -96,11 +98,15 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     /**
      * Adds additional Gem Dependencies.
      *
-     * @param context - context for generation
-     * @return List of relative paths generated to be added to module requires.
+     * @param rubySettings       - generation settings
+     * @param finalResolvedModel - the resolved model (post any transforms)
+     * @param service            - service to generate for
+     * @param protocol           - the resolved protocol
+     * @return Set of ruby dependencies to be added
      */
-    default List<RubyDependency> additionalGemDependencies(
-            GenerationContext context) {
-        return Collections.emptyList();
+    default Set<RubyDependency> additionalGemDependencies(
+            RubySettings rubySettings, Model finalResolvedModel,
+            ServiceShape service, ShapeId protocol) {
+        return Collections.emptySet();
     }
 }
