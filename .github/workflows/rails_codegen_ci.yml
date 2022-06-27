@@ -74,7 +74,6 @@ jobs:
 
       - name: Install gems
         run: |
-          bundle config set --local without 'docs repl'
           bundle install
         working-directory: ./rails_json
 
