@@ -9,13 +9,13 @@ module Hearth
     # @api private
     class ErrorParser
       # @api private
-      HTTP_3XX = (300..399).freeze
+      HTTP_3XX = (300..399)
 
       # @api private
-      HTTP_4XX = (400..499).freeze
+      HTTP_4XX = (400..499)
 
       # @api private
-      HTTP_5XX = (500..599).freeze
+      HTTP_5XX = (500..599)
 
       # @param [Module] error_module The code generated Errors module.
       #   Must contain service specific implementations of

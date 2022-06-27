@@ -6,8 +6,6 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gemspec
 
-gem 'rexml', '~> 3.2', '>= 3.2.4'
-
 group :test do
   gem 'rspec'
   gem 'simplecov'
