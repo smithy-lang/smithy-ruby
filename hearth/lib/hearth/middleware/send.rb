@@ -24,14 +24,14 @@ module Hearth
         @stubs = stubs
       end
 
-      # @param _input
+      # @param input
       # @param context
       # @return [Output]
-      def call(_input, context)
+      def call(input, context)
         if @stub_responses
           stub = @stubs.next(context.operation_name)
           output = Output.new
-          apply_stub(stub, context, output)
+          apply_stub(stub, input, context, output)
           output
         else
           @client.transmit(
@@ -45,11 +45,11 @@ module Hearth
       private
 
       # rubocop:disable Metrics/MethodLength
-      def apply_stub(stub, context, output)
+      def apply_stub(stub, input, context, output)
         case stub
         when Proc
-          stub = stub.call(context)
-          apply_stub(stub, context, output) if stub
+          stub = stub.call(input, context)
+          apply_stub(stub, input, context, output) if stub
         when Exception
           output.error = stub
         when Class

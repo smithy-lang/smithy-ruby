@@ -69,7 +69,7 @@ module Hearth
 
               it 'calls the stub and applies it' do
                 expect(stub_proc).to receive(:call)
-                  .with(context).and_call_original
+                  .with(input, context).and_call_original
                 output = subject.call(input, context)
                 expect(output.error).to be(exception)
               end
@@ -82,16 +82,16 @@ module Hearth
               let(:response) { Hearth::HTTP::Response.new }
 
               let(:stub_proc) do
-                lambda do |ctx|
-                  ctx.response.status = status
-                  ctx.metadata[:more_context] = more_context
+                lambda do |_input, context|
+                  context.response.status = status
+                  context.metadata[:more_context] = more_context
                   nil
                 end
               end
 
               it 'allows stubbing of request, response, and context' do
                 expect(stub_proc).to receive(:call)
-                  .with(context).and_call_original
+                  .with(input, context).and_call_original
                 expect(stub_class).to_not receive(:stub)
                 subject.call(input, context)
                 expect(response.status).to eq status

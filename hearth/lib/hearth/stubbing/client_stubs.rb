@@ -55,8 +55,8 @@ module Hearth
     # stubs dynamically based on the parameters with which operations were
     # called, by passing a `Proc` object:
     #
-    #     client.stub_responses(:operation, -> (context) {
-    #       if context.params[:param] == 'foo'
+    #     client.stub_responses(:operation, -> (input, context) {
+    #       if input[:param] == 'foo'
     #         # return a stub
     #         { param1: [{ name: 'value1'}]}
     #       else
@@ -71,7 +71,7 @@ module Hearth
     # response object provided by the `Proc` object and then
     # return nil.
     #
-    #     client.stub_responses(:operation, -> (context) {
+    #     client.stub_responses(:operation, -> (input, context) {
     #       context.response.status = 404 # simulate an error
     #       nil
     #     })
