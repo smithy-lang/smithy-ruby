@@ -21,6 +21,7 @@ import java.util.Set;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -33,11 +34,11 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * loaded integrations, service, ect.
  */
 @SmithyUnstableApi
-public class GenerationContext implements CodegenContext<RubySettings> {
+public class GenerationContext implements CodegenContext<RubySettings, RubySymbolWriter, RubyImportContainer> {
 
     private final RubySettings rubySettings;
     private final FileManifest fileManifest;
-    private final List<RubyIntegration> integrations;
+    private final List<RubyImportContainer> integrations;
     private final Model model;
     private final ServiceShape service;
     private final ShapeId protocol;
@@ -48,7 +49,7 @@ public class GenerationContext implements CodegenContext<RubySettings> {
 
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
-                             List<RubyIntegration> integrations,
+                             List<RubyImportContainer> integrations,
                              Model model,
                              ServiceShape service,
                              ShapeId protocol,
@@ -89,7 +90,14 @@ public class GenerationContext implements CodegenContext<RubySettings> {
         return fileManifest;
     }
 
-    public List<RubyIntegration> integrations() {
+    @Override
+    public WriterDelegator<RubySymbolWriter> writerDelegator() {
+        // TODO?
+        return null;
+    }
+
+    // TODO, fix
+    public List<RubyImportContainer> integrations() {
         return integrations;
     }
 
