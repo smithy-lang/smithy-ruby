@@ -38,7 +38,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -276,19 +275,6 @@ public class RubySymbolProvider implements SymbolProvider,
             Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
             String rbsType = "Array[" + member.getProperty("rbsType").get() + "]";
             String yardType = "Array<" + member.getProperty("yardType").get() + ">";
-            return createSymbolBuilder(shape, "", rbsType, yardType).build();
-        }
-    }
-
-    @Override
-    public Symbol setShape(SetShape shape) {
-        if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set__"), "", "", moduleName)
-                    .definitionFile("types.rb").build();
-        } else {
-            Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
-            String rbsType = "Set[" + member.getProperty("rbsType").get() + "]";
-            String yardType = "Set<" + member.getProperty("yardType").get() + ">";
             return createSymbolBuilder(shape, "", rbsType, yardType).build();
         }
     }

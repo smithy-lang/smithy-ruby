@@ -2,12 +2,6 @@
 
 require_relative 'spec_helper'
 
-# TODO -
-#  * don't do if input[], but do unless input[].nil? - this prevents false values from skipping validation
-#  * fix TypeError: no implicit conversion of Symbol into Integer
-#    this is happening because validation is needed before delegating to another structure.
-#    decide if it should be in the delegated structure or context around it?
-#  * larger task - use :: for root namespaces everywhere
 module WhiteLabel
   module Validators
     describe Document do
@@ -148,7 +142,6 @@ module WhiteLabel
           list_of_structs: [struct],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
-          set_of_strings: Set.new(['dank', 'memes']),
           union: { string: 'simple string' }
         }
       end
@@ -157,24 +150,6 @@ module WhiteLabel
 
       it 'validates all member input' do
         KitchenSinkInput.validate!(input, context: 'input')
-      end
-    end
-
-    describe SetOfStrings do
-      it 'validates input is a set' do
-        expect { SetOfStrings.validate!({}, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input to be in [Set], got Hash.")
-      end
-
-      it 'validates a set of simple elements' do
-        input = Set.new(['dank', 'memes'])
-        SetOfStrings.validate!(input, context: 'input')
-      end
-
-      it 'raises when element is not an expected type' do
-        input = Set.new(['dank', 'memes', 420])
-        expect { SetOfStrings.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input[2] to be in [String], got Integer.")
       end
     end
 

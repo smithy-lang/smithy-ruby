@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generator
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -47,11 +46,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     @Override
     protected void renderListBuildMethod(ListShape shape) {
-
-    }
-
-    @Override
-    protected void renderSetBuildMethod(SetShape shape) {
 
     }
 

@@ -36,7 +36,6 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -230,21 +229,6 @@ public class PlaceholderExampleGenerator {
 
         @Override
         public Void listShape(ListShape shape) {
-            if (!visited.add(shape.getId())) {
-                return null;
-            }
-
-            Shape target = model.expectShape(shape.getMember().getTarget());
-            if (!visited.contains(target.getId())) {
-                writer.openBlock("$L[", dataSetter);
-                target.accept(new PlaceholderMember("", shape.getMember(), "", visited));
-                writer.closeBlock("]$L", eol);
-            }
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             if (!visited.add(shape.getId())) {
                 return null;
             }

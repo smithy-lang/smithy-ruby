@@ -23,7 +23,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -111,22 +110,6 @@ public class ResponseExampleGenerator {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
-
-            if (!visited.add(shape.getId())) {
-                return null;
-            }
-
-            Shape target = model.expectShape(shape.getMember().getTarget());
-            if (!visited.contains(target.getId())) {
-                String memberGetter = dataGetter + "[0]";
-                target.accept(new ResponseMember(memberGetter, visited));
-            }
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
 
             if (!visited.add(shape.getId())) {

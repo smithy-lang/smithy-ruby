@@ -19,7 +19,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -40,11 +39,6 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
     @Override
     protected void renderListStubMethod(ListShape shape) {
-
-    }
-
-    @Override
-    protected void renderSetStubMethod(SetShape shape) {
 
     }
 

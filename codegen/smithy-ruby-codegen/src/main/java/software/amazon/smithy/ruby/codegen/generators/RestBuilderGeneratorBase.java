@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -390,21 +389,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
 
         @Override
-        public Void setShape(SetShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$1L$2L", dataSetter, inputGetter)
-                    .indent()
-                    .write(".to_a")
-                    .write(".compact")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberSerializer(shape.getMember())))
-                    .write(".join(', ')")
-                    .dedent()
-                    .closeBlock("end");
-            return null;
-        }
-
-        @Override
         public Void mapShape(MapShape shape) {
             // Not supported in headers
             return null;
@@ -509,17 +493,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            Shape target = model.expectShape(shape.getMember().getTarget());
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .openBlock("$1L$2L.map do |value|", setter, inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), "", "value")))
-                    .closeBlock("end")
-                    .closeBlock("end");
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             Shape target = model.expectShape(shape.getMember().getTarget());
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .openBlock("$1L$2L.map do |value|", setter, inputGetter)

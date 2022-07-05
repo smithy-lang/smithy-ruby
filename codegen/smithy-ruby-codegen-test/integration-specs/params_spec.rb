@@ -80,7 +80,6 @@ module WhiteLabel
           list_of_structs: [struct],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
-          set_of_strings: Set.new(['dank', 'memes']),
           union: { string: 'simple string' }
         }
       end
@@ -97,22 +96,9 @@ module WhiteLabel
           list_of_structs: [{ value: 'struct value' }],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: { value: 'struct value' } },
-          set_of_strings: ["dank", "memes"],
           union: { string: 'simple string' }
         }
         expect(data.to_h).to eq(expected)
-      end
-    end
-
-    describe SetOfStrings do
-      include_examples "validates params", Set, Array
-
-      let(:params) { Set.new(['dank', 'memes']) }
-
-      it 'builds a set of simple elements' do
-        data = SetOfStrings.build(params, context: 'params')
-        expect(data).to be_a(Set)
-        expect(data).to eq(params)
       end
     end
 
@@ -161,7 +147,6 @@ module WhiteLabel
     end
 
     describe StreamingOperationInput do
-
       it 'converts a string to StringIO' do
         data = StreamingOperationInput.build({stream: 'string'}, context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)

@@ -24,7 +24,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -69,26 +68,6 @@ public class StubsGenerator extends RestStubsGeneratorBase {
                 })
                 .closeBlock("end")
                 .write("data")
-                .closeBlock("end");
-
-    }
-
-    @Override
-    protected void renderSetStubMethod(SetShape shape) {
-        writer
-                .openBlock("def self.stub(stub)")
-                .write("stub ||= []")
-                .write("data = Set.new")
-                .openBlock("stub.each do |element|")
-                .call(() -> {
-                    Shape memberTarget =
-                            model.expectShape(shape.getMember().getTarget());
-                    memberTarget
-                            .accept(new MemberSerializer(shape.getMember(),
-                                    "data << ", "element", true));
-                })
-                .closeBlock("end")
-                .write("data.to_a")
                 .closeBlock("end");
 
     }
@@ -270,12 +249,6 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            defaultComplexSerializer(shape);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             defaultComplexSerializer(shape);
             return null;
         }

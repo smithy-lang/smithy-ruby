@@ -24,7 +24,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -289,21 +288,6 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$1L$2L", dataSetter, inputGetter)
                     .indent()
-                    .write(".compact")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberSerializer(shape.getMember())))
-                    .write(".join(', ')")
-                    .dedent()
-                    .closeBlock("end");
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$1L$2L", dataSetter, inputGetter)
-                    .indent()
-                    .write(".to_a")
                     .write(".compact")
                     .call(() -> model.expectShape(shape.getMember().getTarget())
                             .accept(new HeaderListMemberSerializer(shape.getMember())))

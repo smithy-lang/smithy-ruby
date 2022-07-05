@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -316,22 +315,6 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
             return null;
         }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", valueGetter)
-                    .write("$1LSet.new($2L", dataSetter, valueGetter)
-                    .indent()
-                    .write(".split(', ')")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberDeserializer(shape.getMember())))
-                    .dedent()
-                    .write(")")
-                    .closeBlock("end");
-
-            return null;
-        }
-
     }
 
     private class HeaderListMemberDeserializer extends ShapeVisitor.Default<Void> {

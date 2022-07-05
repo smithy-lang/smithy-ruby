@@ -23,7 +23,6 @@ import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -72,23 +71,6 @@ public class ParserGenerator extends RestParserGeneratorBase {
                 })
                 .closeBlock("end")
                 .write("data")
-                .closeBlock("end");
-    }
-
-    @Override
-    protected void renderSetParseMethod(SetShape s) {
-        writer
-                .openBlock("def self.parse(list)")
-                .openBlock("data = list.map do |value|")
-                .call(() -> {
-                    Shape memberTarget =
-                            model.expectShape(s.getMember().getTarget());
-                    memberTarget
-                            .accept(new MemberDeserializer(s.getMember(),
-                                    "", "value", true));
-                })
-                .closeBlock("end")
-                .write("Set.new(data)")
                 .closeBlock("end");
     }
 

@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -166,35 +165,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     @Override
-    public Void setShape(SetShape setShape) {
-        String shapeName = symbolProvider.toSymbol(setShape).getName();
-        Shape memberTarget =
-                model.expectShape(setShape.getMember().getTarget());
-
-        writer
-                .write("")
-                .openBlock("module $L", shapeName)
-                .openBlock("def self.build(params, context: '')")
-                .write("Hearth::Validator.validate!(params, ::Set, ::Array, context: context)")
-                .write("data = Set.new")
-                .call(() -> {
-                    if (isComplexShape(memberTarget)) {
-                        writer.openBlock("params.each_with_index do |element, index|");
-                    } else {
-                        writer.openBlock("params.each do |element|");
-                    }
-                })
-                .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
-                                "\"#{context}[#{index}]\"", setShape.getMember(), true)))
-                .closeBlock("end")
-                .write("data")
-                .closeBlock("end")
-                .closeBlock("end");
-        return null;
-    }
-
-    @Override
     public Void mapShape(MapShape mapShape) {
         String shapeName = symbolProvider.toSymbol(mapShape).getName();
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
@@ -267,7 +237,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private boolean isComplexShape(Shape shape) {
         return shape.isStructureShape() || shape.isListShape() || shape.isMapShape()
-                || shape.isSetShape() || shape.isUnionShape() || shape.isOperationShape();
+                || shape.isUnionShape() || shape.isOperationShape();
     }
 
     private static class MemberBuilder extends ShapeVisitor.Default<Void> {
@@ -325,12 +295,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            defaultComplex(shape);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             defaultComplex(shape);
             return null;
         }

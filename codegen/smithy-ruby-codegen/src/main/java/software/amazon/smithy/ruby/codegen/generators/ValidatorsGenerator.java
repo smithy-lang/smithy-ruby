@@ -34,7 +34,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -153,26 +152,6 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("Hearth::Validator.validate!(input, ::Array, context: context)")
-                .openBlock("input.each_with_index do |element, index|")
-                .call(() -> memberTarget
-                        .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
-                .closeBlock("end")
-                .closeBlock("end")
-                .closeBlock("end");
-
-        return null;
-    }
-
-    @Override
-    public Void setShape(SetShape setShape) {
-        Shape memberTarget =
-                model.expectShape(setShape.getMember().getTarget());
-
-        writer
-                .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(setShape).getName())
-                .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, ::Set, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
@@ -311,13 +290,6 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             String name = symbolProvider.toSymbol(shape).getName();
             writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
             return null;
