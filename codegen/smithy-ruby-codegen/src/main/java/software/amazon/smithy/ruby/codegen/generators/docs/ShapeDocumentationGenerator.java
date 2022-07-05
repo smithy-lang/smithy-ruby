@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -41,16 +40,17 @@ import software.amazon.smithy.model.traits.SinceTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public class ShapeDocumentationGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
-    private final SymbolProvider symbolProvider;
+    private final RubySymbolProvider symbolProvider;
     private final Shape shape;
 
-    public ShapeDocumentationGenerator(Model model, SymbolProvider symbolProvider, Shape shape) {
+    public ShapeDocumentationGenerator(Model model, RubySymbolProvider symbolProvider, Shape shape) {
         this.writer = new RubyCodeWriter("");
         this.model = model;
         this.symbolProvider = symbolProvider;

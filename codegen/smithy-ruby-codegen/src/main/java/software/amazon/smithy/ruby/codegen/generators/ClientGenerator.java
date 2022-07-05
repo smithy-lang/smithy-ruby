@@ -22,7 +22,6 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -46,7 +45,7 @@ public class ClientGenerator {
 
     private final GenerationContext context;
     private final RubySettings settings;
-    private final SymbolProvider symbolProvider;
+    private final RubySymbolProvider symbolProvider;
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;

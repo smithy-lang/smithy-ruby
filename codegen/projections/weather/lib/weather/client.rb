@@ -250,7 +250,21 @@ module Weather
     #
     #   resp.data #=> Types::GetForecastOutput
     #   resp.data.chance_of_rain #=> Float
-    #   resp.data.precipitation #=> Precipitation
+    #   resp.data.precipitation #=> Types::Precipitation, one of [Rain, Sleet, Hail, Snow, Mixed, Other, Blob, Foo, Baz]
+    #   resp.data.precipitation.rain #=> Boolean
+    #   resp.data.precipitation.sleet #=> Boolean
+    #   resp.data.precipitation.hail #=> Hash<String, String>
+    #   resp.data.precipitation.hail['key'] #=> String
+    #   resp.data.precipitation.snow #=> String, one of ["YES", "NO"]
+    #   resp.data.precipitation.mixed #=> String, one of ["YES", "NO"]
+    #   resp.data.precipitation.other #=> Types::OtherStructure
+    #   resp.data.precipitation.blob #=> String
+    #   resp.data.precipitation.foo #=> Types::Foo
+    #   resp.data.precipitation.foo.baz #=> String
+    #   resp.data.precipitation.foo.bar #=> String
+    #   resp.data.precipitation.baz #=> Types::Baz
+    #   resp.data.precipitation.baz.baz #=> String
+    #   resp.data.precipitation.baz.bar #=> String
     #
     def get_forecast(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

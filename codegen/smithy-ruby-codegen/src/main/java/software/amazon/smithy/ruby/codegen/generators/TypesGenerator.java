@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -56,7 +55,7 @@ public class TypesGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
-    private final SymbolProvider symbolProvider;
+    private final RubySymbolProvider symbolProvider;
 
     public TypesGenerator(GenerationContext context) {
         this.context = context;
@@ -259,7 +258,7 @@ public class TypesGenerator {
                     .collect(Collectors.toList());
             if (!defaultMembers.isEmpty()) {
                 writer
-                        .openBlock("def initialize(*)")
+                        .openBlock("\ndef initialize(*)")
                         .write("super")
                         .call(() -> {
                             defaultMembers.forEach((m) -> {
@@ -270,7 +269,7 @@ public class TypesGenerator {
                                         target.accept(new MemberDefaultVisitor()));
                             });
                         })
-                        .closeBlock("end\n");
+                        .closeBlock("end");
             }
         }
 
@@ -284,8 +283,7 @@ public class TypesGenerator {
             if (structureShape.hasTrait(SensitiveTrait.class)) {
                 // structure is itself sensitive
                 writer
-                        .write("")
-                        .openBlock("def to_s")
+                        .openBlock("\ndef to_s")
                         .write("\"#<struct $L [SENSITIVE]>\"", fullQualifiedShapeName)
                         .closeBlock("end");
             } else if (hasSensitiveMember) {
@@ -293,8 +291,7 @@ public class TypesGenerator {
                 Iterator<MemberShape> iterator = structureShape.members().iterator();
 
                 writer
-                        .write("")
-                        .openBlock("def to_s")
+                        .openBlock("\ndef to_s")
                         .write("\"#<struct $L \"\\", fullQualifiedShapeName)
                         .indent();
 

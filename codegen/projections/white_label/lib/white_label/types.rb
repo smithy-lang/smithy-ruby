@@ -45,12 +45,12 @@ module WhiteLabel
       keyword_init: true
     ) do
       include Hearth::Structure
+
       def initialize(*)
         super
         self.default_number ||= 0
         self.default_bool ||= false
       end
-
     end
 
     # @!attribute string
@@ -77,12 +77,12 @@ module WhiteLabel
       keyword_init: true
     ) do
       include Hearth::Structure
+
       def initialize(*)
         super
         self.default_number ||= 0
         self.default_bool ||= false
       end
-
     end
 
     EndpointOperationInput = ::Struct.new(

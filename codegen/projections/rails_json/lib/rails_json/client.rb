@@ -1789,7 +1789,19 @@ module RailsJson
     # @example Response structure
     #
     #   resp.data #=> Types::JsonUnionsOutput
-    #   resp.data.contents #=> MyUnion
+    #   resp.data.contents #=> Types::MyUnion, one of [StringValue, BooleanValue, NumberValue, BlobValue, TimestampValue, EnumValue, ListValue, MapValue, StructureValue]
+    #   resp.data.contents.string_value #=> String
+    #   resp.data.contents.boolean_value #=> Boolean
+    #   resp.data.contents.number_value #=> Integer
+    #   resp.data.contents.blob_value #=> String
+    #   resp.data.contents.timestamp_value #=> Time
+    #   resp.data.contents.enum_value #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
+    #   resp.data.contents.list_value #=> Array<String>
+    #   resp.data.contents.list_value[0] #=> String
+    #   resp.data.contents.map_value #=> Hash<String, String>
+    #   resp.data.contents.map_value['key'] #=> String
+    #   resp.data.contents.structure_value #=> Types::GreetingStruct
+    #   resp.data.contents.structure_value.hi #=> String
     #
     def json_unions(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

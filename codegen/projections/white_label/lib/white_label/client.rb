@@ -330,7 +330,9 @@ module WhiteLabel
     #   resp.data.map_of_strings #=> Hash<String, String>
     #   resp.data.map_of_strings['key'] #=> String
     #   resp.data.map_of_structs #=> Hash<String, Struct>
-    #   resp.data.union #=> Union
+    #   resp.data.union #=> Types::Union, one of [String, Struct]
+    #   resp.data.union.string #=> String
+    #   resp.data.union.struct #=> Types::Struct
     #
     # @example Test input and output
     #
