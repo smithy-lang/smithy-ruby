@@ -1,0 +1,58 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module RailsJson
+  module Errors
+
+    def self.error_code: (untyped resp) -> untyped
+
+    class ApiError < Hearth::HTTP::ApiError
+    def initialize: (request_id: untyped request_id, **untyped kwargs) -> void
+
+    attr_reader request_id: untyped
+    end
+
+    class ApiClientError < ApiError
+    end
+
+    class ApiServerError < ApiError
+    end
+
+    class ApiRedirectError < ApiError
+      def initialize: (location: untyped location, **untyped kwargs) -> void
+
+      attr_reader location: untyped
+    end
+
+    class ComplexError < ApiClientError
+      def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void
+
+      attr_reader data: untyped
+    end
+
+    class ErrorWithMembers < ApiClientError
+      def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void
+
+      attr_reader data: untyped
+    end
+
+    class ErrorWithoutMembers < ApiServerError
+      def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void
+
+      attr_reader data: untyped
+    end
+
+    class InvalidGreeting < ApiClientError
+      def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void
+
+      attr_reader data: untyped
+    end
+
+  end
+end

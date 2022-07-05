@@ -112,10 +112,10 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String typesFile =
+        String fileName =
                 settings.getGemName() + "/sig/" + settings.getGemName() + "/errors.rbs";
-        fileManifest.writeFile(typesFile, rbsWriter.toString());
-        LOGGER.info("Wrote errors rbs to " + typesFile);
+        fileManifest.writeFile(fileName, rbsWriter.toString());
+        LOGGER.info("Wrote errors rbs to " + fileName);
     }
 
     private void renderBaseErrors() {

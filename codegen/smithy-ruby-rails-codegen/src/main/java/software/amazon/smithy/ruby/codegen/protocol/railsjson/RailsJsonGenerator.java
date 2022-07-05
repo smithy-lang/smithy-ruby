@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson;
 
 import java.util.logging.Logger;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -56,7 +57,9 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     @Override
     public void generateErrors(GenerationContext context) {
         ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
-        errorsGenerator.render(context.fileManifest());
+        FileManifest fileManifest = context.fileManifest();
+        errorsGenerator.render(fileManifest);
+        errorsGenerator.renderRbs(fileManifest);
         LOGGER.info("created errors");
     }
 
