@@ -280,7 +280,7 @@ module RailsJson
 
     class FooEnumSet
       def self.validate!(input, context:)
-        Hearth::Validator.validate!(input, ::Set, context: context)
+        Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
           Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
         end
@@ -530,7 +530,7 @@ module RailsJson
 
     class IntegerSet
       def self.validate!(input, context:)
-        Hearth::Validator.validate!(input, ::Set, context: context)
+        Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
           Hearth::Validator.validate!(element, ::Integer, context: "#{context}[#{index}]")
         end
@@ -1130,7 +1130,7 @@ module RailsJson
 
     class StringSet
       def self.validate!(input, context:)
-        Hearth::Validator.validate!(input, ::Set, context: context)
+        Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
           Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
         end

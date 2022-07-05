@@ -65,7 +65,7 @@ public class PlaceholderExampleGenerator {
         this.operation = operation;
         this.symbolProvider = symbolProvider;
         this.model = model;
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter("");
         this.visited = new HashSet<>();
     }
 

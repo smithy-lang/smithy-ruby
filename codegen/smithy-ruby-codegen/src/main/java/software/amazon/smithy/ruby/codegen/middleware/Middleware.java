@@ -398,7 +398,7 @@ public final class Middleware {
                     String fileContent =
                             new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 
-                    RubyCodeWriter writer = new RubyCodeWriter();
+                    RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
                     writer
                             .openBlock("module $L", context.settings().getModule())
                             .write(fileContent)

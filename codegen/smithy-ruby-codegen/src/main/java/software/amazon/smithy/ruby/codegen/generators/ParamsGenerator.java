@@ -60,7 +60,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule());
         this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 

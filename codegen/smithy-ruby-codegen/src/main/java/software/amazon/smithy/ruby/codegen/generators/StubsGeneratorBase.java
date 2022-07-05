@@ -82,7 +82,7 @@ public abstract class StubsGeneratorBase {
         this.model = context.model();
         this.generatedStubs = new HashSet<>();
         this.context = context;
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule());
         this.symbolProvider = new RubySymbolProvider(model, settings, "Stubs", true);
     }
 

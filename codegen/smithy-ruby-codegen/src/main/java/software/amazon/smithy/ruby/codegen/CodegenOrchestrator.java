@@ -239,7 +239,7 @@ public class CodegenOrchestrator {
         Optional<TitleTrait> title = context.service().getTrait(TitleTrait.class);
         if (title.isPresent()) {
             FileManifest fileManifest = context.fileManifest();
-            RubyCodeWriter writer = new RubyCodeWriter();
+            RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
             writer.write("--title \"$L\"", title.get().getValue());
             writer.write("--hide-api private");
             String fileName = context.settings().getGemName() + "/.yardopts";

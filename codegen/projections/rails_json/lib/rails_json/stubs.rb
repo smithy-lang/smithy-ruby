@@ -406,7 +406,6 @@ module RailsJson
         end
         unless stub[:header_string_set].nil? || stub[:header_string_set].empty?
           http_resp.headers['X-StringSet'] = stub[:header_string_set]
-            .to_a
             .compact
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
@@ -519,7 +518,7 @@ module RailsJson
       end
     end
 
-    # Set Stubber for StringSet
+    # List Stubber for StringSet
     class StringSet
       def self.default(visited=[])
         return nil if visited.include?('StringSet')
@@ -531,11 +530,11 @@ module RailsJson
 
       def self.stub(stub)
         stub ||= []
-        data = Set.new
+        data = []
         stub.each do |element|
           data << element unless element.nil?
         end
-        data.to_a
+        data
       end
     end
 
@@ -606,7 +605,7 @@ module RailsJson
       end
     end
 
-    # Set Stubber for FooEnumSet
+    # List Stubber for FooEnumSet
     class FooEnumSet
       def self.default(visited=[])
         return nil if visited.include?('FooEnumSet')
@@ -618,11 +617,11 @@ module RailsJson
 
       def self.stub(stub)
         stub ||= []
-        data = Set.new
+        data = []
         stub.each do |element|
           data << element unless element.nil?
         end
-        data.to_a
+        data
       end
     end
 

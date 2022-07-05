@@ -320,8 +320,8 @@ module RailsJson
 
     module FooEnumSet
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
-        data = Set.new
+        Hearth::Validator.validate!(params, ::Array, context: context)
+        data = []
         params.each do |element|
           data << element
         end
@@ -628,8 +628,8 @@ module RailsJson
 
     module IntegerSet
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
-        data = Set.new
+        Hearth::Validator.validate!(params, ::Array, context: context)
+        data = []
         params.each do |element|
           data << element
         end
@@ -1290,8 +1290,8 @@ module RailsJson
 
     module StringSet
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
-        data = Set.new
+        Hearth::Validator.validate!(params, ::Array, context: context)
+        data = []
         params.each do |element|
           data << element
         end

@@ -16,19 +16,28 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.function.Consumer;
-import software.amazon.smithy.utils.AbstractCodeWriter;
+import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A helper class for generating well formatted Ruby code.
  */
 @SmithyUnstableApi
-public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
+public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
 
-    public RubyCodeWriter() {
+    public RubyCodeWriter(String namespace) {
+        super(new RubyImportContainer(namespace));
+
         trimTrailingSpaces();
         trimBlankLines();
         setIndentText("  ");
+    }
+
+    public static final class Factory implements SymbolWriter.Factory<RubyCodeWriter> {
+        @Override
+        public RubyCodeWriter apply(String filename, String namespace) {
+            return new RubyCodeWriter(namespace);
+        }
     }
 
     /**

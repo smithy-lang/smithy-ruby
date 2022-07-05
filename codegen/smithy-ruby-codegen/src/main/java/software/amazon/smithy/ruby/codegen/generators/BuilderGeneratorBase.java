@@ -67,7 +67,7 @@ public abstract class BuilderGeneratorBase {
         this.model = context.model();
         this.generatedBuilders = new HashSet<>();
         this.context = context;
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule());
         this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
     }
 

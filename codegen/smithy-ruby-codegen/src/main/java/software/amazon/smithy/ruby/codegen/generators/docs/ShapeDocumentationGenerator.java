@@ -51,7 +51,7 @@ public class ShapeDocumentationGenerator {
     private final Shape shape;
 
     public ShapeDocumentationGenerator(Model model, SymbolProvider symbolProvider, Shape shape) {
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter("");
         this.model = model;
         this.symbolProvider = symbolProvider;
         this.shape = shape;

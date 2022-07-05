@@ -15,13 +15,17 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.Symbol;
 
 public class RubyImportContainer
-        implements ImportContainer, SmithyIntegration<RubySettings, RubySymbolWriter, CodegenContext> {
+        implements ImportContainer, SmithyIntegration<RubySettings, RubyCodeWriter, GenerationContext> {
+    private final String namespace;
+
+    public RubyImportContainer(String namespace) {
+        this.namespace = namespace;
+    }
 
     @Override
     public void importSymbol(Symbol symbol, String alias) {

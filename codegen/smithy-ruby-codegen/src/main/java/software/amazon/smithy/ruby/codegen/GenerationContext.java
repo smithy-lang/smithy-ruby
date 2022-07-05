@@ -34,11 +34,11 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * loaded integrations, service, ect.
  */
 @SmithyUnstableApi
-public class GenerationContext implements CodegenContext<RubySettings, RubySymbolWriter, RubyImportContainer> {
+public class GenerationContext implements CodegenContext<RubySettings, RubyCodeWriter, RubyIntegration> {
 
     private final RubySettings rubySettings;
     private final FileManifest fileManifest;
-    private final List<RubyImportContainer> integrations;
+    private final List<RubyIntegration> integrations;
     private final Model model;
     private final ServiceShape service;
     private final ShapeId protocol;
@@ -46,10 +46,11 @@ public class GenerationContext implements CodegenContext<RubySettings, RubySymbo
     private final ApplicationTransport applicationTransport;
     private final Set<RubyDependency> rubyDependencies;
     private final SymbolProvider symbolProvider;
+    private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
-                             List<RubyImportContainer> integrations,
+                             List<RubyIntegration> integrations,
                              Model model,
                              ServiceShape service,
                              ShapeId protocol,
@@ -68,6 +69,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubySymbo
         this.applicationTransport = applicationTransport;
         this.rubyDependencies = rubyDependencies;
         this.symbolProvider = symbolProvider;
+        this.writerDelegator = new WriterDelegator(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
 
     @Override
@@ -91,13 +93,13 @@ public class GenerationContext implements CodegenContext<RubySettings, RubySymbo
     }
 
     @Override
-    public WriterDelegator<RubySymbolWriter> writerDelegator() {
+    public WriterDelegator<RubyCodeWriter> writerDelegator() {
+
         // TODO?
         return null;
     }
 
-    // TODO, fix
-    public List<RubyImportContainer> integrations() {
+    public List<RubyIntegration> integrations() {
         return integrations;
     }
 

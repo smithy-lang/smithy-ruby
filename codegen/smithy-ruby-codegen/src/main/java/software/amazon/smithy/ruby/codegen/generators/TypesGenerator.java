@@ -62,8 +62,8 @@ public class TypesGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.rbsWriter = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule());
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
         this.symbolProvider = new RubySymbolProvider(model, settings, "Types", false);
     }
 

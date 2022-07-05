@@ -47,7 +47,7 @@ public class TraitExampleGenerator {
         this.operation = operation;
         this.symbolProvider = symbolProvider;
         this.model = model;
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter("");
         this.documentation = example.getDocumentation();
         this.input = example.getInput();
         this.output = example.getOutput();

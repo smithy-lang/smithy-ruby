@@ -48,7 +48,7 @@ public class GemspecGenerator {
     public void render() {
         FileManifest fileManifest = context.fileManifest();
         RubySettings settings = context.settings();
-        RubyCodeWriter writer = new RubyCodeWriter();
+        RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
 
         writer
                 .writePreamble()

@@ -1496,7 +1496,7 @@ module RailsJson
     #   resp.data.header_false_bool #=> Boolean
     #   resp.data.header_string_list #=> Array<String>
     #   resp.data.header_string_list[0] #=> String
-    #   resp.data.header_string_set #=> Set<String>
+    #   resp.data.header_string_set #=> Array<String>
     #   resp.data.header_string_set[0] #=> String
     #   resp.data.header_integer_list #=> Array<Integer>
     #   resp.data.header_integer_list[0] #=> Integer
@@ -1588,7 +1588,7 @@ module RailsJson
     #   resp.data.foo_enum3 #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_list #=> Array<String>
     #   resp.data.foo_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
-    #   resp.data.foo_enum_set #=> Set<String>
+    #   resp.data.foo_enum_set #=> Array<String>
     #   resp.data.foo_enum_set[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_map #=> Hash<String, String>
     #   resp.data.foo_enum_map['key'] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
@@ -1700,10 +1700,10 @@ module RailsJson
     #   resp.data.sparse_boolean_map['key'] #=> Boolean
     #   resp.data.sparse_string_map #=> Hash<String, String>
     #   resp.data.sparse_string_map['key'] #=> String
-    #   resp.data.dense_set_map #=> Hash<String, Set<String>>
-    #   resp.data.dense_set_map['key'] #=> Set<String>
+    #   resp.data.dense_set_map #=> Hash<String, Array<String>>
+    #   resp.data.dense_set_map['key'] #=> Array<String>
     #   resp.data.dense_set_map['key'][0] #=> String
-    #   resp.data.sparse_set_map #=> Hash<String, Set<String>>
+    #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
     #
     def json_maps(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

@@ -132,10 +132,10 @@ module RailsJson
       end
     end
 
-    # Set Builder for IntegerSet
+    # List Builder for IntegerSet
     class IntegerSet
       def self.build(input)
-        data = Set.new
+        data = []
         input.each do |element|
           data << element unless element.nil?
         end
@@ -154,10 +154,10 @@ module RailsJson
       end
     end
 
-    # Set Builder for StringSet
+    # List Builder for StringSet
     class StringSet
       def self.build(input)
-        data = Set.new
+        data = []
         input.each do |element|
           data << element unless element.nil?
         end
@@ -529,7 +529,6 @@ module RailsJson
         end
         unless input[:header_string_set].nil? || input[:header_string_set].empty?
           http_req.headers['X-StringSet'] = input[:header_string_set]
-            .to_a
             .compact
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
@@ -576,7 +575,7 @@ module RailsJson
         data[:foo_enum2] = input[:foo_enum2] unless input[:foo_enum2].nil?
         data[:foo_enum3] = input[:foo_enum3] unless input[:foo_enum3].nil?
         data[:foo_enum_list] = Builders::FooEnumList.build(input[:foo_enum_list]) unless input[:foo_enum_list].nil?
-        data[:foo_enum_set] = Builders::FooEnumSet.build(input[:foo_enum_set]).to_a unless input[:foo_enum_set].nil?
+        data[:foo_enum_set] = Builders::FooEnumSet.build(input[:foo_enum_set]) unless input[:foo_enum_set].nil?
         data[:foo_enum_map] = Builders::FooEnumMap.build(input[:foo_enum_map]) unless input[:foo_enum_map].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -593,10 +592,10 @@ module RailsJson
       end
     end
 
-    # Set Builder for FooEnumSet
+    # List Builder for FooEnumSet
     class FooEnumSet
       def self.build(input)
-        data = Set.new
+        data = []
         input.each do |element|
           data << element unless element.nil?
         end
@@ -633,7 +632,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = (Builders::StringSet.build(value).to_a unless value.nil?)
+          data[key] = (Builders::StringSet.build(value) unless value.nil?)
         end
         data
       end
@@ -644,7 +643,7 @@ module RailsJson
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::StringSet.build(value).to_a unless value.nil?
+          data[key] = Builders::StringSet.build(value) unless value.nil?
         end
         data
       end
