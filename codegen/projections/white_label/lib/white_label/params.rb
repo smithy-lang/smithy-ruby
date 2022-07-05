@@ -102,7 +102,6 @@ module WhiteLabel
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
         type.map_of_structs = MapOfStructs.build(params[:map_of_structs], context: "#{context}[:map_of_structs]") unless params[:map_of_structs].nil?
-        type.set_of_strings = SetOfStrings.build(params[:set_of_strings], context: "#{context}[:set_of_strings]") unless params[:set_of_strings].nil?
         type.union = Union.build(params[:union], context: "#{context}[:union]") unless params[:union].nil?
         type
       end
@@ -121,7 +120,6 @@ module WhiteLabel
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
         type.map_of_structs = MapOfStructs.build(params[:map_of_structs], context: "#{context}[:map_of_structs]") unless params[:map_of_structs].nil?
-        type.set_of_strings = SetOfStrings.build(params[:set_of_strings], context: "#{context}[:set_of_strings]") unless params[:set_of_strings].nil?
         type.union = Union.build(params[:union], context: "#{context}[:union]") unless params[:union].nil?
         type
       end
@@ -223,17 +221,6 @@ module WhiteLabel
         Hearth::Validator.validate!(params, ::Hash, Types::ServerError, context: context)
         type = Types::ServerError.new
         type
-      end
-    end
-
-    module SetOfStrings
-      def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Set, ::Array, context: context)
-        data = Set.new
-        params.each do |element|
-          data << element
-        end
-        data
       end
     end
 

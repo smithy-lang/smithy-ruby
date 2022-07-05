@@ -44,10 +44,6 @@ module WhiteLabel
     class Struct
     end
 
-    # Set Builder for SetOfStrings
-    class SetOfStrings
-    end
-
     # Map Builder for MapOfStructs
     class MapOfStructs
     end

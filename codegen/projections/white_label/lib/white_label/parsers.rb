@@ -50,9 +50,6 @@ module WhiteLabel
     class Struct
     end
 
-    class SetOfStrings
-    end
-
     class MapOfStructs
     end
 

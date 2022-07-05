@@ -99,7 +99,6 @@ module WhiteLabel
         Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
         Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
         Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::SetOfStrings.validate!(input[:set_of_strings], context: "#{context}[:set_of_strings]") unless input[:set_of_strings].nil?
         Validators::Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
       end
     end
@@ -116,7 +115,6 @@ module WhiteLabel
         Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
         Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
         Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::SetOfStrings.validate!(input[:set_of_strings], context: "#{context}[:set_of_strings]") unless input[:set_of_strings].nil?
         Validators::Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
       end
     end
@@ -199,15 +197,6 @@ module WhiteLabel
     class ServerError
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::ServerError, context: context)
-      end
-    end
-
-    class SetOfStrings
-      def self.validate!(input, context:)
-        Hearth::Validator.validate!(input, ::Set, context: context)
-        input.each_with_index do |element, index|
-          Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
-        end
       end
     end
 

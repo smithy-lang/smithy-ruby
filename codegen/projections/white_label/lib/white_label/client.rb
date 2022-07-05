@@ -309,9 +309,6 @@ module WhiteLabel
     #     map_of_strings: {
     #       'key' => 'value'
     #     },
-    #     set_of_strings: [
-    #       'member'
-    #     ],
     #     union: {
     #       # One of:
     #       string: 'String',
@@ -333,8 +330,6 @@ module WhiteLabel
     #   resp.data.map_of_strings #=> Hash<String, String>
     #   resp.data.map_of_strings['key'] #=> String
     #   resp.data.map_of_structs #=> Hash<String, Struct>
-    #   resp.data.set_of_strings #=> Set<String>
-    #   resp.data.set_of_strings[0] #=> String
     #   resp.data.union #=> Union
     #
     # @example Test input and output
@@ -371,11 +366,6 @@ module WhiteLabel
     #         value: "struct2"
     #       }
     #     },
-    #     set_of_strings: [
-    #       "set",
-    #       "of",
-    #       "strings"
-    #     ],
     #     union: {
     #       string: "union string"
     #     }
@@ -412,11 +402,6 @@ module WhiteLabel
     #         value: "struct2"
     #       }
     #     },
-    #     set_of_strings: [
-    #       "set",
-    #       "of",
-    #       "strings"
-    #     ],
     #     union: {
     #       struct: {
     #         value: "union struct"
