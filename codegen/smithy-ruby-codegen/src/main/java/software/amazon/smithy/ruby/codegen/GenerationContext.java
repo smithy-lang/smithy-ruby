@@ -94,9 +94,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
     @Override
     public WriterDelegator<RubyCodeWriter> writerDelegator() {
-
-        // TODO?
-        return null;
+        return writerDelegator;
     }
 
     public List<RubyIntegration> integrations() {

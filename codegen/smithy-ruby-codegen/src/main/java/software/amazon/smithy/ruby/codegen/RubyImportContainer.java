@@ -15,13 +15,17 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.Symbol;
 
 public class RubyImportContainer
         implements ImportContainer, SmithyIntegration<RubySettings, RubyCodeWriter, GenerationContext> {
+
     private final String namespace;
+    private final List<String> imports = new ArrayList<String>();
 
     public RubyImportContainer(String namespace) {
         this.namespace = namespace;
@@ -29,6 +33,6 @@ public class RubyImportContainer
 
     @Override
     public void importSymbol(Symbol symbol, String alias) {
-        // TODO?
+        imports.add("require '" + symbol.getName() + "'\n");
     }
 }
