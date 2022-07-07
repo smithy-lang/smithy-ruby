@@ -71,7 +71,8 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .write("require '$L'\n", settings.getGemName())
                 .write("require 'hearth/xml/node_matcher'")
                 .write("require 'hearth/query/param_matcher'")

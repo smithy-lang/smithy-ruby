@@ -84,7 +84,8 @@ public class WaitersGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters(false))
@@ -101,7 +102,7 @@ public class WaitersGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters(true))

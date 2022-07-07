@@ -72,7 +72,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     public void render() {
         FileManifest fileManifest = context.fileManifest();
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Validators")
                 .call(() -> renderValidators())

@@ -199,7 +199,8 @@ public abstract class StubsGeneratorBase {
     public void render(FileManifest fileManifest) {
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Stubs")
                 .call(() -> renderStubs())

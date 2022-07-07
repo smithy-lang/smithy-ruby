@@ -25,6 +25,21 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
 
+    private static final String PREAMBLE =
+"""
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+""";
+
+    private boolean includePreamble = false;
+    private boolean includeRequires = false;
+
     public RubyCodeWriter(String namespace) {
         super(new RubyImportContainer(namespace));
 
@@ -33,28 +48,26 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         setIndentText("  ");
     }
 
-    public static final class Factory implements SymbolWriter.Factory<RubyCodeWriter> {
-        @Override
-        public RubyCodeWriter apply(String filename, String namespace) {
-            return new RubyCodeWriter(namespace);
-        }
-    }
-
     /**
-     * Writes preamble comments.
-     * For writers that are used to generate full files, this should
-     * be called before any other write methods.
+     * Preamble comments will be included in the generated code.
+     * This should be called for writers that are used to generate full files.
      *
      * @return Returns the CodeWriter
      */
-    public RubyCodeWriter writePreamble() {
-        write("# frozen_string_literal: true\n");
-        write("# WARNING ABOUT GENERATED CODE");
-        write("#");
-        write("# This file was code generated using smithy-ruby.");
-        write("# https://github.com/awslabs/smithy-ruby");
-        write("#");
-        write("# WARNING ABOUT GENERATED CODE\n");
+    public RubyCodeWriter includePreamble() {
+        this.includePreamble = true;
+        return this;
+    }
+
+    /**
+     * Require statments for symbols/dependenices used
+     * will be included in the generated code.
+     * This should be called for writers that are used to generate full files.
+     *
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter includeRequires() {
+        this.includeRequires = true;
         return this;
     }
 
@@ -72,10 +85,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
-    /*
-     * YARD convenience methods
-     */
-
     /**
      * Writes a yard method tag.
      *
@@ -92,6 +101,10 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         });
         return this;
     }
+
+    /*
+     * YARD convenience methods
+     */
 
     /**
      * Writes a yard attribute tag.
@@ -262,6 +275,22 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if (includePreamble) {
+            result.append(PREAMBLE).append("\n");
+        }
+        if (includeRequires) {
+            String requires = getImportContainer().toString();
+            if (!requires.isEmpty()) {
+                result.append(requires).append("\n");
+            }
+        }
+        result.append(super.toString());
+        return result.toString();
+    }
+
     // Writes a documentation indented newline separated string
     private void writeIndentedParts(String documentation) {
         if (!documentation.isEmpty()) {
@@ -269,6 +298,13 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
             for (int i = 0; i < docstringParts.length; i++) {
                 write("  $L", docstringParts[i]);
             }
+        }
+    }
+
+    public static final class Factory implements SymbolWriter.Factory<RubyCodeWriter> {
+        @Override
+        public RubyCodeWriter apply(String filename, String namespace) {
+            return new RubyCodeWriter(namespace);
         }
     }
 }

@@ -82,7 +82,8 @@ public abstract class ErrorsGeneratorBase {
 
     public void render(FileManifest fileManifest) {
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .openBlock("def self.error_code(resp)")
@@ -101,7 +102,7 @@ public abstract class ErrorsGeneratorBase {
 
     public void renderRbs(FileManifest fileManifest) {
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")

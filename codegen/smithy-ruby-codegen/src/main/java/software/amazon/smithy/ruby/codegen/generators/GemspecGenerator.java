@@ -51,7 +51,7 @@ public class GemspecGenerator {
         RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
 
         writer
-                .writePreamble()
+                .includePreamble()
                 .openBlock("Gem::Specification.new do |spec|")
                 .write("spec.name          = '$L'", settings.getGemName())
                 .write("spec.version       = '$L'", settings.getGemVersion())

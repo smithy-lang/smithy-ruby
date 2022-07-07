@@ -67,7 +67,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .write("require 'securerandom'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")

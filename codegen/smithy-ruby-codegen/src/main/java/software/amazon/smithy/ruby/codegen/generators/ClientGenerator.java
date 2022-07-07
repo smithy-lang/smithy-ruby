@@ -64,7 +64,7 @@ public class ClientGenerator {
     public void render(MiddlewareBuilder middlewareBuilder) {
         FileManifest fileManifest = context.fileManifest();
 
-        writer.writePreamble();
+        writer.includePreamble().includeRequires();
 
         List<String> additionalFiles =
                 middlewareBuilder.writeAdditionalFiles(context);
@@ -116,7 +116,7 @@ public class ClientGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("class Client")
                 .write("include Hearth::ClientStubs\n")

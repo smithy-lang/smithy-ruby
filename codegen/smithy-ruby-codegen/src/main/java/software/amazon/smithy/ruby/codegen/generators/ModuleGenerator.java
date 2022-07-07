@@ -39,7 +39,7 @@ public class ModuleGenerator {
         RubySettings settings = context.settings();
         RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
 
-        writer.writePreamble();
+        writer.includePreamble().includeRequires();
         context.getRubyDependencies().forEach((rubyDependency -> {
             writer.write("require '$L'", rubyDependency.getImportPath());
         }));

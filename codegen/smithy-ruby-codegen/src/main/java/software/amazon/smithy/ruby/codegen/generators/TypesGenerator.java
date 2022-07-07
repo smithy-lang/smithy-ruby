@@ -70,7 +70,8 @@ public class TypesGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
@@ -89,7 +90,7 @@ public class TypesGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")

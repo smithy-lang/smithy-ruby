@@ -197,7 +197,8 @@ public abstract class BuilderGeneratorBase {
     public void render(FileManifest fileManifest) {
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Builders")

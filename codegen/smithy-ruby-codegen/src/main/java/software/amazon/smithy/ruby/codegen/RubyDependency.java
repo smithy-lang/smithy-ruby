@@ -173,7 +173,7 @@ public final class RubyDependency
      * Represents a dependency type.
      */
     public enum Type {
-        STANDARD_LIBRARY, DEPENDENCY;
+        STANDARD_LIBRARY, DEPENDENCY, SDK_INTERNAL;
 
         @Override
         public String toString() {
@@ -182,6 +182,8 @@ public final class RubyDependency
                     return "stdlib";
                 case DEPENDENCY:
                     return "dependency";
+                case SDK_INTERNAL:
+                    return "sdk_internal";
                 default:
                     return "unknown";
             }

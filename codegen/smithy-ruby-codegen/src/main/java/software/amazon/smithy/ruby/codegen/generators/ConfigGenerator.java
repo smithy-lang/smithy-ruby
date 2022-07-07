@@ -62,7 +62,8 @@ public class ConfigGenerator {
         membersBlock += ",";
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .call(() -> renderConfigDocumentation(clientConfigList))
                 .openBlock("Config = ::Struct.new(")

@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -25,7 +25,7 @@ public class RubyImportContainer
         implements ImportContainer, SmithyIntegration<RubySettings, RubyCodeWriter, GenerationContext> {
 
     private final String namespace;
-    private final List<String> imports = new ArrayList<String>();
+    private final Set<String> requires = new TreeSet<>();
 
     public RubyImportContainer(String namespace) {
         this.namespace = namespace;
@@ -33,6 +33,28 @@ public class RubyImportContainer
 
     @Override
     public void importSymbol(Symbol symbol, String alias) {
-        imports.add("require '" + symbol.getName() + "'\n");
+        // We currently don't need to require_relative any symbols defined by the SDK
+        // they are all required in the module definition already
+        // So, add requires only for symbols that have external (including stdlib like time/stringio) dependencies
+        symbol.getDependencies().forEach(d -> {
+            if (shouldRequire(d.getDependencyType())) {
+                requires.add(d.getPackageName());
+            }
+        });
+    }
+
+    private boolean shouldRequire(String dependencyType) {
+        return dependencyType.equals(RubyDependency.Type.DEPENDENCY.toString())
+                || dependencyType.equals(RubyDependency.Type.STANDARD_LIBRARY.toString());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        requires.forEach(r -> {
+            result.append(String.format("require '%s'", r));
+        });
+
+        return result.toString();
     }
 }

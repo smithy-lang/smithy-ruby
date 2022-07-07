@@ -57,7 +57,8 @@ public class PaginatorsGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderPaginators())
@@ -74,7 +75,7 @@ public class PaginatorsGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderRbsPaginators())
