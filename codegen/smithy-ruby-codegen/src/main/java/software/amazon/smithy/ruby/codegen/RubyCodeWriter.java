@@ -15,7 +15,13 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -26,26 +32,28 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
 
     private static final String PREAMBLE =
-"""
-# frozen_string_literal: true
+            """
+                    # frozen_string_literal: true
 
-# WARNING ABOUT GENERATED CODE
-#
-# This file was code generated using smithy-ruby.
-# https://github.com/awslabs/smithy-ruby
-#
-# WARNING ABOUT GENERATED CODE
-""";
-
+                    # WARNING ABOUT GENERATED CODE
+                    #
+                    # This file was code generated using smithy-ruby.
+                    # https://github.com/awslabs/smithy-ruby
+                    #
+                    # WARNING ABOUT GENERATED CODE
+                    """;
+    private final String namespace;
     private boolean includePreamble = false;
     private boolean includeRequires = false;
 
     public RubyCodeWriter(String namespace) {
         super(new RubyImportContainer(namespace));
+        this.namespace = namespace;
 
         trimTrailingSpaces();
         trimBlankLines();
         setIndentText("  ");
+        putFormatter('T', new RubySymbolFormatter());
     }
 
     /**
@@ -305,6 +313,47 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         @Override
         public RubyCodeWriter apply(String filename, String namespace) {
             return new RubyCodeWriter(namespace);
+        }
+    }
+
+    /**
+     * Adds TypeScript symbols for the "$T" formatter.
+     */
+    private final class RubySymbolFormatter implements BiFunction<Object, String, String> {
+        @Override
+        public String apply(Object type, String indent) {
+            if (type instanceof Symbol) {
+                Symbol typeSymbol = (Symbol) type;
+                addUseImports(typeSymbol);
+                return relativizeName(typeSymbol);
+            } else if (type instanceof SymbolReference) {
+                SymbolReference typeSymbol = (SymbolReference) type;
+                addImport(typeSymbol.getSymbol(), typeSymbol.getAlias(), SymbolReference.ContextOption.USE);
+                return typeSymbol.getAlias();
+            } else {
+                throw new CodegenException(
+                        "Invalid type provided to $T. Expected a Symbol or SymbolReference, but found `" + type + "`");
+            }
+        }
+
+        private String relativizeName(Symbol symbol) {
+            if (symbol.getNamespace().isEmpty()) {
+                return "::" + symbol.getName(); // force root namespace
+            } else {
+                String[] symbolNamespace = symbol.getNamespace().split("::");
+                String[] moduleNamespace = namespace.split("::");
+                int i = 0;
+                while (i < symbolNamespace.length && i < moduleNamespace.length) {
+                    if (!symbolNamespace[i].equals(moduleNamespace[i])) {
+                        break;
+                    }
+                    i++;
+                }
+                String relativeNamespace = IntStream.range(i, symbolNamespace.length)
+                        .mapToObj(j -> symbolNamespace[j])
+                        .collect(Collectors.joining("::"));
+                return relativeNamespace + "::" + symbol.getName();
+            }
         }
     }
 }

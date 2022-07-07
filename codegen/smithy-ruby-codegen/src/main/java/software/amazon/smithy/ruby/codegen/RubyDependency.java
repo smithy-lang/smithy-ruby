@@ -53,6 +53,12 @@ public final class RubyDependency
             .version(">= 0")
             .build();
 
+    public static final RubyDependency SECURE_RANDOM = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("securerandom")
+            .version(">= 0")
+            .build();
+
 
     private final Type type;
     private final String gemName;

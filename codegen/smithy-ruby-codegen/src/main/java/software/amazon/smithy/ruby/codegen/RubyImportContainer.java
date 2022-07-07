@@ -24,8 +24,14 @@ import software.amazon.smithy.codegen.core.Symbol;
 public class RubyImportContainer
         implements ImportContainer, SmithyIntegration<RubySettings, RubyCodeWriter, GenerationContext> {
 
+    public static final Symbol SECURE_RANDOM = Symbol.builder()
+            .name("SecureRandom")
+            .addDependency(RubyDependency.SECURE_RANDOM)
+            .build();
+
     private final String namespace;
     private final Set<String> requires = new TreeSet<>();
+
 
     public RubyImportContainer(String namespace) {
         this.namespace = namespace;
@@ -52,7 +58,7 @@ public class RubyImportContainer
     public String toString() {
         StringBuilder result = new StringBuilder();
         requires.forEach(r -> {
-            result.append(String.format("require '%s'", r));
+            result.append(String.format("require '%s'%n", r));
         });
 
         return result.toString();

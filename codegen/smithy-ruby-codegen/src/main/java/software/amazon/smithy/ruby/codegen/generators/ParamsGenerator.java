@@ -40,6 +40,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -59,8 +60,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Params");
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Types", true);
     }
 
     public void render() {
@@ -69,7 +70,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         writer
                 .includePreamble()
                 .includeRequires()
-                .write("require 'securerandom'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())
@@ -109,16 +109,16 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $L", shapeName)
                 .openBlock("def self.build(params, context: '')")
-                .call(() -> renderBuilderForStructureMembers(shapeName, structureShape.members()))
+                .call(() -> renderBuilderForStructureMembers(symbol, structureShape.members()))
                 .closeBlock("end")
                 .closeBlock("end");
         return null;
     }
 
-    private void renderBuilderForStructureMembers(String shapeName, Collection<MemberShape> members) {
+    private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
         writer
-                .write("Hearth::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
-                .write("type = Types::$L.new", shapeName);
+                .write("Hearth::Validator.validate!(params, ::Hash, $T, context: context)", symbol)
+                .write("type = $T.new", symbol);
 
         members.forEach(member -> {
             Shape target = model.expectShape(member.getTarget());
@@ -287,7 +287,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         public Void stringShape(StringShape shape) {
             if (memberShape.hasTrait(IdempotencyTokenTrait.class)
                     || shape.hasTrait(IdempotencyTokenTrait.class)) {
-                writer.write("$L$L || SecureRandom.uuid", memberSetter, input);
+                writer.write("$L$L || $T.uuid", memberSetter, input, RubyImportContainer.SECURE_RANDOM);
             } else {
                 writer.write("$L$L", memberSetter, input);
             }
