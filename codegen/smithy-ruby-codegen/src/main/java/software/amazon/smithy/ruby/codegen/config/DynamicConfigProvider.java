@@ -15,10 +15,16 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+/**
+ * Config provider for dynamically getting config values from arbitrary ruby code blocks.
+ */
 public class DynamicConfigProvider implements ConfigProvider {
 
     private final String rubyDefaultBlock;
 
+    /**
+     * @param rubyDefaultBlock ruby code block to provide the config value
+     */
     public DynamicConfigProvider(String rubyDefaultBlock) {
         this.rubyDefaultBlock = rubyDefaultBlock;
     }

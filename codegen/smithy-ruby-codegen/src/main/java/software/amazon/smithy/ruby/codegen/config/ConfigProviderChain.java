@@ -29,6 +29,9 @@ public class ConfigProviderChain {
 
     private final List<ConfigProvider> providers;
 
+    /**
+     * @param builder builder to construct the chain from.
+     */
     public ConfigProviderChain(Builder builder) {
         this.providers = builder.providers;
     }
@@ -40,6 +43,9 @@ public class ConfigProviderChain {
         return List.copyOf(this.providers);
     }
 
+    /**
+     * @return a string if there should be documentation for the default.
+     */
     public Optional<String> getDocumentationDefault() {
         return providers.stream().map((p) -> p.getDocumentationDefault())
                 .filter((d) -> d.isPresent())
@@ -47,6 +53,9 @@ public class ConfigProviderChain {
                 .findFirst();
     }
 
+    /**
+     * Builder for generating an ordered list of config providers.
+     */
     public static class Builder implements SmithyBuilder<ConfigProviderChain> {
         private final List<ConfigProvider> providers;
 
@@ -59,21 +68,39 @@ public class ConfigProviderChain {
             return this;
         }
 
+        /**
+         * @param value static value
+         * @return this builder
+         */
         public Builder staticProvider(String value) {
             this.providers.add(new StaticConfigProvider(value));
             return this;
         }
 
+        /**
+         * @param rubyDefaultBlock a ruby code block to provide a value
+         * @return this builder
+         */
         public Builder dynamicProvider(String rubyDefaultBlock) {
             this.providers.add(new DynamicConfigProvider(rubyDefaultBlock));
             return this;
         }
 
+        /**
+         * @param environmentKey ENV key to get value from
+         * @param type ruby type to attempt to coerce the value to
+         * @return this builder
+         */
         public Builder envProvider(String environmentKey, String type) {
             this.providers.add(new EnvConfigProvider(environmentKey, type));
             return this;
         }
 
+        /**
+         * @param configKey the key in the shared config files
+         * @param type ruby type to attempt to coerce the value to
+         * @return this builder
+         */
         public Builder sharedConfigProvider(String configKey, String type) {
             this.providers.add(new SharedConfigProvider(configKey, type));
             return this;

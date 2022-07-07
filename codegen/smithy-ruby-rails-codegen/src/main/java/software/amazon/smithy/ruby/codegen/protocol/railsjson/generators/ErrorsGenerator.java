@@ -19,8 +19,14 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.RailsJsonTrait;
 
+/**
+ * ErrorsGenerator for RailsJson.
+ */
 public class ErrorsGenerator extends ErrorsGeneratorBase {
 
+    /**
+     * @param context generation context
+     */
     public ErrorsGenerator(GenerationContext context) {
         super(context);
     }

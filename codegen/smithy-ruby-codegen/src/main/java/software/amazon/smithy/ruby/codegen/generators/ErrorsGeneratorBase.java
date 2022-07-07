@@ -50,24 +50,52 @@ public abstract class ErrorsGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(ErrorsGeneratorBase.class.getName());
 
+    /**
+     * generation context.
+     */
     protected final GenerationContext context;
+    /**
+     * Ruby settings.
+     */
     protected final RubySettings settings;
+    /**
+     * Model to generate for.
+     */
     protected final Model model;
+
+    /**
+     * CodeWriter to write with.
+     */
     protected final RubyCodeWriter writer;
+    /**
+     * CodeWriter to write RBS with.
+     */
     protected final RubyCodeWriter rbsWriter;
+    /**
+     * SymbolProvider scoped to the errors module.
+     */
     protected final SymbolProvider symbolProvider;
+    /**
+     * List of all errorShapes.
+     */
     protected final List<Shape> errorShapes;
 
+    /**
+     * @param context generation context
+     */
     public ErrorsGeneratorBase(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Errors");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
         this.errorShapes = getErrorShapes();
     }
 
+    /**
+     * @return list of all applicable (connected) error shapes.
+     */
     protected List<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
@@ -80,6 +108,9 @@ public abstract class ErrorsGeneratorBase {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * @param fileManifest fileManifest to use for writting.
+     */
     public void render(FileManifest fileManifest) {
         writer
                 .includePreamble()
@@ -100,6 +131,9 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.info("Wrote errors to " + fileName);
     }
 
+    /**
+     * @param fileManifest fileManifest to use for writing.
+     */
     public void renderRbs(FileManifest fileManifest) {
         rbsWriter
                 .includePreamble()
@@ -171,6 +205,9 @@ public abstract class ErrorsGeneratorBase {
      */
     public abstract void renderErrorCodeBody();
 
+    /**
+     * Render RBS signature for error code.
+     */
     public void renderRbsErrorCode() {
         rbsWriter.write("def self.error_code: (untyped resp) -> untyped");
     }

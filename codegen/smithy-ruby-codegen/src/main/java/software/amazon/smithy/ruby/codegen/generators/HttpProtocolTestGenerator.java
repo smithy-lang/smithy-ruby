@@ -48,6 +48,9 @@ import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
+/**
+ * Generate Protocol Tests.
+ */
 public class HttpProtocolTestGenerator {
 
     private static final Logger LOGGER =
@@ -59,6 +62,9 @@ public class HttpProtocolTestGenerator {
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
 
+    /**
+     * @param context generation context
+     */
     public HttpProtocolTestGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
@@ -67,6 +73,9 @@ public class HttpProtocolTestGenerator {
         this.symbolProvider = new RubySymbolProvider(model, settings, "Protocol", true);
     }
 
+    /**
+     * Render (Generate) the protocol tests.
+     */
     public void render() {
         FileManifest fileManifest = context.fileManifest();
 

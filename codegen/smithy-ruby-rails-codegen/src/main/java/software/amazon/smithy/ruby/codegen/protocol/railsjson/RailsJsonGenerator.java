@@ -26,7 +26,9 @@ import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ErrorsG
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ParserGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.StubsGenerator;
 
-// Protocol Implementation for Rails-Json
+/**
+ * Protocol Implementation for Rails-Json.
+ */
 public class RailsJsonGenerator implements ProtocolGenerator {
     private static final Logger LOGGER = Logger.getLogger(RailsJsonGenerator.class.getName());
 

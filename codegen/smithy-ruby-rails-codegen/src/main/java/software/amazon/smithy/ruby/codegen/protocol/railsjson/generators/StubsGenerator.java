@@ -45,8 +45,15 @@ import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
+/**
+ * StubsGenerator for RailsJson.
+ */
 public class StubsGenerator extends RestStubsGeneratorBase {
 
+    /**
+     * Create a StubsGenerator.
+     * @param context generation context
+     */
     public StubsGenerator(GenerationContext context) {
         super(context);
     }

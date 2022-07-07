@@ -18,8 +18,14 @@ package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generator
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
 
+/**
+ * FakeProtocol ErrorGenerator.
+ */
 public class ErrorsGenerator extends ErrorsGeneratorBase {
 
+    /**
+     * @param context generation context
+     */
     public ErrorsGenerator(GenerationContext context) {
         super(context);
     }

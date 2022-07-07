@@ -25,7 +25,9 @@ import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.RailsJsonGenerator;
 
-// Provide support for generating SDKs for Rails (RailsJson)
+/**
+ * Provide support for generating SDKs for Rails (RailsJson).
+ */
 public class RailsIntegration implements RubyIntegration {
 
     @Override

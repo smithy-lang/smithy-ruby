@@ -18,6 +18,9 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.Optional;
 import software.amazon.smithy.model.shapes.Shape;
 
+/**
+ * Utilities for Ruby code generation.
+ */
 public final class CodegenUtils {
     private static final String SYNTHETIC_NAMESPACE = "smithy.ruby.synthetic";
 

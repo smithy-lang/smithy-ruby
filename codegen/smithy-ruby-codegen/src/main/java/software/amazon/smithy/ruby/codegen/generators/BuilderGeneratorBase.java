@@ -54,11 +54,29 @@ public abstract class BuilderGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(BuilderGeneratorBase.class.getName());
 
+    /**
+     * Generation context.
+     */
     protected final GenerationContext context;
+    /**
+     * Ruby Settings.
+     */
     protected final RubySettings settings;
+    /**
+     * Model to generate for.
+     */
     protected final Model model;
+    /**
+     * Set of builders that have already been generated.
+     */
     protected final Set<ShapeId> generatedBuilders;
+    /**
+     * CodeWriter to use for writing.
+     */
     protected final RubyCodeWriter writer;
+    /**
+     * SymbolProvider scoped to this module.
+     */
     protected final RubySymbolProvider symbolProvider;
 
     public BuilderGeneratorBase(GenerationContext context) {
@@ -66,7 +84,7 @@ public abstract class BuilderGeneratorBase {
         this.model = context.model();
         this.generatedBuilders = new HashSet<>();
         this.context = context;
-        this.writer = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Builder");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
     }
 
@@ -194,6 +212,10 @@ public abstract class BuilderGeneratorBase {
      */
     protected abstract void renderMapBuildMethod(MapShape shape);
 
+    /**
+     * Render the builder module.
+     * @param fileManifest files to generate to.
+     */
     public void render(FileManifest fileManifest) {
 
         writer
@@ -211,6 +233,9 @@ public abstract class BuilderGeneratorBase {
         LOGGER.fine("Wrote builders to " + fileName);
     }
 
+    /**
+     * Render all builders.
+     */
     protected void renderBuilders() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
@@ -235,6 +260,10 @@ public abstract class BuilderGeneratorBase {
                 });
     }
 
+    /**
+     * @param operation operation to render for
+     * @param inputShape the operation's inputShape.
+     */
     protected void renderBuildersForOperation(OperationShape operation, Shape inputShape) {
         Symbol symbol = symbolProvider.toSymbol(operation);
 
@@ -248,6 +277,9 @@ public abstract class BuilderGeneratorBase {
         LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
     }
 
+    /**
+     * @param inputShape inputShape from a streaming operation to render for.
+     */
     protected void renderStreamingBodyBuilder(Shape inputShape) {
         MemberShape streamingMember = inputShape.members().stream()
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())

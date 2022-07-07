@@ -28,6 +28,9 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generate Config class for a Client.
+ */
 @SmithyInternalApi
 public class ConfigGenerator {
     private static final Logger LOGGER =
@@ -40,6 +43,9 @@ public class ConfigGenerator {
     private final RubyCodeWriter rbsWriter;
     private final RubySymbolProvider symbolProvider;
 
+    /**
+     * @param context generation context
+     */
     public ConfigGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
@@ -49,6 +55,10 @@ public class ConfigGenerator {
         this.symbolProvider = new RubySymbolProvider(model, settings, "Config", false);
     }
 
+    /**
+     * Render/Generate the Config for the client.
+     * @param clientConfigList list of config to apply to the client.
+     */
     public void render(List<ClientConfig> clientConfigList) {
         FileManifest fileManifest = context.fileManifest();
 
@@ -86,6 +96,9 @@ public class ConfigGenerator {
         LOGGER.fine("Wrote config to " + fileName);
     }
 
+    /**
+     * Render/generate the RBS types for Config.
+     */
     public void renderRbs() {
         FileManifest fileManifest = context.fileManifest();
 

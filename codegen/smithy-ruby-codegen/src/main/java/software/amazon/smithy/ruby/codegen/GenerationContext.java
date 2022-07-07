@@ -48,6 +48,18 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final SymbolProvider symbolProvider;
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
+    /**
+     * @param rubySettings ruby settings
+     * @param fileManifest file manifest for generating files
+     * @param integrations loaded RubyIntegrations
+     * @param model model to generate for
+     * @param service service to generate for
+     * @param protocol the protocol to generate for
+     * @param protocolGenerator the resolved protocol generate to use for generation
+     * @param applicationTransport resolved application transport.
+     * @param rubyDependencies set of Ruby dependencies
+     * @param symbolProvider a symbol provider scoped to the Types module
+     */
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
                              List<RubyIntegration> integrations,
@@ -69,7 +81,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.applicationTransport = applicationTransport;
         this.rubyDependencies = rubyDependencies;
         this.symbolProvider = symbolProvider;
-        this.writerDelegator = new WriterDelegator(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
+        this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
 
     @Override
@@ -97,26 +109,44 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         return writerDelegator;
     }
 
+    /**
+     * @return list of integrations loaded
+     */
     public List<RubyIntegration> integrations() {
         return integrations;
     }
 
+    /**
+     * @return service being generated for.
+     */
     public ServiceShape service() {
         return service;
     }
 
+    /**
+     * @return the resolved ApplicationTransport
+     */
     public ApplicationTransport applicationTransport() {
         return applicationTransport;
     }
 
+    /**
+     * @return the resolved protocol
+     */
     public ShapeId protocol() {
         return protocol;
     }
 
+    /**
+     * @return resolved generator for the protocol.
+     */
     public Optional<ProtocolGenerator> protocolGenerator() {
         return protocolGenerator;
     }
 
+    /**
+     * @return set of RubyDependencies
+     */
     public Set<RubyDependency> getRubyDependencies() {
         return rubyDependencies;
     }

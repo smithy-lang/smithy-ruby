@@ -25,7 +25,13 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
+/**
+ * FakeProtocol builder generator.
+ */
 public class BuilderGenerator extends BuilderGeneratorBase {
+    /**
+     * @param context generation context.
+     */
     public BuilderGenerator(GenerationContext context) {
         super(context);
     }

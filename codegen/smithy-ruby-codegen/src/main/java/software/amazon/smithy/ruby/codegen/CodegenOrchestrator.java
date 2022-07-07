@@ -48,6 +48,9 @@ import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Orchestrates/Directs code generation for Ruby.
+ */
 @SmithyInternalApi
 public class CodegenOrchestrator {
 
@@ -56,6 +59,9 @@ public class CodegenOrchestrator {
 
     private final GenerationContext context;
 
+    /**
+     * @param pluginContext plugin context to generate with.
+     */
     public CodegenOrchestrator(PluginContext pluginContext) {
 
         RubySettings rubySettings =
@@ -101,7 +107,7 @@ public class CodegenOrchestrator {
             supportedProtocols.addAll(
                     integration.getProtocolGenerators()
                             .stream()
-                            .map((g) -> g.getProtocol())
+                            .map(ProtocolGenerator::getProtocol)
                             .peek((s) -> LOGGER.info(
                                     integration.getClass().getSimpleName()
                                             + " registered protocolGenerator "
@@ -134,7 +140,7 @@ public class CodegenOrchestrator {
         // TODO: Apply CodeInterceptors (where?)
 
         SymbolProvider symbolProvider = new RubySymbolProvider(
-                resolvedModel, rubySettings, rubySettings.getModule(), true);
+                resolvedModel, rubySettings, "Types", true);
 
         for (RubyIntegration integration : integrations) {
             symbolProvider = integration.decorateSymbolProvider(resolvedModel, rubySettings, symbolProvider);
@@ -183,6 +189,9 @@ public class CodegenOrchestrator {
         return Optional.empty();
     }
 
+    /**
+     * Execute code generation.
+     */
     public void execute() {
         // Integration hook - processFinalizedModel
         context.integrations().forEach(
@@ -279,7 +288,7 @@ public class CodegenOrchestrator {
         context.protocolGenerator().ifPresent((g) -> g.modifyClientMiddleware(middlewareBuilder, context));
 
         // get all config
-        Set<ClientConfig> unorderedConfig = new HashSet();
+        Set<ClientConfig> unorderedConfig = new HashSet<>();
         unorderedConfig
                 .addAll(context.applicationTransport().getClientConfig());
         unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));

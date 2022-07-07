@@ -38,6 +38,9 @@ import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generate the service Client.
+ */
 @SmithyInternalApi
 public class ClientGenerator {
     private static final Logger LOGGER =
@@ -51,6 +54,9 @@ public class ClientGenerator {
     private final RubyCodeWriter rbsWriter;
     private boolean hasStreamingOperation;
 
+    /**
+     * @param context generation context
+     */
     public ClientGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
@@ -61,6 +67,10 @@ public class ClientGenerator {
         this.hasStreamingOperation = false;
     }
 
+    /**
+     * Render/Generate the service client.
+     * @param middlewareBuilder set of middleware to be added to the client
+     */
     public void render(MiddlewareBuilder middlewareBuilder) {
         FileManifest fileManifest = context.fileManifest();
 
@@ -112,6 +122,9 @@ public class ClientGenerator {
         LOGGER.fine("Wrote client to " + fileName);
     }
 
+    /**
+     * Render/generate the RBS types for the client.
+     */
     public void renderRbs() {
         FileManifest fileManifest = context.fileManifest();
 

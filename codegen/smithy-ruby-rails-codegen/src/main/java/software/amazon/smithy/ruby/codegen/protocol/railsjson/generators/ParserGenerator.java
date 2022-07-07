@@ -44,8 +44,14 @@ import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
+/**
+ * ParserGenerator for RailsJson.
+ */
 public class ParserGenerator extends RestParserGeneratorBase {
 
+    /**
+     * @param context generation context
+     */
     public ParserGenerator(GenerationContext context) {
         super(context);
     }

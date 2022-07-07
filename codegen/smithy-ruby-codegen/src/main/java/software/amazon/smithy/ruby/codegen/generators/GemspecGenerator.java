@@ -37,14 +37,23 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
+/**
+ * Generate a ruby Gemspec.
+ */
 public class GemspecGenerator {
 
     private final GenerationContext context;
 
+    /**
+     * @param context generation context
+     */
     public GemspecGenerator(GenerationContext context) {
         this.context = context;
     }
 
+    /**
+     * Render/Generate the Gemspec.
+     */
     public void render() {
         FileManifest fileManifest = context.fileManifest();
         RubySettings settings = context.settings();

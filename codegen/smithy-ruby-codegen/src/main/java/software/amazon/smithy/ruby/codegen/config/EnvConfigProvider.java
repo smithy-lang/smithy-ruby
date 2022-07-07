@@ -15,10 +15,17 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+/**
+ * ConfigProvider for extracting values from the ENV.
+ */
 public class EnvConfigProvider implements ConfigProvider {
     private final String environmentKey;
     private final String type;
 
+    /**
+     * @param environmentKey the name of the ENV variable
+     * @param type rubyType to coerce the value to
+     */
     public EnvConfigProvider(String environmentKey, String type) {
         this.environmentKey = environmentKey;
         this.type = type;

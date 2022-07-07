@@ -61,7 +61,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.settings();
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Params");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Types", true);
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 
     public void render() {
@@ -102,7 +102,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void structureShape(StructureShape structureShape) {
-        Symbol symbol = symbolProvider.toSymbol(structureShape);
+        Symbol symbol = context.symbolProvider().toSymbol(structureShape);
         String shapeName = symbol.getName();
 
         writer
