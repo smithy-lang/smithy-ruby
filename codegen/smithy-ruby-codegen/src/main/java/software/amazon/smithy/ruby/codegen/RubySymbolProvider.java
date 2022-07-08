@@ -334,7 +334,14 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol memberShape(MemberShape shape) {
         Shape targetShape = model.expectShape(shape.getTarget());
-        return toSymbol(targetShape);
+        Shape containerShape = model.expectShape(shape.getContainer());
+        if (containerShape.isUnionShape()) {
+            String name = getDefaultShapeName(containerShape, "Union__") + "::" + toMemberName(shape);
+            return createSymbolBuilder(shape, name, name, name, moduleName)
+                    .definitionFile("types.rb").build();
+        } else {
+            return toSymbol(targetShape);
+        }
     }
 
     @Override

@@ -343,6 +343,9 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         }
 
         private String relativizeName(Symbol symbol) {
+            if (symbol.getName().equals("AllQueryStringTypesInput")) {
+                System.out.println("wat");
+            }
             if (symbol.getNamespace().isEmpty()) {
                 return "::" + symbol.getName(); // force root namespace
             } else {
@@ -358,7 +361,11 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
                 String relativeNamespace = IntStream.range(i, symbolNamespace.length)
                         .mapToObj(j -> symbolNamespace[j])
                         .collect(Collectors.joining("::"));
-                return relativeNamespace + "::" + symbol.getName();
+                if (relativeNamespace.isBlank()) {
+                    return symbol.getName();
+                } else {
+                    return relativeNamespace + "::" + symbol.getName();
+                }
             }
         }
     }

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -66,7 +67,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Validators");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Validators", true);
     }
 
@@ -101,12 +102,12 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void structureShape(StructureShape structureShape) {
         Collection<MemberShape> members = structureShape.members();
-        String name = symbolProvider.toSymbol(structureShape).getName();
         writer
                 .write("")
-                .openBlock("class $L", name)
+                .openBlock("class $T", symbolProvider.toSymbol(structureShape))
                 .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, Types::$L, context: context)", name)
+                .write("Hearth::Validator.validate!(input, $T, context: context)",
+                        context.symbolProvider().toSymbol(structureShape))
                 .call(() -> renderValidatorsForStructureMembers(members))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -130,7 +131,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(mapShape))
                 .openBlock("def self.validate!(input, context:)")
                 .write("Hearth::Validator.validate!(input, ::Hash, context: context)")
                 .openBlock("input.each do |key, value|")
@@ -151,7 +152,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(listShape))
                 .openBlock("def self.validate!(input, context:)")
                 .write("Hearth::Validator.validate!(input, ::Array, context: context)")
                 .openBlock("input.each_with_index do |element, index|")
@@ -166,18 +167,19 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape unionShape) {
-        String shapeName = symbolProvider.toSymbol(unionShape).getName();
+        Symbol unionType = context.symbolProvider().toSymbol(unionShape);
+        String shapeName = unionType.getName();
         Collection<MemberShape> unionMemberShapes = unionShape.members();
 
         writer
                 .write("")
-                .openBlock("class $L", shapeName)
+                .openBlock("class $T", symbolProvider.toSymbol(unionShape))
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")
                 .call(() -> unionMemberShapes.forEach(unionMemberShape -> {
                     String unionMemberName = symbolProvider.toMemberName(unionMemberShape);
                     writer
-                            .write("when Types::" + shapeName + "::" + unionMemberName)
+                            .write("when $T", context.symbolProvider().toSymbol(unionMemberShape))
                             .indent();
                     model.expectShape(unionMemberShape.getTarget())
                             .accept(new MemberValidator(writer, symbolProvider, "input.__getobj__",
@@ -200,7 +202,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     public Void documentShape(DocumentShape documentShape) {
         writer
                 .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(documentShape).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(documentShape))
                 .openBlock("def self.validate!(input, context:)")
                 .write("Hearth::Validator.validate!(input, "
                         + "::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)")
