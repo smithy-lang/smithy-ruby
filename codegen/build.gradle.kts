@@ -81,7 +81,10 @@ subprojects {
         tasks.withType<JavaCompile> {
             options.encoding = "UTF-8"
             options.compilerArgs.add("-Xlint:unchecked")
-            options.compilerArgs.add("-Xdoclint:none")
+        }
+
+        tasks.withType<Javadoc> {
+            (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
         }
 
         // Use Junit5's test runner.
