@@ -26,24 +26,45 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitService;
 import software.amazon.smithy.utils.ListUtils;
 
+/**
+ * Trait to mark protocol tests that should be skipped/ignored.
+ */
 public final class SkipTestsTrait extends AbstractTrait {
+    /**
+     * ShapeId for the SkipTestsTrait.
+     */
     public static final ShapeId ID = ShapeId.from("smithy.ruby#skipTests");
 
     private final List<SkipTest> skipTests;
 
+    /**
+     * @param skipTests List of tests to skip
+     */
     public SkipTestsTrait(List<SkipTest> skipTests) {
         this(SourceLocation.NONE, skipTests);
     }
 
+    /**
+     * @param sourceLocation location where this trait was applied
+     * @param skipTests tests to skip.
+     */
     public SkipTestsTrait(SourceLocation sourceLocation, List<SkipTest> skipTests) {
         super(ID, sourceLocation);
         this.skipTests = ListUtils.copyOf(skipTests);
     }
 
+    /**
+     * @return list of tests to skip.
+     */
     public List<SkipTest> getSkipTests() {
         return skipTests;
     }
 
+    /**
+     * @param testId testId to skip
+     * @param testType testType to skip
+     * @return optional SkipTest trait
+     */
     public Optional<SkipTest> skipTest(String testId, String testType) {
         return skipTests.stream()
                 .filter((skipTest) -> skipTest.getId().equals(testId)
@@ -59,6 +80,9 @@ public final class SkipTestsTrait extends AbstractTrait {
         return getSkipTests().stream().collect(ArrayNode.collect());
     }
 
+    /**
+     * Provider for the SkipTestsTrait.
+     */
     public static final class Provider implements TraitService {
         @Override
         public ShapeId getShapeId() {

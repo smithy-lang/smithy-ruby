@@ -34,6 +34,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class RubyDependency
         implements SymbolDependencyContainer, Comparable<RubyDependency> {
 
+    /**
+     * SDK Core library: Hearth.
+     */
     public static final RubyDependency HEARTH = new Builder()
             .type(Type.DEPENDENCY)
             .importPath("hearth")
@@ -41,18 +44,27 @@ public final class RubyDependency
             .version("~> 1.0.0.pre1")
             .build();
 
+    /**
+     * Ruby Time library.
+     */
     public static final RubyDependency TIME = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("time")
             .version(">= 0")
             .build();
 
+    /**
+     * Ruby BigDecimal.
+     */
     public static final RubyDependency BIG_DECIMAL = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("bigdecimal")
             .version(">= 0")
             .build();
 
+    /**
+     * Ruby SecureRandom.
+     */
     public static final RubyDependency SECURE_RANDOM = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("securerandom")
@@ -83,6 +95,9 @@ public final class RubyDependency
                 .build();
     }
 
+    /**
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }

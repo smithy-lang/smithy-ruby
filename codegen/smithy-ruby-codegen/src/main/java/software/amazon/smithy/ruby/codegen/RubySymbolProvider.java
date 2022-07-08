@@ -49,6 +49,9 @@ import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * Ruby implementation of SymbolProvider.
+ */
 @SmithyUnstableApi
 public class RubySymbolProvider implements SymbolProvider,
         ShapeVisitor<Symbol> {

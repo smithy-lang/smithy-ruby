@@ -55,6 +55,9 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(RestStubsGeneratorBase.class.getName());
 
+    /**
+     * @param context generation context
+     */
     public RestStubsGeneratorBase(GenerationContext context) {
         super(context);
     }
@@ -144,8 +147,12 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         LOGGER.finer("Generated stub method for operation " + operation.getId().getName());
     }
 
-    // The Output shape is combined with the OperationStub
-    // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
+    /**
+     * The Output shape is combined with the OperationStub.
+     * This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output.
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderOperationBodyStubber(OperationShape operation, Shape outputShape) {
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
@@ -170,12 +177,20 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderStatusCodeStubber(OperationShape operation, Shape outputShape) {
         operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
             writer.write("http_resp.status = $1L", httpTrait.getCode());
         });
     }
 
+    /**
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderHeaderStubbers(OperationShape operation, Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()
@@ -192,6 +207,10 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderPrefixHeadersStubbers(OperationShape operation, Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()

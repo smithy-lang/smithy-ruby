@@ -43,6 +43,9 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generate documentation for a shape.
+ */
 @SmithyInternalApi
 public class ShapeDocumentationGenerator {
     private final Model model;
@@ -50,6 +53,11 @@ public class ShapeDocumentationGenerator {
     private final RubySymbolProvider symbolProvider;
     private final Shape shape;
 
+    /**
+     * @param model model to generate from
+     * @param symbolProvider symbol provider
+     * @param shape shape to generate documentation for
+     */
     public ShapeDocumentationGenerator(Model model, RubySymbolProvider symbolProvider, Shape shape) {
         this.writer = new RubyCodeWriter("");
         this.model = model;
@@ -57,6 +65,9 @@ public class ShapeDocumentationGenerator {
         this.shape = shape;
     }
 
+    /**
+     * @return the rendered documentation
+     */
     public String render() {
         shape.accept(new ShapeDocumentationVisitor());
         return writer.toString();

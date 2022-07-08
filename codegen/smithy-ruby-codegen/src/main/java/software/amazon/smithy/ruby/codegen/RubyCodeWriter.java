@@ -46,6 +46,9 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     private boolean includePreamble = false;
     private boolean includeRequires = false;
 
+    /**
+     * @param namespace namespace to write in
+     */
     public RubyCodeWriter(String namespace) {
         super(new RubyImportContainer(namespace));
         this.namespace = namespace;
@@ -309,6 +312,9 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         }
     }
 
+    /**
+     * RubyCodeWriter factory.
+     */
     public static final class Factory implements SymbolWriter.Factory<RubyCodeWriter> {
         @Override
         public RubyCodeWriter apply(String filename, String namespace) {

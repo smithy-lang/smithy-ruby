@@ -81,6 +81,7 @@ subprojects {
         tasks.withType<JavaCompile> {
             options.encoding = "UTF-8"
             options.compilerArgs.add("-Xlint:unchecked")
+            options.compilerArgs.add("-Xdoclint:none")
         }
 
         // Use Junit5's test runner.

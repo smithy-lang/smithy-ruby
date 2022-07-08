@@ -56,6 +56,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(RestParserGeneratorBase.class.getName());
 
+    /**
+     * @param context generation context
+     */
     public RestParserGeneratorBase(GenerationContext context) {
         super(context);
     }
@@ -140,6 +143,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
     }
 
+    /**
+     * @param outputShape outputShape to render for
+     */
     protected void renderHeaderParsers(Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -156,6 +162,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         }
     }
 
+    /**
+     * @param outputShape outputShape to render for.
+     */
     protected void renderPrefixHeaderParsers(Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -196,8 +205,11 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         }
     }
 
-    // The Output shape is combined with the Operation Parser
-    // This generates the parsing of the body as if it was the Parser for the Out[put
+    /**
+     * The Output shape is combined with the Operation Parser.
+     * This generates the parsing of the body as if it was the Parser for the Output
+     * @param outputShape outputShape to render for
+     */
     protected void renderOperationBodyParser(Shape outputShape) {
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()

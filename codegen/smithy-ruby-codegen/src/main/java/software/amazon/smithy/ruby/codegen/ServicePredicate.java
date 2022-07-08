@@ -18,6 +18,9 @@ package software.amazon.smithy.ruby.codegen;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 
+/**
+ * Tests if this should be applied to an individual operation.
+ */
 @FunctionalInterface
 public interface ServicePredicate {
     /**

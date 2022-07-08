@@ -145,6 +145,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         return httpTrait.getMethod();
     }
 
+    /**
+     * @param inputShape inputShape to render for
+     */
     protected void renderQueryInputBuilder(Shape inputShape) {
         // get a list of all HttpQueryParams members - these must be map shapes
         List<MemberShape> queryParamsMembers = inputShape.members()
@@ -186,6 +189,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         writer.write("http_req.append_query_params(params)");
     }
 
+    /**
+     * @param inputShape inputShape to render for
+     */
     protected void renderHeadersBuilder(Shape inputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = inputShape.members()
@@ -203,6 +209,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
     }
 
+    /**
+     * @param inputShape inputShape to render for
+     */
     protected void renderPrefixHeadersBuilder(Shape inputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = inputShape.members()
@@ -227,6 +236,10 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to render for
+     * @param inputShape inputShape for the operation
+     */
     protected void renderUriBuilder(OperationShape operation, Shape inputShape) {
         String uri = getHttpUri(operation);
         // need to ensure that static query params in the uri are handled first
@@ -287,6 +300,10 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to get uri for
+     * @return the uri
+     */
     protected String getHttpUri(OperationShape operation) {
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         return httpTrait.getUri().toString();
