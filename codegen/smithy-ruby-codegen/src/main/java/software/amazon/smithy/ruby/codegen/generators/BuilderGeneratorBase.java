@@ -221,7 +221,6 @@ public abstract class BuilderGeneratorBase {
         writer
                 .includePreamble()
                 .includeRequires()
-                .write("require 'base64'\n")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Builders")
                 .call(() -> renderBuilders())

@@ -544,7 +544,7 @@ module RailsJson
           value = value
           Types::MyUnion::NumberValue.new(value) if value
         when 'blob_value'
-          value = Base64::decode64(value) unless value.nil?
+          value = ::Base64::decode64(value) unless value.nil?
           Types::MyUnion::BlobValue.new(value) if value
         when 'timestamp_value'
           value = Time.parse(value) if value
@@ -572,7 +572,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::KitchenSinkOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
-        data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
+        data.blob = ::Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
         data.double = Hearth::NumberHelper.deserialize(map['double'])
         data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
@@ -621,7 +621,7 @@ module RailsJson
     class KitchenSink
       def self.parse(map)
         data = Types::KitchenSink.new
-        data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
+        data.blob = ::Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
         data.double = Hearth::NumberHelper.deserialize(map['double'])
         data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
@@ -777,7 +777,7 @@ module RailsJson
     class MediaTypeHeader
       def self.parse(http_resp)
         data = Types::MediaTypeHeaderOutput.new
-        data.json = Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
+        data.json = ::Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
         map = Hearth::JSON.load(http_resp.body)
         data
       end

@@ -28,6 +28,10 @@ public class RubyImportContainer
             .name("SecureRandom")
             .addDependency(RubyDependency.SECURE_RANDOM)
             .build();
+    public static final Symbol BASE64 = Symbol.builder()
+            .name("Base64")
+            .addDependency(RubyDependency.BASE64)
+            .build();
 
     private final String namespace;
     private final Set<String> requires = new TreeSet<>();

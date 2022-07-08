@@ -71,6 +71,16 @@ public final class RubyDependency
             .version(">= 0")
             .build();
 
+    /**
+     * Ruby Base64.
+     */
+    public static final RubyDependency BASE64 = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("base64")
+            .version(">= 0")
+            .build();
+
+
 
     private final Type type;
     private final String gemName;

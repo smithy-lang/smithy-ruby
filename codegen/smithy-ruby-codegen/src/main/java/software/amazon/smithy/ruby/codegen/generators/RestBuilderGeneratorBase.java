@@ -43,6 +43,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -374,7 +375,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
             if (shape.hasTrait(MediaTypeTrait.class)) {
-                writer.write("$1LBase64::encode64($2L).strip unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+                writer.write("$1L$3T::encode64($2L).strip unless $2L.nil? || $2L.empty?",
+                        dataSetter, inputGetter, RubyImportContainer.BASE64);
             } else {
                 writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
             }

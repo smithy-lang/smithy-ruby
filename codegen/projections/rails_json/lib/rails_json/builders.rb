@@ -773,7 +773,7 @@ module RailsJson
         when Types::MyUnion::NumberValue
           data[:number_value] = input
         when Types::MyUnion::BlobValue
-          data[:blob_value] = Base64::encode64(input).strip
+          data[:blob_value] = ::Base64::encode64(input).strip
         when Types::MyUnion::TimestampValue
           data[:timestamp_value] = Hearth::TimeHelper.to_date_time(input)
         when Types::MyUnion::EnumValue
@@ -803,7 +803,7 @@ module RailsJson
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:blob] = Base64::encode64(input[:blob]).strip unless input[:blob].nil?
+        data[:blob] = ::Base64::encode64(input[:blob]).strip unless input[:blob].nil?
         data[:boolean] = input[:boolean] unless input[:boolean].nil?
         data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
         data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
@@ -855,7 +855,7 @@ module RailsJson
     class KitchenSink
       def self.build(input)
         data = {}
-        data[:blob] = Base64::encode64(input[:blob]).strip unless input[:blob].nil?
+        data[:blob] = ::Base64::encode64(input[:blob]).strip unless input[:blob].nil?
         data[:boolean] = input[:boolean] unless input[:boolean].nil?
         data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
         data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
@@ -1010,7 +1010,7 @@ module RailsJson
         http_req.append_path('/MediaTypeHeader')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
-        http_req.headers['X-Json'] = Base64::encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
+        http_req.headers['X-Json'] = ::Base64::encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
       end
     end
 

@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'base64'
+
 module RailsJson
   module Stubs
 
@@ -915,7 +917,7 @@ module RailsJson
         when Types::MyUnion::NumberValue
           data[:number_value] = stub.__getobj__
         when Types::MyUnion::BlobValue
-          data[:blob_value] = Base64::encode64(stub.__getobj__)
+          data[:blob_value] = ::Base64::encode64(stub.__getobj__)
         when Types::MyUnion::TimestampValue
           data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub.__getobj__)
         when Types::MyUnion::EnumValue
@@ -972,7 +974,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:blob] = Base64::encode64(stub[:blob]) unless stub[:blob].nil?
+        data[:blob] = ::Base64::encode64(stub[:blob]) unless stub[:blob].nil?
         data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
         data[:double] = stub[:double] unless stub[:double].nil?
         data[:empty_struct] = Stubs::EmptyStruct.stub(stub[:empty_struct]) unless stub[:empty_struct].nil?
@@ -1076,7 +1078,7 @@ module RailsJson
       def self.stub(stub)
         stub ||= Types::KitchenSink.new
         data = {}
-        data[:blob] = Base64::encode64(stub[:blob]) unless stub[:blob].nil?
+        data[:blob] = ::Base64::encode64(stub[:blob]) unless stub[:blob].nil?
         data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
         data[:double] = stub[:double] unless stub[:double].nil?
         data[:empty_struct] = Stubs::EmptyStruct.stub(stub[:empty_struct]) unless stub[:empty_struct].nil?
@@ -1333,7 +1335,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['X-Json'] = Base64::encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
+        http_resp.headers['X-Json'] = ::Base64::encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
       end
     end
 
