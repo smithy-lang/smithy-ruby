@@ -102,14 +102,13 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void structureShape(StructureShape structureShape) {
-        Symbol symbol = context.symbolProvider().toSymbol(structureShape);
-        String shapeName = symbol.getName();
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbolProvider.toSymbol(structureShape))
                 .openBlock("def self.build(params, context: '')")
-                .call(() -> renderBuilderForStructureMembers(symbol, structureShape.members()))
+                .call(() -> renderBuilderForStructureMembers(
+                        context.symbolProvider().toSymbol(structureShape), structureShape.members()))
                 .closeBlock("end")
                 .closeBlock("end");
         return null;
@@ -136,13 +135,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape listShape) {
-        String shapeName = symbolProvider.toSymbol(listShape).getName();
         Shape memberTarget =
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbolProvider.toSymbol(listShape))
                 .openBlock("def self.build(params, context: '')")
                 .write("Hearth::Validator.validate!(params, ::Array, context: context)")
                 .write("data = []")
@@ -167,12 +165,11 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void mapShape(MapShape mapShape) {
-        String shapeName = symbolProvider.toSymbol(mapShape).getName();
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbolProvider.toSymbol(mapShape))
                 .openBlock("def self.build(params, context: '')")
                 .write("Hearth::Validator.validate!(params, ::Hash, context: context)")
                 .write("data = {}")
@@ -191,14 +188,14 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void unionShape(UnionShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
-        String shapeName = symbol.getName();
+        Symbol typeSymbol = context.symbolProvider().toSymbol(shape);
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbol)
                 .openBlock("def self.build(params, context: '')")
-                .write("return params if params.is_a?(Types::$L)", shapeName)
-                .write("Hearth::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
+                .write("return params if params.is_a?($T)", typeSymbol)
+                .write("Hearth::Validator.validate!(params, ::Hash, $T, context: context)", typeSymbol)
                 .openBlock("unless params.size == 1")
                 .write("raise ArgumentError,")
                 .indent(3)
@@ -214,7 +211,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String memberName = RubyFormatter.asSymbol(memberClassName);
             writer.write("when $L", memberName)
                     .indent()
-                    .openBlock("Types::$L::$L.new(", shapeName, memberClassName);
+                    .openBlock("$T.new(", context.symbolProvider().toSymbol(member));
             String input = "params[" + memberName + "]";
             String context = "\"#{context}[" + memberName + "]\"";
             target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, member, false));
@@ -319,13 +316,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         }
 
         private void defaultComplex(Shape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
             if (checkRequired) {
-                writer.write("$1L$2L.build($3L, context: $4L) unless $3L.nil?", memberSetter,
-                        shapeName, input, context);
+                writer.write("$1L$2T.build($3L, context: $4L) unless $3L.nil?", memberSetter,
+                        symbolProvider.toSymbol(shape), input, context);
             } else {
-                writer.write("$1L($2L.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
-                        shapeName, input, context);
+                writer.write("$1L($2T.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
+                        symbolProvider.toSymbol(shape), input, context);
             }
         }
     }
