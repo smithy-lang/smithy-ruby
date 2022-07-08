@@ -28,9 +28,15 @@ public class RubyImportContainer
             .name("SecureRandom")
             .addDependency(RubyDependency.SECURE_RANDOM)
             .build();
+
     public static final Symbol BASE64 = Symbol.builder()
             .name("Base64")
             .addDependency(RubyDependency.BASE64)
+            .build();
+
+    public static final Symbol BIG_DECIMAL = Symbol.builder()
+            .name("BigDecimal")
+            .addDependency(RubyDependency.BIG_DECIMAL)
             .build();
 
     private final String namespace;

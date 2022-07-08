@@ -46,6 +46,7 @@ import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -341,7 +342,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::BigDecimal, context: $L)", input, context);
+            writer.write("Hearth::Validator.validate!($L, $T, context: $L)",
+                    input, RubyImportContainer.BIG_DECIMAL, context);
             return null;
         }
 
