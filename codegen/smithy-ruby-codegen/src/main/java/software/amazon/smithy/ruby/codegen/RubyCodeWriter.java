@@ -343,9 +343,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         }
 
         private String relativizeName(Symbol symbol) {
-            if (symbol.getName().equals("AllQueryStringTypesInput")) {
-                System.out.println("wat");
-            }
             if (symbol.getNamespace().isEmpty()) {
                 return "::" + symbol.getName(); // force root namespace
             } else {

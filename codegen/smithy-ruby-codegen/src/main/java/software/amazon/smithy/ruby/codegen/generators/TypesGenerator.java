@@ -61,8 +61,8 @@ public class TypesGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Types");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Types");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Types", false);
     }
 
@@ -124,8 +124,6 @@ public class TypesGenerator {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-
             String membersBlock = "nil";
             if (!shape.members().isEmpty()) {
                 membersBlock = shape
@@ -157,7 +155,7 @@ public class TypesGenerator {
             });
 
             writer
-                    .openBlock(shapeName + " = ::Struct.new(")
+                    .openBlock("$T = ::Struct.new(", symbolProvider.toSymbol(shape))
                     .write(membersBlock)
                     .write("keyword_init: true")
                     .closeBlock(") do")
@@ -173,10 +171,9 @@ public class TypesGenerator {
         @Override
         public Void unionShape(UnionShape shape) {
             String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
-            String shapeName = symbolProvider.toSymbol(shape).getName();
 
             writer.writeInline("$L", documentation);
-            writer.openBlock("class $L < Hearth::Union", shapeName);
+            writer.openBlock("class $T < Hearth::Union", symbolProvider.toSymbol(shape));
 
             for (MemberShape memberShape : shape.members()) {
                 String memberDocumentation =
@@ -184,7 +181,8 @@ public class TypesGenerator {
 
                 writer
                         .writeInline("$L", memberDocumentation)
-                        .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
+                        .openBlock("class $L < $T",
+                                symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(shape))
                         .openBlock("def to_h")
                         .write("{ $L: super(__getobj__) }",
                                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
@@ -195,7 +193,7 @@ public class TypesGenerator {
 
             writer
                     .writeDocstring("Handles unknown future members")
-                    .openBlock("class Unknown < $L", shapeName)
+                    .openBlock("class Unknown < $T", symbolProvider.toSymbol(shape))
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
                     .closeBlock("end\n")
@@ -368,21 +366,22 @@ public class TypesGenerator {
         @Override
         public Void unionShape(UnionShape shape) {
             Symbol symbol = symbolProvider.toSymbol(shape);
-            String shapeName = symbol.getName();
-
-            rbsWriter.openBlock("class $L < Hearth::Union", shapeName);
+            rbsWriter.openBlock("class $T < Hearth::Union", symbol);
 
             for (MemberShape memberShape : shape.members()) {
                 rbsWriter
-                        .openBlock("class $L < $L", symbolProvider.toMemberName(memberShape), shapeName)
-                        .write("def to_h: () -> { $L: Hash[Symbol,$L] }",
-                                RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)), shapeName)
+                        .openBlock("class $L < $T",
+                                symbolProvider.toMemberName(memberShape), symbol)
+                        .write("def to_h: () -> { $L: Hash[Symbol,$T] }",
+                                RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)),
+                                symbol)
                         .closeBlock("end\n");
             }
 
             rbsWriter
-                    .openBlock("class Unknown < $L", shapeName)
-                    .write("def to_h: () -> { unknown: Hash[Symbol,$L] }", shapeName)
+                    .openBlock("class Unknown < $T", symbol)
+                    .write("def to_h: () -> { unknown: Hash[Symbol,$T] }",
+                            symbol)
                     .closeBlock("end")
                     .closeBlock("end\n");
 
