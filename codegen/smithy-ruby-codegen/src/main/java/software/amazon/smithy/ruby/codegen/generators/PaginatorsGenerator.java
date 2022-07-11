@@ -48,8 +48,8 @@ public class PaginatorsGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Paginators", false);
     }
 
