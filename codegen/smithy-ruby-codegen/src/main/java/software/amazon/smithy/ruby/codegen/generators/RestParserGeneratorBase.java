@@ -121,7 +121,7 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
         writer
                 .openBlock("def self.parse(http_resp)")
-                .write("data = Types::$L.new", symbolProvider.toSymbol(outputShape).getName())
+                .write("data = $T.new", context.symbolProvider().toSymbol(outputShape))
                 .call(() -> renderHeaderParsers(outputShape))
                 .call(() -> renderPrefixHeaderParsers(outputShape))
                 .call(() -> renderResponseCodeParser(outputShape))
@@ -135,7 +135,7 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
     protected void renderErrorParseMethod(Shape s) {
         writer
                 .openBlock("def self.parse(http_resp)")
-                .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
+                .write("data = $T.new", context.symbolProvider().toSymbol(s))
                 .call(() -> renderHeaderParsers(s))
                 .call(() -> renderPrefixHeaderParsers(s))
                 .call(() -> renderOperationBodyParser(s))
