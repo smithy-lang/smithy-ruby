@@ -75,6 +75,12 @@ public abstract class ErrorsGeneratorBase {
      * SymbolProvider scoped to the errors module.
      */
     protected final SymbolProvider symbolProvider;
+
+    /**
+     * SymbolProvider scoped to the Parsers module.
+     */
+    protected final SymbolProvider parserSymbolProvider;
+
     /**
      * List of all errorShapes.
      */
@@ -90,6 +96,7 @@ public abstract class ErrorsGeneratorBase {
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
+        this.parserSymbolProvider = new RubySymbolProvider(model, settings, "Parsers", true);
         this.errorShapes = getErrorShapes();
     }
 
@@ -246,9 +253,9 @@ public abstract class ErrorsGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("class $L < $L", errorName, apiErrorType)
+                    .openBlock("class $T < $L", symbolProvider.toSymbol(shape), apiErrorType)
                     .openBlock("def initialize(http_resp:, **kwargs)")
-                    .write("@data = Parsers::$L.parse(http_resp)", errorName)
+                    .write("@data = $T.parse(http_resp)", parserSymbolProvider.toSymbol(shape))
                     .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                     .write("super(http_resp: http_resp, **kwargs)")
                     .closeBlock("end")
@@ -286,14 +293,13 @@ public abstract class ErrorsGeneratorBase {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String errorName = symbolProvider.toSymbol(shape).getName();
             String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
             boolean retryable = shape.hasTrait(RetryableTrait.class);
             boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
 
             rbsWriter
                     .write("")
-                    .openBlock("class $L < $L", errorName, apiErrorType)
+                    .openBlock("class $T < $L", symbolProvider.toSymbol(shape), apiErrorType)
                     .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
                     .write("attr_reader data: untyped")
                     .call(() -> {
