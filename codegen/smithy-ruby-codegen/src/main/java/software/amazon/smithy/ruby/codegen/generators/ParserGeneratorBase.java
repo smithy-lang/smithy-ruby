@@ -71,8 +71,8 @@ public abstract class ParserGeneratorBase {
         this.settings = context.settings();
         this.model = context.model();
         this.generatedParsers = new HashSet<>();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Parsers");
+        this.symbolProvider = new RubySymbolProvider(model, settings, "Parsers", true);
     }
 
     /**
@@ -284,7 +284,7 @@ public abstract class ParserGeneratorBase {
         writer
                 .write("")
                 .write("# Error Parser for $L", s.getId().getName())
-                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(s))
                 .call(() -> renderErrorParseMethod(s))
                 .closeBlock("end");
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
@@ -309,7 +309,7 @@ public abstract class ParserGeneratorBase {
         public Void structureShape(StructureShape s) {
             writer
                     .write("")
-                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
+                    .openBlock("class $T", symbolProvider.toSymbol(s))
                     .call(() -> renderStructureParseMethod(s))
                     .closeBlock("end");
 
@@ -320,7 +320,7 @@ public abstract class ParserGeneratorBase {
         public Void listShape(ListShape s) {
             writer
                     .write("")
-                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
+                    .openBlock("class $T", symbolProvider.toSymbol(s))
                     .call(() -> renderListParseMethod(s))
                     .closeBlock("end");
 
@@ -331,7 +331,7 @@ public abstract class ParserGeneratorBase {
         public Void mapShape(MapShape s) {
             writer
                     .write("")
-                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
+                    .openBlock("class $T", symbolProvider.toSymbol(s))
                     .call(() -> renderMapParseMethod(s))
                     .closeBlock("end");
 
@@ -342,7 +342,7 @@ public abstract class ParserGeneratorBase {
         public Void unionShape(UnionShape s) {
             writer
                     .write("")
-                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
+                    .openBlock("class $T", symbolProvider.toSymbol(s))
                     .call(() -> renderUnionParseMethod(s))
                     .closeBlock("end");
 
