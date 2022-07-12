@@ -31,6 +31,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
 
+    public static final String QUALIFIED_NAMESPACE = "qualifiedNamespace";
     private static final String PREAMBLE =
             """
                     # frozen_string_literal: true
@@ -312,6 +313,14 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         }
     }
 
+    public RubyCodeWriter withQualifiedNamespace(String qualifiedNamespace, Runnable task) {
+        pushState(qualifiedNamespace)
+                .putContext(QUALIFIED_NAMESPACE, qualifiedNamespace)
+                .call(task)
+                .popState();
+        return this;
+    }
+
     /**
      * RubyCodeWriter factory.
      */
@@ -348,9 +357,11 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
             } else {
                 String[] symbolNamespace = symbol.getNamespace().split("::");
                 String[] moduleNamespace = namespace.split("::");
+                String qualifiedNamespace = getContext(QUALIFIED_NAMESPACE, String.class);
                 int i = 0;
                 while (i < symbolNamespace.length && i < moduleNamespace.length) {
-                    if (!symbolNamespace[i].equals(moduleNamespace[i])) {
+                    if (!symbolNamespace[i].equals(moduleNamespace[i])
+                            || symbolNamespace[i].equals(qualifiedNamespace)) {
                         break;
                     }
                     i++;

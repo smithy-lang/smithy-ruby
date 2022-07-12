@@ -75,8 +75,8 @@ public class WaitersGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule());
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
         this.symbolProvider = new RubySymbolProvider(context.model(), settings, "Waiters", false);
     }
 

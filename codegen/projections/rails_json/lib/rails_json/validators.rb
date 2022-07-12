@@ -885,19 +885,19 @@ module RailsJson
 
       class ListValue
         def self.validate!(input, context:)
-          StringList.validate!(input, context: context) unless input.nil?
+          Validators::StringList.validate!(input, context: context) unless input.nil?
         end
       end
 
       class MapValue
         def self.validate!(input, context:)
-          StringMap.validate!(input, context: context) unless input.nil?
+          Validators::StringMap.validate!(input, context: context) unless input.nil?
         end
       end
 
       class StructureValue
         def self.validate!(input, context:)
-          GreetingStruct.validate!(input, context: context) unless input.nil?
+          Validators::GreetingStruct.validate!(input, context: context) unless input.nil?
         end
       end
     end

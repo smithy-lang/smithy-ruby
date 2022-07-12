@@ -28,19 +28,19 @@ module Weather
 
       class Police
         def self.validate!(input, context:)
-          Message.validate!(input, context: context) unless input.nil?
+          Validators::Message.validate!(input, context: context) unless input.nil?
         end
       end
 
       class Fire
         def self.validate!(input, context:)
-          Message.validate!(input, context: context) unless input.nil?
+          Validators::Message.validate!(input, context: context) unless input.nil?
         end
       end
 
       class Health
         def self.validate!(input, context:)
-          Message.validate!(input, context: context) unless input.nil?
+          Validators::Message.validate!(input, context: context) unless input.nil?
         end
       end
     end
@@ -186,7 +186,7 @@ module Weather
 
       class Png
         def self.validate!(input, context:)
-          PNGImage.validate!(input, context: context) unless input.nil?
+          Validators::PNGImage.validate!(input, context: context) unless input.nil?
         end
       end
     end
@@ -292,7 +292,7 @@ module Weather
 
       class Hail
         def self.validate!(input, context:)
-          StringMap.validate!(input, context: context) unless input.nil?
+          Validators::StringMap.validate!(input, context: context) unless input.nil?
         end
       end
 
@@ -310,7 +310,7 @@ module Weather
 
       class Other
         def self.validate!(input, context:)
-          OtherStructure.validate!(input, context: context) unless input.nil?
+          Validators::OtherStructure.validate!(input, context: context) unless input.nil?
         end
       end
 
@@ -322,13 +322,13 @@ module Weather
 
       class Foo
         def self.validate!(input, context:)
-          Foo.validate!(input, context: context) unless input.nil?
+          Validators::Foo.validate!(input, context: context) unless input.nil?
         end
       end
 
       class Baz
         def self.validate!(input, context:)
-          Baz.validate!(input, context: context) unless input.nil?
+          Validators::Baz.validate!(input, context: context) unless input.nil?
         end
       end
     end

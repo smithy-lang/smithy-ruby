@@ -192,7 +192,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("        \"Types::" + shapeName + ", got #{input.class}.\"")
                 .write("end") // end switch case
                 .closeBlock("end") // end validate method
-                .call(() -> renderValidatorsForUnionMembers(unionMemberShapes))
+                .withQualifiedNamespace("Validators",
+                        () -> renderValidatorsForUnionMembers(unionMemberShapes))
                 .closeBlock("end");
 
         return null;

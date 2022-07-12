@@ -266,7 +266,7 @@ module WhiteLabel
 
       class Struct
         def self.validate!(input, context:)
-          Struct.validate!(input, context: context) unless input.nil?
+          Validators::Struct.validate!(input, context: context) unless input.nil?
         end
       end
     end
