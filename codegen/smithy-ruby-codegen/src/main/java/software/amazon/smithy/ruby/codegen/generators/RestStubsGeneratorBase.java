@@ -41,6 +41,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
@@ -267,7 +268,8 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.serialize($2L) unless $2L.nil?", dataSetter, inputGetter);
+            writer.write("$1L$3T.serialize($2L) unless $2L.nil?",
+                    dataSetter, inputGetter, Hearth.NUMBER_HELPER);
         }
 
         @Override

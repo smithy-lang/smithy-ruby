@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'stringio'
+
 require_relative 'middleware/request_id'
 
 module HighScoreService
@@ -67,7 +69,7 @@ module HighScoreService
     def create_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
         validate_input: @config.validate_input
@@ -135,7 +137,7 @@ module HighScoreService
     def delete_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
         validate_input: @config.validate_input
@@ -209,7 +211,7 @@ module HighScoreService
     def get_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
         validate_input: @config.validate_input
@@ -279,7 +281,7 @@ module HighScoreService
     def list_high_scores(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
         validate_input: @config.validate_input
@@ -360,7 +362,7 @@ module HighScoreService
     def update_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
         validate_input: @config.validate_input

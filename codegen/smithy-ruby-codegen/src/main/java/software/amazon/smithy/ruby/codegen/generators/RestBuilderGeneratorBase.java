@@ -43,6 +43,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -156,7 +157,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 .filter((m) -> m.hasTrait(HttpQueryParamsTrait.class))
                 .collect(Collectors.toList());
 
-        writer.write("params = Hearth::Query::ParamList.new");
+        writer.write("params = $T.new", Hearth.QUERY_PARAM_LIST);
 
         for (MemberShape m : queryParamsMembers) {
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
@@ -356,7 +357,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.serialize($2L) unless $2L.nil?", dataSetter, inputGetter);
+            writer.write("$1L$3T.serialize($2L) unless $2L.nil?",
+                    dataSetter, inputGetter, Hearth.NUMBER_HELPER);
         }
 
         @Override

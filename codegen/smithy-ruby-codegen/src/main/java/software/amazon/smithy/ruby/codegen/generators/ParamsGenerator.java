@@ -38,6 +38,7 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
@@ -116,7 +117,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
         writer
-                .write("Hearth::Validator.validate!(params, ::Hash, $T, context: context)", symbol)
+                .write("$T.validate!(params, ::Hash, $T, context: context)",
+                        Hearth.VALIDATOR, symbol)
                 .write("type = $T.new", symbol);
 
         members.forEach(member -> {
@@ -142,7 +144,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $T", symbolProvider.toSymbol(listShape))
                 .openBlock("def self.build(params, context: '')")
-                .write("Hearth::Validator.validate!(params, ::Array, context: context)")
+                .write("$T.validate!(params, ::Array, context: context)", Hearth.VALIDATOR)
                 .write("data = []")
                 .call(() -> {
                     if (isComplexShape(memberTarget)) {
@@ -171,7 +173,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $T", symbolProvider.toSymbol(mapShape))
                 .openBlock("def self.build(params, context: '')")
-                .write("Hearth::Validator.validate!(params, ::Hash, context: context)")
+                .write("$T.validate!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
@@ -195,7 +197,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $T", symbol)
                 .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?($T)", typeSymbol)
-                .write("Hearth::Validator.validate!(params, ::Hash, $T, context: context)", typeSymbol)
+                .write("$T.validate!(params, ::Hash, $T, context: context)",
+                        Hearth.VALIDATOR, typeSymbol)
                 .openBlock("unless params.size == 1")
                 .write("raise ArgumentError,")
                 .indent(3)

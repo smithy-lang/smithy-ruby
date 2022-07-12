@@ -321,6 +321,10 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
+    public void addUseImports(RubyDependency dependency) {
+        dependency.getDependencies().forEach(d -> getImportContainer().importDependency(d));
+    }
+
     /**
      * RubyCodeWriter factory.
      */

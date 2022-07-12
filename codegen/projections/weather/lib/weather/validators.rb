@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'time'
+
 module Weather
   module Validators
 

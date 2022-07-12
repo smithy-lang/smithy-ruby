@@ -40,6 +40,7 @@ import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -250,7 +251,8 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.deserialize($2L) unless $2L.nil?", dataSetter, valueGetter);
+            writer.write("$1L$3T.deserialize($2L) unless $2L.nil?",
+                    dataSetter, valueGetter, Hearth.NUMBER_HELPER);
         }
 
         @Override

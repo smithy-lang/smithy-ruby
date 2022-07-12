@@ -47,6 +47,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -152,11 +153,11 @@ public class WaitersGenerator {
                 .call(() -> renderWaiterInitializeDocumentation(waiter))
                 .openBlock("def initialize(client, options = {})")
                 .write("@client = client")
-                .openBlock("@waiter = Hearth::Waiters::Waiter.new({")
+                .openBlock("@waiter = $T.new({", Hearth.WAITER)
                 .write("max_wait_time: options[:max_wait_time],")
                 .write("min_delay: $L || options[:min_delay],", waiter.getMinDelay())
                 .write("max_delay: $L || options[:max_delay],", waiter.getMaxDelay())
-                .openBlock("poller: Hearth::Waiters::Poller.new(")
+                .openBlock("poller: $T.new(", Hearth.POLLER)
                 .write("operation_name: :$L,", operationName)
                 .call(() -> renderAcceptors(waiter))
                 .closeBlock(")")

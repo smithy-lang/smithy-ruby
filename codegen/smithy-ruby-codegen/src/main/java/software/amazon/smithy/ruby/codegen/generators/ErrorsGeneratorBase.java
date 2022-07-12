@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.RetryableTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
@@ -163,7 +164,7 @@ public abstract class ErrorsGeneratorBase {
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < Hearth::HTTP::ApiError; end")
+                .write("class ApiError < $T; end", Hearth.API_ERROR)
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
@@ -185,7 +186,7 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsBaseErrors() {
         rbsWriter
-                .write("\nclass ApiError < Hearth::HTTP::ApiError")
+                .write("\nclass ApiError < $T", Hearth.API_ERROR)
                 .write("def initialize: (request_id: untyped request_id, **untyped kwargs) -> void\n")
                 .write("attr_reader request_id: untyped")
                 .write("end")
@@ -232,7 +233,7 @@ public abstract class ErrorsGeneratorBase {
             apiErrorType = "ApiServerError";
         } else {
             // This should not happen but it's a safe fallback
-            apiErrorType = "Hearth::ApiError";
+            apiErrorType = "Hearth::HTTP::ApiError";
         }
 
         return apiErrorType;

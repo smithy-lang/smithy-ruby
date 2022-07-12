@@ -37,6 +37,7 @@ import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -160,7 +161,7 @@ public class TypesGenerator {
                     .write("keyword_init: true")
                     .closeBlock(") do")
                     .indent()
-                    .write("include Hearth::Structure")
+                    .write("include $T", Hearth.STRUCTURE)
                     .call(() -> renderStructureInitializeMethod(shape))
                     .call(() -> renderStructureToSMethod(shape))
                     .closeBlock("end\n");
@@ -173,7 +174,7 @@ public class TypesGenerator {
             String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
 
             writer.writeInline("$L", documentation);
-            writer.openBlock("class $T < Hearth::Union", symbolProvider.toSymbol(shape));
+            writer.openBlock("class $T < $T", symbolProvider.toSymbol(shape), Hearth.UNION);
 
             for (MemberShape memberShape : shape.members()) {
                 String memberDocumentation =
@@ -366,7 +367,7 @@ public class TypesGenerator {
         @Override
         public Void unionShape(UnionShape shape) {
             Symbol symbol = symbolProvider.toSymbol(shape);
-            rbsWriter.openBlock("class $T < Hearth::Union", symbol);
+            rbsWriter.openBlock("class $T < $T", symbol, Hearth.UNION);
 
             for (MemberShape memberShape : shape.members()) {
                 rbsWriter

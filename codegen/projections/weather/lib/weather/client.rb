@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'stringio'
+
 module Weather
   # An API client for Weather
   # See {#initialize} for a full list of supported configuration options
@@ -59,7 +61,7 @@ module Weather
     def get_city(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
         validate_input: @config.validate_input
@@ -191,7 +193,7 @@ module Weather
     def get_current_time(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
         validate_input: @config.validate_input
@@ -269,7 +271,7 @@ module Weather
     def get_forecast(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
         validate_input: @config.validate_input
@@ -352,7 +354,7 @@ module Weather
     def list_cities(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
         validate_input: @config.validate_input
@@ -420,7 +422,7 @@ module Weather
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
         validate_input: @config.validate_input
@@ -476,7 +478,7 @@ module Weather
       return options[:output_stream] if options[:output_stream]
       return Hearth::BlockIO.new(block) if block
 
-      StringIO.new
+      ::StringIO.new
     end
   end
 end

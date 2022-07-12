@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -81,7 +82,7 @@ public class ConfigGenerator {
                 .write("keyword_init: true")
                 .closeBlock(") do")
                 .indent()
-                .write("include Hearth::Configuration")
+                .write("include $T", Hearth.CONFIGURATION)
                 .write("\nprivate\n")
                 .call(() -> renderValidateMethod(clientConfigList))
                 .write("")
@@ -140,7 +141,8 @@ public class ConfigGenerator {
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";
             }
-            writer.write("Hearth::Validator.validate!($1L, $2L, context: 'options[:$1L]')", member, type);
+            writer.write("$3T.validate!($1L, $2L, context: 'options[:$1L]')",
+                    member, type, Hearth.VALIDATOR);
             // TODO - add constraints here
         });
         writer.closeBlock("end");

@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'stringio'
+
 module WhiteLabel
   # An API client for WhiteLabel
   # See {#initialize} for a full list of supported configuration options
@@ -75,7 +77,7 @@ module WhiteLabel
     def defaults_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DefaultsTestInput,
         validate_input: @config.validate_input
@@ -135,7 +137,7 @@ module WhiteLabel
     def endpoint_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
         validate_input: @config.validate_input
@@ -201,7 +203,7 @@ module WhiteLabel
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
         validate_input: @config.validate_input
@@ -432,7 +434,7 @@ module WhiteLabel
     def kitchen_sink(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkInput,
         validate_input: @config.validate_input
@@ -497,7 +499,7 @@ module WhiteLabel
     def paginators_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestOperationInput,
         validate_input: @config.validate_input
@@ -562,7 +564,7 @@ module WhiteLabel
     def paginators_test_with_items(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestWithItemsInput,
         validate_input: @config.validate_input
@@ -686,7 +688,7 @@ module WhiteLabel
     def streaming_with_length(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingWithLengthInput,
         validate_input: @config.validate_input
@@ -749,7 +751,7 @@ module WhiteLabel
     def waiters_test(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::WaitersTestInput,
         validate_input: @config.validate_input
@@ -815,7 +817,7 @@ module WhiteLabel
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
         validate_input: @config.validate_input
@@ -871,7 +873,7 @@ module WhiteLabel
       return options[:output_stream] if options[:output_stream]
       return Hearth::BlockIO.new(block) if block
 
-      StringIO.new
+      ::StringIO.new
     end
   end
 end

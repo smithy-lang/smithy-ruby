@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolDependency;
 
 public class RubyImportContainer
         implements ImportContainer, SmithyIntegration<RubySettings, RubyCodeWriter, GenerationContext> {
@@ -39,6 +40,22 @@ public class RubyImportContainer
             .addDependency(RubyDependency.BIG_DECIMAL)
             .build();
 
+    public static final Symbol STRING_IO = Symbol.builder()
+            .name("StringIO")
+            .addDependency(RubyDependency.STRING_IO)
+            .build();
+
+    public static final Symbol CGI = Symbol.builder()
+            .name("CGI")
+            .addDependency(RubyDependency.CGI)
+            .build();
+
+    public static final Symbol TIME = Symbol.builder()
+            .name("Time")
+            .addDependency(RubyDependency.TIME)
+            .build();
+
+
     private final String namespace;
     private final Set<String> requires = new TreeSet<>();
 
@@ -53,10 +70,14 @@ public class RubyImportContainer
         // they are all required in the module definition already
         // So, add requires only for symbols that have external (including stdlib like time/stringio) dependencies
         symbol.getDependencies().forEach(d -> {
-            if (shouldRequire(d.getDependencyType())) {
-                requires.add(d.getPackageName());
-            }
+            importDependency(d);
         });
+    }
+
+    public void importDependency(SymbolDependency dependency) {
+        if (shouldRequire(dependency.getDependencyType())) {
+            requires.add(dependency.getPackageName());
+        }
     }
 
     private boolean shouldRequire(String dependencyType) {

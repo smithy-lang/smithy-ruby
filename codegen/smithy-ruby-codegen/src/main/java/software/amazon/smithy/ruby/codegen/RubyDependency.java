@@ -44,43 +44,45 @@ public final class RubyDependency
             .version("~> 1.0.0.pre1")
             .build();
 
-    /**
-     * Ruby Time library.
-     */
     public static final RubyDependency TIME = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("time")
-            .version(">= 0")
             .build();
 
-    /**
-     * Ruby BigDecimal.
-     */
     public static final RubyDependency BIG_DECIMAL = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("bigdecimal")
-            .version(">= 0")
             .build();
 
-    /**
-     * Ruby SecureRandom.
-     */
     public static final RubyDependency SECURE_RANDOM = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("securerandom")
-            .version(">= 0")
             .build();
 
-    /**
-     * Ruby Base64.
-     */
     public static final RubyDependency BASE64 = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("base64")
-            .version(">= 0")
             .build();
 
+    public static final RubyDependency STRING_IO = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("stringio")
+            .build();
 
+    public static final RubyDependency CGI = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("cgi")
+            .build();
+
+    public static final RubyDependency HEARTH_XML_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/xml/node_matcher")
+            .build();
+
+    public static final RubyDependency HEARTH_QUERY_PARAM_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/query/param_matcher")
+            .build();
 
     private final Type type;
     private final String gemName;
@@ -94,7 +96,7 @@ public final class RubyDependency
         this.gemName = builder.gemName;
         this.importPath =
                 SmithyBuilder.requiredState("importPath", builder.importPath);
-        this.version = SmithyBuilder.requiredState("version", builder.version);
+        this.version =  builder.version != null ? builder.version : ">= 0";
         this.dependencies = SmithyBuilder
                 .requiredState("dependencies", builder.dependencies);
 
