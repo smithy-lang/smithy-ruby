@@ -294,8 +294,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
@@ -331,8 +331,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
@@ -351,8 +351,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void mapShape(MapShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
@@ -364,15 +364,15 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 

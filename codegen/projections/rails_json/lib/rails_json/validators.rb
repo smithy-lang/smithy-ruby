@@ -14,24 +14,24 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::AllQueryStringTypesInput, context: context)
         Hearth::Validator.validate!(input[:query_string], ::String, context: "#{context}[:query_string]")
-        Validators::StringList.validate!(input[:query_string_list], context: "#{context}[:query_string_list]") unless input[:query_string_list].nil?
-        Validators::StringSet.validate!(input[:query_string_set], context: "#{context}[:query_string_set]") unless input[:query_string_set].nil?
+        StringList.validate!(input[:query_string_list], context: "#{context}[:query_string_list]") unless input[:query_string_list].nil?
+        StringSet.validate!(input[:query_string_set], context: "#{context}[:query_string_set]") unless input[:query_string_set].nil?
         Hearth::Validator.validate!(input[:query_byte], ::Integer, context: "#{context}[:query_byte]")
         Hearth::Validator.validate!(input[:query_short], ::Integer, context: "#{context}[:query_short]")
         Hearth::Validator.validate!(input[:query_integer], ::Integer, context: "#{context}[:query_integer]")
-        Validators::IntegerList.validate!(input[:query_integer_list], context: "#{context}[:query_integer_list]") unless input[:query_integer_list].nil?
-        Validators::IntegerSet.validate!(input[:query_integer_set], context: "#{context}[:query_integer_set]") unless input[:query_integer_set].nil?
+        IntegerList.validate!(input[:query_integer_list], context: "#{context}[:query_integer_list]") unless input[:query_integer_list].nil?
+        IntegerSet.validate!(input[:query_integer_set], context: "#{context}[:query_integer_set]") unless input[:query_integer_set].nil?
         Hearth::Validator.validate!(input[:query_long], ::Integer, context: "#{context}[:query_long]")
         Hearth::Validator.validate!(input[:query_float], ::Float, context: "#{context}[:query_float]")
         Hearth::Validator.validate!(input[:query_double], ::Float, context: "#{context}[:query_double]")
-        Validators::DoubleList.validate!(input[:query_double_list], context: "#{context}[:query_double_list]") unless input[:query_double_list].nil?
+        DoubleList.validate!(input[:query_double_list], context: "#{context}[:query_double_list]") unless input[:query_double_list].nil?
         Hearth::Validator.validate!(input[:query_boolean], ::TrueClass, ::FalseClass, context: "#{context}[:query_boolean]")
-        Validators::BooleanList.validate!(input[:query_boolean_list], context: "#{context}[:query_boolean_list]") unless input[:query_boolean_list].nil?
+        BooleanList.validate!(input[:query_boolean_list], context: "#{context}[:query_boolean_list]") unless input[:query_boolean_list].nil?
         Hearth::Validator.validate!(input[:query_timestamp], ::Time, context: "#{context}[:query_timestamp]")
-        Validators::TimestampList.validate!(input[:query_timestamp_list], context: "#{context}[:query_timestamp_list]") unless input[:query_timestamp_list].nil?
+        TimestampList.validate!(input[:query_timestamp_list], context: "#{context}[:query_timestamp_list]") unless input[:query_timestamp_list].nil?
         Hearth::Validator.validate!(input[:query_enum], ::String, context: "#{context}[:query_enum]")
-        Validators::FooEnumList.validate!(input[:query_enum_list], context: "#{context}[:query_enum_list]") unless input[:query_enum_list].nil?
-        Validators::StringMap.validate!(input[:query_params_map_of_strings], context: "#{context}[:query_params_map_of_strings]") unless input[:query_params_map_of_strings].nil?
+        FooEnumList.validate!(input[:query_enum_list], context: "#{context}[:query_enum_list]") unless input[:query_enum_list].nil?
+        StringMap.validate!(input[:query_params_map_of_strings], context: "#{context}[:query_params_map_of_strings]") unless input[:query_params_map_of_strings].nil?
       end
     end
 
@@ -54,7 +54,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::ComplexError, context: context)
         Hearth::Validator.validate!(input[:top_level], ::String, context: "#{context}[:top_level]")
-        Validators::ComplexNestedErrorData.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+        ComplexNestedErrorData.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
       end
     end
 
@@ -117,7 +117,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -137,7 +137,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -161,14 +161,14 @@ module RailsJson
     class DocumentTypeAsPayloadInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::DocumentTypeAsPayloadInput, context: context)
-        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+        Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
       end
     end
 
     class DocumentTypeAsPayloadOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::DocumentTypeAsPayloadOutput, context: context)
-        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+        Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
       end
     end
 
@@ -176,7 +176,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::DocumentTypeInput, context: context)
         Hearth::Validator.validate!(input[:string_value], ::String, context: "#{context}[:string_value]")
-        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+        Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
       end
     end
 
@@ -184,7 +184,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::DocumentTypeOutput, context: context)
         Hearth::Validator.validate!(input[:string_value], ::String, context: "#{context}[:string_value]")
-        Validators::Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
+        Document.validate!(input[:document_value], context: "#{context}[:document_value]") unless input[:document_value].nil?
       end
     end
 
@@ -244,10 +244,10 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::ErrorWithMembers, context: context)
         Hearth::Validator.validate!(input[:code], ::String, context: "#{context}[:code]")
-        Validators::KitchenSink.validate!(input[:complex_data], context: "#{context}[:complex_data]") unless input[:complex_data].nil?
+        KitchenSink.validate!(input[:complex_data], context: "#{context}[:complex_data]") unless input[:complex_data].nil?
         Hearth::Validator.validate!(input[:integer_field], ::Integer, context: "#{context}[:integer_field]")
-        Validators::ListOfStrings.validate!(input[:list_field], context: "#{context}[:list_field]") unless input[:list_field].nil?
-        Validators::MapOfStrings.validate!(input[:map_field], context: "#{context}[:map_field]") unless input[:map_field].nil?
+        ListOfStrings.validate!(input[:list_field], context: "#{context}[:list_field]") unless input[:list_field].nil?
+        MapOfStrings.validate!(input[:map_field], context: "#{context}[:map_field]") unless input[:map_field].nil?
         Hearth::Validator.validate!(input[:message], ::String, context: "#{context}[:message]")
         Hearth::Validator.validate!(input[:string_field], ::String, context: "#{context}[:string_field]")
       end
@@ -342,14 +342,14 @@ module RailsJson
     class HttpPayloadWithStructureInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::HttpPayloadWithStructureInput, context: context)
-        Validators::NestedPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+        NestedPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
       end
     end
 
     class HttpPayloadWithStructureOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::HttpPayloadWithStructureOutput, context: context)
-        Validators::NestedPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+        NestedPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
       end
     end
 
@@ -362,7 +362,7 @@ module RailsJson
     class HttpPrefixHeadersInResponseOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::HttpPrefixHeadersInResponseOutput, context: context)
-        Validators::StringMap.validate!(input[:prefix_headers], context: "#{context}[:prefix_headers]") unless input[:prefix_headers].nil?
+        StringMap.validate!(input[:prefix_headers], context: "#{context}[:prefix_headers]") unless input[:prefix_headers].nil?
       end
     end
 
@@ -370,7 +370,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::HttpPrefixHeadersInput, context: context)
         Hearth::Validator.validate!(input[:foo], ::String, context: "#{context}[:foo]")
-        Validators::StringMap.validate!(input[:foo_map], context: "#{context}[:foo_map]") unless input[:foo_map].nil?
+        StringMap.validate!(input[:foo_map], context: "#{context}[:foo_map]") unless input[:foo_map].nil?
       end
     end
 
@@ -378,7 +378,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::HttpPrefixHeadersOutput, context: context)
         Hearth::Validator.validate!(input[:foo], ::String, context: "#{context}[:foo]")
-        Validators::StringMap.validate!(input[:foo_map], context: "#{context}[:foo_map]") unless input[:foo_map].nil?
+        StringMap.validate!(input[:foo_map], context: "#{context}[:foo_map]") unless input[:foo_map].nil?
       end
     end
 
@@ -487,13 +487,13 @@ module RailsJson
         Hearth::Validator.validate!(input[:header_double], ::Float, context: "#{context}[:header_double]")
         Hearth::Validator.validate!(input[:header_true_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_true_bool]")
         Hearth::Validator.validate!(input[:header_false_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_false_bool]")
-        Validators::StringList.validate!(input[:header_string_list], context: "#{context}[:header_string_list]") unless input[:header_string_list].nil?
-        Validators::StringSet.validate!(input[:header_string_set], context: "#{context}[:header_string_set]") unless input[:header_string_set].nil?
-        Validators::IntegerList.validate!(input[:header_integer_list], context: "#{context}[:header_integer_list]") unless input[:header_integer_list].nil?
-        Validators::BooleanList.validate!(input[:header_boolean_list], context: "#{context}[:header_boolean_list]") unless input[:header_boolean_list].nil?
-        Validators::TimestampList.validate!(input[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless input[:header_timestamp_list].nil?
+        StringList.validate!(input[:header_string_list], context: "#{context}[:header_string_list]") unless input[:header_string_list].nil?
+        StringSet.validate!(input[:header_string_set], context: "#{context}[:header_string_set]") unless input[:header_string_set].nil?
+        IntegerList.validate!(input[:header_integer_list], context: "#{context}[:header_integer_list]") unless input[:header_integer_list].nil?
+        BooleanList.validate!(input[:header_boolean_list], context: "#{context}[:header_boolean_list]") unless input[:header_boolean_list].nil?
+        TimestampList.validate!(input[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless input[:header_timestamp_list].nil?
         Hearth::Validator.validate!(input[:header_enum], ::String, context: "#{context}[:header_enum]")
-        Validators::FooEnumList.validate!(input[:header_enum_list], context: "#{context}[:header_enum_list]") unless input[:header_enum_list].nil?
+        FooEnumList.validate!(input[:header_enum_list], context: "#{context}[:header_enum_list]") unless input[:header_enum_list].nil?
       end
     end
 
@@ -509,13 +509,13 @@ module RailsJson
         Hearth::Validator.validate!(input[:header_double], ::Float, context: "#{context}[:header_double]")
         Hearth::Validator.validate!(input[:header_true_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_true_bool]")
         Hearth::Validator.validate!(input[:header_false_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_false_bool]")
-        Validators::StringList.validate!(input[:header_string_list], context: "#{context}[:header_string_list]") unless input[:header_string_list].nil?
-        Validators::StringSet.validate!(input[:header_string_set], context: "#{context}[:header_string_set]") unless input[:header_string_set].nil?
-        Validators::IntegerList.validate!(input[:header_integer_list], context: "#{context}[:header_integer_list]") unless input[:header_integer_list].nil?
-        Validators::BooleanList.validate!(input[:header_boolean_list], context: "#{context}[:header_boolean_list]") unless input[:header_boolean_list].nil?
-        Validators::TimestampList.validate!(input[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless input[:header_timestamp_list].nil?
+        StringList.validate!(input[:header_string_list], context: "#{context}[:header_string_list]") unless input[:header_string_list].nil?
+        StringSet.validate!(input[:header_string_set], context: "#{context}[:header_string_set]") unless input[:header_string_set].nil?
+        IntegerList.validate!(input[:header_integer_list], context: "#{context}[:header_integer_list]") unless input[:header_integer_list].nil?
+        BooleanList.validate!(input[:header_boolean_list], context: "#{context}[:header_boolean_list]") unless input[:header_boolean_list].nil?
+        TimestampList.validate!(input[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless input[:header_timestamp_list].nil?
         Hearth::Validator.validate!(input[:header_enum], ::String, context: "#{context}[:header_enum]")
-        Validators::FooEnumList.validate!(input[:header_enum_list], context: "#{context}[:header_enum_list]") unless input[:header_enum_list].nil?
+        FooEnumList.validate!(input[:header_enum_list], context: "#{context}[:header_enum_list]") unless input[:header_enum_list].nil?
       end
     end
 
@@ -550,9 +550,9 @@ module RailsJson
         Hearth::Validator.validate!(input[:foo_enum1], ::String, context: "#{context}[:foo_enum1]")
         Hearth::Validator.validate!(input[:foo_enum2], ::String, context: "#{context}[:foo_enum2]")
         Hearth::Validator.validate!(input[:foo_enum3], ::String, context: "#{context}[:foo_enum3]")
-        Validators::FooEnumList.validate!(input[:foo_enum_list], context: "#{context}[:foo_enum_list]") unless input[:foo_enum_list].nil?
-        Validators::FooEnumSet.validate!(input[:foo_enum_set], context: "#{context}[:foo_enum_set]") unless input[:foo_enum_set].nil?
-        Validators::FooEnumMap.validate!(input[:foo_enum_map], context: "#{context}[:foo_enum_map]") unless input[:foo_enum_map].nil?
+        FooEnumList.validate!(input[:foo_enum_list], context: "#{context}[:foo_enum_list]") unless input[:foo_enum_list].nil?
+        FooEnumSet.validate!(input[:foo_enum_set], context: "#{context}[:foo_enum_set]") unless input[:foo_enum_set].nil?
+        FooEnumMap.validate!(input[:foo_enum_map], context: "#{context}[:foo_enum_map]") unless input[:foo_enum_map].nil?
       end
     end
 
@@ -562,55 +562,55 @@ module RailsJson
         Hearth::Validator.validate!(input[:foo_enum1], ::String, context: "#{context}[:foo_enum1]")
         Hearth::Validator.validate!(input[:foo_enum2], ::String, context: "#{context}[:foo_enum2]")
         Hearth::Validator.validate!(input[:foo_enum3], ::String, context: "#{context}[:foo_enum3]")
-        Validators::FooEnumList.validate!(input[:foo_enum_list], context: "#{context}[:foo_enum_list]") unless input[:foo_enum_list].nil?
-        Validators::FooEnumSet.validate!(input[:foo_enum_set], context: "#{context}[:foo_enum_set]") unless input[:foo_enum_set].nil?
-        Validators::FooEnumMap.validate!(input[:foo_enum_map], context: "#{context}[:foo_enum_map]") unless input[:foo_enum_map].nil?
+        FooEnumList.validate!(input[:foo_enum_list], context: "#{context}[:foo_enum_list]") unless input[:foo_enum_list].nil?
+        FooEnumSet.validate!(input[:foo_enum_set], context: "#{context}[:foo_enum_set]") unless input[:foo_enum_set].nil?
+        FooEnumMap.validate!(input[:foo_enum_map], context: "#{context}[:foo_enum_map]") unless input[:foo_enum_map].nil?
       end
     end
 
     class JsonMapsInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::JsonMapsInput, context: context)
-        Validators::DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
-        Validators::SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
-        Validators::DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
-        Validators::DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
-        Validators::DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
-        Validators::SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
-        Validators::SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
-        Validators::SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
-        Validators::DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
-        Validators::SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
+        DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
+        SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
+        DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
+        DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
+        DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
+        SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
+        SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
+        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
+        SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
       end
     end
 
     class JsonMapsOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::JsonMapsOutput, context: context)
-        Validators::DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
-        Validators::SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
-        Validators::DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
-        Validators::DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
-        Validators::DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
-        Validators::SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
-        Validators::SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
-        Validators::SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
-        Validators::DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
-        Validators::SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
+        DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
+        SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
+        DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
+        DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
+        DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
+        SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
+        SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
+        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
+        SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
       end
     end
 
     class JsonUnionsInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::JsonUnionsInput, context: context)
-        Validators::MyUnion.validate!(input[:contents], context: "#{context}[:contents]") unless input[:contents].nil?
+        MyUnion.validate!(input[:contents], context: "#{context}[:contents]") unless input[:contents].nil?
       end
     end
 
     class JsonUnionsOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::JsonUnionsOutput, context: context)
-        Validators::MyUnion.validate!(input[:contents], context: "#{context}[:contents]") unless input[:contents].nil?
+        MyUnion.validate!(input[:contents], context: "#{context}[:contents]") unless input[:contents].nil?
       end
     end
 
@@ -620,27 +620,27 @@ module RailsJson
         Hearth::Validator.validate!(input[:blob], ::String, context: "#{context}[:blob]")
         Hearth::Validator.validate!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
         Hearth::Validator.validate!(input[:double], ::Float, context: "#{context}[:double]")
-        Validators::EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
+        EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
         Hearth::Validator.validate!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
         Hearth::Validator.validate!(input[:integer], ::Integer, context: "#{context}[:integer]")
         Hearth::Validator.validate!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
         Hearth::Validator.validate!(input[:json_value], ::String, context: "#{context}[:json_value]")
-        Validators::ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
-        Validators::ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
-        Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
+        ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
+        ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
+        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
+        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
         Hearth::Validator.validate!(input[:long], ::Integer, context: "#{context}[:long]")
-        Validators::MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
-        Validators::MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
-        Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
-        Validators::MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
-        Validators::KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
-        Validators::SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
+        MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
+        MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
+        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
+        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
+        ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
+        MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
+        KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
+        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
-        Validators::StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
+        StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
         Hearth::Validator.validate!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
         Hearth::Validator.validate!(input[:unix_timestamp], ::Time, context: "#{context}[:unix_timestamp]")
       end
@@ -652,27 +652,27 @@ module RailsJson
         Hearth::Validator.validate!(input[:blob], ::String, context: "#{context}[:blob]")
         Hearth::Validator.validate!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
         Hearth::Validator.validate!(input[:double], ::Float, context: "#{context}[:double]")
-        Validators::EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
+        EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
         Hearth::Validator.validate!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
         Hearth::Validator.validate!(input[:integer], ::Integer, context: "#{context}[:integer]")
         Hearth::Validator.validate!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
         Hearth::Validator.validate!(input[:json_value], ::String, context: "#{context}[:json_value]")
-        Validators::ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
-        Validators::ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
-        Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
+        ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
+        ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
+        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
+        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
         Hearth::Validator.validate!(input[:long], ::Integer, context: "#{context}[:long]")
-        Validators::MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
-        Validators::MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
-        Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
-        Validators::MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
-        Validators::KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
-        Validators::SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
+        MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
+        MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
+        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
+        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
+        ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
+        MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
+        KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
+        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
-        Validators::StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
+        StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
         Hearth::Validator.validate!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
         Hearth::Validator.validate!(input[:unix_timestamp], ::Time, context: "#{context}[:unix_timestamp]")
       end
@@ -684,27 +684,27 @@ module RailsJson
         Hearth::Validator.validate!(input[:blob], ::String, context: "#{context}[:blob]")
         Hearth::Validator.validate!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
         Hearth::Validator.validate!(input[:double], ::Float, context: "#{context}[:double]")
-        Validators::EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
+        EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
         Hearth::Validator.validate!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
         Hearth::Validator.validate!(input[:integer], ::Integer, context: "#{context}[:integer]")
         Hearth::Validator.validate!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
         Hearth::Validator.validate!(input[:json_value], ::String, context: "#{context}[:json_value]")
-        Validators::ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
-        Validators::ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
-        Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
+        ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
+        ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
+        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
+        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
         Hearth::Validator.validate!(input[:long], ::Integer, context: "#{context}[:long]")
-        Validators::MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
-        Validators::MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
-        Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
-        Validators::MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
-        Validators::KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
-        Validators::SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
+        MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
+        MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
+        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
+        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
+        ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
+        MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
+        KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
+        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
-        Validators::StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
+        StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
         Hearth::Validator.validate!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
         Hearth::Validator.validate!(input[:unix_timestamp], ::Time, context: "#{context}[:unix_timestamp]")
       end
@@ -714,7 +714,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::KitchenSink.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          KitchenSink.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -723,7 +723,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::ListOfStrings.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          ListOfStrings.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -732,7 +732,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::MapOfStrings.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          MapOfStrings.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -750,7 +750,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::SimpleStruct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          SimpleStruct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -760,7 +760,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::KitchenSink.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          KitchenSink.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -770,7 +770,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::ListOfStrings.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          ListOfStrings.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -780,7 +780,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::MapOfStrings.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          MapOfStrings.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -800,7 +800,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::SimpleStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          SimpleStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -835,11 +835,11 @@ module RailsJson
         when Types::MyUnion::EnumValue
           Hearth::Validator.validate!(input.__getobj__, ::String, context: context)
         when Types::MyUnion::ListValue
-          Validators::StringList.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          StringList.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::MyUnion::MapValue
-          Validators::StringMap.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          StringMap.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::MyUnion::StructureValue
-          Validators::GreetingStruct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          GreetingStruct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError,
                 "Expected #{context} to be a union member of "\
@@ -885,19 +885,19 @@ module RailsJson
 
       class ListValue
         def self.validate!(input, context:)
-          Validators::StringList.validate!(input, context: context) unless input.nil?
+          StringList.validate!(input, context: context) unless input.nil?
         end
       end
 
       class MapValue
         def self.validate!(input, context:)
-          Validators::StringMap.validate!(input, context: context) unless input.nil?
+          StringMap.validate!(input, context: context) unless input.nil?
         end
       end
 
       class StructureValue
         def self.validate!(input, context:)
-          Validators::GreetingStruct.validate!(input, context: context) unless input.nil?
+          GreetingStruct.validate!(input, context: context) unless input.nil?
         end
       end
     end
@@ -905,7 +905,7 @@ module RailsJson
     class NestedAttributesOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::NestedAttributesOperationInput, context: context)
-        Validators::SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
+        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
       end
     end
 
@@ -929,7 +929,7 @@ module RailsJson
         Hearth::Validator.validate!(input, Types::NullAndEmptyHeadersClientInput, context: context)
         Hearth::Validator.validate!(input[:a], ::String, context: "#{context}[:a]")
         Hearth::Validator.validate!(input[:b], ::String, context: "#{context}[:b]")
-        Validators::StringList.validate!(input[:c], context: "#{context}[:c]") unless input[:c].nil?
+        StringList.validate!(input[:c], context: "#{context}[:c]") unless input[:c].nil?
       end
     end
 
@@ -938,7 +938,7 @@ module RailsJson
         Hearth::Validator.validate!(input, Types::NullAndEmptyHeadersClientOutput, context: context)
         Hearth::Validator.validate!(input[:a], ::String, context: "#{context}[:a]")
         Hearth::Validator.validate!(input[:b], ::String, context: "#{context}[:b]")
-        Validators::StringList.validate!(input[:c], context: "#{context}[:c]") unless input[:c].nil?
+        StringList.validate!(input[:c], context: "#{context}[:c]") unless input[:c].nil?
       end
     end
 
@@ -946,8 +946,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::NullOperationInput, context: context)
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
-        Validators::SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
-        Validators::SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
+        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
       end
     end
 
@@ -955,8 +955,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::NullOperationOutput, context: context)
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
-        Validators::SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
-        Validators::SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
+        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
       end
     end
 
@@ -1005,7 +1005,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::QueryParamsAsStringListMapInput, context: context)
         Hearth::Validator.validate!(input[:qux], ::String, context: "#{context}[:qux]")
-        Validators::StringListMap.validate!(input[:foo], context: "#{context}[:foo]") unless input[:foo].nil?
+        StringListMap.validate!(input[:foo], context: "#{context}[:foo]") unless input[:foo].nil?
       end
     end
 
@@ -1047,7 +1047,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -1076,7 +1076,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -1113,7 +1113,7 @@ module RailsJson
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::StringList.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          StringList.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -1190,14 +1190,14 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____789BadNameInput, context: context)
         Hearth::Validator.validate!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
-        Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end
 
     class Struct____789BadNameOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____789BadNameOutput, context: context)
-        Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end
 
