@@ -195,7 +195,7 @@ module RailsJson
     class HttpPayloadWithStructure
       def self.default(visited=[])
         {
-          nested: Stubs::NestedPayload.default(visited),
+          nested: NestedPayload.default(visited),
         }
       end
 
@@ -233,7 +233,7 @@ module RailsJson
       def self.default(visited=[])
         {
           foo: 'foo',
-          foo_map: Stubs::StringMap.default(visited),
+          foo_map: StringMap.default(visited),
         }
       end
 
@@ -271,7 +271,7 @@ module RailsJson
     class HttpPrefixHeadersInResponse
       def self.default(visited=[])
         {
-          prefix_headers: Stubs::StringMap.default(visited),
+          prefix_headers: StringMap.default(visited),
         }
       end
 
@@ -378,13 +378,13 @@ module RailsJson
           header_double: 1.0,
           header_true_bool: false,
           header_false_bool: false,
-          header_string_list: Stubs::StringList.default(visited),
-          header_string_set: Stubs::StringSet.default(visited),
-          header_integer_list: Stubs::IntegerList.default(visited),
-          header_boolean_list: Stubs::BooleanList.default(visited),
-          header_timestamp_list: Stubs::TimestampList.default(visited),
+          header_string_list: StringList.default(visited),
+          header_string_set: StringSet.default(visited),
+          header_integer_list: IntegerList.default(visited),
+          header_boolean_list: BooleanList.default(visited),
+          header_timestamp_list: TimestampList.default(visited),
           header_enum: 'header_enum',
-          header_enum_list: Stubs::FooEnumList.default(visited),
+          header_enum_list: FooEnumList.default(visited),
         }
       end
 
@@ -567,9 +567,9 @@ module RailsJson
           foo_enum1: 'foo_enum1',
           foo_enum2: 'foo_enum2',
           foo_enum3: 'foo_enum3',
-          foo_enum_list: Stubs::FooEnumList.default(visited),
-          foo_enum_set: Stubs::FooEnumSet.default(visited),
-          foo_enum_map: Stubs::FooEnumMap.default(visited),
+          foo_enum_list: FooEnumList.default(visited),
+          foo_enum_set: FooEnumSet.default(visited),
+          foo_enum_map: FooEnumMap.default(visited),
         }
       end
 
@@ -631,16 +631,16 @@ module RailsJson
     class JsonMaps
       def self.default(visited=[])
         {
-          dense_struct_map: Stubs::DenseStructMap.default(visited),
-          sparse_struct_map: Stubs::SparseStructMap.default(visited),
-          dense_number_map: Stubs::DenseNumberMap.default(visited),
-          dense_boolean_map: Stubs::DenseBooleanMap.default(visited),
-          dense_string_map: Stubs::DenseStringMap.default(visited),
-          sparse_number_map: Stubs::SparseNumberMap.default(visited),
-          sparse_boolean_map: Stubs::SparseBooleanMap.default(visited),
-          sparse_string_map: Stubs::SparseStringMap.default(visited),
-          dense_set_map: Stubs::DenseSetMap.default(visited),
-          sparse_set_map: Stubs::SparseSetMap.default(visited),
+          dense_struct_map: DenseStructMap.default(visited),
+          sparse_struct_map: SparseStructMap.default(visited),
+          dense_number_map: DenseNumberMap.default(visited),
+          dense_boolean_map: DenseBooleanMap.default(visited),
+          dense_string_map: DenseStringMap.default(visited),
+          sparse_number_map: SparseNumberMap.default(visited),
+          sparse_boolean_map: SparseBooleanMap.default(visited),
+          sparse_string_map: SparseStringMap.default(visited),
+          dense_set_map: DenseSetMap.default(visited),
+          sparse_set_map: SparseSetMap.default(visited),
         }
       end
 
@@ -668,7 +668,7 @@ module RailsJson
         return nil if visited.include?('SparseSetMap')
         visited = visited + ['SparseSetMap']
         {
-          test_key: Stubs::StringSet.default(visited)
+          test_key: StringSet.default(visited)
         }
       end
 
@@ -688,7 +688,7 @@ module RailsJson
         return nil if visited.include?('DenseSetMap')
         visited = visited + ['DenseSetMap']
         {
-          test_key: Stubs::StringSet.default(visited)
+          test_key: StringSet.default(visited)
         }
       end
 
@@ -828,7 +828,7 @@ module RailsJson
         return nil if visited.include?('SparseStructMap')
         visited = visited + ['SparseStructMap']
         {
-          test_key: Stubs::GreetingStruct.default(visited)
+          test_key: GreetingStruct.default(visited)
         }
       end
 
@@ -866,7 +866,7 @@ module RailsJson
         return nil if visited.include?('DenseStructMap')
         visited = visited + ['DenseStructMap']
         {
-          test_key: Stubs::GreetingStruct.default(visited)
+          test_key: GreetingStruct.default(visited)
         }
       end
 
@@ -884,7 +884,7 @@ module RailsJson
     class JsonUnions
       def self.default(visited=[])
         {
-          contents: Stubs::MyUnion.default(visited),
+          contents: MyUnion.default(visited),
         }
       end
 
@@ -944,27 +944,27 @@ module RailsJson
           blob: 'blob',
           boolean: false,
           double: 1.0,
-          empty_struct: Stubs::EmptyStruct.default(visited),
+          empty_struct: EmptyStruct.default(visited),
           float: 1.0,
           httpdate_timestamp: Time.now,
           integer: 1,
           iso8601_timestamp: Time.now,
           json_value: 'json_value',
-          list_of_lists: Stubs::ListOfListOfStrings.default(visited),
-          list_of_maps_of_strings: Stubs::ListOfMapsOfStrings.default(visited),
-          list_of_strings: Stubs::ListOfStrings.default(visited),
-          list_of_structs: Stubs::ListOfStructs.default(visited),
+          list_of_lists: ListOfListOfStrings.default(visited),
+          list_of_maps_of_strings: ListOfMapsOfStrings.default(visited),
+          list_of_strings: ListOfStrings.default(visited),
+          list_of_structs: ListOfStructs.default(visited),
           long: 1,
-          map_of_lists_of_strings: Stubs::MapOfListsOfStrings.default(visited),
-          map_of_maps: Stubs::MapOfMapOfStrings.default(visited),
-          map_of_strings: Stubs::MapOfStrings.default(visited),
-          map_of_structs: Stubs::MapOfStructs.default(visited),
-          recursive_list: Stubs::ListOfKitchenSinks.default(visited),
-          recursive_map: Stubs::MapOfKitchenSinks.default(visited),
-          recursive_struct: Stubs::KitchenSink.default(visited),
-          simple_struct: Stubs::SimpleStruct.default(visited),
+          map_of_lists_of_strings: MapOfListsOfStrings.default(visited),
+          map_of_maps: MapOfMapOfStrings.default(visited),
+          map_of_strings: MapOfStrings.default(visited),
+          map_of_structs: MapOfStructs.default(visited),
+          recursive_list: ListOfKitchenSinks.default(visited),
+          recursive_map: MapOfKitchenSinks.default(visited),
+          recursive_struct: KitchenSink.default(visited),
+          simple_struct: SimpleStruct.default(visited),
           string: 'string',
-          struct_with_location_name: Stubs::StructWithLocationName.default(visited),
+          struct_with_location_name: StructWithLocationName.default(visited),
           timestamp: Time.now,
           unix_timestamp: Time.now,
         }
@@ -1049,27 +1049,27 @@ module RailsJson
           blob: 'blob',
           boolean: false,
           double: 1.0,
-          empty_struct: Stubs::EmptyStruct.default(visited),
+          empty_struct: EmptyStruct.default(visited),
           float: 1.0,
           httpdate_timestamp: Time.now,
           integer: 1,
           iso8601_timestamp: Time.now,
           json_value: 'json_value',
-          list_of_lists: Stubs::ListOfListOfStrings.default(visited),
-          list_of_maps_of_strings: Stubs::ListOfMapsOfStrings.default(visited),
-          list_of_strings: Stubs::ListOfStrings.default(visited),
-          list_of_structs: Stubs::ListOfStructs.default(visited),
+          list_of_lists: ListOfListOfStrings.default(visited),
+          list_of_maps_of_strings: ListOfMapsOfStrings.default(visited),
+          list_of_strings: ListOfStrings.default(visited),
+          list_of_structs: ListOfStructs.default(visited),
           long: 1,
-          map_of_lists_of_strings: Stubs::MapOfListsOfStrings.default(visited),
-          map_of_maps: Stubs::MapOfMapOfStrings.default(visited),
-          map_of_strings: Stubs::MapOfStrings.default(visited),
-          map_of_structs: Stubs::MapOfStructs.default(visited),
-          recursive_list: Stubs::ListOfKitchenSinks.default(visited),
-          recursive_map: Stubs::MapOfKitchenSinks.default(visited),
-          recursive_struct: Stubs::KitchenSink.default(visited),
-          simple_struct: Stubs::SimpleStruct.default(visited),
+          map_of_lists_of_strings: MapOfListsOfStrings.default(visited),
+          map_of_maps: MapOfMapOfStrings.default(visited),
+          map_of_strings: MapOfStrings.default(visited),
+          map_of_structs: MapOfStructs.default(visited),
+          recursive_list: ListOfKitchenSinks.default(visited),
+          recursive_map: MapOfKitchenSinks.default(visited),
+          recursive_struct: KitchenSink.default(visited),
+          simple_struct: SimpleStruct.default(visited),
           string: 'string',
-          struct_with_location_name: Stubs::StructWithLocationName.default(visited),
+          struct_with_location_name: StructWithLocationName.default(visited),
           timestamp: Time.now,
           unix_timestamp: Time.now,
         }
@@ -1114,7 +1114,7 @@ module RailsJson
         return nil if visited.include?('MapOfKitchenSinks')
         visited = visited + ['MapOfKitchenSinks']
         {
-          test_key: Stubs::KitchenSink.default(visited)
+          test_key: KitchenSink.default(visited)
         }
       end
 
@@ -1134,7 +1134,7 @@ module RailsJson
         return nil if visited.include?('ListOfKitchenSinks')
         visited = visited + ['ListOfKitchenSinks']
         [
-          Stubs::KitchenSink.default(visited)
+          KitchenSink.default(visited)
         ]
       end
 
@@ -1154,7 +1154,7 @@ module RailsJson
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          test_key: Stubs::SimpleStruct.default(visited)
+          test_key: SimpleStruct.default(visited)
         }
       end
 
@@ -1194,7 +1194,7 @@ module RailsJson
         return nil if visited.include?('MapOfMapOfStrings')
         visited = visited + ['MapOfMapOfStrings']
         {
-          test_key: Stubs::MapOfStrings.default(visited)
+          test_key: MapOfStrings.default(visited)
         }
       end
 
@@ -1214,7 +1214,7 @@ module RailsJson
         return nil if visited.include?('MapOfListsOfStrings')
         visited = visited + ['MapOfListsOfStrings']
         {
-          test_key: Stubs::ListOfStrings.default(visited)
+          test_key: ListOfStrings.default(visited)
         }
       end
 
@@ -1254,7 +1254,7 @@ module RailsJson
         return nil if visited.include?('ListOfStructs')
         visited = visited + ['ListOfStructs']
         [
-          Stubs::SimpleStruct.default(visited)
+          SimpleStruct.default(visited)
         ]
       end
 
@@ -1274,7 +1274,7 @@ module RailsJson
         return nil if visited.include?('ListOfMapsOfStrings')
         visited = visited + ['ListOfMapsOfStrings']
         [
-          Stubs::MapOfStrings.default(visited)
+          MapOfStrings.default(visited)
         ]
       end
 
@@ -1294,7 +1294,7 @@ module RailsJson
         return nil if visited.include?('ListOfListOfStrings')
         visited = visited + ['ListOfListOfStrings']
         [
-          Stubs::ListOfStrings.default(visited)
+          ListOfStrings.default(visited)
         ]
       end
 
@@ -1362,7 +1362,7 @@ module RailsJson
         {
           a: 'a',
           b: 'b',
-          c: Stubs::StringList.default(visited),
+          c: StringList.default(visited),
         }
       end
 
@@ -1385,8 +1385,8 @@ module RailsJson
       def self.default(visited=[])
         {
           string: 'string',
-          sparse_string_list: Stubs::SparseStringList.default(visited),
-          sparse_string_map: Stubs::SparseStringMap.default(visited),
+          sparse_string_list: SparseStringList.default(visited),
+          sparse_string_map: SparseStringMap.default(visited),
         }
       end
 
@@ -1523,7 +1523,7 @@ module RailsJson
     class Operation____789BadName
       def self.default(visited=[])
         {
-          member: Stubs::Struct____456efg.default(visited),
+          member: Struct____456efg.default(visited),
         }
       end
 

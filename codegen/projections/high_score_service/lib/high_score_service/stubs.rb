@@ -14,7 +14,7 @@ module HighScoreService
     class CreateHighScore
       def self.default(visited=[])
         {
-          high_score: Stubs::HighScoreAttributes.default(visited),
+          high_score: HighScoreAttributes.default(visited),
           location: 'location',
         }
       end
@@ -72,7 +72,7 @@ module HighScoreService
     class GetHighScore
       def self.default(visited=[])
         {
-          high_score: Stubs::HighScoreAttributes.default(visited),
+          high_score: HighScoreAttributes.default(visited),
         }
       end
 
@@ -89,7 +89,7 @@ module HighScoreService
     class ListHighScores
       def self.default(visited=[])
         {
-          high_scores: Stubs::HighScores.default(visited),
+          high_scores: HighScores.default(visited),
         }
       end
 
@@ -108,7 +108,7 @@ module HighScoreService
         return nil if visited.include?('HighScores')
         visited = visited + ['HighScores']
         [
-          Stubs::HighScoreAttributes.default(visited)
+          HighScoreAttributes.default(visited)
         ]
       end
 
@@ -126,7 +126,7 @@ module HighScoreService
     class UpdateHighScore
       def self.default(visited=[])
         {
-          high_score: Stubs::HighScoreAttributes.default(visited),
+          high_score: HighScoreAttributes.default(visited),
         }
       end
 

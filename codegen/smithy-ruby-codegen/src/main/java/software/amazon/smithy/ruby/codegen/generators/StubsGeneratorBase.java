@@ -81,7 +81,7 @@ public abstract class StubsGeneratorBase {
         this.model = context.model();
         this.generatedStubs = new HashSet<>();
         this.context = context;
-        this.writer = new RubyCodeWriter(context.settings().getModule());
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Stubs");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Stubs", true);
     }
 
@@ -243,7 +243,7 @@ public abstract class StubsGeneratorBase {
         writer
                 .write("")
                 .write("# Operation Stubber for $L", operation.getId().getName())
-                .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(operation))
                 .openBlock("def self.default(visited=[])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
@@ -287,7 +287,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Structure Stubber for $L", shape.getId().getName())
-                    .openBlock("class $L", name)
+                    .openBlock("class $T", symbolProvider.toSymbol(shape))
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -308,7 +308,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# List Stubber for $L", shape.getId().getName())
-                    .openBlock("class $L", name)
+                    .openBlock("class $T", symbolProvider.toSymbol(shape))
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -332,7 +332,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Map Stubber for $L", shape.getId().getName())
-                    .openBlock("class $L", name)
+                    .openBlock("class $T", symbolProvider.toSymbol(shape))
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -355,7 +355,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Union Stubber for $L", shape.getId().getName())
-                    .openBlock("class $L", name)
+                    .openBlock("class $T", symbolProvider.toSymbol(shape))
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -382,7 +382,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Document Type Stubber for $L", name)
-                    .openBlock("class $L", name)
+                    .openBlock("class $T", symbolProvider.toSymbol(shape))
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -493,7 +493,7 @@ public abstract class StubsGeneratorBase {
          * For complex shapes, simply delegate to their Stubber.
          */
         private void complexShapeDefaults(Shape shape) {
-            writer.write("$LStubs::$L.default(visited)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), eol);
+            writer.write("$L$T.default(visited)$L", dataSetter, symbolProvider.toSymbol(shape), eol);
         }
 
         @Override

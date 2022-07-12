@@ -59,13 +59,13 @@ module WhiteLabel
           string: 'string',
           simple_enum: 'simple_enum',
           typed_enum: 'typed_enum',
-          struct: Stubs::Struct.default(visited),
+          struct: Struct.default(visited),
           document: nil,
-          list_of_strings: Stubs::ListOfStrings.default(visited),
-          list_of_structs: Stubs::ListOfStructs.default(visited),
-          map_of_strings: Stubs::MapOfStrings.default(visited),
-          map_of_structs: Stubs::MapOfStructs.default(visited),
-          union: Stubs::Union.default(visited),
+          list_of_strings: ListOfStrings.default(visited),
+          list_of_structs: ListOfStructs.default(visited),
+          map_of_strings: MapOfStrings.default(visited),
+          map_of_structs: MapOfStructs.default(visited),
+          union: Union.default(visited),
         }
       end
 
@@ -105,7 +105,7 @@ module WhiteLabel
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          test_key: Stubs::Struct.default(visited)
+          test_key: Struct.default(visited)
         }
       end
 
@@ -129,7 +129,7 @@ module WhiteLabel
         return nil if visited.include?('ListOfStructs')
         visited = visited + ['ListOfStructs']
         [
-          Stubs::Struct.default(visited)
+          Struct.default(visited)
         ]
       end
 
@@ -165,7 +165,7 @@ module WhiteLabel
       def self.default(visited=[])
         {
           next_token: 'next_token',
-          items: Stubs::Items.default(visited),
+          items: Items.default(visited),
         }
       end
 
@@ -191,7 +191,7 @@ module WhiteLabel
       def self.default(visited=[])
         {
           next_token: 'next_token',
-          items: Stubs::Items.default(visited),
+          items: Items.default(visited),
         }
       end
 
@@ -245,8 +245,8 @@ module WhiteLabel
     class Operation____PaginatorsTestWithBadNames
       def self.default(visited=[])
         {
-          member___wrapper: Stubs::ResultWrapper.default(visited),
-          member___items: Stubs::Items.default(visited),
+          member___wrapper: ResultWrapper.default(visited),
+          member___items: Items.default(visited),
         }
       end
 

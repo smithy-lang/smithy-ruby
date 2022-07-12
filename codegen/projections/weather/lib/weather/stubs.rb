@@ -15,8 +15,8 @@ module Weather
       def self.default(visited=[])
         {
           name: 'name',
-          coordinates: Stubs::CityCoordinates.default(visited),
-          city: Stubs::CitySummary.default(visited),
+          coordinates: CityCoordinates.default(visited),
+          city: CitySummary.default(visited),
         }
       end
 
@@ -59,7 +59,7 @@ module Weather
       def self.default(visited=[])
         {
           last_updated: Time.now,
-          announcements: Stubs::Announcements.default(visited),
+          announcements: Announcements.default(visited),
         }
       end
 
@@ -77,7 +77,7 @@ module Weather
         return nil if visited.include?('Announcements')
         visited = visited + ['Announcements']
         {
-          police: Stubs::Message.default(visited),
+          police: Message.default(visited),
         }
       end
 
@@ -130,7 +130,7 @@ module Weather
       def self.default(visited=[])
         {
           chance_of_rain: 1.0,
-          precipitation: Stubs::Precipitation.default(visited),
+          precipitation: Precipitation.default(visited),
         }
       end
 
@@ -212,8 +212,8 @@ module Weather
           boxed_bool: false,
           default_number: 1,
           boxed_number: 1,
-          items: Stubs::CitySummaries.default(visited),
-          sparse_items: Stubs::SparseCitySummaries.default(visited),
+          items: CitySummaries.default(visited),
+          sparse_items: SparseCitySummaries.default(visited),
         }
       end
 
@@ -229,7 +229,7 @@ module Weather
         return nil if visited.include?('SparseCitySummaries')
         visited = visited + ['SparseCitySummaries']
         [
-          Stubs::CitySummary.default(visited)
+          CitySummary.default(visited)
         ]
       end
 
@@ -241,7 +241,7 @@ module Weather
         return nil if visited.include?('CitySummaries')
         visited = visited + ['CitySummaries']
         [
-          Stubs::CitySummary.default(visited)
+          CitySummary.default(visited)
         ]
       end
 
@@ -252,7 +252,7 @@ module Weather
       def self.default(visited=[])
         {
           member___123abc: 'member___123abc',
-          member: Stubs::Struct____456efg.default(visited),
+          member: Struct____456efg.default(visited),
         }
       end
 
