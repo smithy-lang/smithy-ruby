@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -44,6 +43,8 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -146,6 +147,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         return httpTrait.getMethod();
     }
 
+    /**
+     * @param inputShape inputShape to render for
+     */
     protected void renderQueryInputBuilder(Shape inputShape) {
         // get a list of all HttpQueryParams members - these must be map shapes
         List<MemberShape> queryParamsMembers = inputShape.members()
@@ -153,7 +157,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 .filter((m) -> m.hasTrait(HttpQueryParamsTrait.class))
                 .collect(Collectors.toList());
 
-        writer.write("params = Hearth::Query::ParamList.new");
+        writer.write("params = $T.new", Hearth.QUERY_PARAM_LIST);
 
         for (MemberShape m : queryParamsMembers) {
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
@@ -187,6 +191,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         writer.write("http_req.append_query_params(params)");
     }
 
+    /**
+     * @param inputShape inputShape to render for
+     */
     protected void renderHeadersBuilder(Shape inputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = inputShape.members()
@@ -204,6 +211,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
     }
 
+    /**
+     * @param inputShape inputShape to render for
+     */
     protected void renderPrefixHeadersBuilder(Shape inputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = inputShape.members()
@@ -228,6 +238,10 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to render for
+     * @param inputShape inputShape for the operation
+     */
     protected void renderUriBuilder(OperationShape operation, Shape inputShape) {
         String uri = getHttpUri(operation);
         // need to ensure that static query params in the uri are handled first
@@ -288,6 +302,10 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to get uri for
+     * @return the uri
+     */
     protected String getHttpUri(OperationShape operation) {
         HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
         return httpTrait.getUri().toString();
@@ -339,7 +357,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.serialize($2L) unless $2L.nil?", dataSetter, inputGetter);
+            writer.write("$1L$3T.serialize($2L) unless $2L.nil?",
+                    dataSetter, inputGetter, Hearth.NUMBER_HELPER);
         }
 
         @Override
@@ -358,7 +377,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
             if (shape.hasTrait(MediaTypeTrait.class)) {
-                writer.write("$1LBase64::encode64($2L).strip unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+                writer.write("$1L$3T::encode64($2L).strip unless $2L.nil? || $2L.empty?",
+                        dataSetter, inputGetter, RubyImportContainer.BASE64);
             } else {
                 writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
             }
@@ -380,21 +400,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$1L$2L", dataSetter, inputGetter)
                     .indent()
-                    .write(".compact")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberSerializer(shape.getMember())))
-                    .write(".join(', ')")
-                    .dedent()
-                    .closeBlock("end");
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$1L$2L", dataSetter, inputGetter)
-                    .indent()
-                    .write(".to_a")
                     .write(".compact")
                     .call(() -> model.expectShape(shape.getMember().getTarget())
                             .accept(new HeaderListMemberSerializer(shape.getMember())))
@@ -509,17 +514,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            Shape target = model.expectShape(shape.getMember().getTarget());
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .openBlock("$1L$2L.map do |value|", setter, inputGetter)
-                    .call(() -> target.accept(new QueryMemberSerializer(shape.getMember(), "", "value")))
-                    .closeBlock("end")
-                    .closeBlock("end");
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             Shape target = model.expectShape(shape.getMember().getTarget());
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .openBlock("$1L$2L.map do |value|", setter, inputGetter)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -34,7 +35,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -46,7 +46,9 @@ import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -66,14 +68,15 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Validators");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Validators", true);
     }
 
     public void render() {
         FileManifest fileManifest = context.fileManifest();
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Validators")
                 .call(() -> renderValidators())
@@ -100,12 +103,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void structureShape(StructureShape structureShape) {
         Collection<MemberShape> members = structureShape.members();
-        String name = symbolProvider.toSymbol(structureShape).getName();
         writer
                 .write("")
-                .openBlock("class $L", name)
+                .openBlock("class $T", symbolProvider.toSymbol(structureShape))
                 .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, Types::$L, context: context)", name)
+                .write("$T.validate!(input, $T, context: context)",
+                        Hearth.VALIDATOR,
+                        context.symbolProvider().toSymbol(structureShape))
                 .call(() -> renderValidatorsForStructureMembers(members))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -129,11 +133,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(mapShape))
                 .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, ::Hash, context: context)")
+                .write("$T.validate!(input, ::Hash, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each do |key, value|")
-                .write("Hearth::Validator.validate!(key, ::String, ::Symbol, context: \"#{context}.keys\")")
+                .write("$T.validate!(key, ::String, ::Symbol, context: \"#{context}.keys\")", Hearth.VALIDATOR)
                 .call(() -> valueTarget
                         .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"")))
                 .closeBlock("end")
@@ -150,29 +154,9 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(listShape))
                 .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, ::Array, context: context)")
-                .openBlock("input.each_with_index do |element, index|")
-                .call(() -> memberTarget
-                        .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
-                .closeBlock("end")
-                .closeBlock("end")
-                .closeBlock("end");
-
-        return null;
-    }
-
-    @Override
-    public Void setShape(SetShape setShape) {
-        Shape memberTarget =
-                model.expectShape(setShape.getMember().getTarget());
-
-        writer
-                .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(setShape).getName())
-                .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, ::Set, context: context)")
+                .write("$T.validate!(input, ::Array, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
                         .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
@@ -185,18 +169,19 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape unionShape) {
-        String shapeName = symbolProvider.toSymbol(unionShape).getName();
+        Symbol unionType = context.symbolProvider().toSymbol(unionShape);
+        String shapeName = unionType.getName();
         Collection<MemberShape> unionMemberShapes = unionShape.members();
 
         writer
                 .write("")
-                .openBlock("class $L", shapeName)
+                .openBlock("class $T", symbolProvider.toSymbol(unionShape))
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")
                 .call(() -> unionMemberShapes.forEach(unionMemberShape -> {
                     String unionMemberName = symbolProvider.toMemberName(unionMemberShape);
                     writer
-                            .write("when Types::" + shapeName + "::" + unionMemberName)
+                            .write("when $T", context.symbolProvider().toSymbol(unionMemberShape))
                             .indent();
                     model.expectShape(unionMemberShape.getTarget())
                             .accept(new MemberValidator(writer, symbolProvider, "input.__getobj__",
@@ -209,7 +194,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("        \"Types::" + shapeName + ", got #{input.class}.\"")
                 .write("end") // end switch case
                 .closeBlock("end") // end validate method
-                .call(() -> renderValidatorsForUnionMembers(unionMemberShapes))
+                .withQualifiedNamespace("Validators",
+                        () -> renderValidatorsForUnionMembers(unionMemberShapes))
                 .closeBlock("end");
 
         return null;
@@ -219,10 +205,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     public Void documentShape(DocumentShape documentShape) {
         writer
                 .write("")
-                .openBlock("class $L", symbolProvider.toSymbol(documentShape).getName())
+                .openBlock("class $T", symbolProvider.toSymbol(documentShape))
                 .openBlock("def self.validate!(input, context:)")
-                .write("Hearth::Validator.validate!(input, "
-                        + "::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)")
+                .write("$T.validate!(input, "
+                        + "::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)",
+                        Hearth.VALIDATOR)
                 .write("case input")
                 .openBlock("when ::Hash")
                 .write("input.each do |k,v|")
@@ -298,110 +285,105 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                             .closeBlock("end");
                 }
             } else {
-                writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
+                writer.write("$T.validate!($L, ::String, context: $L)", Hearth.VALIDATOR, input, context);
             }
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::TrueClass, ::FalseClass, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::TrueClass, ::FalseClass, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void listShape(ListShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Integer, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Float, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Float, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::BigDecimal, context: $L)", input, context);
+            writer.write("$T.validate!($L, $T, context: $L)",
+                    Hearth.VALIDATOR, input, RubyImportContainer.BIG_DECIMAL, context);
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::String, context: $L)", input, context);
+            writer.write("$T.validate!($L, ::String, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            String name = symbolProvider.toSymbol(shape).getName();
-            writer.write("Validators::$1L.validate!($2L, context: $3L) unless $2L.nil?", name, input, context);
+            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape), input, context);
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("Hearth::Validator.validate!($L, ::Time, context: $L)", input, context);
+            writer.write("$T.validate!($L, $T, context: $L)",
+                    Hearth.VALIDATOR, input, RubyImportContainer.TIME, context);
             return null;
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,21 +37,30 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
+/**
+ * Generate a ruby Gemspec.
+ */
 public class GemspecGenerator {
 
     private final GenerationContext context;
 
+    /**
+     * @param context generation context
+     */
     public GemspecGenerator(GenerationContext context) {
         this.context = context;
     }
 
+    /**
+     * Render/Generate the Gemspec.
+     */
     public void render() {
         FileManifest fileManifest = context.fileManifest();
         RubySettings settings = context.settings();
-        RubyCodeWriter writer = new RubyCodeWriter();
+        RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
 
         writer
-                .writePreamble()
+                .includePreamble()
                 .openBlock("Gem::Specification.new do |spec|")
                 .write("spec.name          = '$L'", settings.getGemName())
                 .write("spec.version       = '$L'", settings.getGemVersion())

@@ -7,10 +7,9 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'weather'
+require 'cgi'
 
-require 'hearth/xml/node_matcher'
-require 'hearth/query/param_matcher'
+require 'weather'
 
 module Weather
   describe Client do
@@ -251,13 +250,13 @@ module Weather
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/cities')
-            expected_query = CGI.parse(['pageSize=50'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['pageSize=50'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
             forbid_query = ['nextToken']
-            actual_query = CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request_uri.query)
             forbid_query.each do |query|
               expect(actual_query.key?(query)).to be false
             end

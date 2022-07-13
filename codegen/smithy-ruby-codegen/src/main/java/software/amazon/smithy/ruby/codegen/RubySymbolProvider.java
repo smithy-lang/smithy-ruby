@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -50,6 +49,9 @@ import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * Ruby implementation of SymbolProvider.
+ */
 @SmithyUnstableApi
 public class RubySymbolProvider implements SymbolProvider,
         ShapeVisitor<Symbol> {
@@ -281,19 +283,6 @@ public class RubySymbolProvider implements SymbolProvider,
     }
 
     @Override
-    public Symbol setShape(SetShape shape) {
-        if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Set__"), "", "", moduleName)
-                    .definitionFile("types.rb").build();
-        } else {
-            Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
-            String rbsType = "Set[" + member.getProperty("rbsType").get() + "]";
-            String yardType = "Set<" + member.getProperty("yardType").get() + ">";
-            return createSymbolBuilder(shape, "", rbsType, yardType).build();
-        }
-    }
-
-    @Override
     public Symbol mapShape(MapShape shape) {
         if (complexTypes) {
             return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), "", "", moduleName)
@@ -345,7 +334,14 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol memberShape(MemberShape shape) {
         Shape targetShape = model.expectShape(shape.getTarget());
-        return toSymbol(targetShape);
+        Shape containerShape = model.expectShape(shape.getContainer());
+        if (containerShape.isUnionShape()) {
+            String name = getDefaultShapeName(containerShape, "Union__") + "::" + toMemberName(shape);
+            return createSymbolBuilder(shape, name, name, name, moduleName)
+                    .definitionFile("types.rb").build();
+        } else {
+            return toSymbol(targetShape);
+        }
     }
 
     @Override

@@ -9,9 +9,6 @@
 
 require 'high_score_service'
 
-require 'hearth/xml/node_matcher'
-require 'hearth/query/param_matcher'
-
 module HighScoreService
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }

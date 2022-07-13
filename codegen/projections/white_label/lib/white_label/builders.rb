@@ -7,8 +7,6 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'base64'
-
 module WhiteLabel
   module Builders
 
@@ -42,10 +40,6 @@ module WhiteLabel
 
     # Structure Builder for Struct
     class Struct
-    end
-
-    # Set Builder for SetOfStrings
-    class SetOfStrings
     end
 
     # Map Builder for MapOfStructs

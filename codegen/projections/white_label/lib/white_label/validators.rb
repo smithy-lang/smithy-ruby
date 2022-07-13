@@ -93,14 +93,13 @@ module WhiteLabel
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
         Hearth::Validator.validate!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
         Hearth::Validator.validate!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
-        Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
-        Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
-        Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
-        Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::SetOfStrings.validate!(input[:set_of_strings], context: "#{context}[:set_of_strings]") unless input[:set_of_strings].nil?
-        Validators::Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
+        Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
+        Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
+        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
+        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
+        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
+        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
+        Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
       end
     end
 
@@ -110,14 +109,13 @@ module WhiteLabel
         Hearth::Validator.validate!(input[:string], ::String, context: "#{context}[:string]")
         Hearth::Validator.validate!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
         Hearth::Validator.validate!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
-        Validators::Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
-        Validators::Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
-        Validators::ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        Validators::ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
-        Validators::MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        Validators::MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        Validators::SetOfStrings.validate!(input[:set_of_strings], context: "#{context}[:set_of_strings]") unless input[:set_of_strings].nil?
-        Validators::Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
+        Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
+        Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
+        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
+        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
+        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
+        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
+        Union.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
       end
     end
 
@@ -134,7 +132,7 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::Struct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          Struct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -154,7 +152,7 @@ module WhiteLabel
         Hearth::Validator.validate!(input, ::Hash, context: context)
         input.each do |key, value|
           Hearth::Validator.validate!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Validators::Struct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Struct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
       end
     end
@@ -170,7 +168,7 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::PaginatorsTestOperationOutput, context: context)
         Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
-        Validators::Items.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
+        Items.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
       end
     end
 
@@ -185,7 +183,7 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::PaginatorsTestWithItemsOutput, context: context)
         Hearth::Validator.validate!(input[:next_token], ::String, context: "#{context}[:next_token]")
-        Validators::Items.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
+        Items.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
       end
     end
 
@@ -199,15 +197,6 @@ module WhiteLabel
     class ServerError
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::ServerError, context: context)
-      end
-    end
-
-    class SetOfStrings
-      def self.validate!(input, context:)
-        Hearth::Validator.validate!(input, ::Set, context: context)
-        input.each_with_index do |element, index|
-          Hearth::Validator.validate!(element, ::String, context: "#{context}[#{index}]")
-        end
       end
     end
 
@@ -261,7 +250,7 @@ module WhiteLabel
         when Types::Union::String
           Hearth::Validator.validate!(input.__getobj__, ::String, context: context)
         when Types::Union::Struct
-          Validators::Struct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          Struct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError,
                 "Expected #{context} to be a union member of "\
@@ -306,8 +295,8 @@ module WhiteLabel
     class Struct____PaginatorsTestWithBadNamesOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____PaginatorsTestWithBadNamesOutput, context: context)
-        Validators::ResultWrapper.validate!(input[:member___wrapper], context: "#{context}[:member___wrapper]") unless input[:member___wrapper].nil?
-        Validators::Items.validate!(input[:member___items], context: "#{context}[:member___items]") unless input[:member___items].nil?
+        ResultWrapper.validate!(input[:member___wrapper], context: "#{context}[:member___wrapper]") unless input[:member___wrapper].nil?
+        Items.validate!(input[:member___items], context: "#{context}[:member___items]") unless input[:member___items].nil?
       end
     end
 

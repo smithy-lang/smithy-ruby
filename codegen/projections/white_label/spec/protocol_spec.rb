@@ -9,9 +9,6 @@
 
 require 'white_label'
 
-require 'hearth/xml/node_matcher'
-require 'hearth/query/param_matcher'
-
 module WhiteLabel
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }

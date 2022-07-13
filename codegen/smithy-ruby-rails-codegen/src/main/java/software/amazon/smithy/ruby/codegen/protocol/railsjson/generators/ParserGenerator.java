@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -41,12 +40,19 @@ import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
+/**
+ * ParserGenerator for RailsJson.
+ */
 public class ParserGenerator extends RestParserGeneratorBase {
 
+    /**
+     * @param context generation context
+     */
     public ParserGenerator(GenerationContext context) {
         super(context);
     }
@@ -72,23 +78,6 @@ public class ParserGenerator extends RestParserGeneratorBase {
                 })
                 .closeBlock("end")
                 .write("data")
-                .closeBlock("end");
-    }
-
-    @Override
-    protected void renderSetParseMethod(SetShape s) {
-        writer
-                .openBlock("def self.parse(list)")
-                .openBlock("data = list.map do |value|")
-                .call(() -> {
-                    Shape memberTarget =
-                            model.expectShape(s.getMember().getTarget());
-                    memberTarget
-                            .accept(new MemberDeserializer(s.getMember(),
-                                    "", "value", true));
-                })
-                .closeBlock("end")
-                .write("Set.new(data)")
                 .closeBlock("end");
     }
 
@@ -243,7 +232,8 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$1LBase64::decode64($2L) unless $2L.nil?", dataSetter, jsonGetter);
+            writer.write("$1L$3T::decode64($2L) unless $2L.nil?",
+                    dataSetter, jsonGetter, RubyImportContainer.BASE64);
             return null;
         }
 

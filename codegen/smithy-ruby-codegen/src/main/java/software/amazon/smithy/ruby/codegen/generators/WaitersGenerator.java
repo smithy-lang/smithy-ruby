@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -75,8 +76,8 @@ public class WaitersGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.rbsWriter = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
         this.symbolProvider = new RubySymbolProvider(context.model(), settings, "Waiters", false);
     }
 
@@ -84,7 +85,8 @@ public class WaitersGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters(false))
@@ -101,7 +103,7 @@ public class WaitersGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters(true))
@@ -151,11 +153,11 @@ public class WaitersGenerator {
                 .call(() -> renderWaiterInitializeDocumentation(waiter))
                 .openBlock("def initialize(client, options = {})")
                 .write("@client = client")
-                .openBlock("@waiter = Hearth::Waiters::Waiter.new({")
+                .openBlock("@waiter = $T.new({", Hearth.WAITER)
                 .write("max_wait_time: options[:max_wait_time],")
                 .write("min_delay: $L || options[:min_delay],", waiter.getMinDelay())
                 .write("max_delay: $L || options[:max_delay],", waiter.getMaxDelay())
-                .openBlock("poller: Hearth::Waiters::Poller.new(")
+                .openBlock("poller: $T.new(", Hearth.POLLER)
                 .write("operation_name: :$L,", operationName)
                 .call(() -> renderAcceptors(waiter))
                 .closeBlock(")")

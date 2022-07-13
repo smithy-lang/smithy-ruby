@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -28,6 +29,9 @@ import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generate Config class for a Client.
+ */
 @SmithyInternalApi
 public class ConfigGenerator {
     private static final Logger LOGGER =
@@ -40,15 +44,22 @@ public class ConfigGenerator {
     private final RubyCodeWriter rbsWriter;
     private final RubySymbolProvider symbolProvider;
 
+    /**
+     * @param context generation context
+     */
     public ConfigGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.rbsWriter = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Config");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Config");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Config", false);
     }
 
+    /**
+     * Render/Generate the Config for the client.
+     * @param clientConfigList list of config to apply to the client.
+     */
     public void render(List<ClientConfig> clientConfigList) {
         FileManifest fileManifest = context.fileManifest();
 
@@ -62,7 +73,8 @@ public class ConfigGenerator {
         membersBlock += ",";
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .call(() -> renderConfigDocumentation(clientConfigList))
                 .openBlock("Config = ::Struct.new(")
@@ -70,7 +82,7 @@ public class ConfigGenerator {
                 .write("keyword_init: true")
                 .closeBlock(") do")
                 .indent()
-                .write("include Hearth::Configuration")
+                .write("include $T", Hearth.CONFIGURATION)
                 .write("\nprivate\n")
                 .call(() -> renderValidateMethod(clientConfigList))
                 .write("")
@@ -85,6 +97,9 @@ public class ConfigGenerator {
         LOGGER.fine("Wrote config to " + fileName);
     }
 
+    /**
+     * Render/generate the RBS types for Config.
+     */
     public void renderRbs() {
         FileManifest fileManifest = context.fileManifest();
 
@@ -126,7 +141,8 @@ public class ConfigGenerator {
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";
             }
-            writer.write("Hearth::Validator.validate!($1L, $2L, context: 'options[:$1L]')", member, type);
+            writer.write("$3T.validate!($1L, $2L, context: 'options[:$1L]')",
+                    member, type, Hearth.VALIDATOR);
             // TODO - add constraints here
         });
         writer.closeBlock("end");

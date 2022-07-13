@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -77,45 +77,86 @@ public final class Middleware {
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
     }
 
+    /**
+     * @return the Ruby class to use for the middleware.
+     */
     public String getKlass() {
         return klass;
     }
 
+    /**
+     * @return the step for this middleware
+     */
     public MiddlewareStackStep getStep() {
         return step;
     }
 
+    /**
+     * @return order within stack step
+     */
     public byte getOrder() {
         return order;
     }
 
+    /**
+     * @return clientConfig to be added to the client to support this middleware.
+     */
     public Set<ClientConfig> getClientConfig() {
         return clientConfig;
     }
 
+    /**
+     * @return additional parameters that should be passed to the middleware's initialize.
+     */
     public Map<String, String> getAdditionalParams() {
         return additionalParams;
     }
 
+    /**
+     * @param model model
+     * @param service service to test for
+     * @return true if this middleware should be included for the service
+     */
     public boolean includeFor(Model model, ServiceShape service) {
         return servicePredicate.test(model, service);
     }
 
+    /**
+     *
+     * @param model model
+     * @param service service to test for
+     * @param operation operation in the service to test for
+     * @return true if this midldeware should be included for this operation/service
+     */
     public boolean includeFor(Model model, ServiceShape service,
                               OperationShape operation) {
         return operationPredicate.test(model, service, operation);
     }
 
+    /**
+     * Generate code to add this middleware to an operation method.
+     * @param writer writer
+     * @param context generation context
+     * @param operation operation to add to
+     */
     public void renderAdd(RubyCodeWriter writer, GenerationContext context,
                           OperationShape operation) {
         renderAdd.renderAdd(writer, this, context, operation);
     }
 
+    /**
+     * Write additional files required by this middleware.
+     * @param context generation context
+     * @return List of additional files written out
+     */
     public List<String> writeAdditionalFiles(GenerationContext context) {
         return writeAdditionalFiles.writeAdditionalFiles(context);
     }
 
     @FunctionalInterface
+    /**
+     * Called to Render the addition of this middleware to the stack.
+     */
     public interface RenderAdd {
         /**
          * Called to Render the addition of this middleware to the stack.
@@ -130,6 +171,9 @@ public final class Middleware {
     }
 
     @FunctionalInterface
+    /**
+     * Called to write out additional files needed by this Middleware.
+     */
     public interface WriteAdditionalFiles {
         /**
          * Called to write out additional files needed by this Middleware.
@@ -141,6 +185,9 @@ public final class Middleware {
     }
 
     @FunctionalInterface
+    /**
+     * Called to get additional, operation specific parameters.
+     */
     public interface OperationParams {
         /**
          * Called to get additional, operation specific parameters.
@@ -283,7 +330,7 @@ public final class Middleware {
          */
         public Builder appliesOnlyToOperations(String... operationNames) {
             return appliesOnlyToOperations(
-                    new HashSet(Arrays.asList(operationNames)));
+                    new HashSet<>(Arrays.asList(operationNames)));
         }
 
         /**
@@ -398,7 +445,7 @@ public final class Middleware {
                     String fileContent =
                             new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 
-                    RubyCodeWriter writer = new RubyCodeWriter();
+                    RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
                     writer
                             .openBlock("module $L", context.settings().getModule())
                             .write(fileContent)

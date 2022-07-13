@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,7 +25,13 @@ import software.amazon.smithy.model.traits.TraitService;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * RailsJson Protocol trait.
+ */
 public final class RailsJsonTrait extends AbstractTrait implements ToSmithyBuilder<RailsJsonTrait> {
+    /**
+     * ShapeID for the railsJson trait.
+     */
     public static final ShapeId ID = ShapeId.from("smithy.ruby.protocols#railsJson");
 
     private final String errorLocation;
@@ -68,6 +74,10 @@ public final class RailsJsonTrait extends AbstractTrait implements ToSmithyBuild
     public static final class Builder extends AbstractTraitBuilder<RailsJsonTrait, Builder> {
         private String errorLocation;
 
+        /**
+         * @param errorLocation location of the error.
+         * @return the Builder
+         */
         public Builder errorLocation(String errorLocation) {
             this.errorLocation = errorLocation;
             return this;
@@ -79,6 +89,9 @@ public final class RailsJsonTrait extends AbstractTrait implements ToSmithyBuild
         }
     }
 
+    /**
+     * Provider for RailsJsonTrait.
+     */
     public static final class Provider implements TraitService {
         @Override
         public ShapeId getShapeId() {

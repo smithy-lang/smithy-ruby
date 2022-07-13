@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'stringio'
+
 module Weather
   # An API client for Weather
   # See {#initialize} for a full list of supported configuration options
@@ -59,7 +61,7 @@ module Weather
     def get_city(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
         validate_input: @config.validate_input
@@ -191,7 +193,7 @@ module Weather
     def get_current_time(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
         validate_input: @config.validate_input
@@ -250,12 +252,26 @@ module Weather
     #
     #   resp.data #=> Types::GetForecastOutput
     #   resp.data.chance_of_rain #=> Float
-    #   resp.data.precipitation #=> Precipitation
+    #   resp.data.precipitation #=> Types::Precipitation, one of [Rain, Sleet, Hail, Snow, Mixed, Other, Blob, Foo, Baz]
+    #   resp.data.precipitation.rain #=> Boolean
+    #   resp.data.precipitation.sleet #=> Boolean
+    #   resp.data.precipitation.hail #=> Hash<String, String>
+    #   resp.data.precipitation.hail['key'] #=> String
+    #   resp.data.precipitation.snow #=> String, one of ["YES", "NO"]
+    #   resp.data.precipitation.mixed #=> String, one of ["YES", "NO"]
+    #   resp.data.precipitation.other #=> Types::OtherStructure
+    #   resp.data.precipitation.blob #=> String
+    #   resp.data.precipitation.foo #=> Types::Foo
+    #   resp.data.precipitation.foo.baz #=> String
+    #   resp.data.precipitation.foo.bar #=> String
+    #   resp.data.precipitation.baz #=> Types::Baz
+    #   resp.data.precipitation.baz.baz #=> String
+    #   resp.data.precipitation.baz.bar #=> String
     #
     def get_forecast(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
         validate_input: @config.validate_input
@@ -338,7 +354,7 @@ module Weather
     def list_cities(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
         validate_input: @config.validate_input
@@ -406,7 +422,7 @@ module Weather
     def operation____789_bad_name(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
-      response_body = StringIO.new
+      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
         validate_input: @config.validate_input
@@ -462,7 +478,7 @@ module Weather
       return options[:output_stream] if options[:output_stream]
       return Hearth::BlockIO.new(block) if block
 
-      StringIO.new
+      ::StringIO.new
     end
   end
 end

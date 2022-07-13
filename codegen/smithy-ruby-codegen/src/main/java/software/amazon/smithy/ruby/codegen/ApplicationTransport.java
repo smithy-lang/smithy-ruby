@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ public final class ApplicationTransport {
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
-            List<Middleware> middleware = new ArrayList();
+            List<Middleware> middleware = new ArrayList<>();
 
             middleware.add(new Middleware.Builder()
                     .klass("Hearth::Middleware::Build")
@@ -238,24 +238,40 @@ public final class ApplicationTransport {
         return getName().startsWith("http");
     }
 
+    /**
+     * @return a client fragment that will construct the transport's ruby Request object
+     */
     public ClientFragment getRequest() {
         return request;
     }
 
+    /**
+     * @return a client fragment that will construct the transport's ruby Response object
+     */
     public ClientFragment getResponse() {
         return response;
     }
 
+    /**
+     * @return a client fragment that will construct the transport's ruby Client object
+     */
     public ClientFragment getTransportClient() {
         return transportClient;
     }
 
+    /**
+     * @param context generation context
+     * @return list of default middleware to support this transport.
+     */
     public List<Middleware> defaultMiddleware(GenerationContext context) {
         return this.defaultMiddleware.list(this, context);
     }
 
+    /**
+     * @return All client config required to support this transport.
+     */
     public Set<ClientConfig> getClientConfig() {
-        Set<ClientConfig> config = new HashSet();
+        Set<ClientConfig> config = new HashSet<>();
         config.addAll(request.getClientConfig());
         config.addAll(response.getClientConfig());
         config.addAll(transportClient.getClientConfig());

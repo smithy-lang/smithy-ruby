@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,8 +37,11 @@ import software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
 import software.amazon.smithy.protocoltests.traits.HttpResponseTestsTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyDependency;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.trait.SkipTest;
@@ -48,6 +51,9 @@ import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
+/**
+ * Generate Protocol Tests.
+ */
 public class HttpProtocolTestGenerator {
 
     private static final Logger LOGGER =
@@ -59,22 +65,27 @@ public class HttpProtocolTestGenerator {
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
 
+    /**
+     * @param context generation context
+     */
     public HttpProtocolTestGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Protocol", true);
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "");
+        this.symbolProvider = new RubySymbolProvider(model, settings, "", true);
     }
 
+    /**
+     * Render (Generate) the protocol tests.
+     */
     public void render() {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .write("require '$L'\n", settings.getGemName())
-                .write("require 'hearth/xml/node_matcher'")
-                .write("require 'hearth/query/param_matcher'")
                 .write("")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
@@ -367,18 +378,20 @@ public class HttpProtocolTestGenerator {
                     case "application/xml":
                         if (body.get().length() > 0) {
                             writer
-                                    .write("expect(Hearth::XML.parse(request.body.read)).to "
+                                    .write("expect($T.parse(request.body.read)).to "
                                                     + "match_xml_node(Hearth::XML.parse('$L'))",
-                                            body.get());
+                                            Hearth.XML, body.get())
+                                    .addUseImports(RubyDependency.HEARTH_XML_MATCHER);
                         } else {
                             writer.write("expect(request.body.read).to eq('$L')", body.get());
                         }
                         break;
                     case "application/x-www-form-urlencoded":
                         writer
-                                .write("expect(CGI.parse(request.body.read)).to "
-                                                + "match_query_params(CGI.parse('$L'))",
-                                        body.get());
+                                .write("expect($1T.parse(request.body.read)).to "
+                                                + "match_query_params($1T.parse('$2L'))",
+                                        RubyImportContainer.CGI, body.get())
+                                .addUseImports(RubyDependency.HEARTH_QUERY_PARAM_MATCHER);
                         break;
                     default:
                         writer.write("expect(request.body.read).to eq('$L')", body.get());
@@ -413,8 +426,10 @@ public class HttpProtocolTestGenerator {
     private void renderRequestMiddlewareQueryParams(List<String> queryParams) {
         if (!queryParams.isEmpty()) {
             writer
-                    .write("expected_query = CGI.parse($L.join('&'))", getRubyArrayFromList(queryParams))
-                    .write("actual_query = CGI.parse(request_uri.query)")
+                    .write("expected_query = $T.parse($L.join('&'))",
+                            RubyImportContainer.CGI, getRubyArrayFromList(queryParams))
+                    .write("actual_query = $T.parse(request_uri.query)",
+                            RubyImportContainer.CGI)
                     .openBlock("expected_query.each do |k, v|")
                     .write("expect(actual_query[k]).to eq(v)")
                     .closeBlock("end");
@@ -425,7 +440,8 @@ public class HttpProtocolTestGenerator {
         if (!forbidQueryParams.isEmpty()) {
             writer
                     .write("forbid_query = $L", getRubyArrayFromList(forbidQueryParams))
-                    .write("actual_query = CGI.parse(request_uri.query)")
+                    .write("actual_query = $T.parse(request_uri.query)",
+                            RubyImportContainer.CGI)
                     .openBlock("forbid_query.each do |query|")
                     .write("expect(actual_query.key?(query)).to be false")
                     .closeBlock("end");
@@ -436,7 +452,8 @@ public class HttpProtocolTestGenerator {
         if (!requireQueryParams.isEmpty()) {
             writer
                     .write("require_query = $L", getRubyArrayFromList(requireQueryParams))
-                    .write("actual_query = CGI.parse(request_uri.query)")
+                    .write("actual_query = $T.parse(request_uri.query)",
+                            RubyImportContainer.CGI)
                     .openBlock("require_query.each do |query|")
                     .write("expect(actual_query.key?(query)).to be true")
                     .closeBlock("end");
@@ -445,7 +462,8 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseStubMiddleware(HttpResponseTestCase testCase) {
         writer
-                .openBlock("middleware = Hearth::MiddlewareBuilder.after_send do |input, context|")
+                .openBlock("middleware = $T.after_send do |input, context|",
+                        Hearth.MIDDLEWARE_BUILDER)
                 .write("response = context.response")
                 .write("expect(response.status).to eq($L)", testCase.getCode())
                 .closeBlock("end");

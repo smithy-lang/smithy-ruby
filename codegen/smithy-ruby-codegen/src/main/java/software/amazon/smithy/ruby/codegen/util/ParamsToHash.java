@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -200,22 +199,6 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
 
     @Override
     public String listShape(ListShape shape) {
-        if (node.isNullNode()) {
-            return "nil";
-        }
-        ArrayNode arrayNode = node.expectArrayNode();
-        Shape target = model.expectShape(shape.getMember().getTarget());
-
-        String elements = arrayNode.getElements().stream()
-                .map((element) -> target
-                        .accept(new ParamsToHash(model, element, symbolProvider)))
-                .collect(Collectors.joining(",\n"));
-
-        return "[\n" + indent(elements) + "\n]";
-    }
-
-    @Override
-    public String setShape(SetShape shape) {
         if (node.isNullNode()) {
             return "nil";
         }

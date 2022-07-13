@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -34,6 +34,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class RubyDependency
         implements SymbolDependencyContainer, Comparable<RubyDependency> {
 
+    /**
+     * SDK Core library: Hearth.
+     */
     public static final RubyDependency HEARTH = new Builder()
             .type(Type.DEPENDENCY)
             .importPath("hearth")
@@ -44,15 +47,42 @@ public final class RubyDependency
     public static final RubyDependency TIME = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("time")
-            .version(">= 0")
             .build();
 
     public static final RubyDependency BIG_DECIMAL = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("bigdecimal")
-            .version(">= 0")
             .build();
 
+    public static final RubyDependency SECURE_RANDOM = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("securerandom")
+            .build();
+
+    public static final RubyDependency BASE64 = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("base64")
+            .build();
+
+    public static final RubyDependency STRING_IO = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("stringio")
+            .build();
+
+    public static final RubyDependency CGI = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("cgi")
+            .build();
+
+    public static final RubyDependency HEARTH_XML_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/xml/node_matcher")
+            .build();
+
+    public static final RubyDependency HEARTH_QUERY_PARAM_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/query/param_matcher")
+            .build();
 
     private final Type type;
     private final String gemName;
@@ -66,7 +96,7 @@ public final class RubyDependency
         this.gemName = builder.gemName;
         this.importPath =
                 SmithyBuilder.requiredState("importPath", builder.importPath);
-        this.version = SmithyBuilder.requiredState("version", builder.version);
+        this.version =  builder.version != null ? builder.version : ">= 0";
         this.dependencies = SmithyBuilder
                 .requiredState("dependencies", builder.dependencies);
 
@@ -77,6 +107,9 @@ public final class RubyDependency
                 .build();
     }
 
+    /**
+     * @return the builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -173,7 +206,7 @@ public final class RubyDependency
      * Represents a dependency type.
      */
     public enum Type {
-        STANDARD_LIBRARY, DEPENDENCY;
+        STANDARD_LIBRARY, DEPENDENCY, SDK_INTERNAL;
 
         @Override
         public String toString() {
@@ -182,6 +215,8 @@ public final class RubyDependency
                     return "stdlib";
                 case DEPENDENCY:
                     return "dependency";
+                case SDK_INTERNAL:
+                    return "sdk_internal";
                 default:
                     return "unknown";
             }

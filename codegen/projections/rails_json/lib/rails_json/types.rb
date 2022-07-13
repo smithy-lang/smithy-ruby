@@ -20,7 +20,7 @@ module RailsJson
     #
     # @!attribute query_string_set
     #
-    #   @return [Set<String>]
+    #   @return [Array<String>]
     #
     # @!attribute query_byte
     #
@@ -40,7 +40,7 @@ module RailsJson
     #
     # @!attribute query_integer_set
     #
-    #   @return [Set<Integer>]
+    #   @return [Array<Integer>]
     #
     # @!attribute query_long
     #
@@ -761,7 +761,7 @@ module RailsJson
     #
     # @!attribute header_string_set
     #
-    #   @return [Set<String>]
+    #   @return [Array<String>]
     #
     # @!attribute header_integer_list
     #
@@ -848,7 +848,7 @@ module RailsJson
     #
     # @!attribute header_string_set
     #
-    #   @return [Set<String>]
+    #   @return [Array<String>]
     #
     # @!attribute header_integer_list
     #
@@ -927,7 +927,7 @@ module RailsJson
     #
     # @!attribute foo_enum_set
     #
-    #   @return [Set<String>]
+    #   @return [Array<String>]
     #
     # @!attribute foo_enum_map
     #
@@ -966,7 +966,7 @@ module RailsJson
     #
     # @!attribute foo_enum_set
     #
-    #   @return [Set<String>]
+    #   @return [Array<String>]
     #
     # @!attribute foo_enum_map
     #
@@ -1018,11 +1018,11 @@ module RailsJson
     #
     # @!attribute dense_set_map
     #
-    #   @return [Hash<String, Set<String>>]
+    #   @return [Hash<String, Array<String>>]
     #
     # @!attribute sparse_set_map
     #
-    #   @return [Hash<String, Set<String>>]
+    #   @return [Hash<String, Array<String>>]
     #
     JsonMapsInput = ::Struct.new(
       :dense_struct_map,
@@ -1074,11 +1074,11 @@ module RailsJson
     #
     # @!attribute dense_set_map
     #
-    #   @return [Hash<String, Set<String>>]
+    #   @return [Hash<String, Array<String>>]
     #
     # @!attribute sparse_set_map
     #
-    #   @return [Hash<String, Set<String>>]
+    #   @return [Hash<String, Array<String>>]
     #
     JsonMapsOutput = ::Struct.new(
       :dense_struct_map,

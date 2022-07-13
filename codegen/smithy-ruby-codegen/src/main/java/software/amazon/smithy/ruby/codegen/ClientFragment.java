@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,20 +32,33 @@ public class ClientFragment {
     private final Set<ClientConfig> clientConfig;
     private final RenderOperation render;
 
+    /**
+     * @param builder builder to use to construct this fragment.
+     */
     public ClientFragment(Builder builder) {
         this.clientConfig = builder.clientConfig;
         this.render = builder.render;
     }
 
+    /**
+     * @return set of client config to apply to support this fragment.
+     */
     public Set<ClientConfig> getClientConfig() {
         return clientConfig;
     }
 
+    /**
+     * @param context generation context
+     * @return rendered fragment
+     */
     public String render(GenerationContext context) {
         return render.render(this, context);
     }
 
     @FunctionalInterface
+    /**
+     * Called to Render the addition of this middleware to the stack.
+     */
     public interface RenderOperation {
         /**
          * Called to Render the addition of this middleware to the stack.
@@ -57,22 +70,38 @@ public class ClientFragment {
         String render(ClientFragment fragment, GenerationContext context);
     }
 
+    /**
+     * Builder for ClientFragments.
+     */
     public static class Builder implements SmithyBuilder<ClientFragment> {
         private Set<ClientConfig> clientConfig = new HashSet<>();
         private RenderOperation render = (f, c) -> {
             return "";
         };
 
+        /**
+         *
+         * @param config config to be added to support this fragment.
+         * @return this builder.
+         */
         public Builder addConfig(ClientConfig config) {
             this.clientConfig.add(Objects.requireNonNull(config));
             return this;
         }
 
+        /**
+         * @param config config to be added to support this fragment.
+         * @return this builder
+         */
         public Builder config(Collection<ClientConfig> config) {
             this.clientConfig = new HashSet<>(config);
             return this;
         }
 
+        /**
+         * @param r code to render this fragment
+         * @return this builder
+         */
         public Builder render(RenderOperation r) {
             this.render = r;
             return this;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * CodeGeneration for Ruby.
+ */
 @SmithyInternalApi
 public final class RubyCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER =

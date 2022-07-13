@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.protocol.railsjson;
 
 import java.util.logging.Logger;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -25,7 +26,9 @@ import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ErrorsG
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.ParserGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.generators.StubsGenerator;
 
-// Protocol Implementation for Rails-Json
+/**
+ * Protocol Implementation for Rails-Json.
+ */
 public class RailsJsonGenerator implements ProtocolGenerator {
     private static final Logger LOGGER = Logger.getLogger(RailsJsonGenerator.class.getName());
 
@@ -56,7 +59,9 @@ public class RailsJsonGenerator implements ProtocolGenerator {
     @Override
     public void generateErrors(GenerationContext context) {
         ErrorsGenerator errorsGenerator = new ErrorsGenerator(context);
-        errorsGenerator.render(context.fileManifest());
+        FileManifest fileManifest = context.fileManifest();
+        errorsGenerator.render(fileManifest);
+        errorsGenerator.renderRbs(fileManifest);
         LOGGER.info("created errors");
     }
 

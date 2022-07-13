@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -42,6 +41,8 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 /**
@@ -56,6 +57,9 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(RestStubsGeneratorBase.class.getName());
 
+    /**
+     * @param context generation context
+     */
     public RestStubsGeneratorBase(GenerationContext context) {
         super(context);
     }
@@ -145,8 +149,12 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         LOGGER.finer("Generated stub method for operation " + operation.getId().getName());
     }
 
-    // The Output shape is combined with the OperationStub
-    // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
+    /**
+     * The Output shape is combined with the OperationStub.
+     * This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output.
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderOperationBodyStubber(OperationShape operation, Shape outputShape) {
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
@@ -171,12 +179,20 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderStatusCodeStubber(OperationShape operation, Shape outputShape) {
         operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
             writer.write("http_resp.status = $1L", httpTrait.getCode());
         });
     }
 
+    /**
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderHeaderStubbers(OperationShape operation, Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()
@@ -193,6 +209,10 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
+    /**
+     * @param operation operation to render for
+     * @param outputShape outputShape for the operation
+     */
     protected void renderPrefixHeadersStubbers(OperationShape operation, Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()
@@ -248,7 +268,8 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.serialize($2L) unless $2L.nil?", dataSetter, inputGetter);
+            writer.write("$1L$3T.serialize($2L) unless $2L.nil?",
+                    dataSetter, inputGetter, Hearth.NUMBER_HELPER);
         }
 
         @Override
@@ -267,7 +288,8 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
             if (shape.hasTrait(MediaTypeTrait.class)) {
-                writer.write("$1LBase64::encode64($2L).strip unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+                writer.write("$1L$3T::encode64($2L).strip unless $2L.nil? || $2L.empty?",
+                        dataSetter, inputGetter, RubyImportContainer.BASE64);
             } else {
                 writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
             }
@@ -289,21 +311,6 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$1L$2L", dataSetter, inputGetter)
                     .indent()
-                    .write(".compact")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberSerializer(shape.getMember())))
-                    .write(".join(', ')")
-                    .dedent()
-                    .closeBlock("end");
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$1L$2L", dataSetter, inputGetter)
-                    .indent()
-                    .write(".to_a")
                     .write(".compact")
                     .call(() -> model.expectShape(shape.getMember().getTarget())
                             .accept(new HeaderListMemberSerializer(shape.getMember())))

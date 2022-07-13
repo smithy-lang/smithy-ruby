@@ -7,8 +7,6 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'base64'
-
 module WhiteLabel
   module Parsers
 
@@ -48,9 +46,6 @@ module WhiteLabel
     end
 
     class Struct
-    end
-
-    class SetOfStrings
     end
 
     class MapOfStructs

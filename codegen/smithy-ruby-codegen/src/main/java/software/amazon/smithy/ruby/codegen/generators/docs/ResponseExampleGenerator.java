@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,12 +18,10 @@ package software.amazon.smithy.ruby.codegen.generators.docs;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -32,6 +30,8 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -40,15 +40,15 @@ public class ResponseExampleGenerator {
     private final OperationShape operation;
     private final RubyCodeWriter writer;
     private final Set<ShapeId> visited;
-    private final SymbolProvider symbolProvider;
+    private final RubySymbolProvider symbolProvider;
     private final Model model;
 
     public ResponseExampleGenerator(OperationShape operation,
-                                    SymbolProvider symbolProvider, Model model) {
+                                    RubySymbolProvider symbolProvider, Model model) {
         this.operation = operation;
         this.symbolProvider = symbolProvider;
         this.model = model;
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter("");
         this.visited = new HashSet<>();
     }
 
@@ -99,34 +99,16 @@ public class ResponseExampleGenerator {
                 return null;
             }
 
-            if (shape.members().size() > 0) {
-                shape.members().forEach((member) -> {
-                    Shape target = model.expectShape(member.getTarget());
-                    String memberGetter = dataGetter + "." + symbolProvider.toMemberName(member);
-                    target.accept(new ResponseMember(memberGetter, visited));
-                });
-            }
+            shape.members().forEach((member) -> {
+                Shape target = model.expectShape(member.getTarget());
+                String memberGetter = dataGetter + "." + symbolProvider.toMemberName(member);
+                target.accept(new ResponseMember(memberGetter, visited));
+            });
             return null;
         }
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
-
-            if (!visited.add(shape.getId())) {
-                return null;
-            }
-
-            Shape target = model.expectShape(shape.getMember().getTarget());
-            if (!visited.contains(target.getId())) {
-                String memberGetter = dataGetter + "[0]";
-                target.accept(new ResponseMember(memberGetter, visited));
-            }
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
 
             if (!visited.add(shape.getId())) {
@@ -159,13 +141,21 @@ public class ResponseExampleGenerator {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
+            String values = shape.getAllMembers().values().stream()
+                    .map(symbolProvider::toMemberName)
+                    .collect(Collectors.joining(", "));
+            writer.write("$L #=> Types::$L, one of [$L]", dataGetter,
+                    symbolProvider.toSymbol(shape).getProperty("yardType").orElse("").toString(), values);
 
             if (!visited.add(shape.getId())) {
                 return null;
             }
 
-            // TODO: What do we do for unions??
+            shape.members().forEach((member) -> {
+                Shape target = model.expectShape(member.getTarget());
+                String memberGetter = dataGetter + "." + RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member));
+                target.accept(new ResponseMember(memberGetter, visited));
+            });
             return null;
         }
     }

@@ -282,10 +282,9 @@ module RailsJson
             .map { |s| s.to_s }
         end
         unless http_resp.headers['X-StringSet'].nil? || http_resp.headers['X-StringSet'].empty?
-          data.header_string_set = Set.new(http_resp.headers['X-StringSet']
+          data.header_string_set = http_resp.headers['X-StringSet']
             .split(', ')
             .map { |s| s.to_s }
-          )
         end
         unless http_resp.headers['X-IntegerList'].nil? || http_resp.headers['X-IntegerList'].empty?
           data.header_integer_list = http_resp.headers['X-IntegerList']
@@ -347,10 +346,9 @@ module RailsJson
 
     class StringSet
       def self.parse(list)
-        data = list.map do |value|
+        list.map do |value|
           value unless value.nil?
         end
-        Set.new(data)
       end
     end
 
@@ -371,7 +369,7 @@ module RailsJson
         data.foo_enum2 = map['foo_enum2']
         data.foo_enum3 = map['foo_enum3']
         data.foo_enum_list = (Parsers::FooEnumList.parse(map['foo_enum_list']) unless map['foo_enum_list'].nil?)
-        data.foo_enum_set = map['foo_enum_set']
+        data.foo_enum_set = (Parsers::FooEnumSet.parse(map['foo_enum_set']) unless map['foo_enum_set'].nil?)
         data.foo_enum_map = (Parsers::FooEnumMap.parse(map['foo_enum_map']) unless map['foo_enum_map'].nil?)
         data
       end
@@ -389,10 +387,9 @@ module RailsJson
 
     class FooEnumSet
       def self.parse(list)
-        data = list.map do |value|
+        list.map do |value|
           value unless value.nil?
         end
-        Set.new(data)
       end
     end
 
@@ -419,7 +416,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = value
+          data[key] = (Parsers::StringSet.parse(value) unless value.nil?)
         end
         data
       end
@@ -429,7 +426,7 @@ module RailsJson
       def self.parse(map)
         data = {}
         map.map do |key, value|
-          data[key] = value unless value.nil?
+          data[key] = Parsers::StringSet.parse(value) unless value.nil?
         end
         data
       end
@@ -547,7 +544,7 @@ module RailsJson
           value = value
           Types::MyUnion::NumberValue.new(value) if value
         when 'blob_value'
-          value = Base64::decode64(value) unless value.nil?
+          value = ::Base64::decode64(value) unless value.nil?
           Types::MyUnion::BlobValue.new(value) if value
         when 'timestamp_value'
           value = Time.parse(value) if value
@@ -575,7 +572,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::KitchenSinkOperationOutput.new
         map = Hearth::JSON.load(http_resp.body)
-        data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
+        data.blob = ::Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
         data.double = Hearth::NumberHelper.deserialize(map['double'])
         data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
@@ -624,7 +621,7 @@ module RailsJson
     class KitchenSink
       def self.parse(map)
         data = Types::KitchenSink.new
-        data.blob = Base64::decode64(map['blob']) unless map['blob'].nil?
+        data.blob = ::Base64::decode64(map['blob']) unless map['blob'].nil?
         data.boolean = map['boolean']
         data.double = Hearth::NumberHelper.deserialize(map['double'])
         data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
@@ -780,7 +777,7 @@ module RailsJson
     class MediaTypeHeader
       def self.parse(http_resp)
         data = Types::MediaTypeHeaderOutput.new
-        data.json = Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
+        data.json = ::Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
         map = Hearth::JSON.load(http_resp.body)
         data
       end

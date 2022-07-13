@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ public class ModuleGenerator {
     public void render(List<String> additionalFiles) {
         FileManifest fileManifest = context.fileManifest();
         RubySettings settings = context.settings();
-        RubyCodeWriter writer = new RubyCodeWriter();
+        RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
 
-        writer.writePreamble();
+        writer.includePreamble().includeRequires();
         context.getRubyDependencies().forEach((rubyDependency -> {
             writer.write("require '$L'", rubyDependency.getImportPath());
         }));

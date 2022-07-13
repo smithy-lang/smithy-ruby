@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'time'
+
 module Weather
   module Validators
 
@@ -14,11 +16,11 @@ module Weather
       def self.validate!(input, context:)
         case input
         when Types::Announcements::Police
-          Validators::Message.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          Message.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::Announcements::Fire
-          Validators::Message.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          Message.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::Announcements::Health
-          Validators::Message.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          Message.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError,
                 "Expected #{context} to be a union member of "\
@@ -65,7 +67,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::CitySummary.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          CitySummary.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -99,7 +101,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetCityAnnouncementsOutput, context: context)
         Hearth::Validator.validate!(input[:last_updated], ::Time, context: "#{context}[:last_updated]")
-        Validators::Announcements.validate!(input[:announcements], context: "#{context}[:announcements]") unless input[:announcements].nil?
+        Announcements.validate!(input[:announcements], context: "#{context}[:announcements]") unless input[:announcements].nil?
       end
     end
 
@@ -107,7 +109,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetCityImageInput, context: context)
         Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
-        Validators::ImageType.validate!(input[:image_type], context: "#{context}[:image_type]") unless input[:image_type].nil?
+        ImageType.validate!(input[:image_type], context: "#{context}[:image_type]") unless input[:image_type].nil?
       end
     end
 
@@ -131,8 +133,8 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetCityOutput, context: context)
         Hearth::Validator.validate!(input[:name], ::String, context: "#{context}[:name]")
-        Validators::CityCoordinates.validate!(input[:coordinates], context: "#{context}[:coordinates]") unless input[:coordinates].nil?
-        Validators::CitySummary.validate!(input[:city], context: "#{context}[:city]") unless input[:city].nil?
+        CityCoordinates.validate!(input[:coordinates], context: "#{context}[:coordinates]") unless input[:coordinates].nil?
+        CitySummary.validate!(input[:city], context: "#{context}[:city]") unless input[:city].nil?
       end
     end
 
@@ -160,7 +162,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::GetForecastOutput, context: context)
         Hearth::Validator.validate!(input[:chance_of_rain], ::Float, context: "#{context}[:chance_of_rain]")
-        Validators::Precipitation.validate!(input[:precipitation], context: "#{context}[:precipitation]") unless input[:precipitation].nil?
+        Precipitation.validate!(input[:precipitation], context: "#{context}[:precipitation]") unless input[:precipitation].nil?
       end
     end
 
@@ -170,7 +172,7 @@ module Weather
         when Types::ImageType::Raw
           Hearth::Validator.validate!(input.__getobj__, ::TrueClass, ::FalseClass, context: context)
         when Types::ImageType::Png
-          Validators::PNGImage.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          PNGImage.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError,
                 "Expected #{context} to be a union member of "\
@@ -215,8 +217,8 @@ module Weather
         Hearth::Validator.validate!(input[:boxed_bool], ::TrueClass, ::FalseClass, context: "#{context}[:boxed_bool]")
         Hearth::Validator.validate!(input[:default_number], ::Integer, context: "#{context}[:default_number]")
         Hearth::Validator.validate!(input[:boxed_number], ::Integer, context: "#{context}[:boxed_number]")
-        Validators::CitySummaries.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
-        Validators::SparseCitySummaries.validate!(input[:sparse_items], context: "#{context}[:sparse_items]") unless input[:sparse_items].nil?
+        CitySummaries.validate!(input[:items], context: "#{context}[:items]") unless input[:items].nil?
+        SparseCitySummaries.validate!(input[:sparse_items], context: "#{context}[:sparse_items]") unless input[:sparse_items].nil?
       end
     end
 
@@ -258,19 +260,19 @@ module Weather
         when Types::Precipitation::Sleet
           Hearth::Validator.validate!(input.__getobj__, ::TrueClass, ::FalseClass, context: context)
         when Types::Precipitation::Hail
-          Validators::StringMap.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          StringMap.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::Precipitation::Snow
           Hearth::Validator.validate!(input.__getobj__, ::String, context: context)
         when Types::Precipitation::Mixed
           Hearth::Validator.validate!(input.__getobj__, ::String, context: context)
         when Types::Precipitation::Other
-          Validators::OtherStructure.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          OtherStructure.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::Precipitation::Blob
           Hearth::Validator.validate!(input.__getobj__, ::String, context: context)
         when Types::Precipitation::Foo
-          Validators::Foo.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          Foo.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::Precipitation::Baz
-          Validators::Baz.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+          Baz.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError,
                 "Expected #{context} to be a union member of "\
@@ -337,7 +339,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Validators::CitySummary.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+          CitySummary.validate!(element, context: "#{context}[#{index}]") unless element.nil?
         end
       end
     end
@@ -363,7 +365,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____789BadNameInput, context: context)
         Hearth::Validator.validate!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
-        Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end
 
@@ -371,7 +373,7 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate!(input, Types::Struct____789BadNameOutput, context: context)
         Hearth::Validator.validate!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
-        Validators::Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
       end
     end
 

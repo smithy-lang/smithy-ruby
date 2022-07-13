@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,6 +32,9 @@ public class ClientConfig {
     private final ConfigProviderChain defaults;
     private final boolean allowOperationOverride;
 
+    /**
+     * @param builder builder to construct from.
+     */
     public ClientConfig(Builder builder) {
         this.name = builder.name;
         this.type = builder.type;
@@ -76,6 +79,9 @@ public class ClientConfig {
         return defaults.getDocumentationDefault().orElse("");
     }
 
+    /**
+     * @return chain of deafults to use.
+     */
     public ConfigProviderChain getDefaults() {
         return defaults;
     }
@@ -116,6 +122,9 @@ public class ClientConfig {
         return Objects.hash(getName(), getType());
     }
 
+    /**
+     * Builder for ClientConfig.
+     */
     public static class Builder implements SmithyBuilder<ClientConfig> {
         private String name;
         private String type;
@@ -124,36 +133,64 @@ public class ClientConfig {
         private ConfigProviderChain defaults;
         private boolean allowOperationOverride = false;
 
+        /**
+         * @param name name of the config option.
+         * @return this builder.
+         */
         public Builder name(String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * @param type ruby type for the config.
+         * @return this builder.
+         */
         public Builder type(String type) {
             this.type = type;
             return this;
         }
 
+        /**
+         * @param documentation documentation for the config option.
+         * @return this builder.
+         */
         public Builder documentation(String documentation) {
             this.documentation = documentation;
             return this;
         }
 
+        /**
+         * @param defaultValue an optional default value
+         * @return this builder
+         */
         public Builder documentationDefaultValue(String defaultValue) {
             this.documentationDefaultValue = defaultValue;
             return this;
         }
 
+        /**
+         * allows config value to be overridden by values passed on an operation call.
+         * @return this builder
+         */
         public Builder allowOperationOverride() {
             this.allowOperationOverride = true;
             return this;
         }
 
+        /**
+         * @param value a single, static default value to use.
+         * @return this builder
+         */
         public Builder defaultValue(String value) {
             this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
             return this;
         }
 
+        /**
+         * @param defaults chain of default providers to use.
+         * @return this builder.
+         */
         public Builder defaults(ConfigProviderChain defaults) {
             this.defaults = defaults;
             return this;

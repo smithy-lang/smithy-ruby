@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -30,8 +29,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
@@ -39,6 +40,9 @@ import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generate the service Client.
+ */
 @SmithyInternalApi
 public class ClientGenerator {
     private static final Logger LOGGER =
@@ -46,26 +50,34 @@ public class ClientGenerator {
 
     private final GenerationContext context;
     private final RubySettings settings;
-    private final SymbolProvider symbolProvider;
+    private final RubySymbolProvider symbolProvider;
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
     private boolean hasStreamingOperation;
 
+    /**
+     * @param context generation context
+     */
     public ClientGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.rbsWriter = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule());
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
         this.symbolProvider = new RubySymbolProvider(model, context.settings(), "Client", false);
         this.hasStreamingOperation = false;
     }
 
+    /**
+     * Render/Generate the service client.
+     *
+     * @param middlewareBuilder set of middleware to be added to the client
+     */
     public void render(MiddlewareBuilder middlewareBuilder) {
         FileManifest fileManifest = context.fileManifest();
 
-        writer.writePreamble();
+        writer.includePreamble().includeRequires();
 
         List<String> additionalFiles =
                 middlewareBuilder.writeAdditionalFiles(context);
@@ -89,8 +101,8 @@ public class ClientGenerator {
         writer
                 .writeInline("$L", documentation)
                 .openBlock("class Client")
-                .write("include Hearth::ClientStubs")
-                .write("\n@middleware = Hearth::MiddlewareBuilder.new")
+                .write("include $T", Hearth.CLIENT_STUBS)
+                .write("\n@middleware = $T.new", Hearth.MIDDLEWARE_BUILDER)
                 .openBlock("\ndef self.middleware")
                 .write("@middleware")
                 .closeBlock("end\n")
@@ -113,14 +125,17 @@ public class ClientGenerator {
         LOGGER.fine("Wrote client to " + fileName);
     }
 
+    /**
+     * Render/generate the RBS types for the client.
+     */
     public void renderRbs() {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("class Client")
-                .write("include Hearth::ClientStubs\n")
+                .write("include $T\n", Hearth.CLIENT_STUBS)
                 .write("def self.middleware: () -> untyped\n")
                 .write("def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void")
                 .call(() -> renderRbsOperations())
@@ -147,10 +162,10 @@ public class ClientGenerator {
                 .writeYardParam("Config", "config", "An instance of {Config}")
                 .openBlock("def initialize(config = $L::Config.new, options = {})", settings.getModule())
                 .write("@config = config")
-                .write("@middleware = Hearth::MiddlewareBuilder.new(options[:middleware])")
-                .write("@stubs = Hearth::Stubbing::Stubs.new")
-                .write("@retry_quota = Hearth::Retry::RetryQuota.new")
-                .write("@client_rate_limiter = Hearth::Retry::ClientRateLimiter.new")
+                .write("@middleware = $T.new(options[:middleware])", Hearth.MIDDLEWARE_BUILDER)
+                .write("@stubs = $T.new", Hearth.STUBS)
+                .write("@retry_quota = $T.new", Hearth.RETRY_QUOTA)
+                .write("@client_rate_limiter = $T.new", Hearth.CLIENT_RATE_LIMITER)
                 .closeBlock("end");
     }
 
@@ -191,15 +206,15 @@ public class ClientGenerator {
                 .write("")
                 .writeInline("$L", documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
-                .write("stack = Hearth::MiddlewareStack.new")
+                .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> {
                     if (outputShape.members().stream()
                             .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())) {
                         hasStreamingOperation = true;
-                       writer.write("response_body = output_stream(options, &block)");
+                        writer.write("response_body = output_stream(options, &block)");
                     } else {
-                        writer.write("response_body = StringIO.new");
+                        writer.write("response_body = $T.new", RubyImportContainer.STRING_IO);
                     }
                 })
                 .call(() -> middlewareBuilder
@@ -207,7 +222,7 @@ public class ClientGenerator {
                 .write("apply_middleware(stack, options[:middleware])\n")
                 .openBlock("resp = stack.run(")
                 .write("input: input,")
-                .openBlock("context: Hearth::Context.new(")
+                .openBlock("context: $T.new(", Hearth.CONTEXT)
                 .write("request: $L,",
                         context.applicationTransport().getRequest()
                                 .render(context))
@@ -240,7 +255,7 @@ public class ClientGenerator {
                         "\ndef apply_middleware(middleware_stack, middleware)")
                 .write("Client.middleware.apply(middleware_stack)")
                 .write("@middleware.apply(middleware_stack)")
-                .write("Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)")
+                .write("$T.new(middleware).apply(middleware_stack)", Hearth.MIDDLEWARE_BUILDER)
                 .closeBlock("end");
     }
 
@@ -248,8 +263,8 @@ public class ClientGenerator {
         writer
                 .openBlock("\ndef output_stream(options = {}, &block)")
                 .write("return options[:output_stream] if options[:output_stream]")
-                .write("return Hearth::BlockIO.new(block) if block")
-                .write("\nStringIO.new")
+                .write("return $T.new(block) if block", Hearth.BLOCK_IO)
+                .write("\n$T.new", RubyImportContainer.STRING_IO)
                 .closeBlock("end");
     }
 }

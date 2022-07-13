@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,6 +40,11 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
+/**
+ * Collection of middleware to apply to a client.
+ * Middleware is separated into stack steps which each have an
+ * ordered list of Middleware to apply for that step.
+ */
 public class MiddlewareBuilder {
     private final Map<MiddlewareStackStep, List<Middleware>> middlewares;
 

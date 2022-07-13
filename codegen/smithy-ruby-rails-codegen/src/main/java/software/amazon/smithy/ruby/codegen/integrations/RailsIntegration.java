@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.protocol.railsjson.RailsJsonGenerator;
 
-// Provide support for generating SDKs for Rails (RailsJson)
+/**
+ * Provide support for generating SDKs for Rails (RailsJson).
+ */
 public class RailsIntegration implements RubyIntegration {
 
     @Override

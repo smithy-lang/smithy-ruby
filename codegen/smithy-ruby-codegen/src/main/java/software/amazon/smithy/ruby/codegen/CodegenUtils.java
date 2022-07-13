@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.Optional;
 import software.amazon.smithy.model.shapes.Shape;
 
+/**
+ * Utilities for Ruby code generation.
+ */
 public final class CodegenUtils {
     private static final String SYNTHETIC_NAMESPACE = "smithy.ruby.synthetic";
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ allprojects {
     version = "0.1.0"
 }
 
-extra["smithyVersion"] = "[1.19.0,1.20.0["
+extra["smithyVersion"] = "[1.22.0,1.23.0["
 
 // The root project doesn't produce a JAR.
 tasks["jar"].enabled = false
@@ -80,6 +80,11 @@ subprojects {
 
         tasks.withType<JavaCompile> {
             options.encoding = "UTF-8"
+            options.compilerArgs.add("-Xlint:unchecked")
+        }
+
+        tasks.withType<Javadoc> {
+            (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
         }
 
         // Use Junit5's test runner.

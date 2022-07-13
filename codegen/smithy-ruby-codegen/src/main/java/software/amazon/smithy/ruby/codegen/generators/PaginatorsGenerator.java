@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -48,8 +48,8 @@ public class PaginatorsGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.rbsWriter = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Paginators", false);
     }
 
@@ -57,7 +57,8 @@ public class PaginatorsGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderPaginators())
@@ -74,7 +75,7 @@ public class PaginatorsGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderRbsPaginators())

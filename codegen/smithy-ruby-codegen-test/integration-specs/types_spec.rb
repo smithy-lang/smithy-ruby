@@ -14,7 +14,6 @@ module WhiteLabel
           list_of_structs: [struct],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
-          set_of_strings: Set.new(['dank', 'memes']),
           union: { string: 'simple string' }
         }
       end

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -39,8 +38,10 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -60,7 +61,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Params");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
     }
 
@@ -68,8 +69,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .writePreamble()
-                .write("require 'securerandom'\n")
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Params")
                 .call(() -> renderParams())
@@ -102,23 +103,23 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void structureShape(StructureShape structureShape) {
-        Symbol symbol = symbolProvider.toSymbol(structureShape);
-        String shapeName = symbol.getName();
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbolProvider.toSymbol(structureShape))
                 .openBlock("def self.build(params, context: '')")
-                .call(() -> renderBuilderForStructureMembers(shapeName, structureShape.members()))
+                .call(() -> renderBuilderForStructureMembers(
+                        context.symbolProvider().toSymbol(structureShape), structureShape.members()))
                 .closeBlock("end")
                 .closeBlock("end");
         return null;
     }
 
-    private void renderBuilderForStructureMembers(String shapeName, Collection<MemberShape> members) {
+    private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
         writer
-                .write("Hearth::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
-                .write("type = Types::$L.new", shapeName);
+                .write("$T.validate!(params, ::Hash, $T, context: context)",
+                        Hearth.VALIDATOR, symbol)
+                .write("type = $T.new", symbol);
 
         members.forEach(member -> {
             Shape target = model.expectShape(member.getTarget());
@@ -136,15 +137,14 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void listShape(ListShape listShape) {
-        String shapeName = symbolProvider.toSymbol(listShape).getName();
         Shape memberTarget =
                 model.expectShape(listShape.getMember().getTarget());
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbolProvider.toSymbol(listShape))
                 .openBlock("def self.build(params, context: '')")
-                .write("Hearth::Validator.validate!(params, ::Array, context: context)")
+                .write("$T.validate!(params, ::Array, context: context)", Hearth.VALIDATOR)
                 .write("data = []")
                 .call(() -> {
                     if (isComplexShape(memberTarget)) {
@@ -166,44 +166,14 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     }
 
     @Override
-    public Void setShape(SetShape setShape) {
-        String shapeName = symbolProvider.toSymbol(setShape).getName();
-        Shape memberTarget =
-                model.expectShape(setShape.getMember().getTarget());
-
-        writer
-                .write("")
-                .openBlock("module $L", shapeName)
-                .openBlock("def self.build(params, context: '')")
-                .write("Hearth::Validator.validate!(params, ::Set, ::Array, context: context)")
-                .write("data = Set.new")
-                .call(() -> {
-                    if (isComplexShape(memberTarget)) {
-                        writer.openBlock("params.each_with_index do |element, index|");
-                    } else {
-                        writer.openBlock("params.each do |element|");
-                    }
-                })
-                .call(() -> memberTarget
-                        .accept(new MemberBuilder(writer, symbolProvider, "data << ", "element",
-                                "\"#{context}[#{index}]\"", setShape.getMember(), true)))
-                .closeBlock("end")
-                .write("data")
-                .closeBlock("end")
-                .closeBlock("end");
-        return null;
-    }
-
-    @Override
     public Void mapShape(MapShape mapShape) {
-        String shapeName = symbolProvider.toSymbol(mapShape).getName();
         Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbolProvider.toSymbol(mapShape))
                 .openBlock("def self.build(params, context: '')")
-                .write("Hearth::Validator.validate!(params, ::Hash, context: context)")
+                .write("$T.validate!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
@@ -220,14 +190,15 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
     @Override
     public Void unionShape(UnionShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
-        String shapeName = symbol.getName();
+        Symbol typeSymbol = context.symbolProvider().toSymbol(shape);
 
         writer
                 .write("")
-                .openBlock("module $L", shapeName)
+                .openBlock("module $T", symbol)
                 .openBlock("def self.build(params, context: '')")
-                .write("return params if params.is_a?(Types::$L)", shapeName)
-                .write("Hearth::Validator.validate!(params, ::Hash, Types::$L, context: context)", shapeName)
+                .write("return params if params.is_a?($T)", typeSymbol)
+                .write("$T.validate!(params, ::Hash, $T, context: context)",
+                        Hearth.VALIDATOR, typeSymbol)
                 .openBlock("unless params.size == 1")
                 .write("raise ArgumentError,")
                 .indent(3)
@@ -243,7 +214,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String memberName = RubyFormatter.asSymbol(memberClassName);
             writer.write("when $L", memberName)
                     .indent()
-                    .openBlock("Types::$L::$L.new(", shapeName, memberClassName);
+                    .openBlock("$T.new(", context.symbolProvider().toSymbol(member));
             String input = "params[" + memberName + "]";
             String context = "\"#{context}[" + memberName + "]\"";
             target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, member, false));
@@ -267,7 +238,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private boolean isComplexShape(Shape shape) {
         return shape.isStructureShape() || shape.isListShape() || shape.isMapShape()
-                || shape.isSetShape() || shape.isUnionShape() || shape.isOperationShape();
+                || shape.isUnionShape() || shape.isOperationShape();
     }
 
     private static class MemberBuilder extends ShapeVisitor.Default<Void> {
@@ -316,7 +287,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         public Void stringShape(StringShape shape) {
             if (memberShape.hasTrait(IdempotencyTokenTrait.class)
                     || shape.hasTrait(IdempotencyTokenTrait.class)) {
-                writer.write("$L$L || SecureRandom.uuid", memberSetter, input);
+                writer.write("$L$L || $T.uuid", memberSetter, input, RubyImportContainer.SECURE_RANDOM);
             } else {
                 writer.write("$L$L", memberSetter, input);
             }
@@ -325,12 +296,6 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            defaultComplex(shape);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
             defaultComplex(shape);
             return null;
         }
@@ -354,13 +319,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         }
 
         private void defaultComplex(Shape shape) {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
             if (checkRequired) {
-                writer.write("$1L$2L.build($3L, context: $4L) unless $3L.nil?", memberSetter,
-                        shapeName, input, context);
+                writer.write("$1L$2T.build($3L, context: $4L) unless $3L.nil?", memberSetter,
+                        symbolProvider.toSymbol(shape), input, context);
             } else {
-                writer.write("$1L($2L.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
-                        shapeName, input, context);
+                writer.write("$1L($2T.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
+                        symbolProvider.toSymbol(shape), input, context);
             }
         }
     }

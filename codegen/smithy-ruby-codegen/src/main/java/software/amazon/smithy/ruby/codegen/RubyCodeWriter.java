@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,37 +15,71 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import software.amazon.smithy.utils.AbstractCodeWriter;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolReference;
+import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A helper class for generating well formatted Ruby code.
  */
 @SmithyUnstableApi
-public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
+public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportContainer> {
 
-    public RubyCodeWriter() {
+    public static final String QUALIFIED_NAMESPACE = "qualifiedNamespace";
+    private static final String PREAMBLE =
+            """
+                    # frozen_string_literal: true
+
+                    # WARNING ABOUT GENERATED CODE
+                    #
+                    # This file was code generated using smithy-ruby.
+                    # https://github.com/awslabs/smithy-ruby
+                    #
+                    # WARNING ABOUT GENERATED CODE
+                    """;
+    private final String namespace;
+    private boolean includePreamble = false;
+    private boolean includeRequires = false;
+
+    /**
+     * @param namespace namespace to write in
+     */
+    public RubyCodeWriter(String namespace) {
+        super(new RubyImportContainer(namespace));
+        this.namespace = namespace;
+
         trimTrailingSpaces();
         trimBlankLines();
         setIndentText("  ");
+        putFormatter('T', new RubySymbolFormatter());
     }
 
     /**
-     * Writes preamble comments.
-     * For writers that are used to generate full files, this should
-     * be called before any other write methods.
+     * Preamble comments will be included in the generated code.
+     * This should be called for writers that are used to generate full files.
      *
      * @return Returns the CodeWriter
      */
-    public RubyCodeWriter writePreamble() {
-        write("# frozen_string_literal: true\n");
-        write("# WARNING ABOUT GENERATED CODE");
-        write("#");
-        write("# This file was code generated using smithy-ruby.");
-        write("# https://github.com/awslabs/smithy-ruby");
-        write("#");
-        write("# WARNING ABOUT GENERATED CODE\n");
+    public RubyCodeWriter includePreamble() {
+        this.includePreamble = true;
+        return this;
+    }
+
+    /**
+     * Require statments for symbols/dependenices used
+     * will be included in the generated code.
+     * This should be called for writers that are used to generate full files.
+     *
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter includeRequires() {
+        this.includeRequires = true;
         return this;
     }
 
@@ -63,10 +97,6 @@ public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
         return this;
     }
 
-    /*
-     * YARD convenience methods
-     */
-
     /**
      * Writes a yard method tag.
      *
@@ -83,6 +113,10 @@ public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
         });
         return this;
     }
+
+    /*
+     * YARD convenience methods
+     */
 
     /**
      * Writes a yard attribute tag.
@@ -253,12 +287,97 @@ public class RubyCodeWriter extends AbstractCodeWriter<RubyCodeWriter> {
         return this;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if (includePreamble) {
+            result.append(PREAMBLE).append("\n");
+        }
+        if (includeRequires) {
+            String requires = getImportContainer().toString();
+            if (!requires.isEmpty()) {
+                result.append(requires).append("\n");
+            }
+        }
+        result.append(super.toString());
+        return result.toString();
+    }
+
     // Writes a documentation indented newline separated string
     private void writeIndentedParts(String documentation) {
         if (!documentation.isEmpty()) {
             String[] docstringParts = documentation.split("\n");
             for (int i = 0; i < docstringParts.length; i++) {
                 write("  $L", docstringParts[i]);
+            }
+        }
+    }
+
+    public RubyCodeWriter withQualifiedNamespace(String qualifiedNamespace, Runnable task) {
+        pushState(qualifiedNamespace)
+                .putContext(QUALIFIED_NAMESPACE, qualifiedNamespace)
+                .call(task)
+                .popState();
+        return this;
+    }
+
+    public void addUseImports(RubyDependency dependency) {
+        dependency.getDependencies().forEach(d -> getImportContainer().importDependency(d));
+    }
+
+    /**
+     * RubyCodeWriter factory.
+     */
+    public static final class Factory implements SymbolWriter.Factory<RubyCodeWriter> {
+        @Override
+        public RubyCodeWriter apply(String filename, String namespace) {
+            return new RubyCodeWriter(namespace);
+        }
+    }
+
+    /**
+     * Adds TypeScript symbols for the "$T" formatter.
+     */
+    private final class RubySymbolFormatter implements BiFunction<Object, String, String> {
+        @Override
+        public String apply(Object type, String indent) {
+            if (type instanceof Symbol) {
+                Symbol typeSymbol = (Symbol) type;
+                addUseImports(typeSymbol);
+                return relativizeName(typeSymbol);
+            } else if (type instanceof SymbolReference) {
+                SymbolReference typeSymbol = (SymbolReference) type;
+                addImport(typeSymbol.getSymbol(), typeSymbol.getAlias(), SymbolReference.ContextOption.USE);
+                return typeSymbol.getAlias();
+            } else {
+                throw new CodegenException(
+                        "Invalid type provided to $T. Expected a Symbol or SymbolReference, but found `" + type + "`");
+            }
+        }
+
+        private String relativizeName(Symbol symbol) {
+            if (symbol.getNamespace().isEmpty()) {
+                return "::" + symbol.getName(); // force root namespace
+            } else {
+                String[] symbolNamespace = symbol.getNamespace().split("::");
+                String[] moduleNamespace = namespace.split("::");
+                String qualifiedNamespace = getContext(QUALIFIED_NAMESPACE, String.class);
+                int i = 0;
+                while (i < symbolNamespace.length && i < moduleNamespace.length) {
+                    if (!symbolNamespace[i].equals(moduleNamespace[i])
+                            || symbolNamespace[i].equals(qualifiedNamespace)) {
+                        break;
+                    }
+                    i++;
+                }
+                String relativeNamespace = IntStream.range(i, symbolNamespace.length)
+                        .mapToObj(j -> symbolNamespace[j])
+                        .collect(Collectors.joining("::"));
+                if (relativeNamespace.isBlank()) {
+                    return symbol.getName();
+                } else {
+                    return relativeNamespace + "::" + symbol.getName();
+                }
             }
         }
     }

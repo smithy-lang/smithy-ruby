@@ -36,7 +36,6 @@ apply KitchenSink @examples([
             ListOfStructs: [ { value: "struct1" }, { value: "struct2" } ],
             MapOfStrings: { key1: "value1", key2: "value2" },
             MapOfStructs: { key1: { value: "struct1" }, key2: { value: "struct2" } },
-            SetOfStrings: ["set", "of", "strings"],
             Union: { String: "union string" }
         },
         output: {
@@ -47,7 +46,6 @@ apply KitchenSink @examples([
             ListOfStructs: [ { value: "struct1" }, { value: "struct2" } ],
             MapOfStrings: { key1: "value1", key2: "value2" },
             MapOfStructs: { key1: { value: "struct1" }, key2: { value: "struct2" } },
-            SetOfStrings: ["set", "of", "strings"],
             Union: { Struct: { value: "union struct" } }
         }
     },

@@ -460,6 +460,3 @@ structure MediaTypeHeaderOutput {
     @httpHeader("X-Json")
     json: JsonValue,
 }
-
-@mediaType("application/json")
-string JsonValue

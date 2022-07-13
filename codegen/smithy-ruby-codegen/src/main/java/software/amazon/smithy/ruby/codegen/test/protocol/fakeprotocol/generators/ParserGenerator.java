@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generator
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -51,11 +50,6 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     @Override
     protected void renderMapParseMethod(MapShape s) {
-
-    }
-
-    @Override
-    protected void renderSetParseMethod(SetShape s) {
 
     }
 

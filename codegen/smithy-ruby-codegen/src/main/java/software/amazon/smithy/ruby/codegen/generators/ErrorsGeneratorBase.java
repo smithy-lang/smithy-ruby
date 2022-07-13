@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.RetryableTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
@@ -50,24 +51,59 @@ public abstract class ErrorsGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(ErrorsGeneratorBase.class.getName());
 
+    /**
+     * generation context.
+     */
     protected final GenerationContext context;
+    /**
+     * Ruby settings.
+     */
     protected final RubySettings settings;
+    /**
+     * Model to generate for.
+     */
     protected final Model model;
+
+    /**
+     * CodeWriter to write with.
+     */
     protected final RubyCodeWriter writer;
+    /**
+     * CodeWriter to write RBS with.
+     */
     protected final RubyCodeWriter rbsWriter;
+    /**
+     * SymbolProvider scoped to the errors module.
+     */
     protected final SymbolProvider symbolProvider;
+
+    /**
+     * SymbolProvider scoped to the Parsers module.
+     */
+    protected final SymbolProvider parserSymbolProvider;
+
+    /**
+     * List of all errorShapes.
+     */
     protected final List<Shape> errorShapes;
 
+    /**
+     * @param context generation context
+     */
     public ErrorsGeneratorBase(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter();
-        this.rbsWriter = new RubyCodeWriter();
+        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Errors");
+        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
+        this.parserSymbolProvider = new RubySymbolProvider(model, settings, "Parsers", true);
         this.errorShapes = getErrorShapes();
     }
 
+    /**
+     * @return list of all applicable (connected) error shapes.
+     */
     protected List<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
@@ -80,9 +116,13 @@ public abstract class ErrorsGeneratorBase {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * @param fileManifest fileManifest to use for writting.
+     */
     public void render(FileManifest fileManifest) {
         writer
-                .writePreamble()
+                .includePreamble()
+                .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .openBlock("def self.error_code(resp)")
@@ -99,9 +139,12 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.info("Wrote errors to " + fileName);
     }
 
+    /**
+     * @param fileManifest fileManifest to use for writing.
+     */
     public void renderRbs(FileManifest fileManifest) {
         rbsWriter
-                .writePreamble()
+                .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")
@@ -112,16 +155,16 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String typesFile =
+        String fileName =
                 settings.getGemName() + "/sig/" + settings.getGemName() + "/errors.rbs";
-        fileManifest.writeFile(typesFile, rbsWriter.toString());
-        LOGGER.info("Wrote errors rbs to " + typesFile);
+        fileManifest.writeFile(fileName, rbsWriter.toString());
+        LOGGER.info("Wrote errors rbs to " + fileName);
     }
 
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < Hearth::HTTP::ApiError; end")
+                .write("class ApiError < $T; end", Hearth.API_ERROR)
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
@@ -143,7 +186,7 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsBaseErrors() {
         rbsWriter
-                .write("\nclass ApiError < Hearth::HTTP::ApiError")
+                .write("\nclass ApiError < $T", Hearth.API_ERROR)
                 .write("def initialize: (request_id: untyped request_id, **untyped kwargs) -> void\n")
                 .write("attr_reader request_id: untyped")
                 .write("end")
@@ -170,6 +213,9 @@ public abstract class ErrorsGeneratorBase {
      */
     public abstract void renderErrorCodeBody();
 
+    /**
+     * Render RBS signature for error code.
+     */
     public void renderRbsErrorCode() {
         rbsWriter.write("def self.error_code: (untyped resp) -> untyped");
     }
@@ -187,7 +233,7 @@ public abstract class ErrorsGeneratorBase {
             apiErrorType = "ApiServerError";
         } else {
             // This should not happen but it's a safe fallback
-            apiErrorType = "Hearth::ApiError";
+            apiErrorType = "Hearth::HTTP::ApiError";
         }
 
         return apiErrorType;
@@ -208,9 +254,9 @@ public abstract class ErrorsGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("class $L < $L", errorName, apiErrorType)
+                    .openBlock("class $T < $L", symbolProvider.toSymbol(shape), apiErrorType)
                     .openBlock("def initialize(http_resp:, **kwargs)")
-                    .write("@data = Parsers::$L.parse(http_resp)", errorName)
+                    .write("@data = $T.parse(http_resp)", parserSymbolProvider.toSymbol(shape))
                     .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                     .write("super(http_resp: http_resp, **kwargs)")
                     .closeBlock("end")
@@ -248,14 +294,13 @@ public abstract class ErrorsGeneratorBase {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            String errorName = symbolProvider.toSymbol(shape).getName();
             String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
             boolean retryable = shape.hasTrait(RetryableTrait.class);
             boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
 
             rbsWriter
                     .write("")
-                    .openBlock("class $L < $L", errorName, apiErrorType)
+                    .openBlock("class $T < $L", symbolProvider.toSymbol(shape), apiErrorType)
                     .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
                     .write("attr_reader data: untyped")
                     .call(() -> {

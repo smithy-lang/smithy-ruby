@@ -7,10 +7,9 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'rails_json'
+require 'cgi'
 
-require 'hearth/xml/node_matcher'
-require 'hearth/query/param_matcher'
+require 'rails_json'
 
 module RailsJson
   describe Client do
@@ -101,8 +100,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/AllQueryStringTypesInput')
-            expected_query = CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -182,13 +181,13 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/ConstantAndVariableQueryString')
-            expected_query = CGI.parse(['foo=bar', 'baz=bam'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['foo=bar', 'baz=bam'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
             forbid_query = ['maybeSet']
-            actual_query = CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request_uri.query)
             forbid_query.each do |query|
               expect(actual_query.key?(query)).to be false
             end
@@ -208,8 +207,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/ConstantAndVariableQueryString')
-            expected_query = CGI.parse(['foo=bar', 'baz=bam', 'maybeSet=yes'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['foo=bar', 'baz=bam', 'maybeSet=yes'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -237,8 +236,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/ConstantQueryString/hi')
-            expected_query = CGI.parse(['foo=bar', 'hello'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['foo=bar', 'hello'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5534,8 +5533,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
             expect(request_uri.path).to eq('/OmitsNullSerializesEmptyString')
-            expected_query = CGI.parse(['Empty='].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['Empty='].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5604,8 +5603,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
-            expected_query = CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5626,8 +5625,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
-            expected_query = CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5654,8 +5653,8 @@ module RailsJson
             request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
             expect(request_uri.path).to eq('/StringListMap')
-            expected_query = CGI.parse(['corge=named', 'baz=bar', 'baz=qux'].join('&'))
-            actual_query = CGI.parse(request_uri.query)
+            expected_query = ::CGI.parse(['corge=named', 'baz=bar', 'baz=qux'].join('&'))
+            actual_query = ::CGI.parse(request_uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end

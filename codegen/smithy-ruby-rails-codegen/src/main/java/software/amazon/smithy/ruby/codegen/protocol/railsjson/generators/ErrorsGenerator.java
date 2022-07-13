@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,8 +19,14 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.RailsJsonTrait;
 
+/**
+ * ErrorsGenerator for RailsJson.
+ */
 public class ErrorsGenerator extends ErrorsGeneratorBase {
 
+    /**
+     * @param context generation context
+     */
     public ErrorsGenerator(GenerationContext context) {
         super(context);
     }

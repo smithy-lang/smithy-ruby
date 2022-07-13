@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -41,22 +40,34 @@ import software.amazon.smithy.model.traits.SinceTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generate documentation for a shape.
+ */
 @SmithyInternalApi
 public class ShapeDocumentationGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
-    private final SymbolProvider symbolProvider;
+    private final RubySymbolProvider symbolProvider;
     private final Shape shape;
 
-    public ShapeDocumentationGenerator(Model model, SymbolProvider symbolProvider, Shape shape) {
-        this.writer = new RubyCodeWriter();
+    /**
+     * @param model model to generate from
+     * @param symbolProvider symbol provider
+     * @param shape shape to generate documentation for
+     */
+    public ShapeDocumentationGenerator(Model model, RubySymbolProvider symbolProvider, Shape shape) {
+        this.writer = new RubyCodeWriter("");
         this.model = model;
         this.symbolProvider = symbolProvider;
         this.shape = shape;
     }
 
+    /**
+     * @return the rendered documentation
+     */
     public String render() {
         shape.accept(new ShapeDocumentationVisitor());
         return writer.toString();

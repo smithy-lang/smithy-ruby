@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -41,6 +40,8 @@ import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
+import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -57,6 +58,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(RestParserGeneratorBase.class.getName());
 
+    /**
+     * @param context generation context
+     */
     public RestParserGeneratorBase(GenerationContext context) {
         super(context);
     }
@@ -118,7 +122,7 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
         writer
                 .openBlock("def self.parse(http_resp)")
-                .write("data = Types::$L.new", symbolProvider.toSymbol(outputShape).getName())
+                .write("data = $T.new", context.symbolProvider().toSymbol(outputShape))
                 .call(() -> renderHeaderParsers(outputShape))
                 .call(() -> renderPrefixHeaderParsers(outputShape))
                 .call(() -> renderResponseCodeParser(outputShape))
@@ -132,7 +136,7 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
     protected void renderErrorParseMethod(Shape s) {
         writer
                 .openBlock("def self.parse(http_resp)")
-                .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
+                .write("data = $T.new", context.symbolProvider().toSymbol(s))
                 .call(() -> renderHeaderParsers(s))
                 .call(() -> renderPrefixHeaderParsers(s))
                 .call(() -> renderOperationBodyParser(s))
@@ -141,6 +145,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
     }
 
+    /**
+     * @param outputShape outputShape to render for
+     */
     protected void renderHeaderParsers(Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -157,6 +164,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         }
     }
 
+    /**
+     * @param outputShape outputShape to render for.
+     */
     protected void renderPrefixHeaderParsers(Shape outputShape) {
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -197,8 +207,11 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         }
     }
 
-    // The Output shape is combined with the Operation Parser
-    // This generates the parsing of the body as if it was the Parser for the Out[put
+    /**
+     * The Output shape is combined with the Operation Parser.
+     * This generates the parsing of the body as if it was the Parser for the Output
+     * @param outputShape outputShape to render for
+     */
     protected void renderOperationBodyParser(Shape outputShape) {
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = outputShape.members()
@@ -238,7 +251,8 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.deserialize($2L) unless $2L.nil?", dataSetter, valueGetter);
+            writer.write("$1L$3T.deserialize($2L) unless $2L.nil?",
+                    dataSetter, valueGetter, Hearth.NUMBER_HELPER);
         }
 
         @Override
@@ -287,7 +301,8 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
             if (shape.hasTrait(MediaTypeTrait.class)) {
-                writer.write("$1LBase64::decode64($2L).strip unless $2L.nil?", dataSetter, valueGetter);
+                writer.write("$1L$3T::decode64($2L).strip unless $2L.nil?", dataSetter, valueGetter,
+                        RubyImportContainer.BASE64);
             } else {
                 writer.write("$1L$2L", dataSetter, valueGetter);
             }
@@ -316,22 +331,6 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
             return null;
         }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", valueGetter)
-                    .write("$1LSet.new($2L", dataSetter, valueGetter)
-                    .indent()
-                    .write(".split(', ')")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberDeserializer(shape.getMember())))
-                    .dedent()
-                    .write(")")
-                    .closeBlock("end");
-
-            return null;
-        }
-
     }
 
     private class HeaderListMemberDeserializer extends ShapeVisitor.Default<Void> {
