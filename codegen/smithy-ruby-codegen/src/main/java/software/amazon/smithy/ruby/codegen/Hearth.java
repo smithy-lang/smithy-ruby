@@ -82,6 +82,16 @@ public final class Hearth {
             .name("XML")
             .build();
 
+    public static final Symbol XML_NODE = Symbol.builder()
+            .namespace("Hearth::XML", "::")
+            .name("Node")
+            .build();
+
+    public static final Symbol JSON = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("JSON")
+            .build();
+
     public static final Symbol NUMBER_HELPER = Symbol.builder()
             .namespace("Hearth", "::")
             .name("NumberHelper")
