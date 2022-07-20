@@ -106,7 +106,7 @@ module Hearth
       if @config.stub_responses
         @stubs.add_stubs(operation_name, stubs.flatten)
       else
-        msg = 'Stubbing is not enabled. Enable stubbing in Config '\
+        msg = 'Stubbing is not enabled. Enable stubbing in Config ' \
               'with `stub_responses: true`'
         raise ArgumentError, msg
       end
