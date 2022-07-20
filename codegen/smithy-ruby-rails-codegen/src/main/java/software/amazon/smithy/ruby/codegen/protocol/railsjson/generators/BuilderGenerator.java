@@ -145,7 +145,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
         shape.members().forEach((member) -> {
             writer
-                    .write("when Types::$L::$L", shape.getId().getName(), symbolProvider.toMemberName(member))
+                    .write("when $T", context.symbolProvider().toSymbol(member))
                     .indent();
             renderUnionMemberBuilder(shape, member);
             writer.dedent();

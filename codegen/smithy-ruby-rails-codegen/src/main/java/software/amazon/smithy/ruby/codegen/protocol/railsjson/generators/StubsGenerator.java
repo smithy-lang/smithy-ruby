@@ -140,7 +140,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
         shape.members().forEach((member) -> {
             writer
-                    .write("when Types::$L::$L", shape.getId().getName(), symbolProvider.toMemberName(member))
+                    .write("when $T", context.symbolProvider().toSymbol(member))
                     .indent();
             renderUnionMemberStubber(shape, member);
             writer.dedent();
