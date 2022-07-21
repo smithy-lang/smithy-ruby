@@ -289,16 +289,15 @@ public class CodegenOrchestrator {
 
         // get all config
         Set<ClientConfig> unorderedConfig = new HashSet<>();
-        unorderedConfig
-                .addAll(context.applicationTransport().getClientConfig());
-        unorderedConfig.addAll(middlewareBuilder.getClientConfig(context));
-        unorderedConfig.addAll(context.integrations()
-                .stream()
-                .map((i) -> i.getAdditionalClientConfig(context))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList())
-        );
-        context.protocolGenerator().ifPresent((g) -> unorderedConfig.addAll(g.getAdditionalClientConfig(context)));
+        context.applicationTransport().getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        middlewareBuilder.getClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
+
+        context.integrations().forEach((i) -> {
+            i.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        });
+        context.protocolGenerator().ifPresent((g) -> {
+            g.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        });
 
         List<ClientConfig> clientConfigList = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))

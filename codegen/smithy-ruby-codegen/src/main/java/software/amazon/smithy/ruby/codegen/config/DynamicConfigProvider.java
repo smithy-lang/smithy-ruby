@@ -15,22 +15,31 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+import software.amazon.smithy.ruby.codegen.ClientFragment;
+
 /**
  * Config provider for dynamically getting config values from arbitrary ruby code blocks.
  */
 public class DynamicConfigProvider implements ConfigProvider {
 
-    private final String rubyDefaultBlock;
+    private final ClientFragment providerFragment;
 
     /**
      * @param rubyDefaultBlock ruby code block to provide the config value
      */
     public DynamicConfigProvider(String rubyDefaultBlock) {
-        this.rubyDefaultBlock = rubyDefaultBlock;
+        providerFragment = new ClientFragment.Builder().render(rubyDefaultBlock).build();
+    }
+
+    /**
+     * @param providerFragment fragment to provide the config value
+     */
+    public DynamicConfigProvider(ClientFragment providerFragment) {
+        this.providerFragment = providerFragment;
     }
 
     @Override
-    public String render() {
-        return rubyDefaultBlock;
+    public ClientFragment providerFragment() {
+        return providerFragment;
     }
 }

@@ -16,11 +16,13 @@
 package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Optional;
+import software.amazon.smithy.ruby.codegen.ClientFragment;
 
 /**
  * Static Config Provider.
  */
 public class StaticConfigProvider implements ConfigProvider {
+    private final ClientFragment renderValue;
     private final String value;
 
     /**
@@ -28,12 +30,13 @@ public class StaticConfigProvider implements ConfigProvider {
      */
     public StaticConfigProvider(String value) {
         this.value = value;
+        this.renderValue = new ClientFragment.Builder().render(value).build();
     }
 
-    @Override
-    public String render() {
-        return value;
-    }
+   @Override
+   public ClientFragment providerFragment() {
+        return renderValue;
+   }
 
     @Override
     public Optional<String> getDocumentationDefault() {

@@ -57,11 +57,11 @@ public class ClientFragment {
 
     @FunctionalInterface
     /**
-     * Called to Render the addition of this middleware to the stack.
+     * Called to Render the fragment.
      */
     public interface RenderOperation {
         /**
-         * Called to Render the addition of this middleware to the stack.
+         * Called to Render the fragment.
          *
          * @param fragment - fragment to render
          * @param context  - additional context
@@ -104,6 +104,17 @@ public class ClientFragment {
          */
         public Builder render(RenderOperation r) {
             this.render = r;
+            return this;
+        }
+
+        /**
+         * @param staticRubyStatement static ruby statement to render
+         * @return this builder
+         */
+        public Builder render(String staticRubyStatement) {
+            this.render = (f, c) -> {
+                return staticRubyStatement;
+            };
             return this;
         }
 

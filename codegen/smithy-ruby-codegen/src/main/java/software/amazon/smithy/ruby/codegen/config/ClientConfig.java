@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -102,6 +103,19 @@ public class ClientConfig {
             getConfigValue = "options.fetch(:" + getName() + ", @config." + getName() + ")";
         }
         return getConfigValue;
+    }
+
+    /**
+     * @param configCollection set of config to add this ClientConfig and all of its dependent config to.
+     */
+    public void addToConfigCollection(Set<ClientConfig> configCollection) {
+        if (!configCollection.contains(this)) {
+            configCollection.add(this);
+            defaults.getProviders().forEach( (p) -> {
+                p.providerFragment().getClientConfig()
+                        .forEach((c) -> c.addToConfigCollection(configCollection));
+            });
+        }
     }
 
     @Override
