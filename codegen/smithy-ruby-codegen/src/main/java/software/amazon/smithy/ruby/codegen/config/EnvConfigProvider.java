@@ -29,7 +29,7 @@ public class EnvConfigProvider implements ConfigProvider {
      */
     public EnvConfigProvider(String environmentKey, String type) {
         providerFragment = new ClientFragment.Builder()
-                .render("Hearth::Config::EnvProvider.new(" + environmentKey + ", type: '" + type + "')")
+                .render("Hearth::Config::EnvProvider.new('" + environmentKey + "', type: '" + type + "')")
                 .build();
     }
 
