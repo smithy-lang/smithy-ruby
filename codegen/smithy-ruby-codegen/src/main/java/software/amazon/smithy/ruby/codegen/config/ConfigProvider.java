@@ -16,13 +16,14 @@
 package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Optional;
+import software.amazon.smithy.ruby.codegen.ClientFragment;
 
 public interface ConfigProvider {
 
     /**
      * @return the provider rendered into Ruby code
      */
-    String render();
+    ClientFragment providerFragment();
 
     /**
      * @return an optional default value to use in documentation.

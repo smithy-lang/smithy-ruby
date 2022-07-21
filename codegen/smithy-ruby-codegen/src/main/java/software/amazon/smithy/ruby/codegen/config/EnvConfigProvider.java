@@ -15,24 +15,26 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+import software.amazon.smithy.ruby.codegen.ClientFragment;
+
 /**
  * ConfigProvider for extracting values from the ENV.
  */
 public class EnvConfigProvider implements ConfigProvider {
-    private final String environmentKey;
-    private final String type;
+    private final ClientFragment providerFragment;
 
     /**
      * @param environmentKey the name of the ENV variable
-     * @param type rubyType to coerce the value to
+     * @param type           rubyType to coerce the value to
      */
     public EnvConfigProvider(String environmentKey, String type) {
-        this.environmentKey = environmentKey;
-        this.type = type;
+        providerFragment = new ClientFragment.Builder()
+                .render("Hearth::Config::EnvProvider.new(" + environmentKey + ", type: '" + type + "')")
+                .build();
     }
 
     @Override
-    public String render() {
-        return "Hearth::Config::EnvProvider.new(" + environmentKey + ", type: '" + type + "')";
+    public ClientFragment providerFragment() {
+        return providerFragment;
     }
 }

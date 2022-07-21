@@ -15,17 +15,19 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+import software.amazon.smithy.ruby.codegen.ClientFragment;
+
 public class SharedConfigProvider implements ConfigProvider {
-    private final String configKey;
-    private final String type;
+    private final ClientFragment providerFragment;
 
     public SharedConfigProvider(String configKey, String type) {
-        this.configKey = configKey;
-        this.type = type;
+        providerFragment = new ClientFragment.Builder()
+                .render("AWS::SDK::Core::SharedConfigProvider.new(" + configKey + ", type: '" + type + "')")
+                .build();
     }
 
     @Override
-    public String render() {
-        return "AWS::SDK::Core::SharedConfigProvider.new(" + configKey + ", type: '" + type + "')";
+    public ClientFragment providerFragment() {
+        return providerFragment;
     }
 }

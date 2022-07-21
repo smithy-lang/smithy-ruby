@@ -155,7 +155,7 @@ public class ConfigGenerator {
 
         clientConfigList.forEach(clientConfig -> {
             String defaults = clientConfig.getDefaults().getProviders().stream()
-                    .map((p) -> p.render())
+                    .map((p) -> p.providerFragment().render(context))
                     .collect(Collectors.joining(","));
             writer.write("$L: [$L],", clientConfig.getName(), defaults);
         });

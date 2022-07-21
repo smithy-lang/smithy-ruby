@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import software.amazon.smithy.ruby.codegen.ClientFragment;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -83,6 +84,15 @@ public class ConfigProviderChain {
          */
         public Builder dynamicProvider(String rubyDefaultBlock) {
             this.providers.add(new DynamicConfigProvider(rubyDefaultBlock));
+            return this;
+        }
+
+        /**
+         * @param providerFragment a ClientFragment to provide a value
+         * @return this builder
+         */
+        public Builder dynamicProvider(ClientFragment providerFragment) {
+            this.providers.add(new DynamicConfigProvider(providerFragment));
             return this;
         }
 
