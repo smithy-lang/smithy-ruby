@@ -74,6 +74,16 @@ module Hearth
         end
       end
 
+      describe '#update' do
+        it 'accepts a hash, updating self' do
+          subject.update(:abc => 123, 'xyz' => '234', header2 => 'new')
+          expect(subject['abc']).to eq('123')
+          expect(subject['xyz']).to eq('234')
+          expect(subject[header1]).to eq(value1)
+          expect(subject[header2]).to eq('new')
+        end
+      end
+
       describe '#clear' do
         it 'clears the headers' do
           subject.clear

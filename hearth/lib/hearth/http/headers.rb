@@ -60,6 +60,15 @@ module Hearth
         @headers.size
       end
 
+      # @param [Hash] headers
+      # @return [Headers]
+      def update(headers)
+        headers.each_pair do |k, v|
+          self[k] = v
+        end
+        self
+      end
+
       # @return [Hash]
       def clear
         @headers = {}

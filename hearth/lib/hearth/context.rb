@@ -10,6 +10,7 @@ module Hearth
       @response = options[:response]
       @logger = options[:logger]
       @params = options[:params]
+      @signer_params = options[:signer_params] || {}
       @metadata = options[:metadata] || {}
     end
 
@@ -27,6 +28,9 @@ module Hearth
 
     # @return [Hash] The hash of the original request parameters.
     attr_reader :params
+
+    # @return [Hash] A hash of parameters for the signer.
+    attr_reader :signer_params
 
     # @return [Hash]
     attr_reader :metadata

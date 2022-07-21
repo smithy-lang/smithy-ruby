@@ -112,8 +112,8 @@ module Hearth
       when nil then nil
       else
         raise ArgumentError, 'expected :middleware to be a' \
-                             'Hearth::MiddlewareBuilder,' \
-                             " got #{middleware.class}"
+                             'Hearth::MiddlewareBuilder, ' \
+                             "got #{middleware.class}"
       end
     end
 

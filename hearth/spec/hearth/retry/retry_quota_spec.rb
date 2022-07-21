@@ -40,7 +40,7 @@ module Hearth
           expect(subject.instance_variable_get(:@available_capacity)).to be 1
         end
 
-        it 'releases NO_RETRY_INCREMENT back to available capacity when '\
+        it 'releases NO_RETRY_INCREMENT back to available capacity when ' \
            'capacity_amount is not set' do
           subject.instance_variable_set(:@available_capacity, 0)
 

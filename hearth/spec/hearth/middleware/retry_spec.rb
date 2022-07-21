@@ -42,7 +42,7 @@ def handle_with_retry(test_cases, middleware_args = {})
 
   expect(i).to(
     eq(test_cases.size),
-    "Wrong number of retries. Handler was called #{i} times "\
+    "Wrong number of retries. Handler was called #{i} times " \
     "but #{test_cases.size} test cases were defined."
   )
 
