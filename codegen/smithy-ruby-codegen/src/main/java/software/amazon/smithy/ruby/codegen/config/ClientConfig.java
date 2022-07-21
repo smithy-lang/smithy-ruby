@@ -111,7 +111,7 @@ public class ClientConfig {
     public void addToConfigCollection(Set<ClientConfig> configCollection) {
         if (!configCollection.contains(this)) {
             configCollection.add(this);
-            defaults.getProviders().forEach( (p) -> {
+            defaults.getProviders().forEach((p) -> {
                 p.providerFragment().getClientConfig()
                         .forEach((c) -> c.addToConfigCollection(configCollection));
             });
@@ -185,6 +185,7 @@ public class ClientConfig {
 
         /**
          * allows config value to be overridden by values passed on an operation call.
+         *
          * @return this builder
          */
         public Builder allowOperationOverride() {
