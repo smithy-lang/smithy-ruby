@@ -22,7 +22,7 @@ public class SharedConfigProvider implements ConfigProvider {
 
     public SharedConfigProvider(String configKey, String type) {
         providerFragment = new ClientFragment.Builder()
-                .render("AWS::SDK::Core::SharedConfigProvider.new(" + configKey + ", type: '" + type + "')")
+                .render("AWS::SDK::Core::SharedConfigProvider.new('" + configKey + "', type: '" + type + "')")
                 .build();
     }
 

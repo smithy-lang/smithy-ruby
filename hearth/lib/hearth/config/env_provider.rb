@@ -11,7 +11,7 @@ module Hearth
       end
 
       def call(_cfg)
-        return unless (value = ENV.fetch(@env_key))
+        return unless (value = ENV.fetch(@env_key, nil))
 
         case @type
         when 'Float' then parse_float(value)
