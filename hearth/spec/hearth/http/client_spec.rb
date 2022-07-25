@@ -60,8 +60,44 @@ module Hearth
         context 'request body is set' do
           let(:request_body) { StringIO.new('TEST_STRING') }
           it 'transmits the body' do
+            expect_any_instance_of(Net::HTTP::Get)
+              .to receive(:body_stream=).with(request_body).and_call_original
+            # webmock sets to nil
+            expect_any_instance_of(Net::HTTP::Get)
+              .to receive(:body_stream=).with(nil).and_call_original
             stub_request(http_method, url)
               .with(body: 'TEST_STRING')
+            subject.transmit(request: request, response: response)
+          end
+
+          context 'body is empty' do
+            let(:request_body) { StringIO.new('') }
+            it 'does not set the body stream' do
+              expect_any_instance_of(Net::HTTP::Get)
+                .to_not receive(:body_stream=)
+              stub_request(http_method, url)
+              subject.transmit(request: request, response: response)
+            end
+          end
+        end
+
+        context 'request body does not respond to size' do
+          it 'does not set the body stream' do
+            rd, wr = IO.pipe
+            wr.puts 'test'
+            wr.close
+            request = Request.new(
+              http_method: http_method,
+              url: url,
+              headers: headers,
+              body: rd
+            )
+            # webmock sets to nil
+            expect_any_instance_of(Net::HTTP::Get)
+              .to receive(:body_stream=).with(nil).and_call_original
+            expect_any_instance_of(Net::HTTP::Get)
+              .to receive(:body_stream=).with(rd).and_call_original
+            stub_request(http_method, url)
             subject.transmit(request: request, response: response)
           end
         end
