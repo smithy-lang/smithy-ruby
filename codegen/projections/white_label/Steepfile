@@ -1,0 +1,12 @@
+D = Steep::Diagnostic
+
+target :app do
+  signature 'sig'
+
+  check 'lib/white_label/types'
+
+  library "hearth"
+  library "set"
+
+  configure_code_diagnostics(D::Ruby.strict)
+end
