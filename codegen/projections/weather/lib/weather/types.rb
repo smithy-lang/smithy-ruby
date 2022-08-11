@@ -72,6 +72,9 @@ module Weather
     end
 
     # @!attribute latitude
+    #   @deprecated
+    #     Use Float instead, and add the @default trait to structure members that targets this shape
+    #     Since: 2.0
     #
     #   @return [Float]
     #
@@ -472,7 +475,10 @@ module Weather
     end
 
     class Precipitation < Hearth::Union
-
+      # @deprecated
+      #   Use Boolean instead, and add the @default trait to structure members that targets this shape
+      #   Since: 2.0
+      #
       class Rain < Precipitation
         def to_h
           { rain: super(__getobj__) }
@@ -483,6 +489,10 @@ module Weather
         end
       end
 
+      # @deprecated
+      #   Use Boolean instead, and add the @default trait to structure members that targets this shape
+      #   Since: 2.0
+      #
       class Sleet < Precipitation
         def to_h
           { sleet: super(__getobj__) }
