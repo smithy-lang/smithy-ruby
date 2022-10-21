@@ -16,7 +16,10 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -131,5 +134,32 @@ public interface ProtocolGenerator {
             RubySettings rubySettings, Model finalResolvedModel,
             ServiceShape service, ShapeId protocol) {
         return Collections.emptySet();
+    }
+
+    static Map<ShapeId, ProtocolGenerator> collectSupportedProtocolGenerators(
+        List<RubyIntegration> integrations
+    ) {
+        Map<ShapeId, ProtocolGenerator> generators = new HashMap<>();
+        for (RubyIntegration integration : integrations) {
+            for (ProtocolGenerator generator : integration.getProtocolGenerators()) {
+                generators.put(generator.getProtocol(), generator);
+            }
+        }
+        return generators;
+    }
+
+    static Optional<ProtocolGenerator> resolve(
+        ShapeId protocol,
+        List<RubyIntegration> integrations
+    ) {
+        for (RubyIntegration integration : integrations) {
+            Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
+                    .stream().filter((p) -> p.getProtocol().equals(protocol))
+                    .findFirst();
+            if (pg.isPresent()) {
+                return pg;
+            }
+        }
+        return Optional.empty();
     }
 }

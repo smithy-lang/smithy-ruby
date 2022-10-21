@@ -24,7 +24,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
@@ -32,7 +31,6 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
@@ -45,6 +43,7 @@ import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
+import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -122,7 +121,7 @@ public class CodegenOrchestrator {
                 .resolveServiceProtocol(service, resolvedModel,
                         supportedProtocols);
         Optional<ProtocolGenerator> protocolGenerator =
-                resolveProtocolGenerator(protocol, integrations);
+            ProtocolGenerator.resolve(protocol, integrations);
 
         ApplicationTransport
                 applicationTransport; // Java9+ replace with ifPresentOrElse
@@ -171,22 +170,6 @@ public class CodegenOrchestrator {
                 rubyDependencies,
                 symbolProvider
         );
-    }
-
-    /*
-     * Return the first matching ProtocolGenerator (if any)
-     */
-    private Optional<ProtocolGenerator> resolveProtocolGenerator(
-            ShapeId protocol, List<RubyIntegration> integrations) {
-        for (RubyIntegration integration : integrations) {
-            Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
-                    .stream().filter((p) -> p.getProtocol().equals(protocol))
-                    .findFirst();
-            if (pg.isPresent()) {
-                return pg;
-            }
-        }
-        return Optional.empty();
     }
 
     /**
@@ -239,21 +222,12 @@ public class CodegenOrchestrator {
     }
 
     private void generateGemSpec() {
-        GemspecGenerator gemspecGenerator = new GemspecGenerator(context);
-        gemspecGenerator.render();
+        new GemspecGenerator(context).render();
         LOGGER.info("generated .gemspec");
     }
 
     private void generateYardOpts() {
-        Optional<TitleTrait> title = context.service().getTrait(TitleTrait.class);
-        if (title.isPresent()) {
-            FileManifest fileManifest = context.fileManifest();
-            RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
-            writer.write("--title \"$L\"", title.get().getValue());
-            writer.write("--hide-api private");
-            String fileName = context.settings().getGemName() + "/.yardopts";
-            fileManifest.writeFile(fileName, writer.toString());
-        }
+        new YardOptsGenerator(context).render();
     }
 
     private void generateTypes() {

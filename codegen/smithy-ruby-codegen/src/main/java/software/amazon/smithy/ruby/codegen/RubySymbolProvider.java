@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.ReservedWordSymbolProvider;
 import software.amazon.smithy.codegen.core.ReservedWords;
 import software.amazon.smithy.codegen.core.ReservedWordsBuilder;
@@ -352,6 +351,10 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol resourceShape(ResourceShape shape) {
-        throw new CodegenException("Resources are not currently supported");
+        // TODO: handle ResourceShape code generation and define Symbol definitionFile
+        return Symbol.builder()
+            .name(getDefaultShapeName(shape, "Resources__"))
+            .namespace(moduleName, "::")
+            .build();
     }
 }
