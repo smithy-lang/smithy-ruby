@@ -28,6 +28,11 @@ public class ModuleGenerator {
     private static final Logger LOGGER =
             Logger.getLogger(ModuleGenerator.class.getName());
 
+    private static final String[] DEFAULT_REQUIRES = {
+        "builders", "client", "config", "errors", "paginators", "params",
+        "parsers", "stubs", "types", "validators", "waiters"
+    };
+
     private final GenerationContext context;
 
     public ModuleGenerator(GenerationContext context) {
@@ -45,12 +50,7 @@ public class ModuleGenerator {
         }));
         writer.write("\n");
 
-        String[] requires = {
-                "builders", "client", "config", "errors", "paginators", "params",
-                "parsers", "stubs", "types", "validators", "waiters"
-        };
-
-        for (String require : requires) {
+        for (String require : DEFAULT_REQUIRES) {
             writer.write("require_relative '$L/$L'", settings.getGemName(),
                     require);
         }

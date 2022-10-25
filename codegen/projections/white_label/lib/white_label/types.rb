@@ -136,11 +136,6 @@ module WhiteLabel
     #   @note
     #     This shape is meant for internal use only.
     #
-    #   @note
-    #     This shape is recommended.
-    #     Reason: This structure member is
-    #     cool AF.
-    #
     #   @since today
     #
     #   @return [String]
@@ -269,11 +264,6 @@ module WhiteLabel
     #
     #   @note
     #     This shape is meant for internal use only.
-    #
-    #   @note
-    #     This shape is recommended.
-    #     Reason: This structure member is
-    #     cool AF.
     #
     #   @since today
     #

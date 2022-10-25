@@ -121,7 +121,7 @@ module Hearth
 
         # Request a new token every 100ms (10 TPS) for 2 seconds.
         expect(mutex).not_to receive(:sleep)
-        (0..20).each do |t|
+        20.times do |t|
           allow(Process).to receive(:clock_gettime)
             .with(Process::CLOCK_MONOTONIC).and_return(1 + (0.1 * t))
           subject.token_bucket_acquire(1)
