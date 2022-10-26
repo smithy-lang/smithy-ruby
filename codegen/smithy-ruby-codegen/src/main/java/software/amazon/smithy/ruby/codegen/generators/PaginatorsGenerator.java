@@ -28,7 +28,6 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -50,7 +49,7 @@ public class PaginatorsGenerator {
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Paginators", false);
+        this.symbolProvider = context.symbolProvider();
     }
 
     public void render() {

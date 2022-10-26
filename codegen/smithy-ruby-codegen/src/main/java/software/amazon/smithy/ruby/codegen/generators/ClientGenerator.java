@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -34,7 +35,6 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -50,7 +50,7 @@ public class ClientGenerator {
 
     private final GenerationContext context;
     private final RubySettings settings;
-    private final RubySymbolProvider symbolProvider;
+    private final SymbolProvider symbolProvider;
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
@@ -65,7 +65,7 @@ public class ClientGenerator {
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule());
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule());
-        this.symbolProvider = new RubySymbolProvider(model, context.settings(), "Client", false);
+        this.symbolProvider = context.symbolProvider();
         this.hasStreamingOperation = false;
     }
 

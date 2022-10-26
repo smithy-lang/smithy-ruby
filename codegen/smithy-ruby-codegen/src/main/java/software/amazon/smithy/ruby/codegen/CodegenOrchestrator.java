@@ -138,8 +138,7 @@ public class CodegenOrchestrator {
 
         // TODO: Apply CodeInterceptors (where?)
 
-        SymbolProvider symbolProvider = new RubySymbolProvider(
-                resolvedModel, rubySettings, "Types", true);
+        SymbolProvider symbolProvider = new RubySymbolProvider(resolvedModel, rubySettings);
 
         for (RubyIntegration integration : integrations) {
             symbolProvider = integration.decorateSymbolProvider(resolvedModel, rubySettings, symbolProvider);

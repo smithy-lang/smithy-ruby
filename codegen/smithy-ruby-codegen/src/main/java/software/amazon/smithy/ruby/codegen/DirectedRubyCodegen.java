@@ -60,7 +60,7 @@ public class DirectedRubyCodegen
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<RubySettings> directive) {
-        return new RubySymbolProvider(directive.model(), directive.settings(), "Types", true);
+        return new RubySymbolProvider(directive.model(), directive.settings());
     }
 
     @Override

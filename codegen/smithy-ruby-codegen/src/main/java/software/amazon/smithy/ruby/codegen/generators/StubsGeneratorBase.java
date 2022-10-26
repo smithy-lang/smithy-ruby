@@ -53,7 +53,6 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 
 /**
  * Base class for Stubs which iterates shapes and builds skeleton classes.
@@ -82,7 +81,7 @@ public abstract class StubsGeneratorBase {
         this.generatedStubs = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Stubs");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Stubs", true);
+        this.symbolProvider = context.symbolProvider();
     }
 
     /**
@@ -243,7 +242,7 @@ public abstract class StubsGeneratorBase {
         writer
                 .write("")
                 .write("# Operation Stubber for $L", operation.getId().getName())
-                .openBlock("class $T", symbolProvider.toSymbol(operation))
+                .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .openBlock("def self.default(visited=[])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
@@ -287,7 +286,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Structure Stubber for $L", shape.getId().getName())
-                    .openBlock("class $T", symbolProvider.toSymbol(shape))
+                    .openBlock("class $L", name)
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -308,7 +307,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# List Stubber for $L", shape.getId().getName())
-                    .openBlock("class $T", symbolProvider.toSymbol(shape))
+                    .openBlock("class $L", name)
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -332,7 +331,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Map Stubber for $L", shape.getId().getName())
-                    .openBlock("class $T", symbolProvider.toSymbol(shape))
+                    .openBlock("class $L", name)
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -355,7 +354,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Union Stubber for $L", shape.getId().getName())
-                    .openBlock("class $T", symbolProvider.toSymbol(shape))
+                    .openBlock("class $L", name)
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -382,7 +381,7 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .write("# Document Type Stubber for $L", name)
-                    .openBlock("class $T", symbolProvider.toSymbol(shape))
+                    .openBlock("class $L", name)
                     .openBlock("def self.default(visited=[])")
                     .write("return nil if visited.include?('$L')", name)
                     .write("visited = visited + ['$L']", name)
@@ -493,7 +492,7 @@ public abstract class StubsGeneratorBase {
          * For complex shapes, simply delegate to their Stubber.
          */
         private void complexShapeDefaults(Shape shape) {
-            writer.write("$L$T.default(visited)$L", dataSetter, symbolProvider.toSymbol(shape), eol);
+            writer.write("$L$L.default(visited)$L", dataSetter, symbolProvider.toSymbol(shape).getName(), eol);
         }
 
         @Override

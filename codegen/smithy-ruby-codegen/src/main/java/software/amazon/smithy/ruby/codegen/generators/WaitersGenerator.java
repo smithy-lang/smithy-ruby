@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.jmespath.ExpressionSerializer;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
@@ -70,7 +71,7 @@ public class WaitersGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
-    private final RubySymbolProvider symbolProvider;
+    private final SymbolProvider symbolProvider;
 
     public WaitersGenerator(GenerationContext context) {
         this.context = context;
@@ -78,7 +79,7 @@ public class WaitersGenerator {
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
-        this.symbolProvider = new RubySymbolProvider(context.model(), settings, "Waiters", false);
+        this.symbolProvider = context.symbolProvider();
     }
 
     public void render() {
@@ -323,7 +324,7 @@ public class WaitersGenerator {
         }
     }
 
-    private class JmespathTranslator implements ExpressionVisitor<JmespathExpression> {
+    private static class JmespathTranslator implements ExpressionVisitor<JmespathExpression> {
 
         @Override
         public JmespathExpression visitComparator(ComparatorExpression expression) {
@@ -373,7 +374,7 @@ public class WaitersGenerator {
         @Override
         public JmespathExpression visitField(FieldExpression expression) {
             return new FieldExpression(
-                    symbolProvider.toMemberName(expression.getName()),
+                    RubySymbolProvider.toMemberName(expression.getName()),
                     expression.getLine(), expression.getColumn());
         }
 

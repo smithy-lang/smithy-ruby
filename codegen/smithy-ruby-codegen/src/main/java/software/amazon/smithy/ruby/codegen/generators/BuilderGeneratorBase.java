@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -41,7 +42,6 @@ import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -77,7 +77,7 @@ public abstract class BuilderGeneratorBase {
     /**
      * SymbolProvider scoped to this module.
      */
-    protected final RubySymbolProvider symbolProvider;
+    protected final SymbolProvider symbolProvider;
 
     public BuilderGeneratorBase(GenerationContext context) {
         this.settings = context.settings();
@@ -85,7 +85,7 @@ public abstract class BuilderGeneratorBase {
         this.generatedBuilders = new HashSet<>();
         this.context = context;
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Builder");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Builder", true);
+        this.symbolProvider = context.symbolProvider();
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -41,7 +42,6 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -56,7 +56,7 @@ public class TypesGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
-    private final RubySymbolProvider symbolProvider;
+    private final SymbolProvider symbolProvider;
 
     public TypesGenerator(GenerationContext context) {
         this.context = context;
@@ -64,7 +64,7 @@ public class TypesGenerator {
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Types");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Types");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Types", false);
+        this.symbolProvider = context.symbolProvider();
     }
 
     public void render() {

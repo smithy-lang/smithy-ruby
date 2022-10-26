@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators.docs;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -31,7 +32,6 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -40,11 +40,11 @@ public class ResponseExampleGenerator {
     private final OperationShape operation;
     private final RubyCodeWriter writer;
     private final Set<ShapeId> visited;
-    private final RubySymbolProvider symbolProvider;
+    private final SymbolProvider symbolProvider;
     private final Model model;
 
     public ResponseExampleGenerator(OperationShape operation,
-                                    RubySymbolProvider symbolProvider, Model model) {
+                                    SymbolProvider symbolProvider, Model model) {
         this.operation = operation;
         this.symbolProvider = symbolProvider;
         this.model = model;

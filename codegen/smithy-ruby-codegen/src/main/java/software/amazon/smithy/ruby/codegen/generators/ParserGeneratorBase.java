@@ -40,7 +40,6 @@ import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -72,7 +71,7 @@ public abstract class ParserGeneratorBase {
         this.model = context.model();
         this.generatedParsers = new HashSet<>();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Parsers");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Parsers", true);
+        this.symbolProvider = context.symbolProvider();
     }
 
     /**
@@ -284,7 +283,7 @@ public abstract class ParserGeneratorBase {
         writer
                 .write("")
                 .write("# Error Parser for $L", s.getId().getName())
-                .openBlock("class $T", symbolProvider.toSymbol(s))
+                .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .call(() -> renderErrorParseMethod(s))
                 .closeBlock("end");
         LOGGER.finer("Generated Error parser for " + s.getId().getName());
@@ -309,7 +308,7 @@ public abstract class ParserGeneratorBase {
         public Void structureShape(StructureShape s) {
             writer
                     .write("")
-                    .openBlock("class $T", symbolProvider.toSymbol(s))
+                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                     .call(() -> renderStructureParseMethod(s))
                     .closeBlock("end");
 
@@ -320,7 +319,7 @@ public abstract class ParserGeneratorBase {
         public Void listShape(ListShape s) {
             writer
                     .write("")
-                    .openBlock("class $T", symbolProvider.toSymbol(s))
+                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                     .call(() -> renderListParseMethod(s))
                     .closeBlock("end");
 
@@ -331,7 +330,7 @@ public abstract class ParserGeneratorBase {
         public Void mapShape(MapShape s) {
             writer
                     .write("")
-                    .openBlock("class $T", symbolProvider.toSymbol(s))
+                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                     .call(() -> renderMapParseMethod(s))
                     .closeBlock("end");
 
@@ -342,7 +341,7 @@ public abstract class ParserGeneratorBase {
         public Void unionShape(UnionShape s) {
             writer
                     .write("")
-                    .openBlock("class $T", symbolProvider.toSymbol(s))
+                    .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                     .call(() -> renderUnionParseMethod(s))
                     .closeBlock("end");
 

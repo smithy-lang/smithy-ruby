@@ -50,7 +50,6 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -69,7 +68,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.settings();
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Validators");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Validators", true);
+        this.symbolProvider = context.symbolProvider();
     }
 
     public void render() {
@@ -105,7 +104,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         Collection<MemberShape> members = structureShape.members();
         writer
                 .write("")
-                .openBlock("class $T", symbolProvider.toSymbol(structureShape))
+                .openBlock("class $L", symbolProvider.toSymbol(structureShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("$T.validate!(input, $T, context: context)",
                         Hearth.VALIDATOR,
@@ -123,7 +122,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = ":" + symbolProvider.toMemberName(member);
             String input = "input[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberValidator(writer, symbolProvider, input, context));
+            target.accept(new MemberValidator(writer, symbolProvider, input, context, false));
         });
     }
 
@@ -133,13 +132,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $T", symbolProvider.toSymbol(mapShape))
+                .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("$T.validate!(input, ::Hash, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each do |key, value|")
                 .write("$T.validate!(key, ::String, ::Symbol, context: \"#{context}.keys\")", Hearth.VALIDATOR)
                 .call(() -> valueTarget
-                        .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"")))
+                    .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"", false)))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -154,12 +153,12 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $T", symbolProvider.toSymbol(listShape))
+                .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("$T.validate!(input, ::Array, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
-                        .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"")))
+                    .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"", false)))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -175,7 +174,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("class $T", symbolProvider.toSymbol(unionShape))
+                .openBlock("class $L", symbolProvider.toSymbol(unionShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("case input")
                 .call(() -> unionMemberShapes.forEach(unionMemberShape -> {
@@ -184,8 +183,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                             .write("when $T", context.symbolProvider().toSymbol(unionMemberShape))
                             .indent();
                     model.expectShape(unionMemberShape.getTarget())
-                            .accept(new MemberValidator(writer, symbolProvider, "input.__getobj__",
-                                    "context"));
+                        .accept(new MemberValidator(writer, symbolProvider, "input.__getobj__", "context", false));
                     writer.dedent();
                 }))
                 .write("else")
@@ -205,7 +203,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
     public Void documentShape(DocumentShape documentShape) {
         writer
                 .write("")
-                .openBlock("class $T", symbolProvider.toSymbol(documentShape))
+                .openBlock("class $L", symbolProvider.toSymbol(documentShape).getName())
                 .openBlock("def self.validate!(input, context:)")
                 .write("$T.validate!(input, "
                         + "::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)",
@@ -239,7 +237,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                     .write("")
                     .openBlock("class $L", name)
                     .openBlock("def self.validate!(input, context:)")
-                    .call(() -> target.accept(new MemberValidator(writer, symbolProvider, "input", "context")))
+                    .call(() -> target.accept(
+                        new MemberValidator(writer, symbolProvider, "input", "context", true)))
                     .closeBlock("end")
                     .closeBlock("end");
         });
@@ -255,13 +254,18 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
         private final SymbolProvider symbolProvider;
         private final String input;
         private final String context;
+        private Boolean renderUnionMemberValidator;
 
-        MemberValidator(RubyCodeWriter writer, SymbolProvider symbolProvider, String input,
-                        String context) {
+        MemberValidator(RubyCodeWriter writer,
+                        SymbolProvider symbolProvider,
+                        String input,
+                        String context,
+                        Boolean renderUnionMemberValidator) {
             this.writer = writer;
             this.symbolProvider = symbolProvider;
             this.input = input;
             this.context = context;
+            this.renderUnionMemberValidator = renderUnionMemberValidator;
         }
 
         @Override
@@ -298,8 +302,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
-                    symbolProvider.toSymbol(shape), input, context);
+            String content = "$1L.validate!($2L, context: $3L) unless $2L.nil?";
+            if (renderUnionMemberValidator) {
+                content = "Validators::" + content;
+            }
+            writer.write(content, symbolProvider.toSymbol(shape).getName(), input, context);
             return null;
         }
 
@@ -335,8 +342,11 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void documentShape(DocumentShape shape) {
-            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
-                    symbolProvider.toSymbol(shape), input, context);
+            String content = "$1L.validate!($2L, context: $3L) unless $2L.nil?";
+            if (renderUnionMemberValidator) {
+                content = "Validators::" + content;
+            }
+            writer.write(content, symbolProvider.toSymbol(shape).getName(), input, context);
             return null;
         }
 
@@ -355,8 +365,12 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
-                    symbolProvider.toSymbol(shape), input, context);
+            String content = "$1L.validate!($2L, context: $3L) unless $2L.nil?";
+            if (renderUnionMemberValidator) {
+                content = "Validators::" + content;
+            }
+
+            writer.write(content, symbolProvider.toSymbol(shape).getName(), input, context);
             return null;
         }
 
@@ -368,15 +382,18 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
-                    symbolProvider.toSymbol(shape), input, context);
+            String content = "$1L.validate!($2L, context: $3L) unless $2L.nil?";
+            if (renderUnionMemberValidator) {
+                content = "Validators::" + content;
+            }
+            writer.write(content, symbolProvider.toSymbol(shape).getName(), input, context);
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            writer.write("$1T.validate!($2L, context: $3L) unless $2L.nil?",
-                    symbolProvider.toSymbol(shape), input, context);
+            writer.write("$1L.validate!($2L, context: $3L) unless $2L.nil?",
+                    symbolProvider.toSymbol(shape).getName(), input, context);
             return null;
         }
 

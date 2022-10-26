@@ -35,7 +35,6 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -78,11 +77,6 @@ public abstract class ErrorsGeneratorBase {
     protected final SymbolProvider symbolProvider;
 
     /**
-     * SymbolProvider scoped to the Parsers module.
-     */
-    protected final SymbolProvider parserSymbolProvider;
-
-    /**
      * List of all errorShapes.
      */
     protected final List<Shape> errorShapes;
@@ -96,8 +90,7 @@ public abstract class ErrorsGeneratorBase {
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Errors");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Errors", true);
-        this.parserSymbolProvider = new RubySymbolProvider(model, settings, "Parsers", true);
+        this.symbolProvider = context.symbolProvider();
         this.errorShapes = getErrorShapes();
     }
 
@@ -254,9 +247,9 @@ public abstract class ErrorsGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("class $T < $L", symbolProvider.toSymbol(shape), apiErrorType)
+                    .openBlock("class $L < $L", symbolProvider.toSymbol(shape).getName(), apiErrorType)
                     .openBlock("def initialize(http_resp:, **kwargs)")
-                    .write("@data = $T.parse(http_resp)", parserSymbolProvider.toSymbol(shape))
+                    .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(shape).getName())
                     .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
                     .write("super(http_resp: http_resp, **kwargs)")
                     .closeBlock("end")
@@ -300,7 +293,7 @@ public abstract class ErrorsGeneratorBase {
 
             rbsWriter
                     .write("")
-                    .openBlock("class $T < $L", symbolProvider.toSymbol(shape), apiErrorType)
+                    .openBlock("class $L < $L", symbolProvider.toSymbol(shape).getName(), apiErrorType)
                     .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
                     .write("attr_reader data: untyped")
                     .call(() -> {

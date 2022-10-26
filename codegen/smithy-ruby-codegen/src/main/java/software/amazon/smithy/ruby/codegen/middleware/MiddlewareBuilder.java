@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -113,8 +114,7 @@ public class MiddlewareBuilder {
 
     public void addDefaultMiddleware(GenerationContext context) {
         ApplicationTransport transport = context.applicationTransport();
-        RubySymbolProvider symbolProvider =
-                new RubySymbolProvider(context.model(), context.settings(), "Client", false);
+        SymbolProvider symbolProvider = context.symbolProvider();
 
         ClientConfig validateInput = (new ClientConfig.Builder())
                 .name("validate_input")
@@ -159,7 +159,7 @@ public class MiddlewareBuilder {
                         if (segment.isLabel()) {
                             // Here, we rebuild the smithy pattern with reserved word support.
                             // Otherwise we could use pattern.toString()
-                            String label = symbolProvider.toMemberName(segment.getContent());
+                            String label = RubySymbolProvider.toMemberName(segment.getContent());
                             prefix.append("{" + label + "}");
                         } else {
                             prefix.append(segment);
