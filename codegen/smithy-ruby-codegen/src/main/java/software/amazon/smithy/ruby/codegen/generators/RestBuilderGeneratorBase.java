@@ -163,7 +163,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             String inputGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
             MapShape queryParamMap = model.expectShape(m.getTarget(), MapShape.class);
             Shape target = model.expectShape(queryParamMap.getValue().getTarget());
-            String shapeName = symbolProvider.toSymbol(queryParamMap).getName();
 
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .openBlock("$1L.each do |k, v|", inputGetter)

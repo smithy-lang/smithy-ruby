@@ -43,7 +43,6 @@ import software.amazon.smithy.ruby.codegen.RubyDependency;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.trait.SkipTest;
 import software.amazon.smithy.ruby.codegen.trait.SkipTestsTrait;
 import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
@@ -73,7 +72,7 @@ public class HttpProtocolTestGenerator {
         this.settings = context.settings();
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "", true);
+        this.symbolProvider = context.symbolProvider();
     }
 
     /**

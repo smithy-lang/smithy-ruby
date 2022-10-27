@@ -54,37 +54,34 @@ import software.amazon.smithy.utils.StringUtils;
 @SmithyUnstableApi
 public class RubySymbolProvider implements SymbolProvider,
         ShapeVisitor<Symbol> {
+    public static final ReservedWordSymbolProvider.Escaper ESCAPER = ReservedWordSymbolProvider.builder()
+            .nameReservedWords(rubyReservedNames())
+            .memberReservedWords(memberReservedNames())
+            .buildEscaper();
+
+    private static final String DEFAULT_DEFINITION_FILE = "types.rb";
+
     private final Model model;
     private final RubySettings settings;
     private final String rootModuleName;
     private final String moduleName;
-    private final boolean complexTypes;
-    private final ReservedWordSymbolProvider.Escaper escaper;
 
     /**
      * Create a new RubySymbolProvider.
      *
      * @param model    The smithy model to generate for
      * @param settings [RubySettings] settings associated with this codegen
-     * @param moduleName The module name
-     * @param complexTypes Boolean if type is complex
      */
-    public RubySymbolProvider(Model model, RubySettings settings, String moduleName, boolean complexTypes) {
+    public RubySymbolProvider(Model model, RubySettings settings) {
         this.model = model;
         this.settings = settings;
         this.rootModuleName = settings.getModule();
-        this.moduleName = this.rootModuleName + "::" + moduleName;
-        this.complexTypes = complexTypes;
-
-        escaper = ReservedWordSymbolProvider.builder()
-                .nameReservedWords(rubyReservedNames())
-                .memberReservedWords(memberReservedNames())
-                .buildEscaper();
+        this.moduleName = this.rootModuleName + "::Types";
     }
 
     // Taken from https://docs.ruby-lang.org/en/3.1/doc/keywords_rdoc.html
     // Some of these will never occur (like defined?) but define the entire list anyway for safety.
-    private ReservedWords rubyReservedNames() {
+    private static ReservedWords rubyReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
                 {"__ENCODING__", "__LINE__", "__FILE__", "BEGIN", "END", "alias", "and", "begin", "break", "case",
@@ -101,7 +98,7 @@ public class RubySymbolProvider implements SymbolProvider,
     // Mark all instances methods of a class as reserved. Shape members are accessors of a class.
     // Taken from "class Foo; end; Foo.new.methods.sort".
     // Additionally add "each_pair" as we leverage this methods for Type's to_h of Struct.
-    private ReservedWords memberReservedNames() {
+    private static ReservedWords memberReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved =
                 {"!", "!=", "!~", "<=>", "==", "===", "=~", "__id__", "__send__", "class", "clone",
@@ -124,8 +121,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol toSymbol(Shape shape) {
-        Symbol symbol = shape.accept(this);
-        return escaper.escapeSymbol(shape, symbol);
+        return ESCAPER.escapeSymbol(shape, shape.accept(this));
     }
 
     @Override
@@ -150,17 +146,17 @@ public class RubySymbolProvider implements SymbolProvider,
      * @param shapeName The shape's name as a string
      * @return A snake cased string for the member.
      */
-    public String toMemberName(String shapeName) {
-        return prefixLeadingInvalidIdentCharacters(
-                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shapeName)), "member_");
+    public static String toMemberName(String shapeName) {
+        return RubyFormatter.prefixLeadingInvalidIdentCharacters(
+            ESCAPER.escapeMemberName(RubyFormatter.toSnakeCase(shapeName)), "member_");
     }
 
     // Member names (Except for union members) are snake_case.
     // The member names MAY start with underscores but MUST NOT start with a number.
     // If they are a reserved word or start with a number they will be prefixed with “member_”.
     private String getDefaultMemberName(MemberShape shape) {
-        return prefixLeadingInvalidIdentCharacters(
-                escaper.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member_");
+        return RubyFormatter.prefixLeadingInvalidIdentCharacters(
+            ESCAPER.escapeMemberName(RubyFormatter.toSnakeCase(shape.getMemberName())), "member_");
     }
 
     // Shape Names (generated Class names) should be PascalCase
@@ -171,17 +167,9 @@ public class RubySymbolProvider implements SymbolProvider,
         ServiceShape serviceShape =
                 model.expectShape(settings.getService(), ServiceShape.class);
         return StringUtils.capitalize(
-                prefixLeadingInvalidIdentCharacters(
+                RubyFormatter.prefixLeadingInvalidIdentCharacters(
                         shape.getId().getName(serviceShape), prefix)
         );
-    }
-
-    private String prefixLeadingInvalidIdentCharacters(String value, String prefix) {
-        if (!Character.isLetter(value.charAt(0))) {
-            return prefix + value;
-        } else {
-            return value;
-        }
     }
 
     /**
@@ -270,43 +258,34 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol listShape(ListShape shape) {
-        if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), "", "", moduleName)
-                    .definitionFile("types.rb").build();
-        } else {
-            Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
-            String rbsType = "Array[" + member.getProperty("rbsType").get() + "]";
-            String yardType = "Array<" + member.getProperty("yardType").get() + ">";
-            return createSymbolBuilder(shape, "", rbsType, yardType).build();
-        }
+        Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
+        String rbsType = "Array[" + member.getProperty("rbsType").get() + "]";
+        String yardType = "Array<" + member.getProperty("yardType").get() + ">";
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), rbsType, yardType, moduleName)
+                .definitionFile(DEFAULT_DEFINITION_FILE)
+                .build();
     }
 
     @Override
     public Symbol mapShape(MapShape shape) {
-        if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), "", "", moduleName)
-                    .definitionFile("types.rb").build();
-        } else {
-            Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
-            Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
-            String rbsType
-                    = "Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
-            String yardType
-                    = "Hash<" + key.getProperty("yardType").get() + ", " + value.getProperty("yardType").get() + ">";
-            return createSymbolBuilder(shape, "", rbsType, yardType).build();
-        }
+        Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
+        Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
+        String rbsType
+                = "Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
+        String yardType
+                = "Hash<" + key.getProperty("yardType").get() + ", " + value.getProperty("yardType").get() + ">";
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, yardType, moduleName)
+                .definitionFile(DEFAULT_DEFINITION_FILE)
+                .build();
     }
 
     @Override
     public Symbol documentShape(DocumentShape shape) {
-        if (complexTypes) {
-            return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), "", "", moduleName)
-                    .definitionFile("types.rb").build();
-        } else {
-            String rbsType = "document"; // alias defined in Hearth
-            String yardType = "Hash,Array,String,Boolean,Numeric";
-            return createSymbolBuilder(shape, "", rbsType, yardType).build();
-        }
+        String rbsType = "document"; // alias defined in Hearth
+        String yardType = "Hash,Array,String,Boolean,Numeric";
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), rbsType, yardType, moduleName)
+                .definitionFile(DEFAULT_DEFINITION_FILE)
+                .build();
     }
 
     @Override
@@ -320,14 +299,14 @@ public class RubySymbolProvider implements SymbolProvider,
     public Symbol structureShape(StructureShape shape) {
         String name = getDefaultShapeName(shape, "Struct__");
         return createSymbolBuilder(shape, name, name, name, moduleName)
-                .definitionFile("types.rb").build();
+                .definitionFile(DEFAULT_DEFINITION_FILE).build();
     }
 
     @Override
     public Symbol unionShape(UnionShape shape) {
         String name = getDefaultShapeName(shape, "Union__");
         return createSymbolBuilder(shape, name, name, name, moduleName)
-                .definitionFile("types.rb").build();
+                .definitionFile(DEFAULT_DEFINITION_FILE).build();
     }
 
     @Override
@@ -337,7 +316,7 @@ public class RubySymbolProvider implements SymbolProvider,
         if (containerShape.isUnionShape()) {
             String name = getDefaultShapeName(containerShape, "Union__") + "::" + toMemberName(shape);
             return createSymbolBuilder(shape, name, name, name, moduleName)
-                    .definitionFile("types.rb").build();
+                    .definitionFile(DEFAULT_DEFINITION_FILE).build();
         } else {
             return toSymbol(targetShape);
         }
@@ -346,7 +325,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol operationShape(OperationShape shape) {
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Operation__"), "", "", moduleName)
-                .definitionFile("types.rb").build();
+                .definitionFile(DEFAULT_DEFINITION_FILE).build();
     }
 
     @Override

@@ -50,4 +50,12 @@ public final class RubyFormatter {
                 .replace('-', '_')
                 .toLowerCase();
     }
+
+    public static String prefixLeadingInvalidIdentCharacters(String value, String prefix) {
+        if (!Character.isLetter(value.charAt(0))) {
+            return prefix + value;
+        } else {
+            return value;
+        }
+    }
 }

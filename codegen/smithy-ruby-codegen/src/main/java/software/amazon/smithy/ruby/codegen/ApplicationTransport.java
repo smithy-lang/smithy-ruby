@@ -24,7 +24,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -143,12 +142,9 @@ public final class ApplicationTransport {
                     .klass("Hearth::Middleware::Build")
                     .step(MiddlewareStackStep.SERIALIZE)
                     .operationParams((ctx, operation) -> {
-                        SymbolProvider symbolProvider =
-                                new RubySymbolProvider(ctx.model(), ctx.settings(), "Client", false);
-
                         Map<String, String> params = new HashMap<>();
                         params.put("builder",
-                                "Builders::" + symbolProvider.toSymbol(operation).getName());
+                                "Builders::" + ctx.symbolProvider().toSymbol(operation).getName());
                         return params;
                     })
                     .build()
@@ -181,21 +177,19 @@ public final class ApplicationTransport {
                     .klass("Hearth::Middleware::Parse")
                     .step(MiddlewareStackStep.DESERIALIZE)
                     .operationParams((ctx, operation) -> {
-                        SymbolProvider symbolProvider =
-                                new RubySymbolProvider(ctx.model(), ctx.settings(), "Client", false);
-
                         Map<String, String> params = new HashMap<>();
                         params.put("data_parser",
-                                "Parsers::" + symbolProvider.toSymbol(operation).getName());
+                                "Parsers::" + ctx.symbolProvider().toSymbol(operation).getName());
                         String successCode = "200";
                         Optional<HttpTrait> httpTrait = operation.getTrait(HttpTrait.class);
                         if (httpTrait.isPresent()) {
                             successCode = "" + httpTrait.get().getCode();
                         }
-                        String errors =
-                                operation.getErrors().stream().map((error) -> "Errors::"
-                                        + symbolProvider.toSymbol(ctx.model().expectShape(error)).getName()).collect(
-                                        Collectors.joining(", "));
+                        String errors = operation.getErrors()
+                            .stream()
+                            .map((error) -> "Errors::"
+                                    + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
+                            .collect(Collectors.joining(", "));
                         params.put("error_parser",
                                 "Hearth::HTTP::ErrorParser.new("
                                         + "error_module: Errors, success_status: " + successCode

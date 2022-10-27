@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -42,7 +43,7 @@ public class ConfigGenerator {
     private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
-    private final RubySymbolProvider symbolProvider;
+    private final SymbolProvider symbolProvider;
 
     /**
      * @param context generation context
@@ -53,7 +54,7 @@ public class ConfigGenerator {
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Config");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Config");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Config", false);
+        this.symbolProvider = context.symbolProvider();
     }
 
     /**
@@ -67,7 +68,8 @@ public class ConfigGenerator {
         if (!clientConfigList.isEmpty()) {
             membersBlock = clientConfigList
                     .stream()
-                    .map(clientConfig -> RubyFormatter.asSymbol(symbolProvider.toMemberName(clientConfig.getName())))
+                    .map(clientConfig -> RubyFormatter.asSymbol(
+                        RubySymbolProvider.toMemberName(clientConfig.getName())))
                     .collect(Collectors.joining(",\n"));
         }
         membersBlock += ",";
@@ -118,7 +120,7 @@ public class ConfigGenerator {
     private void renderConfigDocumentation(List<ClientConfig> clientConfigList) {
         writer.writeYardMethod("initialize(*options)", () -> {
             clientConfigList.forEach((clientConfig) -> {
-                String member = RubyFormatter.asSymbol(symbolProvider.toMemberName(clientConfig.getName()));
+                String member = RubyFormatter.asSymbol(RubySymbolProvider.toMemberName(clientConfig.getName()));
                 String returnType = clientConfig.getType();
                 String defaultValue = clientConfig.getDocumentationDefaultValue();
                 String documentation = clientConfig.getDocumentation();
@@ -126,7 +128,7 @@ public class ConfigGenerator {
             });
         });
         clientConfigList.forEach((clientConfig) -> {
-            String member = symbolProvider.toMemberName(clientConfig.getName());
+            String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             writer.writeYardAttribute(member, () -> {
                 writer.writeYardReturn(clientConfig.getType(), "");
             });
@@ -136,7 +138,7 @@ public class ConfigGenerator {
     private void renderValidateMethod(List<ClientConfig> clientConfigList) {
         writer.openBlock("def validate!");
         clientConfigList.stream().forEach(clientConfig -> {
-            String member = symbolProvider.toMemberName(clientConfig.getName());
+            String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             String type = clientConfig.getType();
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";

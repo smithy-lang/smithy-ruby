@@ -43,7 +43,6 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -62,7 +61,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
         this.settings = context.settings();
         this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Params");
-        this.symbolProvider = new RubySymbolProvider(model, settings, "Params", true);
+        this.symbolProvider = context.symbolProvider();
     }
 
     public void render() {
@@ -106,7 +105,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("module $T", symbolProvider.toSymbol(structureShape))
+                .openBlock("module $L", symbolProvider.toSymbol(structureShape).getName())
                 .openBlock("def self.build(params, context: '')")
                 .call(() -> renderBuilderForStructureMembers(
                         context.symbolProvider().toSymbol(structureShape), structureShape.members()))
@@ -127,9 +126,9 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             String memberSetter = "type." + memberName + " = ";
             String symbolName = RubyFormatter.asSymbol(memberName);
             String input = "params[" + symbolName + "]";
-            String context = "\"#{context}[" + symbolName + "]\"";
-            target.accept(new MemberBuilder(writer, symbolProvider,
-                    memberSetter, input, context, member, true));
+            String contextKey = "\"#{context}[" + symbolName + "]\"";
+            target.accept(new MemberBuilder(writer, context.symbolProvider(),
+                    memberSetter, input, contextKey, member, true));
         });
 
         writer.write("type");
@@ -142,7 +141,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("module $T", symbolProvider.toSymbol(listShape))
+                .openBlock("module $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.build(params, context: '')")
                 .write("$T.validate!(params, ::Array, context: context)", Hearth.VALIDATOR)
                 .write("data = []")
@@ -171,13 +170,13 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         writer
                 .write("")
-                .openBlock("module $T", symbolProvider.toSymbol(mapShape))
+                .openBlock("module $L", symbolProvider.toSymbol(mapShape).getName())
                 .openBlock("def self.build(params, context: '')")
                 .write("$T.validate!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
-                        .accept(new MemberBuilder(writer, symbolProvider, "data[key] = ", "value",
+                        .accept(new MemberBuilder(writer, context.symbolProvider(), "data[key] = ", "value",
                                 "\"#{context}[:#{key}]\"", mapShape.getValue(), !
                                 mapShape.hasTrait(SparseTrait.class))))
                 .closeBlock("end")
@@ -189,12 +188,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     @Override
     public Void unionShape(UnionShape shape) {
-        Symbol symbol = symbolProvider.toSymbol(shape);
+        String name = symbolProvider.toSymbol(shape).getName();
         Symbol typeSymbol = context.symbolProvider().toSymbol(shape);
 
         writer
                 .write("")
-                .openBlock("module $T", symbol)
+                .openBlock("module $L", name)
                 .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?($T)", typeSymbol)
                 .write("$T.validate!(params, ::Hash, $T, context: context)",
@@ -216,8 +215,8 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                     .indent()
                     .openBlock("$T.new(", context.symbolProvider().toSymbol(member));
             String input = "params[" + memberName + "]";
-            String context = "\"#{context}[" + memberName + "]\"";
-            target.accept(new MemberBuilder(writer, symbolProvider, "", input, context, member, false));
+            String contextString = "\"#{context}[" + memberName + "]\"";
+            target.accept(new MemberBuilder(writer, symbolProvider, "", input, contextString, member, false));
             writer.closeBlock(")")
                     .dedent();
         }
@@ -320,11 +319,11 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
         private void defaultComplex(Shape shape) {
             if (checkRequired) {
-                writer.write("$1L$2T.build($3L, context: $4L) unless $3L.nil?", memberSetter,
-                        symbolProvider.toSymbol(shape), input, context);
+                writer.write("$1L$2L.build($3L, context: $4L) unless $3L.nil?", memberSetter,
+                        symbolProvider.toSymbol(shape).getName(), input, context);
             } else {
-                writer.write("$1L($2T.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
-                        symbolProvider.toSymbol(shape), input, context);
+                writer.write("$1L($2L.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
+                        symbolProvider.toSymbol(shape).getName(), input, context);
             }
         }
     }
