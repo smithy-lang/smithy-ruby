@@ -47,7 +47,6 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public class TypesGenerator {
-
     private static final Logger LOGGER =
             Logger.getLogger(TypesGenerator.class.getName());
 
@@ -62,9 +61,21 @@ public class TypesGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Types");
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Types");
+        this.writer = new RubyCodeWriter(getNameSpace());
+        this.rbsWriter = new RubyCodeWriter(getNameSpace());
         this.symbolProvider = context.symbolProvider();
+    }
+
+    public TypesVisitor getTypeVisitor(RubyCodeWriter writer) {
+        return new TypesVisitor(writer);
+    }
+
+    public String getFile() {
+        return settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
+    }
+
+    public String getNameSpace() {
+        return context.settings().getModule() + "::Types";
     }
 
     public void render() {
@@ -76,13 +87,11 @@ public class TypesGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
-                .call(() -> renderTypes(new TypesVisitor()))
+                .call(() -> renderTypes(getTypeVisitor(writer)))
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName()
-                        + "/types.rb";
+        String fileName = getFile();
         fileManifest.writeFile(fileName, writer.toString());
         LOGGER.fine("Wrote types to " + fileName);
     }
@@ -106,7 +115,7 @@ public class TypesGenerator {
         LOGGER.fine("Wrote types rbs to " + fileName);
     }
 
-    private void renderTypes(ShapeVisitor<Void> visitor) {
+    public void renderTypes(ShapeVisitor<Void> visitor) {
         Model modelWithoutTraitShapes = ModelTransformer.create()
                 .getModelWithoutTraitShapes(model);
 
@@ -117,7 +126,14 @@ public class TypesGenerator {
                 .forEach((shape) -> shape.accept(visitor));
     }
 
-    private class TypesVisitor extends ShapeVisitor.Default<Void> {
+    public class TypesVisitor extends ShapeVisitor.Default<Void> {
+
+        private RubyCodeWriter writer;
+
+        public TypesVisitor(RubyCodeWriter writer) {
+            this.writer = writer;
+        }
+
         @Override
         protected Void getDefault(Shape shape) {
             return null;

@@ -9,6 +9,25 @@
 
 module HighScoreService
   module Types
+    # Permitted params for a High Score
+    #
+    # @!attribute game
+    #   The game for the high score
+    #
+    #   @return [String]
+    #
+    # @!attribute score
+    #   The high score for the game
+    #
+    #   @return [Integer]
+    #
+    HighScoreParams = ::Struct.new(
+      :game,
+      :score,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
 
     # Input structure for CreateHighScore
     #
@@ -19,6 +38,42 @@ module HighScoreService
     #
     CreateHighScoreInput = ::Struct.new(
       :high_score,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # Modeled attributes for a High Score
+    #
+    # @!attribute id
+    #   The high score id
+    #
+    #   @return [String]
+    #
+    # @!attribute game
+    #   The game for the high score
+    #
+    #   @return [String]
+    #
+    # @!attribute score
+    #   The high score for the game
+    #
+    #   @return [Integer]
+    #
+    # @!attribute created_at
+    #
+    #   @return [Time]
+    #
+    # @!attribute updated_at
+    #
+    #   @return [Time]
+    #
+    HighScoreAttributes = ::Struct.new(
+      :id,
+      :game,
+      :score,
+      :created_at,
+      :updated_at,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -39,6 +94,17 @@ module HighScoreService
     CreateHighScoreOutput = ::Struct.new(
       :high_score,
       :location,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute errors
+    #
+    #   @return [Hash<String, Array<String>>]
+    #
+    UnprocessableEntityError = ::Struct.new(
+      :errors,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -95,62 +161,6 @@ module HighScoreService
       include Hearth::Structure
     end
 
-    # Modeled attributes for a High Score
-    #
-    # @!attribute id
-    #   The high score id
-    #
-    #   @return [String]
-    #
-    # @!attribute game
-    #   The game for the high score
-    #
-    #   @return [String]
-    #
-    # @!attribute score
-    #   The high score for the game
-    #
-    #   @return [Integer]
-    #
-    # @!attribute created_at
-    #
-    #   @return [Time]
-    #
-    # @!attribute updated_at
-    #
-    #   @return [Time]
-    #
-    HighScoreAttributes = ::Struct.new(
-      :id,
-      :game,
-      :score,
-      :created_at,
-      :updated_at,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # Permitted params for a High Score
-    #
-    # @!attribute game
-    #   The game for the high score
-    #
-    #   @return [String]
-    #
-    # @!attribute score
-    #   The high score for the game
-    #
-    #   @return [Integer]
-    #
-    HighScoreParams = ::Struct.new(
-      :game,
-      :score,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     ListHighScoresInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -167,17 +177,6 @@ module HighScoreService
     #
     ListHighScoresOutput = ::Struct.new(
       :high_scores,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute errors
-    #
-    #   @return [Hash<String, Array<String>>]
-    #
-    UnprocessableEntityError = ::Struct.new(
-      :errors,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -218,4 +217,5 @@ module HighScoreService
     end
 
   end
+
 end
