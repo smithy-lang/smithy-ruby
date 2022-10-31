@@ -10,6 +10,79 @@
 module RailsJson
   module Types
 
+    # @!attribute hi
+    #
+    #   @return [String]
+    #
+    GreetingStruct = ::Struct.new(
+      :hi,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # Includes enum constants for FooEnum
+    #
+    module FooEnum
+      # No documentation available.
+      #
+      FOO = "Foo"
+
+      # No documentation available.
+      #
+      BAZ = "Baz"
+
+      # No documentation available.
+      #
+      BAR = "Bar"
+
+      # No documentation available.
+      #
+      ONE = "1"
+
+      # No documentation available.
+      #
+      ZERO = "0"
+    end
+
+    # @!attribute member___123foo
+    #
+    #   @return [String]
+    #
+    Struct____456efg = ::Struct.new(
+      :member___123foo,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member___123abc
+    #
+    #   @return [String]
+    #
+    # @!attribute member
+    #
+    #   @return [Struct____456efg]
+    #
+    Struct____789BadNameInput = ::Struct.new(
+      :member___123abc,
+      :member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member
+    #
+    #   @return [Struct____456efg]
+    #
+    Struct____789BadNameOutput = ::Struct.new(
+      :member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute query_string
     #
     #   @return [String]
@@ -119,6 +192,17 @@ module RailsJson
       include Hearth::Structure
     end
 
+    # @!attribute foo
+    #
+    #   @return [String]
+    #
+    ComplexNestedErrorData = ::Struct.new(
+      :foo,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # This error is thrown when a request is invalid.
     #
     # @!attribute top_level
@@ -132,17 +216,6 @@ module RailsJson
     ComplexError = ::Struct.new(
       :top_level,
       :nested,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute foo
-    #
-    #   @return [String]
-    #
-    ComplexNestedErrorData = ::Struct.new(
-      :foo,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -189,28 +262,6 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # @!attribute document_value
-    #
-    #   @return [Hash,Array,String,Boolean,Numeric]
-    #
-    DocumentTypeAsPayloadInput = ::Struct.new(
-      :document_value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute document_value
-    #
-    #   @return [Hash,Array,String,Boolean,Numeric]
-    #
-    DocumentTypeAsPayloadOutput = ::Struct.new(
-      :document_value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!attribute string_value
     #
     #   @return [String]
@@ -237,6 +288,28 @@ module RailsJson
     #
     DocumentTypeOutput = ::Struct.new(
       :string_value,
+      :document_value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeAsPayloadInput = ::Struct.new(
+      :document_value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute document_value
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    DocumentTypeAsPayloadOutput = ::Struct.new(
       :document_value,
       keyword_init: true
     ) do
@@ -296,43 +369,23 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # @!attribute code
+    # @!attribute value
     #
     #   @return [String]
     #
-    # @!attribute complex_data
-    #
-    #   @return [KitchenSink]
-    #
-    # @!attribute integer_field
-    #
-    #   @return [Integer]
-    #
-    # @!attribute list_field
-    #
-    #   @return [Array<String>]
-    #
-    # @!attribute map_field
-    #
-    #   @return [Hash<String, String>]
-    #
-    # @!attribute message
+    SimpleStruct = ::Struct.new(
+      :value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute value
     #
     #   @return [String]
     #
-    # @!attribute string_field
-    #   abc
-    #
-    #   @return [String]
-    #
-    ErrorWithMembers = ::Struct.new(
-      :code,
-      :complex_data,
-      :integer_field,
-      :list_field,
-      :map_field,
-      :message,
-      :string_field,
+    StructWithLocationName = ::Struct.new(
+      :value,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -340,41 +393,6 @@ module RailsJson
 
     ErrorWithoutMembers = ::Struct.new(
       nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # Includes enum constants for FooEnum
-    #
-    module FooEnum
-      # No documentation available.
-      #
-      FOO = "Foo"
-
-      # No documentation available.
-      #
-      BAZ = "Baz"
-
-      # No documentation available.
-      #
-      BAR = "Bar"
-
-      # No documentation available.
-      #
-      ONE = "1"
-
-      # No documentation available.
-      #
-      ZERO = "0"
-    end
-
-    # @!attribute hi
-    #
-    #   @return [String]
-    #
-    GreetingStruct = ::Struct.new(
-      :hi,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -393,6 +411,19 @@ module RailsJson
     #
     GreetingWithErrorsOutput = ::Struct.new(
       :greeting,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # This error is thrown when an invalid greeting value is provided.
+    #
+    # @!attribute message
+    #
+    #   @return [String]
+    #
+    InvalidGreeting = ::Struct.new(
+      :message,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -462,6 +493,22 @@ module RailsJson
       include Hearth::Structure
     end
 
+    # @!attribute greeting
+    #
+    #   @return [String]
+    #
+    # @!attribute name
+    #
+    #   @return [String]
+    #
+    NestedPayload = ::Struct.new(
+      :greeting,
+      :name,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute nested
     #
     #   @return [NestedPayload]
@@ -479,24 +526,6 @@ module RailsJson
     #
     HttpPayloadWithStructureOutput = ::Struct.new(
       :nested,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    HttpPrefixHeadersInResponseInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute prefix_headers
-    #
-    #   @return [Hash<String, String>]
-    #
-    HttpPrefixHeadersInResponseOutput = ::Struct.new(
-      :prefix_headers,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -529,6 +558,24 @@ module RailsJson
     HttpPrefixHeadersOutput = ::Struct.new(
       :foo,
       :foo_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpPrefixHeadersInResponseInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute prefix_headers
+    #
+    #   @return [Hash<String, String>]
+    #
+    HttpPrefixHeadersInResponseOutput = ::Struct.new(
+      :prefix_headers,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -574,54 +621,6 @@ module RailsJson
     end
 
     HttpRequestWithGreedyLabelInPathOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member_epoch_seconds
-    #
-    #   @return [Time]
-    #
-    # @!attribute member_http_date
-    #
-    #   @return [Time]
-    #
-    # @!attribute member_date_time
-    #
-    #   @return [Time]
-    #
-    # @!attribute default_format
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_epoch_seconds
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_http_date
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_date_time
-    #
-    #   @return [Time]
-    #
-    HttpRequestWithLabelsAndTimestampFormatInput = ::Struct.new(
-      :member_epoch_seconds,
-      :member_http_date,
-      :member_date_time,
-      :default_format,
-      :target_epoch_seconds,
-      :target_http_date,
-      :target_date_time,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    HttpRequestWithLabelsAndTimestampFormatOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -677,6 +676,54 @@ module RailsJson
     end
 
     HttpRequestWithLabelsOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member_epoch_seconds
+    #
+    #   @return [Time]
+    #
+    # @!attribute member_http_date
+    #
+    #   @return [Time]
+    #
+    # @!attribute member_date_time
+    #
+    #   @return [Time]
+    #
+    # @!attribute default_format
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_epoch_seconds
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_http_date
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_date_time
+    #
+    #   @return [Time]
+    #
+    HttpRequestWithLabelsAndTimestampFormatInput = ::Struct.new(
+      :member_epoch_seconds,
+      :member_http_date,
+      :member_date_time,
+      :default_format,
+      :target_epoch_seconds,
+      :target_http_date,
+      :target_date_time,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpRequestWithLabelsAndTimestampFormatOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -893,19 +940,6 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # This error is thrown when an invalid greeting value is provided.
-    #
-    # @!attribute message
-    #
-    #   @return [String]
-    #
-    InvalidGreeting = ::Struct.new(
-      :message,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!attribute foo_enum1
     #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #
@@ -1096,6 +1130,115 @@ module RailsJson
       include Hearth::Structure
     end
 
+    # A union with a representative set of types for members.
+    #
+    class MyUnion < Hearth::Union
+
+      class StringValue < MyUnion
+        def to_h
+          { string_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::StringValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class BooleanValue < MyUnion
+        def to_h
+          { boolean_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::BooleanValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class NumberValue < MyUnion
+        def to_h
+          { number_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::NumberValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class BlobValue < MyUnion
+        def to_h
+          { blob_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::BlobValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class TimestampValue < MyUnion
+        def to_h
+          { timestamp_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::TimestampValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      # Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
+      #
+      class EnumValue < MyUnion
+        def to_h
+          { enum_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::EnumValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class ListValue < MyUnion
+        def to_h
+          { list_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::ListValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class MapValue < MyUnion
+        def to_h
+          { map_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::MapValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class StructureValue < MyUnion
+        def to_h
+          { structure_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::StructureValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      # Handles unknown future members
+      #
+      class Unknown < MyUnion
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
+        end
+      end
+    end
+
     # A shared structure that contains a single union member.
     #
     # @!attribute contents
@@ -1119,6 +1262,324 @@ module RailsJson
     #
     JsonUnionsOutput = ::Struct.new(
       :contents,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute json
+    #
+    #   @return [String]
+    #
+    MediaTypeHeaderInput = ::Struct.new(
+      :json,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute json
+    #
+    #   @return [String]
+    #
+    MediaTypeHeaderOutput = ::Struct.new(
+      :json,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute simple_struct
+    #
+    #   @return [SimpleStruct]
+    #
+    NestedAttributesOperationInput = ::Struct.new(
+      :simple_struct,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute value
+    #
+    #   @return [String]
+    #
+    NestedAttributesOperationOutput = ::Struct.new(
+      :value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute a
+    #
+    #   @return [String]
+    #
+    # @!attribute b
+    #
+    #   @return [String]
+    #
+    # @!attribute c
+    #
+    #   @return [Array<String>]
+    #
+    NullAndEmptyHeadersClientInput = ::Struct.new(
+      :a,
+      :b,
+      :c,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute a
+    #
+    #   @return [String]
+    #
+    # @!attribute b
+    #
+    #   @return [String]
+    #
+    # @!attribute c
+    #
+    #   @return [Array<String>]
+    #
+    NullAndEmptyHeadersClientOutput = ::Struct.new(
+      :a,
+      :b,
+      :c,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute string
+    #
+    #   @return [String]
+    #
+    # @!attribute sparse_string_list
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute sparse_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    NullOperationInput = ::Struct.new(
+      :string,
+      :sparse_string_list,
+      :sparse_string_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute string
+    #
+    #   @return [String]
+    #
+    # @!attribute sparse_string_list
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute sparse_string_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    NullOperationOutput = ::Struct.new(
+      :string,
+      :sparse_string_list,
+      :sparse_string_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute null_value
+    #
+    #   @return [String]
+    #
+    # @!attribute empty_string
+    #
+    #   @return [String]
+    #
+    OmitsNullSerializesEmptyStringInput = ::Struct.new(
+      :null_value,
+      :empty_string,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    OmitsNullSerializesEmptyStringOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute value
+    #
+    #   @return [String]
+    #
+    OperationWithOptionalInputOutputInput = ::Struct.new(
+      :value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute value
+    #
+    #   @return [String]
+    #
+    OperationWithOptionalInputOutputOutput = ::Struct.new(
+      :value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute token
+    #
+    #   @return [String]
+    #
+    QueryIdempotencyTokenAutoFillInput = ::Struct.new(
+      :token,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    QueryIdempotencyTokenAutoFillOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute qux
+    #
+    #   @return [String]
+    #
+    # @!attribute foo
+    #
+    #   @return [Hash<String, Array<String>>]
+    #
+    QueryParamsAsStringListMapInput = ::Struct.new(
+      :qux,
+      :foo,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    QueryParamsAsStringListMapOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute output
+    #
+    #   @return [String]
+    #
+    StreamingOperationInput = ::Struct.new(
+      :output,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute output
+    #
+    #   @return [String]
+    #
+    StreamingOperationOutput = ::Struct.new(
+      :output,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member_epoch_seconds
+    #
+    #   @return [Time]
+    #
+    # @!attribute member_http_date
+    #
+    #   @return [Time]
+    #
+    # @!attribute member_date_time
+    #
+    #   @return [Time]
+    #
+    # @!attribute default_format
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_epoch_seconds
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_http_date
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_date_time
+    #
+    #   @return [Time]
+    #
+    TimestampFormatHeadersInput = ::Struct.new(
+      :member_epoch_seconds,
+      :member_http_date,
+      :member_date_time,
+      :default_format,
+      :target_epoch_seconds,
+      :target_http_date,
+      :target_date_time,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member_epoch_seconds
+    #
+    #   @return [Time]
+    #
+    # @!attribute member_http_date
+    #
+    #   @return [Time]
+    #
+    # @!attribute member_date_time
+    #
+    #   @return [Time]
+    #
+    # @!attribute default_format
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_epoch_seconds
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_http_date
+    #
+    #   @return [Time]
+    #
+    # @!attribute target_date_time
+    #
+    #   @return [Time]
+    #
+    TimestampFormatHeadersOutput = ::Struct.new(
+      :member_epoch_seconds,
+      :member_http_date,
+      :member_date_time,
+      :default_format,
+      :target_epoch_seconds,
+      :target_http_date,
+      :target_date_time,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -1255,6 +1716,48 @@ module RailsJson
       :struct_with_location_name,
       :timestamp,
       :unix_timestamp,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute code
+    #
+    #   @return [String]
+    #
+    # @!attribute complex_data
+    #
+    #   @return [KitchenSink]
+    #
+    # @!attribute integer_field
+    #
+    #   @return [Integer]
+    #
+    # @!attribute list_field
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute map_field
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute message
+    #
+    #   @return [String]
+    #
+    # @!attribute string_field
+    #   abc
+    #
+    #   @return [String]
+    #
+    ErrorWithMembers = ::Struct.new(
+      :code,
+      :complex_data,
+      :integer_field,
+      :list_field,
+      :map_field,
+      :message,
+      :string_field,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -1532,508 +2035,6 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # @!attribute json
-    #
-    #   @return [String]
-    #
-    MediaTypeHeaderInput = ::Struct.new(
-      :json,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute json
-    #
-    #   @return [String]
-    #
-    MediaTypeHeaderOutput = ::Struct.new(
-      :json,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # A union with a representative set of types for members.
-    #
-    class MyUnion < Hearth::Union
-
-      class StringValue < MyUnion
-        def to_h
-          { string_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::StringValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class BooleanValue < MyUnion
-        def to_h
-          { boolean_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::BooleanValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class NumberValue < MyUnion
-        def to_h
-          { number_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::NumberValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class BlobValue < MyUnion
-        def to_h
-          { blob_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::BlobValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class TimestampValue < MyUnion
-        def to_h
-          { timestamp_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::TimestampValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      # Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
-      #
-      class EnumValue < MyUnion
-        def to_h
-          { enum_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::EnumValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class ListValue < MyUnion
-        def to_h
-          { list_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::ListValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class MapValue < MyUnion
-        def to_h
-          { map_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::MapValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      class StructureValue < MyUnion
-        def to_h
-          { structure_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::StructureValue #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      # Handles unknown future members
-      #
-      class Unknown < MyUnion
-        def to_h
-          { unknown: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
-        end
-      end
-    end
-
-    # @!attribute simple_struct
-    #
-    #   @return [SimpleStruct]
-    #
-    NestedAttributesOperationInput = ::Struct.new(
-      :simple_struct,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute value
-    #
-    #   @return [String]
-    #
-    NestedAttributesOperationOutput = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute greeting
-    #
-    #   @return [String]
-    #
-    # @!attribute name
-    #
-    #   @return [String]
-    #
-    NestedPayload = ::Struct.new(
-      :greeting,
-      :name,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute a
-    #
-    #   @return [String]
-    #
-    # @!attribute b
-    #
-    #   @return [String]
-    #
-    # @!attribute c
-    #
-    #   @return [Array<String>]
-    #
-    NullAndEmptyHeadersClientInput = ::Struct.new(
-      :a,
-      :b,
-      :c,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute a
-    #
-    #   @return [String]
-    #
-    # @!attribute b
-    #
-    #   @return [String]
-    #
-    # @!attribute c
-    #
-    #   @return [Array<String>]
-    #
-    NullAndEmptyHeadersClientOutput = ::Struct.new(
-      :a,
-      :b,
-      :c,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute string
-    #
-    #   @return [String]
-    #
-    # @!attribute sparse_string_list
-    #
-    #   @return [Array<String>]
-    #
-    # @!attribute sparse_string_map
-    #
-    #   @return [Hash<String, String>]
-    #
-    NullOperationInput = ::Struct.new(
-      :string,
-      :sparse_string_list,
-      :sparse_string_map,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute string
-    #
-    #   @return [String]
-    #
-    # @!attribute sparse_string_list
-    #
-    #   @return [Array<String>]
-    #
-    # @!attribute sparse_string_map
-    #
-    #   @return [Hash<String, String>]
-    #
-    NullOperationOutput = ::Struct.new(
-      :string,
-      :sparse_string_list,
-      :sparse_string_map,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute null_value
-    #
-    #   @return [String]
-    #
-    # @!attribute empty_string
-    #
-    #   @return [String]
-    #
-    OmitsNullSerializesEmptyStringInput = ::Struct.new(
-      :null_value,
-      :empty_string,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    OmitsNullSerializesEmptyStringOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute value
-    #
-    #   @return [String]
-    #
-    OperationWithOptionalInputOutputInput = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute value
-    #
-    #   @return [String]
-    #
-    OperationWithOptionalInputOutputOutput = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute token
-    #
-    #   @return [String]
-    #
-    QueryIdempotencyTokenAutoFillInput = ::Struct.new(
-      :token,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    QueryIdempotencyTokenAutoFillOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute qux
-    #
-    #   @return [String]
-    #
-    # @!attribute foo
-    #
-    #   @return [Hash<String, Array<String>>]
-    #
-    QueryParamsAsStringListMapInput = ::Struct.new(
-      :qux,
-      :foo,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    QueryParamsAsStringListMapOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute value
-    #
-    #   @return [String]
-    #
-    SimpleStruct = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute output
-    #
-    #   @return [String]
-    #
-    StreamingOperationInput = ::Struct.new(
-      :output,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute output
-    #
-    #   @return [String]
-    #
-    StreamingOperationOutput = ::Struct.new(
-      :output,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute value
-    #
-    #   @return [String]
-    #
-    StructWithLocationName = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member_epoch_seconds
-    #
-    #   @return [Time]
-    #
-    # @!attribute member_http_date
-    #
-    #   @return [Time]
-    #
-    # @!attribute member_date_time
-    #
-    #   @return [Time]
-    #
-    # @!attribute default_format
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_epoch_seconds
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_http_date
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_date_time
-    #
-    #   @return [Time]
-    #
-    TimestampFormatHeadersInput = ::Struct.new(
-      :member_epoch_seconds,
-      :member_http_date,
-      :member_date_time,
-      :default_format,
-      :target_epoch_seconds,
-      :target_http_date,
-      :target_date_time,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member_epoch_seconds
-    #
-    #   @return [Time]
-    #
-    # @!attribute member_http_date
-    #
-    #   @return [Time]
-    #
-    # @!attribute member_date_time
-    #
-    #   @return [Time]
-    #
-    # @!attribute default_format
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_epoch_seconds
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_http_date
-    #
-    #   @return [Time]
-    #
-    # @!attribute target_date_time
-    #
-    #   @return [Time]
-    #
-    TimestampFormatHeadersOutput = ::Struct.new(
-      :member_epoch_seconds,
-      :member_http_date,
-      :member_date_time,
-      :default_format,
-      :target_epoch_seconds,
-      :target_http_date,
-      :target_date_time,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___123foo
-    #
-    #   @return [String]
-    #
-    Struct____456efg = ::Struct.new(
-      :member___123foo,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct____456efg]
-    #
-    Struct____789BadNameInput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member
-    #
-    #   @return [Struct____456efg]
-    #
-    Struct____789BadNameOutput = ::Struct.new(
-      :member,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
   end
+
 end

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
@@ -57,6 +59,8 @@ public class DirectedRubyCodegen
 
     private static final Logger LOGGER =
             Logger.getLogger(DirectedRubyCodegen.class.getName());
+
+    private TypesGenerator typesGenerator;
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<RubySettings> directive) {
@@ -88,7 +92,7 @@ public class DirectedRubyCodegen
                 .createDefaultHttpApplicationTransport();
         }
 
-        return new GenerationContext(
+        GenerationContext context = new GenerationContext(
             directive.settings(),
             directive.fileManifest(),
             integrations,
@@ -98,8 +102,11 @@ public class DirectedRubyCodegen
             protocolGenerator,
             applicationTransport,
             collectDependencies(model, service, protocol, directive.settings(), integrations),
-            directive.symbolProvider()
-        );
+            directive.symbolProvider());
+
+        typesGenerator = new TypesGenerator(context);
+
+        return context;
     }
 
     @Override
@@ -148,9 +155,58 @@ public class DirectedRubyCodegen
 
     @Override
     public void generateStructure(GenerateStructureDirective<GenerationContext, RubySettings> directive) {
-        TypesGenerator typesGenerator = new TypesGenerator(directive.context());
-        typesGenerator.render();
+        directive.context().writerDelegator().useFileWriter(
+            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            // TODO: Replace below with dedicated Structure code generator
+            typesGenerator.getTypeVisitor(writer).structureShape(directive.shape());
+        });
+    }
+
+    @Override
+    public void generateError(GenerateErrorDirective<GenerationContext, RubySettings> directive) {
+        if (directive.context().protocolGenerator().isPresent()) {
+            directive.context().protocolGenerator().get().generateErrors(directive.context());
+        }
+        directive.context().writerDelegator().useFileWriter(
+            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            // TODO: Replace below with dedicated Structure code generator
+            typesGenerator.getTypeVisitor(writer).structureShape(directive.shape());
+        });
+    }
+
+    @Override
+    public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
+        directive.context().writerDelegator().useFileWriter(
+            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            // TODO: Replace below with dedicated Union code generator
+            typesGenerator.getTypeVisitor(writer).unionShape(directive.shape());
+        });
+    }
+
+    @Override
+    public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
+        directive.context().writerDelegator().useFileWriter(
+            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            // TODO: Replace below with dedicated Enum code generator
+            typesGenerator.getTypeVisitor(writer).stringShape((StringShape) directive.shape());
+        });
+    }
+
+    @Override
+    public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
+
+    }
+
+    @Override
+    public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
         typesGenerator.renderRbs();
+
+        // Assuming all code generation are completed at this point and close module blocks
+        directive.context()
+            .writerDelegator()
+            .getWriters()
+            .get(Paths.get(typesGenerator.getFile()).toString())
+            .closeModuleBlocks();
 
         ParamsGenerator paramsGenerator = new ParamsGenerator(directive.context());
         paramsGenerator.render();
@@ -174,38 +230,6 @@ public class DirectedRubyCodegen
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
-    }
-
-    @Override
-    public void generateError(GenerateErrorDirective<GenerationContext, RubySettings> directive) {
-        if (directive.context().protocolGenerator().isPresent()) {
-            directive.context().protocolGenerator().get().generateErrors(directive.context());
-        }
-    }
-
-    @Override
-    public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
-        GenerationContext context = directive.context();
 
         List<String> additionalFiles = context.integrations().stream()
                 .map((integration) -> integration.writeAdditionalFiles(context))

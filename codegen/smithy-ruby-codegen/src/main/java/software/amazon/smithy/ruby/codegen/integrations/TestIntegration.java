@@ -17,9 +17,14 @@ package software.amazon.smithy.ruby.codegen.integrations;
 
 import java.util.Arrays;
 import java.util.List;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
+import software.amazon.smithy.ruby.codegen.interceptors.ModuleBlockInterceptor;
 import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.FakeProtocolGenerator;
+import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -31,5 +36,12 @@ public class TestIntegration implements RubyIntegration {
     @Override
     public List<ProtocolGenerator> getProtocolGenerators() {
         return Arrays.asList(new FakeProtocolGenerator());
+    }
+
+    @Override
+    public List<? extends CodeInterceptor<? extends CodeSection, RubyCodeWriter>> interceptors(
+        GenerationContext codegenContext
+    ) {
+        return List.of(new ModuleBlockInterceptor());
     }
 }

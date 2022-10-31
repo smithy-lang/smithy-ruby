@@ -19,10 +19,11 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import software.amazon.smithy.codegen.core.CodegenException;
-import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolReference;
-import software.amazon.smithy.codegen.core.SymbolWriter;
+
+import software.amazon.smithy.codegen.core.*;
+import software.amazon.smithy.ruby.codegen.interceptors.ModuleBlockInterceptor;
+import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -58,6 +59,50 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         trimBlankLines();
         setIndentText("  ");
         putFormatter('T', new RubySymbolFormatter());
+    }
+
+    /**
+     * The purpose of this method is to populate module blocks before code population for each file.
+     *
+     * Most ruby files have the following format.
+     *
+     * module SomeService
+     *  module Types
+     *    StructA
+     *    StructB
+     *    StructC
+     *  end
+     * end
+     *
+     * The example above has a name space "SomeService::Types"
+     *
+     * {@link ModuleBlockInterceptor} will be responsible populating each module based on the namespace provided.
+     *
+     * If namespace is empty, then no module blocks are added.
+     *
+     * @param interceptor
+     * @param <S>
+     * @return
+     */
+    @Override
+    public <S extends CodeSection> RubyCodeWriter onSection(CodeInterceptor<S, RubyCodeWriter> interceptor) {
+        super.onSection(interceptor);
+        if (interceptor instanceof ModuleBlockInterceptor) {
+            String[] modules = this.namespace.split("::");
+            for (String module: modules) {
+                this.pushState(new ModuleBlockSection(module));
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Close module blocks (See {@link #onSection(CodeInterceptor)}
+     */
+    public void closeModuleBlocks() {
+        for (String module : this.getNamespace().split("::")) {
+            this.popState();
+        }
     }
 
     /**
@@ -323,6 +368,10 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
 
     public void addUseImports(RubyDependency dependency) {
         dependency.getDependencies().forEach(d -> getImportContainer().importDependency(d));
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     /**
