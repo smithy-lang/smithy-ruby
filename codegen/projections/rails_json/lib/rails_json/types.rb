@@ -2035,5 +2035,4 @@ module RailsJson
     end
 
   end
-
 end

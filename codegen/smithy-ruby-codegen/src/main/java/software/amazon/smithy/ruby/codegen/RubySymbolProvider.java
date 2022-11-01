@@ -28,7 +28,9 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -196,6 +198,16 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol stringShape(StringShape shape) {
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "String__"), "String", "String").build();
+    }
+
+    @Override
+    public Symbol intEnumShape(IntEnumShape shape) {
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, ""), "Integer", "Integer").build();
+    }
+
+    @Override
+    public Symbol enumShape(EnumShape shape) {
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, ""), "String", "String").build();
     }
 
     @Override

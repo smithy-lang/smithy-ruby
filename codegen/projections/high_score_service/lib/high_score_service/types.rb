@@ -217,5 +217,4 @@ module HighScoreService
     end
 
   end
-
 end

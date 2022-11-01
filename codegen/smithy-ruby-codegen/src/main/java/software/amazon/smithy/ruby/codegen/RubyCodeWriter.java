@@ -64,20 +64,21 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
 
     public void addModule(String name) {
         modules.push(name);
-        this.pushState(new ModuleBlockSection(name));
+        this.openBlock("module $L", name);
     }
 
     public void closeModule() {
-        if (!modules.isEmpty()) {
-            modules.pop();
-            this.popState();
+        if (modules.isEmpty()) {
+            throw new RuntimeException("No modules were opened");
         }
+
+        modules.pop();
+        this.closeBlock("end");
     }
 
     public void closeAllModules() {
         while (!modules.isEmpty()) {
-            modules.pop();
-            this.popState();
+            closeModule();
         }
     }
 

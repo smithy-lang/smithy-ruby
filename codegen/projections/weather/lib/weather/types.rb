@@ -180,9 +180,14 @@ module Weather
     #
     #   @return [ImageType]
     #
+    # @!attribute resolution
+    #
+    #   @return [Integer]
+    #
     GetCityImageInput = ::Struct.new(
       :city_id,
       :image_type,
+      :resolution,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -358,12 +363,6 @@ module Weather
       keyword_init: true
     ) do
       include Hearth::Structure
-
-      def initialize(*)
-        super
-        self.default_bool ||= false
-        self.default_number ||= 0
-      end
     end
 
     # @!attribute next_token
@@ -416,12 +415,6 @@ module Weather
       keyword_init: true
     ) do
       include Hearth::Structure
-
-      def initialize(*)
-        super
-        self.default_bool ||= false
-        self.default_number ||= 0
-      end
     end
 
     # @!attribute message
@@ -591,6 +584,17 @@ module Weather
       end
     end
 
+    # Includes enum constants for Resolution
+    #
+    module Resolution
+      LOW = 0
+
+      MEDIUM = 1
+
+      HIGH = 2
+
+      ULTRA = 3
+    end
     # Includes enum constants for TypedYesNo
     #
     module TypedYesNo
@@ -636,5 +640,4 @@ module Weather
     end
 
   end
-
 end

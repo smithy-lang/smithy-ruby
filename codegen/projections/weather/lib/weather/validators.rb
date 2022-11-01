@@ -110,6 +110,7 @@ module Weather
         Hearth::Validator.validate!(input, Types::GetCityImageInput, context: context)
         Hearth::Validator.validate!(input[:city_id], ::String, context: "#{context}[:city_id]")
         ImageType.validate!(input[:image_type], context: "#{context}[:image_type]") unless input[:image_type].nil?
+        Hearth::Validator.validate!(input[:resolution], ::Integer, context: "#{context}[:resolution]")
       end
     end
 
