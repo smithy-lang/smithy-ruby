@@ -117,6 +117,7 @@ module Weather
         type = Types::GetCityImageInput.new
         type.city_id = params[:city_id]
         type.image_type = ImageType.build(params[:image_type], context: "#{context}[:image_type]") unless params[:image_type].nil?
+        type.resolution = params[:resolution]
         type
       end
     end

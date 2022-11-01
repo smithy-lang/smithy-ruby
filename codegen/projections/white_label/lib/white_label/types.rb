@@ -691,5 +691,4 @@ module WhiteLabel
     end
 
   end
-
 end

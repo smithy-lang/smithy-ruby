@@ -179,7 +179,7 @@ public class DirectedRubyCodegen
 
     @Override
     public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-
+        typeShapes.add(directive.shape());
     }
 
     @Override
@@ -187,6 +187,8 @@ public class DirectedRubyCodegen
         // Generate types
         directive.context().writerDelegator().useFileWriter(
             typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            writer.includePreamble().includeRequires();
+
             TypesGenerator.TypesVisitor visitor = typesGenerator.getTypeVisitor(writer);
 
             writer.addModule(directive.settings().getModule());

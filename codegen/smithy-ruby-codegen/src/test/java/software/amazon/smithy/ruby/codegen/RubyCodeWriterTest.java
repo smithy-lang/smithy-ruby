@@ -6,12 +6,10 @@ import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
-import software.amazon.smithy.ruby.codegen.interceptors.ModuleBlockInterceptor;
 
 import java.nio.file.Paths;
-import java.util.List;
 
-class ModuleBlockInterceptorTest {
+class RubyCodeWriterTest {
 
     @Test
     void expectModulesGenerated() {
@@ -24,10 +22,6 @@ class ModuleBlockInterceptorTest {
             .build();
 
         WriterDelegator<RubyCodeWriter> delegator = new WriterDelegator<>(mockManifest, provider, new RubyCodeWriter.Factory());
-
-        delegator.setInterceptors(List.of(
-            new ModuleBlockInterceptor()
-        ));
 
         String namespace = "TestService::Types";
 
@@ -56,16 +50,7 @@ class ModuleBlockInterceptorTest {
         delegator.useFileWriter("types.rb",namespace, RubyCodeWriter::closeAllModules);
 
         Assertions.assertEquals(
-    "# frozen_string_literal: true\n" +
-            "\n" +
-            "# WARNING ABOUT GENERATED CODE\n" +
-            "#\n" +
-            "# This file was code generated using smithy-ruby.\n" +
-            "# https://github.com/awslabs/smithy-ruby\n" +
-            "#\n" +
-            "# WARNING ABOUT GENERATED CODE\n" +
-            "\n" +
-            "module TestService\n" +
+    "module TestService\n" +
             "  module Types\n" +
             "\n" +
             "    StructA\n" +
@@ -79,7 +64,6 @@ class ModuleBlockInterceptorTest {
             "    StructC\n" +
             "\n" +
             "  end\n" +
-            "\n" +
             "end\n",
             delegator.getWriters().get(
                 Paths.get("types.rb").toString()).toString()

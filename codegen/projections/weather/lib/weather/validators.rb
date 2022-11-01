@@ -117,6 +117,7 @@ module Weather
         Hearth::Validator.validate_types!(input[:city_id], ::String, context: "#{context}[:city_id]")
         Hearth::Validator.validate_required!(input[:image_type], context: "#{context}[:image_type]")
         ImageType.validate!(input[:image_type], context: "#{context}[:image_type]") unless input[:image_type].nil?
+        Hearth::Validator.validate!(input[:resolution], ::Integer, context: "#{context}[:resolution]")
       end
     end
 

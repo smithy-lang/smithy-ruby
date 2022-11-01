@@ -121,7 +121,8 @@ module Weather
     #         height: 1, # required
     #         width: 1 # required
     #       }
-    #     } # required
+    #     }, # required
+    #     resolution: 1 # required
     #   )
     #
     # @example Response structure
