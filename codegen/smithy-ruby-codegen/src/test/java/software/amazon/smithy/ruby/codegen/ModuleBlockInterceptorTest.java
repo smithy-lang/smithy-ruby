@@ -7,7 +7,6 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.ruby.codegen.interceptors.ModuleBlockInterceptor;
-import software.amazon.smithy.utils.AbstractCodeWriter;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -33,25 +32,28 @@ class ModuleBlockInterceptorTest {
         String namespace = "TestService::Types";
 
         delegator.useFileWriter("types.rb", namespace, writer -> {
-            writer.write("$T", Symbol.builder().namespace(namespace, "::").name("StructA").build());
+            writer.addModule("TestService");
+            writer.addModule("Types");
         });
 
         delegator.useFileWriter("types.rb", namespace, writer -> {
-            writer.pushState(new ModuleBlockSection("Nested"));
+            writer.write("$T", Symbol.builder().namespace(namespace, "::").name("StructA").build());
         });
+
+        delegator.useFileWriter("types.rb", namespace, writer -> writer.addModule("Nested"));
 
         delegator.useFileWriter("types.rb", namespace, writer -> {
             writer.write("$T", Symbol.builder().namespace(namespace, "::").name("StructB").build());
         });
 
-        delegator.useFileWriter("types.rb", namespace, AbstractCodeWriter::popState);
+        delegator.useFileWriter("types.rb", namespace, RubyCodeWriter::closeModule);
 
         delegator.useFileWriter("types.rb", namespace, writer -> {
             writer.write("$T", Symbol.builder().namespace(namespace, "::").name("StructC").build());
         });
 
         // Close module blocks
-        delegator.useFileWriter("types.rb",namespace, RubyCodeWriter::closeModuleBlocks);
+        delegator.useFileWriter("types.rb",namespace, RubyCodeWriter::closeAllModules);
 
         Assertions.assertEquals(
     "# frozen_string_literal: true\n" +
@@ -65,6 +67,7 @@ class ModuleBlockInterceptorTest {
             "\n" +
             "module TestService\n" +
             "  module Types\n" +
+            "\n" +
             "    StructA\n" +
             "\n" +
             "    module Nested\n" +
