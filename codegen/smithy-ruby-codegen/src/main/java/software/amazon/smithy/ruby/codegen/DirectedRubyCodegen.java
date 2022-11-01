@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -38,8 +38,8 @@ import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
@@ -61,6 +61,7 @@ public class DirectedRubyCodegen
             Logger.getLogger(DirectedRubyCodegen.class.getName());
 
     private TypesGenerator typesGenerator;
+    private List<Shape> typeShapes = new ArrayList<>();
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<RubySettings> directive) {
@@ -155,11 +156,7 @@ public class DirectedRubyCodegen
 
     @Override
     public void generateStructure(GenerateStructureDirective<GenerationContext, RubySettings> directive) {
-        directive.context().writerDelegator().useFileWriter(
-            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
-            // TODO: Replace below with dedicated Structure code generator
-            typesGenerator.getTypeVisitor(writer).structureShape(directive.shape());
-        });
+        typeShapes.add(directive.shape());
     }
 
     @Override
@@ -167,29 +164,17 @@ public class DirectedRubyCodegen
         if (directive.context().protocolGenerator().isPresent()) {
             directive.context().protocolGenerator().get().generateErrors(directive.context());
         }
-        directive.context().writerDelegator().useFileWriter(
-            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
-            // TODO: Replace below with dedicated Structure code generator
-            typesGenerator.getTypeVisitor(writer).structureShape(directive.shape());
-        });
+        typeShapes.add(directive.shape());
     }
 
     @Override
     public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
-        directive.context().writerDelegator().useFileWriter(
-            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
-            // TODO: Replace below with dedicated Union code generator
-            typesGenerator.getTypeVisitor(writer).unionShape(directive.shape());
-        });
+        typeShapes.add(directive.shape());
     }
 
     @Override
     public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-        directive.context().writerDelegator().useFileWriter(
-            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
-            // TODO: Replace below with dedicated Enum code generator
-            typesGenerator.getTypeVisitor(writer).stringShape((StringShape) directive.shape());
-        });
+        typeShapes.add(directive.shape());
     }
 
     @Override
@@ -198,15 +183,23 @@ public class DirectedRubyCodegen
     }
 
     @Override
-    public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
-        typesGenerator.renderRbs();
+    public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
+        // Generate types
+        directive.context().writerDelegator().useFileWriter(
+            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            TypesGenerator.TypesVisitor visitor = typesGenerator.getTypeVisitor(writer);
 
-        // Assuming all code generation are completed at this point and close module blocks
-        directive.context()
-            .writerDelegator()
-            .getWriters()
-            .get(Paths.get(typesGenerator.getFile()).toString())
-            .closeModuleBlocks();
+            writer.addModule(directive.settings().getModule());
+            writer.addModule("Types");
+
+            typeShapes.stream()
+                .sorted(Comparator.comparing(Shape::getId))
+                .forEach(shape -> shape.accept(visitor));
+
+            writer.closeAllModules();
+        });
+
+        typesGenerator.renderRbs();
 
         ParamsGenerator paramsGenerator = new ParamsGenerator(directive.context());
         paramsGenerator.render();

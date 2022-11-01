@@ -21,17 +21,6 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    # @!attribute member___123next_token
-    #
-    #   @return [String]
-    #
-    ResultWrapper = ::Struct.new(
-      :member___123next_token,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!attribute member___wrapper
     #
     #   @return [ResultWrapper]
@@ -153,160 +142,6 @@ module WhiteLabel
       keyword_init: true
     ) do
       include Hearth::Structure
-    end
-
-    # This docstring should be different than KitchenSink struct member.
-    #
-    # @deprecated
-    #   This structure is
-    #   deprecated.
-    #   Since: today
-    #
-    # @note
-    #   This shape is unstable and may change in the future.
-    #
-    # @see https://www.ruby-lang.org/en/ Homepage
-    #
-    # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-    #
-    # @note
-    #   This shape is meant for internal use only.
-    #
-    # @since today
-    #
-    # @note
-    #   This shape is sensitive and must be handled with care.
-    #
-    # @!attribute value
-    #
-    #   @return [String]
-    #
-    Struct = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-
-      def to_s
-        "#<struct WhiteLabel::Types::Struct [SENSITIVE]>"
-      end
-    end
-
-    # Includes enum constants for TypedEnum
-    #
-    module TypedEnum
-      # No documentation available.
-      #
-      YES = "YES"
-
-      # No documentation available.
-      #
-      NO = "NO"
-
-      # This documentation should be applied.
-      #
-      # @deprecated
-      #   This enum value is deprecated.
-      #
-      # Tags: ["Test"]
-      #
-      MAYBE = "MAYBE"
-    end
-
-    # This is some union documentation.
-    # It has some union members
-    #
-    # @deprecated
-    #   This union is
-    #   deprecated.
-    #   Since: today
-    #
-    # @note
-    #   This shape is unstable and may change in the future.
-    #
-    # @see https://www.ruby-lang.org/en/ Homepage
-    #
-    # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-    #
-    # @note
-    #   This shape is meant for internal use only.
-    #
-    # @since today
-    #
-    # @note
-    #   This shape is sensitive and must be handled with care.
-    #
-    class Union < Hearth::Union
-      # This is a String member.
-      # Struct should also be documented too because the structure is.
-      #
-      # @deprecated
-      #   This union member is
-      #   deprecated.
-      #   Since: today
-      #
-      # @note
-      #   This shape is unstable and may change in the future.
-      #
-      # @see https://www.ruby-lang.org/en/ Homepage
-      #
-      # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-      #
-      # @note
-      #   This shape is meant for internal use only.
-      #
-      # @since today
-      #
-      class String < Union
-        def to_h
-          { string: super(__getobj__) }
-        end
-
-        def to_s
-          "#<WhiteLabel::Types::String #{__getobj__ || 'nil'}>"
-        end
-      end
-
-      # This docstring should be different than KitchenSink struct member.
-      #
-      # @deprecated
-      #   This structure is
-      #   deprecated.
-      #   Since: today
-      #
-      # @note
-      #   This shape is unstable and may change in the future.
-      #
-      # @see https://www.ruby-lang.org/en/ Homepage
-      #
-      # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-      #
-      # @note
-      #   This shape is meant for internal use only.
-      #
-      # @since today
-      #
-      class Struct < Union
-        def to_h
-          { struct: super(__getobj__) }
-        end
-
-        def to_s
-          "#<WhiteLabel::Types::Struct [SENSITIVE]>"
-        end
-      end
-
-      # Handles unknown future members
-      #
-      class Unknown < Union
-        def to_h
-          { unknown: super(__getobj__) }
-        end
-
-        def to_s
-          "#<WhiteLabel::Types::Unknown #{__getobj__ || 'nil'}>"
-        end
-      end
     end
 
     # @!attribute string
@@ -567,13 +402,6 @@ module WhiteLabel
       end
     end
 
-    ServerError = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!attribute next_token
     #
     #   @return [String]
@@ -628,6 +456,24 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # @!attribute member___123next_token
+    #
+    #   @return [String]
+    #
+    ResultWrapper = ::Struct.new(
+      :member___123next_token,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    ServerError = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute stream
     #
     #   @return [String]
@@ -666,6 +512,160 @@ module WhiteLabel
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # This docstring should be different than KitchenSink struct member.
+    #
+    # @deprecated
+    #   This structure is
+    #   deprecated.
+    #   Since: today
+    #
+    # @note
+    #   This shape is unstable and may change in the future.
+    #
+    # @see https://www.ruby-lang.org/en/ Homepage
+    #
+    # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
+    #
+    # @note
+    #   This shape is meant for internal use only.
+    #
+    # @since today
+    #
+    # @note
+    #   This shape is sensitive and must be handled with care.
+    #
+    # @!attribute value
+    #
+    #   @return [String]
+    #
+    Struct = ::Struct.new(
+      :value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      def to_s
+        "#<struct WhiteLabel::Types::Struct [SENSITIVE]>"
+      end
+    end
+
+    # Includes enum constants for TypedEnum
+    #
+    module TypedEnum
+      # No documentation available.
+      #
+      YES = "YES"
+
+      # No documentation available.
+      #
+      NO = "NO"
+
+      # This documentation should be applied.
+      #
+      # @deprecated
+      #   This enum value is deprecated.
+      #
+      # Tags: ["Test"]
+      #
+      MAYBE = "MAYBE"
+    end
+
+    # This is some union documentation.
+    # It has some union members
+    #
+    # @deprecated
+    #   This union is
+    #   deprecated.
+    #   Since: today
+    #
+    # @note
+    #   This shape is unstable and may change in the future.
+    #
+    # @see https://www.ruby-lang.org/en/ Homepage
+    #
+    # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
+    #
+    # @note
+    #   This shape is meant for internal use only.
+    #
+    # @since today
+    #
+    # @note
+    #   This shape is sensitive and must be handled with care.
+    #
+    class Union < Hearth::Union
+      # This is a String member.
+      # Struct should also be documented too because the structure is.
+      #
+      # @deprecated
+      #   This union member is
+      #   deprecated.
+      #   Since: today
+      #
+      # @note
+      #   This shape is unstable and may change in the future.
+      #
+      # @see https://www.ruby-lang.org/en/ Homepage
+      #
+      # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
+      #
+      # @note
+      #   This shape is meant for internal use only.
+      #
+      # @since today
+      #
+      class String < Union
+        def to_h
+          { string: super(__getobj__) }
+        end
+
+        def to_s
+          "#<WhiteLabel::Types::String #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      # This docstring should be different than KitchenSink struct member.
+      #
+      # @deprecated
+      #   This structure is
+      #   deprecated.
+      #   Since: today
+      #
+      # @note
+      #   This shape is unstable and may change in the future.
+      #
+      # @see https://www.ruby-lang.org/en/ Homepage
+      #
+      # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
+      #
+      # @note
+      #   This shape is meant for internal use only.
+      #
+      # @since today
+      #
+      class Struct < Union
+        def to_h
+          { struct: super(__getobj__) }
+        end
+
+        def to_s
+          "#<WhiteLabel::Types::Struct [SENSITIVE]>"
+        end
+      end
+
+      # Handles unknown future members
+      #
+      class Unknown < Union
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+
+        def to_s
+          "#<WhiteLabel::Types::Unknown #{__getobj__ || 'nil'}>"
+        end
+      end
     end
 
     # @!attribute status

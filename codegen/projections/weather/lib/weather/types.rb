@@ -53,41 +53,6 @@ module Weather
       include Hearth::Structure
     end
 
-    # Error encountered when no resource could be found.
-    #
-    # @!attribute resource_type
-    #   The type of resource that was not found.
-    #
-    #   @return [String]
-    #
-    # @!attribute message
-    #
-    #   @return [String]
-    #
-    NoSuchResource = ::Struct.new(
-      :resource_type,
-      :message,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute message
-    #
-    #   @return [String]
-    #
-    # @!attribute author
-    #
-    #   @return [String]
-    #
-    Message = ::Struct.new(
-      :message,
-      :author,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     class Announcements < Hearth::Union
 
       class Police < Announcements
@@ -133,17 +98,181 @@ module Weather
       end
     end
 
-    # @!attribute height
+    # @!attribute latitude
     #
-    #   @return [Integer]
+    #   @return [Float]
     #
-    # @!attribute width
+    # @!attribute longitude
     #
-    #   @return [Integer]
+    #   @return [Float]
     #
-    PNGImage = ::Struct.new(
-      :height,
-      :width,
+    CityCoordinates = ::Struct.new(
+      :latitude,
+      :longitude,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      def initialize(*)
+        super
+        self.latitude ||= 0
+      end
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    # @!attribute name
+    #
+    #   @return [String]
+    #
+    # @!attribute number
+    #
+    #   @return [String]
+    #
+    # @!attribute case
+    #
+    #   @return [String]
+    #
+    CitySummary = ::Struct.new(
+      :city_id,
+      :name,
+      :number,
+      :case,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    GetCityAnnouncementsInput = ::Struct.new(
+      :city_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute last_updated
+    #
+    #   @return [Time]
+    #
+    # @!attribute announcements
+    #
+    #   @return [Announcements]
+    #
+    GetCityAnnouncementsOutput = ::Struct.new(
+      :last_updated,
+      :announcements,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    # @!attribute image_type
+    #
+    #   @return [ImageType]
+    #
+    GetCityImageInput = ::Struct.new(
+      :city_id,
+      :image_type,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute image
+    #
+    #   @return [String]
+    #
+    GetCityImageOutput = ::Struct.new(
+      :image,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # The input used to get a city.
+    #
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    GetCityInput = ::Struct.new(
+      :city_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute name
+    #
+    #   @return [String]
+    #
+    # @!attribute coordinates
+    #
+    #   @return [CityCoordinates]
+    #
+    # @!attribute city
+    #
+    #   @return [CitySummary]
+    #
+    GetCityOutput = ::Struct.new(
+      :name,
+      :coordinates,
+      :city,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    GetCurrentTimeInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute time
+    #
+    #   @return [Time]
+    #
+    GetCurrentTimeOutput = ::Struct.new(
+      :time,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute city_id
+    #
+    #   @return [String]
+    #
+    GetForecastInput = ::Struct.new(
+      :city_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute chance_of_rain
+    #
+    #   @return [Float]
+    #
+    # @!attribute precipitation
+    #
+    #   @return [Precipitation]
+    #
+    GetForecastOutput = ::Struct.new(
+      :chance_of_rain,
+      :precipitation,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -184,90 +313,170 @@ module Weather
       end
     end
 
-    # @!attribute city_id
+    # @!attribute next_token
     #
     #   @return [String]
     #
-    # @!attribute image_type
+    # @!attribute a_string
     #
-    #   @return [ImageType]
+    #   @return [String]
     #
-    GetCityImageInput = ::Struct.new(
-      :city_id,
-      :image_type,
+    # @!attribute default_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute boxed_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute default_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute boxed_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute some_enum
+    #   Enum, one of: ["YES", "NO"]
+    #
+    #   @return [String]
+    #
+    # @!attribute page_size
+    #
+    #   @return [Integer]
+    #
+    ListCitiesInput = ::Struct.new(
+      :next_token,
+      :a_string,
+      :default_bool,
+      :boxed_bool,
+      :default_number,
+      :boxed_number,
+      :some_enum,
+      :page_size,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      def initialize(*)
+        super
+        self.default_bool ||= false
+        self.default_number ||= 0
+      end
+    end
+
+    # @!attribute next_token
+    #
+    #   @return [String]
+    #
+    # @!attribute some_enum
+    #   Enum, one of: ["YES", "NO"]
+    #
+    #   @return [String]
+    #
+    # @!attribute a_string
+    #
+    #   @return [String]
+    #
+    # @!attribute default_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute boxed_bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute default_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute boxed_number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute items
+    #
+    #   @return [Array<CitySummary>]
+    #
+    # @!attribute sparse_items
+    #
+    #   @return [Array<CitySummary>]
+    #
+    ListCitiesOutput = ::Struct.new(
+      :next_token,
+      :some_enum,
+      :a_string,
+      :default_bool,
+      :boxed_bool,
+      :default_number,
+      :boxed_number,
+      :items,
+      :sparse_items,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      def initialize(*)
+        super
+        self.default_bool ||= false
+        self.default_number ||= 0
+      end
+    end
+
+    # @!attribute message
+    #
+    #   @return [String]
+    #
+    # @!attribute author
+    #
+    #   @return [String]
+    #
+    Message = ::Struct.new(
+      :message,
+      :author,
       keyword_init: true
     ) do
       include Hearth::Structure
     end
 
-    # @!attribute image
+    # Error encountered when no resource could be found.
+    #
+    # @!attribute resource_type
+    #   The type of resource that was not found.
     #
     #   @return [String]
     #
-    GetCityImageOutput = ::Struct.new(
-      :image,
+    # @!attribute message
+    #
+    #   @return [String]
+    #
+    NoSuchResource = ::Struct.new(
+      :resource_type,
+      :message,
       keyword_init: true
     ) do
       include Hearth::Structure
-    end
-
-    # @!attribute city_id
-    #
-    #   @return [String]
-    #
-    GetForecastInput = ::Struct.new(
-      :city_id,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute baz
-    #
-    #   @return [String]
-    #
-    # @!attribute bar
-    #
-    #   @return [String]
-    #
-    Baz = ::Struct.new(
-      :baz,
-      :bar,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute baz
-    #
-    #   @return [String]
-    #
-    # @!attribute bar
-    #
-    #   @return [String]
-    #
-    Foo = ::Struct.new(
-      :baz,
-      :bar,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # Includes enum constants for TypedYesNo
-    #
-    module TypedYesNo
-      # No documentation available.
-      #
-      YES = "YES"
-
-      # No documentation available.
-      #
-      NO = "NO"
     end
 
     OtherStructure = ::Struct.new(
       nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute height
+    #
+    #   @return [Integer]
+    #
+    # @!attribute width
+    #
+    #   @return [Integer]
+    #
+    PNGImage = ::Struct.new(
+      :height,
+      :width,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -382,254 +591,45 @@ module Weather
       end
     end
 
-    # @!attribute chance_of_rain
+    # Includes enum constants for TypedYesNo
     #
-    #   @return [Float]
+    module TypedYesNo
+      # No documentation available.
+      #
+      YES = "YES"
+
+      # No documentation available.
+      #
+      NO = "NO"
+    end
+
+    # @!attribute baz
     #
-    # @!attribute precipitation
+    #   @return [String]
     #
-    #   @return [Precipitation]
+    # @!attribute bar
     #
-    GetForecastOutput = ::Struct.new(
-      :chance_of_rain,
-      :precipitation,
+    #   @return [String]
+    #
+    Foo = ::Struct.new(
+      :baz,
+      :bar,
       keyword_init: true
     ) do
       include Hearth::Structure
     end
 
-    # The input used to get a city.
-    #
-    # @!attribute city_id
+    # @!attribute baz
     #
     #   @return [String]
     #
-    GetCityInput = ::Struct.new(
-      :city_id,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute city_id
+    # @!attribute bar
     #
     #   @return [String]
     #
-    # @!attribute name
-    #
-    #   @return [String]
-    #
-    # @!attribute number
-    #
-    #   @return [String]
-    #
-    # @!attribute case
-    #
-    #   @return [String]
-    #
-    CitySummary = ::Struct.new(
-      :city_id,
-      :name,
-      :number,
-      :case,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute latitude
-    #
-    #   @return [Float]
-    #
-    # @!attribute longitude
-    #
-    #   @return [Float]
-    #
-    CityCoordinates = ::Struct.new(
-      :latitude,
-      :longitude,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-
-      def initialize(*)
-        super
-        self.latitude ||= 0
-      end
-    end
-
-    # @!attribute name
-    #
-    #   @return [String]
-    #
-    # @!attribute coordinates
-    #
-    #   @return [CityCoordinates]
-    #
-    # @!attribute city
-    #
-    #   @return [CitySummary]
-    #
-    GetCityOutput = ::Struct.new(
-      :name,
-      :coordinates,
-      :city,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute city_id
-    #
-    #   @return [String]
-    #
-    GetCityAnnouncementsInput = ::Struct.new(
-      :city_id,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute last_updated
-    #
-    #   @return [Time]
-    #
-    # @!attribute announcements
-    #
-    #   @return [Announcements]
-    #
-    GetCityAnnouncementsOutput = ::Struct.new(
-      :last_updated,
-      :announcements,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute next_token
-    #
-    #   @return [String]
-    #
-    # @!attribute a_string
-    #
-    #   @return [String]
-    #
-    # @!attribute default_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute boxed_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute default_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute boxed_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute some_enum
-    #   Enum, one of: ["YES", "NO"]
-    #
-    #   @return [String]
-    #
-    # @!attribute page_size
-    #
-    #   @return [Integer]
-    #
-    ListCitiesInput = ::Struct.new(
-      :next_token,
-      :a_string,
-      :default_bool,
-      :boxed_bool,
-      :default_number,
-      :boxed_number,
-      :some_enum,
-      :page_size,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-
-      def initialize(*)
-        super
-        self.default_bool ||= false
-        self.default_number ||= 0
-      end
-    end
-
-    # @!attribute next_token
-    #
-    #   @return [String]
-    #
-    # @!attribute some_enum
-    #   Enum, one of: ["YES", "NO"]
-    #
-    #   @return [String]
-    #
-    # @!attribute a_string
-    #
-    #   @return [String]
-    #
-    # @!attribute default_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute boxed_bool
-    #
-    #   @return [Boolean]
-    #
-    # @!attribute default_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute boxed_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute items
-    #
-    #   @return [Array<CitySummary>]
-    #
-    # @!attribute sparse_items
-    #
-    #   @return [Array<CitySummary>]
-    #
-    ListCitiesOutput = ::Struct.new(
-      :next_token,
-      :some_enum,
-      :a_string,
-      :default_bool,
-      :boxed_bool,
-      :default_number,
-      :boxed_number,
-      :items,
-      :sparse_items,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-
-      def initialize(*)
-        super
-        self.default_bool ||= false
-        self.default_number ||= 0
-      end
-    end
-
-    GetCurrentTimeInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute time
-    #
-    #   @return [Time]
-    #
-    GetCurrentTimeOutput = ::Struct.new(
-      :time,
+    Baz = ::Struct.new(
+      :baz,
+      :bar,
       keyword_init: true
     ) do
       include Hearth::Structure
