@@ -10,49 +10,6 @@
 module Weather
   module Types
 
-    # @!attribute member___123foo
-    #
-    #   @return [String]
-    #
-    Struct____456efg = ::Struct.new(
-      :member___123foo,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct____456efg]
-    #
-    Struct____789BadNameInput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct____456efg]
-    #
-    Struct____789BadNameOutput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     class Announcements < Hearth::Union
 
       class Police < Announcements
@@ -98,6 +55,22 @@ module Weather
       end
     end
 
+    # @!attribute baz
+    #
+    #   @return [String]
+    #
+    # @!attribute bar
+    #
+    #   @return [String]
+    #
+    Baz = ::Struct.new(
+      :baz,
+      :bar,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute latitude
     #
     #   @return [Float]
@@ -140,6 +113,22 @@ module Weather
       :name,
       :number,
       :case,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute baz
+    #
+    #   @return [String]
+    #
+    # @!attribute bar
+    #
+    #   @return [String]
+    #
+    Foo = ::Struct.new(
+      :baz,
+      :bar,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -607,33 +596,44 @@ module Weather
       NO = "NO"
     end
 
-    # @!attribute baz
+    # @!attribute member___123foo
     #
     #   @return [String]
     #
-    # @!attribute bar
-    #
-    #   @return [String]
-    #
-    Foo = ::Struct.new(
-      :baz,
-      :bar,
+    Struct____456efg = ::Struct.new(
+      :member___123foo,
       keyword_init: true
     ) do
       include Hearth::Structure
     end
 
-    # @!attribute baz
+    # @!attribute member___123abc
     #
     #   @return [String]
     #
-    # @!attribute bar
+    # @!attribute member
+    #
+    #   @return [Struct____456efg]
+    #
+    Struct____789BadNameInput = ::Struct.new(
+      :member___123abc,
+      :member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member___123abc
     #
     #   @return [String]
     #
-    Baz = ::Struct.new(
-      :baz,
-      :bar,
+    # @!attribute member
+    #
+    #   @return [Struct____456efg]
+    #
+    Struct____789BadNameOutput = ::Struct.new(
+      :member___123abc,
+      :member,
       keyword_init: true
     ) do
       include Hearth::Structure

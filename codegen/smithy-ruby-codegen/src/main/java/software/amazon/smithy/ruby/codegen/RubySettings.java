@@ -28,7 +28,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Settings used by {@link RubyCodegenPlugin}.
+ * Settings used by {@link DirectedRubyCodegenPlugin}.
  */
 @SmithyUnstableApi
 public final class RubySettings {
