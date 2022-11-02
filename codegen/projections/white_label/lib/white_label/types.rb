@@ -10,33 +10,6 @@
 module WhiteLabel
   module Types
 
-    # @!attribute member___next_token
-    #
-    #   @return [String]
-    #
-    Struct____PaginatorsTestWithBadNamesInput = ::Struct.new(
-      :member___next_token,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___wrapper
-    #
-    #   @return [ResultWrapper]
-    #
-    # @!attribute member___items
-    #
-    #   @return [Array<String>]
-    #
-    Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
-      :member___wrapper,
-      :member___items,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!attribute message
     #
     #   @return [String]
@@ -685,6 +658,33 @@ module WhiteLabel
     #
     WaitersTestOutput = ::Struct.new(
       :status,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member___next_token
+    #
+    #   @return [String]
+    #
+    Struct____PaginatorsTestWithBadNamesInput = ::Struct.new(
+      :member___next_token,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member___wrapper
+    #
+    #   @return [ResultWrapper]
+    #
+    # @!attribute member___items
+    #
+    #   @return [Array<String>]
+    #
+    Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
+      :member___wrapper,
+      :member___items,
       keyword_init: true
     ) do
       include Hearth::Structure

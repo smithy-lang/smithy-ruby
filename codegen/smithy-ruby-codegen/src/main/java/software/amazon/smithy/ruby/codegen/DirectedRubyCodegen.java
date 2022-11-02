@@ -60,7 +60,6 @@ public class DirectedRubyCodegen
     private static final Logger LOGGER =
             Logger.getLogger(DirectedRubyCodegen.class.getName());
 
-    private TypesGenerator typesGenerator;
     private List<Shape> typeShapes = new ArrayList<>();
 
     @Override
@@ -104,8 +103,6 @@ public class DirectedRubyCodegen
             applicationTransport,
             collectDependencies(model, service, protocol, directive.settings(), integrations),
             directive.symbolProvider());
-
-        typesGenerator = new TypesGenerator(context);
 
         return context;
     }
@@ -184,8 +181,11 @@ public class DirectedRubyCodegen
 
     @Override
     public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
+        GenerationContext context = directive.context();
+
         // Generate types
-        directive.context().writerDelegator().useFileWriter(
+        TypesGenerator typesGenerator = new TypesGenerator(context);
+        context.writerDelegator().useFileWriter(
             typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
             writer.includePreamble().includeRequires();
 
@@ -195,7 +195,7 @@ public class DirectedRubyCodegen
             writer.addModule("Types");
 
             typeShapes.stream()
-                .sorted(Comparator.comparing(Shape::getId))
+                .sorted(Comparator.comparing(a -> a.getId().getName()))
                 .forEach(shape -> shape.accept(visitor));
 
             writer.closeAllModules();
@@ -203,13 +203,12 @@ public class DirectedRubyCodegen
 
         typesGenerator.renderRbs();
 
-        ParamsGenerator paramsGenerator = new ParamsGenerator(directive.context());
+        ParamsGenerator paramsGenerator = new ParamsGenerator(context);
         paramsGenerator.render();
 
-        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(directive.context());
+        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(context);
         validatorsGenerator.render();
 
-        GenerationContext context = directive.context();
 
         if (directive.context().protocolGenerator().isPresent()) {
             ProtocolGenerator generator = directive.context().protocolGenerator().get();

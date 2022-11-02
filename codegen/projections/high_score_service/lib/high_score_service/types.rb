@@ -171,6 +171,17 @@ module HighScoreService
       include Hearth::Structure
     end
 
+    # @!attribute errors
+    #
+    #   @return [Hash<String, Array<String>>]
+    #
+    UnprocessableEntityError = ::Struct.new(
+      :errors,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # Input structure for UpdateHighScore
     #
     # @!attribute id
@@ -200,17 +211,6 @@ module HighScoreService
     #
     UpdateHighScoreOutput = ::Struct.new(
       :high_score,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute errors
-    #
-    #   @return [Hash<String, Array<String>>]
-    #
-    UnprocessableEntityError = ::Struct.new(
-      :errors,
       keyword_init: true
     ) do
       include Hearth::Structure

@@ -9,78 +9,6 @@
 
 module RailsJson
   module Types
-    # Includes enum constants for FooEnum
-    #
-    module FooEnum
-      # No documentation available.
-      #
-      FOO = "Foo"
-
-      # No documentation available.
-      #
-      BAZ = "Baz"
-
-      # No documentation available.
-      #
-      BAR = "Bar"
-
-      # No documentation available.
-      #
-      ONE = "1"
-
-      # No documentation available.
-      #
-      ZERO = "0"
-    end
-
-    # @!attribute hi
-    #
-    #   @return [String]
-    #
-    GreetingStruct = ::Struct.new(
-      :hi,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___123foo
-    #
-    #   @return [String]
-    #
-    Struct____456efg = ::Struct.new(
-      :member___123foo,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member___123abc
-    #
-    #   @return [String]
-    #
-    # @!attribute member
-    #
-    #   @return [Struct____456efg]
-    #
-    Struct____789BadNameInput = ::Struct.new(
-      :member___123abc,
-      :member,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!attribute member
-    #
-    #   @return [Struct____456efg]
-    #
-    Struct____789BadNameOutput = ::Struct.new(
-      :member,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
 
     # @!attribute query_string
     #
@@ -417,6 +345,41 @@ module RailsJson
       include Hearth::Structure
     end
 
+    # Includes enum constants for FooEnum
+    #
+    module FooEnum
+      # No documentation available.
+      #
+      FOO = "Foo"
+
+      # No documentation available.
+      #
+      BAZ = "Baz"
+
+      # No documentation available.
+      #
+      BAR = "Bar"
+
+      # No documentation available.
+      #
+      ONE = "1"
+
+      # No documentation available.
+      #
+      ZERO = "0"
+    end
+
+    # @!attribute hi
+    #
+    #   @return [String]
+    #
+    GreetingStruct = ::Struct.new(
+      :hi,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     GreetingWithErrorsInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -521,22 +484,6 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # @!attribute foo
-    #
-    #   @return [String]
-    #
-    # @!attribute foo_map
-    #
-    #   @return [Hash<String, String>]
-    #
-    HttpPrefixHeadersInput = ::Struct.new(
-      :foo,
-      :foo_map,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     HttpPrefixHeadersInResponseInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -550,6 +497,22 @@ module RailsJson
     #
     HttpPrefixHeadersInResponseOutput = ::Struct.new(
       :prefix_headers,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute foo
+    #
+    #   @return [String]
+    #
+    # @!attribute foo_map
+    #
+    #   @return [Hash<String, String>]
+    #
+    HttpPrefixHeadersInput = ::Struct.new(
+      :foo,
+      :foo_map,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -2029,6 +1992,44 @@ module RailsJson
       :target_epoch_seconds,
       :target_http_date,
       :target_date_time,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member___123foo
+    #
+    #   @return [String]
+    #
+    Struct____456efg = ::Struct.new(
+      :member___123foo,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member___123abc
+    #
+    #   @return [String]
+    #
+    # @!attribute member
+    #
+    #   @return [Struct____456efg]
+    #
+    Struct____789BadNameInput = ::Struct.new(
+      :member___123abc,
+      :member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute member
+    #
+    #   @return [Struct____456efg]
+    #
+    Struct____789BadNameOutput = ::Struct.new(
+      :member,
       keyword_init: true
     ) do
       include Hearth::Structure
