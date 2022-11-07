@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 namespace example.weather
 
 use smithy.ruby.tests.protocols#fakeProtocol
@@ -192,7 +192,7 @@ structure GetCityOutput {
 // This structure is nested within GetCityOutput.
 structure CityCoordinates {
     @required
-    latitude: PrimitiveFloat,
+    latitude: PrimitiveFloat = 0,
 
     @required
     longitude: Float,
@@ -423,11 +423,21 @@ structure GetCityImageInput {
 
     @required
     imageType: ImageType,
+
+    @required,
+    resolution: Resolution
 }
 
 union ImageType {
     raw: DefaultBool,
-    png: PNGImage,
+    png: PNGImage
+}
+
+intEnum Resolution {
+   LOW = 0
+   MEDIUM = 1
+   HIGH = 2
+   ULTRA = 3
 }
 
 structure PNGImage {
@@ -439,6 +449,7 @@ structure PNGImage {
 }
 
 structure GetCityImageOutput {
+    @required
     @httpPayload
     image: CityImageData,
 }

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -46,6 +47,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     private final String namespace;
     private boolean includePreamble = false;
     private boolean includeRequires = false;
+    private Stack<String> modules = new Stack<>();
 
     /**
      * @param namespace namespace to write in
@@ -58,6 +60,26 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         trimBlankLines();
         setIndentText("  ");
         putFormatter('T', new RubySymbolFormatter());
+    }
+
+    public void addModule(String name) {
+        modules.push(name);
+        this.openBlock("module $L", name);
+    }
+
+    public void closeModule() {
+        if (modules.isEmpty()) {
+            throw new RuntimeException("No modules were opened");
+        }
+
+        modules.pop();
+        this.closeBlock("end");
+    }
+
+    public void closeAllModules() {
+        while (!modules.isEmpty()) {
+            closeModule();
+        }
     }
 
     /**
@@ -323,6 +345,10 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
 
     public void addUseImports(RubyDependency dependency) {
         dependency.getDependencies().forEach(d -> getImportContainer().importDependency(d));
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     /**

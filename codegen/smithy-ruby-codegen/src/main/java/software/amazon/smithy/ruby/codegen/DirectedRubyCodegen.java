@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
@@ -57,6 +59,8 @@ public class DirectedRubyCodegen
 
     private static final Logger LOGGER =
             Logger.getLogger(DirectedRubyCodegen.class.getName());
+
+    private List<Shape> typeShapes = new ArrayList<>();
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<RubySettings> directive) {
@@ -88,7 +92,7 @@ public class DirectedRubyCodegen
                 .createDefaultHttpApplicationTransport();
         }
 
-        return new GenerationContext(
+        GenerationContext context = new GenerationContext(
             directive.settings(),
             directive.fileManifest(),
             integrations,
@@ -98,8 +102,9 @@ public class DirectedRubyCodegen
             protocolGenerator,
             applicationTransport,
             collectDependencies(model, service, protocol, directive.settings(), integrations),
-            directive.symbolProvider()
-        );
+            directive.symbolProvider());
+
+        return context;
     }
 
     @Override
@@ -148,17 +153,62 @@ public class DirectedRubyCodegen
 
     @Override
     public void generateStructure(GenerateStructureDirective<GenerationContext, RubySettings> directive) {
-        TypesGenerator typesGenerator = new TypesGenerator(directive.context());
-        typesGenerator.render();
+        typeShapes.add(directive.shape());
+    }
+
+    @Override
+    public void generateError(GenerateErrorDirective<GenerationContext, RubySettings> directive) {
+        if (directive.context().protocolGenerator().isPresent()) {
+            directive.context().protocolGenerator().get().generateErrors(directive.context());
+        }
+        typeShapes.add(directive.shape());
+    }
+
+    @Override
+    public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
+        typeShapes.add(directive.shape());
+    }
+
+    @Override
+    public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
+        typeShapes.add(directive.shape());
+    }
+
+    @Override
+    public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
+        typeShapes.add(directive.shape());
+    }
+
+    @Override
+    public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
+        GenerationContext context = directive.context();
+
+        // Generate types
+        TypesGenerator typesGenerator = new TypesGenerator(context);
+        context.writerDelegator().useFileWriter(
+            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
+            writer.includePreamble().includeRequires();
+
+            TypesGenerator.TypesVisitor visitor = typesGenerator.getTypeVisitor(writer);
+
+            writer.addModule(directive.settings().getModule());
+            writer.addModule("Types");
+
+            typeShapes.stream()
+                .sorted(Comparator.comparing(a -> a.getId().getName()))
+                .forEach(shape -> shape.accept(visitor));
+
+            writer.closeAllModules();
+        });
+
         typesGenerator.renderRbs();
 
-        ParamsGenerator paramsGenerator = new ParamsGenerator(directive.context());
+        ParamsGenerator paramsGenerator = new ParamsGenerator(context);
         paramsGenerator.render();
 
-        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(directive.context());
+        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(context);
         validatorsGenerator.render();
 
-        GenerationContext context = directive.context();
 
         if (directive.context().protocolGenerator().isPresent()) {
             ProtocolGenerator generator = directive.context().protocolGenerator().get();
@@ -174,38 +224,6 @@ public class DirectedRubyCodegen
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
-    }
-
-    @Override
-    public void generateError(GenerateErrorDirective<GenerationContext, RubySettings> directive) {
-        if (directive.context().protocolGenerator().isPresent()) {
-            directive.context().protocolGenerator().get().generateErrors(directive.context());
-        }
-    }
-
-    @Override
-    public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
-
-    }
-
-    @Override
-    public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
-        GenerationContext context = directive.context();
 
         List<String> additionalFiles = context.integrations().stream()
                 .map((integration) -> integration.writeAdditionalFiles(context))

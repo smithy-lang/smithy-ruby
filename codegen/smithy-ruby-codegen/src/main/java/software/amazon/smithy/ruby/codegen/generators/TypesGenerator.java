@@ -27,6 +27,8 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -47,7 +49,6 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public class TypesGenerator {
-
     private static final Logger LOGGER =
             Logger.getLogger(TypesGenerator.class.getName());
 
@@ -62,9 +63,21 @@ public class TypesGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Types");
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Types");
+        this.writer = new RubyCodeWriter(getNameSpace());
+        this.rbsWriter = new RubyCodeWriter(getNameSpace());
         this.symbolProvider = context.symbolProvider();
+    }
+
+    public TypesVisitor getTypeVisitor(RubyCodeWriter writer) {
+        return new TypesVisitor(writer);
+    }
+
+    public String getFile() {
+        return settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
+    }
+
+    public String getNameSpace() {
+        return context.settings().getModule() + "::Types";
     }
 
     public void render() {
@@ -76,13 +89,11 @@ public class TypesGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Types")
                 .write("")
-                .call(() -> renderTypes(new TypesVisitor()))
+                .call(() -> renderTypes(getTypeVisitor(writer)))
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName()
-                        + "/types.rb";
+        String fileName = getFile();
         fileManifest.writeFile(fileName, writer.toString());
         LOGGER.fine("Wrote types to " + fileName);
     }
@@ -106,7 +117,7 @@ public class TypesGenerator {
         LOGGER.fine("Wrote types rbs to " + fileName);
     }
 
-    private void renderTypes(ShapeVisitor<Void> visitor) {
+    public void renderTypes(ShapeVisitor<Void> visitor) {
         Model modelWithoutTraitShapes = ModelTransformer.create()
                 .getModelWithoutTraitShapes(model);
 
@@ -117,7 +128,14 @@ public class TypesGenerator {
                 .forEach((shape) -> shape.accept(visitor));
     }
 
-    private class TypesVisitor extends ShapeVisitor.Default<Void> {
+    public class TypesVisitor extends ShapeVisitor.Default<Void> {
+
+        private RubyCodeWriter writer;
+
+        public TypesVisitor(RubyCodeWriter writer) {
+            this.writer = writer;
+        }
+
         @Override
         protected Void getDefault(Shape shape) {
             return null;
@@ -246,6 +264,65 @@ public class TypesGenerator {
                             .unwrite("\n")
                             .closeBlock("end\n");
                 }
+            }
+
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
+            List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
+                    .filter(value -> value.getName().isPresent())
+                    .collect(Collectors.toList());
+
+            // only write out a module if there is at least one enum constant
+            if (enumDefinitions.size() > 0) {
+                String shapeName = symbolProvider.toSymbol(shape).getName();
+
+                writer
+                        .writeDocstring("Includes enum constants for " + shapeName)
+                        .openBlock("module $L", shapeName);
+
+                enumDefinitions.forEach(enumDefinition -> {
+                    String enumName = enumDefinition.getName().get();
+                    String enumValue = enumDefinition.getValue();
+                    String enumDocumentation = enumDefinition.getDocumentation()
+                            .orElse("No documentation available.");
+                    writer.writeDocstring(enumDocumentation);
+                    if (enumDefinition.isDeprecated()) {
+                        writer.writeYardDeprecated("This enum value is deprecated.", "");
+                    }
+                    if (!enumDefinition.getTags().isEmpty()) {
+                        String enumTags = enumDefinition.getTags().stream()
+                                .map((tag) -> "\"" + tag + "\"")
+                                .collect(Collectors.joining(", "));
+                        writer.writeDocstring("Tags: [" + enumTags + "]");
+                    }
+                    writer.write("$L = $S\n", enumName, enumValue);
+                });
+
+                writer
+                        .unwrite("\n")
+                        .closeBlock("end\n");
+            }
+
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape shape) {
+            // only write out a module if there is at least one enum constant
+            if (shape.getEnumValues().size() > 0) {
+                String shapeName = symbolProvider.toSymbol(shape).getName();
+
+                writer.writeDocstring("Includes enum constants for " + shapeName)
+                    .addModule(shapeName);
+
+                shape.getEnumValues()
+                    .forEach((enumName, enumValue) -> writer.write("$L = $L\n", enumName, enumValue));
+
+                writer.unwrite("\n").closeModule();
             }
 
             return null;
