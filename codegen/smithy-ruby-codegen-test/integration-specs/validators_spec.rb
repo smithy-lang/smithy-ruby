@@ -207,7 +207,7 @@ module WhiteLabel
 
       it 'validates required' do
         expect { EndpointWithHostLabelOperationInput.validate!(input, context: 'input') }
-          .to raise_error(ArgumentError, "Expected input to be set.")
+          .to raise_error(ArgumentError, "Expected input[:label_member] to be set.")
       end
     end
   end
