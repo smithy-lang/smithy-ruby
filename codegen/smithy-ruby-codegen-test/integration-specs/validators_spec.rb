@@ -203,7 +203,7 @@ module WhiteLabel
     end
 
     describe EndpointWithHostLabelOperationInput do
-      let(:input) { EndpointWithHostLabelOperationInput.new }
+      let(:input) { Types::EndpointWithHostLabelOperationInput.new }
 
       it 'validates required' do
         expect { EndpointWithHostLabelOperationInput.validate!(input, context: 'input') }
