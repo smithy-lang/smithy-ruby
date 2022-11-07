@@ -89,16 +89,16 @@ module WhiteLabel
     private
 
     def validate!
-      Hearth::Validator.validate!(adaptive_retry_wait_to_fill, TrueClass, FalseClass, context: 'options[:adaptive_retry_wait_to_fill]')
-      Hearth::Validator.validate!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
-      Hearth::Validator.validate!(endpoint, String, context: 'options[:endpoint]')
-      Hearth::Validator.validate!(http_wire_trace, TrueClass, FalseClass, context: 'options[:http_wire_trace]')
-      Hearth::Validator.validate!(log_level, Symbol, context: 'options[:log_level]')
-      Hearth::Validator.validate!(logger, Logger, context: 'options[:logger]')
-      Hearth::Validator.validate!(max_attempts, Integer, context: 'options[:max_attempts]')
-      Hearth::Validator.validate!(retry_mode, String, context: 'options[:retry_mode]')
-      Hearth::Validator.validate!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
-      Hearth::Validator.validate!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
+      Hearth::Validator.validate_types!(adaptive_retry_wait_to_fill, TrueClass, FalseClass, context: 'options[:adaptive_retry_wait_to_fill]')
+      Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
+      Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
+      Hearth::Validator.validate_types!(http_wire_trace, TrueClass, FalseClass, context: 'options[:http_wire_trace]')
+      Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
+      Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
+      Hearth::Validator.validate_types!(max_attempts, Integer, context: 'options[:max_attempts]')
+      Hearth::Validator.validate_types!(retry_mode, String, context: 'options[:retry_mode]')
+      Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
+      Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
     end
 
     def self.defaults

@@ -42,6 +42,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -122,6 +123,9 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = ":" + symbolProvider.toMemberName(member);
             String input = "input[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
+            if (member.hasTrait(RequiredTrait.class)) {
+                writer.write("$T.validate_required!($L, context: $L)", Hearth.VALIDATOR, input, context);
+            }
             target.accept(new MemberValidator(writer, symbolProvider, input, context, false));
         });
     }
@@ -296,7 +300,8 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("$T.validate_types!($L, ::TrueClass, ::FalseClass, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::TrueClass, ::FalseClass, context: $L)",
+                    Hearth.VALIDATOR, input, context);
             return null;
         }
 

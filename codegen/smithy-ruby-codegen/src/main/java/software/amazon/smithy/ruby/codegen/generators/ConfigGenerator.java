@@ -143,7 +143,7 @@ public class ConfigGenerator {
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";
             }
-            writer.write("$3T.validate!($1L, $2L, context: 'options[:$1L]')",
+            writer.write("$3T.validate_types!($1L, $2L, context: 'options[:$1L]')",
                     member, type, Hearth.VALIDATOR);
             // TODO - add constraints here
         });
