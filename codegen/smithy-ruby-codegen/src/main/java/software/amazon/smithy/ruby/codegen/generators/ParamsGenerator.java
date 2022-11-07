@@ -116,7 +116,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
 
     private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
         writer
-                .write("$T.validate!(params, ::Hash, $T, context: context)",
+                .write("$T.validate_types!(params, ::Hash, $T, context: context)",
                         Hearth.VALIDATOR, symbol)
                 .write("type = $T.new", symbol);
 
@@ -143,7 +143,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.build(params, context: '')")
-                .write("$T.validate!(params, ::Array, context: context)", Hearth.VALIDATOR)
+                .write("$T.validate_types!(params, ::Array, context: context)", Hearth.VALIDATOR)
                 .write("data = []")
                 .call(() -> {
                     if (isComplexShape(memberTarget)) {
@@ -172,7 +172,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("module $L", symbolProvider.toSymbol(mapShape).getName())
                 .openBlock("def self.build(params, context: '')")
-                .write("$T.validate!(params, ::Hash, context: context)", Hearth.VALIDATOR)
+                .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                 .write("data = {}")
                 .openBlock("params.each do |key, value|")
                 .call(() -> valueTarget
@@ -196,7 +196,7 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
                 .openBlock("module $L", name)
                 .openBlock("def self.build(params, context: '')")
                 .write("return params if params.is_a?($T)", typeSymbol)
-                .write("$T.validate!(params, ::Hash, $T, context: context)",
+                .write("$T.validate_types!(params, ::Hash, $T, context: context)",
                         Hearth.VALIDATOR, typeSymbol)
                 .openBlock("unless params.size == 1")
                 .write("raise ArgumentError,")
