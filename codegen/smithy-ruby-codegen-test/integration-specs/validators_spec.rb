@@ -203,8 +203,10 @@ module WhiteLabel
     end
 
     describe EndpointWithHostLabelOperationInput do
+      let(:input) { EndpointWithHostLabelOperationInput.new }
+
       it 'validates required' do
-        expect { EndpointWithHostLabelOperationInput.validate!({}, context: 'input') }
+        expect { EndpointWithHostLabelOperationInput.validate!(input, context: 'input') }
           .to raise_error(ArgumentError, "Expected input to be set.")
       end
     end
