@@ -19,7 +19,7 @@ module Hearth
 
     # Validate a value is present and not empty.
     # @raise [ArgumentError] Raises when the value is nil or empty.
-    def validate_required!(value, context:)
+    def self.validate_required!(value, context:)
       raise ArgumentError, "Expected #{context} to be set." if value.nil?
     end
   end
