@@ -117,13 +117,15 @@ module Weather
         Hearth::Validator.validate_types!(input[:city_id], ::String, context: "#{context}[:city_id]")
         Hearth::Validator.validate_required!(input[:image_type], context: "#{context}[:image_type]")
         ImageType.validate!(input[:image_type], context: "#{context}[:image_type]") unless input[:image_type].nil?
-        Hearth::Validator.validate!(input[:resolution], ::Integer, context: "#{context}[:resolution]")
+        Hearth::Validator.validate_required!(input[:resolution], context: "#{context}[:resolution]")
+        Hearth::Validator.validate_types!(input[:resolution], ::Integer, context: "#{context}[:resolution]")
       end
     end
 
     class GetCityImageOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::GetCityImageOutput, context: context)
+        Hearth::Validator.validate_required!(input[:image], context: "#{context}[:image]")
         unless input[:image].respond_to?(:read) || input[:image].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:image].class}"
         end
