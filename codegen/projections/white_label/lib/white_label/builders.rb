@@ -10,6 +10,20 @@
 module WhiteLabel
   module Builders
 
+    # Operation Builder for DefaultKitchenSink
+    class DefaultKitchenSink
+      def self.build(http_req, input:)
+      end
+    end
+
+    # Map Builder for MapOfStrings
+    class MapOfStrings
+    end
+
+    # List Builder for ListOfStrings
+    class ListOfStrings
+    end
+
     # Operation Builder for DefaultsTest
     class DefaultsTest
       def self.build(http_req, input:)
@@ -46,16 +60,8 @@ module WhiteLabel
     class MapOfStructs
     end
 
-    # Map Builder for MapOfStrings
-    class MapOfStrings
-    end
-
     # List Builder for ListOfStructs
     class ListOfStructs
-    end
-
-    # List Builder for ListOfStrings
-    class ListOfStrings
     end
 
     # Operation Builder for PaginatorsTest

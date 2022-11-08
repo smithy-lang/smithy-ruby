@@ -19,6 +19,10 @@ module WhiteLabel
 
     end
 
+    describe '#default_kitchen_sink' do
+
+    end
+
     describe '#defaults_test' do
 
     end

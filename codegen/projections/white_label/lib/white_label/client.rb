@@ -53,6 +53,103 @@ module WhiteLabel
     end
 
     # @param [Hash] params
+    #   See {Types::DefaultKitchenSinkInput}.
+    #
+    # @return [Types::DefaultKitchenSinkOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.default_kitchen_sink(
+    #     hello: 'hello', # required
+    #     simple_enum: 'YES', # required - accepts ["YES", "NO", "MAYBE"]
+    #     typed_enum: 'YES', # required - accepts ["YES", "NO", "MAYBE"]
+    #     int_enum: 1, # required
+    #     null_document: {
+    #       'nil' => nil,
+    #       'number' => 123.0,
+    #       'string' => 'value',
+    #       'boolean' => true,
+    #       'array' => [],
+    #       'map' => {}
+    #     }, # required
+    #     list_of_strings: [
+    #       'member'
+    #     ], # required
+    #     map_of_strings: {
+    #       'key' => 'value'
+    #     }, # required
+    #     iso8601_timestamp: Time.now, # required
+    #     epoch_timestamp: Time.now # required
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::DefaultKitchenSinkOutput
+    #   resp.data.hello #=> String
+    #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
+    #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
+    #   resp.data.int_enum #=> Integer
+    #   resp.data.null_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.string_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.boolean_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.numbers_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.list_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.map_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.list_of_strings #=> Array<String>
+    #   resp.data.list_of_strings[0] #=> String
+    #   resp.data.map_of_strings #=> Hash<String, String>
+    #   resp.data.map_of_strings['key'] #=> String
+    #   resp.data.iso8601_timestamp #=> Time
+    #   resp.data.epoch_timestamp #=> Time
+    #
+    def default_kitchen_sink(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::DefaultKitchenSinkInput.build(params)
+      response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::DefaultKitchenSinkInput,
+        validate_input: @config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::DefaultKitchenSink
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Retry,
+        retry_mode: @config.retry_mode,
+        error_inspector_class: Hearth::Retry::ErrorInspector,
+        retry_quota: @retry_quota,
+        max_attempts: @config.max_attempts,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+      )
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::DefaultKitchenSink
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        stub_class: Stubs::DefaultKitchenSink,
+        stubs: @stubs,
+        params_class: Params::DefaultKitchenSinkOutput
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: @config.logger,
+          operation_name: :default_kitchen_sink
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
     #   See {Types::DefaultsTestInput}.
     #
     # @return [Types::DefaultsTestOutput]

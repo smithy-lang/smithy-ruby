@@ -10,6 +10,20 @@
 module WhiteLabel
   module Parsers
 
+    # Operation Parser for DefaultKitchenSink
+    class DefaultKitchenSink
+      def self.parse(http_resp)
+        data = Types::DefaultKitchenSinkOutput.new
+        data
+      end
+    end
+
+    class MapOfStrings
+    end
+
+    class ListOfStrings
+    end
+
     # Operation Parser for DefaultsTest
     class DefaultsTest
       def self.parse(http_resp)
@@ -51,13 +65,7 @@ module WhiteLabel
     class MapOfStructs
     end
 
-    class MapOfStrings
-    end
-
     class ListOfStructs
-    end
-
-    class ListOfStrings
     end
 
     # Error Parser for ClientError

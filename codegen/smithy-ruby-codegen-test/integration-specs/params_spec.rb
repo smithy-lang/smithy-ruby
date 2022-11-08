@@ -102,6 +102,30 @@ module WhiteLabel
       end
     end
 
+    describe DefaultKitchenSinkInput do
+      include_examples "validates params", Hash, Types::DefaultKitchenSinkInput
+      it 'builds with empty parmas input' do
+        data = DefaultKitchenSinkInput.build({}, context: 'params')
+        expect(data).to be_a(Types::DefaultKitchenSinkInput)
+        expected = {
+          hello: 'world',
+          simple_enum: 'YES',
+          typed_enum: 'NO',
+          int_enum: 1,
+          string_document: 'some string document',
+          boolean_document: true,
+          numbers_document: 1.23,
+          list_document: [],
+          map_document: {},
+          list_of_strings: [],
+          map_of_strings: {},
+          epoch_timestamp: 1515531081.1234,
+          iso8601_timestamp: "1985-04-12T23:20:50.52Z"
+        }
+        expect(data.to_h).to eq(expected)
+      end
+    end
+
     describe Struct do
       include_examples "validates params", Hash, Types::Struct
 

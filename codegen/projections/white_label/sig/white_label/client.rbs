@@ -14,6 +14,7 @@ module WhiteLabel
     def self.middleware: () -> untyped
 
     def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void
+    def default_kitchen_sink: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def defaults_test: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def endpoint_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def endpoint_with_host_label_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped

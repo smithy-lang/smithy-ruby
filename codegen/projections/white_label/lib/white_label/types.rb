@@ -21,6 +21,162 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # @!attribute hello
+    #
+    #   @return [String]
+    #
+    # @!attribute simple_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute typed_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute int_enum
+    #
+    #   @return [Integer]
+    #
+    # @!attribute null_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute string_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute boolean_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute numbers_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute map_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_of_strings
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute map_of_strings
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute iso8601_timestamp
+    #
+    #   @return [Time]
+    #
+    # @!attribute epoch_timestamp
+    #
+    #   @return [Time]
+    #
+    DefaultKitchenSinkInput = ::Struct.new(
+      :hello,
+      :simple_enum,
+      :typed_enum,
+      :int_enum,
+      :null_document,
+      :string_document,
+      :boolean_document,
+      :numbers_document,
+      :list_document,
+      :map_document,
+      :list_of_strings,
+      :map_of_strings,
+      :iso8601_timestamp,
+      :epoch_timestamp,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute hello
+    #
+    #   @return [String]
+    #
+    # @!attribute simple_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute typed_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute int_enum
+    #
+    #   @return [Integer]
+    #
+    # @!attribute null_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute string_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute boolean_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute numbers_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute map_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_of_strings
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute map_of_strings
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute iso8601_timestamp
+    #
+    #   @return [Time]
+    #
+    # @!attribute epoch_timestamp
+    #
+    #   @return [Time]
+    #
+    DefaultKitchenSinkOutput = ::Struct.new(
+      :hello,
+      :simple_enum,
+      :typed_enum,
+      :int_enum,
+      :null_document,
+      :string_document,
+      :boolean_document,
+      :numbers_document,
+      :list_document,
+      :map_document,
+      :list_of_strings,
+      :map_of_strings,
+      :iso8601_timestamp,
+      :epoch_timestamp,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute string
     #
     #   @return [String]
@@ -115,6 +271,16 @@ module WhiteLabel
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # Includes enum constants for IntEnumType
+    #
+    module IntEnumType
+      ONE = 1
+
+      TWO = 2
+
+      THREE = 3
     end
 
     # @!attribute string

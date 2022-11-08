@@ -53,7 +53,7 @@ module Weather
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::CityCoordinates, context: context)
         type = Types::CityCoordinates.new
-        type.latitude = params[:latitude]
+        type.latitude = params.fetch(:latitude, 0)
         type.longitude = params[:longitude]
         type
       end

@@ -424,7 +424,7 @@ structure GetCityImageInput {
     @required
     imageType: ImageType,
 
-    @required,
+    @required
     resolution: Resolution
 }
 

@@ -62,18 +62,20 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         putFormatter('T', new RubySymbolFormatter());
     }
 
-    public void addModule(String name) {
+    public RubyCodeWriter addModule(String name) {
         modules.push(name);
         this.openBlock("module $L", name);
+        return this;
     }
 
-    public void closeModule() {
+    public RubyCodeWriter closeModule() {
         if (modules.isEmpty()) {
             throw new RuntimeException("No modules were opened");
         }
 
         modules.pop();
         this.closeBlock("end");
+        return this;
     }
 
     public void closeAllModules() {
