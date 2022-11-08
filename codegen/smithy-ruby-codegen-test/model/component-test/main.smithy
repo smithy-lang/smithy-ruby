@@ -9,7 +9,6 @@ service WhiteLabel {
     version: "2018-01-01",
     operations: [
         KitchenSink,
-        DefaultKitchenSink,
         PaginatorsTest,
         PaginatorsTestWithItems,
         __PaginatorsTestWithBadNames,
@@ -97,62 +96,3 @@ structure ClientError {
 @error("server")
 @retryable(throttling: true)
 structure ServerError {}
-
-@http(method: "POST", uri: "/default_kitchen_sink")
-operation DefaultKitchenSink {
-    input: DefaultKitchenSinkInputOutput,
-    output: DefaultKitchenSinkInputOutput,
-    errors: [],
-}
-
-structure DefaultKitchenSinkInputOutput {
-    @required
-    hello: String = "world",
-
-    @required
-    SimpleEnum: SimpleEnum = "YES",
-
-    @required
-    TypedEnum: TypedEnum = "NO",
-
-    @required
-    IntEnum: IntEnumType = 1,
-
-    @required
-    nullDocument: Document = null,
-
-    @required
-    stringDocument: Document = "some string document",
-
-    @required
-    booleanDocument: Document = true,
-
-    @required
-    numbersDocument: Document = 1.23,
-
-    @required
-    listDocument: Document = [],
-
-    @required
-    mapDocument: Document = {},
-
-    @required
-    ListOfStrings: ListOfStrings = [],
-
-    @required
-    MapOfStrings: MapOfStrings = {},
-
-    @required
-    @timestampFormat("date-time")
-    Iso8601Timestamp: Timestamp = "1985-04-12T23:20:50.52Z",
-
-    @required
-    @timestampFormat("epoch-seconds")
-    EpochTimestamp: Timestamp = 1515531081.1234
-}
-
-intEnum IntEnumType {
-    ONE = 1
-    TWO = 2
-    THREE = 3
-}

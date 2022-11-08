@@ -77,96 +77,8 @@ module RailsJson
       end
     end
 
-    # Map Builder for StringMap
-    class StringMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for FooEnumList
-    class FooEnumList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for TimestampList
-    class TimestampList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Hearth::TimeHelper.to_date_time(element) unless element.nil?
-        end
-        data
-      end
-    end
-
     # List Builder for BooleanList
     class BooleanList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for DoubleList
-    class DoubleList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Hearth::NumberHelper.serialize(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for IntegerSet
-    class IntegerSet
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for IntegerList
-    class IntegerList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for StringSet
-    class StringSet
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for StringList
-    class StringList
       def self.build(input)
         data = []
         input.each do |element|
@@ -211,6 +123,61 @@ module RailsJson
       end
     end
 
+    # Map Builder for DenseBooleanMap
+    class DenseBooleanMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseNumberMap
+    class DenseNumberMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseSetMap
+    class DenseSetMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::StringSet.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseStringMap
+    class DenseStringMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for DenseStructMap
+    class DenseStructMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::GreetingStruct.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     # Operation Builder for DocumentType
     class DocumentType
       def self.build(http_req, input:)
@@ -239,6 +206,17 @@ module RailsJson
       end
     end
 
+    # List Builder for DoubleList
+    class DoubleList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << Hearth::NumberHelper.serialize(element) unless element.nil?
+        end
+        data
+      end
+    end
+
     # Operation Builder for EmptyOperation
     class EmptyOperation
       def self.build(http_req, input:)
@@ -246,6 +224,14 @@ module RailsJson
         http_req.append_path('/emptyoperation')
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
+      end
+    end
+
+    # Structure Builder for EmptyStruct
+    class EmptyStruct
+      def self.build(input)
+        data = {}
+        data
       end
     end
 
@@ -271,6 +257,48 @@ module RailsJson
         data = {}
         data[:label_member] = input[:label_member] unless input[:label_member].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    # List Builder for FooEnumList
+    class FooEnumList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for FooEnumMap
+    class FooEnumMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # List Builder for FooEnumSet
+    class FooEnumSet
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    # Structure Builder for GreetingStruct
+    class GreetingStruct
+      def self.build(input)
+        data = {}
+        data[:hi] = input[:hi] unless input[:hi].nil?
+        data
       end
     end
 
@@ -320,16 +348,6 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::NestedPayload.build(input[:nested]) unless input[:nested].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-      end
-    end
-
-    # Structure Builder for NestedPayload
-    class NestedPayload
-      def self.build(input)
-        data = {}
-        data[:greeting] = input[:greeting] unless input[:greeting].nil?
-        data[:name] = input[:name] unless input[:name].nil?
-        data
       end
     end
 
@@ -561,6 +579,28 @@ module RailsJson
       end
     end
 
+    # List Builder for IntegerList
+    class IntegerList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    # List Builder for IntegerSet
+    class IntegerSet
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
     # Operation Builder for JsonEnums
     class JsonEnums
       def self.build(http_req, input:)
@@ -578,28 +618,6 @@ module RailsJson
         data[:foo_enum_set] = Builders::FooEnumSet.build(input[:foo_enum_set]) unless input[:foo_enum_set].nil?
         data[:foo_enum_map] = Builders::FooEnumMap.build(input[:foo_enum_map]) unless input[:foo_enum_map].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-      end
-    end
-
-    # Map Builder for FooEnumMap
-    class FooEnumMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for FooEnumSet
-    class FooEnumSet
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
       end
     end
 
@@ -627,125 +645,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseSetMap
-    class SparseSetMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = (Builders::StringSet.build(value) unless value.nil?)
-        end
-        data
-      end
-    end
-
-    # Map Builder for DenseSetMap
-    class DenseSetMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::StringSet.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
-    # Map Builder for SparseStringMap
-    class SparseStringMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value
-        end
-        data
-      end
-    end
-
-    # Map Builder for SparseBooleanMap
-    class SparseBooleanMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value
-        end
-        data
-      end
-    end
-
-    # Map Builder for SparseNumberMap
-    class SparseNumberMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value
-        end
-        data
-      end
-    end
-
-    # Map Builder for DenseStringMap
-    class DenseStringMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    # Map Builder for DenseBooleanMap
-    class DenseBooleanMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    # Map Builder for DenseNumberMap
-    class DenseNumberMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    # Map Builder for SparseStructMap
-    class SparseStructMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = (Builders::GreetingStruct.build(value) unless value.nil?)
-        end
-        data
-      end
-    end
-
-    # Structure Builder for GreetingStruct
-    class GreetingStruct
-      def self.build(input)
-        data = {}
-        data[:hi] = input[:hi] unless input[:hi].nil?
-        data
-      end
-    end
-
-    # Map Builder for DenseStructMap
-    class DenseStructMap
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::GreetingStruct.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
     # Operation Builder for JsonUnions
     class JsonUnions
       def self.build(http_req, input:)
@@ -761,34 +660,36 @@ module RailsJson
       end
     end
 
-    # Structure Builder for MyUnion
-    class MyUnion
+    # Structure Builder for KitchenSink
+    class KitchenSink
       def self.build(input)
         data = {}
-        case input
-        when Types::MyUnion::StringValue
-          data[:string_value] = input
-        when Types::MyUnion::BooleanValue
-          data[:boolean_value] = input
-        when Types::MyUnion::NumberValue
-          data[:number_value] = input
-        when Types::MyUnion::BlobValue
-          data[:blob_value] = ::Base64::encode64(input).strip
-        when Types::MyUnion::TimestampValue
-          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(input)
-        when Types::MyUnion::EnumValue
-          data[:enum_value] = input
-        when Types::MyUnion::ListValue
-          data[:list_value] = (Builders::StringList.build(input) unless input.nil?)
-        when Types::MyUnion::MapValue
-          data[:map_value] = (Builders::StringMap.build(input) unless input.nil?)
-        when Types::MyUnion::StructureValue
-          data[:structure_value] = (Builders::GreetingStruct.build(input) unless input.nil?)
-        else
-          raise ArgumentError,
-          "Expected input to be one of the subclasses of Types::MyUnion"
-        end
-
+        data[:blob] = ::Base64::encode64(input[:blob]).strip unless input[:blob].nil?
+        data[:boolean] = input[:boolean] unless input[:boolean].nil?
+        data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
+        data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
+        data[:float] = Hearth::NumberHelper.serialize(input[:float]) unless input[:float].nil?
+        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
+        data[:integer] = input[:integer] unless input[:integer].nil?
+        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
+        data[:json_value] = input[:json_value] unless input[:json_value].nil?
+        data[:list_of_lists] = Builders::ListOfListOfStrings.build(input[:list_of_lists]) unless input[:list_of_lists].nil?
+        data[:list_of_maps_of_strings] = Builders::ListOfMapsOfStrings.build(input[:list_of_maps_of_strings]) unless input[:list_of_maps_of_strings].nil?
+        data[:list_of_strings] = Builders::ListOfStrings.build(input[:list_of_strings]) unless input[:list_of_strings].nil?
+        data[:list_of_structs] = Builders::ListOfStructs.build(input[:list_of_structs]) unless input[:list_of_structs].nil?
+        data[:long] = input[:long] unless input[:long].nil?
+        data[:map_of_lists_of_strings] = Builders::MapOfListsOfStrings.build(input[:map_of_lists_of_strings]) unless input[:map_of_lists_of_strings].nil?
+        data[:map_of_maps] = Builders::MapOfMapOfStrings.build(input[:map_of_maps]) unless input[:map_of_maps].nil?
+        data[:map_of_strings] = Builders::MapOfStrings.build(input[:map_of_strings]) unless input[:map_of_strings].nil?
+        data[:map_of_structs] = Builders::MapOfStructs.build(input[:map_of_structs]) unless input[:map_of_structs].nil?
+        data[:recursive_list] = Builders::ListOfKitchenSinks.build(input[:recursive_list]) unless input[:recursive_list].nil?
+        data[:recursive_map] = Builders::MapOfKitchenSinks.build(input[:recursive_map]) unless input[:recursive_map].nil?
+        data[:recursive_struct] = Builders::KitchenSink.build(input[:recursive_struct]) unless input[:recursive_struct].nil?
+        data[:simple_struct] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
+        data[:string] = input[:string] unless input[:string].nil?
+        data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
+        data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
+        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
         data
       end
     end
@@ -833,69 +734,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for StructWithLocationName
-    class StructWithLocationName
-      def self.build(input)
-        data = {}
-        data['RenamedMember'] = input[:value] unless input[:value].nil?
-        data
-      end
-    end
-
-    # Structure Builder for SimpleStruct
-    class SimpleStruct
-      def self.build(input)
-        data = {}
-        data[:value] = input[:value] unless input[:value].nil?
-        data
-      end
-    end
-
-    # Structure Builder for KitchenSink
-    class KitchenSink
-      def self.build(input)
-        data = {}
-        data[:blob] = ::Base64::encode64(input[:blob]).strip unless input[:blob].nil?
-        data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
-        data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = Hearth::NumberHelper.serialize(input[:float]) unless input[:float].nil?
-        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
-        data[:integer] = input[:integer] unless input[:integer].nil?
-        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
-        data[:json_value] = input[:json_value] unless input[:json_value].nil?
-        data[:list_of_lists] = Builders::ListOfListOfStrings.build(input[:list_of_lists]) unless input[:list_of_lists].nil?
-        data[:list_of_maps_of_strings] = Builders::ListOfMapsOfStrings.build(input[:list_of_maps_of_strings]) unless input[:list_of_maps_of_strings].nil?
-        data[:list_of_strings] = Builders::ListOfStrings.build(input[:list_of_strings]) unless input[:list_of_strings].nil?
-        data[:list_of_structs] = Builders::ListOfStructs.build(input[:list_of_structs]) unless input[:list_of_structs].nil?
-        data[:long] = input[:long] unless input[:long].nil?
-        data[:map_of_lists_of_strings] = Builders::MapOfListsOfStrings.build(input[:map_of_lists_of_strings]) unless input[:map_of_lists_of_strings].nil?
-        data[:map_of_maps] = Builders::MapOfMapOfStrings.build(input[:map_of_maps]) unless input[:map_of_maps].nil?
-        data[:map_of_strings] = Builders::MapOfStrings.build(input[:map_of_strings]) unless input[:map_of_strings].nil?
-        data[:map_of_structs] = Builders::MapOfStructs.build(input[:map_of_structs]) unless input[:map_of_structs].nil?
-        data[:recursive_list] = Builders::ListOfKitchenSinks.build(input[:recursive_list]) unless input[:recursive_list].nil?
-        data[:recursive_map] = Builders::MapOfKitchenSinks.build(input[:recursive_map]) unless input[:recursive_map].nil?
-        data[:recursive_struct] = Builders::KitchenSink.build(input[:recursive_struct]) unless input[:recursive_struct].nil?
-        data[:simple_struct] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
-        data[:string] = input[:string] unless input[:string].nil?
-        data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
-        data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
-        data
-      end
-    end
-
-    # Map Builder for MapOfKitchenSinks
-    class MapOfKitchenSinks
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::KitchenSink.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
     # List Builder for ListOfKitchenSinks
     class ListOfKitchenSinks
       def self.build(input)
@@ -907,45 +745,23 @@ module RailsJson
       end
     end
 
-    # Map Builder for MapOfStructs
-    class MapOfStructs
+    # List Builder for ListOfListOfStrings
+    class ListOfListOfStrings
       def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::SimpleStruct.build(value) unless value.nil?
+        data = []
+        input.each do |element|
+          data << Builders::ListOfStrings.build(element) unless element.nil?
         end
         data
       end
     end
 
-    # Map Builder for MapOfStrings
-    class MapOfStrings
+    # List Builder for ListOfMapsOfStrings
+    class ListOfMapsOfStrings
       def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    # Map Builder for MapOfMapOfStrings
-    class MapOfMapOfStrings
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::MapOfStrings.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
-    # Map Builder for MapOfListsOfStrings
-    class MapOfListsOfStrings
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::ListOfStrings.build(value) unless value.nil?
+        data = []
+        input.each do |element|
+          data << Builders::MapOfStrings.build(element) unless element.nil?
         end
         data
       end
@@ -973,32 +789,57 @@ module RailsJson
       end
     end
 
-    # List Builder for ListOfMapsOfStrings
-    class ListOfMapsOfStrings
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::MapOfStrings.build(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    # List Builder for ListOfListOfStrings
-    class ListOfListOfStrings
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::ListOfStrings.build(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    # Structure Builder for EmptyStruct
-    class EmptyStruct
+    # Map Builder for MapOfKitchenSinks
+    class MapOfKitchenSinks
       def self.build(input)
         data = {}
+        input.each do |key, value|
+          data[key] = Builders::KitchenSink.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for MapOfListsOfStrings
+    class MapOfListsOfStrings
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::ListOfStrings.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for MapOfMapOfStrings
+    class MapOfMapOfStrings
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::MapOfStrings.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for MapOfStrings
+    class MapOfStrings
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for MapOfStructs
+    class MapOfStructs
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::SimpleStruct.build(value) unless value.nil?
+        end
         data
       end
     end
@@ -1014,6 +855,38 @@ module RailsJson
       end
     end
 
+    # Structure Builder for MyUnion
+    class MyUnion
+      def self.build(input)
+        data = {}
+        case input
+        when Types::MyUnion::StringValue
+          data[:string_value] = input
+        when Types::MyUnion::BooleanValue
+          data[:boolean_value] = input
+        when Types::MyUnion::NumberValue
+          data[:number_value] = input
+        when Types::MyUnion::BlobValue
+          data[:blob_value] = ::Base64::encode64(input).strip
+        when Types::MyUnion::TimestampValue
+          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(input)
+        when Types::MyUnion::EnumValue
+          data[:enum_value] = input
+        when Types::MyUnion::ListValue
+          data[:list_value] = (Builders::StringList.build(input) unless input.nil?)
+        when Types::MyUnion::MapValue
+          data[:map_value] = (Builders::StringMap.build(input) unless input.nil?)
+        when Types::MyUnion::StructureValue
+          data[:structure_value] = (Builders::GreetingStruct.build(input) unless input.nil?)
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::MyUnion"
+        end
+
+        data
+      end
+    end
+
     # Operation Builder for NestedAttributesOperation
     class NestedAttributesOperation
       def self.build(http_req, input:)
@@ -1026,6 +899,16 @@ module RailsJson
         data = {}
         data[:simple_struct_attributes] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    # Structure Builder for NestedPayload
+    class NestedPayload
+      def self.build(input)
+        data = {}
+        data[:greeting] = input[:greeting] unless input[:greeting].nil?
+        data[:name] = input[:name] unless input[:name].nil?
+        data
       end
     end
 
@@ -1061,17 +944,6 @@ module RailsJson
         data[:sparse_string_list] = Builders::SparseStringList.build(input[:sparse_string_list]) unless input[:sparse_string_list].nil?
         data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-      end
-    end
-
-    # List Builder for SparseStringList
-    class SparseStringList
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element
-        end
-        data
       end
     end
 
@@ -1133,12 +1005,76 @@ module RailsJson
       end
     end
 
-    # Map Builder for StringListMap
-    class StringListMap
+    # Structure Builder for SimpleStruct
+    class SimpleStruct
+      def self.build(input)
+        data = {}
+        data[:value] = input[:value] unless input[:value].nil?
+        data
+      end
+    end
+
+    # Map Builder for SparseBooleanMap
+    class SparseBooleanMap
       def self.build(input)
         data = {}
         input.each do |key, value|
-          data[key] = Builders::StringList.build(value) unless value.nil?
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseNumberMap
+    class SparseNumberMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseSetMap
+    class SparseSetMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = (Builders::StringSet.build(value) unless value.nil?)
+        end
+        data
+      end
+    end
+
+    # List Builder for SparseStringList
+    class SparseStringList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseStringMap
+    class SparseStringMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value
+        end
+        data
+      end
+    end
+
+    # Map Builder for SparseStructMap
+    class SparseStructMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = (Builders::GreetingStruct.build(value) unless value.nil?)
         end
         data
       end
@@ -1157,6 +1093,59 @@ module RailsJson
       end
     end
 
+    # List Builder for StringList
+    class StringList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for StringListMap
+    class StringListMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::StringList.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    # Map Builder for StringMap
+    class StringMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    # List Builder for StringSet
+    class StringSet
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    # Structure Builder for StructWithLocationName
+    class StructWithLocationName
+      def self.build(input)
+        data = {}
+        data['RenamedMember'] = input[:value] unless input[:value].nil?
+        data
+      end
+    end
+
     # Operation Builder for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.build(http_req, input:)
@@ -1171,6 +1160,26 @@ module RailsJson
         http_req.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i unless input[:target_epoch_seconds].nil?
         http_req.headers['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(input[:target_http_date]) unless input[:target_http_date].nil?
         http_req.headers['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(input[:target_date_time]) unless input[:target_date_time].nil?
+      end
+    end
+
+    # List Builder for TimestampList
+    class TimestampList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << Hearth::TimeHelper.to_date_time(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    # Structure Builder for __456efg
+    class Struct____456efg
+      def self.build(input)
+        data = {}
+        data[:__123foo] = input[:member___123foo] unless input[:member___123foo].nil?
+        data
       end
     end
 
@@ -1193,15 +1202,6 @@ module RailsJson
         data = {}
         data[:member] = Builders::Struct____456efg.build(input[:member]) unless input[:member].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-      end
-    end
-
-    # Structure Builder for __456efg
-    class Struct____456efg
-      def self.build(input)
-        data = {}
-        data[:__123foo] = input[:member___123foo] unless input[:member___123foo].nil?
-        data
       end
     end
   end

@@ -102,12 +102,14 @@ module WhiteLabel
       end
     end
 
-    describe DefaultKitchenSinkInput do
-      include_examples "validates params", Hash, Types::DefaultKitchenSinkInput
+    describe DefaultsTestInput do
+      include_examples "validates params", Hash, Types::DefaultsTestInput
       it 'builds with empty parmas input' do
-        data = DefaultKitchenSinkInput.build({}, context: 'params')
-        expect(data).to be_a(Types::DefaultKitchenSinkInput)
+        data = DefaultsTestInput.build({}, context: 'params')
+        expect(data).to be_a(Types::DefaultsTestInput)
         expected = {
+          number: 0,
+          bool: false,
           hello: 'world',
           simple_enum: 'YES',
           typed_enum: 'NO',
@@ -119,6 +121,8 @@ module WhiteLabel
           map_document: {},
           list_of_strings: [],
           map_of_strings: {},
+          epoch_timestamp: 1515531081.1234,
+          iso8601_timestamp: "1985-04-12T23:20:50.52Z"
         }
         expect(data.to_h).to eq(expected)
       end

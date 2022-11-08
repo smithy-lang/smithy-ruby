@@ -10,10 +10,16 @@
 module WhiteLabel
   module Stubs
 
-    # Operation Stubber for DefaultKitchenSink
-    class DefaultKitchenSink
+    # Operation Stubber for DefaultsTest
+    class DefaultsTest
       def self.default(visited=[])
         {
+          string: 'string',
+          struct: Struct.default(visited),
+          un_required_number: 1,
+          un_required_bool: false,
+          number: 1,
+          bool: false,
           hello: 'hello',
           simple_enum: 'simple_enum',
           typed_enum: 'typed_enum',
@@ -33,32 +39,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
-        http_resp.status = 200
       end
-    end
-
-    # Map Stubber for MapOfStrings
-    class MapOfStrings
-      def self.default(visited=[])
-        return nil if visited.include?('MapOfStrings')
-        visited = visited + ['MapOfStrings']
-        {
-          test_key: 'value'
-        }
-      end
-
-    end
-
-    # List Stubber for ListOfStrings
-    class ListOfStrings
-      def self.default(visited=[])
-        return nil if visited.include?('ListOfStrings')
-        visited = visited + ['ListOfStrings']
-        [
-          'member'
-        ]
-      end
-
     end
 
     # Document Type Stubber for Document
@@ -71,22 +52,6 @@ module WhiteLabel
 
       def self.stub(stub = {})
         stub
-      end
-    end
-
-    # Operation Stubber for DefaultsTest
-    class DefaultsTest
-      def self.default(visited=[])
-        {
-          string: 'string',
-          boxed_number: 1,
-          default_number: 1,
-          default_bool: false,
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
       end
     end
 
@@ -116,6 +81,18 @@ module WhiteLabel
       end
     end
 
+    # List Stubber for Items
+    class Items
+      def self.default(visited=[])
+        return nil if visited.include?('Items')
+        visited = visited + ['Items']
+        [
+          'member'
+        ]
+      end
+
+    end
+
     # Operation Stubber for KitchenSink
     class KitchenSink
       def self.default(visited=[])
@@ -139,25 +116,37 @@ module WhiteLabel
       end
     end
 
-    # Union Stubber for Union
-    class Union
+    # List Stubber for ListOfStrings
+    class ListOfStrings
       def self.default(visited=[])
-        return nil if visited.include?('Union')
-        visited = visited + ['Union']
-        {
-          string: 'string',
-        }
+        return nil if visited.include?('ListOfStrings')
+        visited = visited + ['ListOfStrings']
+        [
+          'member'
+        ]
       end
 
     end
 
-    # Structure Stubber for Struct
-    class Struct
+    # List Stubber for ListOfStructs
+    class ListOfStructs
       def self.default(visited=[])
-        return nil if visited.include?('Struct')
-        visited = visited + ['Struct']
+        return nil if visited.include?('ListOfStructs')
+        visited = visited + ['ListOfStructs']
+        [
+          Struct.default(visited)
+        ]
+      end
+
+    end
+
+    # Map Stubber for MapOfStrings
+    class MapOfStrings
+      def self.default(visited=[])
+        return nil if visited.include?('MapOfStrings')
+        visited = visited + ['MapOfStrings']
         {
-          value: 'value',
+          test_key: 'value'
         }
       end
 
@@ -171,18 +160,6 @@ module WhiteLabel
         {
           test_key: Struct.default(visited)
         }
-      end
-
-    end
-
-    # List Stubber for ListOfStructs
-    class ListOfStructs
-      def self.default(visited=[])
-        return nil if visited.include?('ListOfStructs')
-        visited = visited + ['ListOfStructs']
-        [
-          Struct.default(visited)
-        ]
       end
 
     end
@@ -201,18 +178,6 @@ module WhiteLabel
       end
     end
 
-    # List Stubber for Items
-    class Items
-      def self.default(visited=[])
-        return nil if visited.include?('Items')
-        visited = visited + ['Items']
-        [
-          'member'
-        ]
-      end
-
-    end
-
     # Operation Stubber for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.default(visited=[])
@@ -225,6 +190,18 @@ module WhiteLabel
       def self.stub(http_resp, stub:)
         data = {}
       end
+    end
+
+    # Structure Stubber for ResultWrapper
+    class ResultWrapper
+      def self.default(visited=[])
+        return nil if visited.include?('ResultWrapper')
+        visited = visited + ['ResultWrapper']
+        {
+          member___123next_token: 'member___123next_token',
+        }
+      end
+
     end
 
     # Operation Stubber for StreamingOperation
@@ -255,6 +232,30 @@ module WhiteLabel
       end
     end
 
+    # Structure Stubber for Struct
+    class Struct
+      def self.default(visited=[])
+        return nil if visited.include?('Struct')
+        visited = visited + ['Struct']
+        {
+          value: 'value',
+        }
+      end
+
+    end
+
+    # Union Stubber for Union
+    class Union
+      def self.default(visited=[])
+        return nil if visited.include?('Union')
+        visited = visited + ['Union']
+        {
+          string: 'string',
+        }
+      end
+
+    end
+
     # Operation Stubber for WaitersTest
     class WaitersTest
       def self.default(visited=[])
@@ -280,18 +281,6 @@ module WhiteLabel
       def self.stub(http_resp, stub:)
         data = {}
       end
-    end
-
-    # Structure Stubber for ResultWrapper
-    class ResultWrapper
-      def self.default(visited=[])
-        return nil if visited.include?('ResultWrapper')
-        visited = visited + ['ResultWrapper']
-        {
-          member___123next_token: 'member___123next_token',
-        }
-      end
-
     end
   end
 end

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,6 +38,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -236,15 +236,15 @@ public abstract class BuilderGeneratorBase {
      * Render all builders.
      */
     protected void renderBuilders() {
+        TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
-                .filter((o) -> !Streaming.isEventStreaming(model, o))
-                .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(o -> {
+            .filter((o) -> !Streaming.isEventStreaming(model, o))
+            .forEach(o -> {
                     Shape inputShape = model.expectShape(o.getInputShape());
-                    renderBuildersForOperation(o, inputShape);
+                    shapesToBeRendered.add(o);
                     generatedBuilders.add(o.toShapeId());
                     generatedBuilders.add(inputShape.toShapeId());
 
@@ -253,10 +253,21 @@ public abstract class BuilderGeneratorBase {
                         Shape s = it.next();
                         if (!generatedBuilders.contains(s.getId())) {
                             generatedBuilders.add(s.getId());
-                            s.accept(new BuilderClassGenerator());
+                            shapesToBeRendered.add(s);
                         }
                     }
                 });
+
+        // Render all shapes in alphabetical ordering
+        shapesToBeRendered
+            .forEach(shape -> {
+                if (shape instanceof OperationShape operation) {
+                    Shape inputShape = model.expectShape(operation.getInputShape());
+                    renderBuildersForOperation(operation, inputShape);
+                } else {
+                    shape.accept(new BuilderClassGenerator());
+                }
+            });
     }
 
     /**

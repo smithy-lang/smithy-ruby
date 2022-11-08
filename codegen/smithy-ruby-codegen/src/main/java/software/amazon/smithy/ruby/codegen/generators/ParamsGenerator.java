@@ -288,7 +288,12 @@ public class ParamsGenerator extends ShapeVisitor.Default<Void> {
             this.checkRequired = checkRequired;
             this.rubySymbol = RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape));
 
-            if (memberShape.hasTrait(DefaultTrait.class) && memberShape.hasTrait(RequiredTrait.class)) {
+            // Note: No need to check for box trait for V1 Smithy models.
+            // Smithy convert V1 to V2 model and populate Default trait automatically
+            boolean containsRequiredAndDefaultTraits =
+                memberShape.hasTrait(DefaultTrait.class) && memberShape.hasTrait(RequiredTrait.class);
+
+            if (containsRequiredAndDefaultTraits) {
                 Shape targetShape = model.expectShape(memberShape.getTarget());
                 this.defaultValue = Optional.of(targetShape.accept(new DefaultValueRetriever(model, memberShape)));
             } else {

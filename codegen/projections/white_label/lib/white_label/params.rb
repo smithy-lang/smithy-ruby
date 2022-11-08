@@ -19,58 +19,30 @@ module WhiteLabel
       end
     end
 
-    module DefaultKitchenSinkInput
-      def self.build(params, context: '')
-        Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultKitchenSinkInput, context: context)
-        type = Types::DefaultKitchenSinkInput.new
-        type.hello = params.fetch(:hello, "world")
-        type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.typed_enum = params.fetch(:typed_enum, "NO")
-        type.int_enum = params.fetch(:int_enum, 1)
-        type.null_document = params.fetch(:null_document, nil)
-        type.string_document = params.fetch(:string_document, "some string document")
-        type.boolean_document = params.fetch(:boolean_document, true)
-        type.numbers_document = params.fetch(:numbers_document, 1.23)
-        type.list_document = params.fetch(:list_document, [])
-        type.map_document = params.fetch(:map_document, {})
-        type.list_of_strings = ListOfStrings.build(params.fetch(:list_of_strings, []), context: "#{context}[:list_of_strings]")
-        type.map_of_strings = MapOfStrings.build(params.fetch(:map_of_strings, {}), context: "#{context}[:map_of_strings]")
-        type.iso8601_timestamp = params.fetch(:iso8601_timestamp, "1985-04-12T23:20:50.52Z")
-        type.epoch_timestamp = params.fetch(:epoch_timestamp, 1.5155310811234E9)
-        type
-      end
-    end
-
-    module DefaultKitchenSinkOutput
-      def self.build(params, context: '')
-        Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultKitchenSinkOutput, context: context)
-        type = Types::DefaultKitchenSinkOutput.new
-        type.hello = params.fetch(:hello, "world")
-        type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.typed_enum = params.fetch(:typed_enum, "NO")
-        type.int_enum = params.fetch(:int_enum, 1)
-        type.null_document = params.fetch(:null_document, nil)
-        type.string_document = params.fetch(:string_document, "some string document")
-        type.boolean_document = params.fetch(:boolean_document, true)
-        type.numbers_document = params.fetch(:numbers_document, 1.23)
-        type.list_document = params.fetch(:list_document, [])
-        type.map_document = params.fetch(:map_document, {})
-        type.list_of_strings = ListOfStrings.build(params.fetch(:list_of_strings, []), context: "#{context}[:list_of_strings]")
-        type.map_of_strings = MapOfStrings.build(params.fetch(:map_of_strings, {}), context: "#{context}[:map_of_strings]")
-        type.iso8601_timestamp = params.fetch(:iso8601_timestamp, "1985-04-12T23:20:50.52Z")
-        type.epoch_timestamp = params.fetch(:epoch_timestamp, 1.5155310811234E9)
-        type
-      end
-    end
-
     module DefaultsTestInput
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)
         type = Types::DefaultsTestInput.new
         type.string = params[:string]
-        type.boxed_number = params[:boxed_number]
-        type.default_number = params[:default_number]
-        type.default_bool = params[:default_bool]
+        type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
+        type.un_required_number = params[:un_required_number]
+        type.un_required_bool = params[:un_required_bool]
+        type.number = params.fetch(:number, 0)
+        type.bool = params.fetch(:bool, false)
+        type.hello = params.fetch(:hello, "world")
+        type.simple_enum = params.fetch(:simple_enum, "YES")
+        type.typed_enum = params.fetch(:typed_enum, "NO")
+        type.int_enum = params.fetch(:int_enum, 1)
+        type.null_document = params.fetch(:null_document, nil)
+        type.string_document = params.fetch(:string_document, "some string document")
+        type.boolean_document = params.fetch(:boolean_document, true)
+        type.numbers_document = params.fetch(:numbers_document, 1.23)
+        type.list_document = params.fetch(:list_document, [])
+        type.map_document = params.fetch(:map_document, {})
+        type.list_of_strings = ListOfStrings.build(params.fetch(:list_of_strings, []), context: "#{context}[:list_of_strings]")
+        type.map_of_strings = MapOfStrings.build(params.fetch(:map_of_strings, {}), context: "#{context}[:map_of_strings]")
+        type.iso8601_timestamp = params.fetch(:iso8601_timestamp, "1985-04-12T23:20:50.52Z")
+        type.epoch_timestamp = params.fetch(:epoch_timestamp, 1.5155310811234E9)
         type
       end
     end
@@ -80,9 +52,25 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestOutput, context: context)
         type = Types::DefaultsTestOutput.new
         type.string = params[:string]
-        type.boxed_number = params[:boxed_number]
-        type.default_number = params[:default_number]
-        type.default_bool = params[:default_bool]
+        type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
+        type.un_required_number = params[:un_required_number]
+        type.un_required_bool = params[:un_required_bool]
+        type.number = params.fetch(:number, 0)
+        type.bool = params.fetch(:bool, false)
+        type.hello = params.fetch(:hello, "world")
+        type.simple_enum = params.fetch(:simple_enum, "YES")
+        type.typed_enum = params.fetch(:typed_enum, "NO")
+        type.int_enum = params.fetch(:int_enum, 1)
+        type.null_document = params.fetch(:null_document, nil)
+        type.string_document = params.fetch(:string_document, "some string document")
+        type.boolean_document = params.fetch(:boolean_document, true)
+        type.numbers_document = params.fetch(:numbers_document, 1.23)
+        type.list_document = params.fetch(:list_document, [])
+        type.map_document = params.fetch(:map_document, {})
+        type.list_of_strings = ListOfStrings.build(params.fetch(:list_of_strings, []), context: "#{context}[:list_of_strings]")
+        type.map_of_strings = MapOfStrings.build(params.fetch(:map_of_strings, {}), context: "#{context}[:map_of_strings]")
+        type.iso8601_timestamp = params.fetch(:iso8601_timestamp, "1985-04-12T23:20:50.52Z")
+        type.epoch_timestamp = params.fetch(:epoch_timestamp, 1.5155310811234E9)
         type
       end
     end

@@ -10,20 +10,6 @@
 module WhiteLabel
   module Builders
 
-    # Operation Builder for DefaultKitchenSink
-    class DefaultKitchenSink
-      def self.build(http_req, input:)
-      end
-    end
-
-    # Map Builder for MapOfStrings
-    class MapOfStrings
-    end
-
-    # List Builder for ListOfStrings
-    class ListOfStrings
-    end
-
     # Operation Builder for DefaultsTest
     class DefaultsTest
       def self.build(http_req, input:)
@@ -48,20 +34,20 @@ module WhiteLabel
       end
     end
 
-    # Structure Builder for Union
-    class Union
-    end
-
-    # Structure Builder for Struct
-    class Struct
-    end
-
-    # Map Builder for MapOfStructs
-    class MapOfStructs
+    # List Builder for ListOfStrings
+    class ListOfStrings
     end
 
     # List Builder for ListOfStructs
     class ListOfStructs
+    end
+
+    # Map Builder for MapOfStrings
+    class MapOfStrings
+    end
+
+    # Map Builder for MapOfStructs
+    class MapOfStructs
     end
 
     # Operation Builder for PaginatorsTest
@@ -91,6 +77,14 @@ module WhiteLabel
         http_req.body = input[:stream]
         http_req.headers['Content-Type'] = 'application/octet-stream'
       end
+    end
+
+    # Structure Builder for Struct
+    class Struct
+    end
+
+    # Structure Builder for Union
+    class Union
     end
 
     # Operation Builder for WaitersTest
