@@ -12,7 +12,7 @@ module Hearth
         private
 
         def validate!
-          Hearth::Validator.validate!(
+          Hearth::Validator.validate_types!(
             option, String, context: 'options[:option]'
           )
         end

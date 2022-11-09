@@ -42,6 +42,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -106,7 +107,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(structureShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("$T.validate!(input, $T, context: context)",
+                .write("$T.validate_types!(input, $T, context: context)",
                         Hearth.VALIDATOR,
                         context.symbolProvider().toSymbol(structureShape))
                 .call(() -> renderValidatorsForStructureMembers(members))
@@ -122,6 +123,9 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
             String symbolName = ":" + symbolProvider.toMemberName(member);
             String input = "input[" + symbolName + "]";
             String context = "\"#{context}[" + symbolName + "]\"";
+            if (member.hasTrait(RequiredTrait.class)) {
+                writer.write("$T.validate_required!($L, context: $L)", Hearth.VALIDATOR, input, context);
+            }
             target.accept(new MemberValidator(writer, symbolProvider, input, context, false));
         });
     }
@@ -134,9 +138,9 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("$T.validate!(input, ::Hash, context: context)", Hearth.VALIDATOR)
+                .write("$T.validate_types!(input, ::Hash, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each do |key, value|")
-                .write("$T.validate!(key, ::String, ::Symbol, context: \"#{context}.keys\")", Hearth.VALIDATOR)
+                .write("$T.validate_types!(key, ::String, ::Symbol, context: \"#{context}.keys\")", Hearth.VALIDATOR)
                 .call(() -> valueTarget
                     .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"", false)))
                 .closeBlock("end")
@@ -155,7 +159,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("$T.validate!(input, ::Array, context: context)", Hearth.VALIDATOR)
+                .write("$T.validate_types!(input, ::Array, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each_with_index do |element, index|")
                 .call(() -> memberTarget
                     .accept(new MemberValidator(writer, symbolProvider, "element", "\"#{context}[#{index}]\"", false)))
@@ -205,7 +209,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(documentShape).getName())
                 .openBlock("def self.validate!(input, context:)")
-                .write("$T.validate!(input, "
+                .write("$T.validate_types!(input, "
                         + "::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)",
                         Hearth.VALIDATOR)
                 .write("case input")
@@ -289,14 +293,15 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
                             .closeBlock("end");
                 }
             } else {
-                writer.write("$T.validate!($L, ::String, context: $L)", Hearth.VALIDATOR, input, context);
+                writer.write("$T.validate_types!($L, ::String, context: $L)", Hearth.VALIDATOR, input, context);
             }
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("$T.validate!($L, ::TrueClass, ::FalseClass, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::TrueClass, ::FalseClass, context: $L)",
+                    Hearth.VALIDATOR, input, context);
             return null;
         }
 
@@ -312,31 +317,31 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void byteShape(ByteShape shape) {
-            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void shortShape(ShortShape shape) {
-            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void longShape(LongShape shape) {
-            writer.write("$T.validate!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::Integer, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void floatShape(FloatShape shape) {
-            writer.write("$T.validate!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
@@ -352,13 +357,13 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void doubleShape(DoubleShape shape) {
-            writer.write("$T.validate!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
         @Override
         public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.write("$T.validate!($L, $T, context: $L)",
+            writer.write("$T.validate_types!($L, $T, context: $L)",
                     Hearth.VALIDATOR, input, RubyImportContainer.BIG_DECIMAL, context);
             return null;
         }
@@ -376,7 +381,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("$T.validate!($L, ::String, context: $L)", Hearth.VALIDATOR, input, context);
+            writer.write("$T.validate_types!($L, ::String, context: $L)", Hearth.VALIDATOR, input, context);
             return null;
         }
 
@@ -399,7 +404,7 @@ public class ValidatorsGenerator extends ShapeVisitor.Default<Void> {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write("$T.validate!($L, $T, context: $L)",
+            writer.write("$T.validate_types!($L, $T, context: $L)",
                     Hearth.VALIDATOR, input, RubyImportContainer.TIME, context);
             return null;
         }

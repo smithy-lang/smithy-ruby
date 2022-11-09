@@ -90,7 +90,7 @@ public class HttpProtocolTestGenerator {
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
                 .write("let(:endpoint) { 'http://127.0.0.1' } ")
-                .write("let(:config) { Config.new(stub_responses: true, endpoint: endpoint) }")
+                .write("let(:config) { Config.new(stub_responses: true, validate_input: false, endpoint: endpoint) }")
                 .write("let(:client) { Client.new(config) }")
                 .write("")
                 .call(() -> renderTests())

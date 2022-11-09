@@ -12,7 +12,7 @@ module HighScoreService
 
     module AttributeErrors
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
           data[key] = ErrorMessages.build(value, context: "#{context}[:#{key}]") unless value.nil?
@@ -23,7 +23,7 @@ module HighScoreService
 
     module CreateHighScoreInput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::CreateHighScoreInput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::CreateHighScoreInput, context: context)
         type = Types::CreateHighScoreInput.new
         type.high_score = HighScoreParams.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
         type
@@ -32,7 +32,7 @@ module HighScoreService
 
     module CreateHighScoreOutput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::CreateHighScoreOutput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::CreateHighScoreOutput, context: context)
         type = Types::CreateHighScoreOutput.new
         type.high_score = HighScoreAttributes.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
         type.location = params[:location]
@@ -42,7 +42,7 @@ module HighScoreService
 
     module DeleteHighScoreInput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
         type = Types::DeleteHighScoreInput.new
         type.id = params[:id]
         type
@@ -51,7 +51,7 @@ module HighScoreService
 
     module DeleteHighScoreOutput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::DeleteHighScoreOutput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreOutput, context: context)
         type = Types::DeleteHighScoreOutput.new
         type
       end
@@ -59,7 +59,7 @@ module HighScoreService
 
     module ErrorMessages
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Array, context: context)
+        Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each do |element|
           data << element
@@ -70,7 +70,7 @@ module HighScoreService
 
     module GetHighScoreInput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::GetHighScoreInput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreInput, context: context)
         type = Types::GetHighScoreInput.new
         type.id = params[:id]
         type
@@ -79,7 +79,7 @@ module HighScoreService
 
     module GetHighScoreOutput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::GetHighScoreOutput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreOutput, context: context)
         type = Types::GetHighScoreOutput.new
         type.high_score = HighScoreAttributes.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
         type
@@ -88,7 +88,7 @@ module HighScoreService
 
     module HighScoreAttributes
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::HighScoreAttributes, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreAttributes, context: context)
         type = Types::HighScoreAttributes.new
         type.id = params[:id]
         type.game = params[:game]
@@ -101,7 +101,7 @@ module HighScoreService
 
     module HighScoreParams
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::HighScoreParams, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreParams, context: context)
         type = Types::HighScoreParams.new
         type.game = params[:game]
         type.score = params[:score]
@@ -111,7 +111,7 @@ module HighScoreService
 
     module HighScores
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Array, context: context)
+        Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each_with_index do |element, index|
           data << HighScoreAttributes.build(element, context: "#{context}[#{index}]") unless element.nil?
@@ -122,7 +122,7 @@ module HighScoreService
 
     module ListHighScoresInput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::ListHighScoresInput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresInput, context: context)
         type = Types::ListHighScoresInput.new
         type
       end
@@ -130,7 +130,7 @@ module HighScoreService
 
     module ListHighScoresOutput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::ListHighScoresOutput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresOutput, context: context)
         type = Types::ListHighScoresOutput.new
         type.high_scores = HighScores.build(params[:high_scores], context: "#{context}[:high_scores]") unless params[:high_scores].nil?
         type
@@ -139,7 +139,7 @@ module HighScoreService
 
     module UnprocessableEntityError
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::UnprocessableEntityError, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::UnprocessableEntityError, context: context)
         type = Types::UnprocessableEntityError.new
         type.errors = AttributeErrors.build(params[:errors], context: "#{context}[:errors]") unless params[:errors].nil?
         type
@@ -148,7 +148,7 @@ module HighScoreService
 
     module UpdateHighScoreInput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
         type = Types::UpdateHighScoreInput.new
         type.id = params[:id]
         type.high_score = HighScoreParams.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
@@ -158,7 +158,7 @@ module HighScoreService
 
     module UpdateHighScoreOutput
       def self.build(params, context: '')
-        Hearth::Validator.validate!(params, ::Hash, Types::UpdateHighScoreOutput, context: context)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreOutput, context: context)
         type = Types::UpdateHighScoreOutput.new
         type.high_score = HighScoreAttributes.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
         type
