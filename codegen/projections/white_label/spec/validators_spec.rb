@@ -201,5 +201,14 @@ module WhiteLabel
           .to raise_error(ArgumentError, "Expected input to respond_to(:size)")
       end
     end
+
+    describe EndpointWithHostLabelOperationInput do
+      let(:input) { Types::EndpointWithHostLabelOperationInput.new }
+
+      it 'validates required' do
+        expect { EndpointWithHostLabelOperationInput.validate!(input, context: 'input') }
+          .to raise_error(ArgumentError, "Expected input[:label_member] to be set.")
+      end
+    end
   end
 end

@@ -52,6 +52,7 @@ tasks.register<Copy>("copyHighScoreServiceGem") {
     into("$buildDir/../../projections/")
 }
 tasks.register<Copy>("copyRailsJsonGem") {
+    mustRunAfter("copyIntegrationSpecs")
     from("$buildDir/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen")
     into("$buildDir/../../projections/")
 }
@@ -59,4 +60,8 @@ tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
     into("$buildDir/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json/spec")
 }
-tasks["build"].finalizedBy(tasks["copyHighScoreServiceGem"], tasks["copyRailsJsonGem"], tasks["copyIntegrationSpecs"])
+tasks["build"].finalizedBy(
+    tasks["copyIntegrationSpecs"],
+    tasks["copyRailsJsonGem"],
+    tasks["copyHighScoreServiceGem"]
+)
