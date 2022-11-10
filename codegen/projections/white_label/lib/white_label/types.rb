@@ -637,6 +637,33 @@ module WhiteLabel
       end
     end
 
+    # @!attribute user_id
+    #
+    #   @return [String]
+    #
+    MixinTestInput = ::Struct.new(
+      :user_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute username
+    #
+    #   @return [String]
+    #
+    # @!attribute user_id
+    #
+    #   @return [String]
+    #
+    MixinTestOutput = ::Struct.new(
+      :username,
+      :user_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute next_token
     #
     #   @return [String]

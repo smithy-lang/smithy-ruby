@@ -224,6 +224,21 @@ module WhiteLabel
       end
     end
 
+    class MixinTestInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MixinTestInput, context: context)
+        Hearth::Validator.validate_types!(input[:user_id], ::String, context: "#{context}[:user_id]")
+      end
+    end
+
+    class MixinTestOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MixinTestOutput, context: context)
+        Hearth::Validator.validate_types!(input[:username], ::String, context: "#{context}[:username]")
+        Hearth::Validator.validate_types!(input[:user_id], ::String, context: "#{context}[:user_id]")
+      end
+    end
+
     class PaginatorsTestOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::PaginatorsTestOperationInput, context: context)

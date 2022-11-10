@@ -65,6 +65,14 @@ module WhiteLabel
     class MapOfStructs
     end
 
+    # Operation Parser for MixinTest
+    class MixinTest
+      def self.parse(http_resp)
+        data = Types::MixinTestOutput.new
+        data
+      end
+    end
+
     # Operation Parser for PaginatorsTest
     class PaginatorsTest
       def self.parse(http_resp)

@@ -525,6 +525,70 @@ module WhiteLabel
     end
 
     # @param [Hash] params
+    #   See {Types::MixinTestInput}.
+    #
+    # @return [Types::MixinTestOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.mixin_test(
+    #     user_id: 'userId'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::MixinTestOutput
+    #   resp.data.username #=> String
+    #   resp.data.user_id #=> String
+    #
+    def mixin_test(params = {}, options = {}, &block)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::MixinTestInput.build(params)
+      response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::MixinTestInput,
+        validate_input: @config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::MixinTest
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Retry,
+        retry_mode: @config.retry_mode,
+        error_inspector_class: Hearth::Retry::ErrorInspector,
+        retry_quota: @retry_quota,
+        max_attempts: @config.max_attempts,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+      )
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::MixinTest
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: @config.stub_responses,
+        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        stub_class: Stubs::MixinTest,
+        stubs: @stubs,
+        params_class: Params::MixinTestOutput
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: @config.logger,
+          operation_name: :mixin_test
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
     #   See {Types::PaginatorsTestOperationInput}.
     #
     # @return [Types::PaginatorsTestOperationOutput]

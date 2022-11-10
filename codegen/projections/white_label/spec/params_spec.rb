@@ -194,5 +194,23 @@ module WhiteLabel
         expect(data.stream).to be(stream)
       end
     end
+
+    describe MixinTestInput do
+      it 'expects mixins input operation generated' do
+        data = MixinTestInput.build({user_id: 'abc123'}, context: 'params')
+        expect(data).to be_a(Types::MixinTestInput)
+        expect(data.user_id).to eq('abc123')
+      end
+
+    end
+
+    describe MixinTestOutput do
+      it 'expects mixins output operation generated' do
+        data = MixinTestOutput.build({username: 'ben', user_id: 'abc123'}, context: 'params')
+        expect(data).to be_a(Types::MixinTestOutput)
+        expect(data.user_id).to eq('abc123')
+        expect(data.username).to eq('ben')
+      end
+    end
   end
 end

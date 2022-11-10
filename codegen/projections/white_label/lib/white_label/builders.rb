@@ -50,6 +50,12 @@ module WhiteLabel
     class MapOfStructs
     end
 
+    # Operation Builder for MixinTest
+    class MixinTest
+      def self.build(http_req, input:)
+      end
+    end
+
     # Operation Builder for PaginatorsTest
     class PaginatorsTest
       def self.build(http_req, input:)

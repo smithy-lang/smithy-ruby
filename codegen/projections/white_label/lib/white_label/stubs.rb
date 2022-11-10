@@ -164,6 +164,20 @@ module WhiteLabel
 
     end
 
+    # Operation Stubber for MixinTest
+    class MixinTest
+      def self.default(visited=[])
+        {
+          username: 'username',
+          user_id: 'user_id',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+      end
+    end
+
     # Operation Stubber for PaginatorsTest
     class PaginatorsTest
       def self.default(visited=[])

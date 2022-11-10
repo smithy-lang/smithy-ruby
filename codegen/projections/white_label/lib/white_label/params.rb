@@ -199,6 +199,25 @@ module WhiteLabel
       end
     end
 
+    module MixinTestInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestInput, context: context)
+        type = Types::MixinTestInput.new
+        type.user_id = params[:user_id]
+        type
+      end
+    end
+
+    module MixinTestOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestOutput, context: context)
+        type = Types::MixinTestOutput.new
+        type.username = params[:username]
+        type.user_id = params[:user_id]
+        type
+      end
+    end
+
     module PaginatorsTestOperationInput
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
