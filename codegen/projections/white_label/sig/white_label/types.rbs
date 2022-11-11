@@ -28,6 +28,10 @@ module WhiteLabel
 
     KitchenSinkOutput: untyped
 
+    MixinTestInput: untyped
+
+    MixinTestOutput: untyped
+
     PaginatorsTestOperationInput: untyped
 
     PaginatorsTestOperationOutput: untyped

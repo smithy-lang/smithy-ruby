@@ -35,6 +35,10 @@ module WhiteLabel
 
     end
 
+    describe '#mixin_test' do
+
+    end
+
     describe '#paginators_test' do
 
     end

@@ -102,6 +102,32 @@ module WhiteLabel
       end
     end
 
+    describe DefaultsTestInput do
+      include_examples "validates params", Hash, Types::DefaultsTestInput
+      it 'builds with empty parmas input' do
+        data = DefaultsTestInput.build({}, context: 'params')
+        expect(data).to be_a(Types::DefaultsTestInput)
+        expected = {
+          number: 0,
+          bool: false,
+          hello: 'world',
+          simple_enum: 'YES',
+          typed_enum: 'NO',
+          int_enum: 1,
+          string_document: 'some string document',
+          boolean_document: true,
+          numbers_document: 1.23,
+          list_document: [],
+          map_document: {},
+          list_of_strings: [],
+          map_of_strings: {},
+          epoch_timestamp: 1515531081.1234,
+          iso8601_timestamp: "1985-04-12T23:20:50.52Z"
+        }
+        expect(data.to_h).to eq(expected)
+      end
+    end
+
     describe Struct do
       include_examples "validates params", Hash, Types::Struct
 
@@ -166,6 +192,24 @@ module WhiteLabel
         data = StreamingOperationInput.build({stream: stream}, context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)
         expect(data.stream).to be(stream)
+      end
+    end
+
+    describe MixinTestInput do
+      it 'expects mixins input operation generated' do
+        data = MixinTestInput.build({user_id: 'abc123'}, context: 'params')
+        expect(data).to be_a(Types::MixinTestInput)
+        expect(data.user_id).to eq('abc123')
+      end
+
+    end
+
+    describe MixinTestOutput do
+      it 'expects mixins output operation generated' do
+        data = MixinTestOutput.build({username: 'ben', user_id: 'abc123'}, context: 'params')
+        expect(data).to be_a(Types::MixinTestOutput)
+        expect(data.user_id).to eq('abc123')
+        expect(data.username).to eq('ben')
       end
     end
   end

@@ -25,16 +25,6 @@ module HighScoreService
       end
     end
 
-    # Structure Builder for HighScoreParams
-    class HighScoreParams
-      def self.build(input)
-        data = {}
-        data[:game] = input[:game] unless input[:game].nil?
-        data[:score] = input[:score] unless input[:score].nil?
-        data
-      end
-    end
-
     # Operation Builder for DeleteHighScore
     class DeleteHighScore
       def self.build(http_req, input:)
@@ -66,6 +56,16 @@ module HighScoreService
         )
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
+      end
+    end
+
+    # Structure Builder for HighScoreParams
+    class HighScoreParams
+      def self.build(input)
+        data = {}
+        data[:game] = input[:game] unless input[:game].nil?
+        data[:score] = input[:score] unless input[:score].nil?
+        data
       end
     end
 

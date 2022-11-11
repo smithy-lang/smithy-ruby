@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -230,6 +231,7 @@ public abstract class ParserGeneratorBase {
     }
 
     protected void renderParsers() {
+        TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
@@ -238,16 +240,15 @@ public abstract class ParserGeneratorBase {
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape outputShape = model.expectShape(o.getOutputShape());
-                    renderParsersForOperation(o, outputShape);
+                    shapesToBeRendered.add(o);
                     generatedParsers.add(o.toShapeId());
                     generatedParsers.add(outputShape.toShapeId());
-
                     Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
                     while (it.hasNext()) {
                         Shape s = it.next();
                         if (!generatedParsers.contains(s.getId())) {
                             generatedParsers.add(s.getId());
-                            s.accept(new ParserClassGenerator());
+                            shapesToBeRendered.add(s);
                         }
                     }
 
@@ -257,15 +258,22 @@ public abstract class ParserGeneratorBase {
                             Shape s = errIt.next();
                             if (!generatedParsers.contains(s.getId())) {
                                 generatedParsers.add(s.getId());
-                                if (s.hasTrait(ErrorTrait.class)) {
-                                    renderErrorParser(s);
-                                } else {
-                                    s.accept(new ParserClassGenerator());
-                                }
+                                shapesToBeRendered.add(s);
                             }
                         }
                     }
                 });
+
+        shapesToBeRendered.forEach(shape -> {
+            if (shape instanceof OperationShape operation) {
+                Shape outputShape = model.expectShape(operation.getOutputShape());
+                renderParsersForOperation(operation, outputShape);
+            } else if (shape.hasTrait(ErrorTrait.class)) {
+                renderErrorParser(shape);
+            } else {
+                shape.accept(new ParserClassGenerator());
+            }
+        });
     }
 
     protected void renderParsersForOperation(OperationShape operation, Shape outputShape) {

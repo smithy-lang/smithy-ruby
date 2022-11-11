@@ -10,6 +10,14 @@
 module WhiteLabel
   module Parsers
 
+    # Error Parser for ClientError
+    class ClientError
+      def self.parse(http_resp)
+        data = Types::ClientError.new
+        data
+      end
+    end
+
     # Operation Parser for DefaultsTest
     class DefaultsTest
       def self.parse(http_resp)
@@ -34,6 +42,9 @@ module WhiteLabel
       end
     end
 
+    class Items
+    end
+
     # Operation Parser for KitchenSink
     class KitchenSink
       def self.parse(http_resp)
@@ -42,36 +53,22 @@ module WhiteLabel
       end
     end
 
-    class Union
-    end
-
-    class Struct
-    end
-
-    class MapOfStructs
-    end
-
-    class MapOfStrings
+    class ListOfStrings
     end
 
     class ListOfStructs
     end
 
-    class ListOfStrings
+    class MapOfStrings
     end
 
-    # Error Parser for ClientError
-    class ClientError
-      def self.parse(http_resp)
-        data = Types::ClientError.new
-        data
-      end
+    class MapOfStructs
     end
 
-    # Error Parser for ServerError
-    class ServerError
+    # Operation Parser for MixinTest
+    class MixinTest
       def self.parse(http_resp)
-        data = Types::ServerError.new
+        data = Types::MixinTestOutput.new
         data
       end
     end
@@ -84,13 +81,21 @@ module WhiteLabel
       end
     end
 
-    class Items
-    end
-
     # Operation Parser for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.parse(http_resp)
         data = Types::PaginatorsTestWithItemsOutput.new
+        data
+      end
+    end
+
+    class ResultWrapper
+    end
+
+    # Error Parser for ServerError
+    class ServerError
+      def self.parse(http_resp)
+        data = Types::ServerError.new
         data
       end
     end
@@ -112,6 +117,12 @@ module WhiteLabel
       end
     end
 
+    class Struct
+    end
+
+    class Union
+    end
+
     # Operation Parser for WaitersTest
     class WaitersTest
       def self.parse(http_resp)
@@ -126,9 +137,6 @@ module WhiteLabel
         data = Types::Struct____PaginatorsTestWithBadNamesOutput.new
         data
       end
-    end
-
-    class ResultWrapper
     end
   end
 end

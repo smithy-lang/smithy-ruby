@@ -34,28 +34,26 @@ module WhiteLabel
       end
     end
 
-    # Structure Builder for Union
-    class Union
-    end
-
-    # Structure Builder for Struct
-    class Struct
-    end
-
-    # Map Builder for MapOfStructs
-    class MapOfStructs
-    end
-
-    # Map Builder for MapOfStrings
-    class MapOfStrings
+    # List Builder for ListOfStrings
+    class ListOfStrings
     end
 
     # List Builder for ListOfStructs
     class ListOfStructs
     end
 
-    # List Builder for ListOfStrings
-    class ListOfStrings
+    # Map Builder for MapOfStrings
+    class MapOfStrings
+    end
+
+    # Map Builder for MapOfStructs
+    class MapOfStructs
+    end
+
+    # Operation Builder for MixinTest
+    class MixinTest
+      def self.build(http_req, input:)
+      end
     end
 
     # Operation Builder for PaginatorsTest
@@ -85,6 +83,14 @@ module WhiteLabel
         http_req.body = input[:stream]
         http_req.headers['Content-Type'] = 'application/octet-stream'
       end
+    end
+
+    # Structure Builder for Struct
+    class Struct
+    end
+
+    # Structure Builder for Union
+    class Union
     end
 
     # Operation Builder for WaitersTest

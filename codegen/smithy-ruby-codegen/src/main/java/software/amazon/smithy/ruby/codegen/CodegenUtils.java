@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.TreeSet;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -53,5 +55,12 @@ public final class CodegenUtils {
 
         SyntheticClone synthClone = optional.get();
         return !synthClone.getArchetype().isPresent();
+    }
+
+    /**
+     * @return TreeSet sorted by shape name in alphabetical order
+     */
+    public static TreeSet<Shape> getAlphabeticalOrderedShapesSet() {
+        return new TreeSet<>(Comparator.comparing(o -> o.getId().getName()));
     }
 }

@@ -49,6 +49,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -213,6 +214,7 @@ public abstract class StubsGeneratorBase {
     }
 
     private void renderStubs() {
+        TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
@@ -220,18 +222,27 @@ public abstract class StubsGeneratorBase {
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape outputShape = model.expectShape(o.getOutputShape());
-                    renderStubsForOperation(o, outputShape);
+                    shapesToBeRendered.add(o);
                     generatedStubs.add(o.toShapeId());
-
+                    generatedStubs.add(outputShape.toShapeId());
                     Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
                     while (it.hasNext()) {
                         Shape s = it.next();
                         if (!generatedStubs.contains(s.getId())) {
                             generatedStubs.add(s.getId());
-                            s.accept(new StubClassGenerator());
+                            shapesToBeRendered.add(s);
                         }
                     }
                 });
+
+        shapesToBeRendered.forEach(shape -> {
+            if (shape instanceof OperationShape operation) {
+                Shape outputShape = model.expectShape(operation.getOutputShape());
+                renderStubsForOperation(operation, outputShape);
+            } else {
+                shape.accept(new StubClassGenerator());
+            }
+        });
     }
 
     // The Output shape is combined with the OperationStub

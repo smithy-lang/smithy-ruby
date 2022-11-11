@@ -29,32 +29,6 @@ module HighScoreService
       end
     end
 
-    # Structure Stubber for HighScoreAttributes
-    class HighScoreAttributes
-      def self.default(visited=[])
-        return nil if visited.include?('HighScoreAttributes')
-        visited = visited + ['HighScoreAttributes']
-        {
-          id: 'id',
-          game: 'game',
-          score: 1,
-          created_at: Time.now,
-          updated_at: Time.now,
-        }
-      end
-
-      def self.stub(stub)
-        stub ||= Types::HighScoreAttributes.new
-        data = {}
-        data[:id] = stub[:id] unless stub[:id].nil?
-        data[:game] = stub[:game] unless stub[:game].nil?
-        data[:score] = stub[:score] unless stub[:score].nil?
-        data[:created_at] = Hearth::TimeHelper.to_date_time(stub[:created_at]) unless stub[:created_at].nil?
-        data[:updated_at] = Hearth::TimeHelper.to_date_time(stub[:updated_at]) unless stub[:updated_at].nil?
-        data
-      end
-    end
-
     # Operation Stubber for DeleteHighScore
     class DeleteHighScore
       def self.default(visited=[])
@@ -85,20 +59,29 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for ListHighScores
-    class ListHighScores
+    # Structure Stubber for HighScoreAttributes
+    class HighScoreAttributes
       def self.default(visited=[])
+        return nil if visited.include?('HighScoreAttributes')
+        visited = visited + ['HighScoreAttributes']
         {
-          high_scores: HighScores.default(visited),
+          id: 'id',
+          game: 'game',
+          score: 1,
+          created_at: Time.now,
+          updated_at: Time.now,
         }
       end
 
-      def self.stub(http_resp, stub:)
+      def self.stub(stub)
+        stub ||= Types::HighScoreAttributes.new
         data = {}
-        http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        data[:id] = stub[:id] unless stub[:id].nil?
+        data[:game] = stub[:game] unless stub[:game].nil?
+        data[:score] = stub[:score] unless stub[:score].nil?
+        data[:created_at] = Hearth::TimeHelper.to_date_time(stub[:created_at]) unless stub[:created_at].nil?
+        data[:updated_at] = Hearth::TimeHelper.to_date_time(stub[:updated_at]) unless stub[:updated_at].nil?
+        data
       end
     end
 
@@ -119,6 +102,23 @@ module HighScoreService
           data << Stubs::HighScoreAttributes.stub(element) unless element.nil?
         end
         data
+      end
+    end
+
+    # Operation Stubber for ListHighScores
+    class ListHighScores
+      def self.default(visited=[])
+        {
+          high_scores: HighScores.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
+        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 

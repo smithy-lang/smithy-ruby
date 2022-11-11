@@ -15,14 +15,43 @@ module WhiteLabel
       def self.default(visited=[])
         {
           string: 'string',
-          boxed_number: 1,
-          default_number: 1,
-          default_bool: false,
+          struct: Struct.default(visited),
+          un_required_number: 1,
+          un_required_bool: false,
+          number: 1,
+          bool: false,
+          hello: 'hello',
+          simple_enum: 'simple_enum',
+          typed_enum: 'typed_enum',
+          int_enum: 1,
+          null_document: nil,
+          string_document: nil,
+          boolean_document: nil,
+          numbers_document: nil,
+          list_document: nil,
+          map_document: nil,
+          list_of_strings: ListOfStrings.default(visited),
+          map_of_strings: MapOfStrings.default(visited),
+          iso8601_timestamp: Time.now,
+          epoch_timestamp: Time.now,
         }
       end
 
       def self.stub(http_resp, stub:)
         data = {}
+      end
+    end
+
+    # Document Type Stubber for Document
+    class Document
+      def self.default(visited=[])
+        return nil if visited.include?('Document')
+        visited = visited + ['Document']
+        { 'Document' => [0, 1, 2] }
+      end
+
+      def self.stub(stub = {})
+        stub
       end
     end
 
@@ -52,6 +81,18 @@ module WhiteLabel
       end
     end
 
+    # List Stubber for Items
+    class Items
+      def self.default(visited=[])
+        return nil if visited.include?('Items')
+        visited = visited + ['Items']
+        [
+          'member'
+        ]
+      end
+
+    end
+
     # Operation Stubber for KitchenSink
     class KitchenSink
       def self.default(visited=[])
@@ -75,25 +116,37 @@ module WhiteLabel
       end
     end
 
-    # Union Stubber for Union
-    class Union
+    # List Stubber for ListOfStrings
+    class ListOfStrings
       def self.default(visited=[])
-        return nil if visited.include?('Union')
-        visited = visited + ['Union']
-        {
-          string: 'string',
-        }
+        return nil if visited.include?('ListOfStrings')
+        visited = visited + ['ListOfStrings']
+        [
+          'member'
+        ]
       end
 
     end
 
-    # Structure Stubber for Struct
-    class Struct
+    # List Stubber for ListOfStructs
+    class ListOfStructs
       def self.default(visited=[])
-        return nil if visited.include?('Struct')
-        visited = visited + ['Struct']
+        return nil if visited.include?('ListOfStructs')
+        visited = visited + ['ListOfStructs']
+        [
+          Struct.default(visited)
+        ]
+      end
+
+    end
+
+    # Map Stubber for MapOfStrings
+    class MapOfStrings
+      def self.default(visited=[])
+        return nil if visited.include?('MapOfStrings')
+        visited = visited + ['MapOfStrings']
         {
-          value: 'value',
+          test_key: 'value'
         }
       end
 
@@ -111,52 +164,17 @@ module WhiteLabel
 
     end
 
-    # Map Stubber for MapOfStrings
-    class MapOfStrings
+    # Operation Stubber for MixinTest
+    class MixinTest
       def self.default(visited=[])
-        return nil if visited.include?('MapOfStrings')
-        visited = visited + ['MapOfStrings']
         {
-          test_key: 'value'
+          username: 'username',
+          user_id: 'user_id',
         }
       end
 
-    end
-
-    # List Stubber for ListOfStructs
-    class ListOfStructs
-      def self.default(visited=[])
-        return nil if visited.include?('ListOfStructs')
-        visited = visited + ['ListOfStructs']
-        [
-          Struct.default(visited)
-        ]
-      end
-
-    end
-
-    # List Stubber for ListOfStrings
-    class ListOfStrings
-      def self.default(visited=[])
-        return nil if visited.include?('ListOfStrings')
-        visited = visited + ['ListOfStrings']
-        [
-          'member'
-        ]
-      end
-
-    end
-
-    # Document Type Stubber for Document
-    class Document
-      def self.default(visited=[])
-        return nil if visited.include?('Document')
-        visited = visited + ['Document']
-        { 'Document' => [0, 1, 2] }
-      end
-
-      def self.stub(stub = {})
-        stub
+      def self.stub(http_resp, stub:)
+        data = {}
       end
     end
 
@@ -174,18 +192,6 @@ module WhiteLabel
       end
     end
 
-    # List Stubber for Items
-    class Items
-      def self.default(visited=[])
-        return nil if visited.include?('Items')
-        visited = visited + ['Items']
-        [
-          'member'
-        ]
-      end
-
-    end
-
     # Operation Stubber for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.default(visited=[])
@@ -198,6 +204,18 @@ module WhiteLabel
       def self.stub(http_resp, stub:)
         data = {}
       end
+    end
+
+    # Structure Stubber for ResultWrapper
+    class ResultWrapper
+      def self.default(visited=[])
+        return nil if visited.include?('ResultWrapper')
+        visited = visited + ['ResultWrapper']
+        {
+          member___123next_token: 'member___123next_token',
+        }
+      end
+
     end
 
     # Operation Stubber for StreamingOperation
@@ -228,6 +246,30 @@ module WhiteLabel
       end
     end
 
+    # Structure Stubber for Struct
+    class Struct
+      def self.default(visited=[])
+        return nil if visited.include?('Struct')
+        visited = visited + ['Struct']
+        {
+          value: 'value',
+        }
+      end
+
+    end
+
+    # Union Stubber for Union
+    class Union
+      def self.default(visited=[])
+        return nil if visited.include?('Union')
+        visited = visited + ['Union']
+        {
+          string: 'string',
+        }
+      end
+
+    end
+
     # Operation Stubber for WaitersTest
     class WaitersTest
       def self.default(visited=[])
@@ -253,18 +295,6 @@ module WhiteLabel
       def self.stub(http_resp, stub:)
         data = {}
       end
-    end
-
-    # Structure Stubber for ResultWrapper
-    class ResultWrapper
-      def self.default(visited=[])
-        return nil if visited.include?('ResultWrapper')
-        visited = visited + ['ResultWrapper']
-        {
-          member___123next_token: 'member___123next_token',
-        }
-      end
-
     end
   end
 end

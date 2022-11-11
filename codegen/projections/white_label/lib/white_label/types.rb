@@ -25,31 +25,157 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    # @!attribute boxed_number
+    # @!attribute struct
+    #   This docstring should be different than KitchenSink struct member.
+    #
+    #   @deprecated
+    #     This structure is
+    #     deprecated.
+    #     Since: today
+    #
+    #   @note
+    #     This shape is unstable and may change in the future.
+    #
+    #   @see https://www.ruby-lang.org/en/ Homepage
+    #
+    #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
+    #
+    #   @note
+    #     This shape is meant for internal use only.
+    #
+    #   @since today
+    #
+    #   @return [Struct]
+    #
+    # @!attribute un_required_number
     #
     #   @return [Integer]
     #
-    # @!attribute default_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute default_bool
+    # @!attribute un_required_bool
     #
     #   @return [Boolean]
     #
+    # @!attribute number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute hello
+    #
+    #   @return [String]
+    #
+    # @!attribute simple_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute typed_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute int_enum
+    #
+    #   @return [Integer]
+    #
+    # @!attribute null_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute string_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute boolean_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute numbers_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute map_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_of_strings
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute map_of_strings
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute iso8601_timestamp
+    #
+    #   @return [Time]
+    #
+    # @!attribute epoch_timestamp
+    #
+    #   @return [Time]
+    #
     DefaultsTestInput = ::Struct.new(
       :string,
-      :boxed_number,
-      :default_number,
-      :default_bool,
+      :struct,
+      :un_required_number,
+      :un_required_bool,
+      :number,
+      :bool,
+      :hello,
+      :simple_enum,
+      :typed_enum,
+      :int_enum,
+      :null_document,
+      :string_document,
+      :boolean_document,
+      :numbers_document,
+      :list_document,
+      :map_document,
+      :list_of_strings,
+      :map_of_strings,
+      :iso8601_timestamp,
+      :epoch_timestamp,
       keyword_init: true
     ) do
       include Hearth::Structure
 
       def initialize(*)
         super
-        self.default_number ||= 0
-        self.default_bool ||= false
+        self.un_required_number ||= 0
+        self.un_required_bool ||= false
+        self.number ||= 0
+        self.bool ||= false
+      end
+
+      def to_s
+        "#<struct WhiteLabel::Types::DefaultsTestInput "\
+          "string=#{string || 'nil'}, "\
+          "struct=\"[SENSITIVE]\", "\
+          "un_required_number=#{un_required_number || 'nil'}, "\
+          "un_required_bool=#{un_required_bool || 'nil'}, "\
+          "number=#{number || 'nil'}, "\
+          "bool=#{bool || 'nil'}, "\
+          "hello=#{hello || 'nil'}, "\
+          "simple_enum=#{simple_enum || 'nil'}, "\
+          "typed_enum=#{typed_enum || 'nil'}, "\
+          "int_enum=#{int_enum || 'nil'}, "\
+          "null_document=#{null_document || 'nil'}, "\
+          "string_document=#{string_document || 'nil'}, "\
+          "boolean_document=#{boolean_document || 'nil'}, "\
+          "numbers_document=#{numbers_document || 'nil'}, "\
+          "list_document=#{list_document || 'nil'}, "\
+          "map_document=#{map_document || 'nil'}, "\
+          "list_of_strings=#{list_of_strings || 'nil'}, "\
+          "map_of_strings=#{map_of_strings || 'nil'}, "\
+          "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, "\
+          "epoch_timestamp=#{epoch_timestamp || 'nil'}>"
       end
     end
 
@@ -57,31 +183,157 @@ module WhiteLabel
     #
     #   @return [String]
     #
-    # @!attribute boxed_number
+    # @!attribute struct
+    #   This docstring should be different than KitchenSink struct member.
+    #
+    #   @deprecated
+    #     This structure is
+    #     deprecated.
+    #     Since: today
+    #
+    #   @note
+    #     This shape is unstable and may change in the future.
+    #
+    #   @see https://www.ruby-lang.org/en/ Homepage
+    #
+    #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
+    #
+    #   @note
+    #     This shape is meant for internal use only.
+    #
+    #   @since today
+    #
+    #   @return [Struct]
+    #
+    # @!attribute un_required_number
     #
     #   @return [Integer]
     #
-    # @!attribute default_number
-    #
-    #   @return [Integer]
-    #
-    # @!attribute default_bool
+    # @!attribute un_required_bool
     #
     #   @return [Boolean]
     #
+    # @!attribute number
+    #
+    #   @return [Integer]
+    #
+    # @!attribute bool
+    #
+    #   @return [Boolean]
+    #
+    # @!attribute hello
+    #
+    #   @return [String]
+    #
+    # @!attribute simple_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute typed_enum
+    #   Enum, one of: ["YES", "NO", "MAYBE"]
+    #
+    #   @return [String]
+    #
+    # @!attribute int_enum
+    #
+    #   @return [Integer]
+    #
+    # @!attribute null_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute string_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute boolean_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute numbers_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute map_document
+    #
+    #   @return [Hash,Array,String,Boolean,Numeric]
+    #
+    # @!attribute list_of_strings
+    #
+    #   @return [Array<String>]
+    #
+    # @!attribute map_of_strings
+    #
+    #   @return [Hash<String, String>]
+    #
+    # @!attribute iso8601_timestamp
+    #
+    #   @return [Time]
+    #
+    # @!attribute epoch_timestamp
+    #
+    #   @return [Time]
+    #
     DefaultsTestOutput = ::Struct.new(
       :string,
-      :boxed_number,
-      :default_number,
-      :default_bool,
+      :struct,
+      :un_required_number,
+      :un_required_bool,
+      :number,
+      :bool,
+      :hello,
+      :simple_enum,
+      :typed_enum,
+      :int_enum,
+      :null_document,
+      :string_document,
+      :boolean_document,
+      :numbers_document,
+      :list_document,
+      :map_document,
+      :list_of_strings,
+      :map_of_strings,
+      :iso8601_timestamp,
+      :epoch_timestamp,
       keyword_init: true
     ) do
       include Hearth::Structure
 
       def initialize(*)
         super
-        self.default_number ||= 0
-        self.default_bool ||= false
+        self.un_required_number ||= 0
+        self.un_required_bool ||= false
+        self.number ||= 0
+        self.bool ||= false
+      end
+
+      def to_s
+        "#<struct WhiteLabel::Types::DefaultsTestOutput "\
+          "string=#{string || 'nil'}, "\
+          "struct=\"[SENSITIVE]\", "\
+          "un_required_number=#{un_required_number || 'nil'}, "\
+          "un_required_bool=#{un_required_bool || 'nil'}, "\
+          "number=#{number || 'nil'}, "\
+          "bool=#{bool || 'nil'}, "\
+          "hello=#{hello || 'nil'}, "\
+          "simple_enum=#{simple_enum || 'nil'}, "\
+          "typed_enum=#{typed_enum || 'nil'}, "\
+          "int_enum=#{int_enum || 'nil'}, "\
+          "null_document=#{null_document || 'nil'}, "\
+          "string_document=#{string_document || 'nil'}, "\
+          "boolean_document=#{boolean_document || 'nil'}, "\
+          "numbers_document=#{numbers_document || 'nil'}, "\
+          "list_document=#{list_document || 'nil'}, "\
+          "map_document=#{map_document || 'nil'}, "\
+          "list_of_strings=#{list_of_strings || 'nil'}, "\
+          "map_of_strings=#{map_of_strings || 'nil'}, "\
+          "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, "\
+          "epoch_timestamp=#{epoch_timestamp || 'nil'}>"
       end
     end
 
@@ -115,6 +367,16 @@ module WhiteLabel
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # Includes enum constants for IntEnumType
+    #
+    module IntEnumType
+      ONE = 1
+
+      TWO = 2
+
+      THREE = 3
     end
 
     # @!attribute string
@@ -373,6 +635,33 @@ module WhiteLabel
           "map_of_structs=#{map_of_structs || 'nil'}, "\
           "union=\"[SENSITIVE]\">"
       end
+    end
+
+    # @!attribute user_id
+    #
+    #   @return [String]
+    #
+    MixinTestInput = ::Struct.new(
+      :user_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute username
+    #
+    #   @return [String]
+    #
+    # @!attribute user_id
+    #
+    #   @return [String]
+    #
+    MixinTestOutput = ::Struct.new(
+      :username,
+      :user_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
     end
 
     # @!attribute next_token

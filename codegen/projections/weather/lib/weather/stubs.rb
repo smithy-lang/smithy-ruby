@@ -10,32 +10,26 @@
 module Weather
   module Stubs
 
-    # Operation Stubber for GetCity
-    class GetCity
+    # Union Stubber for Announcements
+    class Announcements
       def self.default(visited=[])
+        return nil if visited.include?('Announcements')
+        visited = visited + ['Announcements']
         {
-          name: 'name',
-          coordinates: CityCoordinates.default(visited),
-          city: CitySummary.default(visited),
+          police: Message.default(visited),
         }
       end
 
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
-      end
     end
 
-    # Structure Stubber for CitySummary
-    class CitySummary
+    # Structure Stubber for Baz
+    class Baz
       def self.default(visited=[])
-        return nil if visited.include?('CitySummary')
-        visited = visited + ['CitySummary']
+        return nil if visited.include?('Baz')
+        visited = visited + ['Baz']
         {
-          city_id: 'city_id',
-          name: 'name',
-          number: 'number',
-          case: 'case',
+          baz: 'baz',
+          bar: 'bar',
         }
       end
 
@@ -54,6 +48,62 @@ module Weather
 
     end
 
+    # List Stubber for CitySummaries
+    class CitySummaries
+      def self.default(visited=[])
+        return nil if visited.include?('CitySummaries')
+        visited = visited + ['CitySummaries']
+        [
+          CitySummary.default(visited)
+        ]
+      end
+
+    end
+
+    # Structure Stubber for CitySummary
+    class CitySummary
+      def self.default(visited=[])
+        return nil if visited.include?('CitySummary')
+        visited = visited + ['CitySummary']
+        {
+          city_id: 'city_id',
+          name: 'name',
+          number: 'number',
+          case: 'case',
+        }
+      end
+
+    end
+
+    # Structure Stubber for Foo
+    class Foo
+      def self.default(visited=[])
+        return nil if visited.include?('Foo')
+        visited = visited + ['Foo']
+        {
+          baz: 'baz',
+          bar: 'bar',
+        }
+      end
+
+    end
+
+    # Operation Stubber for GetCity
+    class GetCity
+      def self.default(visited=[])
+        {
+          name: 'name',
+          coordinates: CityCoordinates.default(visited),
+          city: CitySummary.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     # Operation Stubber for GetCityAnnouncements
     class GetCityAnnouncements
       def self.default(visited=[])
@@ -69,31 +119,6 @@ module Weather
         http_resp.headers['x-last-updated'] = Hearth::TimeHelper.to_date_time(stub[:last_updated]) unless stub[:last_updated].nil?
         IO.copy_stream(stub[:announcements], http_resp.body)
       end
-    end
-
-    # Union Stubber for Announcements
-    class Announcements
-      def self.default(visited=[])
-        return nil if visited.include?('Announcements')
-        visited = visited + ['Announcements']
-        {
-          police: Message.default(visited),
-        }
-      end
-
-    end
-
-    # Structure Stubber for Message
-    class Message
-      def self.default(visited=[])
-        return nil if visited.include?('Message')
-        visited = visited + ['Message']
-        {
-          message: 'message',
-          author: 'author',
-        }
-      end
-
     end
 
     # Operation Stubber for GetCityImage
@@ -140,67 +165,6 @@ module Weather
       end
     end
 
-    # Union Stubber for Precipitation
-    class Precipitation
-      def self.default(visited=[])
-        return nil if visited.include?('Precipitation')
-        visited = visited + ['Precipitation']
-        {
-          rain: false,
-        }
-      end
-
-    end
-
-    # Structure Stubber for Baz
-    class Baz
-      def self.default(visited=[])
-        return nil if visited.include?('Baz')
-        visited = visited + ['Baz']
-        {
-          baz: 'baz',
-          bar: 'bar',
-        }
-      end
-
-    end
-
-    # Structure Stubber for Foo
-    class Foo
-      def self.default(visited=[])
-        return nil if visited.include?('Foo')
-        visited = visited + ['Foo']
-        {
-          baz: 'baz',
-          bar: 'bar',
-        }
-      end
-
-    end
-
-    # Structure Stubber for OtherStructure
-    class OtherStructure
-      def self.default(visited=[])
-        return nil if visited.include?('OtherStructure')
-        visited = visited + ['OtherStructure']
-        {
-        }
-      end
-
-    end
-
-    # Map Stubber for StringMap
-    class StringMap
-      def self.default(visited=[])
-        return nil if visited.include?('StringMap')
-        visited = visited + ['StringMap']
-        {
-          test_key: 'value'
-        }
-      end
-
-    end
-
     # Operation Stubber for ListCities
     class ListCities
       def self.default(visited=[])
@@ -223,6 +187,42 @@ module Weather
       end
     end
 
+    # Structure Stubber for Message
+    class Message
+      def self.default(visited=[])
+        return nil if visited.include?('Message')
+        visited = visited + ['Message']
+        {
+          message: 'message',
+          author: 'author',
+        }
+      end
+
+    end
+
+    # Structure Stubber for OtherStructure
+    class OtherStructure
+      def self.default(visited=[])
+        return nil if visited.include?('OtherStructure')
+        visited = visited + ['OtherStructure']
+        {
+        }
+      end
+
+    end
+
+    # Union Stubber for Precipitation
+    class Precipitation
+      def self.default(visited=[])
+        return nil if visited.include?('Precipitation')
+        visited = visited + ['Precipitation']
+        {
+          rain: false,
+        }
+      end
+
+    end
+
     # List Stubber for SparseCitySummaries
     class SparseCitySummaries
       def self.default(visited=[])
@@ -235,14 +235,26 @@ module Weather
 
     end
 
-    # List Stubber for CitySummaries
-    class CitySummaries
+    # Map Stubber for StringMap
+    class StringMap
       def self.default(visited=[])
-        return nil if visited.include?('CitySummaries')
-        visited = visited + ['CitySummaries']
-        [
-          CitySummary.default(visited)
-        ]
+        return nil if visited.include?('StringMap')
+        visited = visited + ['StringMap']
+        {
+          test_key: 'value'
+        }
+      end
+
+    end
+
+    # Structure Stubber for __456efg
+    class Struct____456efg
+      def self.default(visited=[])
+        return nil if visited.include?('Struct____456efg')
+        visited = visited + ['Struct____456efg']
+        {
+          member___123foo: 'member___123foo',
+        }
       end
 
     end
@@ -260,18 +272,6 @@ module Weather
         data = {}
         http_resp.status = 200
       end
-    end
-
-    # Structure Stubber for __456efg
-    class Struct____456efg
-      def self.default(visited=[])
-        return nil if visited.include?('Struct____456efg')
-        visited = visited + ['Struct____456efg']
-        {
-          member___123foo: 'member___123foo',
-        }
-      end
-
     end
   end
 end

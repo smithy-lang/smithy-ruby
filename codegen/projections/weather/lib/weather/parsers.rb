@@ -10,24 +10,25 @@
 module Weather
   module Parsers
 
-    # Operation Parser for GetCity
-    class GetCity
-      def self.parse(http_resp)
-        data = Types::GetCityOutput.new
-        data
-      end
-    end
-
-    class CitySummary
+    class Baz
     end
 
     class CityCoordinates
     end
 
-    # Error Parser for NoSuchResource
-    class NoSuchResource
+    class CitySummaries
+    end
+
+    class CitySummary
+    end
+
+    class Foo
+    end
+
+    # Operation Parser for GetCity
+    class GetCity
       def self.parse(http_resp)
-        data = Types::NoSuchResource.new
+        data = Types::GetCityOutput.new
         data
       end
     end
@@ -57,21 +58,6 @@ module Weather
       end
     end
 
-    class Precipitation
-    end
-
-    class Baz
-    end
-
-    class Foo
-    end
-
-    class OtherStructure
-    end
-
-    class StringMap
-    end
-
     # Operation Parser for ListCities
     class ListCities
       def self.parse(http_resp)
@@ -80,10 +66,27 @@ module Weather
       end
     end
 
+    # Error Parser for NoSuchResource
+    class NoSuchResource
+      def self.parse(http_resp)
+        data = Types::NoSuchResource.new
+        data
+      end
+    end
+
+    class OtherStructure
+    end
+
+    class Precipitation
+    end
+
     class SparseCitySummaries
     end
 
-    class CitySummaries
+    class StringMap
+    end
+
+    class Struct____456efg
     end
 
     # Operation Parser for __789BadName
@@ -92,9 +95,6 @@ module Weather
         data = Types::Struct____789BadNameOutput.new
         data
       end
-    end
-
-    class Struct____456efg
     end
   end
 end
