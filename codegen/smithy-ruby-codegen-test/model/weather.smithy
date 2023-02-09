@@ -400,8 +400,10 @@ structure OtherStructure {}
 @enum([{value: "YES"}, {value: "NO"}])
 string SimpleYesNo
 
-@enum([{value: "YES", name: "YES"}, {value: "NO", name: "NO"}])
-string TypedYesNo
+enum TypedYesNo {
+    YES = "YES"
+    NO = "NO"
+}
 
 map StringMap {
     key: String,
