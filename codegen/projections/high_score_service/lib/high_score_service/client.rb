@@ -34,6 +34,7 @@ module HighScoreService
       @stubs = Hearth::Stubbing::Stubs.new
       @retry_quota = Hearth::Retry::RetryQuota.new
       @client_rate_limiter = Hearth::Retry::ClientRateLimiter.new
+      @interceptors = options[:interceptors] || []
     end
 
     # Create a new high score
@@ -69,7 +70,12 @@ module HighScoreService
     def create_high_score(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
+      # operation_config = resolve_operation_config(options)
+      # interceptors = interceptors = operation_config.interceptors
+      # interceptors += options[:interceptors] if options[:interceptors]
+      interceptors = @interceptors + ( options[:interceptors] || [])
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
         validate_input: @config.validate_input
@@ -107,7 +113,8 @@ module HighScoreService
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: @config.logger,
-          operation_name: :create_high_score
+          operation_name: :create_high_score,
+          interceptors: interceptors
         )
       )
       raise resp.error if resp.error
@@ -363,6 +370,7 @@ module HighScoreService
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
       response_body = ::StringIO.new
+
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
         validate_input: @config.validate_input

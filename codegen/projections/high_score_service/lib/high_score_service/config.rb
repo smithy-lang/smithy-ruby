@@ -82,6 +82,7 @@ module HighScoreService
     :retry_mode,
     :stub_responses,
     :validate_input,
+    :interceptors,
     keyword_init: true
   ) do
     include Hearth::Configuration
@@ -112,6 +113,7 @@ module HighScoreService
         max_attempts: [3],
         retry_mode: ['standard'],
         stub_responses: [false],
+        interceptors: [],
         validate_input: [true]
       }.freeze
     end
