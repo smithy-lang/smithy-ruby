@@ -17,7 +17,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -29,20 +29,20 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 
-public final class UnionGenerator
+public final class UnionGenerator extends TypesFileGenerator
         implements Consumer<GenerateUnionDirective<GenerationContext, RubySettings>> {
+
+    public UnionGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+        super(directive);
+    }
+
     @Override
     public void accept(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
-        var model = directive.model();
-        var settings = directive.context().settings();
-        var namespace = settings.getModule() + "::Types";
-        var rbFile = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
-        var rbsFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
         var shape = directive.shape();
-        var symbolProvider = directive.context().symbolProvider();
+        var model = directive.model();
         String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
 
-        directive.context().writerDelegator().useFileWriter(rbFile, namespace, writer -> {
+        directive.context().writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
             writer.writeInline("$L", documentation);
             writer.openBlock("class $T < $T", symbolProvider.toSymbol(shape), Hearth.UNION);
 
@@ -58,7 +58,7 @@ public final class UnionGenerator
                         .write("{ $L: super(__getobj__) }",
                                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                         .closeBlock("end")
-                        .call(() -> renderUnionToSMethod(settings, symbolProvider, writer, model, memberShape))
+                        .call(() -> renderUnionToSMethod(writer, model, memberShape))
                         .closeBlock("end\n");
             }
 
@@ -69,13 +69,13 @@ public final class UnionGenerator
                     .write("{ unknown: super(__getobj__) }")
                     .closeBlock("end\n")
                     .openBlock("def to_s")
-                    .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", settings.getModule())
+                    .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", directive.settings().getModule())
                     .closeBlock("end")
                     .closeBlock("end")
                     .closeBlock("end\n");
         });
 
-        directive.context().writerDelegator().useFileWriter(rbsFile, namespace, writer -> {
+        directive.context().writerDelegator().useFileWriter(rbsFile(), nameSpace(), writer -> {
             Symbol symbol = symbolProvider.toSymbol(shape);
             writer.openBlock("class $T < $T", symbol, Hearth.UNION);
 
@@ -99,8 +99,6 @@ public final class UnionGenerator
     }
 
     private void renderUnionToSMethod(
-        RubySettings settings,
-        SymbolProvider symbolProvider,
         RubyCodeWriter writer,
         Model model,
         MemberShape memberShape) {

@@ -49,6 +49,7 @@ import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.PaginatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.StructureGenerator;
+import software.amazon.smithy.ruby.codegen.generators.TypesFileBlockGenerator;
 import software.amazon.smithy.ruby.codegen.generators.UnionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
@@ -61,10 +62,11 @@ public class DirectedRubyCodegen
     private static final Logger LOGGER =
             Logger.getLogger(DirectedRubyCodegen.class.getName());
 
-    private final StructureGenerator structureGenerator = new StructureGenerator();
-    private final UnionGenerator unionGenerator = new UnionGenerator();
-    private final EnumGenerator enumGenerator = new EnumGenerator();
-    private final IntEnumGenerator intEnumGenerator = new IntEnumGenerator();
+    private StructureGenerator structureGenerator;
+    private UnionGenerator unionGenerator;
+    private EnumGenerator enumGenerator;
+    private IntEnumGenerator intEnumGenerator;
+    private TypesFileBlockGenerator typesFileBlockGenerator;
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<RubySettings> directive) {
@@ -157,21 +159,14 @@ public class DirectedRubyCodegen
 
     @Override
     public void customizeBeforeShapeGeneration(CustomizeDirective<GenerationContext, RubySettings> directive) {
-        // Pre-populate module blocks to types.rb and types.rbs files
-        var settings = directive.context().settings();
-        var namespace = settings.getModule() + "::Types";
-        var rbFile = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
-        var rbsFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
-        directive.context().writerDelegator().useFileWriter(rbFile, namespace, writer -> {
-            writer.includePreamble().includeRequires();
-            writer.addModule(settings.getModule());
-            writer.addModule("Types");
-        });
-        directive.context().writerDelegator().useFileWriter(rbsFile, namespace, writer -> {
-            writer.includePreamble();
-            writer.addModule(settings.getModule());
-            writer.addModule("Types");
-        });
+        this.structureGenerator = new StructureGenerator(directive);
+        this.unionGenerator = new UnionGenerator(directive);
+        this.enumGenerator = new EnumGenerator(directive);
+        this.intEnumGenerator = new IntEnumGenerator(directive);
+        this.typesFileBlockGenerator = new TypesFileBlockGenerator(directive);
+
+        // Pre-populate module blocks for types.rb and types.rbs files
+        this.typesFileBlockGenerator.openBlocks();
     }
 
     @Override
@@ -241,13 +236,8 @@ public class DirectedRubyCodegen
 
     @Override
     public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
-        // Close all module blocks to types.rb and types.rbs files
-        var settings = directive.context().settings();
-        var namespace = settings.getModule() + "::Types";
-        var rbFile = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
-        var rbsFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
-        directive.context().writerDelegator().useFileWriter(rbFile, namespace, RubyCodeWriter::closeAllModules);
-        directive.context().writerDelegator().useFileWriter(rbsFile, namespace, RubyCodeWriter::closeAllModules);
+        // Close all module blocks for types.rb and types.rbs files
+        this.typesFileBlockGenerator.closeAllBlocks();
     }
 
     private Set<RubyDependency> collectDependencies(

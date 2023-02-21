@@ -205,21 +205,21 @@ module Hearth
       %w[before after around].each do |method|
         method_name = "#{method}_#{simple_step_name}"
         define_method(method_name) do |*args, &block|
-          return send(method, klass, *args, &block)
+          send(method, klass, *args, &block)
         end
 
         define_singleton_method(method_name) do |*args, &block|
-          return send(method, klass, *args, &block)
+          send(method, klass, *args, &block)
         end
       end
 
       remove_method_name = "remove_#{simple_step_name}"
       define_method(remove_method_name) do
-        return remove(klass)
+        remove(klass)
       end
 
       define_singleton_method(remove_method_name) do
-        return remove(klass)
+        remove(klass)
       end
     end
 

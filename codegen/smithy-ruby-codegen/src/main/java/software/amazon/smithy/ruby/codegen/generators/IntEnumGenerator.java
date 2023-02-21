@@ -16,22 +16,24 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.function.Consumer;
+import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateIntEnumDirective;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
-public final class IntEnumGenerator
-        implements Consumer<GenerateIntEnumDirective<GenerationContext, RubySettings>> {
+public final class IntEnumGenerator extends TypesFileGenerator
+    implements Consumer<GenerateIntEnumDirective<GenerationContext, RubySettings>> {
+
+    public IntEnumGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+        super(directive);
+    }
+
     @Override
     public void accept(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-        var settings = directive.context().settings();
-        var namespace = settings.getModule() + "::Types";
-        var file = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
-        IntEnumShape shape = (IntEnumShape) directive.shape();
-        var symbolProvider = directive.context().symbolProvider();
+        var shape = (IntEnumShape) directive.shape();
 
-        directive.context().writerDelegator().useFileWriter(file, namespace, writer -> {
+        directive.context().writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
             // only write out a module if there is at least one enum constant
             if (shape.getEnumValues().size() > 0) {
                 String shapeName = symbolProvider.toSymbol(shape).getName();

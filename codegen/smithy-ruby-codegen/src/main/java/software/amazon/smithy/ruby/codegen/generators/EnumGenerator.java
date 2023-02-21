@@ -18,25 +18,26 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateEnumDirective;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
-public final class EnumGenerator
-        implements Consumer<GenerateEnumDirective<GenerationContext, RubySettings>> {
+public final class EnumGenerator extends TypesFileGenerator
+    implements Consumer<GenerateEnumDirective<GenerationContext, RubySettings>> {
+
+    public EnumGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+        super(directive);
+    }
+
     @Override
     public void accept(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-        var settings = directive.context().settings();
-        var namespace = settings.getModule() + "::Types";
-        var rbFile = settings.getGemName() + "/lib/" + settings.getGemName() + "/types.rb";
-        var rbsFile = settings.getGemName() + "/sig/" + settings.getGemName() + "/types.rbs";
         var shape = directive.shape();
-        var symbolProvider = directive.context().symbolProvider();
+        directive.context().writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
+            final EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
 
-        directive.context().writerDelegator().useFileWriter(rbFile, namespace, writer -> {
-            EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
             List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
                     .filter(value -> value.getName().isPresent())
                     .collect(Collectors.toList());
@@ -73,7 +74,7 @@ public final class EnumGenerator
             }
         });
 
-        directive.context().writerDelegator().useFileWriter(rbsFile, namespace, writer -> {
+        directive.context().writerDelegator().useFileWriter(rbsFile(), nameSpace(), writer -> {
             // Only write out string shapes for enums
             EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
             List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
