@@ -584,6 +584,7 @@ module Weather
 
       ULTRA = 3
     end
+
     # Includes enum constants for TypedYesNo
     #
     module TypedYesNo

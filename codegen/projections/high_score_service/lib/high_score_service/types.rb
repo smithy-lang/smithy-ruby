@@ -9,6 +9,7 @@
 
 module HighScoreService
   module Types
+
     # Input structure for CreateHighScore
     #
     # @!attribute high_score
