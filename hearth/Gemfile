@@ -13,7 +13,7 @@ group :test do
 end
 
 group :development do
-  gem 'rbs'
+  gem 'rbs', '~>2'
   gem 'rubocop'
   gem 'steep'
 end
