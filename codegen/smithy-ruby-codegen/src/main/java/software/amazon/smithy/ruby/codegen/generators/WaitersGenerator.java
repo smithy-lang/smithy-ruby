@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
 import software.amazon.smithy.jmespath.ExpressionSerializer;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
@@ -44,8 +44,6 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -61,68 +59,54 @@ import software.amazon.smithy.waiters.WaitableTrait;
 import software.amazon.smithy.waiters.Waiter;
 
 @SmithyInternalApi
-public class WaitersGenerator {
+public class WaitersGenerator extends RubyGeneratorBase {
 
     private static final Logger LOGGER =
             Logger.getLogger(WaitersGenerator.class.getName());
 
-    private final GenerationContext context;
-    private final RubySettings settings;
-    private final Model model;
-    private final RubyCodeWriter writer;
-    private final RubyCodeWriter rbsWriter;
-    private final SymbolProvider symbolProvider;
+    private final Set<OperationShape> operations;
 
-    public WaitersGenerator(GenerationContext context) {
-        this.context = context;
-        this.settings = context.settings();
-        this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Waiters");
-        this.symbolProvider = context.symbolProvider();
+    public WaitersGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
+        super(directive);
+        this.operations = directive.operations();
+    }
+
+    @Override
+    String getModule() {
+        return "Waiters";
     }
 
     public void render() {
-        FileManifest fileManifest = context.fileManifest();
-
-        writer
+        write(writer -> {
+            writer
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
-                .call(() -> renderWaiters(false))
+                .call(() -> renderWaiters(writer, false))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
-
-        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/waiters.rb";
-        fileManifest.writeFile(fileName, writer.toString());
-        LOGGER.fine("Wrote waiters to " + fileName);
+        });
+        LOGGER.fine("Wrote waiters to " + rbFile());
     }
 
     public void renderRbs() {
-        FileManifest fileManifest = context.fileManifest();
-
-        rbsWriter
+        writeRbs(writer -> {
+            writer
                 .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
-                .call(() -> renderWaiters(true))
+                .call(() -> renderWaiters(writer, true))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
-
-        String typesFile =
-                settings.getGemName() + "/sig/" + settings.getGemName()
-                        + "/waiters.rbs";
-        fileManifest.writeFile(typesFile, rbsWriter.toString());
-        LOGGER.fine("Wrote waiters rbs to " + typesFile);
+            });
+        LOGGER.fine("Wrote waiters rbs to " + rbsFile());
     }
 
-    private void renderWaiters(Boolean rbs) {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-
-        topDownIndex.getContainedOperations(context.service()).stream().forEach((operation) -> {
+    private void renderWaiters(RubyCodeWriter writer, Boolean rbs) {
+        operations.forEach((operation) -> {
             if (operation.hasTrait(WaitableTrait.class)) {
                 Map<String, Waiter> waiters = operation.getTrait(WaitableTrait.class).get().getWaiters();
                 Iterator<Map.Entry<String, Waiter>> iterator = waiters.entrySet().iterator();
@@ -132,9 +116,9 @@ public class WaitersGenerator {
                     String waiterName = entry.getKey();
                     Waiter waiter = entry.getValue();
                     if (rbs) {
-                        renderRbsWaiter(waiterName);
+                        renderRbsWaiter(writer, waiterName);
                     } else {
-                        renderWaiter(waiterName, waiter, operation);
+                        renderWaiter(writer, waiterName, waiter, operation);
                     }
                     if (iterator.hasNext()) {
                         writer.write("");
@@ -144,14 +128,14 @@ public class WaitersGenerator {
         });
     }
 
-    private void renderWaiter(String waiterName, Waiter waiter, OperationShape operation) {
+    private void renderWaiter(RubyCodeWriter writer, String waiterName, Waiter waiter, OperationShape operation) {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
         writer
                 .write("")
-                .call(() -> renderWaiterDocumentation(waiter))
+                .call(() -> renderWaiterDocumentation(writer, waiter))
                 .openBlock("class $L", waiterName)
-                .call(() -> renderWaiterInitializeDocumentation(waiter))
+                .call(() -> renderWaiterInitializeDocumentation(writer, waiter))
                 .openBlock("def initialize(client, options = {})")
                 .write("@client = client")
                 .openBlock("@waiter = $T.new({", Hearth.WAITER)
@@ -160,15 +144,15 @@ public class WaitersGenerator {
                 .write("max_delay: $L || options[:max_delay],", waiter.getMaxDelay())
                 .openBlock("poller: $T.new(", Hearth.POLLER)
                 .write("operation_name: :$L,", operationName)
-                .call(() -> renderAcceptors(waiter))
+                .call(() -> renderAcceptors(writer, waiter))
                 .closeBlock(")")
                 .closeBlock("}.merge(options))")
-                .call(() -> renderWaiterTags(waiter))
+                .call(() -> renderWaiterTags(writer, waiter))
                 .closeBlock("end")
                 .write("")
                 .write("attr_reader :tags")
                 .write("")
-                .call(() -> renderWaiterWaitDocumentation(operation, operationName))
+                .call(() -> renderWaiterWaitDocumentation(writer, operation, operationName))
                 .openBlock("def wait(params = {}, options = {})")
                 .write("@waiter.wait(@client, params, options)")
                 .closeBlock("end")
@@ -177,8 +161,8 @@ public class WaitersGenerator {
         LOGGER.finer("Generated waiter " + waiterName + " for operation: " + operationName);
     }
 
-    private void renderRbsWaiter(String waiterName) {
-        rbsWriter
+    private void renderRbsWaiter(RubyCodeWriter writer, String waiterName) {
+        writer
                 .write("")
                 .openBlock("class $L", waiterName)
                 .write("def initialize: (untyped client, ?::Hash[untyped, untyped] options) -> void\n")
@@ -187,7 +171,7 @@ public class WaitersGenerator {
                 .closeBlock("end");
     }
 
-    private void renderWaiterDocumentation(Waiter waiter) {
+    private void renderWaiterDocumentation(RubyCodeWriter writer, Waiter waiter) {
         if (waiter.getDocumentation().isPresent()) {
             writer.writeDocstring(waiter.getDocumentation().get());
         }
@@ -196,14 +180,14 @@ public class WaitersGenerator {
         }
     }
 
-    private void renderWaiterTags(Waiter waiter) {
+    private void renderWaiterTags(RubyCodeWriter writer, Waiter waiter) {
         String tags = waiter.getTags().stream()
                 .map((tag) -> "\"" + tag + "\"")
                 .collect(Collectors.joining(", "));
         writer.write("@tags = [$L]", tags);
     }
 
-    private void renderAcceptors(Waiter waiter) {
+    private void renderAcceptors(RubyCodeWriter writer, Waiter waiter) {
         List<Acceptor> acceptorsList = waiter.getAcceptors();
 
         if (acceptorsList.isEmpty()) {
@@ -221,7 +205,7 @@ public class WaitersGenerator {
                         .write("state: '$L',", state)
                         .openBlock("matcher: {")
                         .call(() -> {
-                            matcher.accept(new AcceptorVisitor());
+                            matcher.accept(new AcceptorVisitor(writer));
                         })
                         .closeBlock("}");
 
@@ -241,7 +225,7 @@ public class WaitersGenerator {
         return transformedPath;
     }
 
-    private void renderWaiterWaitDocumentation(OperationShape operation, String operationName) {
+    private void renderWaiterWaitDocumentation(RubyCodeWriter writer, OperationShape operation, String operationName) {
         String operationReturnType = "Types::" + symbolProvider.toSymbol(operation).getName();
 
         String operationReference = "(see Client#" + operationName + ")";
@@ -251,7 +235,7 @@ public class WaitersGenerator {
                 .writeYardReturn(operationReturnType, operationReference);
     }
 
-    private void renderWaiterInitializeDocumentation(Waiter waiter) {
+    private void renderWaiterInitializeDocumentation(RubyCodeWriter writer, Waiter waiter) {
         writer
                 .writeYardParam("Client", "client", "")
                 .writeYardParam("Hash", "options", "")
@@ -275,7 +259,13 @@ public class WaitersGenerator {
                         "The maximum time in seconds to delay polling attempts.");
     }
 
-    private class AcceptorVisitor implements Matcher.Visitor<Void> {
+    private final class AcceptorVisitor implements Matcher.Visitor<Void> {
+
+        private final RubyCodeWriter writer;
+
+        private AcceptorVisitor(RubyCodeWriter writer) {
+            this.writer = writer;
+        }
 
         private void renderPathMatcher(String memberName, String path, String comparator, String expected) {
             writer

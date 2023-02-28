@@ -19,11 +19,18 @@ import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-public class TypesFileBlockGenerator extends TypesFileGenerator {
+@SmithyInternalApi
+public class TypesFileBlockGenerator extends RubyGeneratorBase {
 
     public TypesFileBlockGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
+    }
+
+    @Override
+    String getModule() {
+        return "Types";
     }
 
     public void openBlocks() {

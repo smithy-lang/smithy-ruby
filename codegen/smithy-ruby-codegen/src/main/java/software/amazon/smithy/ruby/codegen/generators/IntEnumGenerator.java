@@ -15,25 +15,29 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.function.Consumer;
-import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateIntEnumDirective;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-public final class IntEnumGenerator extends TypesFileGenerator
-    implements Consumer<GenerateIntEnumDirective<GenerationContext, RubySettings>> {
+@SmithyInternalApi
+public final class IntEnumGenerator extends RubyGeneratorBase {
 
-    public IntEnumGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+    private final IntEnumShape shape;
+
+    public IntEnumGenerator(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
+        this.shape = (IntEnumShape) directive.shape();
     }
 
     @Override
-    public void accept(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-        var shape = (IntEnumShape) directive.shape();
+    String getModule() {
+        return "Types";
+    }
 
-        directive.context().writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
+    public void render() {
+        write(writer -> {
             // only write out a module if there is at least one enum constant
             if (shape.getEnumValues().size() > 0) {
                 String shapeName = symbolProvider.toSymbol(shape).getName();

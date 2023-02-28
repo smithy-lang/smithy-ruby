@@ -16,26 +16,32 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateEnumDirective;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-public final class EnumGenerator extends TypesFileGenerator
-    implements Consumer<GenerateEnumDirective<GenerationContext, RubySettings>> {
+@SmithyInternalApi
+public final class EnumGenerator extends RubyGeneratorBase {
 
-    public EnumGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+    private final Shape shape;
+
+    public EnumGenerator(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
+        this.shape = directive.shape();
     }
 
     @Override
-    public void accept(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-        var shape = directive.shape();
-        directive.context().writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
+    String getModule() {
+        return "Types";
+    }
+
+    public void render() {
+        write(writer -> {
             final EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
 
             List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
@@ -74,7 +80,7 @@ public final class EnumGenerator extends TypesFileGenerator
             }
         });
 
-        directive.context().writerDelegator().useFileWriter(rbsFile(), nameSpace(), writer -> {
+        writeRbs(writer -> {
             // Only write out string shapes for enums
             EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
             List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
