@@ -17,10 +17,8 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.codegen.core.directed.ShapeDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -36,20 +34,25 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-public final class StructureGenerator extends TypesFileGenerator
-    implements Consumer<ShapeDirective<StructureShape, GenerationContext, RubySettings>> {
+@SmithyInternalApi
+public final class StructureGenerator extends RubyGeneratorBase {
 
-    public StructureGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+    private final StructureShape shape;
+
+    public StructureGenerator(ShapeDirective<StructureShape, GenerationContext, RubySettings> directive) {
         super(directive);
+        this.shape = directive.shape();
     }
 
     @Override
-    public void accept(ShapeDirective<StructureShape, GenerationContext, RubySettings> directive) {
-        var model = directive.model();
-        var shape = directive.shape();
+    String getModule() {
+        return "Types";
+    }
 
-        directive.context().writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
+    public void render() {
+        write(writer -> {
             String membersBlock = "nil";
             if (!shape.members().isEmpty()) {
                 membersBlock = shape
@@ -92,7 +95,7 @@ public final class StructureGenerator extends TypesFileGenerator
                 .closeBlock("end\n");
         });
 
-        directive.context().writerDelegator().useFileWriter(rbsFile(), nameSpace(), writer -> {
+        writeRbs(writer -> {
             Symbol symbol = symbolProvider.toSymbol(shape);
             String shapeName = symbol.getName();
             writer.write(shapeName + ": untyped\n");

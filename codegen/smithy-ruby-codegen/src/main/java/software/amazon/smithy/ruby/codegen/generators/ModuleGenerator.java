@@ -15,11 +15,11 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
-import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -34,42 +34,44 @@ public class ModuleGenerator {
     };
 
     private final GenerationContext context;
+    private final RubySettings settings;
 
-    public ModuleGenerator(GenerationContext context) {
-        this.context = context;
+    public ModuleGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+        this.context = directive.context();
+        this.settings = directive.settings();
     }
 
-    public void render(List<String> additionalFiles) {
-        FileManifest fileManifest = context.fileManifest();
-        RubySettings settings = context.settings();
-        RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
-
-        writer.includePreamble().includeRequires();
-        context.getRubyDependencies().forEach((rubyDependency -> {
-            writer.write("require '$L'", rubyDependency.getImportPath());
-        }));
-        writer.write("\n");
-
-        for (String require : DEFAULT_REQUIRES) {
-            writer.write("require_relative '$L/$L'", settings.getGemName(),
-                    require);
-        }
-
-        for (String require : additionalFiles) {
-            writer.write("require_relative '$L'", require);
-            LOGGER.finer("Adding additional module require: " + require);
-        }
-
-        writer.write("");
-
-        writer.openBlock("module $L", settings.getModule())
-                .write("GEM_VERSION = '$L'", settings.getGemVersion())
-                .closeBlock("end");
+    public void render() {
+        List<String> additionalFiles = context.integrations().stream()
+                .map((integration) -> integration.writeAdditionalFiles(context))
+                .flatMap(Collection::stream)
+                .toList();
 
         String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
+            settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
 
-        fileManifest.writeFile(fileName, writer.toString());
+        context.writerDelegator().useFileWriter(fileName, settings.getModule(), writer -> {
+            writer.includePreamble().includeRequires();
+            context.getRubyDependencies().forEach((rubyDependency -> {
+                writer.write("require '$L'", rubyDependency.getImportPath());
+            }));
+            writer.write("\n");
+
+            for (String require : DEFAULT_REQUIRES) {
+                writer.write("require_relative '$L/$L'", settings.getGemName(), require);
+            }
+
+            for (String require : additionalFiles) {
+                writer.write("require_relative '$L'", require);
+                LOGGER.finer("Adding additional module require: " + require);
+            }
+
+            writer.write("");
+
+            writer.openBlock("module $L", settings.getModule())
+                .write("GEM_VERSION = '$L'", settings.getGemVersion())
+                .closeBlock("end");
+        });
         LOGGER.fine("Wrote module file to " + fileName);
     }
 }

@@ -62,10 +62,6 @@ public class DirectedRubyCodegen
     private static final Logger LOGGER =
             Logger.getLogger(DirectedRubyCodegen.class.getName());
 
-    private StructureGenerator structureGenerator;
-    private UnionGenerator unionGenerator;
-    private EnumGenerator enumGenerator;
-    private IntEnumGenerator intEnumGenerator;
     private TypesFileBlockGenerator typesFileBlockGenerator;
 
     @Override
@@ -116,7 +112,6 @@ public class DirectedRubyCodegen
     @Override
     public void generateService(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
         GenerationContext context = directive.context();
-
         // Register all middleware
         MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder();
         middlewareBuilder.addDefaultMiddleware(context);
@@ -146,23 +141,23 @@ public class DirectedRubyCodegen
         LOGGER.fine("Client config: "
                 + clientConfigList.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
 
-        ConfigGenerator configGenerator = new ConfigGenerator(context);
-        configGenerator.render(clientConfigList);
+        ConfigGenerator configGenerator = new ConfigGenerator(directive, clientConfigList);
+        configGenerator.render();
         configGenerator.renderRbs();
         LOGGER.info("generated config");
 
-        ClientGenerator clientGenerator = new ClientGenerator(context);
-        clientGenerator.render(middlewareBuilder);
+        ClientGenerator clientGenerator = new ClientGenerator(directive, middlewareBuilder);
+        clientGenerator.render();
         clientGenerator.renderRbs();
         LOGGER.info("generated client");
+
+        WaitersGenerator waitersGenerator = new WaitersGenerator(directive);
+        waitersGenerator.render();
+        waitersGenerator.renderRbs();
     }
 
     @Override
     public void customizeBeforeShapeGeneration(CustomizeDirective<GenerationContext, RubySettings> directive) {
-        this.structureGenerator = new StructureGenerator(directive);
-        this.unionGenerator = new UnionGenerator(directive);
-        this.enumGenerator = new EnumGenerator(directive);
-        this.intEnumGenerator = new IntEnumGenerator(directive);
         this.typesFileBlockGenerator = new TypesFileBlockGenerator(directive);
 
         // Pre-populate module blocks for types.rb and types.rbs files
@@ -171,7 +166,7 @@ public class DirectedRubyCodegen
 
     @Override
     public void generateStructure(GenerateStructureDirective<GenerationContext, RubySettings> directive) {
-        structureGenerator.accept(directive);
+        new StructureGenerator(directive).render();
     }
 
     @Override
@@ -179,29 +174,29 @@ public class DirectedRubyCodegen
         if (directive.context().protocolGenerator().isPresent()) {
             directive.context().protocolGenerator().get().generateErrors(directive.context());
         }
-        structureGenerator.accept(directive);
+        new StructureGenerator(directive).render();
     }
 
     @Override
     public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
-        unionGenerator.accept(directive);
+        new UnionGenerator(directive).render();
     }
 
     @Override
     public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-        enumGenerator.accept(directive);
+        new EnumGenerator(directive).render();
     }
 
     @Override
     public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-        intEnumGenerator.accept(directive);
+        new IntEnumGenerator(directive).render();
     }
 
     @Override
     public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
         GenerationContext context = directive.context();
-        new ParamsGenerator(context).render();
-        new ValidatorsGenerator(context).render();
+        new ParamsGenerator(directive).render();
+        new ValidatorsGenerator(directive).render();
 
         if (directive.context().protocolGenerator().isPresent()) {
             ProtocolGenerator generator = directive.context().protocolGenerator().get();
@@ -210,20 +205,11 @@ public class DirectedRubyCodegen
             generator.generateStubs(directive.context());
         }
 
-        WaitersGenerator waitersGenerator = new WaitersGenerator(context);
-        waitersGenerator.render();
-        waitersGenerator.renderRbs();
-
-        PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
+        PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(directive);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
 
-        List<String> additionalFiles = context.integrations().stream()
-                .map((integration) -> integration.writeAdditionalFiles(context))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        new ModuleGenerator(context).render(additionalFiles);
+        new ModuleGenerator(directive).render();
         new GemspecGenerator(context).render();
         new YardOptsGenerator(context).render();
 
