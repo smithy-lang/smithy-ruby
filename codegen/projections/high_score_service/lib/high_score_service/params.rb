@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module HighScoreService
+  # @api private
   module Params
 
     module AttributeErrors

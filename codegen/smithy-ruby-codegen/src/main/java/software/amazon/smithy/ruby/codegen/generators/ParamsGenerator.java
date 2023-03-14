@@ -82,6 +82,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
                 .includePreamble()
                 .includeRequires()
                 .addModule(settings.getModule())
+                .apiPrivate()
                 .addModule("Params")
                 .call(() -> renderParams(writer))
                 .write("")

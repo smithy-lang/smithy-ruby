@@ -73,6 +73,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
+                .apiPrivate()
                 .openBlock("module Validators")
                 .call(() -> renderValidators(writer))
                 .write("")
