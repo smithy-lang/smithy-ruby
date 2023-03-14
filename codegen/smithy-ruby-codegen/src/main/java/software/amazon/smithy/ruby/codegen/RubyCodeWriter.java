@@ -92,6 +92,11 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         }
     }
 
+    public RubyCodeWriter apiPrivate() {
+        this.write("# @api private");
+        return this;
+    }
+
     /**
      * Preamble comments will be included in the generated code.
      * This should be called for writers that are used to generate full files.

@@ -10,6 +10,7 @@
 require 'base64'
 
 module RailsJson
+  # @api private
   module Builders
 
     # Operation Builder for AllQueryStringTypes

@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
+  # @api private
   module Parsers
 
     # Error Parser for ClientError

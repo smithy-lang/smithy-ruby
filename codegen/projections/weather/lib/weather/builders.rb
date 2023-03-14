@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module Weather
+  # @api private
   module Builders
 
     # Operation Builder for GetCity

@@ -10,6 +10,7 @@
 require 'time'
 
 module WhiteLabel
+  # @api private
   module Validators
 
     class ClientError

@@ -202,6 +202,7 @@ public abstract class StubsGeneratorBase {
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
+                .apiPrivate()
                 .openBlock("module Stubs")
                 .call(() -> renderStubs())
                 .closeBlock("end")
