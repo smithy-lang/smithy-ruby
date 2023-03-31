@@ -8,6 +8,7 @@ module Hearth
         unless Hearth.use_crt?
           raise ArgumentError, 'Requires the `aws-crt` gem.'
         end
+
         super(Aws::Crt::Checksums.method(:crc32c))
       end
     end
