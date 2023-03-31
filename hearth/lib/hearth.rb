@@ -27,6 +27,7 @@ require_relative 'hearth/waiters/poller'
 require_relative 'hearth/waiters/waiter'
 require_relative 'hearth/xml'
 
+# Core SDK library
 module Hearth
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 
