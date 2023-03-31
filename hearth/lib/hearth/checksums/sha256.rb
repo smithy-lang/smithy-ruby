@@ -2,10 +2,10 @@
 
 module Hearth
   module Checksums
-    # MD5 Checksum Digest class
-    class MD5 < Digest
+    # SHA256 Checksum Digest class
+    class SHA256 < Digest
       def initialize
-        super(::Digest::MD5.new)
+        super(::Digest::SHA256.new)
       end
     end
   end

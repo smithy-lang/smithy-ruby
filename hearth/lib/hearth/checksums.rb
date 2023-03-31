@@ -2,7 +2,13 @@
 
 require 'tempfile'
 require 'digest'
+require_relative 'checksums/digest'
+require_relative 'checksums/digest32'
 require_relative 'checksums/md5'
+require_relative 'checksums/sha1'
+require_relative 'checksums/sha256'
+require_relative 'checksums/crc32'
+require_relative 'checksums/crc32c'
 
 module Hearth
   # A utility module for calculating checksums.
@@ -13,22 +19,38 @@ module Hearth
     # @param [File, Tempfile, StringIO#read, String] value
     # @return [String<MD5>]
     def self.md5(value)
-      if value.is_a?(File) || value.is_a?(Tempfile)
-        OpenSSL::Digest.new('MD5').file(value).base64digest
-      elsif value.respond_to?(:read)
-        md5 = MD5.new
+      digest = algorithm_for('MD5')
+      if value.respond_to?(:read)
         loop do
           chunk = value.read(CHUNK_SIZE)
           break unless chunk
 
-          md5.update(chunk)
+          digest.update(chunk)
         end
         value.rewind
-        md5.base64digest
+        digest.base64digest
       else
-        MD5.new.tap { |md5| md5.update(value) }.base64digest
+        digest.tap { |d| d.update(value) }.base64digest
       end
     end
 
+    # @param
+    def self.algorithm_for(checksum_algorithm)
+      case checksum_algorithm.upcase
+      when 'MD5'
+        MD5.new
+      when 'SHA1'
+        SHA1.new
+      when 'SHA256'
+        SHA256.new
+      when 'CRC32'
+        CRC32.new
+      when 'CRC32C'
+        CRC32C.new
+      else
+        raise ArgumentError,
+              "Unsupported checksum algorithm: #{checksum_algorithm}"
+      end
+    end
   end
 end

@@ -2,18 +2,12 @@
 
 module Hearth
   module Checksums
-    describe MD5 do
-      ZERO_DIGEST = '1B2M2Y8AsgTpgAmY7PhCfg=='
+    describe CRC32 do
+      ZERO_DIGEST = 'AAAAAA=='
 
       describe '#digest_length' do
         it 'returns the digest_length' do
-          expect(subject.digest_length).to eq(16)
-        end
-      end
-
-      describe '#block_length' do
-        it 'returns the block_length' do
-          expect(subject.block_length).to eq(64)
+          expect(subject.digest_length).to eq(32)
         end
       end
 
@@ -26,7 +20,7 @@ module Hearth
       describe '#update' do
         it 'updates the digest' do
           subject.update('chunk1')
-          expect(subject.base64digest).to eq('jBWb++B+TOnlxhI+/CwtyA==')
+          expect(subject.base64digest).to eq('X5/kCQ==')
         end
       end
 

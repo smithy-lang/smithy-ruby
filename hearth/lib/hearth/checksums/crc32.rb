@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+require 'zlib'
 
 module Hearth
   module Checksums
-    # MD5 Checksum Digest class
-    class MD5 < Digest
+    # CRC32 Checksum Digest class
+    class CRC32 < Digest32
       def initialize
-        super(::Digest::MD5.new)
+        super(Zlib.method(:crc32))
       end
     end
   end
