@@ -3,7 +3,7 @@
 module Hearth
   module Checksums
     describe CRC32 do
-      ZERO_DIGEST = 'AAAAAA=='
+      let(:zero_digest) { 'AAAAAA==' }
 
       describe '#digest_length' do
         it 'returns the digest_length' do
@@ -13,7 +13,7 @@ module Hearth
 
       describe '#base64digest' do
         it 'returns the zero digest' do
-          expect(subject.base64digest).to eq(ZERO_DIGEST)
+          expect(subject.base64digest).to eq(zero_digest)
         end
       end
 
@@ -28,7 +28,7 @@ module Hearth
         it 'resets the digest' do
           subject.update('chunk1')
           subject.reset
-          expect(subject.base64digest).to eq(ZERO_DIGEST)
+          expect(subject.base64digest).to eq(zero_digest)
         end
       end
     end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'base64'
 
 module Hearth
@@ -8,7 +9,6 @@ module Hearth
     # (eg CRC32)
     # @api private
     class Digest32
-
       # @param [Object] digest_fn
       def initialize(digest_fn)
         @digest_fn = digest_fn

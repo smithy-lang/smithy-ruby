@@ -31,8 +31,8 @@ module Hearth
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 
   def self.use_crt?
-    if @@use_crt.nil?
-      @@use_crt =
+    if @use_crt.nil?
+      @use_crt =
         begin
           require 'aws-crt'
           true
@@ -40,6 +40,6 @@ module Hearth
           false
         end
     end
-    @@use_crt
+    @use_crt
   end
 end

@@ -31,8 +31,8 @@ module Hearth
         it 'computes the MD5 by reading 1MB at a time' do
           body = StringIO.new('.' * 5 * 1024 * 1024) # 5MB
           expect(body).to receive(:read)
-                            .with(1024 * 1024, any_args)
-                            .exactly(5 + 1).times.and_call_original
+            .with(1024 * 1024, any_args)
+            .exactly(5 + 1).times.and_call_original
           md5 = subject.md5(body)
           expect(md5).to eq('+kDD2/74SZx+Rz+/Dw7I1Q==')
         end

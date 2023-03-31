@@ -2,7 +2,7 @@
 
 describe Hearth do
   describe '.use_crt?' do
-    before { Hearth.class_variable_set(:@@use_crt, nil) }
+    before { Hearth.instance_variable_set(:@use_crt, nil) }
 
     it 'is true when aws-crt is available' do
       expect(Hearth).to receive(:require).with('aws-crt').and_return(true)
