@@ -30,6 +30,7 @@ require_relative 'hearth/xml'
 module Hearth
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 
+  # @return true if CRT is available
   def self.use_crt?
     if @use_crt.nil?
       @use_crt =

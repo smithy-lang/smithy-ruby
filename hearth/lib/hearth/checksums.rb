@@ -34,7 +34,8 @@ module Hearth
       end
     end
 
-    # @param
+    # @param [String] checksum_algorithm - the name of the algorithm
+    # @return [Digest|Digest32] a Digest object for the  checksum_algorithm
     def self.algorithm_for(checksum_algorithm)
       case checksum_algorithm.upcase
       when 'MD5'
