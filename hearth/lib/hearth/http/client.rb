@@ -51,11 +51,10 @@ module Hearth
       # @param [Response] response
       # @return [Response]
       def transmit(request:, response:)
-        uri = URI.parse(request.url)
-        http = create_http(uri)
+        http = create_http(request.uri)
         http.set_debug_output(@logger) if @http_wire_trace
 
-        if uri.scheme == 'https'
+        if request.uri.scheme == 'https'
           configure_ssl(http)
         else
           http.use_ssl = false
@@ -77,7 +76,7 @@ module Hearth
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
-            response.headers = extract_headers(net_resp)
+            response.fields = extract_fields(net_resp)
             net_resp.read_body do |chunk|
               response.body.write(chunk)
             end
@@ -115,7 +114,8 @@ module Hearth
       # @return [Net::HTTP::Request]
       def build_net_request(request)
         request_class = net_http_request_class(request)
-        req = request_class.new(request.url, request.headers.to_h)
+        # Trailers are not supported in Net::HTTP, but get all fields anyway.
+        req = request_class.new(request.uri.to_s, request.fields.to_h)
 
         # Net::HTTP adds a default Content-Type when a body is present.
         # Set the body stream when it has an unknown size or when it is > 0.
@@ -128,8 +128,8 @@ module Hearth
       end
 
       # @param [Net::HTTP::Response] response
-      # @return [Hash<String, String>]
-      def extract_headers(response)
+      # @return [Hash<String, Field>]
+      def extract_fields(response)
         response.to_hash.transform_values(&:first)
       end
 

@@ -14,8 +14,8 @@ module Hearth
 
           let(:request) do
             Request.new(
-              http_method: :get,
-              url: 'http://example.com',
+              http_method: 'GET',
+              uri: URI('http://example.com'),
               body: body
             )
           end
@@ -34,7 +34,7 @@ module Hearth
             it 'does not set the content-length and calls next middleware' do
               expect(app).to receive(:call).with(input, context)
               resp = subject.call(input, context)
-              expect(request.headers['Content-Length']).to be_nil
+              expect(request.fields['Content-Length']).to be_nil
               expect(resp).to be output
             end
           end
@@ -47,7 +47,8 @@ module Hearth
                 expect(app).to receive(:call).with(input, context)
 
                 resp = subject.call(input, context)
-                expect(request.headers['Content-Length'].to_i).to eq(body.size)
+                expect(request.fields['Content-Length'].value)
+                  .to eq(body.size.to_s)
                 expect(resp).to be output
               end
             end
@@ -61,7 +62,7 @@ module Hearth
                   .with(:size).and_return(false)
 
                 resp = subject.call(input, context)
-                expect(request.headers['Content-Length']).to be_nil
+                expect(request.fields['Content-Length']).to be_nil
                 expect(resp).to be output
               end
             end

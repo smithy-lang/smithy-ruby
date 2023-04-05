@@ -4,12 +4,12 @@ module Hearth
   module HTTP
     describe ApiError do
       let(:http_status) { 404 }
-      let(:http_headers) { Headers.new }
+      let(:http_fields) { Fields.new }
       let(:http_body) { 'body' }
       let(:http_resp) do
         Response.new(
           status: http_status,
-          headers: http_headers,
+          fields: http_fields,
           body: http_body
         )
       end
@@ -34,9 +34,9 @@ module Hearth
         end
       end
 
-      describe '#http_headers' do
-        it 'returns the http headers' do
-          expect(subject.http_headers).to eq(http_headers)
+      describe '#http_fields' do
+        it 'returns the http fields' do
+          expect(subject.http_fields).to eq(http_fields)
         end
       end
 

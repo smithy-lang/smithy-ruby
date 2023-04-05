@@ -4,7 +4,8 @@ require 'cgi'
 require_relative 'http/api_error'
 require_relative 'http/client'
 require_relative 'http/error_parser'
-require_relative 'http/headers'
+require_relative 'http/field'
+require_relative 'http/fields'
 require_relative 'http/middleware/content_length'
 require_relative 'http/middleware/content_md5'
 require_relative 'http/networking_error'
@@ -19,7 +20,7 @@ module Hearth
     class << self
       # URI escapes the given value.
       #
-      #   Hearth::_escape("a b/c")
+      #   Hearth.uri_escape("a b/c")
       #   #=> "a%20b%2Fc"
       #
       # @param [String] value
@@ -28,6 +29,13 @@ module Hearth
         CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
       end
 
+      # URI escapes the given path.
+      #
+      #   Hearth.uri_escape_path("a b/c")
+      #   #=> "a%20b/c"
+      #
+      # @param [String] path
+      # @return [String] URI encoded path except for '+' and '~'.
       def uri_escape_path(path)
         path.gsub(%r{[^/]+}) { |part| uri_escape(part) }
       end

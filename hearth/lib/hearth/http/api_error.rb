@@ -7,7 +7,7 @@ module Hearth
     class ApiError < Hearth::ApiError
       def initialize(http_resp:, **kwargs)
         @http_status = http_resp.status
-        @http_headers = http_resp.headers
+        @http_fields = http_resp.fields
         @http_body = http_resp.body
         super(**kwargs)
       end
@@ -15,8 +15,8 @@ module Hearth
       # @return [Integer]
       attr_reader :http_status
 
-      # @return [Hash<String, String>]
-      attr_reader :http_headers
+      # @return [Hash<String, Fields>]
+      attr_reader :http_fields
 
       # @return [String]
       attr_reader :http_body

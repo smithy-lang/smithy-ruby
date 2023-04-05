@@ -3,7 +3,7 @@
 module Hearth
   module HTTP
     module Middleware
-      describe ContentLength do
+      describe ContentMD5 do
         let(:app) { double('app', call: output) }
 
         subject { ContentMD5.new(app) }
@@ -16,8 +16,8 @@ module Hearth
 
           let(:request) do
             Request.new(
-              http_method: :get,
-              url: 'http://example.com',
+              http_method: 'GET',
+              uri: URI('http://example.com'),
               body: body
             )
           end
@@ -36,20 +36,20 @@ module Hearth
               expect(Hearth::Checksums).to receive(:md5)
                 .with(body).and_return('checksum')
               resp = subject.call(input, context)
-              expect(request.headers['Content-MD5']).to eq('checksum')
+              expect(request.fields['Content-MD5'].value).to eq('checksum')
               expect(resp).to be output
             end
           end
 
           context 'Content-MD5 is already set' do
-            before { request.headers['Content-MD5'] = 'existing' }
+            before { request.fields['Content-MD5'] = 'existing' }
 
             it 'does not calculate a new checksum' do
               expect(app).to receive(:call).with(input, context)
               expect(Hearth::Checksums).not_to receive(:md5)
 
               resp = subject.call(input, context)
-              expect(request.headers['Content-MD5']).to eq('existing')
+              expect(request.fields['Content-MD5'].value).to eq('existing')
               expect(resp).to be output
             end
           end

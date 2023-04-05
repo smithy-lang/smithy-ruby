@@ -15,10 +15,10 @@ module Hearth
         # @return [Output]
         def call(input, context)
           request = context.request
-          if request&.body.respond_to?(:size) &&
-             !request.headers.key?('Content-Length')
+          if request.body.respond_to?(:size) &&
+             !request.fields.key?('Content-Length')
             length = request.body.size
-            request.headers['Content-Length'] = length
+            request.fields['Content-Length'] = length
           end
 
           @app.call(input, context)

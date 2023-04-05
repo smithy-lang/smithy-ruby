@@ -102,8 +102,14 @@ module Hearth
           metadata: {}
         )
       end
-      let(:request) { Hearth::HTTP::Request.new }
-      let(:response) { Hearth::HTTP::Response.new }
+
+      let(:request) do
+        Hearth::HTTP::Request.new(
+          uri: URI('https://example.com'),
+          body: StringIO.new
+        )
+      end
+      let(:response) { Hearth::HTTP::Response.new(body: StringIO.new) }
       let(:context) do
         Hearth::Context.new(
           request: request,
