@@ -73,6 +73,10 @@ module Hearth
         else
           raise ArgumentError, 'Unsupported stub type'
         end
+        
+        if context.response.body.respond_to?(:rewind)
+          context.response.body.rewind
+        end
       end
       # rubocop:enable Metrics/MethodLength
     end

@@ -30,7 +30,8 @@ module Hearth
         let(:input) { double('Type::OperationInput') }
 
         let(:request) { double('request') }
-        let(:response) { double('response') }
+        let(:body) { StringIO.new }
+        let(:response) { double('response', body: body) }
         let(:context) do
           Hearth::Context.new(
             request: request,
@@ -58,6 +59,13 @@ module Hearth
               .with(:operation).and_return(Exception)
             output = subject.call(input, context)
             expect(output.error).to be_a(Exception)
+          end
+
+          it 'rewinds the body' do
+            expect(stubs).to receive(:next)
+              .with(:operation).and_return(Exception)
+            expect(body).to receive(:rewind)
+            subject.call(input, context)
           end
 
           context 'stub is a proc' do
