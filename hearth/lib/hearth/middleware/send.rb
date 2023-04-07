@@ -32,6 +32,9 @@ module Hearth
           stub = @stubs.next(context.operation_name)
           output = Output.new
           apply_stub(stub, input, context, output)
+          if context.response.body.respond_to?(:rewind)
+            context.response.body.rewind
+          end
           output
         else
           @client.transmit(
@@ -72,10 +75,6 @@ module Hearth
           )
         else
           raise ArgumentError, 'Unsupported stub type'
-        end
-        
-        if context.response.body.respond_to?(:rewind)
-          context.response.body.rewind
         end
       end
       # rubocop:enable Metrics/MethodLength
