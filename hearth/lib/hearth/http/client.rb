@@ -132,7 +132,7 @@ module Hearth
       def net_headers_for(request)
         # Trailers are not supported in Net::HTTP
         if request.fields.any?(&:trailer?)
-          raise ArgumentError, 'Trailers are not supported in Net::HTTP'
+          raise NotImplementedError, 'Trailers are not supported in Net::HTTP'
         end
 
         request.fields.to_h

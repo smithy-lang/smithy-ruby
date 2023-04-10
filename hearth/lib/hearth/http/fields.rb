@@ -6,12 +6,10 @@ module Hearth
     class Fields
       include Enumerable
 
-      # @param [Hash<String,Field>] fields
+      # @param [Hash<String,String|Integer|Array|Field>] fields
       def initialize(fields = {}, encoding: 'utf-8')
         @entries = {}
-        fields.each_pair do |key, value|
-          self[key] = value
-        end
+        fields.each_pair { |k, v| self[k] = v }
         @encoding = encoding
       end
 
@@ -24,23 +22,24 @@ module Hearth
       end
 
       # @param [String] key
-      # @param [String,Array,Field] value
+      # @param [String, Integer, Array<String>, Field] value
       def []=(key, value)
-        value =
+        field =
           case value
-          when String
-            Field.new(key, [value])
-          when Integer
-            Field.new(key, [value.to_s])
-          when Array
-            Field.new(key, value)
-          when Field
-            value
+          when String then Field.new(key, [value])
+          when Integer then Field.new(key, [value.to_s])
+          when Array then Field.new(key, value)
+          when Field then value
           else
             raise ArgumentError,
                   'value must be a String, Integer, Array, or Field'
           end
-        @entries[key.downcase] = value
+        @entries[key.downcase] = field
+      end
+
+      # @param [Field] field
+      def <<(field)
+        @entries[field.name.downcase] = field
       end
 
       # @param [String] key

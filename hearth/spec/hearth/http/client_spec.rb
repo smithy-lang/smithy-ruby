@@ -102,11 +102,25 @@ module Hearth
         end
 
         context 'request headers are set' do
-          let(:fields) { Fields.new({ 'Header-Name' => 'Header-Value' }) }
+          before { fields['Header-Name'] = 'Header-Value' }
+
           it 'transmits the headers' do
             stub_request(http_method, uri.to_s)
               .with(headers: fields.to_h)
             subject.transmit(request: request, response: response)
+          end
+        end
+
+        context 'request trailers are set' do
+          let(:field) do
+            Field.new('Trailer-Name', ['Trailer-Value'], kind: :trailer)
+          end
+          before { fields['Trailer-Name'] = field }
+
+          it 'raises NotImplementedError' do
+            expect do
+              subject.transmit(request: request, response: response)
+            end.to raise_error(NotImplementedError)
           end
         end
 
