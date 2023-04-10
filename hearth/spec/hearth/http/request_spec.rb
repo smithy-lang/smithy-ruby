@@ -35,6 +35,14 @@ module Hearth
           expect(request.fields['name'].kind).to eq(:header)
         end
 
+        it 'allows appending to headers' do
+          request = Request.new
+          request.headers['name'] = 'value'
+          request.headers['name'] << 'value2'
+          expect(request.fields['name'].value).to eq('value,value2')
+          expect(request.fields['name'].kind).to eq(:header)
+        end
+
         it 'lets you get a hash of only the headers' do
           request = Request.new
           request.headers['name'] = 'value'

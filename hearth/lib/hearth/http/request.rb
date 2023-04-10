@@ -152,18 +152,18 @@ module Hearth
         def <<(field)
           # TODO: What exactly should this do?
           # Do we need to check that it exists and kind matches?
-          @entries[field.name] << field
+          @fields[field.name] << field
         end
 
         # @param [String] key
         def [](key)
           # TODO - check the kind and error or return nil if does not match?
-          @entries[key]
+          @fields[key]
         end
 
         # @return [Hash]
         def to_hash
-          @fields.filter { |f| f.kind == @kind }.to_h { |v| [v.name, v.value(@encoding)] }
+          @fields.filter { |f| f.kind == @kind }.to_h { |v| [v.name, v.value(@fields.encoding)] }
         end
         alias to_h to_hash
 
