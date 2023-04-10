@@ -12,6 +12,8 @@ module Hearth
         super(**kwargs)
         @http_method = http_method
         @fields = fields
+        @headers = FieldsProxy.new(@fields, :header)
+        @trailers = FieldsProxy.new(@fields, :trailer)
       end
 
       # @return [String]
@@ -19,6 +21,8 @@ module Hearth
 
       # @return [Fields]
       attr_reader :fields
+      attr_reader :headers
+      attr_reader :trailers
 
       # Append a path to the HTTP request URI.
       #
@@ -121,6 +125,48 @@ module Hearth
       #
       def prefix_host(prefix)
         uri.host = prefix + uri.host
+      end
+
+      class FieldsProxy
+        def initialize(fields, kind)
+          @fields = fields
+          @kind = kind
+        end
+
+        # @param [String] key
+        # @param [String, Integer, Array<String>, Field] value
+        def []=(key, value)
+          field =
+            case value
+            when String then Field.new(key, [value], kind: @kind)
+            when Integer then Field.new(key, [value.to_s], kind: @kind)
+            when Array then Field.new(key, value, kind: @kind)
+            when Field then value
+            else
+              raise ArgumentError,
+                    'value must be a String, Integer, Array, or Field'
+            end
+          @fields[key] = field
+        end
+
+        def <<(field)
+          # TODO: What exactly should this do?
+          # Do we need to check that it exists and kind matches?
+          @entries[field.name] << field
+        end
+
+        # @param [String] key
+        def [](key)
+          # TODO - check the kind and error or return nil if does not match?
+          @entries[key]
+        end
+
+        # @return [Hash]
+        def to_hash
+          @fields.filter { |f| f.kind == @kind }.to_h { |v| [v.name, v.value(@encoding)] }
+        end
+        alias to_h to_hash
+
       end
     end
   end

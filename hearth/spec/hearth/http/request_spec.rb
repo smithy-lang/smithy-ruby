@@ -27,6 +27,31 @@ module Hearth
         end
       end
 
+      describe '#headers' do
+        it 'allows setting of headers' do
+          request = Request.new
+          request.headers['name'] = 'value'
+          expect(request.fields['name'].value).to eq('value')
+          expect(request.fields['name'].kind).to eq(:header)
+        end
+
+        it 'lets you get a hash of only the headers' do
+          request = Request.new
+          request.headers['name'] = 'value'
+          request.trailers['trailer'] = 'trailer-value'
+          expect(request.headers.to_h).to eq({'name' => 'value'})
+        end
+      end
+
+      describe '#trailers' do
+        it 'allows setting of trailers' do
+          request = Request.new
+          request.trailers['name'] = 'value'
+          expect(request.fields['name'].value).to eq('value')
+          expect(request.fields['name'].kind).to eq(:trailer)
+        end
+      end
+
       describe '#append_path' do
         it 'appends to the uri' do
           subject.append_path('test')
