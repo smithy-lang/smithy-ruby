@@ -73,7 +73,10 @@ public class DirectedRubyCodegen
     public GenerationContext createContext(CreateContextDirective<RubySettings, RubyIntegration> directive) {
         ServiceShape service = directive.service();
         Model model = directive.model();
-        List<RubyIntegration> integrations = directive.integrations();
+        List<RubyIntegration> integrations = directive.integrations().stream()
+                .filter((integration) -> integration
+                        .includeFor(service, model))
+                .collect(Collectors.toList());
 
         Map<ShapeId, ProtocolGenerator> supportedProtocols = ProtocolGenerator
             .collectSupportedProtocolGenerators(integrations);
