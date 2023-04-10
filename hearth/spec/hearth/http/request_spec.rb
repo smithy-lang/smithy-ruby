@@ -21,8 +21,8 @@ module Hearth
         it 'sets empty defaults' do
           request = Request.new(uri: uri.to_s)
           expect(request.http_method).to be_nil
-          expect(request.fields).to be_a Fields
-          expect(request.body).to be_nil
+          expect(request.fields).to be_a(Fields)
+          expect(request.body).to be_a(StringIO)
         end
       end
 

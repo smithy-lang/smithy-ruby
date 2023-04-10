@@ -7,7 +7,7 @@ module Hearth
       # @param [String] name The name of the field.
       # @param [Array<String>] values ([]) The String values for the field.
       # @param [Symbol] kind The kind of field, either :header or :trailer.
-      #   Trailers are currently not supported.
+      #   Trailers are currently not supported by Net::HTTP.
       def initialize(name, values = [], kind: :header)
         if name.nil? || name.empty?
           raise ArgumentError, 'Field name must be a non-empty String'
@@ -45,13 +45,20 @@ module Hearth
 
       # Returns an escaped string representation of the field.
       # @return [String]
-      def value
-        @values.compact.map { |v| escape_value(v) }.join(',')
+      def value(encoding = nil)
+        value = @values.compact.map { |v| escape_value(v) }.join(',')
+        value = value.encode(encoding) if encoding
+        value
       end
 
       # @return [Boolean]
       def header?
         @kind == :header
+      end
+
+      # @return [Boolean]
+      def trailer?
+        @kind == :trailer
       end
 
       def to_h

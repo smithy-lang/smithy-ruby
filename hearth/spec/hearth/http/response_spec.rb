@@ -6,16 +6,16 @@ module Hearth
       describe '#initialize' do
         it 'sets empty defaults' do
           response = Response.new
+          expect(response.body).to be_a(StringIO)
           expect(response.status).to eq(0)
           expect(response.fields).to be_a(Fields)
-          expect(response.body).to be_nil
+          expect(response.body).to be_a(StringIO)
         end
       end
 
       describe '#reset' do
         it 'resets to defaults' do
           response = Response.new(
-            body: StringIO.new,
             reason: 'Because',
             status: 200,
             fields: Fields.new({ 'key' => 'value' })

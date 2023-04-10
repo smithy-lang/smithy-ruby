@@ -28,8 +28,7 @@ module Hearth
 
       let(:http_method) { :get }
       let(:uri) { URI('http://example.com') }
-      let(:headers) { {} }
-      let(:fields) { Fields.new(headers) }
+      let(:fields) { Fields.new }
       let(:request_body) { StringIO.new('') }
 
       let(:request) do
@@ -40,8 +39,7 @@ module Hearth
           body: request_body
         )
       end
-
-      let(:response) { Response.new(body: StringIO.new) }
+      let(:response) { Response.new }
 
       describe '#transmit' do
         it 'sends the request to the uri' do
@@ -51,7 +49,7 @@ module Hearth
 
         %i[get post put patch delete].each do |http_method|
           it "sends a #{http_method} request" do
-            request = Request.new(http_method: http_method, uri: uri.to_s)
+            request = Request.new(http_method: http_method, uri: uri)
 
             stub_request(http_method, uri.to_s)
             subject.transmit(request: request, response: response)
@@ -104,7 +102,7 @@ module Hearth
         end
 
         context 'request headers are set' do
-          let(:headers) { { 'Header-Name' => 'Header-Value' } }
+          let(:fields) { Fields.new({ 'Header-Name' => 'Header-Value' }) }
           it 'transmits the headers' do
             stub_request(http_method, uri.to_s)
               .with(headers: fields.to_h)
@@ -127,7 +125,7 @@ module Hearth
           stub_request(http_method, uri.to_s)
             .to_return(headers: response_headers)
           subject.transmit(request: request, response: response)
-          expect(response.fields).to eq(response_headers)
+          expect(response.fields.to_h).to eq(response_headers)
         end
 
         it 'writes the response body' do
@@ -148,7 +146,7 @@ module Hearth
 
         it 'raises ArgumentError on invalid http verbs' do
           expect do
-            request = Request.new(http_method: :invalid_verb, uri: uri.to_s)
+            request = Request.new(http_method: :invalid_verb, uri: uri)
             subject.transmit(request: request, response: response)
           end.to raise_error(ArgumentError)
         end

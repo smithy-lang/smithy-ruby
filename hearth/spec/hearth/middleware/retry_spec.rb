@@ -109,7 +109,7 @@ module Hearth
           body: StringIO.new
         )
       end
-      let(:response) { Hearth::HTTP::Response.new(body: StringIO.new) }
+      let(:response) { Hearth::HTTP::Response.new }
       let(:context) do
         Hearth::Context.new(
           request: request,

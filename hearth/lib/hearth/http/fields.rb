@@ -60,15 +60,14 @@ module Hearth
         @entries.delete(key.downcase)
       end
 
-      # @return [Enumerable<String,Field>]
-      def each_pair(&block)
-        @entries.each(&block)
+      # @return [Enumerable<Field>]
+      def each(&block)
+        @entries.values.each(&block)
       end
-      alias each each_pair
 
       # @return [Hash]
       def to_hash
-        @entries.to_h { |_k, v| [v.name, v.value] }
+        each.to_h { |v| [v.name, v.value(@encoding)] }
       end
       alias to_h to_hash
 

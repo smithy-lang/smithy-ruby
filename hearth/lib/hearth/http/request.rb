@@ -8,12 +8,10 @@ module Hearth
     # Represents an HTTP request.
     # @api private
     class Request < Hearth::Request
-      # @param [URI, String] uri The URI. Also sets :destination.
       # @param [String] http_method
       # @param [Fields] fields
       # @param (see Hearth::Request#initialize)
-      def initialize(uri:, http_method: nil, fields: Fields.new, **kwargs)
-        kwargs[:destination] = URI(uri)
+      def initialize(http_method: nil, fields: Fields.new, **kwargs)
         super(**kwargs)
         @http_method = http_method
         @fields = fields
@@ -24,13 +22,6 @@ module Hearth
 
       # @return [Fields]
       attr_reader :fields
-
-      # Base request uses "Destination" concept. HTTP request uses "URI".
-      def destination=(value)
-        @destination = URI(value)
-      end
-      alias uri destination
-      alias uri= destination=
 
       # Append a path to the HTTP request URI.
       #

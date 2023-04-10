@@ -76,7 +76,7 @@ module Hearth
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
-            response.fields = extract_fields(net_resp)
+            response.fields = fields_from(net_resp)
             net_resp.read_body do |chunk|
               response.body.write(chunk)
             end
@@ -114,8 +114,7 @@ module Hearth
       # @return [Net::HTTP::Request]
       def build_net_request(request)
         request_class = net_http_request_class(request)
-        # Trailers are not supported in Net::HTTP, but get all fields anyway.
-        req = request_class.new(request.uri.to_s, request.fields.to_h)
+        req = request_class.new(request.uri.to_s, net_headers_for(request))
 
         # Net::HTTP adds a default Content-Type when a body is present.
         # Set the body stream when it has an unknown size or when it is > 0.
@@ -127,10 +126,22 @@ module Hearth
         req
       end
 
+      # Validate that fields are not trailers and return a hash of headers.
+      # @param [HTTP::Request] request
+      # @return [Hash<String, String>]
+      def net_headers_for(request)
+        # Trailers are not supported in Net::HTTP
+        if request.fields.any?(&:trailer?)
+          raise ArgumentError, 'Trailers are not supported in Net::HTTP'
+        end
+
+        request.fields.to_h
+      end
+
       # @param [Net::HTTP::Response] response
-      # @return [Hash<String, Field>]
-      def extract_fields(response)
-        response.to_hash.transform_values(&:first)
+      # @return [Fields] fields
+      def fields_from(response)
+        Fields.new(response.to_hash.transform_values(&:first))
       end
 
       # @param [Http::Request] request

@@ -6,17 +6,17 @@ module Hearth
   # Represents a base request.
   # @api private
   class Request
-    # @param [String] destination
-    # @param [IO, nil] (nil) body
-    def initialize(destination:, body: nil)
-      @destination = destination
+    # @param [URI] uri
+    # @param [IO] (StringIO.new) body
+    def initialize(uri:, body: StringIO.new)
+      @uri = uri
       @body = body
     end
 
-    # @return [String]
-    attr_accessor :destination
+    # @return [URI]
+    attr_accessor :uri
 
-    # @return [IO, nil]
+    # @return [IO]
     attr_accessor :body
   end
 end
