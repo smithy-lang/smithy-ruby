@@ -290,7 +290,9 @@ public class ParamsGenerator extends RubyGeneratorBase {
                 // Note: No need to check for box trait for V1 Smithy models.
                 // Smithy convert V1 to V2 model and populate Default trait automatically
                 boolean containsRequiredAndDefaultTraits =
-                        memberShape.hasTrait(DefaultTrait.class) && memberShape.hasTrait(RequiredTrait.class);
+                        memberShape.hasTrait(DefaultTrait.class) &&
+                                !memberShape.expectTrait(DefaultTrait.class).toNode().isNullNode() &&
+                                memberShape.hasTrait(RequiredTrait.class);
 
                 if (containsRequiredAndDefaultTraits) {
                     Shape targetShape = model.expectShape(memberShape.getTarget());
