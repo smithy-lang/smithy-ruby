@@ -25,10 +25,9 @@ module RailsJson
         it 'rails_json_serializes_bad_names' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/BadName/abc_value')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/BadName/abc_value')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
             Hearth::Output.new
@@ -97,11 +96,10 @@ module RailsJson
         it 'RailsJsonAllQueryStringTypes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/AllQueryStringTypesInput')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
             expected_query = ::CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -178,16 +176,15 @@ module RailsJson
         it 'RailsJsonConstantAndVariableQueryStringMissingOneValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/ConstantAndVariableQueryString')
+            expect(request.uri.path).to eq('/ConstantAndVariableQueryString')
             expected_query = ::CGI.parse(['foo=bar', 'baz=bam'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
             forbid_query = ['maybeSet']
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             forbid_query.each do |query|
               expect(actual_query.key?(query)).to be false
             end
@@ -204,11 +201,10 @@ module RailsJson
         it 'RailsJsonConstantAndVariableQueryStringAllValues' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/ConstantAndVariableQueryString')
+            expect(request.uri.path).to eq('/ConstantAndVariableQueryString')
             expected_query = ::CGI.parse(['foo=bar', 'baz=bam', 'maybeSet=yes'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -233,11 +229,10 @@ module RailsJson
         it 'RailsJsonConstantQueryString' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/ConstantQueryString/hi')
+            expect(request.uri.path).to eq('/ConstantQueryString/hi')
             expected_query = ::CGI.parse(['foo=bar', 'hello'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -261,10 +256,9 @@ module RailsJson
         it 'RailsJsonDocumentTypeInputWithObject' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": {
@@ -284,10 +278,9 @@ module RailsJson
         it 'RailsJsonDocumentInputWithString' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": "hello"
@@ -305,10 +298,9 @@ module RailsJson
         it 'RailsJsonDocumentInputWithNumber' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": 10
@@ -326,10 +318,9 @@ module RailsJson
         it 'RailsJsonDocumentInputWithBoolean' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": true
@@ -347,10 +338,9 @@ module RailsJson
         it 'RailsJsonDocumentInputWithList' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentType')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentType')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "string_value": "string",
                 "document_value": [
@@ -591,10 +581,9 @@ module RailsJson
         it 'RailsJsonDocumentTypeAsPayloadInput' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentTypeAsPayload')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentTypeAsPayload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "foo": "bar"
             }'))
@@ -610,10 +599,9 @@ module RailsJson
         it 'RailsJsonDocumentTypeAsPayloadInputString' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/DocumentTypeAsPayload')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/DocumentTypeAsPayload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
             Hearth::Output.new
           end
@@ -835,10 +823,9 @@ module RailsJson
         it 'RailsJsonEndpointTrait' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.host).to eq('foo.example.com')
-            expect(request_uri.path).to eq('/endpoint')
+            expect(request.uri.host).to eq('foo.example.com')
+            expect(request.uri.path).to eq('/endpoint')
             Hearth::Output.new
           end
           opts = {middleware: middleware}
@@ -861,10 +848,9 @@ module RailsJson
         it 'RailsJsonEndpointTraitWithHostLabel' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.host).to eq('foo.bar.example.com')
-            expect(request_uri.path).to eq('/endpointwithhostlabel')
+            expect(request.uri.host).to eq('foo.bar.example.com')
+            expect(request.uri.path).to eq('/endpointwithhostlabel')
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label_member": "bar"}'))
             Hearth::Output.new
           end
@@ -964,10 +950,9 @@ module RailsJson
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/HttpPayloadTraits')
-            { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/HttpPayloadTraits')
+            { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
             Hearth::Output.new
@@ -983,10 +968,9 @@ module RailsJson
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/HttpPayloadTraits')
-            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/HttpPayloadTraits')
+            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1080,10 +1064,9 @@ module RailsJson
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/HttpPayloadTraitsWithMediaType')
-            { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/HttpPayloadTraitsWithMediaType')
+            { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
             Hearth::Output.new
@@ -1147,10 +1130,9 @@ module RailsJson
         it 'RailsJsonHttpPayloadWithStructure' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('PUT')
-            expect(request_uri.path).to eq('/HttpPayloadWithStructure')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/HttpPayloadWithStructure')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "greeting": "hello",
@@ -1228,10 +1210,9 @@ module RailsJson
         it 'RailsJsonHttpPrefixHeadersArePresent' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpPrefixHeaders')
-            { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/HttpPrefixHeaders')
+            { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1249,10 +1230,9 @@ module RailsJson
         it 'RailsJsonHttpPrefixHeadersAreNotPresent' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpPrefixHeaders')
-            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/HttpPrefixHeaders')
+            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1375,9 +1355,8 @@ module RailsJson
         it 'RailsJsonSupportsNaNFloatLabels' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/FloatHttpLabels/NaN/NaN')
+            expect(request.uri.path).to eq('/FloatHttpLabels/NaN/NaN')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1392,9 +1371,8 @@ module RailsJson
         it 'RailsJsonSupportsInfinityFloatLabels' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/FloatHttpLabels/Infinity/Infinity')
+            expect(request.uri.path).to eq('/FloatHttpLabels/Infinity/Infinity')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1409,9 +1387,8 @@ module RailsJson
         it 'RailsJsonSupportsNegativeInfinityFloatLabels' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/FloatHttpLabels/-Infinity/-Infinity')
+            expect(request.uri.path).to eq('/FloatHttpLabels/-Infinity/-Infinity')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1433,9 +1410,8 @@ module RailsJson
         it 'RailsJsonHttpRequestWithGreedyLabelInPath' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy')
+            expect(request.uri.path).to eq('/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1457,9 +1433,8 @@ module RailsJson
         it 'RailsJsonInputWithHeadersAndAllParams' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
+            expect(request.uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1480,9 +1455,8 @@ module RailsJson
         it 'RailsJsonHttpRequestLabelEscaping' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
+            expect(request.uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1510,9 +1484,8 @@ module RailsJson
         it 'RailsJsonHttpRequestWithLabelsAndTimestampFormat' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z/2019-12-16T23%3A48%3A18Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z')
+            expect(request.uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z/2019-12-16T23%3A48%3A18Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1707,10 +1680,9 @@ module RailsJson
         it 'RailsJsonInputAndOutputWithStringHeaders' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1734,10 +1706,9 @@ module RailsJson
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1761,10 +1732,9 @@ module RailsJson
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -1784,10 +1754,9 @@ module RailsJson
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/InputAndOutputWithHeaders')
-            { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -2084,10 +2053,9 @@ module RailsJson
         it 'RailsJsonEnums' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonenums')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonenums')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "foo_enum1": "Foo",
                 "foo_enum2": "0",
@@ -2234,10 +2202,9 @@ module RailsJson
         it 'RailsJsonJsonMaps' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "dense_struct_map": {
                     "foo": {
@@ -2283,10 +2250,9 @@ module RailsJson
         it 'RailsJsonSerializesNullMapValues' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_boolean_map": {
                     "x": null
@@ -2324,10 +2290,9 @@ module RailsJson
         it 'RailsJsonSerializesZeroValuesInMaps' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "dense_number_map": {
                     "x": 0
@@ -2365,10 +2330,9 @@ module RailsJson
         it 'RailsJsonSerializesSparseSetMap' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_set_map": {
                     "x": [],
@@ -2395,10 +2359,9 @@ module RailsJson
         it 'RailsJsonSerializesDenseSetMap' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "dense_set_map": {
                     "x": [],
@@ -2425,10 +2388,9 @@ module RailsJson
         it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/JsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_set_map": {
                     "x": [],
@@ -2971,10 +2933,9 @@ module RailsJson
         it 'RailsJsonSerializeStringUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "string_value": "foo"
@@ -2994,10 +2955,9 @@ module RailsJson
         it 'RailsJsonSerializeBooleanUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "boolean_value": true
@@ -3017,10 +2977,9 @@ module RailsJson
         it 'RailsJsonSerializeNumberUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "number_value": 1
@@ -3040,10 +2999,9 @@ module RailsJson
         it 'RailsJsonSerializeBlobUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "blob_value": "Zm9v"
@@ -3063,10 +3021,9 @@ module RailsJson
         it 'RailsJsonSerializeTimestampUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "timestamp_value": "2014-04-29T18:30:38Z"
@@ -3086,10 +3043,9 @@ module RailsJson
         it 'RailsJsonSerializeEnumUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "enum_value": "Foo"
@@ -3109,10 +3065,9 @@ module RailsJson
         it 'RailsJsonSerializeListUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "list_value": ["foo", "bar"]
@@ -3135,10 +3090,9 @@ module RailsJson
         it 'RailsJsonSerializeMapUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "map_value": {
@@ -3164,10 +3118,9 @@ module RailsJson
         it 'RailsJsonSerializeStructureUnionValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/jsonunions')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
                     "structure_value": {
@@ -3611,10 +3564,9 @@ module RailsJson
         it 'rails_json_rails_json_serializes_string_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
             Hearth::Output.new
@@ -3629,10 +3581,9 @@ module RailsJson
         it 'rails_json_serializes_string_shapes_with_jsonvalue_trait' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
             Hearth::Output.new
@@ -3647,10 +3598,9 @@ module RailsJson
         it 'rails_json_serializes_integer_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
             Hearth::Output.new
@@ -3665,10 +3615,9 @@ module RailsJson
         it 'rails_json_serializes_long_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
             Hearth::Output.new
@@ -3683,10 +3632,9 @@ module RailsJson
         it 'rails_json_serializes_float_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
             Hearth::Output.new
@@ -3701,10 +3649,9 @@ module RailsJson
         it 'rails_json_serializes_double_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
             Hearth::Output.new
@@ -3719,10 +3666,9 @@ module RailsJson
         it 'rails_json_serializes_blob_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
             Hearth::Output.new
@@ -3737,10 +3683,9 @@ module RailsJson
         it 'rails_json_serializes_boolean_shapes_true' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
             Hearth::Output.new
@@ -3755,10 +3700,9 @@ module RailsJson
         it 'rails_json_serializes_boolean_shapes_false' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
             Hearth::Output.new
@@ -3773,10 +3717,9 @@ module RailsJson
         it 'rails_json_serializes_timestamp_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
             Hearth::Output.new
@@ -3791,10 +3734,9 @@ module RailsJson
         it 'rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
             Hearth::Output.new
@@ -3809,10 +3751,9 @@ module RailsJson
         it 'rails_json_serializes_timestamp_shapes_with_httpdate_timestampformat' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
             Hearth::Output.new
@@ -3827,10 +3768,9 @@ module RailsJson
         it 'rails_json_serializes_timestamp_shapes_with_unixtimestamp_timestampformat' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
             Hearth::Output.new
@@ -3845,10 +3785,9 @@ module RailsJson
         it 'rails_json_serializes_list_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
             Hearth::Output.new
@@ -3867,10 +3806,9 @@ module RailsJson
         it 'rails_json_serializes_empty_list_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
             Hearth::Output.new
@@ -3887,10 +3825,9 @@ module RailsJson
         it 'rails_json_serializes_list_of_map_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
             Hearth::Output.new
@@ -3915,10 +3852,9 @@ module RailsJson
         it 'rails_json_serializes_list_of_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
             Hearth::Output.new
@@ -3943,10 +3879,9 @@ module RailsJson
         it 'rails_json_serializes_list_of_recursive_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
             Hearth::Output.new
@@ -3973,10 +3908,9 @@ module RailsJson
         it 'rails_json_serializes_map_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
             Hearth::Output.new
@@ -3994,10 +3928,9 @@ module RailsJson
         it 'rails_json_serializes_empty_map_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
             Hearth::Output.new
@@ -4014,10 +3947,9 @@ module RailsJson
         it 'rails_json_serializes_map_of_list_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
             Hearth::Output.new
@@ -4041,10 +3973,9 @@ module RailsJson
         it 'rails_json_serializes_map_of_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
             Hearth::Output.new
@@ -4066,10 +3997,9 @@ module RailsJson
         it 'rails_json_serializes_map_of_recursive_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
             Hearth::Output.new
@@ -4096,10 +4026,9 @@ module RailsJson
         it 'rails_json_serializes_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
             Hearth::Output.new
@@ -4116,10 +4045,9 @@ module RailsJson
         it 'rails_json_serializes_structure_members_with_locationname_traits' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
             Hearth::Output.new
@@ -4136,10 +4064,9 @@ module RailsJson
         it 'rails_json_serializes_empty_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
             Hearth::Output.new
@@ -4156,10 +4083,9 @@ module RailsJson
         it 'rails_json_serializes_structure_which_have_no_members' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
             Hearth::Output.new
@@ -4176,10 +4102,9 @@ module RailsJson
         it 'rails_json_serializes_recursive_structure_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
             Hearth::Output.new
@@ -5204,10 +5129,9 @@ module RailsJson
         it 'RailsJsonMediaTypeHeaderInputBase64' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/MediaTypeHeader')
-            { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/MediaTypeHeader')
+            { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -5266,10 +5190,9 @@ module RailsJson
         it 'rails_json_nested_attributes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/nestedattributes')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/nestedattributes')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
             Hearth::Output.new
           end
@@ -5292,9 +5215,8 @@ module RailsJson
         it 'RailsJsonNullAndEmptyHeaders' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/NullAndEmptyHeadersClient')
+            expect(request.uri.path).to eq('/NullAndEmptyHeadersClient')
             ['X-A', 'X-B', 'X-C'].each { |k| expect(request.headers.key?(k)).to be(false) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
@@ -5320,10 +5242,9 @@ module RailsJson
         it 'RailsJsonStructuresDontSerializeNullValues' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/nulloperation')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Hearth::Output.new
           end
@@ -5337,10 +5258,9 @@ module RailsJson
         it 'RailsJsonMapsSerializeNullValues' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/nulloperation')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_string_map": {
                     "foo": null
@@ -5360,10 +5280,9 @@ module RailsJson
         it 'RailsJsonListsSerializeNull' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/nulloperation')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "sparse_string_list": [
                     null
@@ -5514,9 +5433,8 @@ module RailsJson
         it 'RailsJsonOmitsNullQuery' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/OmitsNullSerializesEmptyString')
+            expect(request.uri.path).to eq('/OmitsNullSerializesEmptyString')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -5530,11 +5448,10 @@ module RailsJson
         it 'RailsJsonSerializesEmptyQueryValue' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/OmitsNullSerializesEmptyString')
+            expect(request.uri.path).to eq('/OmitsNullSerializesEmptyString')
             expected_query = ::CGI.parse(['Empty='].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5558,10 +5475,9 @@ module RailsJson
         it 'rails_json_can_call_operation_with_no_input_or_output' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/operationwithoptionalinputoutput')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
             Hearth::Output.new
           end
@@ -5575,10 +5491,9 @@ module RailsJson
         it 'rails_json_can_call_operation_with_optional_input' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/operationwithoptionalinputoutput')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
             Hearth::Output.new
           end
@@ -5600,11 +5515,10 @@ module RailsJson
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
+            expect(request.uri.path).to eq('/QueryIdempotencyTokenAutoFill')
             expected_query = ::CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5622,11 +5536,10 @@ module RailsJson
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/QueryIdempotencyTokenAutoFill')
+            expect(request.uri.path).to eq('/QueryIdempotencyTokenAutoFill')
             expected_query = ::CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5650,11 +5563,10 @@ module RailsJson
         it 'RailsJsonQueryParamsStringListMap' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/StringListMap')
+            expect(request.uri.path).to eq('/StringListMap')
             expected_query = ::CGI.parse(['corge=named', 'baz=bar', 'baz=qux'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
@@ -5688,10 +5600,9 @@ module RailsJson
         it 'RailsJsonTimestampFormatHeaders' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/TimestampFormatHeaders')
-            { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.uri.path).to eq('/TimestampFormatHeaders')
+            { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.fields[k]).to eq(v) }
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end

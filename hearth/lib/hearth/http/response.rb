@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'stringio'
-
 module Hearth
   module HTTP
     # Represents an HTTP Response.

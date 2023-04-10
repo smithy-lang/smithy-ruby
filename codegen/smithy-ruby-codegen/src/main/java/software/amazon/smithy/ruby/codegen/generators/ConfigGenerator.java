@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -40,10 +38,8 @@ public class ConfigGenerator {
 
     private final GenerationContext context;
     private final RubySettings settings;
-    private final Model model;
     private final RubyCodeWriter writer;
     private final RubyCodeWriter rbsWriter;
-    private final SymbolProvider symbolProvider;
 
     /**
      * @param context generation context
@@ -51,10 +47,8 @@ public class ConfigGenerator {
     public ConfigGenerator(GenerationContext context) {
         this.context = context;
         this.settings = context.settings();
-        this.model = context.model();
         this.writer = new RubyCodeWriter(context.settings().getModule() + "::Config");
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Config");
-        this.symbolProvider = context.symbolProvider();
     }
 
     /**

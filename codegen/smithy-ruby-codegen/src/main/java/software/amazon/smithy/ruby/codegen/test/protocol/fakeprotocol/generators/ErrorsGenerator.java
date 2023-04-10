@@ -31,6 +31,6 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
     }
 
     public void renderErrorCodeBody() {
-        writer.write("resp.headers['x-smithy-error']");
+        writer.write("resp.fields['x-smithy-error']");
     }
 }

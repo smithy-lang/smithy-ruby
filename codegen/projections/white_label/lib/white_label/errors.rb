@@ -10,7 +10,7 @@
 module WhiteLabel
   module Errors
     def self.error_code(resp)
-      resp.headers['x-smithy-error']
+      resp.fields['x-smithy-error']
     end
 
     # Base class for all errors returned by this service

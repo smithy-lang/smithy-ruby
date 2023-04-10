@@ -299,14 +299,14 @@ public abstract class BuilderGeneratorBase {
 
         writer.write("http_req.body = input[:$L]", symbolProvider.toMemberName(streamingMember));
         if (!target.hasTrait(RequiresLengthTrait.class)) {
-            writer.write("http_req.headers['Transfer-Encoding'] = 'chunked'");
+            writer.write("http_req.fields['Transfer-Encoding'] = 'chunked'");
         }
 
         if (target.hasTrait(MediaTypeTrait.class)) {
-            writer.write("http_req.headers['Content-Type'] = '$L'",
+            writer.write("http_req.fields['Content-Type'] = '$L'",
                     target.expectTrait(MediaTypeTrait.class).getValue());
         } else {
-            writer.write("http_req.headers['Content-Type'] = 'application/octet-stream'");
+            writer.write("http_req.fields['Content-Type'] = 'application/octet-stream'");
         }
     }
 

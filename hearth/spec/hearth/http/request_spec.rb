@@ -19,10 +19,11 @@ module Hearth
 
       describe '#initialize' do
         it 'sets empty defaults' do
-          request = Request.new(uri: uri.to_s)
+          request = Request.new
           expect(request.http_method).to be_nil
           expect(request.fields).to be_a(Fields)
           expect(request.body).to be_a(StringIO)
+          expect(request.uri).to be_a(URI)
         end
       end
 

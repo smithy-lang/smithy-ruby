@@ -15,7 +15,6 @@ module Hearth
           let(:request) do
             Request.new(
               http_method: 'GET',
-              uri: URI('http://example.com'),
               body: body
             )
           end

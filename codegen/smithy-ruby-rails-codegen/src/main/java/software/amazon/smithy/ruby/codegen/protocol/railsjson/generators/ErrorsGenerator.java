@@ -43,7 +43,7 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
     }
 
     private void renderErrorCodeFromHeader() {
-        writer.write("resp.headers['x-smithy-rails-error']");
+        writer.write("resp.fields['x-smithy-rails-error']");
     }
 
     // See https://github.com/rails/rails/blob/2dfd4fcd73ae7c4b40114f2447c7ef9d4c0790b4/guides/source/layouts_and_rendering.md?plain=1#L363-L408

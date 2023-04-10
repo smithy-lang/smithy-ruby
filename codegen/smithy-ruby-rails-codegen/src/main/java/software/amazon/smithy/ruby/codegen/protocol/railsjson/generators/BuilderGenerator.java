@@ -103,7 +103,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
     protected void renderBodyBuilder(OperationShape operation, Shape inputShape) {
         writer
                 .write("")
-                .write("http_req.headers['Content-Type'] = 'application/json'")
+                .write("http_req.fields['Content-Type'] = 'application/json'")
                 .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
                 .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
@@ -303,7 +303,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         @Override
         public Void stringShape(StringShape shape) {
             writer
-                    .write("http_req.headers['Content-Type'] = 'text/plain'")
+                    .write("http_req.fields['Content-Type'] = 'text/plain'")
                     .write("http_req.body = StringIO.new($L || '')", inputGetter);
             return null;
         }
@@ -317,7 +317,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             }
 
             writer
-                    .write("http_req.headers['Content-Type'] = '$L'", mediaType)
+                    .write("http_req.fields['Content-Type'] = '$L'", mediaType)
                     .write("http_req.body = StringIO.new($L || '')", inputGetter);
             return null;
         }
@@ -325,7 +325,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         @Override
         public Void documentShape(DocumentShape shape) {
             writer
-                    .write("http_req.headers['Content-Type'] = 'application/json'")
+                    .write("http_req.fields['Content-Type'] = 'application/json'")
                     .write("http_req.body = StringIO.new(Hearth::JSON.dump($1L))", inputGetter);
             return null;
         }
@@ -356,7 +356,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
         private void defaultComplexSerializer(Shape shape) {
             writer
-                    .write("http_req.headers['Content-Type'] = 'application/json'")
+                    .write("http_req.fields['Content-Type'] = 'application/json'")
                     .write("data = Builders::$1L.build($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
                             inputGetter)
                     .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");

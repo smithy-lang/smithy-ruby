@@ -7,12 +7,10 @@ module Hearth
 
       let(:http_status) { 404 }
       let(:http_fields) { Hearth::HTTP::Fields.new }
-      let(:http_body) { 'body' }
       let(:http_resp) do
         Hearth::HTTP::Response.new(
           status: http_status,
-          fields: http_fields,
-          body: http_body
+          fields: http_fields
         )
       end
       let(:message) { 'message' }

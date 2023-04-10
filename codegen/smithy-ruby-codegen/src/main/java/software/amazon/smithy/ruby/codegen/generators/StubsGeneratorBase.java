@@ -183,7 +183,7 @@ public abstract class StubsGeneratorBase {
      * def self.stub(http_resp, stub:)
      *   data = {}
      *   http_resp.status = 200
-     *   http_resp.headers['Content-Type'] = 'application/json'
+     *   http_resp.fields['Content-Type'] = 'application/json'
      *   data['contents'] = Stubs::Contents.stub(stub[:contents]) unless stub[:contents].nil?
      *   http_resp.body = StringIO.new(Hearth::JSON.dump(data))
      * end

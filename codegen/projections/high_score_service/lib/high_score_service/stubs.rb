@@ -22,8 +22,8 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 201
-        http_resp.headers['Location'] = stub[:location] unless stub[:location].nil? || stub[:location].empty?
-        http_resp.headers['Content-Type'] = 'application/json'
+        http_resp.fields['Location'] = stub[:location] unless stub[:location].nil? || stub[:location].empty?
+        http_resp.fields['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -53,7 +53,7 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
+        http_resp.fields['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -116,7 +116,7 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
+        http_resp.fields['Content-Type'] = 'application/json'
         data = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -133,7 +133,7 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
+        http_resp.fields['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end

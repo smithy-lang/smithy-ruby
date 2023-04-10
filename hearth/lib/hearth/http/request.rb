@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'stringio'
-require 'uri'
-
 module Hearth
   module HTTP
     # Represents an HTTP request.
