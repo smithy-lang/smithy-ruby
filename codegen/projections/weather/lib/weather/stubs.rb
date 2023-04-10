@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module Weather
+  # @api private
   module Stubs
 
     # Union Stubber for Announcements

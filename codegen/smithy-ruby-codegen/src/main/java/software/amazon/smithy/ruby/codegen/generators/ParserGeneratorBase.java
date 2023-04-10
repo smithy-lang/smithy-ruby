@@ -220,6 +220,7 @@ public abstract class ParserGeneratorBase {
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
+                .apiPrivate()
                 .openBlock("module Parsers")
                 .call(() -> renderParsers())
                 .closeBlock("end")

@@ -10,6 +10,7 @@
 require 'time'
 
 module RailsJson
+  # @api private
   module Validators
 
     class AllQueryStringTypesInput

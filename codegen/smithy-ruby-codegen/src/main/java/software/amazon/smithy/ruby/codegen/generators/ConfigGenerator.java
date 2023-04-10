@@ -18,7 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -32,47 +32,40 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * Generate Config class for a Client.
  */
 @SmithyInternalApi
-public class ConfigGenerator {
+public class ConfigGenerator extends RubyGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(ConfigGenerator.class.getName());
 
-    private final GenerationContext context;
-    private final RubySettings settings;
-    private final RubyCodeWriter writer;
-    private final RubyCodeWriter rbsWriter;
+    private final List<ClientConfig> clientConfigList;
 
-    /**
-     * @param context generation context
-     */
-    public ConfigGenerator(GenerationContext context) {
-        this.context = context;
-        this.settings = context.settings();
-        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Config");
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Config");
+    public ConfigGenerator(
+            ContextualDirective<GenerationContext, RubySettings> directive, List<ClientConfig> clientConfigList) {
+        super(directive);
+        this.clientConfigList = clientConfigList;
     }
 
-    /**
-     * Render/Generate the Config for the client.
-     * @param clientConfigList list of config to apply to the client.
-     */
-    public void render(List<ClientConfig> clientConfigList) {
-        FileManifest fileManifest = context.fileManifest();
+    @Override
+    String getModule() {
+        return "Config";
+    }
 
-        String membersBlock = "nil";
-        if (!clientConfigList.isEmpty()) {
-            membersBlock = clientConfigList
+    public void render() {
+        write(writer -> {
+            String membersBlock = "nil";
+            if (!clientConfigList.isEmpty()) {
+                membersBlock = clientConfigList
                     .stream()
                     .map(clientConfig -> RubyFormatter.asSymbol(
                         RubySymbolProvider.toMemberName(clientConfig.getName())))
                     .collect(Collectors.joining(",\n"));
-        }
-        membersBlock += ",";
+            }
+            membersBlock += ",";
 
-        writer
+            writer
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
-                .call(() -> renderConfigDocumentation(clientConfigList))
+                .call(() -> renderConfigDocumentation(writer))
                 .openBlock("Config = ::Struct.new(")
                 .write(membersBlock)
                 .write("keyword_init: true")
@@ -80,38 +73,30 @@ public class ConfigGenerator {
                 .indent()
                 .write("include $T", Hearth.CONFIGURATION)
                 .write("\nprivate\n")
-                .call(() -> renderValidateMethod(clientConfigList))
+                .call(() -> renderValidateMethod(writer))
                 .write("")
-                .call(() -> renderDefaultsMethod(clientConfigList))
+                .call(() -> renderDefaultsMethod(writer))
                 .closeBlock("end")
                 .closeBlock("end\n");
+        });
 
-        String fileName =
-                settings.getGemName() + "/lib/" + settings.getGemName()
-                        + "/config.rb";
-        fileManifest.writeFile(fileName, writer.toString());
-        LOGGER.fine("Wrote config to " + fileName);
+        LOGGER.fine("Wrote config to " + rbFile());
     }
 
     /**
      * Render/generate the RBS types for Config.
      */
     public void renderRbs() {
-        FileManifest fileManifest = context.fileManifest();
-
-        rbsWriter
+        writeRbs(writer -> {
+            writer
                 .openBlock("module $L", settings.getModule())
                 .write("Config: untyped")
                 .closeBlock("end");
-
-        String fileName =
-                settings.getGemName() + "/sig/" + settings.getGemName()
-                        + "/config.rbs";
-        fileManifest.writeFile(fileName, rbsWriter.toString());
-        LOGGER.fine("Wrote config rbs to " + fileName);
+        });
+        LOGGER.fine("Wrote config rbs to " + rbsFile());
     }
 
-    private void renderConfigDocumentation(List<ClientConfig> clientConfigList) {
+    private void renderConfigDocumentation(RubyCodeWriter writer) {
         writer.writeYardMethod("initialize(*options)", () -> {
             clientConfigList.forEach((clientConfig) -> {
                 String member = RubyFormatter.asSymbol(RubySymbolProvider.toMemberName(clientConfig.getName()));
@@ -129,7 +114,7 @@ public class ConfigGenerator {
         });
     }
 
-    private void renderValidateMethod(List<ClientConfig> clientConfigList) {
+    private void renderValidateMethod(RubyCodeWriter writer) {
         writer.openBlock("def validate!");
         clientConfigList.stream().forEach(clientConfig -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
@@ -144,7 +129,7 @@ public class ConfigGenerator {
         writer.closeBlock("end");
     }
 
-    private void renderDefaultsMethod(List<ClientConfig> clientConfigList) {
+    private void renderDefaultsMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("def self.defaults")
                 .openBlock("@defaults ||= {");

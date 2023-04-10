@@ -42,7 +42,7 @@ jobs:
 
   ruby-rbs-type-check:
     needs: [generate-test-sdk]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:

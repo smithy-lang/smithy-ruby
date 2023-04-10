@@ -10,6 +10,7 @@
 require 'base64'
 
 module RailsJson
+  # @api private
   module Stubs
 
     # Operation Stubber for AllQueryStringTypes

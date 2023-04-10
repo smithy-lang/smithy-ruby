@@ -10,6 +10,7 @@
 require 'securerandom'
 
 module RailsJson
+  # @api private
   module Params
 
     module AllQueryStringTypesInput

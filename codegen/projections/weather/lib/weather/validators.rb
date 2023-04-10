@@ -10,6 +10,7 @@
 require 'time'
 
 module Weather
+  # @api private
   module Validators
 
     class Announcements
