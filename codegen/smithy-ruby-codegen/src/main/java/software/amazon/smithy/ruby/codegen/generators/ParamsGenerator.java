@@ -79,14 +79,14 @@ public class ParamsGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                .includePreamble()
-                .includeRequires()
-                .addModule(settings.getModule())
-                .apiPrivate()
-                .addModule("Params")
-                .call(() -> renderParams(writer))
-                .write("")
-                .closeAllModules();
+                    .includePreamble()
+                    .includeRequires()
+                    .addModule(settings.getModule())
+                    .apiPrivate()
+                    .addModule("Params")
+                    .call(() -> renderParams(writer))
+                    .write("")
+                    .closeAllModules();
         });
         LOGGER.fine("Wrote params to " + rbFile());
     }
@@ -118,21 +118,21 @@ public class ParamsGenerator extends RubyGeneratorBase {
         @Override
         public Void structureShape(StructureShape structureShape) {
             writer
-                .write("")
-                .openBlock("module $L", symbolProvider.toSymbol(structureShape).getName())
-                .openBlock("def self.build(params, context: '')")
-                .call(() -> renderBuilderForStructureMembers(
-                        context.symbolProvider().toSymbol(structureShape), structureShape.members()))
-                .closeBlock("end")
-                .closeBlock("end");
+                    .write("")
+                    .openBlock("module $L", symbolProvider.toSymbol(structureShape).getName())
+                    .openBlock("def self.build(params, context: '')")
+                    .call(() -> renderBuilderForStructureMembers(
+                            context.symbolProvider().toSymbol(structureShape), structureShape.members()))
+                    .closeBlock("end")
+                    .closeBlock("end");
             return null;
         }
 
         private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
             writer
-                .write("$T.validate_types!(params, ::Hash, $T, context: context)",
-                        Hearth.VALIDATOR, symbol)
-                .write("type = $T.new", symbol);
+                    .write("$T.validate_types!(params, ::Hash, $T, context: context)",
+                            Hearth.VALIDATOR, symbol)
+                    .write("type = $T.new", symbol);
 
             members.forEach(member -> {
                 Shape target = model.expectShape(member.getTarget());
@@ -142,7 +142,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
                 String input = "params[" + symbolName + "]";
                 String contextKey = "\"#{context}[" + symbolName + "]\"";
                 target.accept(new MemberBuilder(model, writer, context.symbolProvider(),
-                    memberSetter, input, contextKey, member, true));
+                        memberSetter, input, contextKey, member, true));
             });
 
             writer.write("type");
@@ -151,30 +151,30 @@ public class ParamsGenerator extends RubyGeneratorBase {
         @Override
         public Void listShape(ListShape listShape) {
             Shape memberTarget =
-                model.expectShape(listShape.getMember().getTarget());
+                    model.expectShape(listShape.getMember().getTarget());
 
             writer
-                .write("")
-                .openBlock("module $L", symbolProvider.toSymbol(listShape).getName())
-                .openBlock("def self.build(params, context: '')")
-                .write("$T.validate_types!(params, ::Array, context: context)", Hearth.VALIDATOR)
-                .write("data = []")
-                .call(() -> {
-                    if (isComplexShape(memberTarget)) {
-                        writer.openBlock("params.each_with_index do |element, index|");
-                    } else {
-                        writer.openBlock("params.each do |element|");
-                    }
-                })
-                .call(() -> memberTarget
-                        .accept(new MemberBuilder(model, writer, symbolProvider, "data << ",
-                                "element", "\"#{context}[#{index}]\"",
-                                listShape.getMember(),
-                                !listShape.hasTrait(SparseTrait.class))))
-                .closeBlock("end")
-                .write("data")
-                .closeBlock("end")
-                .closeBlock("end");
+                    .write("")
+                    .openBlock("module $L", symbolProvider.toSymbol(listShape).getName())
+                    .openBlock("def self.build(params, context: '')")
+                    .write("$T.validate_types!(params, ::Array, context: context)", Hearth.VALIDATOR)
+                    .write("data = []")
+                    .call(() -> {
+                        if (isComplexShape(memberTarget)) {
+                            writer.openBlock("params.each_with_index do |element, index|");
+                        } else {
+                            writer.openBlock("params.each do |element|");
+                        }
+                    })
+                    .call(() -> memberTarget
+                            .accept(new MemberBuilder(model, writer, symbolProvider, "data << ",
+                                    "element", "\"#{context}[#{index}]\"",
+                                    listShape.getMember(),
+                                    !listShape.hasTrait(SparseTrait.class))))
+                    .closeBlock("end")
+                    .write("data")
+                    .closeBlock("end")
+                    .closeBlock("end");
             return null;
         }
 
@@ -183,20 +183,20 @@ public class ParamsGenerator extends RubyGeneratorBase {
             Shape valueTarget = model.expectShape(mapShape.getValue().getTarget());
 
             writer
-                .write("")
-                .openBlock("module $L", symbolProvider.toSymbol(mapShape).getName())
-                .openBlock("def self.build(params, context: '')")
-                .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
-                .write("data = {}")
-                .openBlock("params.each do |key, value|")
-                .call(() -> valueTarget
-                        .accept(new MemberBuilder(model, writer, context.symbolProvider(), "data[key] = ",
-                                "value", "\"#{context}[:#{key}]\"", mapShape.getValue(),
-                                !mapShape.hasTrait(SparseTrait.class))))
-                .closeBlock("end")
-                .write("data")
-                .closeBlock("end")
-                .closeBlock("end");
+                    .write("")
+                    .openBlock("module $L", symbolProvider.toSymbol(mapShape).getName())
+                    .openBlock("def self.build(params, context: '')")
+                    .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
+                    .write("data = {}")
+                    .openBlock("params.each do |key, value|")
+                    .call(() -> valueTarget
+                            .accept(new MemberBuilder(model, writer, context.symbolProvider(), "data[key] = ",
+                                    "value", "\"#{context}[:#{key}]\"", mapShape.getValue(),
+                                    !mapShape.hasTrait(SparseTrait.class))))
+                    .closeBlock("end")
+                    .write("data")
+                    .closeBlock("end")
+                    .closeBlock("end");
             return null;
         }
 
@@ -206,53 +206,53 @@ public class ParamsGenerator extends RubyGeneratorBase {
             Symbol typeSymbol = context.symbolProvider().toSymbol(shape);
 
             writer
-                .write("")
-                .openBlock("module $L", name)
-                .openBlock("def self.build(params, context: '')")
-                .write("return params if params.is_a?($T)", typeSymbol)
-                .write("$T.validate_types!(params, ::Hash, $T, context: context)",
-                        Hearth.VALIDATOR, typeSymbol)
-                .openBlock("unless params.size == 1")
-                .write("raise ArgumentError,")
-                .indent(3)
-                .write("\"Expected #{context} to have exactly one member, got: #{params}\"")
-                .dedent(3)
-                .closeBlock("end")
-                .write("key, value = params.flatten")
-                .write("case key"); //start a case statement.  This does NOT indent
+                    .write("")
+                    .openBlock("module $L", name)
+                    .openBlock("def self.build(params, context: '')")
+                    .write("return params if params.is_a?($T)", typeSymbol)
+                    .write("$T.validate_types!(params, ::Hash, $T, context: context)",
+                            Hearth.VALIDATOR, typeSymbol)
+                    .openBlock("unless params.size == 1")
+                    .write("raise ArgumentError,")
+                    .indent(3)
+                    .write("\"Expected #{context} to have exactly one member, got: #{params}\"")
+                    .dedent(3)
+                    .closeBlock("end")
+                    .write("key, value = params.flatten")
+                    .write("case key"); //start a case statement.  This does NOT indent
 
             for (MemberShape member : shape.members()) {
                 Shape target = model.expectShape(member.getTarget());
                 String memberClassName = symbolProvider.toMemberName(member);
                 String memberName = RubyFormatter.asSymbol(memberClassName);
                 writer.write("when $L", memberName)
-                    .indent()
-                    .openBlock("$T.new(", context.symbolProvider().toSymbol(member));
+                        .indent()
+                        .openBlock("$T.new(", context.symbolProvider().toSymbol(member));
                 String input = "params[" + memberName + "]";
                 String contextString = "\"#{context}[" + memberName + "]\"";
                 target.accept(new MemberBuilder(model, writer, symbolProvider, "", input, contextString,
                         member, false));
                 writer.closeBlock(")")
-                    .dedent();
+                        .dedent();
             }
             String expectedMembers =
-                shape.members().stream().map((member) -> RubyFormatter.asSymbol(member.getMemberName()))
-                        .collect(Collectors.joining(", "));
+                    shape.members().stream().map((member) -> RubyFormatter.asSymbol(member.getMemberName()))
+                            .collect(Collectors.joining(", "));
             writer.write("else")
-                .indent()
-                .write("raise ArgumentError,")
-                .indent(3)
-                .write("\"Expected #{context} to have one of $L set\"", expectedMembers)
-                .dedent(4);
+                    .indent()
+                    .write("raise ArgumentError,")
+                    .indent(3)
+                    .write("\"Expected #{context} to have one of $L set\"", expectedMembers)
+                    .dedent(4);
             writer.write("end")  //end of case statement, NOT indented
-                .closeBlock("end")
-                .closeBlock("end");
+                    .closeBlock("end")
+                    .closeBlock("end");
             return null;
         }
 
         private boolean isComplexShape(Shape shape) {
             return shape.isStructureShape() || shape.isListShape() || shape.isMapShape()
-                || shape.isUnionShape() || shape.isOperationShape();
+                    || shape.isUnionShape() || shape.isOperationShape();
         }
 
         private static class MemberBuilder extends ShapeVisitor.Default<Void> {
@@ -290,9 +290,9 @@ public class ParamsGenerator extends RubyGeneratorBase {
                 // Note: No need to check for box trait for V1 Smithy models.
                 // Smithy convert V1 to V2 model and populate Default trait automatically
                 boolean containsRequiredAndDefaultTraits =
-                        memberShape.hasTrait(DefaultTrait.class) &&
-                                !memberShape.expectTrait(DefaultTrait.class).toNode().isNullNode() &&
-                                memberShape.hasTrait(RequiredTrait.class);
+                        memberShape.hasTrait(DefaultTrait.class)
+                                && !memberShape.expectTrait(DefaultTrait.class).toNode().isNullNode()
+                                && memberShape.hasTrait(RequiredTrait.class);
 
                 if (containsRequiredAndDefaultTraits) {
                     Shape targetShape = model.expectShape(memberShape.getTarget());
@@ -316,12 +316,12 @@ public class ParamsGenerator extends RubyGeneratorBase {
             public Void blobShape(BlobShape shape) {
                 if (shape.hasTrait(StreamingTrait.class)) {
                     writer
-                        .write("io = $L || StringIO.new", input)
-                        .openBlock("unless io.respond_to?(:read) "
-                                + "|| io.respond_to?(:readpartial)")
-                        .write("io = StringIO.new(io)")
-                        .closeBlock("end")
-                        .write("$Lio", memberSetter);
+                            .write("io = $L || StringIO.new", input)
+                            .openBlock("unless io.respond_to?(:read) "
+                                    + "|| io.respond_to?(:readpartial)")
+                            .write("io = StringIO.new(io)")
+                            .closeBlock("end")
+                            .write("$Lio", memberSetter);
                 } else {
                     getDefault(shape);
                 }
