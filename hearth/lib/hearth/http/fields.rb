@@ -22,24 +22,15 @@ module Hearth
       end
 
       # @param [String] key
-      # @param [String, Integer, Array<String>, Field] value
+      # @param [Field] value
       def []=(key, value)
-        field =
-          case value
-          when String then Field.new(key, [value])
-          when Integer then Field.new(key, [value.to_s])
-          when Array then Field.new(key, value)
-          when Field then value
-          else
-            raise ArgumentError,
-                  'value must be a String, Integer, Array, or Field'
-          end
-        @entries[key.downcase] = field
+        raise ArgumentError, 'value must be a Field' unless value.is_a?(Field)
+        @entries[key.downcase] = value
       end
 
       # @param [Field] field
       def <<(field)
-        @entries[field.name.downcase] = field
+        @entries[field.name.downcase] << field
       end
 
       # @param [String] key
