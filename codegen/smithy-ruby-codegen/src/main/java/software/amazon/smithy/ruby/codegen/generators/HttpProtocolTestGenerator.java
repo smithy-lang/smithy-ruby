@@ -332,7 +332,8 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseMiddlewareBody(Optional<String> body) {
         if (body.isPresent()) {
-            writer.write("response.body = StringIO.new('$L')", body.get());
+            writer.write("response.body.write('$L')", body.get());
+            writer.write("response.body.rewind");
         }
     }
 

@@ -32,6 +32,9 @@ module Hearth
           stub = @stubs.next(context.operation_name)
           output = Output.new
           apply_stub(stub, input, context, output)
+          if context.response.body.respond_to?(:rewind)
+            context.response.body.rewind
+          end
           output
         else
           @client.transmit(

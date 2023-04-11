@@ -50,7 +50,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"member":{"__123foo":"foo value"}}')
+            response.body.write('{"member":{"__123foo":"foo value"}}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -378,12 +379,13 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "string_value": "string",
                 "document_value": {
                     "foo": "bar"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -400,10 +402,11 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "string_value": "string",
                 "document_value": "hello"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -420,10 +423,11 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "string_value": "string",
                 "document_value": 10
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -440,10 +444,11 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "string_value": "string",
                 "document_value": false
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -460,13 +465,14 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "string_value": "string",
                 "document_value": [
                     true,
                     false
                 ]
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -620,9 +626,10 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "foo": "bar"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -638,7 +645,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('"hello"')
+            response.body.write('"hello"')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -699,7 +707,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{}')
+            response.body.write('{}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -718,9 +727,10 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "foo": true
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -740,7 +750,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -875,9 +886,10 @@ module RailsJson
             response.status = 400
             response.headers['Content-Type'] = 'application/json'
             response.headers['x-smithy-rails-error'] = 'InvalidGreeting'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "message": "Hi"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -900,12 +912,13 @@ module RailsJson
             response.status = 400
             response.headers['Content-Type'] = 'application/json'
             response.headers['x-smithy-rails-error'] = 'ComplexError'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "top_level": "Top level",
                 "nested": {
                     "Fooooo": "bar"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -928,8 +941,9 @@ module RailsJson
             response.status = 400
             response.headers['Content-Type'] = 'application/json'
             response.headers['x-smithy-rails-error'] = 'ComplexError'
-            response.body = StringIO.new('{
+            response.body.write('{
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -992,7 +1006,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['X-Foo'] = 'Foo'
-            response.body = StringIO.new('blobby blob blob')
+            response.body.write('blobby blob blob')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1009,7 +1024,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['X-Foo'] = 'Foo'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1091,7 +1107,8 @@ module RailsJson
             response.status = 200
             response.headers['Content-Type'] = 'text/plain'
             response.headers['X-Foo'] = 'Foo'
-            response.body = StringIO.new('blobby blob blob')
+            response.body.write('blobby blob blob')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1162,10 +1179,11 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "greeting": "hello",
                 "name": "Phreddy"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1525,7 +1543,8 @@ module RailsJson
             response = context.response
             response.status = 201
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{}')
+            response.body.write('{}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1542,7 +1561,8 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 201
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1609,7 +1629,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{}')
+            response.body.write('{}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1626,7 +1647,8 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1789,7 +1811,8 @@ module RailsJson
             response.headers['X-String'] = 'Hello'
             response.headers['X-StringList'] = 'a, b, c'
             response.headers['X-StringSet'] = 'a, b, c'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1815,7 +1838,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['X-StringList'] = '"b,c", "\"def\"", a'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1841,7 +1865,8 @@ module RailsJson
             response.headers['X-IntegerList'] = '1, 2, 3'
             response.headers['X-Long'] = '123'
             response.headers['X-Short'] = '123'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1869,7 +1894,8 @@ module RailsJson
             response.headers['X-Boolean1'] = 'true'
             response.headers['X-Boolean2'] = 'false'
             response.headers['X-BooleanList'] = 'true, false, true'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -1892,7 +1918,8 @@ module RailsJson
             response.status = 200
             response.headers['X-Enum'] = 'Foo'
             response.headers['X-EnumList'] = 'Foo, Bar, Baz'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2122,7 +2149,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "foo_enum1": "Foo",
                 "foo_enum2": "0",
                 "foo_enum3": "1",
@@ -2139,6 +2166,7 @@ module RailsJson
                     "zero": "0"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2442,7 +2470,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "dense_struct_map": {
                     "foo": {
                         "hi": "there"
@@ -2460,6 +2488,7 @@ module RailsJson
                     }
                }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2490,7 +2519,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "sparse_boolean_map": {
                     "x": null
                 },
@@ -2504,6 +2533,7 @@ module RailsJson
                     "x": null
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2530,7 +2560,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "dense_number_map": {
                     "x": 0
                 },
@@ -2544,6 +2574,7 @@ module RailsJson
                     "x": false
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2570,12 +2601,13 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2599,12 +2631,13 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2628,13 +2661,14 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -2660,13 +2694,14 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3167,11 +3202,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "string_value": "foo"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3189,11 +3225,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "boolean_value": true
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3211,11 +3248,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "number_value": 1
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3233,11 +3271,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "blob_value": "Zm9v"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3255,11 +3294,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "timestamp_value": "2014-04-29T18:30:38Z"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3277,11 +3317,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "enum_value": "Foo"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3299,11 +3340,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "list_value": ["foo", "bar"]
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3324,7 +3366,7 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "map_value": {
                         "foo": "bar",
@@ -3332,6 +3374,7 @@ module RailsJson
                     }
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -3352,13 +3395,14 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "contents": {
                     "structure_value": {
                         "hi": "hello"
                     }
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4160,7 +4204,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{}')
+            response.body.write('{}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4176,7 +4221,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"string":"string-value"}')
+            response.body.write('{"string":"string-value"}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4192,7 +4238,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"integer":1234}')
+            response.body.write('{"integer":1234}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4208,7 +4255,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"long":1234567890123456789}')
+            response.body.write('{"long":1234567890123456789}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4224,7 +4272,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"float":1234.5}')
+            response.body.write('{"float":1234.5}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4240,7 +4289,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"double":123456789.12345679}')
+            response.body.write('{"double":123456789.12345679}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4256,7 +4306,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"boolean":true}')
+            response.body.write('{"boolean":true}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4272,7 +4323,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"boolean":false}')
+            response.body.write('{"boolean":false}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4288,7 +4340,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"blob":"YmluYXJ5LXZhbHVl"}')
+            response.body.write('{"blob":"YmluYXJ5LXZhbHVl"}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4304,7 +4357,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"timestamp":"2000-01-02T20:34:56Z"}')
+            response.body.write('{"timestamp":"2000-01-02T20:34:56Z"}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4320,7 +4374,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
+            response.body.write('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4336,7 +4391,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
+            response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4352,7 +4408,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"list_of_strings":["abc","mno","xyz"]}')
+            response.body.write('{"list_of_strings":["abc","mno","xyz"]}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4372,7 +4429,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
+            response.body.write('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4395,7 +4453,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
+            response.body.write('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4422,7 +4481,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
+            response.body.write('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4445,7 +4505,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
+            response.body.write('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4473,7 +4534,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"map_of_strings":{"size":"large","color":"red"}}')
+            response.body.write('{"map_of_strings":{"size":"large","color":"red"}}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4492,7 +4554,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
+            response.body.write('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4517,7 +4580,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
+            response.body.write('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4542,7 +4606,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
+            response.body.write('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4565,7 +4630,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
+            response.body.write('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -4594,7 +4660,8 @@ module RailsJson
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
             response.headers['X-Amzn-Requestid'] = 'amazon-uniq-request-id'
-            response.body = StringIO.new('{}')
+            response.body.write('{}')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -5169,7 +5236,8 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['X-Json'] = 'dHJ1ZQ=='
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -5326,9 +5394,10 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "string": null
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -5344,11 +5413,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "sparse_string_map": {
                     "foo": null
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -5366,11 +5436,12 @@ module RailsJson
             response = context.response
             response.status = 200
             response.headers['Content-Type'] = 'application/json'
-            response.body = StringIO.new('{
+            response.body.write('{
                 "sparse_string_list": [
                     null
                 ]
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -5652,7 +5723,8 @@ module RailsJson
             response.headers['X-targetDateTime'] = '2019-12-16T23:48:18Z'
             response.headers['X-targetEpochSeconds'] = '1576540098'
             response.headers['X-targetHttpDate'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
-            response.body = StringIO.new('')
+            response.body.write('')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
