@@ -26,10 +26,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -74,7 +75,7 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.body = StringIO.new('{
+            response.body.write('{
                 "name": "Seattle",
                 "coordinates": {
                     "latitude": 12.34,
@@ -87,6 +88,7 @@ module Weather
                     "case": "Upper"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -153,10 +155,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -182,10 +185,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -211,10 +215,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
