@@ -138,16 +138,6 @@ module Hearth
         request.headers.to_h
       end
 
-      # @param [Net::HTTP::Response] response
-      # @return [Fields] fields
-      def fields_from(response)
-        fields = response.to_hash.map { |k, v| Field.new(k, v) }
-        puts fields.to_a
-        require 'byebug'
-        byebug
-        Fields.new(fields)
-      end
-
       # @param [Http::Request] request
       # @raise [InvalidHttpVerbError]
       # @return Returns a base `Net::HTTP::Request` class, e.g.,

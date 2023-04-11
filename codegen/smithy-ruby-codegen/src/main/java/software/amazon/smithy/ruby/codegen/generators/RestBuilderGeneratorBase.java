@@ -187,7 +187,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
 
-        writer.write("http_req.append_query_params(params)");
+        writer.write("http_req.append_query_param_list(params)");
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         String[] uriParts = uri.split("[?]");
         if (uriParts.length > 1) {
             uri = uriParts[0];
-            // TODO this should use append_query_params? interface needs to be changed in Hearth if so
+            // TODO this should use append_query_param_list? interface needs to be changed in Hearth if so
             writer
                     .openBlock("CGI.parse('$L').each do |k,v|", uriParts[1])
                     .write("v.each { |q_v| http_req.append_query_param(k, q_v) }")
