@@ -47,7 +47,11 @@ module Hearth
       # Returns an escaped string representation of the field.
       # @return [String]
       def value(encoding = nil)
-        value = @values.compact.map { |v| escape_value(v.to_s) }.join(', ')
+        value = if @values.size > 1
+                  @values.compact.map { |v| escape_value(v.to_s) }.join(', ')
+                else
+                  @values.first&.to_s || ''
+                end
         value = value.encode(encoding) if encoding
         value
       end
