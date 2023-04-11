@@ -18,8 +18,9 @@ module Hearth
           response = Response.new(
             reason: 'Because',
             status: 200,
-            fields: Fields.new({ 'key' => 'value' })
+            fields: Fields.new([Field.new('key', 'value')])
           )
+          response.headers['key'] = 'value'
           response.body << 'foo bar' # frozen string literal, cannot pass in
           response.reset
           expect(response.status).to eq(0)

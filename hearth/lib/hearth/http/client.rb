@@ -76,7 +76,7 @@ module Hearth
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
-            response.fields = fields_from(net_resp)
+            net_resp.each_header { |k, v| response.headers[k] = v }
             net_resp.read_body do |chunk|
               response.body.write(chunk)
             end
@@ -131,17 +131,21 @@ module Hearth
       # @return [Hash<String, String>]
       def net_headers_for(request)
         # Trailers are not supported in Net::HTTP
-        if request.fields.any?(&:trailer?)
+        if request.trailers.any?
           raise NotImplementedError, 'Trailers are not supported in Net::HTTP'
         end
 
-        request.fields.to_h
+        request.headers.to_h
       end
 
       # @param [Net::HTTP::Response] response
       # @return [Fields] fields
       def fields_from(response)
-        Fields.new(response.to_hash.transform_values(&:first))
+        fields = response.to_hash.map { |k, v| Field.new(k, v) }
+        puts fields.to_a
+        require 'byebug'
+        byebug
+        Fields.new(fields)
       end
 
       # @param [Http::Request] request

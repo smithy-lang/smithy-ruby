@@ -5,7 +5,7 @@ module Hearth
     describe Request do
       let(:http_method) { :get }
       let(:uri) { URI('http://example.com') }
-      let(:fields) { Fields.new({ 'key' => 'value' }) }
+      let(:fields) { Fields.new }
       let(:body) { 'body' }
 
       subject do

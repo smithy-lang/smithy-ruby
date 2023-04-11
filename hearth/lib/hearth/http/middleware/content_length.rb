@@ -18,7 +18,7 @@ module Hearth
           if request.body.respond_to?(:size) &&
              !request.fields.key?('Content-Length')
             length = request.body.size
-            request.fields['Content-Length'] = length
+            request.headers['Content-Length'] = length
           end
 
           @app.call(input, context)

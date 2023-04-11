@@ -245,7 +245,7 @@ module RailsJson
     class HttpPayloadTraits
       def self.parse(http_resp)
         data = Types::HttpPayloadTraitsOutput.new
-        data.foo = http_resp.fields['X-Foo']
+        data.foo = http_resp.headers['X-Foo']
         payload = http_resp.body.read
         data.blob = payload unless payload.empty?
         data
@@ -256,7 +256,7 @@ module RailsJson
     class HttpPayloadTraitsWithMediaType
       def self.parse(http_resp)
         data = Types::HttpPayloadTraitsWithMediaTypeOutput.new
-        data.foo = http_resp.fields['X-Foo']
+        data.foo = http_resp.headers['X-Foo']
         payload = http_resp.body.read
         data.blob = payload unless payload.empty?
         data
@@ -277,7 +277,7 @@ module RailsJson
     class HttpPrefixHeaders
       def self.parse(http_resp)
         data = Types::HttpPrefixHeadersOutput.new
-        data.foo = http_resp.fields['X-Foo']
+        data.foo = http_resp.headers['X-Foo']
         data.foo_map = {}
         http_resp.headers.each do |key, value|
           if key.start_with?('X-Foo-')
@@ -363,43 +363,43 @@ module RailsJson
     class InputAndOutputWithHeaders
       def self.parse(http_resp)
         data = Types::InputAndOutputWithHeadersOutput.new
-        data.header_string = http_resp.fields['X-String']
-        data.header_byte = http_resp.fields['X-Byte'].to_i unless http_resp.fields['X-Byte'].nil?
-        data.header_short = http_resp.fields['X-Short'].to_i unless http_resp.fields['X-Short'].nil?
-        data.header_integer = http_resp.fields['X-Integer'].to_i unless http_resp.fields['X-Integer'].nil?
-        data.header_long = http_resp.fields['X-Long'].to_i unless http_resp.fields['X-Long'].nil?
-        data.header_float = Hearth::NumberHelper.deserialize(http_resp.fields['X-Float']) unless http_resp.fields['X-Float'].nil?
-        data.header_double = Hearth::NumberHelper.deserialize(http_resp.fields['X-Double']) unless http_resp.fields['X-Double'].nil?
-        data.header_true_bool = http_resp.fields['X-Boolean1'] == 'true' unless http_resp.fields['X-Boolean1'].nil?
-        data.header_false_bool = http_resp.fields['X-Boolean2'] == 'true' unless http_resp.fields['X-Boolean2'].nil?
-        unless http_resp.fields['X-StringList'].nil? || http_resp.fields['X-StringList'].empty?
-          data.header_string_list = http_resp.fields['X-StringList']
+        data.header_string = http_resp.headers['X-String']
+        data.header_byte = http_resp.headers['X-Byte'].to_i unless http_resp.headers['X-Byte'].nil?
+        data.header_short = http_resp.headers['X-Short'].to_i unless http_resp.headers['X-Short'].nil?
+        data.header_integer = http_resp.headers['X-Integer'].to_i unless http_resp.headers['X-Integer'].nil?
+        data.header_long = http_resp.headers['X-Long'].to_i unless http_resp.headers['X-Long'].nil?
+        data.header_float = Hearth::NumberHelper.deserialize(http_resp.headers['X-Float']) unless http_resp.headers['X-Float'].nil?
+        data.header_double = Hearth::NumberHelper.deserialize(http_resp.headers['X-Double']) unless http_resp.headers['X-Double'].nil?
+        data.header_true_bool = http_resp.headers['X-Boolean1'] == 'true' unless http_resp.headers['X-Boolean1'].nil?
+        data.header_false_bool = http_resp.headers['X-Boolean2'] == 'true' unless http_resp.headers['X-Boolean2'].nil?
+        unless http_resp.headers['X-StringList'].nil? || http_resp.headers['X-StringList'].empty?
+          data.header_string_list = http_resp.headers['X-StringList']
             .split(', ')
             .map { |s| s.to_s }
         end
-        unless http_resp.fields['X-StringSet'].nil? || http_resp.fields['X-StringSet'].empty?
-          data.header_string_set = http_resp.fields['X-StringSet']
+        unless http_resp.headers['X-StringSet'].nil? || http_resp.headers['X-StringSet'].empty?
+          data.header_string_set = http_resp.headers['X-StringSet']
             .split(', ')
             .map { |s| s.to_s }
         end
-        unless http_resp.fields['X-IntegerList'].nil? || http_resp.fields['X-IntegerList'].empty?
-          data.header_integer_list = http_resp.fields['X-IntegerList']
+        unless http_resp.headers['X-IntegerList'].nil? || http_resp.headers['X-IntegerList'].empty?
+          data.header_integer_list = http_resp.headers['X-IntegerList']
             .split(', ')
             .map { |s| s.to_i }
         end
-        unless http_resp.fields['X-BooleanList'].nil? || http_resp.fields['X-BooleanList'].empty?
-          data.header_boolean_list = http_resp.fields['X-BooleanList']
+        unless http_resp.headers['X-BooleanList'].nil? || http_resp.headers['X-BooleanList'].empty?
+          data.header_boolean_list = http_resp.headers['X-BooleanList']
             .split(', ')
             .map { |s| s == 'true' }
         end
-        unless http_resp.fields['X-TimestampList'].nil? || http_resp.fields['X-TimestampList'].empty?
-          data.header_timestamp_list = http_resp.fields['X-TimestampList']
+        unless http_resp.headers['X-TimestampList'].nil? || http_resp.headers['X-TimestampList'].empty?
+          data.header_timestamp_list = http_resp.headers['X-TimestampList']
             .split(', ')
             .map { |s| Time.parse(s) }
         end
-        data.header_enum = http_resp.fields['X-Enum']
-        unless http_resp.fields['X-EnumList'].nil? || http_resp.fields['X-EnumList'].empty?
-          data.header_enum_list = http_resp.fields['X-EnumList']
+        data.header_enum = http_resp.headers['X-Enum']
+        unless http_resp.headers['X-EnumList'].nil? || http_resp.headers['X-EnumList'].empty?
+          data.header_enum_list = http_resp.headers['X-EnumList']
             .split(', ')
             .map { |s| s.to_s }
         end
@@ -632,7 +632,7 @@ module RailsJson
     class MediaTypeHeader
       def self.parse(http_resp)
         data = Types::MediaTypeHeaderOutput.new
-        data.json = ::Base64::decode64(http_resp.fields['X-Json']).strip unless http_resp.fields['X-Json'].nil?
+        data.json = ::Base64::decode64(http_resp.headers['X-Json']).strip unless http_resp.headers['X-Json'].nil?
         map = Hearth::JSON.load(http_resp.body)
         data
       end
@@ -698,10 +698,10 @@ module RailsJson
     class NullAndEmptyHeadersClient
       def self.parse(http_resp)
         data = Types::NullAndEmptyHeadersClientOutput.new
-        data.a = http_resp.fields['X-A']
-        data.b = http_resp.fields['X-B']
-        unless http_resp.fields['X-C'].nil? || http_resp.fields['X-C'].empty?
-          data.c = http_resp.fields['X-C']
+        data.a = http_resp.headers['X-A']
+        data.b = http_resp.headers['X-B']
+        unless http_resp.headers['X-C'].nil? || http_resp.headers['X-C'].empty?
+          data.c = http_resp.headers['X-C']
             .split(', ')
             .map { |s| s.to_s }
         end
@@ -872,13 +872,13 @@ module RailsJson
     class TimestampFormatHeaders
       def self.parse(http_resp)
         data = Types::TimestampFormatHeadersOutput.new
-        data.member_epoch_seconds = Time.at(http_resp.fields['X-memberEpochSeconds'].to_i) if http_resp.fields['X-memberEpochSeconds']
-        data.member_http_date = Time.parse(http_resp.fields['X-memberHttpDate']) if http_resp.fields['X-memberHttpDate']
-        data.member_date_time = Time.parse(http_resp.fields['X-memberDateTime']) if http_resp.fields['X-memberDateTime']
-        data.default_format = Time.parse(http_resp.fields['X-defaultFormat']) if http_resp.fields['X-defaultFormat']
-        data.target_epoch_seconds = Time.at(http_resp.fields['X-targetEpochSeconds'].to_i) if http_resp.fields['X-targetEpochSeconds']
-        data.target_http_date = Time.parse(http_resp.fields['X-targetHttpDate']) if http_resp.fields['X-targetHttpDate']
-        data.target_date_time = Time.parse(http_resp.fields['X-targetDateTime']) if http_resp.fields['X-targetDateTime']
+        data.member_epoch_seconds = Time.at(http_resp.headers['X-memberEpochSeconds'].to_i) if http_resp.headers['X-memberEpochSeconds']
+        data.member_http_date = Time.parse(http_resp.headers['X-memberHttpDate']) if http_resp.headers['X-memberHttpDate']
+        data.member_date_time = Time.parse(http_resp.headers['X-memberDateTime']) if http_resp.headers['X-memberDateTime']
+        data.default_format = Time.parse(http_resp.headers['X-defaultFormat']) if http_resp.headers['X-defaultFormat']
+        data.target_epoch_seconds = Time.at(http_resp.headers['X-targetEpochSeconds'].to_i) if http_resp.headers['X-targetEpochSeconds']
+        data.target_http_date = Time.parse(http_resp.headers['X-targetHttpDate']) if http_resp.headers['X-targetHttpDate']
+        data.target_date_time = Time.parse(http_resp.headers['X-targetDateTime']) if http_resp.headers['X-targetDateTime']
         map = Hearth::JSON.load(http_resp.body)
         data
       end

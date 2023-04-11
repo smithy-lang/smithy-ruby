@@ -6,10 +6,11 @@ module Hearth
     class Fields
       include Enumerable
 
-      # @param [Hash<String,String|Integer|Array|Field>] fields
-      def initialize(fields = {}, encoding: 'utf-8')
+      # @param [Array<Field>] fields
+      # @param [String] encoding
+      def initialize(fields = [], encoding: 'utf-8')
         @entries = {}
-        fields.each_pair { |k, v| self[k] = v }
+        fields.each { |field| self[field.name] = field }
         @encoding = encoding
       end
 
@@ -25,12 +26,8 @@ module Hearth
       # @param [Field] value
       def []=(key, value)
         raise ArgumentError, 'value must be a Field' unless value.is_a?(Field)
-        @entries[key.downcase] = value
-      end
 
-      # @param [Field] field
-      def <<(field)
-        @entries[field.name.downcase] << field
+        @entries[key.downcase] = value
       end
 
       # @param [String] key
@@ -69,6 +66,38 @@ module Hearth
       # @return [Hash]
       def clear
         @entries = {}
+      end
+
+      # Proxy class that wraps Fields to create Headers and Trailers
+      class Proxy
+        include Enumerable
+
+        def initialize(fields, kind)
+          @fields = fields
+          @kind = kind
+        end
+
+        # @param [String] key
+        def [](key)
+          @fields[key]
+        end
+
+        # @param [String] key
+        # @param [String, Integer, Array<String|Integer>] value
+        def []=(key, value)
+          @fields[key] = Field.new(key, value, kind: @kind)
+        end
+
+        # @return [Enumerable<Field>]
+        def each(&block)
+          @fields.filter { |f| f.kind == @kind }.each(&block)
+        end
+
+        # @return [Hash]
+        def to_hash
+          each.to_h { |v| [v.name, v.value(@fields.encoding)] }
+        end
+        alias to_h to_hash
       end
     end
   end

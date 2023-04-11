@@ -19,7 +19,7 @@ module HighScoreService
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
 
-        http_req.fields['Content-Type'] = 'application/json'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
@@ -95,7 +95,7 @@ module HighScoreService
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
 
-        http_req.fields['Content-Type'] = 'application/json'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))

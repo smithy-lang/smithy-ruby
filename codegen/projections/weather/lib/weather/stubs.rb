@@ -117,7 +117,7 @@ module Weather
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['x-last-updated'] = Hearth::TimeHelper.to_date_time(stub[:last_updated]) unless stub[:last_updated].nil?
+        http_resp.headers['x-last-updated'] = Hearth::TimeHelper.to_date_time(stub[:last_updated]) unless stub[:last_updated].nil?
         IO.copy_stream(stub[:announcements], http_resp.body)
       end
     end

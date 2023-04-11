@@ -25,7 +25,7 @@ module HighScoreService
     class CreateHighScore
       def self.parse(http_resp)
         data = Types::CreateHighScoreOutput.new
-        data.location = http_resp.fields['Location']
+        data.location = http_resp.headers['Location']
         json = Hearth::JSON.load(http_resp.body)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data

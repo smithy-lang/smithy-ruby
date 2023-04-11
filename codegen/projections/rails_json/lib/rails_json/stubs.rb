@@ -197,7 +197,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:string_value] = stub[:string_value] unless stub[:string_value].nil?
         data[:document_value] = stub[:document_value] unless stub[:document_value].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
@@ -215,7 +215,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         http_resp.body = StringIO.new(Hearth::JSON.dump(stub[:document_value]))
       end
     end
@@ -364,7 +364,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -382,8 +382,8 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
-        http_resp.fields['Content-Type'] = 'application/octet-stream'
+        http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
+        http_resp.headers['Content-Type'] = 'application/octet-stream'
         http_resp.body = StringIO.new(stub[:blob] || '')
       end
     end
@@ -400,8 +400,8 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
-        http_resp.fields['Content-Type'] = 'text/plain'
+        http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
+        http_resp.headers['Content-Type'] = 'text/plain'
         http_resp.body = StringIO.new(stub[:blob] || '')
       end
     end
@@ -417,7 +417,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::NestedPayload.stub(stub[:nested]) unless stub[:nested].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -435,9 +435,9 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
+        http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
         stub[:foo_map].each do |key, value|
-          http_resp.fields["X-Foo-#{key}"] = value unless value.nil? || value.empty?
+          http_resp.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
         end
       end
     end
@@ -454,7 +454,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         stub[:prefix_headers].each do |key, value|
-          http_resp.fields["#{key}"] = value unless value.nil? || value.empty?
+          http_resp.headers["#{key}"] = value unless value.nil? || value.empty?
         end
       end
     end
@@ -566,48 +566,48 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-String'] = stub[:header_string] unless stub[:header_string].nil? || stub[:header_string].empty?
-        http_resp.fields['X-Byte'] = stub[:header_byte].to_s unless stub[:header_byte].nil?
-        http_resp.fields['X-Short'] = stub[:header_short].to_s unless stub[:header_short].nil?
-        http_resp.fields['X-Integer'] = stub[:header_integer].to_s unless stub[:header_integer].nil?
-        http_resp.fields['X-Long'] = stub[:header_long].to_s unless stub[:header_long].nil?
-        http_resp.fields['X-Float'] = Hearth::NumberHelper.serialize(stub[:header_float]) unless stub[:header_float].nil?
-        http_resp.fields['X-Double'] = Hearth::NumberHelper.serialize(stub[:header_double]) unless stub[:header_double].nil?
-        http_resp.fields['X-Boolean1'] = stub[:header_true_bool].to_s unless stub[:header_true_bool].nil?
-        http_resp.fields['X-Boolean2'] = stub[:header_false_bool].to_s unless stub[:header_false_bool].nil?
+        http_resp.headers['X-String'] = stub[:header_string] unless stub[:header_string].nil? || stub[:header_string].empty?
+        http_resp.headers['X-Byte'] = stub[:header_byte].to_s unless stub[:header_byte].nil?
+        http_resp.headers['X-Short'] = stub[:header_short].to_s unless stub[:header_short].nil?
+        http_resp.headers['X-Integer'] = stub[:header_integer].to_s unless stub[:header_integer].nil?
+        http_resp.headers['X-Long'] = stub[:header_long].to_s unless stub[:header_long].nil?
+        http_resp.headers['X-Float'] = Hearth::NumberHelper.serialize(stub[:header_float]) unless stub[:header_float].nil?
+        http_resp.headers['X-Double'] = Hearth::NumberHelper.serialize(stub[:header_double]) unless stub[:header_double].nil?
+        http_resp.headers['X-Boolean1'] = stub[:header_true_bool].to_s unless stub[:header_true_bool].nil?
+        http_resp.headers['X-Boolean2'] = stub[:header_false_bool].to_s unless stub[:header_false_bool].nil?
         unless stub[:header_string_list].nil? || stub[:header_string_list].empty?
-          http_resp.fields['X-StringList'] = stub[:header_string_list]
+          http_resp.headers['X-StringList'] = stub[:header_string_list]
             .compact
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
         end
         unless stub[:header_string_set].nil? || stub[:header_string_set].empty?
-          http_resp.fields['X-StringSet'] = stub[:header_string_set]
+          http_resp.headers['X-StringSet'] = stub[:header_string_set]
             .compact
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
         end
         unless stub[:header_integer_list].nil? || stub[:header_integer_list].empty?
-          http_resp.fields['X-IntegerList'] = stub[:header_integer_list]
+          http_resp.headers['X-IntegerList'] = stub[:header_integer_list]
             .compact
             .map { |s| s.to_s }
             .join(', ')
         end
         unless stub[:header_boolean_list].nil? || stub[:header_boolean_list].empty?
-          http_resp.fields['X-BooleanList'] = stub[:header_boolean_list]
+          http_resp.headers['X-BooleanList'] = stub[:header_boolean_list]
             .compact
             .map { |s| s.to_s }
             .join(', ')
         end
         unless stub[:header_timestamp_list].nil? || stub[:header_timestamp_list].empty?
-          http_resp.fields['X-TimestampList'] = stub[:header_timestamp_list]
+          http_resp.headers['X-TimestampList'] = stub[:header_timestamp_list]
             .compact
             .map { |s| Hearth::TimeHelper.to_date_time(s) }
             .join(', ')
         end
-        http_resp.fields['X-Enum'] = stub[:header_enum] unless stub[:header_enum].nil? || stub[:header_enum].empty?
+        http_resp.headers['X-Enum'] = stub[:header_enum] unless stub[:header_enum].nil? || stub[:header_enum].empty?
         unless stub[:header_enum_list].nil? || stub[:header_enum_list].empty?
-          http_resp.fields['X-EnumList'] = stub[:header_enum_list]
+          http_resp.headers['X-EnumList'] = stub[:header_enum_list]
             .compact
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
@@ -651,7 +651,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:foo_enum1] = stub[:foo_enum1] unless stub[:foo_enum1].nil?
         data[:foo_enum2] = stub[:foo_enum2] unless stub[:foo_enum2].nil?
         data[:foo_enum3] = stub[:foo_enum3] unless stub[:foo_enum3].nil?
@@ -682,7 +682,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:dense_struct_map] = Stubs::DenseStructMap.stub(stub[:dense_struct_map]) unless stub[:dense_struct_map].nil?
         data[:sparse_struct_map] = Stubs::SparseStructMap.stub(stub[:sparse_struct_map]) unless stub[:sparse_struct_map].nil?
         data[:dense_number_map] = Stubs::DenseNumberMap.stub(stub[:dense_number_map]) unless stub[:dense_number_map].nil?
@@ -708,7 +708,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:contents] = Stubs::MyUnion.stub(stub[:contents]) unless stub[:contents].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -818,7 +818,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:blob] = ::Base64::encode64(stub[:blob]) unless stub[:blob].nil?
         data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
         data[:double] = stub[:double] unless stub[:double].nil?
@@ -1060,7 +1060,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-Json'] = ::Base64::encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
+        http_resp.headers['X-Json'] = ::Base64::encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
       end
     end
 
@@ -1115,7 +1115,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -1154,10 +1154,10 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-A'] = stub[:a] unless stub[:a].nil? || stub[:a].empty?
-        http_resp.fields['X-B'] = stub[:b] unless stub[:b].nil? || stub[:b].empty?
+        http_resp.headers['X-A'] = stub[:a] unless stub[:a].nil? || stub[:a].empty?
+        http_resp.headers['X-B'] = stub[:b] unless stub[:b].nil? || stub[:b].empty?
         unless stub[:c].nil? || stub[:c].empty?
-          http_resp.fields['X-C'] = stub[:c]
+          http_resp.headers['X-C'] = stub[:c]
             .compact
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
@@ -1178,7 +1178,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:string] = stub[:string] unless stub[:string].nil?
         data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
@@ -1210,7 +1210,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end
@@ -1490,13 +1490,13 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:member_epoch_seconds]).to_i unless stub[:member_epoch_seconds].nil?
-        http_resp.fields['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:member_http_date]) unless stub[:member_http_date].nil?
-        http_resp.fields['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(stub[:member_date_time]) unless stub[:member_date_time].nil?
-        http_resp.fields['X-defaultFormat'] = Hearth::TimeHelper.to_date_time(stub[:default_format]) unless stub[:default_format].nil?
-        http_resp.fields['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:target_epoch_seconds]).to_i unless stub[:target_epoch_seconds].nil?
-        http_resp.fields['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:target_http_date]) unless stub[:target_http_date].nil?
-        http_resp.fields['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(stub[:target_date_time]) unless stub[:target_date_time].nil?
+        http_resp.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:member_epoch_seconds]).to_i unless stub[:member_epoch_seconds].nil?
+        http_resp.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:member_http_date]) unless stub[:member_http_date].nil?
+        http_resp.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(stub[:member_date_time]) unless stub[:member_date_time].nil?
+        http_resp.headers['X-defaultFormat'] = Hearth::TimeHelper.to_date_time(stub[:default_format]) unless stub[:default_format].nil?
+        http_resp.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:target_epoch_seconds]).to_i unless stub[:target_epoch_seconds].nil?
+        http_resp.headers['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:target_http_date]) unless stub[:target_http_date].nil?
+        http_resp.headers['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(stub[:target_date_time]) unless stub[:target_date_time].nil?
       end
     end
 
@@ -1549,7 +1549,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.fields['Content-Type'] = 'application/json'
+        http_resp.headers['Content-Type'] = 'application/json'
         data[:member] = Stubs::Struct____456efg.stub(stub[:member]) unless stub[:member].nil?
         http_resp.body = StringIO.new(Hearth::JSON.dump(data))
       end

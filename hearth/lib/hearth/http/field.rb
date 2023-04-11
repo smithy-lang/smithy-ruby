@@ -5,21 +5,27 @@ module Hearth
     # Represents an HTTP field.
     class Field
       # @param [String] name The name of the field.
-      # @param [Array<String>] values ([]) The String values for the field.
+      # @param [Array<String>] value ([]) The String value for the field.
       # @param [Symbol] kind The kind of field, either :header or :trailer.
       #   Trailers are currently not supported by Net::HTTP.
-      def initialize(name, values = [], kind: :header)
+      def initialize(name, value = [], kind: :header)
         if name.nil? || name.empty?
           raise ArgumentError, 'Field name must be a non-empty String'
         end
 
-        if !values.is_a?(Array) || values.any? { |v| !v.is_a?(String) }
-          raise ArgumentError, 'Field values must be an Array of Strings'
-        end
-
         @name = name
-        @values = values
+        @values = _values(value)
         @kind = kind
+      end
+
+      def _values(value)
+        case value
+        when String, Integer then [value]
+        when Array then value
+        else
+          raise ArgumentError,
+                'Field value must be a String, Integer, or Array'
+        end
       end
 
       # @return [String]
@@ -46,7 +52,7 @@ module Hearth
       # Returns an escaped string representation of the field.
       # @return [String]
       def value(encoding = nil)
-        value = @values.compact.map { |v| escape_value(v) }.join(',')
+        value = @values.compact.map { |v| escape_value(v.to_s) }.join(',')
         value = value.encode(encoding) if encoding
         value
       end

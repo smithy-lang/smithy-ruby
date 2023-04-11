@@ -158,7 +158,7 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
             HttpHeaderTrait headerTrait = m.expectTrait(HttpHeaderTrait.class);
             String symbolName = symbolProvider.toMemberName(m);
             String dataSetter = "data." + symbolName + " = ";
-            String valueGetter = "http_resp.fields['" + headerTrait.getValue() + "']";
+            String valueGetter = "http_resp.headers['" + headerTrait.getValue() + "']";
             model.expectShape(m.getTarget()).accept(new HeaderDeserializer(m, dataSetter, valueGetter));
             LOGGER.finest("Generated header parser for " + m.getMemberName());
         }

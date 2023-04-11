@@ -88,7 +88,6 @@ module Hearth
             request = Request.new(
               http_method: http_method,
               uri: uri,
-              fields: fields,
               body: rd
             )
             # webmock sets to nil
@@ -102,20 +101,17 @@ module Hearth
         end
 
         context 'request headers are set' do
-          before { fields['Header-Name'] = 'Header-Value' }
+          before { request.headers['Header-Name'] = 'Header-Value' }
 
           it 'transmits the headers' do
             stub_request(http_method, uri.to_s)
-              .with(headers: fields.to_h)
+              .with(headers: request.headers.to_h)
             subject.transmit(request: request, response: response)
           end
         end
 
         context 'request trailers are set' do
-          let(:field) do
-            Field.new('Trailer-Name', ['Trailer-Value'], kind: :trailer)
-          end
-          before { fields['Trailer-Name'] = field }
+          before { request.trailers['Trailer-Name'] = 'Trailer-Value' }
 
           it 'raises NotImplementedError' do
             expect do
@@ -139,7 +135,7 @@ module Hearth
           stub_request(http_method, uri.to_s)
             .to_return(headers: response_headers)
           subject.transmit(request: request, response: response)
-          expect(response.fields.to_h).to eq(response_headers)
+          expect(response.headers.to_h).to eq(response_headers)
         end
 
         it 'writes the response body' do

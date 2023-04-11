@@ -14,6 +14,8 @@ module Hearth
         @status = status
         @reason = reason
         @fields = fields
+        @headers = Fields::Proxy.new(@fields, :header)
+        @trailers = Fields::Proxy.new(@fields, :trailer)
       end
 
       # @return [Integer]
@@ -23,7 +25,13 @@ module Hearth
       attr_accessor :reason
 
       # @return [Fields]
-      attr_accessor :fields
+      attr_reader :fields
+
+      # @return [Fields::Proxy]
+      attr_reader :headers
+
+      # @return [Fields::Proxy]
+      attr_reader :trailers
 
       # Resets the HTTP response.
       # @return [Response]

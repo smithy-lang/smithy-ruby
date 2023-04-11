@@ -113,7 +113,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     @Override
     protected void renderBodyStub(OperationShape operation, Shape outputShape) {
         writer
-                .write("http_resp.fields['Content-Type'] = 'application/json'")
+                .write("http_resp.headers['Content-Type'] = 'application/json'")
                 .call(() -> renderMemberStubbers(outputShape))
                 .write("http_resp.body = StringIO.new(Hearth::JSON.dump(data))");
     }
@@ -299,7 +299,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         @Override
         public Void stringShape(StringShape shape) {
             writer
-                    .write("http_resp.fields['Content-Type'] = 'text/plain'")
+                    .write("http_resp.headers['Content-Type'] = 'text/plain'")
                     .write("http_resp.body = StringIO.new($L || '')", inputGetter);
             return null;
         }
@@ -313,7 +313,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
             }
 
             writer
-                    .write("http_resp.fields['Content-Type'] = '$L'", mediaType)
+                    .write("http_resp.headers['Content-Type'] = '$L'", mediaType)
                     .write("http_resp.body = StringIO.new($L || '')", inputGetter);
 
             return null;
@@ -322,7 +322,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         @Override
         public Void documentShape(DocumentShape shape) {
             writer
-                    .write("http_resp.fields['Content-Type'] = 'application/json'")
+                    .write("http_resp.headers['Content-Type'] = 'application/json'")
                     .write("http_resp.body = StringIO.new(Hearth::JSON.dump($1L))", inputGetter);
             return null;
         }
@@ -353,7 +353,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
         private void defaultComplexSerializer(Shape shape) {
             writer
-                    .write("http_resp.fields['Content-Type'] = 'application/json'")
+                    .write("http_resp.headers['Content-Type'] = 'application/json'")
                     .write("data = Stubs::$1L.stub($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
                             inputGetter)
                     .write("http_resp.body = StringIO.new(Hearth::JSON.dump(data))");

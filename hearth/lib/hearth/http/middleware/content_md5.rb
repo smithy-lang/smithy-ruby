@@ -17,7 +17,7 @@ module Hearth
           request = context.request
           unless request.fields.key?('Content-MD5')
             md5 = Hearth::Checksums.md5(request.body)
-            request.fields['Content-MD5'] = md5
+            request.headers['Content-MD5'] = md5
           end
 
           @app.call(input, context)

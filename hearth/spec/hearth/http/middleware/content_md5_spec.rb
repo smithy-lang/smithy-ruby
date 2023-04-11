@@ -35,20 +35,20 @@ module Hearth
               expect(Hearth::Checksums).to receive(:md5)
                 .with(body).and_return('checksum')
               resp = subject.call(input, context)
-              expect(request.fields['Content-MD5'].value).to eq('checksum')
+              expect(request.headers['Content-MD5'].value).to eq('checksum')
               expect(resp).to be output
             end
           end
 
           context 'Content-MD5 is already set' do
-            before { request.fields['Content-MD5'] = 'existing' }
+            before { request.headers['Content-MD5'] = 'existing' }
 
             it 'does not calculate a new checksum' do
               expect(app).to receive(:call).with(input, context)
               expect(Hearth::Checksums).not_to receive(:md5)
 
               resp = subject.call(input, context)
-              expect(request.fields['Content-MD5'].value).to eq('existing')
+              expect(request.headers['Content-MD5'].value).to eq('existing')
               expect(resp).to be output
             end
           end

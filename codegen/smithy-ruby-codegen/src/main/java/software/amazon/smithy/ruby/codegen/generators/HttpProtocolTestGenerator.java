@@ -403,7 +403,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderRequestMiddlewareHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
-            writer.write("$L.each { |k, v| expect(request.fields[k]).to eq(v) } ", getRubyHashFromMap(headers));
+            writer.write("$L.each { |k, v| expect(request.headers[k]).to eq(v) } ", getRubyHashFromMap(headers));
         }
     }
 

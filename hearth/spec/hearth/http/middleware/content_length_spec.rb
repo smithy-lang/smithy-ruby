@@ -33,7 +33,7 @@ module Hearth
             it 'does not set the content-length and calls next middleware' do
               expect(app).to receive(:call).with(input, context)
               resp = subject.call(input, context)
-              expect(request.fields['Content-Length']).to be_nil
+              expect(request.headers['Content-Length']).to be_nil
               expect(resp).to be output
             end
           end
@@ -46,7 +46,7 @@ module Hearth
                 expect(app).to receive(:call).with(input, context)
 
                 resp = subject.call(input, context)
-                expect(request.fields['Content-Length'].value)
+                expect(request.headers['Content-Length'].value)
                   .to eq(body.size.to_s)
                 expect(resp).to be output
               end
@@ -61,7 +61,7 @@ module Hearth
                   .with(:size).and_return(false)
 
                 resp = subject.call(input, context)
-                expect(request.fields['Content-Length']).to be_nil
+                expect(request.headers['Content-Length']).to be_nil
                 expect(resp).to be output
               end
             end
