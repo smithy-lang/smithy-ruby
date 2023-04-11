@@ -95,7 +95,7 @@ module WhiteLabel
         it 'sets Transfer-Encoding and does not set content length' do
           streaming_input = StringIO.new("test")
           middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
-            expect(context.request.headers['Transfer-Encoding'].value).to eq('chunked')
+            expect(context.request.headers['Transfer-Encoding']).to eq('chunked')
             expect(context.request.fields.key?('Content-Length')).to eq(false)
           end
           expect(streaming_input).not_to receive(:size)
@@ -109,7 +109,7 @@ module WhiteLabel
 
       it 'sets content-length and does not set Transfer-Encoding' do
         middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
-          expect(context.request.headers['Content-Length'].value).to eq(data.length.to_s)
+          expect(context.request.headers['Content-Length']).to eq(data.length.to_s)
           expect(context.request.fields.key?('Transfer-Encoding')).to eq(false)
         end
         client.streaming_with_length({stream: data}, middleware: middleware)
