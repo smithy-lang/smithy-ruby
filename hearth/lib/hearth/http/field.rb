@@ -5,7 +5,7 @@ module Hearth
     # Represents an HTTP field.
     class Field
       # @param [String] name The name of the field.
-      # @param [Array<String>] value ([]) The String value for the field.
+      # @param [Array<String>] value ([]) The String values for the field.
       # @param [Symbol] kind The kind of field, either :header or :trailer.
       #   Trailers are currently not supported by Net::HTTP.
       def initialize(name, value = [], kind: :header)
@@ -18,29 +18,24 @@ module Hearth
         @kind = kind
       end
 
-      def _values(value)
-        case value
-        when String, Integer then [value]
-        when Array then value
-        else
-          raise ArgumentError,
-                'Field value must be a String, Integer, or Array'
-        end
-      end
-
       # @return [String]
       attr_reader :name
 
       # @return [Array, nil]
-      attr_accessor :values
+      attr_reader :values
 
       # @return [Symbol]
       attr_reader :kind
 
+      # @param [Array|String|Integer|Float] value
+      def values=(value)
+        @values = _values(value)
+      end
+
       # Append a value to the field.
-      # @param [String] value
+      # @param [String|Integer|Float] value
       def <<(value)
-        @values << value
+        @values << value.to_s
       end
 
       # Delete a value from the field.
@@ -52,7 +47,7 @@ module Hearth
       # Returns an escaped string representation of the field.
       # @return [String]
       def value(encoding = nil)
-        value = @values.compact.map { |v| escape_value(v.to_s) }.join(',')
+        value = @values.compact.map { |v| escape_value(v.to_s) }.join(', ')
         value = value.encode(encoding) if encoding
         value
       end
@@ -72,6 +67,16 @@ module Hearth
       end
 
       private
+
+      def _values(value)
+        case value
+        when String, Integer, Float then [value]
+        when Array then value
+        else
+          raise ArgumentError,
+                'Field value must be a String, Integer, Float, or Array'
+        end
+      end
 
       def escape_value(str)
         s = str

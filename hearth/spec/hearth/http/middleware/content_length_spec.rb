@@ -46,7 +46,7 @@ module Hearth
                 expect(app).to receive(:call).with(input, context)
 
                 resp = subject.call(input, context)
-                expect(request.headers['Content-Length'].value)
+                expect(request.headers['Content-Length'])
                   .to eq(body.size.to_s)
                 expect(resp).to be output
               end

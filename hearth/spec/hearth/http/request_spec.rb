@@ -35,19 +35,11 @@ module Hearth
           expect(request.fields['name'].kind).to eq(:header)
         end
 
-        it 'allows appending to headers' do
-          request = Request.new
-          request.headers['name'] = 'value'
-          request.headers['name'] << 'value2'
-          expect(request.fields['name'].value).to eq('value,value2')
-          expect(request.fields['name'].kind).to eq(:header)
-        end
-
         it 'lets you get a hash of only the headers' do
           request = Request.new
           request.headers['name'] = 'value'
           request.trailers['trailer'] = 'trailer-value'
-          expect(request.headers.to_h).to eq({'name' => 'value'})
+          expect(request.headers.to_h).to eq('name' => 'value')
         end
       end
 
@@ -57,6 +49,13 @@ module Hearth
           request.trailers['name'] = 'value'
           expect(request.fields['name'].value).to eq('value')
           expect(request.fields['name'].kind).to eq(:trailer)
+        end
+
+        it 'lets you get a hash of only the trailers' do
+          request = Request.new
+          request.trailers['name'] = 'value'
+          request.headers['header'] = 'header-value'
+          expect(request.trailers.to_h).to eq('name' => 'value')
         end
       end
 

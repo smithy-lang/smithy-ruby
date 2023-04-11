@@ -35,7 +35,7 @@ module Hearth
               expect(Hearth::Checksums).to receive(:md5)
                 .with(body).and_return('checksum')
               resp = subject.call(input, context)
-              expect(request.headers['Content-MD5'].value).to eq('checksum')
+              expect(request.headers['Content-MD5']).to eq('checksum')
               expect(resp).to be output
             end
           end
@@ -48,7 +48,7 @@ module Hearth
               expect(Hearth::Checksums).not_to receive(:md5)
 
               resp = subject.call(input, context)
-              expect(request.headers['Content-MD5'].value).to eq('existing')
+              expect(request.headers['Content-MD5']).to eq('existing')
               expect(resp).to be output
             end
           end

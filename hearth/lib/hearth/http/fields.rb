@@ -36,27 +36,17 @@ module Hearth
         @entries.key?(key.downcase)
       end
 
-      # @return [Array<String>]
-      def keys
-        @entries.keys
-      end
-
       # @param [String] key
       # @return [Field, nil] Returns the Field for the deleted Field key.
       def delete(key)
         @entries.delete(key.downcase)
       end
 
-      # @return [Enumerable<Field>]
+      # @return [Enumerable<String,Field>]
       def each(&block)
-        @entries.values.each(&block)
+        @entries.each(&block)
       end
-
-      # @return [Hash]
-      def to_hash
-        each.to_h { |v| [v.name, v.value(@encoding)] }
-      end
-      alias to_h to_hash
+      alias each_pair each
 
       # @return [Integer] Returns the number of Field entries.
       def size
@@ -79,25 +69,29 @@ module Hearth
 
         # @param [String] key
         def [](key)
-          @fields[key]
+          @fields[key]&.value
         end
 
         # @param [String] key
-        # @param [String, Integer, Array<String|Integer>] value
+        # @param [String, Integer, Array<String|Integer|Float>] value
         def []=(key, value)
           @fields[key] = Field.new(key, value, kind: @kind)
         end
 
-        # @return [Enumerable<Field>]
-        def each(&block)
-          @fields.filter { |f| f.kind == @kind }.each(&block)
+        # @param [String] key
+        # @return [Boolean] Returns `true` if there is a Field with the given
+        #   key and kind.
+        def key?(key)
+          @fields.key?(key) && @fields[key].kind == @kind
         end
 
-        # @return [Hash]
-        def to_hash
-          each.to_h { |v| [v.name, v.value(@fields.encoding)] }
+        # @return [Enumerable<String,String>]
+        def each(&block)
+          @fields.filter { |_k, v| v.kind == @kind }
+                 .to_h { |_k, v| [v.name, v.value(@fields.encoding)] }
+                 .each(&block)
         end
-        alias to_h to_hash
+        alias each_pair each
       end
     end
   end
