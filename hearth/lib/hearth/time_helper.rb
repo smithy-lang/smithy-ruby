@@ -35,12 +35,7 @@ module Hearth
         if time.subsec.zero?
           time.utc.httpdate
         else
-          t = time.utc
-          format('%s, %02d %s %0*d %02d:%02d:%02d.%03d GMT',
-                 Time::RFC2822_DAY_NAME[t.wday],
-                 t.day, Time::RFC2822_MONTH_NAME[t.mon - 1],
-                 t.year.negative? ? 5 : 4, t.year,
-                 t.hour, t.min, t.sec, (t.subsec * 1000).round)
+          time.utc.strftime('%a, %d %b %Y %H:%M:%S.%L GMT')
         end
       end
     end
