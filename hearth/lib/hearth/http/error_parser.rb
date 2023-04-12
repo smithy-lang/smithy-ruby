@@ -91,7 +91,7 @@ module Hearth
         http_resp = error_opts[:http_resp]
         case http_resp.status
         when HTTP_3XX then @error_module::ApiRedirectError.new(
-          location: http_resp.fields['location'], **error_opts
+          location: http_resp.headers['location'], **error_opts
         )
         when HTTP_4XX then @error_module::ApiClientError.new(**error_opts)
         when HTTP_5XX then @error_module::ApiServerError.new(**error_opts)

@@ -74,7 +74,7 @@ module Hearth
 
         # @param [String] key
         def [](key)
-          @fields[key].value if key?(key)
+          @fields[key].value(@fields.encoding) if key?(key)
         end
 
         # @param [String] key

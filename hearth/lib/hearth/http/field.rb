@@ -10,7 +10,6 @@ module Hearth
       #   object that responds to `#to_s` or an Array of objects that respond to
       #  `#to_s`.
       # @param [Symbol] kind The kind of field, either :header or :trailer.
-      #   Trailers are currently not supported by Net::HTTP.
       def initialize(name, value = nil, kind: :header)
         if name.nil? || name.empty?
           raise ArgumentError, 'Field name must be a non-empty String'

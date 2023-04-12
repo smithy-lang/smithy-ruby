@@ -98,6 +98,14 @@ module Hearth
           it 'returns nil if the kind of field does not exist' do
             expect(subject['x-trailer']).to be_nil
           end
+
+          context 'encoding' do
+            let(:fields) { Fields.new([header_field], encoding: 'UTF-16') }
+
+            it 'applies the encoding' do
+              expect(subject['x-header'].encoding).to eq(Encoding::UTF_16)
+            end
+          end
         end
 
         describe '#[]=' do
@@ -124,6 +132,15 @@ module Hearth
           it 'returns the Field name and value for each field kind' do
             # not downcased header name
             expect(subject.each.to_h).to eq('X-Header' => 'foo')
+          end
+
+          context 'encoding' do
+            let(:fields) { Fields.new([header_field], encoding: 'UTF-16') }
+
+            it 'applies the encoding' do
+              expect(subject.each.to_h['X-Header'].encoding)
+                .to eq(Encoding::UTF_16)
+            end
           end
         end
       end

@@ -15,7 +15,7 @@ module Hearth
       # @return [Integer]
       attr_reader :http_status
 
-      # @return [Hash<String, Fields>]
+      # @return [Fields]
       attr_reader :http_fields
 
       # @return [String]

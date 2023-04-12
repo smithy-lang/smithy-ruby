@@ -57,6 +57,12 @@ module Hearth
               .to eq('"bar, baz", "\"quoted\""')
           end
         end
+
+        context 'encoding' do
+          it 'allows for different encoding' do
+            expect(header.value('UTF-16').encoding).to eq(Encoding::UTF_16)
+          end
+        end
       end
 
       describe '#header?' do
