@@ -210,7 +210,7 @@ public final class Middleware {
                     Set<ClientConfig> config = middleware.getClientConfig();
 
                     Map<String, String> params =
-                            middleware.getAdditionalParams();
+                            new HashMap<>(middleware.getAdditionalParams());
                     params.putAll(middleware.operationParams
                             .params(context, operation));
 

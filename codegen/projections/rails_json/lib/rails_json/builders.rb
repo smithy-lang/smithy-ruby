@@ -360,7 +360,7 @@ module RailsJson
         params = Hearth::Query::ParamList.new
         http_req.append_query_params(params)
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
-        input[:foo_map].each do |key, value|
+        input[:foo_map]&.each do |key, value|
           http_req.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
         end
       end

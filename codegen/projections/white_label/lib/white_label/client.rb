@@ -134,11 +134,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -198,11 +198,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -264,11 +264,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -491,11 +491,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: [Errors::ClientError, Errors::ServerError]),
@@ -555,11 +555,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -620,11 +620,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -685,11 +685,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -747,11 +747,11 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -809,11 +809,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -872,11 +872,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
@@ -938,11 +938,11 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_mode: @config.retry_mode,
+        client_rate_limiter: @client_rate_limiter,
+        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill,
         error_inspector_class: Hearth::Retry::ErrorInspector,
         retry_quota: @retry_quota,
-        max_attempts: @config.max_attempts,
-        client_rate_limiter: @client_rate_limiter,
-        adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
+        max_attempts: @config.max_attempts
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),

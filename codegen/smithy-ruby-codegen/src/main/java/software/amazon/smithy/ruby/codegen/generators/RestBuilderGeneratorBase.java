@@ -214,7 +214,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
      * @param inputShape inputShape to render for
      */
     protected void renderPrefixHeadersBuilder(Shape inputShape) {
-        // get a list of all of HttpLabel members
+        // get a list of all of HttpPrefixHeaders members
         List<MemberShape> headerMembers = inputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
@@ -230,7 +230,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             String symbolName = ":" + symbolProvider.toMemberName(m);
             String headerSetter = "http_req.headers[\"" + prefix + "#{key}\"] = ";
             writer
-                    .openBlock("input[$L].each do |key, value|", symbolName)
+                    .openBlock("input[$L]&.each do |key, value|", symbolName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
                     .closeBlock("end");
             LOGGER.finest("Generated prefix header builder for " + m.getMemberName());
