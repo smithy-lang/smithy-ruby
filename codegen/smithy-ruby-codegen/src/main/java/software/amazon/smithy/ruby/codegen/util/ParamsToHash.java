@@ -196,7 +196,7 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
                 // rounding of floats cause an issue in the precision of fractional seconds
                 Double n = node.expectNumberNode().getValue().doubleValue();
                 long seconds = (long) Math.floor(n);
-                long ms = (long) ((n - Math.floor(n)) * 1000);
+                long ms = Math.round((n - Math.floor(n)) * 1000);
                 return "Time.at(" + seconds + ", " + ms + ", :millisecond)";
             } else {
                 return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
