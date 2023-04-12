@@ -3830,6 +3830,24 @@ module RailsJson
             timestamp: Time.at(946845296)
           }, **opts)
         end
+        # Serializes fractional timestamp shapes
+        #
+        it 'rails_json_serializes_fractional_timestamp_shapes' do
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            request_uri = URI.parse(request.url)
+            expect(request.http_method).to eq('POST')
+            expect(request_uri.path).to eq('/')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56.123Z"}'))
+            Hearth::Output.new
+          end
+          opts = {middleware: middleware}
+          client.kitchen_sink_operation({
+            timestamp: Time.at(946845296, 123, :millisecond)
+          }, **opts)
+        end
         # Serializes timestamp shapes with iso8601 timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat' do
@@ -4424,6 +4442,23 @@ module RailsJson
             timestamp: Time.at(946845296)
           })
         end
+        # Parses fractional timestamp shapes
+        #
+        it 'rails_json_parses_fractional_timestamp_shapes' do
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
+            response.body.write('{"timestamp":"2000-01-02T20:34:56.123Z"}')
+            response.body.rewind
+            Hearth::Output.new
+          end
+          middleware.remove_send.remove_build.remove_retry
+          output = client.kitchen_sink_operation({}, middleware: middleware)
+          expect(output.data.to_h).to eq({
+            timestamp: Time.at(946845296, 123, :millisecond)
+          })
+        end
         # Parses iso8601 timestamps
         #
         it 'rails_json_parses_iso8601_timestamps' do
@@ -4456,6 +4491,23 @@ module RailsJson
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
+          })
+        end
+        # Parses fractional httpdate timestamps
+        #
+        it 'rails_json_parses_fractional_httpdate_timestamps' do
+          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
+            response = context.response
+            response.status = 200
+            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
+            response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.123 GMT"}')
+            response.body.rewind
+            Hearth::Output.new
+          end
+          middleware.remove_send.remove_build.remove_retry
+          output = client.kitchen_sink_operation({}, middleware: middleware)
+          expect(output.data.to_h).to eq({
+            httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
         end
         # Parses list shapes
@@ -4889,6 +4941,22 @@ module RailsJson
             timestamp: Time.at(946845296)
           })
         end
+        # Parses fractional timestamp shapes
+        #
+        it 'stubs rails_json_parses_fractional_timestamp_shapes' do
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build.remove_retry
+          client.stub_responses(:kitchen_sink_operation, {
+            timestamp: Time.at(946845296, 123, :millisecond)
+          })
+          output = client.kitchen_sink_operation({}, middleware: middleware)
+          expect(output.data.to_h).to eq({
+            timestamp: Time.at(946845296, 123, :millisecond)
+          })
+        end
         # Parses iso8601 timestamps
         #
         it 'stubs rails_json_parses_iso8601_timestamps' do
@@ -4919,6 +4987,22 @@ module RailsJson
           output = client.kitchen_sink_operation({}, middleware: middleware)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
+          })
+        end
+        # Parses fractional httpdate timestamps
+        #
+        it 'stubs rails_json_parses_fractional_httpdate_timestamps' do
+          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
+            response = context.response
+            expect(response.status).to eq(200)
+          end
+          middleware.remove_build.remove_retry
+          client.stub_responses(:kitchen_sink_operation, {
+            httpdate_timestamp: Time.at(946845296, 123, :millisecond)
+          })
+          output = client.kitchen_sink_operation({}, middleware: middleware)
+          expect(output.data.to_h).to eq({
+            httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
         end
         # Parses list shapes

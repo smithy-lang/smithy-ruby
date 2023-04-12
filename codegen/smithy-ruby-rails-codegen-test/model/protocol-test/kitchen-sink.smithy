@@ -169,6 +169,22 @@ use smithy.test#httpResponseTests
         uri: "/",
     },
     {
+        id: "rails_json_serializes_fractional_timestamp_shapes",
+        protocol: railsJson,
+        documentation: "Serializes fractional timestamp shapes",
+        body: "{\"timestamp\":\"2000-01-02T20:34:56.123Z\"}",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            Timestamp: 946845296.123,
+        },
+        method: "POST",
+        uri: "/",
+    },
+    {
         id: "rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat",
         protocol: railsJson,
         documentation: "Serializes timestamp shapes with iso8601 timestampFormat",
@@ -665,6 +681,18 @@ use smithy.test#httpResponseTests
         code: 200,
     },
     {
+        id: "rails_json_parses_fractional_timestamp_shapes",
+        protocol: railsJson,
+        documentation: "Parses fractional timestamp shapes",
+        body: "{\"timestamp\":\"2000-01-02T20:34:56.123Z\"}",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            Timestamp: 946845296.123,
+        },
+        code: 200,
+    },
+    {
         id: "rails_json_parses_iso8601_timestamps",
         protocol: railsJson,
         documentation: "Parses iso8601 timestamps",
@@ -685,6 +713,18 @@ use smithy.test#httpResponseTests
         headers: {"Content-Type": "application/json"},
         params: {
             HttpdateTimestamp: 946845296,
+        },
+        code: 200,
+    },
+    {
+        id: "rails_json_parses_fractional_httpdate_timestamps",
+        protocol: railsJson,
+        documentation: "Parses fractional httpdate timestamps",
+        body: "{\"httpdate_timestamp\":\"Sun, 02 Jan 2000 20:34:56.123 GMT\"}",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            HttpdateTimestamp: 946845296.123,
         },
         code: 200,
     },

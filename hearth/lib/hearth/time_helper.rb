@@ -11,7 +11,11 @@ module Hearth
       # @param [Time] time
       # @return [String<Date Time>] The time as an ISO8601 string.
       def to_date_time(time)
-        time.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+        if time.subsec.zero?
+          time.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+        else
+          time.utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ')
+        end
       end
 
       # @param [Time] time
@@ -28,7 +32,16 @@ module Hearth
       # @return [String<Http Date>] Returns the time formatted
       #   as an HTTP header date.
       def to_http_date(time)
-        time.utc.httpdate
+        if time.subsec.zero?
+          time.utc.httpdate
+        else
+          t = time.utc
+          format('%s, %02d %s %0*d %02d:%02d:%02d.%03d GMT',
+                 Time::RFC2822_DAY_NAME[t.wday],
+                 t.day, Time::RFC2822_MONTH_NAME[t.mon - 1],
+                 t.year.negative? ? 5 : 4, t.year,
+                 t.hour, t.min, t.sec, (t.subsec * 1000).round)
+        end
       end
     end
   end

@@ -8,6 +8,13 @@ module Hearth
       it 'converts a time object to date time format' do
         expect(subject.to_date_time(time)).to eq '1970-01-01T00:00:00Z'
       end
+
+      context 'fractional seconds' do
+        let(:time) { Time.at(946_845_296, 123, :millisecond) }
+        it 'converts to date time format with milliseconds' do
+          expect(subject.to_date_time(time)).to eq '2000-01-02T20:34:56.123Z'
+        end
+      end
     end
 
     describe '.to_epoch_seconds' do
@@ -19,6 +26,14 @@ module Hearth
     describe '.to_http_date' do
       it 'converts a time object to http date format' do
         expect(subject.to_http_date(time)).to eq 'Thu, 01 Jan 1970 00:00:00 GMT'
+      end
+
+      context 'fractional seconds' do
+        let(:time) { Time.at(946_845_296, 123, :millisecond) }
+        it 'converts to http date format with milliseconds' do
+          expect(subject.to_http_date(time))
+            .to eq 'Sun, 02 Jan 2000 20:34:56.123 GMT'
+        end
       end
     end
   end
