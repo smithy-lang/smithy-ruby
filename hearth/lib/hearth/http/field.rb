@@ -5,53 +5,36 @@ module Hearth
     # Represents an HTTP field.
     class Field
       # @param [String] name The name of the field.
-      # @param [Array<String>] value ([]) The String values for the field.
+      # @param [Array|#to_s] value (nil) The values for the field. It can be any
+      #   object that responds to `#to_s` or an Array of objects that respond to
+      #  `#to_s`.
       # @param [Symbol] kind The kind of field, either :header or :trailer.
       #   Trailers are currently not supported by Net::HTTP.
-      def initialize(name, value = [], kind: :header)
+      def initialize(name, value = nil, kind: :header)
         if name.nil? || name.empty?
           raise ArgumentError, 'Field name must be a non-empty String'
         end
 
         @name = name
-        @values = _values(value)
+        @value = value
         @kind = kind
       end
 
       # @return [String]
       attr_reader :name
 
-      # @return [Array, nil]
-      attr_reader :values
-
       # @return [Symbol]
       attr_reader :kind
-
-      # @param [Array|String|Integer|Float] value
-      def values=(value)
-        @values = _values(value)
-      end
-
-      # Append a value to the field.
-      # @param [String|Integer|Float] value
-      def <<(value)
-        @values << value.to_s
-      end
-
-      # Delete a value from the field.
-      # @param [String] value
-      def delete(value)
-        @values.delete(value)
-      end
 
       # Returns an escaped string representation of the field.
       # @return [String]
       def value(encoding = nil)
-        value = if @values.size > 1
-                  @values.compact.map { |v| escape_value(v.to_s) }.join(', ')
-                else
-                  @values.first&.to_s || ''
-                end
+        value =
+          if @value.is_a?(Array)
+            @value.compact.map { |v| escape_value(v.to_s) }.join(', ')
+          else
+            @value.to_s
+          end
         value = value.encode(encoding) if encoding
         value
       end

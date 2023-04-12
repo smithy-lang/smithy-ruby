@@ -397,15 +397,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         @Override
         public Void listShape(ListShape shape) {
             writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
-//            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-//                    .write("$1L$2L", dataSetter, inputGetter)
-//                    .indent()
-//                    .write(".compact")
-//                    .call(() -> model.expectShape(shape.getMember().getTarget())
-//                            .accept(new HeaderListMemberSerializer(shape.getMember())))
-//                    .write(".join(', ')")
-//                    .dedent()
-//                    .closeBlock("end");
             return null;
         }
 
@@ -427,37 +418,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             return null;
         }
     }
-//
-//    protected class HeaderListMemberSerializer extends ShapeVisitor.Default<Void> {
-//
-//        private final MemberShape memberShape;
-//
-//        HeaderListMemberSerializer(MemberShape memberShape) {
-//            this.memberShape = memberShape;
-//        }
-//
-//        @Override
-//        protected Void getDefault(Shape shape) {
-//            writer.write(".map { |s| s.to_s }");
-//            return null;
-//        }
-//
-//        @Override
-//        public Void stringShape(StringShape shape) {
-//            writer
-//                    .write(".map { |s| (s.include?('\"') || s.include?(\",\"))"
-//                            + " ? \"\\\"#{s.gsub('\"', '\\\"')}\\\"\" : s }");
-//            return null;
-//        }
-//
-//        @Override
-//        public Void timestampShape(TimestampShape shape) {
-//            writer.write(".map { |s| $L }",
-//                    TimestampFormat.serializeTimestamp(
-//                            shape, memberShape, "s", TimestampFormatTrait.Format.HTTP_DATE, false));
-//            return null;
-//        }
-//    }
 
     protected class LabelMemberSerializer extends ShapeVisitor.Default<String> {
 
