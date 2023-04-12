@@ -21,6 +21,13 @@ module Hearth
       it 'converts a time object to epoch seconds format' do
         expect(subject.to_epoch_seconds(time)).to eq 0.0
       end
+
+      context 'fractional seconds' do
+        let(:time) { Time.at(946_845_296, 123, :millisecond) }
+        it 'converts to date time format with milliseconds' do
+          expect(subject.to_epoch_seconds(time)).to eq 946_845_296.123
+        end
+      end
     end
 
     describe '.to_http_date' do
