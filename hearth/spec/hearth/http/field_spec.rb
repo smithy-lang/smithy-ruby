@@ -52,7 +52,7 @@ module Hearth
 
           it 'returns the value as a String' do
             expect(header_list_scalar.value)
-              .to eq("foo, 42, 420.69, #{time.to_s}")
+              .to eq("foo, 42, 420.69, #{time}")
             expect(header_list_escape.value)
               .to eq('"bar, baz", "\"quoted\""')
           end
