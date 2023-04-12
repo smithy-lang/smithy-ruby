@@ -3,6 +3,7 @@
 module Hearth
   module HTTP
     # Represents an HTTP field.
+    # @api private
     class Field
       # @param [String] name The name of the field.
       # @param [Array|#to_s] value (nil) The values for the field. It can be any
@@ -54,16 +55,6 @@ module Hearth
       end
 
       private
-
-      def _values(value)
-        case value
-        when String, Integer, Float then [value]
-        when Array then value
-        else
-          raise ArgumentError,
-                'Field value must be a String, Integer, Float, or Array'
-        end
-      end
 
       def escape_value(str)
         s = str

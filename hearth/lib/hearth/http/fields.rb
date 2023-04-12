@@ -3,12 +3,17 @@
 module Hearth
   module HTTP
     # Provides Hash like access for Headers and Trailers with key normalization
+    # @api private
     class Fields
       include Enumerable
 
       # @param [Array<Field>] fields
       # @param [String] encoding
       def initialize(fields = [], encoding: 'utf-8')
+        unless fields.is_a?(Array)
+          raise ArgumentError, 'fields must be an Array'
+        end
+
         @entries = {}
         fields.each { |field| self[field.name] = field }
         @encoding = encoding
@@ -69,11 +74,11 @@ module Hearth
 
         # @param [String] key
         def [](key)
-          @fields[key]&.value
+          @fields[key].value if key?(key)
         end
 
         # @param [String] key
-        # @param [String, Integer, Array<String|Integer|Float>] value
+        # @param [#to_s, Array<#to_s>] value
         def []=(key, value)
           @fields[key] = Field.new(key, value, kind: @kind)
         end
