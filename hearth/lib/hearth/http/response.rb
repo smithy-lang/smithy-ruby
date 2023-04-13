@@ -1,35 +1,44 @@
 # frozen_string_literal: true
 
-require 'stringio'
-
 module Hearth
   module HTTP
     # Represents an HTTP Response.
     # @api private
-    class Response
+    class Response < Hearth::Response
       # @param [Integer] status
-      # @param [Headers] headers
-      # @param [IO] body
-      def initialize(status: 0, headers: Headers.new, body: StringIO.new)
+      # @param [String, nil] reason
+      # @param [Fields] fields
+      # @param (see Hearth::Response#initialize)
+      def initialize(status: 0, reason: nil, fields: Fields.new, **kwargs)
+        super(**kwargs)
         @status = status
-        @headers = headers
-        @body = body
+        @reason = reason
+        @fields = fields
+        @headers = Fields::Proxy.new(@fields, :header)
+        @trailers = Fields::Proxy.new(@fields, :trailer)
       end
 
       # @return [Integer]
       attr_accessor :status
 
-      # @return [Headers]
-      attr_accessor :headers
+      # @return [String, nil]
+      attr_accessor :reason
 
-      # @return [IO]
-      attr_accessor :body
+      # @return [Fields]
+      attr_reader :fields
+
+      # @return [Fields::Proxy]
+      attr_reader :headers
+
+      # @return [Fields::Proxy]
+      attr_reader :trailers
 
       # Resets the HTTP response.
       # @return [Response]
       def reset
         @status = 0
-        @headers.clear
+        @reason = nil
+        @fields.clear
         @body.truncate(0)
         self
       end

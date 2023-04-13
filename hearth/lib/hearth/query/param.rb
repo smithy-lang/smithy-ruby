@@ -43,7 +43,7 @@ module Hearth
       private
 
       def serialize(name, value)
-        value.nil? ? "#{escape(name)}=" : "#{escape(name)}=#{escape(value)}"
+        value.nil? ? escape(name) : "#{escape(name)}=#{escape(value)}"
       end
 
       def escape(value)

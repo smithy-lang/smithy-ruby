@@ -19,8 +19,8 @@ module Hearth
         let(:input) { struct.new }
 
         let(:output) { double('output') }
-        let(:url) { 'https://example.com' }
-        let(:request) { Hearth::HTTP::Request.new(url: url) }
+        let(:uri) { URI('https://example.com') }
+        let(:request) { Hearth::HTTP::Request.new(uri: uri) }
         let(:response) { double('response') }
         let(:context) do
           Context.new(
@@ -38,7 +38,7 @@ module Hearth
             expect(app).to receive(:call).with(input, context).ordered
 
             resp = subject.call(input, context)
-            expect(request.url).to eq('https://foo.example.com')
+            expect(request.uri.to_s).to eq('https://foo.example.com')
             expect(resp).to be output
           end
 
@@ -50,7 +50,7 @@ module Hearth
               expect(app).to receive(:call).with(input, context)
 
               resp = subject.call(input, context)
-              expect(request.url).to eq('https://bar.example.com')
+              expect(request.uri.to_s).to eq('https://bar.example.com')
               expect(resp).to be output
             end
 
@@ -83,7 +83,7 @@ module Hearth
             expect(app).to receive(:call).with(input, context)
 
             resp = subject.call(input, context)
-            expect(request.url).to eq(url)
+            expect(request.uri).to eq(uri)
             expect(resp).to be output
           end
         end

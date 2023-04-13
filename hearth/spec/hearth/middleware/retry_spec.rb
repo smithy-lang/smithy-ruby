@@ -102,6 +102,7 @@ module Hearth
           metadata: {}
         )
       end
+
       let(:request) { Hearth::HTTP::Request.new }
       let(:response) { Hearth::HTTP::Response.new }
       let(:context) do

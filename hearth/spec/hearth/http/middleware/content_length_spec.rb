@@ -14,8 +14,7 @@ module Hearth
 
           let(:request) do
             Request.new(
-              http_method: :get,
-              url: 'http://example.com',
+              http_method: 'GET',
               body: body
             )
           end
@@ -47,7 +46,8 @@ module Hearth
                 expect(app).to receive(:call).with(input, context)
 
                 resp = subject.call(input, context)
-                expect(request.headers['Content-Length'].to_i).to eq(body.size)
+                expect(request.headers['Content-Length'])
+                  .to eq(body.size.to_s)
                 expect(resp).to be output
               end
             end

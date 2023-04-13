@@ -6,13 +6,11 @@ module Hearth
       subject { ErrorInspector.new(error, http_status) }
 
       let(:http_status) { 404 }
-      let(:http_headers) { Hearth::HTTP::Headers.new }
-      let(:http_body) { 'body' }
+      let(:http_fields) { Hearth::HTTP::Fields.new }
       let(:http_resp) do
         Hearth::HTTP::Response.new(
           status: http_status,
-          headers: http_headers,
-          body: http_body
+          fields: http_fields
         )
       end
       let(:message) { 'message' }

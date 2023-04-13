@@ -51,11 +51,10 @@ module Hearth
       # @param [Response] response
       # @return [Response]
       def transmit(request:, response:)
-        uri = URI.parse(request.url)
-        http = create_http(uri)
+        http = create_http(request.uri)
         http.set_debug_output(@logger) if @http_wire_trace
 
-        if uri.scheme == 'https'
+        if request.uri.scheme == 'https'
           configure_ssl(http)
         else
           http.use_ssl = false
@@ -77,7 +76,7 @@ module Hearth
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             response.status = net_resp.code.to_i
-            response.headers = extract_headers(net_resp)
+            net_resp.each_header { |k, v| response.headers[k] = v }
             net_resp.read_body do |chunk|
               response.body.write(chunk)
             end
@@ -115,7 +114,7 @@ module Hearth
       # @return [Net::HTTP::Request]
       def build_net_request(request)
         request_class = net_http_request_class(request)
-        req = request_class.new(request.url, request.headers.to_h)
+        req = request_class.new(request.uri.to_s, net_headers_for(request))
 
         # Net::HTTP adds a default Content-Type when a body is present.
         # Set the body stream when it has an unknown size or when it is > 0.
@@ -127,10 +126,16 @@ module Hearth
         req
       end
 
-      # @param [Net::HTTP::Response] response
+      # Validate that fields are not trailers and return a hash of headers.
+      # @param [HTTP::Request] request
       # @return [Hash<String, String>]
-      def extract_headers(response)
-        response.to_hash.transform_values(&:first)
+      def net_headers_for(request)
+        # Trailers are not supported in Net::HTTP
+        if request.trailers.any?
+          raise NotImplementedError, 'Trailers are not supported in Net::HTTP'
+        end
+
+        request.headers.to_h
       end
 
       # @param [Http::Request] request

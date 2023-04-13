@@ -338,8 +338,10 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
-        if (!headers.isEmpty()) {
-            writer.write("response.headers = Hearth::HTTP::Headers.new($L)", getRubyHashFromMap(headers));
+        Iterator<Map.Entry<String, String>> iterator = headers.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry header = iterator.next();
+            writer.write("response.headers['$L'] = '$L'", header.getKey(), header.getValue());
         }
     }
 
@@ -347,10 +349,9 @@ public class HttpProtocolTestGenerator {
         writer
                 .openBlock("middleware = Hearth::MiddlewareBuilder.before_send do |input, context|")
                 .write("request = context.request")
-                .write("request_uri = URI.parse(request.url)")
                 .write("expect(request.http_method).to eq('$L')", testCase.getMethod())
                 .call(() -> renderRequestMiddlewareHost(testCase.getResolvedHost()))
-                .write("expect(request_uri.path).to eq('$L')", testCase.getUri())
+                .write("expect(request.uri.path).to eq('$L')", testCase.getUri())
                 .call(() -> renderRequestMiddlewareQueryParams(testCase.getQueryParams()))
                 .call(() -> renderRequestMiddlewareForbidQueryParams(testCase.getForbidQueryParams()))
                 .call(() -> renderRequestMiddlewareRequireQueryParams(testCase.getRequireQueryParams()))
@@ -364,7 +365,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderRequestMiddlewareHost(Optional<String> resolvedHost) {
         if (resolvedHost.isPresent()) {
-            writer.write("expect(request_uri.host).to eq('$L')", resolvedHost.get());
+            writer.write("expect(request.uri.host).to eq('$L')", resolvedHost.get());
         }
     }
 
@@ -428,7 +429,7 @@ public class HttpProtocolTestGenerator {
             writer
                     .write("expected_query = $T.parse($L.join('&'))",
                             RubyImportContainer.CGI, getRubyArrayFromList(queryParams))
-                    .write("actual_query = $T.parse(request_uri.query)",
+                    .write("actual_query = $T.parse(request.uri.query)",
                             RubyImportContainer.CGI)
                     .openBlock("expected_query.each do |k, v|")
                     .write("expect(actual_query[k]).to eq(v)")
@@ -440,7 +441,7 @@ public class HttpProtocolTestGenerator {
         if (!forbidQueryParams.isEmpty()) {
             writer
                     .write("forbid_query = $L", getRubyArrayFromList(forbidQueryParams))
-                    .write("actual_query = $T.parse(request_uri.query)",
+                    .write("actual_query = $T.parse(request.uri.query)",
                             RubyImportContainer.CGI)
                     .openBlock("forbid_query.each do |query|")
                     .write("expect(actual_query.key?(query)).to be false")
@@ -452,7 +453,7 @@ public class HttpProtocolTestGenerator {
         if (!requireQueryParams.isEmpty()) {
             writer
                     .write("require_query = $L", getRubyArrayFromList(requireQueryParams))
-                    .write("actual_query = $T.parse(request_uri.query)",
+                    .write("actual_query = $T.parse(request.uri.query)",
                             RubyImportContainer.CGI)
                     .openBlock("require_query.each do |query|")
                     .write("expect(actual_query.key?(query)).to be true")

@@ -9,7 +9,7 @@ module WhiteLabel
     describe '#endpoint_operation' do
       it 'prepends to the host' do
         middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
-          expect(context.request.url).to include('foo')
+          expect(context.request.uri.to_s).to include('foo')
         end
         client.endpoint_operation( {}, middleware: middleware)
       end
@@ -28,7 +28,7 @@ module WhiteLabel
 
       it 'prepends the label to the host' do
         middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
-          expect(context.request.url).to include("foo.#{label}")
+          expect(context.request.uri.to_s).to include("foo.#{label}")
         end
         client.endpoint_with_host_label_operation({ label_member: label }, middleware: middleware)
       end

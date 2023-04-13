@@ -14,6 +14,8 @@ module Hearth
           @location = location
           super(**kwargs)
         end
+
+        attr_reader :location
       end
 
       class ApiClientError < ApiError; end
@@ -29,7 +31,8 @@ module Hearth
       let(:errors) { [TestErrors::TestModeledError] }
 
       let(:resp_status) { 200 }
-      let(:http_resp) { Response.new(status: resp_status) }
+      let(:fields) { Fields.new }
+      let(:http_resp) { Response.new(status: resp_status, fields: fields) }
       let(:metadata) { { key: 'value' } }
 
       subject do
@@ -60,10 +63,18 @@ module Hearth
           end
 
           context 'error response: 3XX code' do
+            let(:field) { Field.new('Location', 'http://example.com') }
+            let(:fields) { Fields.new([field]) }
+
             let(:resp_status) { 300 }
             it 'returns an APIRedirectError' do
               error = subject.parse(http_resp, metadata)
               expect(error).to be_a(TestErrors::ApiRedirectError)
+            end
+
+            it 'populates a location' do
+              error = subject.parse(http_resp, metadata)
+              expect(error.location).to eq('http://example.com')
             end
           end
 

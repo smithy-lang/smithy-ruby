@@ -3,7 +3,7 @@
 module Hearth
   module HTTP
     module Middleware
-      describe ContentLength do
+      describe ContentMD5 do
         let(:app) { double('app', call: output) }
 
         subject { ContentMD5.new(app) }
@@ -16,8 +16,7 @@ module Hearth
 
           let(:request) do
             Request.new(
-              http_method: :get,
-              url: 'http://example.com',
+              http_method: 'GET',
               body: body
             )
           end

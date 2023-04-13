@@ -7,6 +7,11 @@ require_relative 'hearth/configuration'
 require_relative 'hearth/config/env_provider'
 require_relative 'hearth/config/resolver'
 require_relative 'hearth/context'
+
+# must be required before http
+require_relative 'hearth/request'
+require_relative 'hearth/response'
+
 require_relative 'hearth/http'
 require_relative 'hearth/json'
 require_relative 'hearth/middleware'

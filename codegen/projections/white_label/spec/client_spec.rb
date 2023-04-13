@@ -67,7 +67,7 @@ module WhiteLabel
       it 'uses endpoint from config' do
         expect(Hearth::HTTP::Request)
           .to receive(:new)
-                .with(hash_including(url: config.endpoint))
+                .with(hash_including(uri: URI(config.endpoint)))
                 .and_call_original
 
         client.kitchen_sink
@@ -76,7 +76,7 @@ module WhiteLabel
       it 'uses endpoint from options' do
         expect(Hearth::HTTP::Request)
           .to receive(:new)
-                .with(hash_including(url: 'endpoint'))
+                .with(hash_including(uri: URI('endpoint')))
                 .and_call_original
 
         client.kitchen_sink({}, endpoint: 'endpoint')
