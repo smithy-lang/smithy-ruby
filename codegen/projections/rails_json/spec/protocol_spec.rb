@@ -3796,9 +3796,8 @@ module RailsJson
         it 'rails_json_serializes_fractional_timestamp_shapes' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('POST')
-            expect(request_uri.path).to eq('/')
+            expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56.123Z"}'))
@@ -4391,7 +4390,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
+            response.headers['Content-Type'] = 'application/json'
             response.body.write('{"timestamp":"2000-01-02T20:34:56.123Z"}')
             response.body.rewind
             Hearth::Output.new
@@ -4442,7 +4441,7 @@ module RailsJson
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.headers = Hearth::HTTP::Headers.new({ 'Content-Type' => 'application/json' })
+            response.headers['Content-Type'] = 'application/json'
             response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.123 GMT"}')
             response.body.rewind
             Hearth::Output.new
