@@ -53,6 +53,7 @@ module Hearth
         @ssl_ca_bundle = options[:ssl_ca_bundle]
         @ssl_ca_directory = options[:ssl_ca_directory]
         @ssl_ca_store = options[:ssl_ca_store]
+        # TODO: use this, and implement happy eyeballs
         @dns_resolver = options[:dns_resolver] || Hearth::DNS::HostResolver.new
       end
 

@@ -6,7 +6,6 @@ module Hearth
     # @api private
     class HostResolver
       def resolve_address(options = {})
-        options = { service: 443, socktype: :SOCK_STREAM }.merge(options)
         addrinfo_list = addrinfo(options)
         ipv6 = ipv6_addr(addrinfo_list, options)
         ipv4 = ipv4_addr(addrinfo_list, options)
@@ -20,7 +19,7 @@ module Hearth
           options[:nodename],
           options[:service],
           options[:family],
-          options[:socktype],
+          options[:socktype] || :SOCK_STREAM,
           options[:protocol],
           options[:flags]
         )
