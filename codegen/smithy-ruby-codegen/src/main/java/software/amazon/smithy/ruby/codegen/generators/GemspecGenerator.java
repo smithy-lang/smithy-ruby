@@ -29,6 +29,8 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.HashSet;
+import java.util.Set;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -69,8 +71,15 @@ public class GemspecGenerator {
                 .write("spec.files         = Dir['lib/**/*.rb']")
                 .write("")
                 .call(() -> {
+                    // determine set of indirect dependencies - covered by requiring another
+                    Set<RubyDependency> indirectDependencies = new HashSet<>();
+                    context.getRubyDependencies().forEach(rubyDependency -> {
+                        indirectDependencies.addAll(rubyDependency.getRubyDependencies());
+                    });
+
                     context.getRubyDependencies().forEach((rubyDependency -> {
-                        if (rubyDependency.getType() != RubyDependency.Type.STANDARD_LIBRARY) {
+                        if (rubyDependency.getType() != RubyDependency.Type.STANDARD_LIBRARY
+                                && !indirectDependencies.contains(rubyDependency)) {
                             writer.write("spec.add_runtime_dependency '$L', '$L'",
                                     rubyDependency.getGemName(), rubyDependency.getVersion());
                         }

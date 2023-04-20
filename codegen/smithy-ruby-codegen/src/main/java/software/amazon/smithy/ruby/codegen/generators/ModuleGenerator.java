@@ -16,10 +16,13 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.RubyDependency;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -52,8 +55,16 @@ public class ModuleGenerator {
 
         context.writerDelegator().useFileWriter(fileName, settings.getModule(), writer -> {
             writer.includePreamble().includeRequires();
+            // determine set of indirect dependencies - covered by requiring another
+            Set<RubyDependency> indirectDependencies = new HashSet<>();
+            context.getRubyDependencies().forEach(rubyDependency -> {
+                indirectDependencies.addAll(rubyDependency.getRubyDependencies());
+            });
+
             context.getRubyDependencies().forEach((rubyDependency -> {
-                writer.write("require '$L'", rubyDependency.getImportPath());
+                if (!indirectDependencies.contains(rubyDependency)) {
+                    writer.write("require '$L'", rubyDependency.getImportPath());
+                }
             }));
             writer.write("\n");
 
