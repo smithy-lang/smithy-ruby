@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -100,15 +101,62 @@ public class MiddlewareBuilder {
         ServiceShape service = context.service();
 
         for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
-            List<Middleware> orderedStepMiddleware = middlewares.get(step)
-                    .stream()
-                    .filter((m) -> m.includeFor(model, service, operation))
-                    .sorted(Comparator.comparing(Middleware::getOrder))
-                    .collect(Collectors.toList());
+            List<Middleware> orderedStepMiddleware = resolveAndFilter(step, model, service, operation);
 
             for (Middleware middleware : orderedStepMiddleware) {
                 middleware.renderAdd(writer, context, operation);
             }
+        }
+    }
+
+    private List<Middleware> resolveAndFilter(MiddlewareStackStep step, Model model, ServiceShape service,
+                                              OperationShape operation) {
+        Set<Middleware> resolved = new HashSet<>();
+        Map<Middleware, Integer> order = new HashMap<>();
+        Map<String, Middleware> klassToMiddlewareMap = new HashMap<>();
+
+
+        List<Middleware> filteredMiddleware = middlewares.get(step)
+                .stream().filter((m) -> m.includeFor(model, service, operation))
+                .collect(Collectors.toList());
+
+        filteredMiddleware.forEach((m) -> klassToMiddlewareMap.put(m.getKlass(), m));
+
+        try {
+            for (Middleware middleware : filteredMiddleware) {
+                resolve(middleware, resolved, order, klassToMiddlewareMap);
+            }
+        } catch (StackOverflowError e) {
+            throw new IllegalArgumentException("Stackoverflow error when resolving middleware order."
+                    + "  This likely means you have a circular dependency.");
+        }
+        return filteredMiddleware.stream()
+                .sorted(Comparator.comparingInt(order::get))
+                .collect(Collectors.toList());
+    }
+
+    private void resolve(Middleware middleware, Set<Middleware> resolved, Map<Middleware, Integer> order,
+                         Map<String, Middleware> klassToMiddlewareMap) {
+        // skip if its already been resolved
+        if (!resolved.contains(middleware)) {
+            if (middleware.getRelative().isPresent()) {
+                Middleware relativeTo = Objects.requireNonNull(
+                        klassToMiddlewareMap.get(middleware.getRelative().get().getTo()),
+                        middleware.getKlass() + " relative references a middleware class ("
+                                + middleware.getRelative().get().getTo() + ") that is not available in the stack.");
+                //recursively resolve the relative middleware
+                resolve(relativeTo, resolved, order, klassToMiddlewareMap);
+                // the order of relativeTo should now be set
+                if (middleware.getRelative().get().getType().equals(Middleware.Relative.Type.BEFORE)) {
+                    order.put(middleware, order.get(relativeTo) - 1);
+                } else {
+                    order.put(middleware, order.get(relativeTo) + 1);
+                }
+            } else {
+                // Base case - middleware is not relative to anything else, use its default order.
+                order.put(middleware, (int) middleware.getOrder());
+            }
+            resolved.add(middleware);
         }
     }
 
