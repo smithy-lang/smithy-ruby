@@ -179,6 +179,10 @@ module RailsJson
         def to_h: () -> { structure_value: Hash[Symbol,MyUnion] }
       end
 
+      class RenamedStructureValue < MyUnion
+        def to_h: () -> { renamed_structure_value: Hash[Symbol,MyUnion] }
+      end
+
       class Unknown < MyUnion
         def to_h: () -> { unknown: Hash[Symbol,MyUnion] }
       end
@@ -213,6 +217,8 @@ module RailsJson
     QueryParamsAsStringListMapInput: untyped
 
     QueryParamsAsStringListMapOutput: untyped
+
+    RenamedGreeting: untyped
 
     SimpleStruct: untyped
 

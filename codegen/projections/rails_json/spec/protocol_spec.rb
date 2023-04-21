@@ -3192,6 +3192,32 @@ module RailsJson
             }
           }, **opts)
         end
+        # Serializes a renamed structure union value
+        #
+        it 'RailsJsonSerializeRenamedStructureUnionValue' do
+          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/jsonunions')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "contents": {
+                    "renamed_structure_value": {
+                        "salutation": "hello!"
+                    }
+                }
+            }'))
+            Hearth::Output.new
+          end
+          opts = {middleware: middleware}
+          client.json_unions({
+            contents: {
+              renamed_structure_value: {
+                salutation: "hello!"
+              }
+            }
+          }, **opts)
+        end
       end
 
       describe 'responses' do

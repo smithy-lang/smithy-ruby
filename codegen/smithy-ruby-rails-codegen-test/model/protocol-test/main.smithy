@@ -11,6 +11,10 @@ use smithy.test#httpResponseTests
 @title("RailsJson Protocol Test Service")
 service RailsJson {
     version: "2018-01-01",
+    // Ensure that generators are able to handle renames.
+    rename: {
+        "aws.protocoltests.restjson.nested#GreetingStruct": "RenamedGreeting",
+    },
     operations: [
         KitchenSinkOperation,
         EndpointOperation,

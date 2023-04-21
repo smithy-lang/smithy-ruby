@@ -1784,6 +1784,9 @@ module RailsJson
     #       },
     #       structure_value: {
     #         hi: 'hi'
+    #       },
+    #       renamed_structure_value: {
+    #         salutation: 'salutation'
     #       }
     #     }
     #   )
@@ -1791,7 +1794,7 @@ module RailsJson
     # @example Response structure
     #
     #   resp.data #=> Types::JsonUnionsOutput
-    #   resp.data.contents #=> Types::MyUnion, one of [StringValue, BooleanValue, NumberValue, BlobValue, TimestampValue, EnumValue, ListValue, MapValue, StructureValue]
+    #   resp.data.contents #=> Types::MyUnion, one of [StringValue, BooleanValue, NumberValue, BlobValue, TimestampValue, EnumValue, ListValue, MapValue, StructureValue, RenamedStructureValue]
     #   resp.data.contents.string_value #=> String
     #   resp.data.contents.boolean_value #=> Boolean
     #   resp.data.contents.number_value #=> Integer
@@ -1804,6 +1807,8 @@ module RailsJson
     #   resp.data.contents.map_value['key'] #=> String
     #   resp.data.contents.structure_value #=> Types::GreetingStruct
     #   resp.data.contents.structure_value.hi #=> String
+    #   resp.data.contents.renamed_structure_value #=> Types::RenamedGreeting
+    #   resp.data.contents.renamed_structure_value.salutation #=> String
     #
     def json_unions(params = {}, options = {}, &block)
       stack = Hearth::MiddlewareStack.new

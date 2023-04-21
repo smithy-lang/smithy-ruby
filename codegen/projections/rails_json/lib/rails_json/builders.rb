@@ -295,6 +295,15 @@ module RailsJson
     end
 
     # Structure Builder for GreetingStruct
+    class RenamedGreeting
+      def self.build(input)
+        data = {}
+        data[:salutation] = input[:salutation] unless input[:salutation].nil?
+        data
+      end
+    end
+
+    # Structure Builder for GreetingStruct
     class GreetingStruct
       def self.build(input)
         data = {}
@@ -849,6 +858,8 @@ module RailsJson
           data[:map_value] = (Builders::StringMap.build(input) unless input.nil?)
         when Types::MyUnion::StructureValue
           data[:structure_value] = (Builders::GreetingStruct.build(input) unless input.nil?)
+        when Types::MyUnion::RenamedStructureValue
+          data[:renamed_structure_value] = (Builders::RenamedGreeting.build(input) unless input.nil?)
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::MyUnion"
