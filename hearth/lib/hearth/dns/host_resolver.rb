@@ -7,9 +7,9 @@ module Hearth
     class HostResolver
       def resolve_address(options = {})
         addrinfo_list = addrinfo(options)
-        ipv6 = ipv6_addr(addrinfo_list, options)
+        ipv6 = ipv6_addr(addrinfo_list, options) if use_ipv6?
         ipv4 = ipv4_addr(addrinfo_list, options)
-        [ipv6, ipv4].compact
+        [ipv6, ipv4]
       end
 
       private
@@ -47,6 +47,15 @@ module Hearth
           hostname: options[:nodename],
           service: options[:service]
         )
+      end
+
+      def use_ipv6?
+        begin
+          list = Socket.ip_address_list
+        rescue NotImplementedError
+          return true
+        end
+        list.any? { |a| a.ipv6? && !a.ipv6_loopback? && !a.ipv6_linklocal? }
       end
     end
   end

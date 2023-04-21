@@ -42,9 +42,9 @@ module Hearth
       #
       # @option options [#resolve_address] (Hearth::DNS::HostResolver)
       #   :dns_resolver An object that responds to `#resolve_address`, returning
-      #   an array of up to two IP addresses for the given hostname, one IPv4
-      #   and one IPv6. `#resolve_address` takes an options hash similar to
-      #   Addrinfo.getaddrinfo.
+      #   an array of up to two IP addresses for the given hostname, one IPv6
+      #   and one IPv4, in that order. `#resolve_address` takes keyword args
+      #   similar to Addrinfo.getaddrinfo's positional parameters.
       def initialize(options = {})
         @http_wire_trace = options[:http_wire_trace]
         @logger = options[:logger]
@@ -53,7 +53,6 @@ module Hearth
         @ssl_ca_bundle = options[:ssl_ca_bundle]
         @ssl_ca_directory = options[:ssl_ca_directory]
         @ssl_ca_store = options[:ssl_ca_store]
-        # TODO: use this, and implement happy eyeballs
         @dns_resolver = options[:dns_resolver] || Hearth::DNS::HostResolver.new
       end
 
@@ -83,14 +82,23 @@ module Hearth
       private
 
       def _transmit(http, request, response)
+        # Inform monkey patch to use our DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = @dns_resolver
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
-            response.status = net_resp.code.to_i
-            net_resp.each_header { |k, v| response.headers[k] = v }
-            net_resp.read_body do |chunk|
-              response.body.write(chunk)
-            end
+            unpack_response(net_resp, response)
           end
+        end
+      ensure
+        # Restore the default DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = nil
+      end
+
+      def unpack_response(net_resp, response)
+        response.status = net_resp.code.to_i
+        net_resp.each_header { |k, v| response.headers[k] = v }
+        net_resp.read_body do |chunk|
+          response.body.write(chunk)
         end
       end
 
@@ -170,5 +178,41 @@ module Hearth
         ]
       end
     end
+  end
+end
+
+# These patches are based on resolv-replace
+# https://github.com/ruby/ruby/blob/master/lib/resolv-replace.rb
+# We cannot require resolv-replace because it would change DNS resolution
+# globally. When opening an HTTP request, we will set a thread local variable
+# to enable custom DNS resolution, and then disable it after the request is
+# complete. When the thread local variable is not set, we will use the default
+# Ruby DNS resolution, which may be Resolv or the system resolver.
+
+# Patch IPSocket
+class << IPSocket
+  alias original_hearth_getaddress getaddress
+
+  def getaddress(host)
+    unless (resolver = Thread.current[:net_http_hearth_dns_resolver])
+      return original_hearth_getaddress(host)
+    end
+
+    ipv6, ipv4 = resolver.resolve_address(nodename: host)
+    return ipv6.address if ipv6
+
+    ipv4.address
+  end
+end
+
+# Patch TCPSocket
+class TCPSocket < IPSocket
+  alias original_hearth_initialize initialize
+
+  def initialize(host, serv, *rest)
+    super unless Thread.current[:net_http_hearth_dns_resolver]
+
+    rest[0] = IPSocket.getaddress(rest[0]) if rest[0]
+    original_hearth_initialize(IPSocket.getaddress(host), serv, *rest)
   end
 end
