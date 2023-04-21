@@ -112,6 +112,7 @@ public class MiddlewareBuilder {
     private List<Middleware> resolveAndFilter(MiddlewareStackStep step, Model model, ServiceShape service,
                                               OperationShape operation) {
         Set<Middleware> resolved = new HashSet<>();
+        Set<Middleware> visiting = new HashSet<>();
         Map<Middleware, Integer> order = new HashMap<>();
         Map<String, Middleware> klassToMiddlewareMap = new HashMap<>();
 
@@ -122,30 +123,32 @@ public class MiddlewareBuilder {
 
         filteredMiddleware.forEach((m) -> klassToMiddlewareMap.put(m.getKlass(), m));
 
-        try {
-            for (Middleware middleware : filteredMiddleware) {
-                resolve(middleware, resolved, order, klassToMiddlewareMap);
-            }
-        } catch (StackOverflowError e) {
-            throw new IllegalArgumentException("Stackoverflow error when resolving middleware order."
-                    + "  This likely means you have a circular dependency.");
+        for (Middleware middleware : filteredMiddleware) {
+            resolve(middleware, resolved, visiting, order, klassToMiddlewareMap);
         }
+
         return filteredMiddleware.stream()
                 .sorted(Comparator.comparingInt(order::get))
                 .collect(Collectors.toList());
     }
 
-    private void resolve(Middleware middleware, Set<Middleware> resolved, Map<Middleware, Integer> order,
-                         Map<String, Middleware> klassToMiddlewareMap) {
+    private void resolve(Middleware middleware, Set<Middleware> resolved, Set<Middleware> visiting,
+                         Map<Middleware, Integer> order, Map<String, Middleware> klassToMiddlewareMap) {
+
+        if (visiting.contains(middleware)) {
+            throw new IllegalArgumentException("Circular dependency detected when resolving order for middleware: "
+                    + middleware.getKlass());
+        }
         // skip if its already been resolved
         if (!resolved.contains(middleware)) {
+            visiting.add(middleware);
             if (middleware.getRelative().isPresent()) {
                 Middleware relativeTo = Objects.requireNonNull(
                         klassToMiddlewareMap.get(middleware.getRelative().get().getTo()),
                         middleware.getKlass() + " relative references a middleware class ("
                                 + middleware.getRelative().get().getTo() + ") that is not available in the stack.");
                 //recursively resolve the relative middleware
-                resolve(relativeTo, resolved, order, klassToMiddlewareMap);
+                resolve(relativeTo, resolved, visiting, order, klassToMiddlewareMap);
                 // the order of relativeTo should now be set
                 if (middleware.getRelative().get().getType().equals(Middleware.Relative.Type.BEFORE)) {
                     order.put(middleware, order.get(relativeTo) - 1);
@@ -156,6 +159,7 @@ public class MiddlewareBuilder {
                 // Base case - middleware is not relative to anything else, use its default order.
                 order.put(middleware, (int) middleware.getOrder());
             }
+            visiting.remove(middleware);
             resolved.add(middleware);
         }
     }
