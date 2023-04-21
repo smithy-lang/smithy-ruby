@@ -168,6 +168,15 @@ public final class RubyDependency
         return new ArrayList<>(symbolDependencySet);
     }
 
+    /**
+     * Get all the Ruby dependencies.
+     *
+     * @return list of RubyDependency
+     */
+    public Set<RubyDependency> getRubyDependencies() {
+        return dependencies;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
