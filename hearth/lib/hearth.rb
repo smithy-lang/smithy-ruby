@@ -7,8 +7,7 @@ require_relative 'hearth/configuration'
 require_relative 'hearth/config/env_provider'
 require_relative 'hearth/config/resolver'
 require_relative 'hearth/context'
-require_relative 'hearth/dns/host_address'
-require_relative 'hearth/dns/host_resolver'
+require_relative 'hearth/dns'
 
 # must be required before http
 require_relative 'hearth/request'
