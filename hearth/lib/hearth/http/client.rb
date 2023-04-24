@@ -40,11 +40,13 @@ module Hearth
       # @option options [OpenSSL::X509::Store] :ssl_ca_store An OpenSSL X509
       #   certificate store that contains the SSL certificate authority.
       #
-      # @option options [#resolve_address] (Hearth::DNS::HostResolver)
-      #   :dns_resolver An object that responds to `#resolve_address`, returning
-      #   an array of up to two IP addresses for the given hostname, one IPv6
-      #   and one IPv4, in that order. `#resolve_address` takes keyword args
-      #   similar to Addrinfo.getaddrinfo's positional parameters.
+      # @option options [#resolve_address] (nil) :host_resolver
+      #   An object, such as {Hearth::DNS::HostResolver} that responds to
+      #   `#resolve_address`, returning an array of up to two IP addresses for
+      #   the given hostname, one IPv6 and one IPv4, in that order.
+      #   `#resolve_address` should take a nodename keyword argument and
+      #   optionally other keyword args similar to {Addrinfo#getaddrinfo}'s
+      #   positional parameters.
       def initialize(options = {})
         @http_wire_trace = options[:http_wire_trace]
         @logger = options[:logger]
@@ -53,7 +55,7 @@ module Hearth
         @ssl_ca_bundle = options[:ssl_ca_bundle]
         @ssl_ca_directory = options[:ssl_ca_directory]
         @ssl_ca_store = options[:ssl_ca_store]
-        @dns_resolver = options[:dns_resolver] || Hearth::DNS::HostResolver.new
+        @host_resolver = options[:host_resolver]
       end
 
       # @param [Request] request
@@ -83,7 +85,7 @@ module Hearth
 
       def _transmit(http, request, response)
         # Inform monkey patch to use our DNS resolver
-        Thread.current[:net_http_hearth_dns_resolver] = @dns_resolver
+        Thread.current[:net_http_hearth_dns_resolver] = @host_resolver
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
             unpack_response(net_resp, response)
@@ -210,7 +212,9 @@ class TCPSocket < IPSocket
   alias original_hearth_initialize initialize
 
   def initialize(host, serv, *rest)
-    super unless Thread.current[:net_http_hearth_dns_resolver]
+    unless Thread.current[:net_http_hearth_dns_resolver]
+      return original_hearth_initialize(host, serv, *rest)
+    end
 
     rest[0] = IPSocket.getaddress(rest[0]) if rest[0]
     original_hearth_initialize(IPSocket.getaddress(host), serv, *rest)

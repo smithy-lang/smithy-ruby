@@ -2,14 +2,12 @@
 
 module Hearth
   module DNS
-    # Address results from a DNS lookup.
-    # @api private
+    # Address results from a DNS lookup in {HostResolver}.
     class HostAddress
-      def initialize(address_type:, address:, hostname:, service:)
+      def initialize(address_type:, address:, hostname:)
         @address_type = address_type
         @address = address
         @hostname = hostname
-        @service = service
       end
 
       # @return [Symbol]
@@ -20,9 +18,6 @@ module Hearth
 
       # @return [String]
       attr_reader :hostname
-
-      # @return [Integer]
-      attr_reader :service
     end
   end
 end

@@ -2,10 +2,42 @@
 
 module Hearth
   module DNS
-    # Resolve a host name to an address.
-    # @api private
+    # Resolves a host name and service to an IP address. Can be used with
+    # {Hearth::HTTP::Client} host_resolver option.
     class HostResolver
-      def resolve_address(options = {})
+      # @param [Integer] service (443)
+      # @param [Integer] family (nil)
+      # @param [Symbol] socktype (:SOCK_STREAM)
+      # @param [Integer] protocol (nil)
+      # @param [Integer] flags (nil)
+      def initialize(service: 443, family: nil, socktype: :SOCK_STREAM,
+                     protocol: nil, flags: nil)
+        @service = service
+        @family = family
+        @socktype = socktype
+        @protocol = protocol
+        @flags = flags
+      end
+
+      # @return [Integer]
+      attr_reader :service
+
+      # @return [Integer]
+      attr_reader :family
+
+      # @return [Symbol]
+      attr_reader :socktype
+
+      # @return [Integer]
+      attr_reader :protocol
+
+      # @return [Integer]
+      attr_reader :flags
+
+      # @param [String] nodename
+      # @param (see Hearth::DNS::HostResolver#initialize)
+      def resolve_address(nodename:, **kwargs)
+        options = kwargs.merge(nodename: nodename)
         addrinfo_list = addrinfo(options)
         ipv6 = ipv6_addr(addrinfo_list, options) if use_ipv6?
         ipv4 = ipv4_addr(addrinfo_list, options)
@@ -17,11 +49,11 @@ module Hearth
       def addrinfo(options)
         Addrinfo.getaddrinfo(
           options[:nodename],
-          options[:service],
-          options[:family],
-          options[:socktype] || :SOCK_STREAM,
-          options[:protocol],
-          options[:flags]
+          options.fetch(:service, @service),
+          options.fetch(:family, @family),
+          options.fetch(:socktype, @socktype),
+          options.fetch(:protocol, @protocol),
+          options.fetch(:flags, @flags)
         )
       end
 
@@ -32,8 +64,7 @@ module Hearth
         HostAddress.new(
           address_type: :A,
           address: addr.ip_address,
-          hostname: options[:nodename],
-          service: options[:service]
+          hostname: options[:nodename]
         )
       end
 
@@ -44,18 +75,14 @@ module Hearth
         HostAddress.new(
           address_type: :AAAA,
           address: addr.ip_address,
-          hostname: options[:nodename],
-          service: options[:service]
+          hostname: options[:nodename]
         )
       end
 
       def use_ipv6?
-        begin
-          list = Socket.ip_address_list
-        rescue NotImplementedError
-          return true
+        Socket.ip_address_list.any? do |a|
+          a.ipv6? && !a.ipv6_loopback? && !a.ipv6_linklocal?
         end
-        list.any? { |a| a.ipv6? && !a.ipv6_loopback? && !a.ipv6_linklocal? }
       end
     end
   end
