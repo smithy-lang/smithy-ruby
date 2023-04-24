@@ -18,7 +18,7 @@ module Hearth
       #
       # @option options [Logger] :logger A logger where debug output is sent.
       #
-      # @option options [URI::HTTP,String] :http_proxy A proxy to send
+      # @option options [String] :http_proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
       #
       # @option options [Boolean] :ssl_verify_peer (true) When `true`,
@@ -36,15 +36,26 @@ module Hearth
       #   authority files for verifying peer certificates.  If you do
       #   not pass `:ssl_ca_bundle` or `:ssl_ca_directory` the
       #   system default will be used if available.
+      #
+      # @option options [OpenSSL::X509::Store] :ssl_ca_store An OpenSSL X509
+      #   certificate store that contains the SSL certificate authority.
+      #
+      # @option options [#resolve_address] (nil) :host_resolver
+      #   An object, such as {Hearth::DNS::HostResolver} that responds to
+      #   `#resolve_address`, returning an array of up to two IP addresses for
+      #   the given hostname, one IPv6 and one IPv4, in that order.
+      #   `#resolve_address` should take a nodename keyword argument and
+      #   optionally other keyword args similar to {Addrinfo#getaddrinfo}'s
+      #   positional parameters.
       def initialize(options = {})
         @http_wire_trace = options[:http_wire_trace]
         @logger = options[:logger]
-        @http_proxy = options[:http_proxy]
-        @http_proxy = URI.parse(@http_proxy.to_s) if @http_proxy
+        @http_proxy = URI(options[:http_proxy]) if options[:http_proxy]
         @ssl_verify_peer = options[:ssl_verify_peer]
         @ssl_ca_bundle = options[:ssl_ca_bundle]
         @ssl_ca_directory = options[:ssl_ca_directory]
         @ssl_ca_store = options[:ssl_ca_store]
+        @host_resolver = options[:host_resolver]
       end
 
       # @param [Request] request
@@ -73,14 +84,23 @@ module Hearth
       private
 
       def _transmit(http, request, response)
+        # Inform monkey patch to use our DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = @host_resolver
         http.start do |conn|
           conn.request(build_net_request(request)) do |net_resp|
-            response.status = net_resp.code.to_i
-            net_resp.each_header { |k, v| response.headers[k] = v }
-            net_resp.read_body do |chunk|
-              response.body.write(chunk)
-            end
+            unpack_response(net_resp, response)
           end
+        end
+      ensure
+        # Restore the default DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = nil
+      end
+
+      def unpack_response(net_resp, response)
+        response.status = net_resp.code.to_i
+        net_resp.each_header { |k, v| response.headers[k] = v }
+        net_resp.read_body do |chunk|
+          response.body.write(chunk)
         end
       end
 
@@ -150,7 +170,7 @@ module Hearth
       end
 
       # Extract the parts of the http_proxy URI
-      # @return [Array(String)]
+      # @return [Array]
       def http_proxy_parts
         [
           @http_proxy.host,

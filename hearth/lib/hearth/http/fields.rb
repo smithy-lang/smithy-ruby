@@ -90,6 +90,12 @@ module Hearth
           @fields.key?(key) && @fields[key].kind == @kind
         end
 
+        # @param [String] key
+        # @return [Field, nil] Returns the value for the deleted Field key.
+        def delete(key)
+          @fields.delete(key).value(@fields.encoding) if key?(key)
+        end
+
         # @return [Enumerable<String,String>]
         def each(&block)
           @fields.filter { |_k, v| v.kind == @kind }

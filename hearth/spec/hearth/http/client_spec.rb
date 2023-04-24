@@ -14,6 +14,7 @@ module Hearth
       let(:ssl_ca_bundle) { nil }
       let(:ssl_ca_directory) { nil }
       let(:ssl_ca_store) { nil }
+      let(:host_resolver) { nil }
 
       subject do
         Client.new(
@@ -22,7 +23,8 @@ module Hearth
           ssl_verify_peer: ssl_verify_peer,
           ssl_ca_bundle: ssl_ca_bundle,
           ssl_ca_directory: ssl_ca_directory,
-          ssl_ca_store: ssl_ca_store
+          ssl_ca_store: ssl_ca_store,
+          host_resolver: host_resolver
         )
       end
 
@@ -291,6 +293,19 @@ module Hearth
             stub_request(:any, uri.to_s)
             expect_any_instance_of(Net::HTTP)
               .to receive(:set_debug_output).with(logger)
+            subject.transmit(request: request, response: response)
+          end
+        end
+
+        context 'DNS resolution' do
+          let(:host_resolver) { Hearth::DNS::HostResolver.new }
+
+          it 'sets the custom dns resolver as a thread local variable' do
+            expect(Thread.current).to receive(:[]=)
+              .with(:net_http_hearth_dns_resolver, host_resolver)
+            expect(Thread.current).to receive(:[]=)
+              .with(:net_http_hearth_dns_resolver, nil)
+            stub_request(:any, uri.to_s)
             subject.transmit(request: request, response: response)
           end
         end
