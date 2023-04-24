@@ -10,7 +10,7 @@ use smithy.ruby.protocols#UnprocessableEntityError
 @title("High Score Sample Rails Service")
 service HighScoreService {
     version: "2021-02-15",
-    resources: [HighScore],
+    resources: [HighScore]
 }
 
 /// Rails default scaffold operations

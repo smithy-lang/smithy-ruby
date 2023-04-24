@@ -336,6 +336,24 @@ module RailsJson
     end
 
     # Structure Stubber for GreetingStruct
+    class RenamedGreeting
+      def self.default(visited=[])
+        return nil if visited.include?('RenamedGreeting')
+        visited = visited + ['RenamedGreeting']
+        {
+          salutation: 'salutation',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::RenamedGreeting.new
+        data = {}
+        data[:salutation] = stub[:salutation] unless stub[:salutation].nil?
+        data
+      end
+    end
+
+    # Structure Stubber for GreetingStruct
     class GreetingStruct
       def self.default(visited=[])
         return nil if visited.include?('GreetingStruct')
@@ -1095,6 +1113,8 @@ module RailsJson
           data[:map_value] = (Stubs::StringMap.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         when Types::MyUnion::StructureValue
           data[:structure_value] = (Stubs::GreetingStruct.stub(stub.__getobj__) unless stub.__getobj__.nil?)
+        when Types::MyUnion::RenamedStructureValue
+          data[:renamed_structure_value] = (Stubs::RenamedGreeting.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::MyUnion"

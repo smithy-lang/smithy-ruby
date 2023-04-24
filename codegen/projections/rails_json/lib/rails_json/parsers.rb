@@ -223,6 +223,14 @@ module RailsJson
       end
     end
 
+    class RenamedGreeting
+      def self.parse(map)
+        data = Types::RenamedGreeting.new
+        data.salutation = map['salutation']
+        return data
+      end
+    end
+
     class GreetingStruct
       def self.parse(map)
         data = Types::GreetingStruct.new
@@ -669,6 +677,9 @@ module RailsJson
         when 'structure_value'
           value = (Parsers::GreetingStruct.parse(value) unless value.nil?)
           Types::MyUnion::StructureValue.new(value) if value
+        when 'renamed_structure_value'
+          value = (Parsers::RenamedGreeting.parse(value) unless value.nil?)
+          Types::MyUnion::RenamedStructureValue.new(value) if value
         else
           Types::MyUnion::Unknown.new({name: key, value: value})
         end

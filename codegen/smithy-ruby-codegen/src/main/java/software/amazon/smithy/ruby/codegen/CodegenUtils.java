@@ -61,6 +61,6 @@ public final class CodegenUtils {
      * @return TreeSet sorted by shape name in alphabetical order
      */
     public static TreeSet<Shape> getAlphabeticalOrderedShapesSet() {
-        return new TreeSet<>(Comparator.comparing(o -> o.getId().getName()));
+        return new TreeSet<>(Comparator.comparing(o -> o.getId().getName() + " " + o.getId()));
     }
 }
