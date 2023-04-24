@@ -79,7 +79,7 @@ module Hearth
 
         it 'returns host address objects' do
           expect(Addrinfo).to receive(:getaddrinfo).and_return(addrinfo_list)
-          ipv6, ipv4 = subject.resolve_address(nodename: nodename)
+          _ipv6, ipv4 = subject.resolve_address(nodename: nodename)
           expect(ipv4).to be_a(Hearth::DNS::HostAddress)
         end
 

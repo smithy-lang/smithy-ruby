@@ -211,12 +211,14 @@ end
 class TCPSocket < IPSocket
   alias original_hearth_initialize initialize
 
+  # rubocop:disable Lint/MissingSuper
   def initialize(host, serv, *rest)
-    unless Thread.current[:net_http_hearth_dns_resolver]
-      return original_hearth_initialize(host, serv, *rest)
+    if Thread.current[:net_http_hearth_dns_resolver]
+      rest[0] = IPSocket.getaddress(rest[0]) if rest[0]
+      original_hearth_initialize(IPSocket.getaddress(host), serv, *rest)
+    else
+      original_hearth_initialize(host, serv, *rest)
     end
-
-    rest[0] = IPSocket.getaddress(rest[0]) if rest[0]
-    original_hearth_initialize(IPSocket.getaddress(host), serv, *rest)
   end
+  # rubocop:enable Lint/MissingSuper
 end
