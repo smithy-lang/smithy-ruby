@@ -31,12 +31,8 @@ def handle_with_retry(test_cases, middleware_args = {})
 
   subject = Hearth::Middleware::Retry.new(
     app,
-    retry_mode: middleware_args[:retry_mode],
-    max_attempts: middleware_args[:max_attempts],
-    adaptive_retry_wait_to_fill: middleware_args[:adaptive_retry_wait_to_fill],
-    error_inspector_class: Hearth::Retry::ErrorInspector,
-    retry_quota: retry_quota,
-    client_rate_limiter: client_rate_limiter
+    error_inspector_class: Hearth::HTTP::ErrorInspector,
+    retry_strategy: middleware_args[:retry_strategy]
   )
   subject.call(input, context)
 
@@ -56,8 +52,13 @@ def apply_expectations(retry_class, test_case)
   # Don't actually sleep
   allow(Kernel).to receive(:sleep)
 
+  retry_strategy = retry_class.instance_variable_get(:@retry_strategy)
+  retry_quota = retry_strategy.instance_variable_get(:@retry_quota)
+  client_rate_limiter =
+    retry_strategy.instance_variable_get(:@client_rate_limiter)
+
   if expected[:retries]
-    expect(retry_class.instance_variable_get(:@retries))
+    expect(retry_strategy.instance_variable_get(:@retries))
       .to eq(expected[:retries])
   end
   if expected[:available_capacity]
@@ -92,10 +93,8 @@ end
 module Hearth
   module Middleware
     describe Retry do
-      let(:retry_quota) { Hearth::Retry::RetryQuota.new }
-      let(:client_rate_limiter) { Hearth::Retry::ClientRateLimiter.new }
-
       let(:input) { double('Type::OperationInput') }
+
       let(:error) do
         Hearth::ApiError.new(
           error_code: 'error_code',
@@ -112,13 +111,14 @@ module Hearth
         )
       end
 
+      before { allow(error).to receive(:retryable?).and_return(true) }
+
       context 'standard mode' do
+        let(:retry_strategy) { Hearth::Retry::StandardRetryStrategy.new }
+        let(:retry_quota) { retry_strategy.instance_variable_get(:@retry_quota) }
+
         let(:middleware_args) do
-          {
-            retry_mode: 'standard',
-            max_attempts: 3,
-            adaptive_retry_wait_to_fill: true
-          }
+          { retry_strategy: retry_strategy }
         end
 
         before do
@@ -217,11 +217,16 @@ module Hearth
             }
           ]
 
-          handle_with_retry(test_cases, middleware_args.merge(max_attempts: 5))
+          args = middleware_args.merge(
+            retry_strategy: Hearth::Retry::StandardRetryStrategy.new(
+              max_attempts: 5
+            )
+          )
+          handle_with_retry(test_cases, args)
         end
 
         it 'does not exceed the max backoff time' do
-          stub_const('Hearth::Middleware::Retry::MAX_BACKOFF', 3)
+          stub_const('Hearth::Retry::RetryBackoffStrategy::MAX_BACKOFF', 3)
 
           test_cases = [
             {
@@ -246,17 +251,22 @@ module Hearth
             }
           ]
 
-          handle_with_retry(test_cases, middleware_args.merge(max_attempts: 5))
+          args = middleware_args.merge(
+            retry_strategy: Hearth::Retry::StandardRetryStrategy.new(
+              max_attempts: 5
+            )
+          )
+          handle_with_retry(test_cases, args)
         end
       end
 
       context 'adaptive mode' do
+        let(:retry_strategy) { Hearth::Retry::AdaptiveRetryStrategy.new }
+        let(:retry_quota) { retry_strategy.instance_variable_get(:@retry_quota) }
+        let(:client_rate_limiter) { retry_strategy.instance_variable_get(:@client_rate_limiter) }
+
         let(:middleware_args) do
-          {
-            retry_mode: 'adaptive',
-            max_attempts: 3,
-            adaptive_retry_wait_to_fill: true
-          }
+          { retry_strategy: retry_strategy }
         end
 
         it 'verifies cubic calculations for successes' do

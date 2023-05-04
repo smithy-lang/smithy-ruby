@@ -39,7 +39,7 @@ module Hearth
         @status = 0
         @reason = nil
         @fields.clear
-        @body.truncate(0)
+        @body.truncate(0) if @body.respond_to?(:truncate)
         self
       end
     end
