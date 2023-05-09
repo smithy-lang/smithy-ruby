@@ -19,10 +19,10 @@ module Hearth
       # Check if there is sufficient capacity to retry and return it.
       # If there is insufficient capacity, return 0
       # @return [Integer] The amount of capacity checked out
-      def checkout_capacity(error_type)
+      def checkout_capacity(error_info)
         @mutex.synchronize do
           capacity_amount =
-            if error_type == 'Transient'
+            if error_info.error_type == 'Transient'
               TIMEOUT_RETRY_COST
             else
               RETRY_COST

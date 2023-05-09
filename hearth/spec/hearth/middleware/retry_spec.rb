@@ -58,7 +58,7 @@ def apply_expectations(retry_class, test_case)
     retry_strategy.instance_variable_get(:@client_rate_limiter)
 
   if expected[:retries]
-    expect(retry_strategy.instance_variable_get(:@retries))
+    expect(retry_class.instance_variable_get(:@retries))
       .to eq(expected[:retries])
   end
   if expected[:available_capacity]
@@ -114,7 +114,7 @@ module Hearth
       before { allow(error).to receive(:retryable?).and_return(true) }
 
       context 'standard mode' do
-        let(:retry_strategy) { Hearth::Retry::StandardRetryStrategy.new }
+        let(:retry_strategy) { Hearth::Retry::Standard.new }
         let(:retry_quota) { retry_strategy.instance_variable_get(:@retry_quota) }
 
         let(:middleware_args) do
@@ -218,15 +218,13 @@ module Hearth
           ]
 
           args = middleware_args.merge(
-            retry_strategy: Hearth::Retry::StandardRetryStrategy.new(
-              max_attempts: 5
-            )
+            retry_strategy: Hearth::Retry::Standard.new(max_attempts: 5)
           )
           handle_with_retry(test_cases, args)
         end
 
         it 'does not exceed the max backoff time' do
-          stub_const('Hearth::Retry::RetryBackoffStrategy::MAX_BACKOFF', 3)
+          stub_const('Hearth::Retry::ExponentialBackoff::MAX_BACKOFF', 3)
 
           test_cases = [
             {
@@ -252,16 +250,14 @@ module Hearth
           ]
 
           args = middleware_args.merge(
-            retry_strategy: Hearth::Retry::StandardRetryStrategy.new(
-              max_attempts: 5
-            )
+            retry_strategy: Hearth::Retry::Standard.new(max_attempts: 5)
           )
           handle_with_retry(test_cases, args)
         end
       end
 
       context 'adaptive mode' do
-        let(:retry_strategy) { Hearth::Retry::AdaptiveRetryStrategy.new }
+        let(:retry_strategy) { Hearth::Retry::Adaptive.new }
         let(:retry_quota) { retry_strategy.instance_variable_get(:@retry_quota) }
         let(:client_rate_limiter) { retry_strategy.instance_variable_get(:@client_rate_limiter) }
 
