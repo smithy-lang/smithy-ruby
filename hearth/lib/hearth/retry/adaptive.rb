@@ -3,7 +3,7 @@
 module Hearth
   module Retry
     # Adaptive retry strategy for retrying requests.
-    class Adaptive
+    class Adaptive < Strategy
       # @param [#call] backoff (ExponentialBackoff) A callable object that
       #   calculates a backoff delay for a retry attempt.
       # @param [Integer] max_attempts (3) The maximum number of attempts that
@@ -14,6 +14,7 @@ module Hearth
       #   not retry instead of sleeping.
       def initialize(backoff: ExponentialBackoff.new, max_attempts: 3,
                      wait_to_fill: true)
+        super()
         @backoff = backoff
         @max_attempts = max_attempts
         @wait_to_fill = wait_to_fill
@@ -28,7 +29,7 @@ module Hearth
         @client_rate_limiter.token_bucket_acquire(
           1, wait_to_fill: @wait_to_fill
         )
-        RetryToken.new(retry_count: 0)
+        Token.new(retry_count: 0)
       end
 
       def refresh_retry_token(retry_token, error_info)

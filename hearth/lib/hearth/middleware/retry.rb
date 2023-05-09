@@ -8,10 +8,10 @@ module Hearth
       # @param [Class] app The next middleware in the stack.
       # @param [Standard|Adaptive] retry_strategy (Standard) The retry strategy
       #   to use. Hearth has two built in classes, Standard and Adaptive.
-      #   * `Standard` - A standardized set of retry rules across
+      #   * `Retry::Standard` - A standardized set of retry rules across
       #     the AWS SDKs. This includes support for retry quotas, which limit
       #     the number of unsuccessful retries a client can make.
-      #   * `Adaptive` - An experimental retry mode that includes
+      #   * `Retry::Adaptive` - An experimental retry mode that includes
       #     all the functionality of `standard` mode along with automatic
       #     client side throttling. This is a provisional mode that may change
       #     behavior in the future.
@@ -30,7 +30,6 @@ module Hearth
         token = @retry_strategy.acquire_initial_retry_token(
           context.metadata[:retry_token_scope]
         )
-        raise 'Unable to make request, too many failures' if token.nil?
 
         output = nil
         loop do
@@ -47,6 +46,7 @@ module Hearth
           break unless token && output.error
 
           reset_request(context, output)
+          @retries += 1
         end
         output
       end
@@ -55,7 +55,6 @@ module Hearth
       private
 
       def reset_request(context, output)
-        @retries += 1
         context.request.body.rewind
         context.response.reset
         output.error = nil

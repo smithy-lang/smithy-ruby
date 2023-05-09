@@ -151,8 +151,6 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("@config = config")
                 .write("@middleware = $T.new(options[:middleware])", Hearth.MIDDLEWARE_BUILDER)
                 .write("@stubs = $T.new", Hearth.STUBS)
-                .write("@retry_quota = $T.new", Hearth.RETRY_QUOTA)
-                .write("@client_rate_limiter = $T.new", Hearth.CLIENT_RATE_LIMITER)
                 .closeBlock("end");
     }
 

@@ -62,16 +62,6 @@ public final class Hearth {
             .name("Stubs")
             .build();
 
-    public static final Symbol RETRY_QUOTA = Symbol.builder()
-            .namespace("Hearth::Retry", "::")
-            .name("RetryQuota")
-            .build();
-
-    public static final Symbol CLIENT_RATE_LIMITER = Symbol.builder()
-            .namespace("Hearth::Retry", "::")
-            .name("ClientRateLimiter")
-            .build();
-
     public static final Symbol API_ERROR = Symbol.builder()
             .namespace("Hearth::HTTP", "::")
             .name("ApiError")

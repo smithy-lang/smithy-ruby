@@ -255,6 +255,13 @@ public final class ApplicationTransport {
     }
 
     /**
+     * @return the error inspector used for HTTP errors.
+     */
+    public String getErrorInspector() {
+        return "Hearth::HTTP::ErrorInspector";
+    }
+
+    /**
      * @param context generation context
      * @return list of default middleware to support this transport.
      */
