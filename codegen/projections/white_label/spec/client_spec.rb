@@ -17,16 +17,12 @@ module WhiteLabel
         client.kitchen_sink
       end
 
-      it 'uses retry_mode, max_attempts, and adaptive_retry_wait_to_fill' do
+      it 'uses retry_strategy' do
         expect(Hearth::Middleware::Retry)
           .to receive(:new)
                 .with(anything,
-                      retry_mode: config.retry_mode,
-                      max_attempts: config.max_attempts,
-                      adaptive_retry_wait_to_fill: config.adaptive_retry_wait_to_fill,
-                      error_inspector_class: anything,
-                      client_rate_limiter: anything,
-                      retry_quota: anything)
+                      retry_strategy: config.retry_strategy,
+                      error_inspector_class: anything)
                 .and_call_original
 
         client.kitchen_sink

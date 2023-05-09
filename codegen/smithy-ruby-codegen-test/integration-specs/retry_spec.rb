@@ -16,7 +16,7 @@ module WhiteLabel
         client.stub_responses(:kitchen_sink, [error, { string: "ok" }])
 
         expect(Kernel).to receive(:sleep).once
-        expect_any_instance_of(Hearth::Middleware::Retry).to receive(:call).twice.and_call_original
+        expect_any_instance_of(Hearth::Middleware::Retry).to receive(:call).and_call_original
 
         client.kitchen_sink
       end
