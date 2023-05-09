@@ -115,7 +115,9 @@ module Hearth
 
       context 'standard mode' do
         let(:retry_strategy) { Hearth::Retry::Standard.new }
-        let(:retry_quota) { retry_strategy.instance_variable_get(:@retry_quota) }
+        let(:retry_quota) do
+          retry_strategy.instance_variable_get(:@retry_quota)
+        end
 
         let(:middleware_args) do
           { retry_strategy: retry_strategy }
@@ -258,8 +260,12 @@ module Hearth
 
       context 'adaptive mode' do
         let(:retry_strategy) { Hearth::Retry::Adaptive.new }
-        let(:retry_quota) { retry_strategy.instance_variable_get(:@retry_quota) }
-        let(:client_rate_limiter) { retry_strategy.instance_variable_get(:@client_rate_limiter) }
+        let(:retry_quota) do
+          retry_strategy.instance_variable_get(:@retry_quota)
+        end
+        let(:client_rate_limiter) do
+          retry_strategy.instance_variable_get(:@client_rate_limiter)
+        end
 
         let(:middleware_args) do
           { retry_strategy: retry_strategy }
