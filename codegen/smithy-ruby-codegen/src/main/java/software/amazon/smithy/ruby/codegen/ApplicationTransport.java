@@ -258,7 +258,7 @@ public final class ApplicationTransport {
      * @return the error inspector used for HTTP errors.
      */
     public String getErrorInspector() {
-        return "Hearth::HTTP::ErrorInspector";
+        return Hearth.HTTP_ERROR_INSPECTOR.toString();
     }
 
     /**

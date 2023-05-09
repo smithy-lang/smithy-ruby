@@ -25,7 +25,9 @@ module RailsJson
   #     Logger to use for output
   #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
-  #     Specifies which retry strategu to use. Values are:
+  #     Specifies which retry strategy class to use. Strategy classes
+  #      may have additional options, such as max_retries and backoff strategies.
+  #      Available options are:
   #      * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. This includes support for retry quotas, which limit the number of unsuccessful retries a client can make.
   #      * `Retry::Adaptive` - An experimental retry mode that includes all the functionality of `standard` mode along with automatic client side throttling.  This is a provisional mode that may change behavior in the future.
   #

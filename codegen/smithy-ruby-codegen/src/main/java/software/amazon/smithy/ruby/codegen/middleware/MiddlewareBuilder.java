@@ -236,7 +236,9 @@ public class MiddlewareBuilder {
                 .documentationDefaultValue("Hearth::Retry::Standard.new")
                 .defaultValue("Hearth::Retry::Standard.new")
                 .documentation(
-                        "Specifies which retry strategu to use. Values are: \n"
+                        "Specifies which retry strategy class to use. Strategy classes\n"
+                                + " may have additional options, such as max_retries and backoff strategies.\n"
+                                + " Available options are: \n"
                                 + " * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. "
                                 + "This includes support for retry quotas, which limit the number of"
                                 + " unsuccessful retries a client can make.\n"
