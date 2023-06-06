@@ -27,27 +27,29 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
+      # rubocop:disable Metrics/MethodLength
       def call(input, context)
+        output = Output.new
         if @stub_responses
           stub = @stubs.next(context.operation_name)
-          output = Output.new
           apply_stub(stub, input, context, output)
           if context.response.body.respond_to?(:rewind)
             context.response.body.rewind
           end
-          output
         else
-          @client.transmit(
+          resp_or_error = @client.transmit(
             request: context.request,
             response: context.response
           )
-          Output.new
+          if resp_or_error.is_a?(Hearth::NetworkingError)
+            output.error = resp_or_error
+          end
         end
+        output
       end
 
       private
 
-      # rubocop:disable Metrics/MethodLength
       def apply_stub(stub, input, context, output)
         case stub
         when Proc
