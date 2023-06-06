@@ -44,11 +44,22 @@ module Hearth
           expect(client).to receive(:transmit).with(
             request: request,
             response: response
-          )
+          ).and_return(response)
 
-          expect(
-            subject.call(input, context)
-          ).to be_a Hearth::Output
+          output = subject.call(input, context)
+          expect(output).to be_a(Hearth::Output)
+        end
+
+        it 'sets output error to NetworkingError if the request fails' do
+          error = Hearth::HTTP::NetworkingError.new(StandardError.new)
+          expect(client).to receive(:transmit).with(
+            request: request,
+            response: response
+          ).and_return(error)
+
+          output = subject.call(input, context)
+          expect(output).to be_a(Hearth::Output)
+          expect(output.error).to be_a(Hearth::NetworkingError)
         end
 
         context 'stub_responses is true' do

@@ -6,7 +6,6 @@ require 'openssl'
 
 module Hearth
   module HTTP
-    # Transmits an HTTP {Request} object, returning an HTTP {Response}.
     # @api private
     class Client
       # Initialize an instance of this HTTP client.
@@ -78,7 +77,7 @@ module Hearth
         # Invalid verb, ArgumentError is a StandardError
         raise e
       rescue StandardError => e
-        raise Hearth::HTTP::NetworkingError, e
+        Hearth::HTTP::NetworkingError.new(e)
       end
 
       private

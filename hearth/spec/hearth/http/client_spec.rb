@@ -163,11 +163,10 @@ module Hearth
           end.to raise_error(ArgumentError)
         end
 
-        it 'rescues StandardError and converts to a NetworkingError' do
+        it 'rescues StandardError and returns an HTTP::NetworkingError' do
           stub_request(:any, uri.to_s).to_raise(StandardError)
-          expect do
-            subject.transmit(request: request, response: response)
-          end.to raise_error(NetworkingError)
+          resp_or_error = subject.transmit(request: request, response: response)
+          expect(resp_or_error).to be_a(NetworkingError)
         end
 
         context 'https' do

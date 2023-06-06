@@ -10,6 +10,7 @@ require_relative 'hearth/context'
 require_relative 'hearth/dns'
 
 # must be required before http
+require_relative 'hearth/networking_error'
 require_relative 'hearth/request'
 require_relative 'hearth/response'
 
