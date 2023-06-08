@@ -102,7 +102,7 @@ public final class ApplicationTransport {
                 .build();
 
         ClientConfig httpClient = (new ClientConfig.Builder())
-                .name("client")
+                .name("http_client")
                 .type("Hearth::HTTP::Client")
                 .documentation("The HTTP Client to use for request transport.")
                 .documentationDefaultValue("Hearth::HTTP::Client.new")

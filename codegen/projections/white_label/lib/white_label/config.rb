@@ -9,14 +9,14 @@
 
 module WhiteLabel
   # @!method initialize(*options)
-  #   @option args [Hearth::HTTP::Client] :client (Hearth::HTTP::Client.new)
-  #     The HTTP Client to use for request transport.
-  #
   #   @option args [Boolean] :disable_host_prefix (false)
   #     When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.
   #
   #   @option args [String] :endpoint
   #     Endpoint of the service
+  #
+  #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
+  #     The HTTP Client to use for request transport.
   #
   #   @option args [Symbol] :log_level (:info)
   #     The default log level to use with the Logger.
@@ -37,14 +37,14 @@ module WhiteLabel
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   #
-  # @!attribute client
-  #   @return [Hearth::HTTP::Client]
-  #
   # @!attribute disable_host_prefix
   #   @return [Boolean]
   #
   # @!attribute endpoint
   #   @return [String]
+  #
+  # @!attribute http_client
+  #   @return [Hearth::HTTP::Client]
   #
   # @!attribute log_level
   #   @return [Symbol]
@@ -62,9 +62,9 @@ module WhiteLabel
   #   @return [Boolean]
   #
   Config = ::Struct.new(
-    :client,
     :disable_host_prefix,
     :endpoint,
+    :http_client,
     :log_level,
     :logger,
     :retry_strategy,
@@ -77,9 +77,9 @@ module WhiteLabel
     private
 
     def validate!
-      Hearth::Validator.validate_types!(client, Hearth::HTTP::Client, context: 'options[:client]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
+      Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
@@ -89,9 +89,9 @@ module WhiteLabel
 
     def self.defaults
       @defaults ||= {
-        client: [Hearth::HTTP::Client.new],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
+        http_client: [Hearth::HTTP::Client.new],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         retry_strategy: [Hearth::Retry::Standard.new],
