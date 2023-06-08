@@ -6,19 +6,34 @@ require 'openssl'
 
 module Hearth
   module HTTP
-    # @api private
+    # An HTTP client that uses Net::HTTP to send requests.
     class Client
       # Initialize an instance of this HTTP client.
       #
       # @param [Hash] options The options for this HTTP Client
       #
       # @option options [Boolean] :debug_output (false) When `true`,
-      #   HTTP debug output will be sent to the configured logger.
-      #
-      # @option options [Logger] :logger A logger where debug output is sent.
+      #   sets an output stream to the configured Logger for debugging.
       #
       # @option options [String] :proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
+      #
+      # @option options [Float] :open_timeout Number of seconds to
+      #   wait for the connection to open.
+      #
+      # @option options [Float] :read_timeout Number of seconds to wait
+      #   for one block to be read (via one read(2) call).
+      #
+      # @option options [Float] :keep_alive_timeout Seconds to reuse the
+      #   connection of the previous request.
+      #
+      # @option options [Float] :continue_timeout Seconds to wait for
+      #   100 Continue response.
+      #
+      # @option options [Float] :write_timeout Number of seconds to wait
+      #   for one block to be written (via one write(2) call).
+      #
+      # @option options [Float] :ssl_timeout Sets the SSL timeout seconds.
       #
       # @option options [Boolean] :verify_peer (true) When `true`,
       #   SSL peer certificates are verified when establishing a
@@ -44,11 +59,17 @@ module Hearth
       #   `#resolve_address`, returning an array of up to two IP addresses for
       #   the given hostname, one IPv6 and one IPv4, in that order.
       #   `#resolve_address` should take a nodename keyword argument and
-      #   optionally other keyword args similar to {Addrinfo#getaddrinfo}'s
+      #   optionally other keyword args similar to Addrinfo.getaddrinfo's
       #   positional parameters.
       def initialize(options = {})
         @debug_output = options[:debug_output]
         @proxy = URI(options[:proxy]) if options[:proxy]
+        @open_timeout = options[:open_timeout]
+        @read_timeout = options[:read_timeout]
+        @keep_alive_timeout = options[:keep_alive_timeout]
+        @continue_timeout = options[:continue_timeout]
+        @write_timeout = options[:write_timeout]
+        @ssl_timeout = options[:ssl_timeout]
         @verify_peer = options[:verify_peer]
         @ca_file = options[:ca_file]
         @ca_path = options[:ca_path]
