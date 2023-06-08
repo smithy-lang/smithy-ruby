@@ -27,7 +27,6 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
-      # rubocop:disable Metrics/MethodLength
       def call(input, context)
         output = Output.new
         if @stub_responses
@@ -80,7 +79,6 @@ module Hearth
           raise ArgumentError, 'Unsupported stub type'
         end
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

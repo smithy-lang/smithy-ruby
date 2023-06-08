@@ -50,7 +50,6 @@ module Hearth
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
       def update_sending_rate(is_throttling_error)
         @mutex.synchronize do
           update_measured_rate
@@ -77,7 +76,6 @@ module Hearth
           token_bucket_update_rate(new_rate)
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
