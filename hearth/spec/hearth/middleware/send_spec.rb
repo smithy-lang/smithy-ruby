@@ -13,6 +13,7 @@ module Hearth
       let(:stub_class) { double('stub_class') }
       let(:params_class) { double('params_class') }
       let(:stubs) { Hearth::Stubbing::Stubs.new }
+      let(:logger) { double('Logger') }
 
       subject do
         Send.new(
@@ -36,14 +37,16 @@ module Hearth
           Hearth::Context.new(
             request: request,
             response: response,
-            operation_name: operation
+            operation_name: operation,
+            logger: logger
           )
         end
 
         it 'sends the request and returns an output object' do
           expect(client).to receive(:transmit).with(
             request: request,
-            response: response
+            response: response,
+            logger: logger
           ).and_return(response)
 
           output = subject.call(input, context)
@@ -54,7 +57,8 @@ module Hearth
           error = Hearth::HTTP::NetworkingError.new(StandardError.new)
           expect(client).to receive(:transmit).with(
             request: request,
-            response: response
+            response: response,
+            logger: logger
           ).and_return(error)
 
           output = subject.call(input, context)

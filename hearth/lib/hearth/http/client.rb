@@ -12,8 +12,8 @@ module Hearth
       #
       # @param [Hash] options The options for this HTTP Client
       #
-      # @option options [Boolean] :http_wire_trace (false) When `true`,
-      #   HTTP debug output will be sent to the `:logger`.
+      # @option options [Boolean] :debug_output (false) When `true`,
+      #   HTTP debug output will be sent to the configured logger.
       #
       # @option options [Logger] :logger A logger where debug output is sent.
       #
@@ -47,7 +47,7 @@ module Hearth
       #   optionally other keyword args similar to {Addrinfo#getaddrinfo}'s
       #   positional parameters.
       def initialize(options = {})
-        @http_wire_trace = options[:http_wire_trace]
+        @debug_output = options[:debug_output]
         @proxy = URI(options[:proxy]) if options[:proxy]
         @verify_peer = options[:verify_peer]
         @ca_file = options[:ca_file]
@@ -61,7 +61,7 @@ module Hearth
       # @return [Response]
       def transmit(request:, response:, **options)
         http = create_http(request.uri)
-        http.set_debug_output(options[:logger]) if @http_wire_trace
+        http.set_debug_output(options[:logger]) if @debug_output
 
         if request.uri.scheme == 'https'
           configure_ssl(http)

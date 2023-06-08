@@ -7,7 +7,7 @@ module Hearth
     describe Client do
       before { WebMock.disable_net_connect! }
 
-      let(:wire_trace) { false }
+      let(:debug_output) { false }
       let(:logger) { double('logger') }
       let(:proxy) { nil }
       let(:verify_peer) { true }
@@ -18,7 +18,7 @@ module Hearth
 
       subject do
         Client.new(
-          http_wire_trace: wire_trace, logger: logger,
+          debug_output: debug_output,
           proxy: proxy,
           verify_peer: verify_peer,
           ca_file: ca_file,
@@ -285,14 +285,18 @@ module Hearth
           end
         end
 
-        context 'http_wire_trace: true' do
-          let(:wire_trace) { true }
+        context 'debug_output: true' do
+          let(:debug_output) { true }
 
           it 'sets the logger on debug_output' do
             stub_request(:any, uri.to_s)
             expect_any_instance_of(Net::HTTP)
               .to receive(:set_debug_output).with(logger)
-            subject.transmit(request: request, response: response)
+            subject.transmit(
+              request: request,
+              response: response,
+              logger: logger
+            )
           end
         end
 
