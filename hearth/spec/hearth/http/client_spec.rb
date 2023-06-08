@@ -181,8 +181,10 @@ module Hearth
           expect_any_instance_of(Net::HTTP).to receive(:open_timeout=).with(1)
           expect_any_instance_of(Net::HTTP).to receive(:read_timeout=).with(1)
           expect_any_instance_of(Net::HTTP).to receive(:write_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP).to receive(:continue_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP).to receive(:keep_alive_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP)
+            .to receive(:continue_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP)
+            .to receive(:keep_alive_timeout=).with(1)
 
           subject.transmit(request: request, response: response)
         end
@@ -232,7 +234,8 @@ module Hearth
 
               it 'sets ssl_timeout' do
                 stub_request(:any, uri.to_s)
-                expect_any_instance_of(Net::HTTP).to receive(:ssl_timeout=).with(1)
+                expect_any_instance_of(Net::HTTP)
+                  .to receive(:ssl_timeout=).with(1)
 
                 subject.transmit(request: request, response: response)
               end
