@@ -27,7 +27,6 @@ module Hearth
       # @param input
       # @param context
       # @return [Output]
-      # rubocop:disable Metrics/MethodLength
       def call(input, context)
         output = Output.new
         if @stub_responses
@@ -39,7 +38,8 @@ module Hearth
         else
           resp_or_error = @client.transmit(
             request: context.request,
-            response: context.response
+            response: context.response,
+            logger: context.logger
           )
           if resp_or_error.is_a?(Hearth::NetworkingError)
             output.error = resp_or_error
@@ -79,7 +79,6 @@ module Hearth
           raise ArgumentError, 'Unsupported stub type'
         end
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

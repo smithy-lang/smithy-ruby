@@ -8,7 +8,7 @@ module Hearth
   # @api private
   class Request
     # @param [URI] uri (URI(''))
-    # @param [IO] (StringIO.new) body
+    # @param [IO] body (StringIO.new)
     def initialize(uri: URI(''), body: StringIO.new)
       @uri = uri
       @body = body

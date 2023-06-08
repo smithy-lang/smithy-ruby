@@ -15,14 +15,14 @@ module WhiteLabel
   #   @option args [String] :endpoint
   #     Endpoint of the service
   #
-  #   @option args [Boolean] :http_wire_trace (false)
-  #     Enable debug wire trace on http requests.
+  #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
+  #     The HTTP Client to use for request transport.
   #
   #   @option args [Symbol] :log_level (:info)
-  #     Default log level to use
+  #     The default log level to use with the Logger.
   #
-  #   @option args [Logger] :logger ($stdout)
-  #     Logger to use for output
+  #   @option args [Logger] :logger (Logger.new($stdout, level: cfg.log_level))
+  #     The Logger instance to use for logging.
   #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes
@@ -43,8 +43,8 @@ module WhiteLabel
   # @!attribute endpoint
   #   @return [String]
   #
-  # @!attribute http_wire_trace
-  #   @return [Boolean]
+  # @!attribute http_client
+  #   @return [Hearth::HTTP::Client]
   #
   # @!attribute log_level
   #   @return [Symbol]
@@ -64,7 +64,7 @@ module WhiteLabel
   Config = ::Struct.new(
     :disable_host_prefix,
     :endpoint,
-    :http_wire_trace,
+    :http_client,
     :log_level,
     :logger,
     :retry_strategy,
@@ -79,7 +79,7 @@ module WhiteLabel
     def validate!
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
-      Hearth::Validator.validate_types!(http_wire_trace, TrueClass, FalseClass, context: 'options[:http_wire_trace]')
+      Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
@@ -91,7 +91,7 @@ module WhiteLabel
       @defaults ||= {
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
-        http_wire_trace: [false],
+        http_client: [Hearth::HTTP::Client.new],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         retry_strategy: [Hearth::Retry::Standard.new],

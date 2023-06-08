@@ -25,7 +25,6 @@ module Hearth
         @retries = 0
       end
 
-      # rubocop:disable Metrics
       def call(input, context)
         token = @retry_strategy.acquire_initial_retry_token(
           context.metadata[:retry_token_scope]
@@ -50,7 +49,6 @@ module Hearth
         end
         output
       end
-      # rubocop:enable Metrics
 
       private
 

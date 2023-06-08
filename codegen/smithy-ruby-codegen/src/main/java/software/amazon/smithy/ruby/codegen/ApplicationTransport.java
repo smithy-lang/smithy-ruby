@@ -101,39 +101,21 @@ public final class ApplicationTransport {
                 .render((self, ctx) -> "Hearth::HTTP::Response.new(body: response_body)")
                 .build();
 
-        ClientConfig wireTrace = (new ClientConfig.Builder())
-                .name("http_wire_trace")
-                .type("Boolean")
-                .defaultValue("false")
-                .documentation("Enable debug wire trace on http requests.")
+        ClientConfig httpClient = (new ClientConfig.Builder())
+                .name("http_client")
+                .type("Hearth::HTTP::Client")
+                .documentation("The HTTP Client to use for request transport.")
+                .documentationDefaultValue("Hearth::HTTP::Client.new")
                 .allowOperationOverride()
-                .build();
-
-        ClientConfig logger = (new ClientConfig.Builder())
-                .name("logger")
-                .type("Logger")
-                .documentationDefaultValue("$stdout")
                 .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .staticProvider("Hearth::HTTP::Client.new")
                         .build()
                 )
-                .documentation("Logger to use for output")
-                .build();
-
-        ClientConfig logLevel = (new ClientConfig.Builder())
-                .name("log_level")
-                .type("Symbol")
-                .defaultValue(":info")
-                .documentation("Default log level to use")
                 .build();
 
         ClientFragment client = (new ClientFragment.Builder())
-                .addConfig(wireTrace)
-                .addConfig(logger)
-                .addConfig(logLevel)
-                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: " + logger.renderGetConfigValue()
-                        + ", http_wire_trace: "
-                        + wireTrace.renderGetConfigValue() + ")")
+                .addConfig(httpClient)
+                .render((self, ctx) -> httpClient.renderGetConfigValue())
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
@@ -155,12 +137,8 @@ public final class ApplicationTransport {
                     .klass("Hearth::HTTP::Middleware::ContentLength")
                     .operationPredicate(
                             (model, service, operation) ->
-                                    !Streaming.isNonFiniteStreaming(model,
-                                            model.expectShape(
-                                                    operation.getInputShape(),
-                                                    StructureShape.class
-                                            )
-                                    )
+                                    !Streaming.isNonFiniteStreaming(
+                                            model, model.expectShape(operation.getInputShape(), StructureShape.class))
                     )
                     .step(MiddlewareStackStep.BUILD)
                     .build()

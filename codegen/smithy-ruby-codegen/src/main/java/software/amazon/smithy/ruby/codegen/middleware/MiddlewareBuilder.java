@@ -39,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -82,6 +83,9 @@ public class MiddlewareBuilder {
                     .collect(Collectors.toSet());
             config.addAll(stepConfig);
         }
+
+        config.addAll(getDefaultClientConfig());
+
         return config;
     }
 
@@ -278,5 +282,27 @@ public class MiddlewareBuilder {
         register(send);
 
         register(transport.defaultMiddleware(context));
+    }
+
+    private Collection<? extends ClientConfig> getDefaultClientConfig() {
+        ClientConfig logger = (new ClientConfig.Builder())
+                .name("logger")
+                .type("Logger")
+                .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
+                .defaults(new ConfigProviderChain.Builder()
+                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .build()
+                )
+                .documentation("The Logger instance to use for logging.")
+                .build();
+
+        ClientConfig logLevel = (new ClientConfig.Builder())
+                .name("log_level")
+                .type("Symbol")
+                .defaultValue(":info")
+                .documentation("The default log level to use with the Logger.")
+                .build();
+
+        return Arrays.asList(logger, logLevel);
     }
 }
