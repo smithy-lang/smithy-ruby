@@ -10,6 +10,7 @@ module Hearth
       let(:debug_output) { false }
       let(:logger) { double('logger') }
       let(:proxy) { nil }
+      let(:ssl_timeout) { nil }
       let(:verify_peer) { true }
       let(:ca_file) { nil }
       let(:ca_path) { nil }
@@ -20,6 +21,12 @@ module Hearth
         Client.new(
           debug_output: debug_output,
           proxy: proxy,
+          read_timeout: 1,
+          open_timeout: 1,
+          write_timeout: 1,
+          keep_alive_timeout: 1,
+          continue_timeout: 1,
+          ssl_timeout: ssl_timeout,
           verify_peer: verify_peer,
           ca_file: ca_file,
           ca_path: ca_path,
@@ -169,6 +176,17 @@ module Hearth
           expect(resp_or_error).to be_a(NetworkingError)
         end
 
+        it 'configures timeouts' do
+          stub_request(:any, uri.to_s)
+          expect_any_instance_of(Net::HTTP).to receive(:open_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP).to receive(:read_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP).to receive(:write_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP).to receive(:continue_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP).to receive(:keep_alive_timeout=).with(1)
+
+          subject.transmit(request: request, response: response)
+        end
+
         context 'https' do
           let(:uri) { URI('https://example.com') }
 
@@ -207,6 +225,17 @@ module Hearth
               end
 
               subject.transmit(request: request, response: response)
+            end
+
+            context 'ssl_timeout' do
+              let(:ssl_timeout) { 1 }
+
+              it 'sets ssl_timeout' do
+                stub_request(:any, uri.to_s)
+                expect_any_instance_of(Net::HTTP).to receive(:ssl_timeout=).with(1)
+
+                subject.transmit(request: request, response: response)
+              end
             end
 
             context 'ca_file' do

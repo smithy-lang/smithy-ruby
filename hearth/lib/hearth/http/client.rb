@@ -83,6 +83,7 @@ module Hearth
       def transmit(request:, response:, **options)
         http = create_http(request.uri)
         http.set_debug_output(options[:logger]) if @debug_output
+        configure_timeouts(http)
 
         if request.uri.scheme == 'https'
           configure_ssl(http)
@@ -115,6 +116,14 @@ module Hearth
         Thread.current[:net_http_hearth_dns_resolver] = nil
       end
 
+      def configure_timeouts(http)
+        http.open_timeout = @open_timeout if @open_timeout
+        http.keep_alive_timeout = @keep_alive_timeout if @keep_alive_timeout
+        http.read_timeout = @read_timeout if @read_timeout
+        http.continue_timeout = @continue_timeout if @continue_timeout
+        http.write_timeout = @write_timeout if @write_timeout
+      end
+
       def unpack_response(net_resp, response)
         response.status = net_resp.code.to_i
         net_resp.each_header { |k, v| response.headers[k] = v }
@@ -137,6 +146,7 @@ module Hearth
       # applies ssl settings to the HTTP object
       def configure_ssl(http)
         http.use_ssl = true
+        http.ssl_timeout = @ssl_timeout if @ssl_timeout
         if @verify_peer
           http.verify_mode = OpenSSL::SSL::VERIFY_PEER
           http.ca_file = @ca_file if @ca_file
