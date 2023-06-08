@@ -6,6 +6,10 @@ Metrics:
   Exclude:
     - 'spec/**/*.rb'
 
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/hearth/http/client.rb'
+
 # For some reason, Metrics disable doesn't cover this
 Metrics/BlockLength:
   Exclude:
@@ -27,7 +31,6 @@ Metrics/ClassLength:
 
 Metrics/ParameterLists:
   Exclude:
-    - 'lib/hearth/middleware/retry.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Style/Documentation:
