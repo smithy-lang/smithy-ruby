@@ -78,7 +78,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::GetCity,
         stubs: @stubs,
         params_class: Params::GetCityOutput
@@ -146,7 +146,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::GetCityImage,
         stubs: @stubs,
         params_class: Params::GetCityImageOutput
@@ -203,7 +203,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::GetCurrentTime,
         stubs: @stubs,
         params_class: Params::GetCurrentTimeOutput
@@ -277,7 +277,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::GetForecast,
         stubs: @stubs,
         params_class: Params::GetForecastOutput
@@ -356,7 +356,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::ListCities,
         stubs: @stubs,
         params_class: Params::ListCitiesOutput
@@ -420,7 +420,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::Operation____789BadName,
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput

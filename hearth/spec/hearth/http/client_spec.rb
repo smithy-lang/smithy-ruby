@@ -9,21 +9,21 @@ module Hearth
 
       let(:wire_trace) { false }
       let(:logger) { double('logger') }
-      let(:http_proxy) { nil }
-      let(:ssl_verify_peer) { true }
-      let(:ssl_ca_bundle) { nil }
-      let(:ssl_ca_directory) { nil }
-      let(:ssl_ca_store) { nil }
+      let(:proxy) { nil }
+      let(:verify_peer) { true }
+      let(:ca_file) { nil }
+      let(:ca_path) { nil }
+      let(:cert_store) { nil }
       let(:host_resolver) { nil }
 
       subject do
         Client.new(
           http_wire_trace: wire_trace, logger: logger,
-          http_proxy: http_proxy,
-          ssl_verify_peer: ssl_verify_peer,
-          ssl_ca_bundle: ssl_ca_bundle,
-          ssl_ca_directory: ssl_ca_directory,
-          ssl_ca_store: ssl_ca_store,
+          proxy: proxy,
+          verify_peer: verify_peer,
+          ca_file: ca_file,
+          ca_path: ca_path,
+          cert_store: cert_store,
           host_resolver: host_resolver
         )
       end
@@ -182,8 +182,8 @@ module Hearth
             subject.transmit(request: request, response: response)
           end
 
-          context 'ssl_verify_peer: false' do
-            let(:ssl_verify_peer) { false }
+          context 'verify_peer: false' do
+            let(:verify_peer) { false }
 
             it 'sets verify_peer to NONE' do
               stub_request(:any, uri.to_s)
@@ -196,8 +196,8 @@ module Hearth
             end
           end
 
-          context 'ssl_verify_peer: true' do
-            let(:ssl_verify_peer) { true }
+          context 'verify_peer: true' do
+            let(:verify_peer) { true }
 
             it 'sets verify_peer to VERIFY_PEER' do
               stub_request(:any, uri.to_s)
@@ -209,8 +209,8 @@ module Hearth
               subject.transmit(request: request, response: response)
             end
 
-            context 'ssl_ca_bundle' do
-              let(:ssl_ca_bundle) { 'ca_bundle' }
+            context 'ca_file' do
+              let(:ca_file) { 'ca_bundle' }
 
               it 'sets ca_file' do
                 stub_request(:any, uri.to_s)
@@ -223,8 +223,8 @@ module Hearth
               end
             end
 
-            context 'ssl_ca_directory' do
-              let(:ssl_ca_directory) { 'ca_directory' }
+            context 'ca_path' do
+              let(:ca_path) { 'ca_directory' }
 
               it 'sets ca_path' do
                 stub_request(:any, uri.to_s)
@@ -237,13 +237,13 @@ module Hearth
               end
             end
 
-            context 'ssl_ca_store' do
-              let(:ssl_ca_store) { 'ca_store' }
+            context 'cert_store' do
+              let(:cert_store) { 'cert_store' }
 
               it 'sets cert_store' do
                 stub_request(:any, uri.to_s)
                 expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
-                  expect(http.cert_store).to eq 'ca_store'
+                  expect(http.cert_store).to eq 'cert_store'
                   http
                 end
 
@@ -253,8 +253,8 @@ module Hearth
           end
         end
 
-        context 'http_proxy set' do
-          let(:http_proxy) { 'http://my-proxy-host.com:88' }
+        context 'proxy set' do
+          let(:proxy) { 'http://my-proxy-host.com:88' }
           it 'sets the http proxy' do
             stub_request(:any, uri.to_s)
             expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
@@ -268,7 +268,7 @@ module Hearth
           context 'user and password set on proxy' do
             let(:password) { 'pass/word' }
             let(:user) { 'my user' }
-            let(:http_proxy) do
+            let(:proxy) do
               "http://#{CGI.escape(user)}:#{CGI.escape(password)}@my-proxy-host.com:88"
             end
 

@@ -9,7 +9,7 @@ module WhiteLabel
         config_keys = {
           disable_host_prefix: true,
           endpoint: 'test',
-          http_wire_trace: true,
+          client: Hearth::HTTP::Client.new,
           log_level: :debug,
           logger: Logger.new($stdout, level: :debug),
           retry_strategy: Hearth::Retry::Adaptive.new,

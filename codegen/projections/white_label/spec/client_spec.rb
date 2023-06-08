@@ -29,35 +29,12 @@ module WhiteLabel
       end
 
       it 'uses logger' do
-        expect(Hearth::HTTP::Client)
-          .to receive(:new)
-                .with(hash_including(logger: config.logger))
-                .and_call_original
-
         expect(Hearth::Context)
           .to receive(:new)
                 .with(hash_including(logger: config.logger))
                 .and_call_original
 
         client.kitchen_sink
-      end
-
-      it 'uses http_wire_trace from config' do
-        expect(Hearth::HTTP::Client)
-          .to receive(:new)
-                .with(hash_including(http_wire_trace: config.http_wire_trace))
-                .and_call_original
-
-        client.kitchen_sink
-      end
-
-      it 'uses http_wire_trace from options' do
-        expect(Hearth::HTTP::Client)
-          .to receive(:new)
-                .with(hash_including(http_wire_trace: true))
-                .and_call_original
-
-        client.kitchen_sink({}, http_wire_trace: true)
       end
 
       it 'uses endpoint from config' do

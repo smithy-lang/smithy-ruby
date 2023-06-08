@@ -140,7 +140,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::DefaultsTest,
         stubs: @stubs,
         params_class: Params::DefaultsTestOutput
@@ -200,7 +200,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::EndpointOperation,
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
@@ -262,7 +262,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
@@ -485,7 +485,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::KitchenSink,
         stubs: @stubs,
         params_class: Params::KitchenSinkOutput
@@ -545,7 +545,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::MixinTest,
         stubs: @stubs,
         params_class: Params::MixinTestOutput
@@ -606,7 +606,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::PaginatorsTest,
         stubs: @stubs,
         params_class: Params::PaginatorsTestOperationOutput
@@ -667,7 +667,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::PaginatorsTestWithItems,
         stubs: @stubs,
         params_class: Params::PaginatorsTestWithItemsOutput
@@ -725,7 +725,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::StreamingOperation,
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
@@ -783,7 +783,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::StreamingWithLength,
         stubs: @stubs,
         params_class: Params::StreamingWithLengthOutput
@@ -842,7 +842,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::WaitersTest,
         stubs: @stubs,
         params_class: Params::WaitersTestOutput
@@ -904,7 +904,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: @config.stub_responses,
-        client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
+        client: options.fetch(:client, @config.client),
         stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: @stubs,
         params_class: Params::Struct____PaginatorsTestWithBadNamesOutput

@@ -17,26 +17,26 @@ module Hearth
       #
       # @option options [Logger] :logger A logger where debug output is sent.
       #
-      # @option options [String] :http_proxy A proxy to send
+      # @option options [String] :proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
       #
-      # @option options [Boolean] :ssl_verify_peer (true) When `true`,
+      # @option options [Boolean] :verify_peer (true) When `true`,
       #   SSL peer certificates are verified when establishing a
       #   connection.
       #
-      # @option options [String] :ssl_ca_bundle Full path to the SSL
+      # @option options [String] :ca_file Full path to the SSL
       #   certificate authority bundle file that should be used when
       #   verifying peer certificates.  If you do not pass
-      #   `:ssl_ca_bundle` or `:ssl_ca_directory` the system default
+      #   `:ca_file` or `:ca_path` the system default
       #   will be used if available.
       #
-      # @option options [String] :ssl_ca_directory Full path of the
+      # @option options [String] :ca_path Full path of the
       #   directory that contains the unbundled SSL certificate
       #   authority files for verifying peer certificates.  If you do
-      #   not pass `:ssl_ca_bundle` or `:ssl_ca_directory` the
+      #   not pass `:ca_file` or `:ca_path` the
       #   system default will be used if available.
       #
-      # @option options [OpenSSL::X509::Store] :ssl_ca_store An OpenSSL X509
+      # @option options [OpenSSL::X509::Store] :cert_store An OpenSSL X509
       #   certificate store that contains the SSL certificate authority.
       #
       # @option options [#resolve_address] (nil) :host_resolver
@@ -48,21 +48,20 @@ module Hearth
       #   positional parameters.
       def initialize(options = {})
         @http_wire_trace = options[:http_wire_trace]
-        @logger = options[:logger]
-        @http_proxy = URI(options[:http_proxy]) if options[:http_proxy]
-        @ssl_verify_peer = options[:ssl_verify_peer]
-        @ssl_ca_bundle = options[:ssl_ca_bundle]
-        @ssl_ca_directory = options[:ssl_ca_directory]
-        @ssl_ca_store = options[:ssl_ca_store]
+        @proxy = URI(options[:proxy]) if options[:proxy]
+        @verify_peer = options[:verify_peer]
+        @ca_file = options[:ca_file]
+        @ca_path = options[:ca_path]
+        @cert_store = options[:cert_store]
         @host_resolver = options[:host_resolver]
       end
 
       # @param [Request] request
       # @param [Response] response
       # @return [Response]
-      def transmit(request:, response:)
+      def transmit(request:, response:, **options)
         http = create_http(request.uri)
-        http.set_debug_output(@logger) if @http_wire_trace
+        http.set_debug_output(options[:logger]) if @http_wire_trace
 
         if request.uri.scheme == 'https'
           configure_ssl(http)
@@ -109,7 +108,7 @@ module Hearth
         args = []
         args << endpoint.host
         args << endpoint.port
-        args += http_proxy_parts if @http_proxy
+        args += proxy_parts if @proxy
         # Net::HTTP.new uses positional arguments: host, port, proxy_args....
         Net::HTTP.new(*args.compact)
       end
@@ -117,11 +116,11 @@ module Hearth
       # applies ssl settings to the HTTP object
       def configure_ssl(http)
         http.use_ssl = true
-        if @ssl_verify_peer
+        if @verify_peer
           http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          http.ca_file = @ssl_ca_bundle if @ssl_ca_bundle
-          http.ca_path = @ssl_ca_directory if @ssl_ca_directory
-          http.cert_store = @ssl_ca_store if @ssl_ca_store
+          http.ca_file = @ca_file if @ca_file
+          http.ca_path = @ca_path if @ca_path
+          http.cert_store = @cert_store if @cert_store
         else
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
@@ -168,14 +167,14 @@ module Hearth
         raise ArgumentError, msg
       end
 
-      # Extract the parts of the http_proxy URI
+      # Extract the parts of the proxy URI
       # @return [Array]
-      def http_proxy_parts
+      def proxy_parts
         [
-          @http_proxy.host,
-          @http_proxy.port,
-          (@http_proxy.user && CGI.unescape(@http_proxy.user)),
-          (@http_proxy.password && CGI.unescape(@http_proxy.password))
+          @proxy.host,
+          @proxy.port,
+          (@proxy.user && CGI.unescape(@proxy.user)),
+          (@proxy.password && CGI.unescape(@proxy.password))
         ]
       end
     end

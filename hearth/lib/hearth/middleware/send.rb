@@ -39,7 +39,8 @@ module Hearth
         else
           resp_or_error = @client.transmit(
             request: context.request,
-            response: context.response
+            response: context.response,
+            logger: context.logger
           )
           if resp_or_error.is_a?(Hearth::NetworkingError)
             output.error = resp_or_error
