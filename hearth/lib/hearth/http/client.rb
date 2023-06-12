@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'delegate'
 require 'net/http'
 require 'logger'
 require 'openssl'
@@ -81,27 +82,55 @@ module Hearth
       # @param [Response] response
       # @return [Response]
       def transmit(request:, response:, **options)
-        http = create_http(request.uri)
+        # http = create_http(request.uri)
+        # http.set_debug_output(options[:logger]) if @debug_output
+        # configure_timeouts(http)
+        #
+        # if request.uri.scheme == 'https'
+        #   configure_ssl(http)
+        # else
+        #   http.use_ssl = false
+        # end
+        endpoint = request.uri
+        pool = ConnectionPool.for(config)
+        session = pool.session_for(endpoint) do
+          start_session(endpoint)
+        end
+        _transmit2(session, request, response)
+        pool.offer(endpoint, session)
+
+        # _transmit(http, request, response)
+        response.body.rewind if response.body.respond_to?(:rewind)
+        response
+      rescue ArgumentError => e
+        session&.finish
+        # Invalid verb, ArgumentError is a StandardError
+        raise e
+      rescue StandardError => e
+        session&.finish
+        Hearth::HTTP::NetworkingError.new(e)
+      end
+
+      private
+
+      # Starts and returns a new HTTP session.
+      # @param [URI] endpoint
+      # @return [Net::HTTP]
+      def start_session(endpoint)
+        puts "starting a new session for #{endpoint}"
+        http = create_http(endpoint)
         http.set_debug_output(options[:logger]) if @debug_output
         configure_timeouts(http)
 
-        if request.uri.scheme == 'https'
+        if endpoint.scheme == 'https'
           configure_ssl(http)
         else
           http.use_ssl = false
         end
 
-        _transmit(http, request, response)
-        response.body.rewind if response.body.respond_to?(:rewind)
-        response
-      rescue ArgumentError => e
-        # Invalid verb, ArgumentError is a StandardError
-        raise e
-      rescue StandardError => e
-        Hearth::HTTP::NetworkingError.new(e)
+        http.start
+        http
       end
-
-      private
 
       def _transmit(http, request, response)
         # Inform monkey patch to use our DNS resolver
@@ -110,6 +139,17 @@ module Hearth
           conn.request(build_net_request(request)) do |net_resp|
             unpack_response(net_resp, response)
           end
+        end
+      ensure
+        # Restore the default DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = nil
+      end
+
+      def _transmit2(http, request, response)
+        # Inform monkey patch to use our DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = @host_resolver
+        http.request(build_net_request(request)) do |net_resp|
+          unpack_response(net_resp, response)
         end
       ensure
         # Restore the default DNS resolver
@@ -132,6 +172,24 @@ module Hearth
         end
       end
 
+      def config
+        {
+          debug_output: @debug_output,
+          proxy: @proxy,
+          open_timeout: @open_timeout,
+          read_timeout: @read_timeout,
+          keep_alive_timeout: @keep_alive_timeout,
+          continue_timeout: @continue_timeout,
+          write_timeout: @write_timeout,
+          ssl_timeout: @ssl_timeout,
+          verify_peer: @verify_peer,
+          ca_file: @ca_file,
+          ca_path: @ca_path,
+          cert_store: @cert_store,
+          host_resolver: @host_resolver
+        }
+      end
+
       # Creates an HTTP connection to the endpoint
       # Applies proxy if set
       def create_http(endpoint)
@@ -140,7 +198,7 @@ module Hearth
         args << endpoint.port
         args += proxy_parts if @proxy
         # Net::HTTP.new uses positional arguments: host, port, proxy_args....
-        Net::HTTP.new(*args.compact)
+        HTTP.new(Net::HTTP.new(*args.compact))
       end
 
       # applies ssl settings to the HTTP object
@@ -208,6 +266,52 @@ module Hearth
           (@proxy.password && CGI.unescape(@proxy.password))
         ]
       end
+
+      # Helper methods extended onto Net::HTTP objects opened by the
+      # connection manager.
+      # @api private
+      class HTTP < Delegator
+        def initialize(http)
+          super(http)
+          @http = http
+        end
+
+        # @return [Integer, nil]
+        attr_reader :last_used
+
+        def __getobj__
+          @http
+        end
+
+        def __setobj__(obj)
+          @http = obj
+        end
+
+        # Sends the request and tracks that this session has been used.
+        def request(...)
+          @http.request(...)
+          @last_used = monotonic_milliseconds
+        end
+
+        def stale?
+          @last_used.nil? ||
+            (monotonic_milliseconds - @last_used) > keep_alive_timeout * 1000
+        end
+
+        # Attempts to close/finish the session without raising an error.
+        def finish
+          @http.finish
+        rescue IOError
+          nil
+        end
+
+        private
+
+        def monotonic_milliseconds
+          Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+        end
+      end
+
     end
   end
 end

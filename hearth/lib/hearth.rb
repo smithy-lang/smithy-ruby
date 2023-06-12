@@ -6,6 +6,7 @@ require_relative 'hearth/checksums'
 require_relative 'hearth/configuration'
 require_relative 'hearth/config/env_provider'
 require_relative 'hearth/config/resolver'
+require_relative 'hearth/connection_pool'
 require_relative 'hearth/context'
 require_relative 'hearth/dns'
 
