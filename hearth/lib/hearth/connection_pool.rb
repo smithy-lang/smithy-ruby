@@ -15,14 +15,6 @@ module Hearth
           @pools[config] ||= new
         end
       end
-
-      # @return [Array<ConnectionPool>] Returns a list of the
-      #   constructed connection pools.
-      def pools
-        @pools_mutex.synchronize do
-          @pools.values
-        end
-      end
     end
 
     # @api private
@@ -32,63 +24,40 @@ module Hearth
     end
 
     # @param [URI::HTTP, URI::HTTPS] endpoint The HTTP(S) endpoint
-    #    to connect to (e.g. 'https://domain.com').
-    # @param [Proc] block A block that returns a new session.
+    #   to connect to (e.g. 'https://domain.com').
+    # @param [Proc] block A block that returns a new connection if
+    #   there are no connections present.
     # @return [Object, nil]
-    def session_for(endpoint, &block)
-      session = nil
+    def connection_for(endpoint, &block)
+      connection = nil
       endpoint = remove_path_and_query(endpoint)
-      # attempt to recycle an already open session
+      # attempt to recycle an already open connection
       @pool_mutex.synchronize do
-        _clean
-        session = @pool[endpoint].shift if @pool.key?(endpoint)
-        puts "using session from pool: #{session}\n" if session
+        clean
+        connection = @pool[endpoint].shift if @pool.key?(endpoint)
+        puts "using connection from pool: #{connection}\n" if connection
       end
-      session || block.call
+      connection || block.call
     end
 
     # @param [URI::HTTP, URI::HTTPS] endpoint The HTTP(S) endpoint
-    # @param [Object] session The session to check back into the pool.
+    # @param [Object] connection The connection to check back into the pool.
     # @return [nil]
-    def offer(endpoint, session)
+    def offer(endpoint, connection)
       endpoint = remove_path_and_query(endpoint)
       @pool_mutex.synchronize do
         @pool[endpoint] = [] unless @pool.key?(endpoint)
-        @pool[endpoint] << session
+        @pool[endpoint] << connection
       end
-    end
-
-    # Removes stale http sessions from the pool (that have exceeded
-    # the idle timeout).
-    # @return [nil]
-    def clean!
-      @pool_mutex.synchronize { _clean }
-      nil
-    end
-
-    # Closes and removes all sessions from the pool.
-    # If empty! is called while there are outstanding requests they may
-    # get checked back into the pool, leaving the pool in a non-empty
-    # state.
-    # @return [nil]
-    def empty!
-      @pool_mutex.synchronize do
-        @pool.each_pair do |_endpoint, sessions|
-          # Requires each session to have a #finish method.
-          sessions.each(&:finish)
-        end
-        @pool.clear
-      end
-      nil
     end
 
     private
 
-    # Removes stale sessions from the pool.  This method *must* be called
+    # Removes stale connections from the pool.  This method *must* be called
     # @note **Must** be called behind a `@pool_mutex` synchronize block.
-    def _clean
-      @pool.each_pair do |_endpoint, sessions|
-        sessions.delete_if(&:stale?)
+    def clean
+      @pool.each_pair do |_endpoint, connections|
+        connections.delete_if(&:stale?)
       end
     end
 
