@@ -6,6 +6,9 @@ module Hearth
   module HTTP
     describe Client do
       before { WebMock.disable_net_connect! }
+      before do
+        ConnectionPool.pools.each(&:empty!)
+      end
 
       let(:debug_output) { false }
       let(:logger) { double('logger') }
@@ -19,6 +22,7 @@ module Hearth
 
       subject do
         Client.new(
+          logger: logger,
           debug_output: debug_output,
           proxy: proxy,
           read_timeout: 1,
@@ -178,13 +182,13 @@ module Hearth
 
         it 'configures timeouts' do
           stub_request(:any, uri.to_s)
-          expect_any_instance_of(Net::HTTP).to receive(:open_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP).to receive(:read_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP).to receive(:write_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP)
-            .to receive(:continue_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP)
-            .to receive(:keep_alive_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
+            expect(http.open_timeout).to eq(1)
+            expect(http.read_timeout).to eq(1)
+            expect(http.write_timeout).to eq(1)
+            expect(http.continue_timeout).to eq(1)
+            expect(http.keep_alive_timeout).to eq(1)
+          end
 
           subject.transmit(request: request, response: response)
         end
@@ -234,8 +238,9 @@ module Hearth
 
               it 'sets ssl_timeout' do
                 stub_request(:any, uri.to_s)
-                expect_any_instance_of(Net::HTTP)
-                  .to receive(:ssl_timeout=).with(1)
+                expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
+                  expect(http.ssl_timeout).to eq 1
+                end
 
                 subject.transmit(request: request, response: response)
               end
@@ -326,8 +331,7 @@ module Hearth
               .to receive(:set_debug_output).with(logger)
             subject.transmit(
               request: request,
-              response: response,
-              logger: logger
+              response: response
             )
           end
         end

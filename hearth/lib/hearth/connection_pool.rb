@@ -10,9 +10,15 @@ module Hearth
       # @return [ConnectionPool]
       def for(config = {})
         @pools_mutex.synchronize do
-          puts "using connection pool for #{config}\n" if @pools[config]
-          puts "creating connection pool for #{config}\n" unless @pools[config]
           @pools[config] ||= new
+        end
+      end
+
+      # @return [Array<ConnectionPool>] Returns a list of the
+      #   constructed connection pools.
+      def pools
+        @pools_mutex.synchronize do
+          @pools.values
         end
       end
     end
@@ -27,7 +33,7 @@ module Hearth
     #   to connect to (e.g. 'https://domain.com').
     # @param [Proc] block A block that returns a new connection if
     #   there are no connections present.
-    # @return [Object, nil]
+    # @return [Connection, nil]
     def connection_for(endpoint, &block)
       connection = nil
       endpoint = remove_path_and_query(endpoint)
@@ -35,9 +41,8 @@ module Hearth
       @pool_mutex.synchronize do
         clean
         connection = @pool[endpoint].shift if @pool.key?(endpoint)
-        puts "using connection from pool: #{connection}\n" if connection
       end
-      connection || block.call
+      connection || (block.call if block_given?)
     end
 
     # @param [URI::HTTP, URI::HTTPS] endpoint The HTTP(S) endpoint
@@ -49,6 +54,21 @@ module Hearth
         @pool[endpoint] = [] unless @pool.key?(endpoint)
         @pool[endpoint] << connection
       end
+    end
+
+    # Closes and removes all sessions from the pool.
+    # If empty! is called while there are outstanding requests they may
+    # get checked back into the pool, leaving the pool in a non-empty
+    # state.
+    # @return [nil]
+    def empty!
+      @pool_mutex.synchronize do
+        @pool.each_pair do |_endpoint, connections|
+          connections.each(&:finish)
+        end
+        @pool.clear
+      end
+      nil
     end
 
     private

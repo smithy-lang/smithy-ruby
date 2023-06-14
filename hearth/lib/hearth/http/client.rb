@@ -131,7 +131,6 @@ module Hearth
       # @param [URI] endpoint
       # @return [Net::HTTP]
       def new_connection(endpoint, options)
-        puts "starting a new connection for #{endpoint}"
         http = create_http(endpoint, options[:proxy])
         http.set_debug_output(options[:logger]) if options[:debug_output]
         configure_timeouts(http, options)
@@ -185,7 +184,7 @@ module Hearth
       end
 
       # applies ssl settings to the HTTP object
-      def configure_ssl(http)
+      def configure_ssl(http, options)
         http.use_ssl = true
         http.ssl_timeout = options[:ssl_timeout]
         if options[:verify_peer]
