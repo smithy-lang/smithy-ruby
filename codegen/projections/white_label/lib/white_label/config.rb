@@ -91,7 +91,7 @@ module WhiteLabel
       @defaults ||= {
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
-        http_client: [Hearth::HTTP::Client.new],
+        http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         retry_strategy: [Hearth::Retry::Standard.new],

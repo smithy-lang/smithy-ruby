@@ -36,6 +36,7 @@ module Hearth
             context.response.body.rewind
           end
         else
+          # TODO: should this instead raise NetworkingError?
           resp_or_error = @client.transmit(
             request: context.request,
             response: context.response,

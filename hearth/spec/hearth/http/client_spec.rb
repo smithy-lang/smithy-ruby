@@ -6,12 +6,15 @@ module Hearth
   module HTTP
     describe Client do
       before { WebMock.disable_net_connect! }
+      before do
+        ConnectionPool.pools.each(&:empty!)
+      end
 
       let(:debug_output) { false }
       let(:logger) { double('logger') }
       let(:proxy) { nil }
       let(:ssl_timeout) { nil }
-      let(:verify_peer) { true }
+      let(:verify_peer) { false }
       let(:ca_file) { nil }
       let(:ca_path) { nil }
       let(:cert_store) { nil }
@@ -19,6 +22,7 @@ module Hearth
 
       subject do
         Client.new(
+          logger: logger,
           debug_output: debug_output,
           proxy: proxy,
           read_timeout: 1,
@@ -178,13 +182,13 @@ module Hearth
 
         it 'configures timeouts' do
           stub_request(:any, uri.to_s)
-          expect_any_instance_of(Net::HTTP).to receive(:open_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP).to receive(:read_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP).to receive(:write_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP)
-            .to receive(:continue_timeout=).with(1)
-          expect_any_instance_of(Net::HTTP)
-            .to receive(:keep_alive_timeout=).with(1)
+          expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
+            expect(http.open_timeout).to eq(1)
+            expect(http.read_timeout).to eq(1)
+            expect(http.write_timeout).to eq(1)
+            expect(http.continue_timeout).to eq(1)
+            expect(http.keep_alive_timeout).to eq(1)
+          end
 
           subject.transmit(request: request, response: response)
         end
@@ -234,8 +238,9 @@ module Hearth
 
               it 'sets ssl_timeout' do
                 stub_request(:any, uri.to_s)
-                expect_any_instance_of(Net::HTTP)
-                  .to receive(:ssl_timeout=).with(1)
+                expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
+                  expect(http.ssl_timeout).to eq 1
+                end
 
                 subject.transmit(request: request, response: response)
               end
@@ -319,6 +324,7 @@ module Hearth
 
         context 'debug_output: true' do
           let(:debug_output) { true }
+          let(:request_logger) { double('request_logger') }
 
           it 'sets the logger on debug_output' do
             stub_request(:any, uri.to_s)
@@ -326,8 +332,18 @@ module Hearth
               .to receive(:set_debug_output).with(logger)
             subject.transmit(
               request: request,
+              response: response
+            )
+          end
+
+          it 'allows logger per request' do
+            stub_request(:any, uri.to_s)
+            expect_any_instance_of(Net::HTTP)
+              .to receive(:set_debug_output).with(request_logger)
+            subject.transmit(
+              request: request,
               response: response,
-              logger: logger
+              logger: request_logger
             )
           end
         end
@@ -342,6 +358,75 @@ module Hearth
               .with(:net_http_hearth_dns_resolver, nil)
             stub_request(:any, uri.to_s)
             subject.transmit(request: request, response: response)
+          end
+        end
+
+        context 'connection pooling' do
+          it 'gets a connection from the pool' do
+            stub_request(http_method, uri.to_s)
+            expect(ConnectionPool).to receive(:for).and_call_original
+            expect_any_instance_of(ConnectionPool).to receive(:connection_for)
+              .and_call_original
+            subject.transmit(request: request, response: response)
+          end
+
+          it 'offers the connection back to the pool' do
+            stub_request(http_method, uri.to_s)
+            expect_any_instance_of(ConnectionPool).to receive(:offer)
+              .with(uri, an_instance_of(Hearth::HTTP::Client::HTTP))
+              .and_call_original
+            subject.transmit(request: request, response: response)
+          end
+
+          it 'finishes the connection if there is a networking error' do
+            stub_request(http_method, uri.to_s)
+            original_error = StandardError.new('failed')
+            error = Hearth::HTTP::NetworkingError.new(original_error)
+            expect_any_instance_of(Net::HTTP)
+              .to receive(:start).and_raise(original_error)
+            resp = subject.transmit(request: request, response: response)
+            expect(resp).to eq(error)
+          end
+        end
+      end
+
+      describe HTTP do
+        let(:http) { Hearth::HTTP::Client::HTTP.new(net_http) }
+        let(:net_http) { Net::HTTP.new(request.uri.host, request.uri.port) }
+
+        it 'delegates to Net::HTTP' do
+          expect(http).to be_a(Delegator)
+          expect(http.__getobj__).to be(net_http)
+        end
+
+        describe '#stale?' do
+          let(:base_time_ms) { 0 }
+          let(:fresh_time_ms) { 1000 }
+          let(:stale_time_ms) { 3000 }
+
+          before do
+            net_http.keep_alive_timeout = 2
+            allow(net_http).to receive(:request)
+          end
+
+          it 'uses last used time to determine staleness' do
+            expect(Process).to receive(:clock_gettime).and_return(base_time_ms)
+            http.request(request)
+            expect(Process).to receive(:clock_gettime).and_return(fresh_time_ms)
+            expect(http.stale?).to be(false)
+            expect(Process).to receive(:clock_gettime).and_return(stale_time_ms)
+            expect(http.stale?).to be(true)
+          end
+
+          it 'is stale if not used' do
+            expect(http.stale?).to be(true)
+          end
+        end
+
+        describe '#finish' do
+          it 'closes the connection without errors' do
+            expect(net_http).to receive(:finish).and_raise(IOError)
+            expect { http.finish }.not_to raise_error
           end
         end
       end

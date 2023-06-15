@@ -108,7 +108,7 @@ public final class ApplicationTransport {
                 .documentationDefaultValue("Hearth::HTTP::Client.new")
                 .allowOperationOverride()
                 .defaults(new ConfigProviderChain.Builder()
-                        .staticProvider("Hearth::HTTP::Client.new")
+                        .dynamicProvider("proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }")
                         .build()
                 )
                 .build();
