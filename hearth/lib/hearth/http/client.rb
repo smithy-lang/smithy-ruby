@@ -307,7 +307,6 @@ module Hearth
           Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
         end
       end
-
     end
   end
 end
