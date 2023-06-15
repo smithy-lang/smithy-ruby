@@ -116,7 +116,7 @@ module Hearth
       private
 
       def with_connection_pool(endpoint, logger)
-        pool = ConnectionPool.for(config)
+        pool = ConnectionPool.for(pool_config)
         connection = pool.connection_for(endpoint) do
           new_connection(endpoint, logger)
         end
@@ -252,7 +252,7 @@ module Hearth
 
       # Config options for the HTTP client used for connection pooling
       # @return [Hash]
-      def config
+      def pool_config
         OPTIONS.each_key.with_object({}) do |option_name, hash|
           hash[option_name] = instance_variable_get("@#{option_name}")
         end
