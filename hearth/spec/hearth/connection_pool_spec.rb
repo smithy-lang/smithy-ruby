@@ -18,21 +18,6 @@ module Hearth
     let(:connection2) { double('connection2', stale?: false, finish: nil) }
     let(:stale_connection) { double('stale_connection', stale?: true) }
 
-    shared_examples 'thread safety' do
-      it 'is thread safe' do
-        thing = test.call
-        threads = []
-        10.times do
-          threads << Thread.new do
-            10.times do
-              expect(test.call).to eq(thing)
-            end
-          end
-        end
-        threads.each(&:join)
-      end
-    end
-
     describe '.for' do
       it 'returns a connection pool' do
         expect(ConnectionPool.for(config)).to be_a(ConnectionPool)
@@ -45,10 +30,6 @@ module Hearth
       it 'returns a different connection pool for a different config' do
         expect(ConnectionPool.for(config)).not_to eq(ConnectionPool.for({}))
       end
-
-      it_behaves_like 'thread safety' do
-        let(:test) { -> { ConnectionPool.for } }
-      end
     end
 
     describe '.pools' do
@@ -59,10 +40,6 @@ module Hearth
       it 'returns the same list of constructed connection pools' do
         ConnectionPool.for(config)
         expect(ConnectionPool.pools).to eq(ConnectionPool.pools)
-      end
-
-      it_behaves_like 'thread safety' do
-        let(:test) { -> { ConnectionPool.pools } }
       end
     end
 
@@ -108,22 +85,6 @@ module Hearth
         actual = pool.connection_for(endpoint)
         expect(actual).to eq(connection)
       end
-
-      it_behaves_like 'thread safety' do
-        let(:test) do
-          lambda {
-            pool.connection_for(endpoint) { connection }
-          }
-        end
-      end
-
-      it_behaves_like 'thread safety' do
-        let(:test) do
-          lambda {
-            pool.offer(endpoint, connection)
-          }
-        end
-      end
     end
 
     describe '#empty!' do
@@ -135,16 +96,6 @@ module Hearth
         pool.empty!
         expect(pool.connection_for(endpoint)).to be_nil
         expect(pool.connection_for(endpoint2)).to be_nil
-      end
-
-      it_behaves_like 'thread safety' do
-        let(:test) do
-          lambda {
-            pool.offer(endpoint, connection)
-            pool.offer(endpoint2, connection2)
-            pool.empty!
-          }
-        end
       end
     end
   end

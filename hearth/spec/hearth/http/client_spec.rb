@@ -14,7 +14,7 @@ module Hearth
       let(:logger) { double('logger') }
       let(:proxy) { nil }
       let(:ssl_timeout) { nil }
-      let(:verify_peer) { true }
+      let(:verify_peer) { false }
       let(:ca_file) { nil }
       let(:ca_path) { nil }
       let(:cert_store) { nil }
@@ -66,6 +66,62 @@ module Hearth
 
             stub_request(http_method, uri.to_s)
             subject.transmit(request: request, response: response)
+          end
+        end
+
+        context 'request options' do
+          # need https for this example
+          let(:uri) { URI('https://example.com') }
+          # named differently than outer equivalents
+          let(:options_logger) { double('options-logger') }
+          let(:options_proxy) { URI('http://proxy.com') }
+          let(:options_host_resolver) { double('options-host-resolver') }
+
+          it 'accepts pass through http client options' do
+            stub_request(:any, uri.to_s)
+            expect_any_instance_of(Net::HTTP)
+              .to receive(:set_debug_output).with(options_logger)
+            expect(Net::HTTP).to receive(:new)
+              .with(
+                uri.host, uri.port, options_proxy.host, options_proxy.port
+              ).and_call_original
+            expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
+              expect(http.open_timeout).to eq(2)
+              expect(http.read_timeout).to eq(2)
+              expect(http.write_timeout).to eq(2)
+              expect(http.continue_timeout).to eq(2)
+              expect(http.keep_alive_timeout).to eq(2)
+              expect(http.ssl_timeout).to eq(2)
+              expect(http.verify_mode).to eq(OpenSSL::SSL::VERIFY_PEER)
+              expect(http.ca_file).to eq('ca_file')
+              expect(http.ca_path).to eq('ca_path')
+              expect(http.cert_store).to eq('cert_store')
+            end
+
+            expect(Thread.current).to receive(:[]=)
+              .with(:net_http_hearth_dns_resolver, options_host_resolver)
+            expect(Thread.current).to receive(:[]=)
+              .with(:net_http_hearth_dns_resolver, nil)
+
+            subject.transmit(
+              request: request,
+              response: response,
+              # These options must be opposite of spec defaults
+              logger: options_logger,
+              debug_output: true,
+              proxy: options_proxy,
+              read_timeout: 2,
+              open_timeout: 2,
+              write_timeout: 2,
+              keep_alive_timeout: 2,
+              continue_timeout: 2,
+              ssl_timeout: 2,
+              verify_peer: true,
+              ca_file: 'ca_file',
+              ca_path: 'ca_path',
+              cert_store: 'cert_store',
+              host_resolver: options_host_resolver
+            )
           end
         end
 
@@ -346,6 +402,75 @@ module Hearth
               .with(:net_http_hearth_dns_resolver, nil)
             stub_request(:any, uri.to_s)
             subject.transmit(request: request, response: response)
+          end
+        end
+
+        context 'connection pooling' do
+          it 'gets a connection from the pool' do
+            stub_request(http_method, uri.to_s)
+            expect(ConnectionPool).to receive(:for).and_call_original
+            expect_any_instance_of(ConnectionPool).to receive(:connection_for)
+              .and_call_original
+            subject.transmit(request: request, response: response)
+          end
+
+          it 'offers the connection back to the pool' do
+            stub_request(http_method, uri.to_s)
+            expect_any_instance_of(ConnectionPool).to receive(:offer)
+              .with(uri, an_instance_of(Hearth::HTTP::Client::HTTP))
+              .and_call_original
+            subject.transmit(request: request, response: response)
+          end
+
+          it 'finishes the connection if there is a networking error' do
+            stub_request(http_method, uri.to_s)
+            original_error = StandardError.new('failed')
+            error = Hearth::HTTP::NetworkingError.new(original_error)
+            expect_any_instance_of(Net::HTTP)
+              .to receive(:start).and_raise(original_error)
+            resp = subject.transmit(request: request, response: response)
+            expect(resp).to eq(error)
+          end
+        end
+      end
+
+      describe HTTP do
+        let(:http) { Hearth::HTTP::Client::HTTP.new(net_http) }
+        let(:net_http) { Net::HTTP.new(request.uri.host, request.uri.port) }
+
+        it 'delegates to Net::HTTP' do
+          expect(http).to be_a(Delegator)
+          expect(http.__getobj__).to be(net_http)
+        end
+
+        describe '#stale?' do
+          let(:base_time_ms) { 0 }
+          let(:fresh_time_ms) { 1000 }
+          let(:stale_time_ms) { 3000 }
+
+          before do
+            net_http.keep_alive_timeout = 2
+            allow(net_http).to receive(:request)
+          end
+
+          it 'uses last used time to determine staleness' do
+            expect(Process).to receive(:clock_gettime).and_return(base_time_ms)
+            http.request(request)
+            expect(Process).to receive(:clock_gettime).and_return(fresh_time_ms)
+            expect(http.stale?).to be(false)
+            expect(Process).to receive(:clock_gettime).and_return(stale_time_ms)
+            expect(http.stale?).to be(true)
+          end
+
+          it 'is stale if not used' do
+            expect(http.stale?).to be(true)
+          end
+        end
+
+        describe '#finish' do
+          it 'closes the connection without errors' do
+            expect(net_http).to receive(:finish).and_raise(IOError)
+            expect { http.finish }.not_to raise_error
           end
         end
       end

@@ -56,7 +56,7 @@ module Hearth
       end
     end
 
-    # Closes and removes all sessions from the pool.
+    # Closes and removes all connections from the pool.
     # If empty! is called while there are outstanding requests they may
     # get checked back into the pool, leaving the pool in a non-empty
     # state.
