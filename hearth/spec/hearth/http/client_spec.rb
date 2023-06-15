@@ -69,62 +69,6 @@ module Hearth
           end
         end
 
-        context 'request options' do
-          # need https for this example
-          let(:uri) { URI('https://example.com') }
-          # named differently than outer equivalents
-          let(:options_logger) { double('options-logger') }
-          let(:options_proxy) { URI('http://proxy.com') }
-          let(:options_host_resolver) { double('options-host-resolver') }
-
-          it 'accepts pass through http client options' do
-            stub_request(:any, uri.to_s)
-            expect_any_instance_of(Net::HTTP)
-              .to receive(:set_debug_output).with(options_logger)
-            expect(Net::HTTP).to receive(:new)
-              .with(
-                uri.host, uri.port, options_proxy.host, options_proxy.port
-              ).and_call_original
-            expect_any_instance_of(Net::HTTP).to receive(:start) do |http|
-              expect(http.open_timeout).to eq(2)
-              expect(http.read_timeout).to eq(2)
-              expect(http.write_timeout).to eq(2)
-              expect(http.continue_timeout).to eq(2)
-              expect(http.keep_alive_timeout).to eq(2)
-              expect(http.ssl_timeout).to eq(2)
-              expect(http.verify_mode).to eq(OpenSSL::SSL::VERIFY_PEER)
-              expect(http.ca_file).to eq('ca_file')
-              expect(http.ca_path).to eq('ca_path')
-              expect(http.cert_store).to eq('cert_store')
-            end
-
-            expect(Thread.current).to receive(:[]=)
-              .with(:net_http_hearth_dns_resolver, options_host_resolver)
-            expect(Thread.current).to receive(:[]=)
-              .with(:net_http_hearth_dns_resolver, nil)
-
-            subject.transmit(
-              request: request,
-              response: response,
-              # These options must be opposite of spec defaults
-              logger: options_logger,
-              debug_output: true,
-              proxy: options_proxy,
-              read_timeout: 2,
-              open_timeout: 2,
-              write_timeout: 2,
-              keep_alive_timeout: 2,
-              continue_timeout: 2,
-              ssl_timeout: 2,
-              verify_peer: true,
-              ca_file: 'ca_file',
-              ca_path: 'ca_path',
-              cert_store: 'cert_store',
-              host_resolver: options_host_resolver
-            )
-          end
-        end
-
         context 'request body is set' do
           let(:request_body) { StringIO.new('TEST_STRING') }
           it 'transmits the body' do
@@ -380,6 +324,7 @@ module Hearth
 
         context 'debug_output: true' do
           let(:debug_output) { true }
+          let(:request_logger) { double('request_logger') }
 
           it 'sets the logger on debug_output' do
             stub_request(:any, uri.to_s)
@@ -388,6 +333,17 @@ module Hearth
             subject.transmit(
               request: request,
               response: response
+            )
+          end
+
+          it 'allows logger per request' do
+            stub_request(:any, uri.to_s)
+            expect_any_instance_of(Net::HTTP)
+              .to receive(:set_debug_output).with(request_logger)
+            subject.transmit(
+              request: request,
+              response: response,
+              logger: request_logger
             )
           end
         end

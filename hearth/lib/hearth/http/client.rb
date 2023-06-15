@@ -97,12 +97,12 @@ module Hearth
 
       # @param [Request] request
       # @param [Response] response
+      # @param [Logger] (nil) logger
       # @return [Response]
-      def transmit(request:, response:, **options)
-        options = request_options(options)
+      def transmit(request:, response:, logger: nil)
         net_request = build_net_request(request)
-        with_connection_pool(request.uri, options) do |connection|
-          _transmit(connection, net_request, response, options[:host_resolver])
+        with_connection_pool(request.uri, logger) do |connection|
+          _transmit(connection, net_request, response)
         end
         response.body.rewind if response.body.respond_to?(:rewind)
         response
@@ -115,10 +115,10 @@ module Hearth
 
       private
 
-      def with_connection_pool(endpoint, options)
-        pool = ConnectionPool.for(options)
+      def with_connection_pool(endpoint, logger)
+        pool = ConnectionPool.for(config)
         connection = pool.connection_for(endpoint) do
-          new_connection(endpoint, options)
+          new_connection(endpoint, logger)
         end
         yield connection
         pool.offer(endpoint, connection)
@@ -130,13 +130,13 @@ module Hearth
       # Starts and returns a new HTTP connection.
       # @param [URI] endpoint
       # @return [Net::HTTP]
-      def new_connection(endpoint, options)
-        http = create_http(endpoint, options[:proxy])
-        http.set_debug_output(options[:logger]) if options[:debug_output]
-        configure_timeouts(http, options)
+      def new_connection(endpoint, logger)
+        http = create_http(endpoint)
+        http.set_debug_output(logger || @logger) if @debug_output
+        configure_timeouts(http)
 
         if endpoint.scheme == 'https'
-          configure_ssl(http, options)
+          configure_ssl(http)
         else
           http.use_ssl = false
         end
@@ -145,9 +145,9 @@ module Hearth
         http
       end
 
-      def _transmit(http, net_request, response, host_resolver)
+      def _transmit(http, net_request, response)
         # Inform monkey patch to use our DNS resolver
-        Thread.current[:net_http_hearth_dns_resolver] = host_resolver
+        Thread.current[:net_http_hearth_dns_resolver] = @host_resolver
         http.request(net_request) do |net_resp|
           unpack_response(net_resp, response)
         end
@@ -166,32 +166,32 @@ module Hearth
 
       # Creates an HTTP connection to the endpoint.
       # Applies proxy if set.
-      def create_http(endpoint, proxy)
+      def create_http(endpoint)
         args = []
         args << endpoint.host
         args << endpoint.port
-        args += proxy_parts(URI(proxy)) if proxy
+        args += proxy_parts if @proxy
         # Net::HTTP.new uses positional arguments: host, port, proxy_args....
         HTTP.new(Net::HTTP.new(*args.compact))
       end
 
-      def configure_timeouts(http, options)
-        http.open_timeout = options[:open_timeout]
-        http.keep_alive_timeout = options[:keep_alive_timeout]
-        http.read_timeout = options[:read_timeout]
-        http.continue_timeout = options[:continue_timeout]
-        http.write_timeout = options[:write_timeout]
+      def configure_timeouts(http)
+        http.open_timeout = @open_timeout
+        http.keep_alive_timeout = @keep_alive_timeout
+        http.read_timeout = @read_timeout
+        http.continue_timeout = @continue_timeout
+        http.write_timeout = @write_timeout
       end
 
       # applies ssl settings to the HTTP object
-      def configure_ssl(http, options)
+      def configure_ssl(http)
         http.use_ssl = true
-        http.ssl_timeout = options[:ssl_timeout]
-        if options[:verify_peer]
+        http.ssl_timeout = @ssl_timeout
+        if @verify_peer
           http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          http.ca_file = options[:ca_file]
-          http.ca_path = options[:ca_path]
-          http.cert_store = options[:cert_store]
+          http.ca_file = @ca_file
+          http.ca_path = @ca_path
+          http.cert_store = @cert_store
         else
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
@@ -240,7 +240,8 @@ module Hearth
 
       # Extract the parts of the proxy URI
       # @return [Array]
-      def proxy_parts(proxy)
+      def proxy_parts
+        proxy = URI(@proxy)
         [
           proxy.host,
           proxy.port,
@@ -249,18 +250,11 @@ module Hearth
         ]
       end
 
-      # Request level options for the HTTP client. Prefers options passed
-      # to the request over the instance options.
+      # Config options for the HTTP client used for connection pooling
       # @return [Hash]
-      def request_options(options)
+      def config
         OPTIONS.each_key.with_object({}) do |option_name, hash|
-          value =
-            if options.key?(option_name)
-              options[option_name]
-            else
-              instance_variable_get("@#{option_name}")
-            end
-          hash[option_name] = value
+          hash[option_name] = instance_variable_get("@#{option_name}")
         end
       end
 
