@@ -37,8 +37,6 @@ module Hearth
           end
         else
           # TODO: should this instead raise NetworkingError?
-          # TODO: accept passthrough options. maybe need to make
-          #  request_options a public method and use it in codegen clients
           resp_or_error = @client.transmit(
             request: context.request,
             response: context.response,
