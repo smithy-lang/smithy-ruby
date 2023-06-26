@@ -7,14 +7,12 @@ module WhiteLabel
     describe '#build' do
       it 'sets member values' do
         config_keys = {
-          adaptive_retry_wait_to_fill: false,
           disable_host_prefix: true,
           endpoint: 'test',
-          http_wire_trace: true,
+          http_client: Hearth::HTTP::Client.new,
           log_level: :debug,
           logger: Logger.new($stdout, level: :debug),
-          max_attempts: 0,
-          retry_mode: 'adaptive',
+          retry_strategy: Hearth::Retry::Adaptive.new,
           stub_responses: false,
           validate_input: false
         }

@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module HighScoreService
+  # @api private
   module Builders
 
     # Operation Builder for CreateHighScore
@@ -16,7 +17,7 @@ module HighScoreService
         http_req.http_method = 'POST'
         http_req.append_path('/high_scores')
         params = Hearth::Query::ParamList.new
-        http_req.append_query_params(params)
+        http_req.append_query_param_list(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -38,7 +39,7 @@ module HighScoreService
           )
         )
         params = Hearth::Query::ParamList.new
-        http_req.append_query_params(params)
+        http_req.append_query_param_list(params)
       end
     end
 
@@ -55,7 +56,7 @@ module HighScoreService
           )
         )
         params = Hearth::Query::ParamList.new
-        http_req.append_query_params(params)
+        http_req.append_query_param_list(params)
       end
     end
 
@@ -75,7 +76,7 @@ module HighScoreService
         http_req.http_method = 'GET'
         http_req.append_path('/high_scores')
         params = Hearth::Query::ParamList.new
-        http_req.append_query_params(params)
+        http_req.append_query_param_list(params)
       end
     end
 
@@ -92,7 +93,7 @@ module HighScoreService
           )
         )
         params = Hearth::Query::ParamList.new
-        http_req.append_query_params(params)
+        http_req.append_query_param_list(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}

@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -48,6 +50,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     private boolean includePreamble = false;
     private boolean includeRequires = false;
     private Stack<String> modules = new Stack<>();
+    private Set<String> modulesSet = new HashSet<>();
 
     /**
      * @param namespace namespace to write in
@@ -63,6 +66,10 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     }
 
     public RubyCodeWriter addModule(String name) {
+        if (modulesSet.contains(name)) {
+            return this;
+        }
+        modulesSet.add(name);
         modules.push(name);
         this.openBlock("module $L", name);
         return this;
@@ -73,7 +80,8 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
             throw new RuntimeException("No modules were opened");
         }
 
-        modules.pop();
+        String module = modules.pop();
+        modulesSet.remove(module);
         this.closeBlock("end");
         return this;
     }
@@ -82,6 +90,11 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         while (!modules.isEmpty()) {
             closeModule();
         }
+    }
+
+    public RubyCodeWriter apiPrivate() {
+        this.write("# @api private");
+        return this;
     }
 
     /**

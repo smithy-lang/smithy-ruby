@@ -93,46 +93,29 @@ public final class ApplicationTransport {
 
         ClientFragment request = (new ClientFragment.Builder())
                 .addConfig(endpoint)
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(url: " + endpoint.renderGetConfigValue() + ")")
+                // TODO: Replace URI with Endpoint middleware - should be a blank request
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.renderGetConfigValue() + "))")
                 .build();
 
         ClientFragment response = (new ClientFragment.Builder())
                 .render((self, ctx) -> "Hearth::HTTP::Response.new(body: response_body)")
                 .build();
 
-        ClientConfig wireTrace = (new ClientConfig.Builder())
-                .name("http_wire_trace")
-                .type("Boolean")
-                .defaultValue("false")
-                .documentation("Enable debug wire trace on http requests.")
+        ClientConfig httpClient = (new ClientConfig.Builder())
+                .name("http_client")
+                .type("Hearth::HTTP::Client")
+                .documentation("The HTTP Client to use for request transport.")
+                .documentationDefaultValue("Hearth::HTTP::Client.new")
                 .allowOperationOverride()
-                .build();
-
-        ClientConfig logger = (new ClientConfig.Builder())
-                .name("logger")
-                .type("Logger")
-                .documentationDefaultValue("$stdout")
                 .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .dynamicProvider("proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }")
                         .build()
                 )
-                .documentation("Logger to use for output")
-                .build();
-
-        ClientConfig logLevel = (new ClientConfig.Builder())
-                .name("log_level")
-                .type("Symbol")
-                .defaultValue(":info")
-                .documentation("Default log level to use")
                 .build();
 
         ClientFragment client = (new ClientFragment.Builder())
-                .addConfig(wireTrace)
-                .addConfig(logger)
-                .addConfig(logLevel)
-                .render((self, ctx) -> "Hearth::HTTP::Client.new(logger: " + logger.renderGetConfigValue()
-                        + ", http_wire_trace: "
-                        + wireTrace.renderGetConfigValue() + ")")
+                .addConfig(httpClient)
+                .render((self, ctx) -> httpClient.renderGetConfigValue())
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {
@@ -154,12 +137,8 @@ public final class ApplicationTransport {
                     .klass("Hearth::HTTP::Middleware::ContentLength")
                     .operationPredicate(
                             (model, service, operation) ->
-                                    !Streaming.isNonFiniteStreaming(model,
-                                            model.expectShape(
-                                                    operation.getInputShape(),
-                                                    StructureShape.class
-                                            )
-                                    )
+                                    !Streaming.isNonFiniteStreaming(
+                                            model, model.expectShape(operation.getInputShape(), StructureShape.class))
                     )
                     .step(MiddlewareStackStep.BUILD)
                     .build()
@@ -251,6 +230,13 @@ public final class ApplicationTransport {
      */
     public ClientFragment getTransportClient() {
         return transportClient;
+    }
+
+    /**
+     * @return the error inspector used for HTTP errors.
+     */
+    public String getErrorInspector() {
+        return Hearth.HTTP_ERROR_INSPECTOR.toString();
     }
 
     /**

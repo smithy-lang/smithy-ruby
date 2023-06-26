@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module HighScoreService
+  # @api private
   module Stubs
 
     # Operation Stubber for CreateHighScore
@@ -25,7 +26,7 @@ module HighScoreService
         http_resp.headers['Location'] = stub[:location] unless stub[:location].nil? || stub[:location].empty?
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -55,7 +56,7 @@ module HighScoreService
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -118,7 +119,7 @@ module HighScoreService
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -135,7 +136,7 @@ module HighScoreService
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
   end

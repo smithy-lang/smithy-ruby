@@ -10,6 +10,7 @@
 require 'base64'
 
 module RailsJson
+  # @api private
   module Stubs
 
     # Operation Stubber for AllQueryStringTypes
@@ -199,7 +200,7 @@ module RailsJson
         http_resp.headers['Content-Type'] = 'application/json'
         data[:string_value] = stub[:string_value] unless stub[:string_value].nil?
         data[:document_value] = stub[:document_value] unless stub[:document_value].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -215,7 +216,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        http_resp.body = StringIO.new(Hearth::JSON.dump(stub[:document_value]))
+        http_resp.body.write(Hearth::JSON.dump(stub[:document_value]))
       end
     end
 
@@ -335,6 +336,24 @@ module RailsJson
     end
 
     # Structure Stubber for GreetingStruct
+    class RenamedGreeting
+      def self.default(visited=[])
+        return nil if visited.include?('RenamedGreeting')
+        visited = visited + ['RenamedGreeting']
+        {
+          salutation: 'salutation',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::RenamedGreeting.new
+        data = {}
+        data[:salutation] = stub[:salutation] unless stub[:salutation].nil?
+        data
+      end
+    end
+
+    # Structure Stubber for GreetingStruct
     class GreetingStruct
       def self.default(visited=[])
         return nil if visited.include?('GreetingStruct')
@@ -365,7 +384,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -383,7 +402,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
         http_resp.headers['Content-Type'] = 'application/octet-stream'
-        http_resp.body = StringIO.new(stub[:blob] || '')
+        http_resp.body.write(stub[:blob] || '')
       end
     end
 
@@ -401,7 +420,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
         http_resp.headers['Content-Type'] = 'text/plain'
-        http_resp.body = StringIO.new(stub[:blob] || '')
+        http_resp.body.write(stub[:blob] || '')
       end
     end
 
@@ -418,7 +437,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::NestedPayload.stub(stub[:nested]) unless stub[:nested].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -657,7 +676,7 @@ module RailsJson
         data[:foo_enum_list] = Stubs::FooEnumList.stub(stub[:foo_enum_list]) unless stub[:foo_enum_list].nil?
         data[:foo_enum_set] = Stubs::FooEnumSet.stub(stub[:foo_enum_set]) unless stub[:foo_enum_set].nil?
         data[:foo_enum_map] = Stubs::FooEnumMap.stub(stub[:foo_enum_map]) unless stub[:foo_enum_map].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -692,7 +711,7 @@ module RailsJson
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
         data[:dense_set_map] = Stubs::DenseSetMap.stub(stub[:dense_set_map]) unless stub[:dense_set_map].nil?
         data[:sparse_set_map] = Stubs::SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -709,7 +728,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:contents] = Stubs::MyUnion.stub(stub[:contents]) unless stub[:contents].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -844,7 +863,7 @@ module RailsJson
         data[:struct_with_location_name] = Stubs::StructWithLocationName.stub(stub[:struct_with_location_name]) unless stub[:struct_with_location_name].nil?
         data[:timestamp] = Hearth::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
         data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]).to_i unless stub[:unix_timestamp].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1094,6 +1113,8 @@ module RailsJson
           data[:map_value] = (Stubs::StringMap.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         when Types::MyUnion::StructureValue
           data[:structure_value] = (Stubs::GreetingStruct.stub(stub.__getobj__) unless stub.__getobj__.nil?)
+        when Types::MyUnion::RenamedStructureValue
+          data[:renamed_structure_value] = (Stubs::RenamedGreeting.stub(stub.__getobj__) unless stub.__getobj__.nil?)
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::MyUnion"
@@ -1116,7 +1137,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1181,7 +1202,7 @@ module RailsJson
         data[:string] = stub[:string] unless stub[:string].nil?
         data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
         data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1211,7 +1232,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:value] = stub[:value] unless stub[:value].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1550,7 +1571,7 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:member] = Stubs::Struct____456efg.stub(stub[:member]) unless stub[:member].nil?
-        http_resp.body = StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
   end

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -38,6 +39,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -81,6 +83,9 @@ public class MiddlewareBuilder {
                     .collect(Collectors.toSet());
             config.addAll(stepConfig);
         }
+
+        config.addAll(getDefaultClientConfig());
+
         return config;
     }
 
@@ -100,15 +105,66 @@ public class MiddlewareBuilder {
         ServiceShape service = context.service();
 
         for (MiddlewareStackStep step : MiddlewareStackStep.values()) {
-            List<Middleware> orderedStepMiddleware = middlewares.get(step)
-                    .stream()
-                    .filter((m) -> m.includeFor(model, service, operation))
-                    .sorted(Comparator.comparing(Middleware::getOrder))
-                    .collect(Collectors.toList());
+            List<Middleware> orderedStepMiddleware = resolveAndFilter(step, model, service, operation);
 
             for (Middleware middleware : orderedStepMiddleware) {
                 middleware.renderAdd(writer, context, operation);
             }
+        }
+    }
+
+    private List<Middleware> resolveAndFilter(MiddlewareStackStep step, Model model, ServiceShape service,
+                                              OperationShape operation) {
+        Set<Middleware> resolved = new HashSet<>();
+        Set<Middleware> visiting = new HashSet<>();
+        Map<Middleware, Integer> order = new HashMap<>();
+        Map<String, Middleware> klassToMiddlewareMap = new HashMap<>();
+
+
+        List<Middleware> filteredMiddleware = middlewares.get(step)
+                .stream().filter((m) -> m.includeFor(model, service, operation))
+                .collect(Collectors.toList());
+
+        filteredMiddleware.forEach((m) -> klassToMiddlewareMap.put(m.getKlass(), m));
+
+        for (Middleware middleware : filteredMiddleware) {
+            resolve(middleware, resolved, visiting, order, klassToMiddlewareMap);
+        }
+
+        return filteredMiddleware.stream()
+                .sorted(Comparator.comparingInt(order::get))
+                .collect(Collectors.toList());
+    }
+
+    private void resolve(Middleware middleware, Set<Middleware> resolved, Set<Middleware> visiting,
+                         Map<Middleware, Integer> order, Map<String, Middleware> klassToMiddlewareMap) {
+
+        if (visiting.contains(middleware)) {
+            throw new IllegalArgumentException("Circular dependency detected when resolving order for middleware: "
+                    + middleware.getKlass());
+        }
+        // skip if its already been resolved
+        if (!resolved.contains(middleware)) {
+            visiting.add(middleware);
+            if (middleware.getRelative().isPresent()) {
+                Middleware relativeTo = Objects.requireNonNull(
+                        klassToMiddlewareMap.get(middleware.getRelative().get().getTo()),
+                        middleware.getKlass() + " relative references a middleware class ("
+                                + middleware.getRelative().get().getTo() + ") that is not available in the stack.");
+                //recursively resolve the relative middleware
+                resolve(relativeTo, resolved, visiting, order, klassToMiddlewareMap);
+                // the order of relativeTo should now be set
+                if (middleware.getRelative().get().getType().equals(Middleware.Relative.Type.BEFORE)) {
+                    order.put(middleware, order.get(relativeTo) - 1);
+                } else {
+                    order.put(middleware, order.get(relativeTo) + 1);
+                }
+            } else {
+                // Base case - middleware is not relative to anything else, use its default order.
+                order.put(middleware, (int) middleware.getOrder());
+            }
+            visiting.remove(middleware);
+            resolved.add(middleware);
         }
     }
 
@@ -178,55 +234,30 @@ public class MiddlewareBuilder {
                         "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
                 .build();
 
-        ClientConfig maxAttempts = (new ClientConfig.Builder())
-                .name("max_attempts")
-                .type("Integer")
-                .defaultValue("3")
+        ClientConfig retryStrategy = (new ClientConfig.Builder())
+                .name("retry_strategy")
+                .type("Hearth::Retry::Strategy")
+                .documentationDefaultValue("Hearth::Retry::Standard.new")
+                .defaultValue("Hearth::Retry::Standard.new")
                 .documentation(
-                        "An integer representing the maximum number of attempts that will be made for a "
-                                + "single request, including the initial attempt."
-                )
-                .build();
-
-        ClientConfig retryMode = (new ClientConfig.Builder())
-                .name("retry_mode")
-                .type("String")
-                .defaultValue("'standard'")
-                .documentation(
-                        "Specifies which retry algorithm to use. Values are: \n"
-                                +
-                                " * `standard` - A standardized set of retry rules across the AWS SDKs. "
-                                +
-                                "This includes support"
-                                +
-                                " for retry quotas, which limit the number of unsuccessful retries a client can make.\n"
-                                + " * `adaptive` - An experimental retry mode that includes all the"
+                        "Specifies which retry strategy class to use. Strategy classes\n"
+                                + " may have additional options, such as max_retries and backoff strategies.\n"
+                                + " Available options are: \n"
+                                + " * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. "
+                                + "This includes support for retry quotas, which limit the number of"
+                                + " unsuccessful retries a client can make.\n"
+                                + " * `Retry::Adaptive` - An experimental retry mode that includes all the"
                                 + " functionality of `standard` mode along with automatic client side"
                                 + " throttling.  This is a provisional mode that may change behavior"
                                 + " in the future."
                 )
                 .build();
 
-        ClientConfig adaptiveRetryWaitToFill = (new ClientConfig.Builder())
-                .name("adaptive_retry_wait_to_fill")
-                .type("Boolean")
-                .defaultValue("true")
-                .documentation(
-                        "Used only in `adaptive` retry mode. When true, the request will sleep until there is"
-                                + " sufficient client side capacity to retry the request. When false, the request will"
-                                + " raise a `CapacityNotAvailableError` and will not retry instead of sleeping."
-                )
-                .build();
-
         Middleware retry = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Retry")
                 .step(MiddlewareStackStep.RETRY)
-                .addConfig(maxAttempts)
-                .addConfig(retryMode)
-                .addConfig(adaptiveRetryWaitToFill)
-                .addParam("error_inspector_class", "Hearth::Retry::ErrorInspector")
-                .addParam("retry_quota", "@retry_quota")
-                .addParam("client_rate_limiter", "@client_rate_limiter")
+                .addConfig(retryStrategy)
+                .addParam("error_inspector_class", transport.getErrorInspector())
                 .build();
 
         Middleware send = (new Middleware.Builder())
@@ -251,5 +282,27 @@ public class MiddlewareBuilder {
         register(send);
 
         register(transport.defaultMiddleware(context));
+    }
+
+    private Collection<? extends ClientConfig> getDefaultClientConfig() {
+        ClientConfig logger = (new ClientConfig.Builder())
+                .name("logger")
+                .type("Logger")
+                .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
+                .defaults(new ConfigProviderChain.Builder()
+                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .build()
+                )
+                .documentation("The Logger instance to use for logging.")
+                .build();
+
+        ClientConfig logLevel = (new ClientConfig.Builder())
+                .name("log_level")
+                .type("Symbol")
+                .defaultValue(":info")
+                .documentation("The default log level to use with the Logger.")
+                .build();
+
+        return Arrays.asList(logger, logLevel);
     }
 }

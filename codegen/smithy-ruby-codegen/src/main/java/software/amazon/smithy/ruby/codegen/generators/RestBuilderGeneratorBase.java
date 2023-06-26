@@ -187,7 +187,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
 
-        writer.write("http_req.append_query_params(params)");
+        writer.write("http_req.append_query_param_list(params)");
     }
 
     /**
@@ -214,7 +214,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
      * @param inputShape inputShape to render for
      */
     protected void renderPrefixHeadersBuilder(Shape inputShape) {
-        // get a list of all of HttpLabel members
+        // get a list of all of HttpPrefixHeaders members
         List<MemberShape> headerMembers = inputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
@@ -230,7 +230,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             String symbolName = ":" + symbolProvider.toMemberName(m);
             String headerSetter = "http_req.headers[\"" + prefix + "#{key}\"] = ";
             writer
-                    .openBlock("input[$L].each do |key, value|", symbolName)
+                    .openBlock("input[$L]&.each do |key, value|", symbolName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
                     .closeBlock("end");
             LOGGER.finest("Generated prefix header builder for " + m.getMemberName());
@@ -248,7 +248,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         String[] uriParts = uri.split("[?]");
         if (uriParts.length > 1) {
             uri = uriParts[0];
-            // TODO this should use append_query_params? interface needs to be changed in Hearth if so
+            // TODO this should use append_query_param_list? interface needs to be changed in Hearth if so
             writer
                     .openBlock("CGI.parse('$L').each do |k,v|", uriParts[1])
                     .write("v.each { |q_v| http_req.append_query_param(k, q_v) }")
@@ -396,15 +396,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$1L$2L", dataSetter, inputGetter)
-                    .indent()
-                    .write(".compact")
-                    .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberSerializer(shape.getMember())))
-                    .write(".join(', ')")
-                    .dedent()
-                    .closeBlock("end");
+            writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
             return null;
         }
 
@@ -423,37 +415,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         @Override
         public Void unionShape(UnionShape shape) {
             // Not supported in headers
-            return null;
-        }
-    }
-
-    protected class HeaderListMemberSerializer extends ShapeVisitor.Default<Void> {
-
-        private final MemberShape memberShape;
-
-        HeaderListMemberSerializer(MemberShape memberShape) {
-            this.memberShape = memberShape;
-        }
-
-        @Override
-        protected Void getDefault(Shape shape) {
-            writer.write(".map { |s| s.to_s }");
-            return null;
-        }
-
-        @Override
-        public Void stringShape(StringShape shape) {
-            writer
-                    .write(".map { |s| (s.include?('\"') || s.include?(\",\"))"
-                            + " ? \"\\\"#{s.gsub('\"', '\\\"')}\\\"\" : s }");
-            return null;
-        }
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            writer.write(".map { |s| $L }",
-                    TimestampFormat.serializeTimestamp(
-                            shape, memberShape, "s", TimestampFormatTrait.Format.HTTP_DATE, false));
             return null;
         }
     }

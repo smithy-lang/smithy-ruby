@@ -1,109 +1,197 @@
 # frozen_string_literal: true
 
+require 'delegate'
 require 'net/http'
 require 'logger'
 require 'openssl'
 
 module Hearth
   module HTTP
-    # Transmits an HTTP {Request} object, returning an HTTP {Response}.
-    # @api private
+    # An HTTP client that uses Net::HTTP to send requests.
     class Client
+      # @api private
+      OPTIONS = {
+        logger: Logger.new($stdout),
+        debug_output: nil,
+        proxy: nil,
+        open_timeout: 15,
+        read_timeout: nil,
+        keep_alive_timeout: 5,
+        continue_timeout: 1,
+        write_timeout: nil,
+        ssl_timeout: nil,
+        verify_peer: true,
+        ca_file: nil,
+        ca_path: nil,
+        cert_store: nil,
+        host_resolver: nil
+      }.freeze
+
       # Initialize an instance of this HTTP client.
       #
       # @param [Hash] options The options for this HTTP Client
       #
-      # @option options [Boolean] :http_wire_trace (false) When `true`,
-      #   HTTP debug output will be sent to the `:logger`.
+      # @param options [Logger] (Logger.new($stdout)) :logger A logger
+      #   used to log Net::HTTP requests and responses when `:debug_output`
+      #   is enabled.
       #
-      # @option options [Logger] :logger A logger where debug output is sent.
+      # @option options [Boolean] :debug_output (false) When `true`,
+      #   sets an output stream to the configured Logger for debugging.
       #
-      # @option options [URI::HTTP,String] :http_proxy A proxy to send
+      # @option options [String, URI] :proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
       #
-      # @option options [Boolean] :ssl_verify_peer (true) When `true`,
+      # @option options [Float] :open_timeout (15) Number of seconds to
+      #   wait for the connection to open.
+      #
+      # @option options [Float] :read_timeout Number of seconds to wait
+      #   for one block to be read (via one read(2) call).
+      #
+      # @option options [Float] :keep_alive_timeout (5) Seconds to reuse the
+      #   connection of the previous request.
+      #
+      # @option options [Float] :continue_timeout (1) Seconds to wait for
+      #   100 Continue response.
+      #
+      # @option options [Float] :write_timeout Number of seconds to wait
+      #   for one block to be written (via one write(2) call).
+      #
+      # @option options [Float] :ssl_timeout Sets the SSL timeout seconds.
+      #
+      # @option options [Boolean] :verify_peer (true) When `true`,
       #   SSL peer certificates are verified when establishing a
       #   connection.
       #
-      # @option options [String] :ssl_ca_bundle Full path to the SSL
+      # @option options [String] :ca_file Full path to the SSL
       #   certificate authority bundle file that should be used when
       #   verifying peer certificates.  If you do not pass
-      #   `:ssl_ca_bundle` or `:ssl_ca_directory` the system default
+      #   `:ca_file` or `:ca_path` the system default
       #   will be used if available.
       #
-      # @option options [String] :ssl_ca_directory Full path of the
+      # @option options [String] :ca_path Full path of the
       #   directory that contains the unbundled SSL certificate
       #   authority files for verifying peer certificates.  If you do
-      #   not pass `:ssl_ca_bundle` or `:ssl_ca_directory` the
+      #   not pass `:ca_file` or `:ca_path` the
       #   system default will be used if available.
+      #
+      # @option options [OpenSSL::X509::Store] :cert_store An OpenSSL X509
+      #   certificate store that contains the SSL certificate authority.
+      #
+      # @option options [#resolve_address] :host_resolver
+      #   An object, such as {Hearth::DNS::HostResolver} that responds to
+      #   `#resolve_address`, returning an array of up to two IP addresses for
+      #   the given hostname, one IPv6 and one IPv4, in that order.
+      #   `#resolve_address` should take a nodename keyword argument and
+      #   optionally other keyword args similar to Addrinfo.getaddrinfo's
+      #   positional parameters.
       def initialize(options = {})
-        @http_wire_trace = options[:http_wire_trace]
-        @logger = options[:logger]
-        @http_proxy = options[:http_proxy]
-        @http_proxy = URI.parse(@http_proxy.to_s) if @http_proxy
-        @ssl_verify_peer = options[:ssl_verify_peer]
-        @ssl_ca_bundle = options[:ssl_ca_bundle]
-        @ssl_ca_directory = options[:ssl_ca_directory]
-        @ssl_ca_store = options[:ssl_ca_store]
+        OPTIONS.each_pair do |opt_name, default_value|
+          value = options.key?(opt_name) ? options[opt_name] : default_value
+          instance_variable_set("@#{opt_name}", value)
+        end
+      end
+
+      OPTIONS.each_key do |attr_name|
+        attr_reader(attr_name)
       end
 
       # @param [Request] request
       # @param [Response] response
+      # @param [Logger] (nil) logger
       # @return [Response]
-      def transmit(request:, response:)
-        uri = URI.parse(request.url)
-        http = create_http(uri)
-        http.set_debug_output(@logger) if @http_wire_trace
-
-        if uri.scheme == 'https'
-          configure_ssl(http)
-        else
-          http.use_ssl = false
+      def transmit(request:, response:, logger: nil)
+        net_request = build_net_request(request)
+        with_connection_pool(request.uri, logger) do |connection|
+          _transmit(connection, net_request, response)
         end
-
-        _transmit(http, request, response)
         response.body.rewind if response.body.respond_to?(:rewind)
         response
       rescue ArgumentError => e
         # Invalid verb, ArgumentError is a StandardError
         raise e
       rescue StandardError => e
-        raise Hearth::HTTP::NetworkingError, e
+        Hearth::HTTP::NetworkingError.new(e)
       end
 
       private
 
-      def _transmit(http, request, response)
-        http.start do |conn|
-          conn.request(build_net_request(request)) do |net_resp|
-            response.status = net_resp.code.to_i
-            response.headers = extract_headers(net_resp)
-            net_resp.read_body do |chunk|
-              response.body.write(chunk)
-            end
-          end
+      def with_connection_pool(endpoint, logger)
+        pool = ConnectionPool.for(pool_config)
+        connection = pool.connection_for(endpoint) do
+          new_connection(endpoint, logger)
+        end
+        yield connection
+        pool.offer(endpoint, connection)
+      rescue StandardError => e
+        connection&.finish
+        raise e
+      end
+
+      # Starts and returns a new HTTP connection.
+      # @param [URI] endpoint
+      # @return [Net::HTTP]
+      def new_connection(endpoint, logger)
+        http = create_http(endpoint)
+        http.set_debug_output(logger || @logger) if @debug_output
+        configure_timeouts(http)
+
+        if endpoint.scheme == 'https'
+          configure_ssl(http)
+        else
+          http.use_ssl = false
+        end
+
+        http.start
+        http
+      end
+
+      def _transmit(http, net_request, response)
+        # Inform monkey patch to use our DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = @host_resolver
+        http.request(net_request) do |net_resp|
+          unpack_response(net_resp, response)
+        end
+      ensure
+        # Restore the default DNS resolver
+        Thread.current[:net_http_hearth_dns_resolver] = nil
+      end
+
+      def unpack_response(net_resp, response)
+        response.status = net_resp.code.to_i
+        net_resp.each_header { |k, v| response.headers[k] = v }
+        net_resp.read_body do |chunk|
+          response.body.write(chunk)
         end
       end
 
-      # Creates an HTTP connection to the endpoint
-      # Applies proxy if set
+      # Creates an HTTP connection to the endpoint.
+      # Applies proxy if set.
       def create_http(endpoint)
         args = []
         args << endpoint.host
         args << endpoint.port
-        args += http_proxy_parts if @http_proxy
+        args += proxy_parts if @proxy
         # Net::HTTP.new uses positional arguments: host, port, proxy_args....
-        Net::HTTP.new(*args.compact)
+        HTTP.new(Net::HTTP.new(*args.compact))
+      end
+
+      def configure_timeouts(http)
+        http.open_timeout = @open_timeout
+        http.keep_alive_timeout = @keep_alive_timeout
+        http.read_timeout = @read_timeout
+        http.continue_timeout = @continue_timeout
+        http.write_timeout = @write_timeout
       end
 
       # applies ssl settings to the HTTP object
       def configure_ssl(http)
         http.use_ssl = true
-        if @ssl_verify_peer
+        http.ssl_timeout = @ssl_timeout
+        if @verify_peer
           http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          http.ca_file = @ssl_ca_bundle if @ssl_ca_bundle
-          http.ca_path = @ssl_ca_directory if @ssl_ca_directory
-          http.cert_store = @ssl_ca_store if @ssl_ca_store
+          http.ca_file = @ca_file
+          http.ca_path = @ca_path
+          http.cert_store = @cert_store
         else
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
@@ -115,7 +203,7 @@ module Hearth
       # @return [Net::HTTP::Request]
       def build_net_request(request)
         request_class = net_http_request_class(request)
-        req = request_class.new(request.url, request.headers.to_h)
+        req = request_class.new(request.uri.to_s, net_headers_for(request))
 
         # Net::HTTP adds a default Content-Type when a body is present.
         # Set the body stream when it has an unknown size or when it is > 0.
@@ -127,10 +215,16 @@ module Hearth
         req
       end
 
-      # @param [Net::HTTP::Response] response
+      # Validate that fields are not trailers and return a hash of headers.
+      # @param [HTTP::Request] request
       # @return [Hash<String, String>]
-      def extract_headers(response)
-        response.to_hash.transform_values(&:first)
+      def net_headers_for(request)
+        # Trailers are not supported in Net::HTTP
+        if request.trailers.any?
+          raise NotImplementedError, 'Trailers are not supported in Net::HTTP'
+        end
+
+        request.headers.to_h
       end
 
       # @param [Http::Request] request
@@ -144,15 +238,68 @@ module Hearth
         raise ArgumentError, msg
       end
 
-      # Extract the parts of the http_proxy URI
-      # @return [Array(String)]
-      def http_proxy_parts
+      # Extract the parts of the proxy URI
+      # @return [Array]
+      def proxy_parts
+        proxy = URI(@proxy)
         [
-          @http_proxy.host,
-          @http_proxy.port,
-          (@http_proxy.user && CGI.unescape(@http_proxy.user)),
-          (@http_proxy.password && CGI.unescape(@http_proxy.password))
+          proxy.host,
+          proxy.port,
+          (proxy.user && CGI.unescape(proxy.user)),
+          (proxy.password && CGI.unescape(proxy.password))
         ]
+      end
+
+      # Config options for the HTTP client used for connection pooling
+      # @return [Hash]
+      def pool_config
+        OPTIONS.each_key.with_object({}) do |option_name, hash|
+          hash[option_name] = instance_variable_get("@#{option_name}")
+        end
+      end
+
+      # Helper methods extended onto Net::HTTP objects.
+      # @api private
+      class HTTP < Delegator
+        def initialize(http)
+          super(http)
+          @http = http
+        end
+
+        # @return [Integer, nil]
+        attr_reader :last_used
+
+        def __getobj__
+          @http
+        end
+
+        def __setobj__(obj)
+          @http = obj
+        end
+
+        # Sends the request and tracks that this connection has been used.
+        def request(...)
+          @http.request(...)
+          @last_used = monotonic_milliseconds
+        end
+
+        def stale?
+          @last_used.nil? ||
+            (monotonic_milliseconds - @last_used) > keep_alive_timeout * 1000
+        end
+
+        # Attempts to close/finish the connection without raising an error.
+        def finish
+          @http.finish
+        rescue IOError
+          nil
+        end
+
+        private
+
+        def monotonic_milliseconds
+          Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+        end
       end
     end
   end

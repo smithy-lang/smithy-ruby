@@ -10,6 +10,7 @@
 require 'time'
 
 module HighScoreService
+  # @api private
   module Validators
 
     class AttributeErrors

@@ -10,6 +10,7 @@
 require 'securerandom'
 
 module RailsJson
+  # @api private
   module Params
 
     module AllQueryStringTypesInput
@@ -334,6 +335,15 @@ module RailsJson
         Hearth::Validator.validate_types!(params, ::Hash, Types::GreetingStruct, context: context)
         type = Types::GreetingStruct.new
         type.hi = params[:hi]
+        type
+      end
+    end
+
+    module RenamedGreeting
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RenamedGreeting, context: context)
+        type = Types::RenamedGreeting.new
+        type.salutation = params[:salutation]
         type
       end
     end
@@ -1004,9 +1014,13 @@ module RailsJson
           Types::MyUnion::StructureValue.new(
             (GreetingStruct.build(params[:structure_value], context: "#{context}[:structure_value]") unless params[:structure_value].nil?)
           )
+        when :renamed_structure_value
+          Types::MyUnion::RenamedStructureValue.new(
+            (RenamedGreeting.build(params[:renamed_structure_value], context: "#{context}[:renamed_structure_value]") unless params[:renamed_structure_value].nil?)
+          )
         else
           raise ArgumentError,
-                "Expected #{context} to have one of :string_value, :boolean_value, :number_value, :blob_value, :timestamp_value, :enum_value, :list_value, :map_value, :structure_value set"
+                "Expected #{context} to have one of :string_value, :boolean_value, :number_value, :blob_value, :timestamp_value, :enum_value, :list_value, :map_value, :structure_value, :renamed_structure_value set"
         end
       end
     end

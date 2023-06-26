@@ -2,20 +2,31 @@ module Hearth
   module HTTP
     # Represents an HTTP Response.
     # @api private
-    class Response
+    class Response < Hearth::Response
       # @param [Integer] status
-      # @param [Headers] headers
-      # @param [IO] body
-      def initialize: (?status: ::Integer status, ?headers: Headers headers, ?body: IO body) -> Response
+      # @param [String, nil] reason
+      # @param [Fields] fields
+      # @param (see Hearth::Response#initialize)
+      def initialize: (?status: ::Integer, ?reason: untyped?, ?fields: untyped, **untyped kwargs) -> void
 
       # @return [Integer]
-      attr_accessor status: Integer
+      attr_accessor status: untyped
 
-      # @return [Headers]
-      attr_accessor headers: Headers
+      # @return [String, nil]
+      attr_accessor reason: untyped
 
-      # @return [IO]
-      attr_accessor body: IO
+      # @return [Fields]
+      attr_reader fields: untyped
+
+      # @return [Fields::Proxy]
+      attr_reader headers: untyped
+
+      # @return [Fields::Proxy]
+      attr_reader trailers: untyped
+
+      # Resets the HTTP response.
+      # @return [Response]
+      def reset: () -> self
     end
   end
 end

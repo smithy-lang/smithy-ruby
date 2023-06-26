@@ -13,7 +13,8 @@ group :test do
 end
 
 group :development do
-  gem 'rbs'
+  gem 'parallel', '1.22.1' # 1.23.0 broke steep, temporary
+  gem 'rbs', '~> 2'
   gem 'rubocop'
-  gem 'steep'
+  gem 'steep', '1.3.2'
 end

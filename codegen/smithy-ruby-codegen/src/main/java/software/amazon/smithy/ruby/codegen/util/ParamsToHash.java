@@ -192,7 +192,15 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
             return "";
         }
         if (node.isNumberNode()) {
-            return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
+            if (node.expectNumberNode().isFloatingPointNumber()) {
+                // rounding of floats cause an issue in the precision of fractional seconds
+                Double n = node.expectNumberNode().getValue().doubleValue();
+                long seconds = (long) Math.floor(n);
+                long ms = Math.round((n - Math.floor(n)) * 1000);
+                return "Time.at(" + seconds + ", " + ms + ", :millisecond)";
+            } else {
+                return "Time.at(" + node.expectNumberNode().getValue().toString() + ")";
+            }
         }
         return "Time.parse('" + node + "')";
     }

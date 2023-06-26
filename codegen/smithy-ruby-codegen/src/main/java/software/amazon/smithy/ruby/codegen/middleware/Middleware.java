@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.CodegenException;
@@ -54,6 +55,8 @@ public final class Middleware {
     private final String klass;
     private final MiddlewareStackStep step;
     private final byte order;
+
+    private final Optional<Relative> relative;
     private final Set<ClientConfig> clientConfig;
     private final OperationParams operationParams;
     private final Map<String, String> additionalParams;
@@ -68,6 +71,7 @@ public final class Middleware {
         this.klass = builder.klass;
         this.step = builder.step;
         this.order = builder.order;
+        this.relative = builder.relative;
         this.clientConfig = builder.clientConfig;
         this.operationParams = builder.operationParams;
         this.additionalParams = builder.additionalParams;
@@ -96,6 +100,13 @@ public final class Middleware {
      */
     public byte getOrder() {
         return order;
+    }
+
+    /**
+     * @return relative order within stack step
+     */
+    public Optional<Relative> getRelative() {
+        return relative;
     }
 
     /**
@@ -210,7 +221,7 @@ public final class Middleware {
                     Set<ClientConfig> config = middleware.getClientConfig();
 
                     Map<String, String> params =
-                            middleware.getAdditionalParams();
+                            new HashMap<>(middleware.getAdditionalParams());
                     params.putAll(middleware.operationParams
                             .params(context, operation));
 
@@ -236,6 +247,7 @@ public final class Middleware {
                     }
                 };
         private byte order = 0;
+        private Optional<Relative> relative = Optional.empty();
         private String klass;
         private MiddlewareStackStep step;
         private Set<ClientConfig> clientConfig = new HashSet<>();
@@ -263,7 +275,18 @@ public final class Middleware {
          * @return Returns the builder
          */
         public Builder order(byte order) {
+            if (relative.isPresent()) {
+                throw new IllegalArgumentException("Cannot combine relative ordering with explicit order value.");
+            }
             this.order = order;
+            return this;
+        }
+
+        public Builder relative(Relative relative) {
+            if (order != 0) {
+                throw new IllegalArgumentException("Cannot combine relative ordering with explicit order value.");
+            }
+            this.relative = Optional.of(relative);
             return this;
         }
 
@@ -465,6 +488,33 @@ public final class Middleware {
         @Override
         public Middleware build() {
             return new Middleware(this);
+        }
+    }
+
+    public static class Relative {
+        private final Type type;
+        private final String to;
+
+        public Relative(Type type, String to) {
+            this.type = type;
+            this.to = to;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public String getTo() {
+            return to;
+        }
+
+        public String toString() {
+            return type + " " + to;
+        }
+
+        public enum Type {
+            BEFORE,
+            AFTER
         }
     }
 }

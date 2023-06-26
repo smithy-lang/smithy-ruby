@@ -6,7 +6,11 @@ Metrics:
   Exclude:
     - 'spec/**/*.rb'
 
-# For some reason, Metrics disable doesn't cover this
+Metrics/AbcSize:
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'lib/hearth/http/client.rb'
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
@@ -19,15 +23,18 @@ Layout/LineLength:
   Max: 80
 
 Metrics/MethodLength:
-  Max: 15
+  Max: 20
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'lib/hearth/middleware/send.rb'
 
 Metrics/ClassLength:
   Exclude:
+    - 'lib/hearth/http/client.rb'
     - 'lib/hearth/middleware_builder.rb'
 
 Metrics/ParameterLists:
   Exclude:
-    - 'lib/hearth/middleware/retry.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Style/Documentation:

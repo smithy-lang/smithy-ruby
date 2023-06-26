@@ -1650,6 +1650,16 @@ module RailsJson
         end
       end
 
+      class RenamedStructureValue < MyUnion
+        def to_h
+          { renamed_structure_value: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::RenamedStructureValue #{__getobj__ || 'nil'}>"
+        end
+      end
+
       # Handles unknown future members
       #
       class Unknown < MyUnion
@@ -1866,6 +1876,17 @@ module RailsJson
 
     QueryParamsAsStringListMapOutput = ::Struct.new(
       nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute salutation
+    #
+    #   @return [String]
+    #
+    RenamedGreeting = ::Struct.new(
+      :salutation,
       keyword_init: true
     ) do
       include Hearth::Structure

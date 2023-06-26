@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -38,17 +37,20 @@ import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
+import software.amazon.smithy.ruby.codegen.generators.EnumGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
+import software.amazon.smithy.ruby.codegen.generators.IntEnumGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.PaginatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
-import software.amazon.smithy.ruby.codegen.generators.TypesGenerator;
+import software.amazon.smithy.ruby.codegen.generators.StructureGenerator;
+import software.amazon.smithy.ruby.codegen.generators.TypesFileBlockGenerator;
+import software.amazon.smithy.ruby.codegen.generators.UnionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
@@ -60,7 +62,7 @@ public class DirectedRubyCodegen
     private static final Logger LOGGER =
             Logger.getLogger(DirectedRubyCodegen.class.getName());
 
-    private List<Shape> typeShapes = new ArrayList<>();
+    private TypesFileBlockGenerator typesFileBlockGenerator;
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<RubySettings> directive) {
@@ -71,7 +73,10 @@ public class DirectedRubyCodegen
     public GenerationContext createContext(CreateContextDirective<RubySettings, RubyIntegration> directive) {
         ServiceShape service = directive.service();
         Model model = directive.model();
-        List<RubyIntegration> integrations = directive.integrations();
+        List<RubyIntegration> integrations = directive.integrations().stream()
+                .filter((integration) -> integration
+                        .includeFor(service, model))
+                .collect(Collectors.toList());
 
         Map<ShapeId, ProtocolGenerator> supportedProtocols = ProtocolGenerator
             .collectSupportedProtocolGenerators(integrations);
@@ -110,7 +115,6 @@ public class DirectedRubyCodegen
     @Override
     public void generateService(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
         GenerationContext context = directive.context();
-
         // Register all middleware
         MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder();
         middlewareBuilder.addDefaultMiddleware(context);
@@ -140,20 +144,32 @@ public class DirectedRubyCodegen
         LOGGER.fine("Client config: "
                 + clientConfigList.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
 
-        ConfigGenerator configGenerator = new ConfigGenerator(context);
-        configGenerator.render(clientConfigList);
+        ConfigGenerator configGenerator = new ConfigGenerator(directive, clientConfigList);
+        configGenerator.render();
         configGenerator.renderRbs();
         LOGGER.info("generated config");
 
-        ClientGenerator clientGenerator = new ClientGenerator(context);
-        clientGenerator.render(middlewareBuilder);
+        ClientGenerator clientGenerator = new ClientGenerator(directive, middlewareBuilder);
+        clientGenerator.render();
         clientGenerator.renderRbs();
         LOGGER.info("generated client");
+
+        WaitersGenerator waitersGenerator = new WaitersGenerator(directive);
+        waitersGenerator.render();
+        waitersGenerator.renderRbs();
+    }
+
+    @Override
+    public void customizeBeforeShapeGeneration(CustomizeDirective<GenerationContext, RubySettings> directive) {
+        this.typesFileBlockGenerator = new TypesFileBlockGenerator(directive);
+
+        // Pre-populate module blocks for types.rb and types.rbs files
+        this.typesFileBlockGenerator.openBlocks();
     }
 
     @Override
     public void generateStructure(GenerateStructureDirective<GenerationContext, RubySettings> directive) {
-        typeShapes.add(directive.shape());
+        new StructureGenerator(directive).render();
     }
 
     @Override
@@ -161,54 +177,29 @@ public class DirectedRubyCodegen
         if (directive.context().protocolGenerator().isPresent()) {
             directive.context().protocolGenerator().get().generateErrors(directive.context());
         }
-        typeShapes.add(directive.shape());
+        new StructureGenerator(directive).render();
     }
 
     @Override
     public void generateUnion(GenerateUnionDirective<GenerationContext, RubySettings> directive) {
-        typeShapes.add(directive.shape());
+        new UnionGenerator(directive).render();
     }
 
     @Override
     public void generateEnumShape(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
-        typeShapes.add(directive.shape());
+        new EnumGenerator(directive).render();
     }
 
     @Override
     public void generateIntEnumShape(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
-        typeShapes.add(directive.shape());
+        new IntEnumGenerator(directive).render();
     }
 
     @Override
     public void customizeBeforeIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
         GenerationContext context = directive.context();
-
-        // Generate types
-        TypesGenerator typesGenerator = new TypesGenerator(context);
-        context.writerDelegator().useFileWriter(
-            typesGenerator.getFile(), typesGenerator.getNameSpace(), writer -> {
-            writer.includePreamble().includeRequires();
-
-            TypesGenerator.TypesVisitor visitor = typesGenerator.getTypeVisitor(writer);
-
-            writer.addModule(directive.settings().getModule());
-            writer.addModule("Types");
-
-            typeShapes.stream()
-                .sorted(Comparator.comparing(a -> a.getId().getName()))
-                .forEach(shape -> shape.accept(visitor));
-
-            writer.closeAllModules();
-        });
-
-        typesGenerator.renderRbs();
-
-        ParamsGenerator paramsGenerator = new ParamsGenerator(context);
-        paramsGenerator.render();
-
-        ValidatorsGenerator validatorsGenerator = new ValidatorsGenerator(context);
-        validatorsGenerator.render();
-
+        new ParamsGenerator(directive).render();
+        new ValidatorsGenerator(directive).render();
 
         if (directive.context().protocolGenerator().isPresent()) {
             ProtocolGenerator generator = directive.context().protocolGenerator().get();
@@ -217,20 +208,11 @@ public class DirectedRubyCodegen
             generator.generateStubs(directive.context());
         }
 
-        WaitersGenerator waitersGenerator = new WaitersGenerator(context);
-        waitersGenerator.render();
-        waitersGenerator.renderRbs();
-
-        PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(context);
+        PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(directive);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
 
-        List<String> additionalFiles = context.integrations().stream()
-                .map((integration) -> integration.writeAdditionalFiles(context))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        new ModuleGenerator(context).render(additionalFiles);
+        new ModuleGenerator(directive).render();
         new GemspecGenerator(context).render();
         new YardOptsGenerator(context).render();
 
@@ -239,6 +221,12 @@ public class DirectedRubyCodegen
                     new HttpProtocolTestGenerator(context);
             testGenerator.render();
         }
+    }
+
+    @Override
+    public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
+        // Close all module blocks for types.rb and types.rbs files
+        this.typesFileBlockGenerator.closeAllBlocks();
     }
 
     private Set<RubyDependency> collectDependencies(

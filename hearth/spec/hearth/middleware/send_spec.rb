@@ -13,6 +13,7 @@ module Hearth
       let(:stub_class) { double('stub_class') }
       let(:params_class) { double('params_class') }
       let(:stubs) { Hearth::Stubbing::Stubs.new }
+      let(:logger) { double('Logger') }
 
       subject do
         Send.new(
@@ -30,24 +31,39 @@ module Hearth
         let(:input) { double('Type::OperationInput') }
 
         let(:request) { double('request') }
-        let(:response) { double('response') }
+        let(:body) { StringIO.new }
+        let(:response) { double('response', body: body) }
         let(:context) do
           Hearth::Context.new(
             request: request,
             response: response,
-            operation_name: operation
+            operation_name: operation,
+            logger: logger
           )
         end
 
         it 'sends the request and returns an output object' do
           expect(client).to receive(:transmit).with(
             request: request,
-            response: response
-          )
+            response: response,
+            logger: logger
+          ).and_return(response)
 
-          expect(
-            subject.call(input, context)
-          ).to be_a Hearth::Output
+          output = subject.call(input, context)
+          expect(output).to be_a(Hearth::Output)
+        end
+
+        it 'sets output error to NetworkingError if the request fails' do
+          error = Hearth::HTTP::NetworkingError.new(StandardError.new)
+          expect(client).to receive(:transmit).with(
+            request: request,
+            response: response,
+            logger: logger
+          ).and_return(error)
+
+          output = subject.call(input, context)
+          expect(output).to be_a(Hearth::Output)
+          expect(output.error).to be_a(Hearth::NetworkingError)
         end
 
         context 'stub_responses is true' do
@@ -58,6 +74,13 @@ module Hearth
               .with(:operation).and_return(Exception)
             output = subject.call(input, context)
             expect(output.error).to be_a(Exception)
+          end
+
+          it 'rewinds the body' do
+            expect(stubs).to receive(:next)
+              .with(:operation).and_return(Exception)
+            expect(body).to receive(:rewind)
+            subject.call(input, context)
           end
 
           context 'stub is a proc' do

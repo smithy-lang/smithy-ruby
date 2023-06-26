@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen;
 
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.codegen.core.ShapeGenerationOrder;
 import software.amazon.smithy.codegen.core.directed.CodegenDirector;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -52,6 +53,8 @@ public class DirectedRubyCodegenPlugin implements SmithyBuildPlugin {
         runner.performDefaultCodegenTransforms();
 
         runner.createDedicatedInputsAndOutputs();
+
+        runner.shapeGenerationOrder(ShapeGenerationOrder.ALPHABETICAL);
 
         runner.run();
     }

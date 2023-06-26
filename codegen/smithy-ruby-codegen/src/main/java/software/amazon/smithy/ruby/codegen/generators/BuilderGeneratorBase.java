@@ -222,6 +222,7 @@ public abstract class BuilderGeneratorBase {
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
+                .apiPrivate()
                 .openBlock("module Builders")
                 .call(() -> renderBuilders())
                 .closeBlock("end")

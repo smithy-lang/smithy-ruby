@@ -157,7 +157,7 @@ public abstract class ErrorsGeneratorBase {
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < $T; end", Hearth.API_ERROR)
+                .write("class ApiError < $T; end", Hearth.HTTP_API_ERROR)
                 .write("\n# Base class for all errors returned where the client is at fault.")
                 .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
@@ -179,7 +179,7 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsBaseErrors() {
         rbsWriter
-                .write("\nclass ApiError < $T", Hearth.API_ERROR)
+                .write("\nclass ApiError < $T", Hearth.HTTP_API_ERROR)
                 .write("def initialize: (request_id: untyped request_id, **untyped kwargs) -> void\n")
                 .write("attr_reader request_id: untyped")
                 .write("end")

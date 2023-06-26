@@ -26,10 +26,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -54,9 +55,8 @@ module Weather
         it 'WriteGetCityAssertions' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/cities/123')
+            expect(request.uri.path).to eq('/cities/123')
             expect(request.body.read).to eq('')
             Hearth::Output.new
           end
@@ -74,7 +74,7 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 200
-            response.body = StringIO.new('{
+            response.body.write('{
                 "name": "Seattle",
                 "coordinates": {
                     "latitude": 12.34,
@@ -87,6 +87,7 @@ module Weather
                     "case": "Upper"
                 }
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -153,10 +154,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -182,10 +184,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -211,10 +214,11 @@ module Weather
           middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
             response = context.response
             response.status = 404
-            response.body = StringIO.new('{
+            response.body.write('{
                 "resourceType": "City",
                 "message": "Your custom message"
             }')
+            response.body.rewind
             Hearth::Output.new
           end
           middleware.remove_send.remove_build.remove_retry
@@ -247,16 +251,15 @@ module Weather
         it 'WriteListCitiesAssertions' do
           middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
             request = context.request
-            request_uri = URI.parse(request.url)
             expect(request.http_method).to eq('GET')
-            expect(request_uri.path).to eq('/cities')
+            expect(request.uri.path).to eq('/cities')
             expected_query = ::CGI.parse(['pageSize=50'].join('&'))
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
             end
             forbid_query = ['nextToken']
-            actual_query = ::CGI.parse(request_uri.query)
+            actual_query = ::CGI.parse(request.uri.query)
             forbid_query.each do |query|
               expect(actual_query.key?(query)).to be false
             end

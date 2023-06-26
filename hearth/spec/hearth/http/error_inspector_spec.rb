@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Retry
+  module HTTP
     describe ErrorInspector do
-      subject { ErrorInspector.new(error, http_status) }
+      subject { ErrorInspector.new(error, http_resp) }
 
       let(:http_status) { 404 }
-      let(:http_headers) { Hearth::HTTP::Headers.new }
-      let(:http_body) { 'body' }
       let(:http_resp) do
-        Hearth::HTTP::Response.new(
-          status: http_status,
-          headers: http_headers,
-          body: http_body
-        )
+        Hearth::HTTP::Response.new(status: http_status)
       end
       let(:message) { 'message' }
 
@@ -66,7 +60,7 @@ module Hearth
           end
         end
 
-        context 'error is networking' do
+        context 'error is transient' do
           let(:error) { Hearth::HTTP::NetworkingError.new(StandardError.new) }
 
           it 'returns true' do
@@ -76,7 +70,7 @@ module Hearth
       end
 
       describe '#error_type' do
-        context 'networking error' do
+        context 'transient error' do
           let(:error) { Hearth::HTTP::NetworkingError.new(StandardError.new) }
 
           it 'returns Transient' do
@@ -126,6 +120,42 @@ module Hearth
 
           it 'returns ServerError' do
             expect(subject.error_type).to eq 'Unknown'
+          end
+        end
+      end
+
+      describe '#hints' do
+        context 'retry_after_hint' do
+          context 'header is an integer' do
+            it 'hint returns an integer delay' do
+              http_resp.headers['retry-after'] = '123'
+              expect(subject.hints[:retry_after_hint]).to eq(123)
+            end
+          end
+
+          context 'header is a date' do
+            let(:time) { Time.new(2023, 1, 24) }
+            let(:retry_after_time) { (time + 123).httpdate }
+
+            it 'hint returns an integer delay' do
+              http_resp.headers['retry-after'] = retry_after_time
+              allow(Time).to receive(:now).and_return(time)
+              expect(subject.hints[:retry_after_hint]).to eq(123)
+            end
+          end
+
+          context 'header is nil' do
+            it 'no hint' do
+              http_resp.headers['retry-after'] = nil
+              expect(subject.hints.key?(:retry_after_hint)).to eq(false)
+            end
+          end
+
+          context 'header is an empty string' do
+            it 'no hint' do
+              http_resp.headers['retry-after'] = ''
+              expect(subject.hints.key?(:retry_after_hint)).to eq(false)
+            end
           end
         end
       end

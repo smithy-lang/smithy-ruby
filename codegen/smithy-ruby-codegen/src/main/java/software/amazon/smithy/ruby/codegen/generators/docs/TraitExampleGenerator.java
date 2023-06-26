@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators.docs;
 import java.util.Optional;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -36,7 +37,7 @@ public class TraitExampleGenerator {
     private final RubyCodeWriter writer;
     private final Optional<String> documentation;
     private final ObjectNode input;
-    private final ObjectNode output;
+    private final Node output;
     private final Optional<ExamplesTrait.ErrorExample> error;
     private final String operationName;
     private final Shape operationInput;
@@ -50,7 +51,11 @@ public class TraitExampleGenerator {
         this.writer = new RubyCodeWriter("");
         this.documentation = example.getDocumentation();
         this.input = example.getInput();
-        this.output = example.getOutput();
+        if (example.getOutput().isPresent()) {
+            this.output = example.getOutput().get();
+        } else {
+            this.output = ObjectNode.nullNode();
+        }
         this.error = example.getError();
 
         this.operationName =

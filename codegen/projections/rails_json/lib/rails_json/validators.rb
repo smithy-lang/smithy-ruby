@@ -10,6 +10,7 @@
 require 'time'
 
 module RailsJson
+  # @api private
   module Validators
 
     class AllQueryStringTypesInput
@@ -295,6 +296,13 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::GreetingStruct, context: context)
         Hearth::Validator.validate_types!(input[:hi], ::String, context: "#{context}[:hi]")
+      end
+    end
+
+    class RenamedGreeting
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RenamedGreeting, context: context)
+        Hearth::Validator.validate_types!(input[:salutation], ::String, context: "#{context}[:salutation]")
       end
     end
 
@@ -863,6 +871,8 @@ module RailsJson
           StringMap.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::MyUnion::StructureValue
           GreetingStruct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+        when Types::MyUnion::RenamedStructureValue
+          RenamedGreeting.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError,
                 "Expected #{context} to be a union member of "\
@@ -921,6 +931,12 @@ module RailsJson
       class StructureValue
         def self.validate!(input, context:)
           Validators::GreetingStruct.validate!(input, context: context) unless input.nil?
+        end
+      end
+
+      class RenamedStructureValue
+        def self.validate!(input, context:)
+          Validators::RenamedGreeting.validate!(input, context: context) unless input.nil?
         end
       end
     end

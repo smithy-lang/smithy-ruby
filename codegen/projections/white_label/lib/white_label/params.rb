@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
+  # @api private
   module Params
 
     module ClientError
@@ -33,7 +34,7 @@ module WhiteLabel
         type.simple_enum = params.fetch(:simple_enum, "YES")
         type.typed_enum = params.fetch(:typed_enum, "NO")
         type.int_enum = params.fetch(:int_enum, 1)
-        type.null_document = params.fetch(:null_document, nil)
+        type.null_document = params[:null_document]
         type.string_document = params.fetch(:string_document, "some string document")
         type.boolean_document = params.fetch(:boolean_document, true)
         type.numbers_document = params.fetch(:numbers_document, 1.23)
@@ -61,7 +62,7 @@ module WhiteLabel
         type.simple_enum = params.fetch(:simple_enum, "YES")
         type.typed_enum = params.fetch(:typed_enum, "NO")
         type.int_enum = params.fetch(:int_enum, 1)
-        type.null_document = params.fetch(:null_document, nil)
+        type.null_document = params[:null_document]
         type.string_document = params.fetch(:string_document, "some string document")
         type.boolean_document = params.fetch(:boolean_document, true)
         type.numbers_document = params.fetch(:numbers_document, 1.23)

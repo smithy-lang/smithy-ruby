@@ -28,64 +28,31 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-
-        # modify_before_transmit hook
-        # exception behavior - exceptions set to output.error and control
-        # bubbles up to modifyBeforeAttemptCompletion
-        context.interceptors.reverse.each do |i|
-          if i.respond_to?(:modify_before_transmit)
-            begin
-              i.modify_before_transmit(context.interceptor_context(input, nil))
-            rescue StandardError => e
-              return Hearth::Output.new(error: e)
-            end
-          end
-        end
-
-        # read_before_transmit hook
-        # exception behavior - exceptions set to output.error and control
-        # bubbles up to modifyBeforeAttemptCompletion
-        context.interceptors.reverse.each do |i|
-          if i.respond_to?(:read_before_transmit)
-            begin
-              i.read_before_transmit(context.interceptor_context(input, nil))
-            rescue StandardError => e
-              return Hearth::Output.new(error: e)
-            end
-          end
-        end
-
+	# TODO: Add modify and read_before_transmit hooks
+        output = Output.new
         if @stub_responses
           stub = @stubs.next(context.operation_name)
-          output = Output.new
           apply_stub(stub, input, context, output)
+          if context.response.body.respond_to?(:rewind)
+            context.response.body.rewind
+          end
         else
-          @client.transmit(
+          # TODO: should this instead raise NetworkingError?
+          resp_or_error = @client.transmit(
             request: context.request,
-            response: context.response
+            response: context.response,
+            logger: context.logger
           )
-          output = Output.new
-        end
-
-        # read_after_transmit hook
-        # exception behavior - exceptions set to output.error and control
-        # bubbles up to modifyBeforeAttemptCompletion
-        context.interceptors.reverse.each do |i|
-          if i.respond_to?(:read_after_transmit)
-            begin
-              i.read_after_transmit(context.interceptor_context(input, output))
-            rescue StandardError => e
-              return Hearth::Output.new(error: e)
-            end
+          if resp_or_error.is_a?(Hearth::NetworkingError)
+            output.error = resp_or_error
           end
         end
-
+	# TODO: Add read after transmit hook
         output
       end
 
       private
 
-      # rubocop:disable Metrics/MethodLength
       def apply_stub(stub, input, context, output)
         case stub
         when Proc
@@ -115,7 +82,6 @@ module Hearth
           raise ArgumentError, 'Unsupported stub type'
         end
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

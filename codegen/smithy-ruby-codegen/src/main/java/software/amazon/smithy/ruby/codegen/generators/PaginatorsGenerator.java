@@ -18,9 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.Model;
+import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.knowledge.PaginatedIndex;
 import software.amazon.smithy.model.knowledge.PaginationInfo;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -31,65 +29,51 @@ import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public class PaginatorsGenerator {
+public class PaginatorsGenerator extends RubyGeneratorBase {
 
     private static final Logger LOGGER =
             Logger.getLogger(PaginatorsGenerator.class.getName());
 
-    private final GenerationContext context;
-    private final RubySettings settings;
-    private final Model model;
-    private final RubyCodeWriter writer;
-    private final RubyCodeWriter rbsWriter;
-    private final SymbolProvider symbolProvider;
+    public PaginatorsGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
+        super(directive);
+    }
 
-    public PaginatorsGenerator(GenerationContext context) {
-        this.context = context;
-        this.settings = context.settings();
-        this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
-        this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Paginators");
-        this.symbolProvider = context.symbolProvider();
+    @Override
+    String getModule() {
+        return "Paginators";
     }
 
     public void render() {
-        FileManifest fileManifest = context.fileManifest();
-
-        writer
+        write(writer -> {
+            writer
                 .includePreamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
-                .call(() -> renderPaginators())
+                .call(() -> renderPaginators(writer))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
 
-        String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/paginators.rb";
-        fileManifest.writeFile(fileName, writer.toString());
-        LOGGER.fine("Wrote paginators to " + fileName);
+        });
+        LOGGER.fine("Wrote paginators to " + rbFile());
     }
 
     public void renderRbs() {
-        FileManifest fileManifest = context.fileManifest();
-
-        rbsWriter
+        writeRbs(writer -> {
+            writer
                 .includePreamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
-                .call(() -> renderRbsPaginators())
+                .call(() -> renderRbsPaginators(writer))
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
-
-        String typesFile =
-                settings.getGemName() + "/sig/" + settings.getGemName()
-                        + "/paginators.rbs";
-        fileManifest.writeFile(typesFile, rbsWriter.toString());
-        LOGGER.fine("Wrote paginators types to " + typesFile);
+        });
+        LOGGER.fine("Wrote paginators types to " + rbsFile());
     }
 
-    private void renderPaginators() {
+    private void renderPaginators(RubyCodeWriter writer) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         PaginatedIndex paginatedIndex = PaginatedIndex.of(model);
 
@@ -99,12 +83,12 @@ public class PaginatorsGenerator {
             if (paginationInfoOptional.isPresent()) {
                 PaginationInfo paginationInfo = paginationInfoOptional.get();
                 String operationName = symbolProvider.toSymbol(operation).getName();
-                renderPaginator(operationName, paginationInfo);
+                renderPaginator(writer, operationName, paginationInfo);
             }
         });
     }
 
-    private void renderRbsPaginators() {
+    private void renderRbsPaginators(RubyCodeWriter writer) {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         PaginatedIndex paginatedIndex = PaginatedIndex.of(model);
 
@@ -114,33 +98,33 @@ public class PaginatorsGenerator {
             if (paginationInfoOptional.isPresent()) {
                 PaginationInfo paginationInfo = paginationInfoOptional.get();
                 String operationName = symbolProvider.toSymbol(operation).getName();
-                renderRbsPaginator(operationName, paginationInfo);
+                renderRbsPaginator(writer, operationName, paginationInfo);
             }
         });
     }
 
-    private void renderPaginator(String operationName, PaginationInfo paginationInfo) {
+    private void renderPaginator(RubyCodeWriter writer, String operationName, PaginationInfo paginationInfo) {
         writer
                 .write("")
                 .openBlock("class $L", operationName)
-                .call(() -> renderPaginatorInitializeDocumentation(operationName))
+                .call(() -> renderPaginatorInitializeDocumentation(writer, operationName))
                 .openBlock("def initialize(client, params = {}, options = {})")
                 .write("@params = params")
                 .write("@options = options")
                 .write("@client = client")
                 .closeBlock("end")
-                .call(() -> renderPaginatorPages(operationName, paginationInfo))
+                .call(() -> renderPaginatorPages(writer, operationName, paginationInfo))
                 .call(() -> {
                     if (!paginationInfo.getItemsMemberPath().isEmpty()) {
-                        renderPaginatorItems(paginationInfo, operationName);
+                        renderPaginatorItems(writer, paginationInfo, operationName);
                     }
                 })
                 .closeBlock("end");
         LOGGER.finer("Generated paginator for " + operationName);
     }
 
-    private void renderRbsPaginator(String operationName, PaginationInfo paginationInfo) {
-        rbsWriter
+    private void renderRbsPaginator(RubyCodeWriter writer, String operationName, PaginationInfo paginationInfo) {
+        writer
                 .write("")
                 .openBlock("class $L", operationName)
                 .write("def initialize: (untyped client, ?::Hash[untyped, untyped] params, "
@@ -148,13 +132,13 @@ public class PaginatorsGenerator {
                 .write("def pages: () -> untyped")
                 .call(() -> {
                     if (!paginationInfo.getItemsMemberPath().isEmpty()) {
-                        rbsWriter.write("def items: () -> untyped");
+                        writer.write("def items: () -> untyped");
                     }
                 })
                 .closeBlock("end");
     }
 
-    private void renderPaginatorInitializeDocumentation(String operationName) {
+    private void renderPaginatorInitializeDocumentation(RubyCodeWriter writer, String operationName) {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
         writer.writeDocs((w) -> w
@@ -163,7 +147,7 @@ public class PaginatorsGenerator {
                 .write("@param [Hash] options (see Client#$L)", snakeOperationName));
     }
 
-    private void renderPaginatorPages(String operationName, PaginationInfo paginationInfo) {
+    private void renderPaginatorPages(RubyCodeWriter writer, String operationName, PaginationInfo paginationInfo) {
         String inputToken = symbolProvider.toMemberName(paginationInfo.getInputTokenMember());
         String outputToken = paginationInfo.getOutputTokenMemberPath().stream()
                 .map((member) -> symbolProvider.toMemberName(member))
@@ -171,7 +155,7 @@ public class PaginatorsGenerator {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
         writer
-                .call(() -> renderPaginatorPagesDocumentation(snakeOperationName))
+                .call(() -> renderPaginatorPagesDocumentation(writer, snakeOperationName))
                 .openBlock("def pages")
                 .write("params = @params")
                 .openBlock("Enumerator.new do |e|")
@@ -190,20 +174,20 @@ public class PaginatorsGenerator {
                 .closeBlock("end");
     }
 
-    private void renderPaginatorPagesDocumentation(String snakeOperationName) {
+    private void renderPaginatorPagesDocumentation(RubyCodeWriter writer, String snakeOperationName) {
         writer.writeDocs((w) -> w
                 .write("Iterate all response pages of the $L operation.", snakeOperationName)
                 .write("@return [Enumerator]"));
     }
 
-    private void renderPaginatorItems(PaginationInfo paginationInfo, String operationName) {
+    private void renderPaginatorItems(RubyCodeWriter writer, PaginationInfo paginationInfo, String operationName) {
         String items = paginationInfo.getItemsMemberPath().stream()
                 .map((member) -> symbolProvider.toMemberName(member))
                 .collect(Collectors.joining("&."));
 
         writer
                 .write("")
-                .call(() -> renderPaginatorItemsDocumentation(operationName))
+                .call(() -> renderPaginatorItemsDocumentation(writer, operationName))
                 .openBlock("def items")
                 .openBlock("Enumerator.new do |e|")
                 .openBlock("pages.each do |page|")
@@ -215,7 +199,7 @@ public class PaginatorsGenerator {
                 .closeBlock("end");
     }
 
-    private void renderPaginatorItemsDocumentation(String operationName) {
+    private void renderPaginatorItemsDocumentation(RubyCodeWriter writer, String operationName) {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
         writer.writeDocs((w) -> w
                 .write("Iterate all items from pages in the $L operation.", snakeOperationName)
