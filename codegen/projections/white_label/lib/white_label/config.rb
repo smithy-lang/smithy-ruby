@@ -24,6 +24,9 @@ module WhiteLabel
   #   @option args [Logger] :logger (Logger.new($stdout, level: cfg.log_level))
   #     The Logger instance to use for logging.
   #
+  #   @option args [Array] :plugins ([])
+  #     A list of Plugins to apply to the client.
+  #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes
   #      may have additional options, such as max_retries and backoff strategies.
@@ -52,6 +55,9 @@ module WhiteLabel
   # @!attribute logger
   #   @return [Logger]
   #
+  # @!attribute plugins
+  #   @return [Array]
+  #
   # @!attribute retry_strategy
   #   @return [Hearth::Retry::Strategy]
   #
@@ -67,6 +73,7 @@ module WhiteLabel
     :http_client,
     :log_level,
     :logger,
+    :plugins,
     :retry_strategy,
     :stub_responses,
     :validate_input,
@@ -82,6 +89,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
+      Hearth::Validator.validate_types!(plugins, Array, context: 'options[:plugins]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
@@ -94,6 +102,7 @@ module WhiteLabel
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
+        plugins: [[]],
         retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
         validate_input: [true]

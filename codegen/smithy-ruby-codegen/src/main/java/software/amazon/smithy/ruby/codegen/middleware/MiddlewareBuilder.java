@@ -303,6 +303,13 @@ public class MiddlewareBuilder {
                 .documentation("The default log level to use with the Logger.")
                 .build();
 
-        return Arrays.asList(logger, logLevel);
+        ClientConfig plugins = (new ClientConfig.Builder())
+                .name("plugins")
+                .type("Array")
+                .defaultValue("[]")
+                .documentation("A list of Plugins to apply to the client.")
+                .build();
+
+        return Arrays.asList(logger, logLevel, plugins);
     }
 }
