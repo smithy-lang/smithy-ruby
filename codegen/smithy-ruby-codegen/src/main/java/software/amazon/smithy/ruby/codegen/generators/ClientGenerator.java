@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -51,8 +52,8 @@ public class ClientGenerator extends RubyGeneratorBase {
     private boolean hasStreamingOperation;
 
     public ClientGenerator(
-        GenerateServiceDirective<GenerationContext, RubySettings> directive,
-        MiddlewareBuilder middlewareBuilder
+            GenerateServiceDirective<GenerationContext, RubySettings> directive,
+            MiddlewareBuilder middlewareBuilder
     ) {
         super(directive);
         this.hasStreamingOperation = false;
@@ -70,6 +71,12 @@ public class ClientGenerator extends RubyGeneratorBase {
      */
     public void render() {
         List<String> additionalFiles = middlewareBuilder.writeAdditionalFiles(context);
+        additionalFiles.addAll(
+                context.getRuntimePlugins().stream()
+                        .map(plugin -> plugin.writeAdditionalFiles(context))
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList())
+        );
 
         write(writer -> {
 
@@ -85,32 +92,33 @@ public class ClientGenerator extends RubyGeneratorBase {
             }
 
             writer
-                .openBlock("module $L", settings.getModule())
-                .write("# An API client for $L",
-                        settings.getService().getName())
-                .write("# See {#initialize} for a full list of supported configuration options");
+                    .openBlock("module $L", settings.getModule())
+                    .write("# An API client for $L",
+                            settings.getService().getName())
+                    .write("# See {#initialize} for a full list of supported configuration options");
 
             String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.service()).render();
 
             writer
-                .writeInline("$L", documentation)
-                .openBlock("class Client")
-                .write("include $T", Hearth.CLIENT_STUBS)
-                .write("\n@middleware = $T.new", Hearth.MIDDLEWARE_BUILDER)
-                .openBlock("\ndef self.middleware")
-                .write("@middleware")
-                .closeBlock("end\n")
-                .call(() -> renderInitializeMethod(writer))
-                .call(() -> renderOperations(writer))
-                .write("\nprivate")
-                .call(() -> renderApplyMiddlewareMethod(writer))
-                .call(() -> {
-                    if (hasStreamingOperation) {
-                        renderOutputStreamMethod(writer);
-                    }
-                })
-                .closeBlock("end")
-                .closeBlock("end");
+                    .writeInline("$L", documentation)
+                    .openBlock("class Client")
+                    .write("include $T", Hearth.CLIENT_STUBS)
+                    .write("\n@middleware = $T.new", Hearth.MIDDLEWARE_BUILDER)
+                    .openBlock("\ndef self.middleware")
+                    .write("@middleware")
+                    .closeBlock("end\n")
+                    .call(() -> renderClassRuntimePlugins(writer))
+                    .call(() -> renderInitializeMethod(writer))
+                    .call(() -> renderOperations(writer))
+                    .write("\nprivate")
+                    .call(() -> renderApplyMiddlewareMethod(writer))
+                    .call(() -> {
+                        if (hasStreamingOperation) {
+                            renderOutputStreamMethod(writer);
+                        }
+                    })
+                    .closeBlock("end")
+                    .closeBlock("end");
         });
 
         LOGGER.fine("Wrote client to " + rbFile());
@@ -122,17 +130,18 @@ public class ClientGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                .includePreamble()
-                .openBlock("module $L", settings.getModule())
-                .openBlock("class Client")
-                .write("include $T\n", Hearth.CLIENT_STUBS)
-                .write("def self.middleware: () -> untyped\n")
-                .write("def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void")
-                .call(() -> renderRbsOperations(writer))
-                .write("")
-                .closeBlock("end")
-                .closeBlock("end");
-            });
+                    .includePreamble()
+                    .openBlock("module $L", settings.getModule())
+                    .openBlock("class Client")
+                    .write("include $T\n", Hearth.CLIENT_STUBS)
+                    .write("def self.middleware: () -> untyped\n")
+                    .write("def self.plugins: () -> untyped\n")
+                    .write("def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void")
+                    .call(() -> renderRbsOperations(writer))
+                    .write("")
+                    .closeBlock("end")
+                    .closeBlock("end");
+        });
 
         LOGGER.fine("Wrote client rbs to " + rbsFile());
     }
@@ -144,11 +153,33 @@ public class ClientGenerator extends RubyGeneratorBase {
         return s;
     }
 
+    private void renderClassRuntimePlugins(RubyCodeWriter writer) {
+        if (context.getRuntimePlugins().isEmpty()) {
+            writer.write("@plugins = []");
+        } else {
+            writer.openBlock("@plugins = [");
+            writer.write(
+                    context.getRuntimePlugins().stream()
+                            .map(p -> p.renderAdd(context))
+                            .collect(Collectors.joining(",\n"))
+            );
+            writer.closeBlock("]");
+        }
+
+        writer.openBlock("\ndef self.plugins")
+                .write("@plugins")
+                .closeBlock("end\n");
+
+    }
+
     private void renderInitializeMethod(RubyCodeWriter writer) {
         writer
                 .writeYardParam("Config", "config", "An instance of {Config}")
                 .openBlock("def initialize(config = $L::Config.new, options = {})", settings.getModule())
-                .write("@config = config")
+                .write("config = config.dup")
+                .write("Client.plugins.each { |p| p.call(config) }")
+                .write("config.plugins.each { |p| p.call(config) }")
+                .write("@config = config.freeze")
                 .write("@middleware = $T.new(options[:middleware])", Hearth.MIDDLEWARE_BUILDER)
                 .write("@stubs = $T.new", Hearth.STUBS)
                 .closeBlock("end");
@@ -156,15 +187,15 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderOperations(RubyCodeWriter writer) {
         operations.stream()
-            .filter((o) -> !Streaming.isEventStreaming(model, o))
-            .sorted(Comparator.comparing((o) -> o.getId().getName()))
-            .forEach(o -> renderOperation(writer, o));
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(o -> renderOperation(writer, o));
     }
 
     private void renderRbsOperations(RubyCodeWriter writer) {
         operations.stream()
-            .sorted(Comparator.comparing((o) -> o.getId().getName()))
-            .forEach(o -> renderRbsOperation(writer, o));
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach(o -> renderRbsOperation(writer, o));
     }
 
     private void renderOperation(RubyCodeWriter writer, OperationShape operation) {
@@ -181,6 +212,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("")
                 .writeInline("$L", documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
+                .write("config = options[:plugins] ? @config.dup : @config")
+                .write("options[:plugins]&.each { |p| p.call(config) }\n")
                 .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> {
@@ -205,7 +238,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                         context.applicationTransport().getResponse()
                                 .render(context))
                 .write("params: params,")
-                .write("logger: @config.logger,")
+                .write("logger: config.logger,")
                 .write("operation_name: :$L", operationName)
                 .closeBlock(")")
                 .closeBlock(")")

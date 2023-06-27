@@ -24,11 +24,20 @@ module RailsJson
       @middleware
     end
 
+    @plugins = []
+
+    def self.plugins
+      @plugins
+    end
+
     # @param [Config] config
     #   An instance of {Config}
     #
     def initialize(config = RailsJson::Config.new, options = {})
-      @config = config
+      config = config.dup
+      Client.plugins.each { |p| p.call(config) }
+      config.plugins.each { |p| p.call(config) }
+      @config = config.freeze
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
@@ -87,19 +96,22 @@ module RailsJson
     #   resp.data #=> Types::AllQueryStringTypesOutput
     #
     def all_query_string_types(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::AllQueryStringTypesInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::AllQueryStringTypesInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::AllQueryStringTypes
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -108,8 +120,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::AllQueryStringTypes,
         stubs: @stubs,
         params_class: Params::AllQueryStringTypesOutput
@@ -119,10 +131,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :all_query_string_types
         )
       )
@@ -151,19 +163,22 @@ module RailsJson
     #   resp.data #=> Types::ConstantAndVariableQueryStringOutput
     #
     def constant_and_variable_query_string(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantAndVariableQueryStringInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ConstantAndVariableQueryStringInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ConstantAndVariableQueryString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -172,8 +187,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::ConstantAndVariableQueryString,
         stubs: @stubs,
         params_class: Params::ConstantAndVariableQueryStringOutput
@@ -183,10 +198,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :constant_and_variable_query_string
         )
       )
@@ -215,19 +230,22 @@ module RailsJson
     #   resp.data #=> Types::ConstantQueryStringOutput
     #
     def constant_query_string(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantQueryStringInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ConstantQueryStringInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ConstantQueryString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -236,8 +254,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::ConstantQueryString,
         stubs: @stubs,
         params_class: Params::ConstantQueryStringOutput
@@ -247,10 +265,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :constant_query_string
         )
       )
@@ -286,19 +304,22 @@ module RailsJson
     #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
     #
     def document_type(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DocumentTypeInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DocumentType
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -307,8 +328,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::DocumentType,
         stubs: @stubs,
         params_class: Params::DocumentTypeOutput
@@ -318,10 +339,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :document_type
         )
       )
@@ -355,19 +376,22 @@ module RailsJson
     #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
     #
     def document_type_as_payload(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeAsPayloadInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DocumentTypeAsPayloadInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DocumentTypeAsPayload
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -376,8 +400,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::DocumentTypeAsPayload,
         stubs: @stubs,
         params_class: Params::DocumentTypeAsPayloadOutput
@@ -387,10 +411,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :document_type_as_payload
         )
       )
@@ -412,19 +436,22 @@ module RailsJson
     #   resp.data #=> Types::EmptyOperationOutput
     #
     def empty_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::EmptyOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EmptyOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EmptyOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -433,8 +460,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EmptyOperation,
         stubs: @stubs,
         params_class: Params::EmptyOperationOutput
@@ -444,10 +471,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :empty_operation
         )
       )
@@ -469,23 +496,26 @@ module RailsJson
     #   resp.data #=> Types::EndpointOperationOutput
     #
     def endpoint_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
-        disable_host_prefix: @config.disable_host_prefix
+        disable_host_prefix: config.disable_host_prefix
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -494,8 +524,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EndpointOperation,
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
@@ -505,10 +535,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :endpoint_operation
         )
       )
@@ -532,23 +562,26 @@ module RailsJson
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     #
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
-        disable_host_prefix: @config.disable_host_prefix
+        disable_host_prefix: config.disable_host_prefix
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -557,8 +590,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
@@ -568,10 +601,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :endpoint_with_host_label_operation
         )
       )
@@ -603,19 +636,22 @@ module RailsJson
     #   resp.data.greeting #=> String
     #
     def greeting_with_errors(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::GreetingWithErrorsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GreetingWithErrorsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GreetingWithErrors
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -624,8 +660,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GreetingWithErrors,
         stubs: @stubs,
         params_class: Params::GreetingWithErrorsOutput
@@ -635,10 +671,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :greeting_with_errors
         )
       )
@@ -670,19 +706,22 @@ module RailsJson
     #   resp.data.blob #=> String
     #
     def http_payload_traits(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadTraitsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPayloadTraits
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -691,8 +730,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpPayloadTraits,
         stubs: @stubs,
         params_class: Params::HttpPayloadTraitsOutput
@@ -702,10 +741,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_payload_traits
         )
       )
@@ -735,19 +774,22 @@ module RailsJson
     #   resp.data.blob #=> String
     #
     def http_payload_traits_with_media_type(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadTraitsWithMediaTypeInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPayloadTraitsWithMediaType
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -756,8 +798,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpPayloadTraitsWithMediaType,
         stubs: @stubs,
         params_class: Params::HttpPayloadTraitsWithMediaTypeOutput
@@ -767,10 +809,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_payload_traits_with_media_type
         )
       )
@@ -805,19 +847,22 @@ module RailsJson
     #   resp.data.nested.name #=> String
     #
     def http_payload_with_structure(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadWithStructureInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadWithStructureInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPayloadWithStructure
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -826,8 +871,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpPayloadWithStructure,
         stubs: @stubs,
         params_class: Params::HttpPayloadWithStructureOutput
@@ -837,10 +882,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_payload_with_structure
         )
       )
@@ -874,19 +919,22 @@ module RailsJson
     #   resp.data.foo_map['key'] #=> String
     #
     def http_prefix_headers(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPrefixHeadersInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPrefixHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -895,8 +943,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpPrefixHeaders,
         stubs: @stubs,
         params_class: Params::HttpPrefixHeadersOutput
@@ -906,10 +954,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_prefix_headers
         )
       )
@@ -935,19 +983,22 @@ module RailsJson
     #   resp.data.prefix_headers['key'] #=> String
     #
     def http_prefix_headers_in_response(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInResponseInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPrefixHeadersInResponseInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpPrefixHeadersInResponse
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -956,8 +1007,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpPrefixHeadersInResponse,
         stubs: @stubs,
         params_class: Params::HttpPrefixHeadersInResponseOutput
@@ -967,10 +1018,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_prefix_headers_in_response
         )
       )
@@ -995,19 +1046,22 @@ module RailsJson
     #   resp.data #=> Types::HttpRequestWithFloatLabelsOutput
     #
     def http_request_with_float_labels(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithFloatLabelsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithFloatLabelsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithFloatLabels
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1016,8 +1070,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpRequestWithFloatLabels,
         stubs: @stubs,
         params_class: Params::HttpRequestWithFloatLabelsOutput
@@ -1027,10 +1081,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_request_with_float_labels
         )
       )
@@ -1055,19 +1109,22 @@ module RailsJson
     #   resp.data #=> Types::HttpRequestWithGreedyLabelInPathOutput
     #
     def http_request_with_greedy_label_in_path(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithGreedyLabelInPathInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithGreedyLabelInPath
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1076,8 +1133,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpRequestWithGreedyLabelInPath,
         stubs: @stubs,
         params_class: Params::HttpRequestWithGreedyLabelInPathOutput
@@ -1087,10 +1144,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_request_with_greedy_label_in_path
         )
       )
@@ -1130,19 +1187,22 @@ module RailsJson
     #   resp.data #=> Types::HttpRequestWithLabelsOutput
     #
     def http_request_with_labels(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithLabelsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithLabels
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1151,8 +1211,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpRequestWithLabels,
         stubs: @stubs,
         params_class: Params::HttpRequestWithLabelsOutput
@@ -1162,10 +1222,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_request_with_labels
         )
       )
@@ -1198,19 +1258,22 @@ module RailsJson
     #   resp.data #=> Types::HttpRequestWithLabelsAndTimestampFormatOutput
     #
     def http_request_with_labels_and_timestamp_format(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithLabelsAndTimestampFormatInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpRequestWithLabelsAndTimestampFormat
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1219,8 +1282,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
         stubs: @stubs,
         params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput
@@ -1230,10 +1293,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_request_with_labels_and_timestamp_format
         )
       )
@@ -1256,19 +1319,22 @@ module RailsJson
     #   resp.data.status #=> Integer
     #
     def http_response_code(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpResponseCodeInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpResponseCodeInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpResponseCode
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1277,8 +1343,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::HttpResponseCode,
         stubs: @stubs,
         params_class: Params::HttpResponseCodeOutput
@@ -1288,10 +1354,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :http_response_code
         )
       )
@@ -1318,19 +1384,22 @@ module RailsJson
     #   resp.data.baz #=> String
     #
     def ignore_query_params_in_response(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::IgnoreQueryParamsInResponseInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::IgnoreQueryParamsInResponseInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::IgnoreQueryParamsInResponse
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1339,8 +1408,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::IgnoreQueryParamsInResponse,
         stubs: @stubs,
         params_class: Params::IgnoreQueryParamsInResponseOutput
@@ -1350,10 +1419,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :ignore_query_params_in_response
         )
       )
@@ -1429,19 +1498,22 @@ module RailsJson
     #   resp.data.header_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #
     def input_and_output_with_headers(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::InputAndOutputWithHeadersInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::InputAndOutputWithHeadersInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::InputAndOutputWithHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1450,8 +1522,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::InputAndOutputWithHeaders,
         stubs: @stubs,
         params_class: Params::InputAndOutputWithHeadersOutput
@@ -1461,10 +1533,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :input_and_output_with_headers
         )
       )
@@ -1510,19 +1582,22 @@ module RailsJson
     #   resp.data.foo_enum_map['key'] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #
     def json_enums(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonEnumsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonEnumsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::JsonEnums
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1531,8 +1606,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::JsonEnums,
         stubs: @stubs,
         params_class: Params::JsonEnumsOutput
@@ -1542,10 +1617,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :json_enums
         )
       )
@@ -1618,19 +1693,22 @@ module RailsJson
     #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
     #
     def json_maps(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonMapsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonMapsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::JsonMaps
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1639,8 +1717,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::JsonMaps,
         stubs: @stubs,
         params_class: Params::JsonMapsOutput
@@ -1650,10 +1728,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :json_maps
         )
       )
@@ -1717,19 +1795,22 @@ module RailsJson
     #   resp.data.contents.renamed_structure_value.salutation #=> String
     #
     def json_unions(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonUnionsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonUnionsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::JsonUnions
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1738,8 +1819,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::JsonUnions,
         stubs: @stubs,
         params_class: Params::JsonUnionsOutput
@@ -1749,10 +1830,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :json_unions
         )
       )
@@ -1882,19 +1963,22 @@ module RailsJson
     #   resp.data.unix_timestamp #=> Time
     #
     def kitchen_sink_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSinkOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1903,8 +1987,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::KitchenSinkOperation,
         stubs: @stubs,
         params_class: Params::KitchenSinkOperationOutput
@@ -1914,10 +1998,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :kitchen_sink_operation
         )
       )
@@ -1944,19 +2028,22 @@ module RailsJson
     #   resp.data.json #=> String
     #
     def media_type_header(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::MediaTypeHeaderInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::MediaTypeHeaderInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MediaTypeHeader
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -1965,8 +2052,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::MediaTypeHeader,
         stubs: @stubs,
         params_class: Params::MediaTypeHeaderOutput
@@ -1976,10 +2063,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :media_type_header
         )
       )
@@ -2006,19 +2093,22 @@ module RailsJson
     #   resp.data.value #=> String
     #
     def nested_attributes_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::NestedAttributesOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NestedAttributesOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NestedAttributesOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2027,8 +2117,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::NestedAttributesOperation,
         stubs: @stubs,
         params_class: Params::NestedAttributesOperationOutput
@@ -2038,10 +2128,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :nested_attributes_operation
         )
       )
@@ -2077,19 +2167,22 @@ module RailsJson
     #   resp.data.c[0] #=> String
     #
     def null_and_empty_headers_client(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::NullAndEmptyHeadersClientInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NullAndEmptyHeadersClientInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NullAndEmptyHeadersClient
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2098,8 +2191,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::NullAndEmptyHeadersClient,
         stubs: @stubs,
         params_class: Params::NullAndEmptyHeadersClientOutput
@@ -2109,10 +2202,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :null_and_empty_headers_client
         )
       )
@@ -2147,19 +2240,22 @@ module RailsJson
     #   resp.data.sparse_string_map['key'] #=> String
     #
     def null_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::NullOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NullOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NullOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2168,8 +2264,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::NullOperation,
         stubs: @stubs,
         params_class: Params::NullOperationOutput
@@ -2179,10 +2275,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :null_operation
         )
       )
@@ -2209,19 +2305,22 @@ module RailsJson
     #   resp.data #=> Types::OmitsNullSerializesEmptyStringOutput
     #
     def omits_null_serializes_empty_string(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::OmitsNullSerializesEmptyStringInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::OmitsNullSerializesEmptyStringInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OmitsNullSerializesEmptyString
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2230,8 +2329,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::OmitsNullSerializesEmptyString,
         stubs: @stubs,
         params_class: Params::OmitsNullSerializesEmptyStringOutput
@@ -2241,10 +2340,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :omits_null_serializes_empty_string
         )
       )
@@ -2269,19 +2368,22 @@ module RailsJson
     #   resp.data.value #=> String
     #
     def operation_with_optional_input_output(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::OperationWithOptionalInputOutputInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::OperationWithOptionalInputOutputInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OperationWithOptionalInputOutput
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2290,8 +2392,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::OperationWithOptionalInputOutput,
         stubs: @stubs,
         params_class: Params::OperationWithOptionalInputOutputOutput
@@ -2301,10 +2403,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :operation_with_optional_input_output
         )
       )
@@ -2332,19 +2434,22 @@ module RailsJson
     #   resp.data #=> Types::QueryIdempotencyTokenAutoFillOutput
     #
     def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::QueryIdempotencyTokenAutoFillInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::QueryIdempotencyTokenAutoFill
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2353,8 +2458,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::QueryIdempotencyTokenAutoFill,
         stubs: @stubs,
         params_class: Params::QueryIdempotencyTokenAutoFillOutput
@@ -2364,10 +2469,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :query_idempotency_token_auto_fill
         )
       )
@@ -2396,19 +2501,22 @@ module RailsJson
     #   resp.data #=> Types::QueryParamsAsStringListMapOutput
     #
     def query_params_as_string_list_map(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryParamsAsStringListMapInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::QueryParamsAsStringListMapInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::QueryParamsAsStringListMap
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2417,8 +2525,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::QueryParamsAsStringListMap,
         stubs: @stubs,
         params_class: Params::QueryParamsAsStringListMapOutput
@@ -2428,10 +2536,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :query_params_as_string_list_map
         )
       )
@@ -2456,18 +2564,21 @@ module RailsJson
     #   resp.data.output #=> String
     #
     def streaming_operation(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params)
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
       )
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2476,8 +2587,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::StreamingOperation,
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
@@ -2487,10 +2598,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :streaming_operation
         )
       )
@@ -2529,19 +2640,22 @@ module RailsJson
     #   resp.data.target_date_time #=> Time
     #
     def timestamp_format_headers(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::TimestampFormatHeadersInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::TimestampFormatHeadersInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::TimestampFormatHeaders
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2550,8 +2664,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::TimestampFormatHeaders,
         stubs: @stubs,
         params_class: Params::TimestampFormatHeadersOutput
@@ -2561,10 +2675,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :timestamp_format_headers
         )
       )
@@ -2593,19 +2707,22 @@ module RailsJson
     #   resp.data.member.member___123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____789BadName
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -2614,8 +2731,8 @@ module RailsJson
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::Operation____789BadName,
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput
@@ -2625,10 +2742,10 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :operation____789_bad_name
         )
       )

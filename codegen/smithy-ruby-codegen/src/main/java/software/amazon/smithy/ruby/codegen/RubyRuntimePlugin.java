@@ -42,11 +42,11 @@ public class RubyRuntimePlugin {
     /**
      * Generate code to add this plugin to the list of client class plugins.
      *
-     * @param writer  writer
      * @param context generation context
+     * @return rendered string
      */
-    public void renderAdd(RubyCodeWriter writer, GenerationContext context) {
-        renderAdd.renderAdd(writer, context);
+    public String renderAdd(GenerationContext context) {
+        return renderAdd.renderAdd(context);
     }
 
     /**
@@ -59,6 +59,10 @@ public class RubyRuntimePlugin {
         return writeAdditionalFiles.writeAdditionalFiles(context);
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @FunctionalInterface
     /**
      * Called to Render the addition of this middleware to the stack.
@@ -67,10 +71,10 @@ public class RubyRuntimePlugin {
         /**
          * Called to Render the addition of this middleware to the stack.
          *
-         * @param writer  - codewriter to render with
          * @param context - additional context
+         * @return rendered string used to add this plugin to the list of client plugins
          */
-        void renderAdd(RubyCodeWriter writer, GenerationContext context);
+        String renderAdd(GenerationContext context);
     }
 
     @FunctionalInterface
@@ -134,7 +138,7 @@ public class RubyRuntimePlugin {
         }
 
         /**
-         * Plugins may be implemented via classes with the `call` method.
+         * Plugins may be implemented via classes with the `call(config)` method.
          * Setting the pluginKlass will initialize the provided class with no arguments
          * and add it to the list of client class plugins.
          *
@@ -142,9 +146,7 @@ public class RubyRuntimePlugin {
          * @return this builder
          */
         public Builder pluginKlass(String pluginKlass) {
-            this.renderAdd = (writer, context) -> {
-                writer.write("$L.new", pluginKlass);
-            };
+            this.renderAdd = (context) -> pluginKlass + ".new";
             return this;
         }
 

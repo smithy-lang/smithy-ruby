@@ -23,11 +23,20 @@ module Weather
       @middleware
     end
 
+    @plugins = []
+
+    def self.plugins
+      @plugins
+    end
+
     # @param [Config] config
     #   An instance of {Config}
     #
     def initialize(config = Weather::Config.new, options = {})
-      @config = config
+      config = config.dup
+      Client.plugins.each { |p| p.call(config) }
+      config.plugins.each { |p| p.call(config) }
+      @config = config.freeze
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
@@ -57,19 +66,22 @@ module Weather
     #   resp.data.city.case #=> String
     #
     def get_city(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCity
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -77,8 +89,8 @@ module Weather
         data_parser: Parsers::GetCity
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetCity,
         stubs: @stubs,
         params_class: Params::GetCityOutput
@@ -88,10 +100,10 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :get_city
         )
       )
@@ -125,19 +137,22 @@ module Weather
     #   resp.data.image #=> String
     #
     def get_city_image(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityImageInput.build(params)
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityImageInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCityImage
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -145,8 +160,8 @@ module Weather
         data_parser: Parsers::GetCityImage
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetCityImage,
         stubs: @stubs,
         params_class: Params::GetCityImageOutput
@@ -156,10 +171,10 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :get_city_image
         )
       )
@@ -182,19 +197,22 @@ module Weather
     #   resp.data.time #=> Time
     #
     def get_current_time(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCurrentTime
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -202,8 +220,8 @@ module Weather
         data_parser: Parsers::GetCurrentTime
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetCurrentTime,
         stubs: @stubs,
         params_class: Params::GetCurrentTimeOutput
@@ -213,10 +231,10 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :get_current_time
         )
       )
@@ -256,19 +274,22 @@ module Weather
     #   resp.data.precipitation.baz.bar #=> String
     #
     def get_forecast(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetForecast
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -276,8 +297,8 @@ module Weather
         data_parser: Parsers::GetForecast
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetForecast,
         stubs: @stubs,
         params_class: Params::GetForecastOutput
@@ -287,10 +308,10 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :get_forecast
         )
       )
@@ -335,19 +356,22 @@ module Weather
     #   resp.data.sparse_items #=> Array<CitySummary>
     #
     def list_cities(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ListCities
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -355,8 +379,8 @@ module Weather
         data_parser: Parsers::ListCities
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::ListCities,
         stubs: @stubs,
         params_class: Params::ListCitiesOutput
@@ -366,10 +390,10 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :list_cities
         )
       )
@@ -399,19 +423,22 @@ module Weather
     #   resp.data.member.member___123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____789BadName
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -419,8 +446,8 @@ module Weather
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::Operation____789BadName,
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput
@@ -430,10 +457,10 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :operation____789_bad_name
         )
       )

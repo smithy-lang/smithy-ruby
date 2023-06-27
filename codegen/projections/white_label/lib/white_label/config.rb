@@ -37,6 +37,9 @@ module WhiteLabel
   #   @option args [Boolean] :stub_responses (false)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs stub_responses}.
   #
+  #   @option args [String] :test_config ('default')
+  #     A Test Config
+  #
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   #
@@ -64,6 +67,9 @@ module WhiteLabel
   # @!attribute stub_responses
   #   @return [Boolean]
   #
+  # @!attribute test_config
+  #   @return [String]
+  #
   # @!attribute validate_input
   #   @return [Boolean]
   #
@@ -76,6 +82,7 @@ module WhiteLabel
     :plugins,
     :retry_strategy,
     :stub_responses,
+    :test_config,
     :validate_input,
     keyword_init: true
   ) do
@@ -92,6 +99,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(plugins, Array, context: 'options[:plugins]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
+      Hearth::Validator.validate_types!(test_config, String, context: 'options[:test_config]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
     end
 
@@ -105,6 +113,7 @@ module WhiteLabel
         plugins: [[]],
         retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
+        test_config: ['default'],
         validate_input: [true]
       }.freeze
     end

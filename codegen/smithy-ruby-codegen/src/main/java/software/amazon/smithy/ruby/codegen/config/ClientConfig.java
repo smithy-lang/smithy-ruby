@@ -99,10 +99,19 @@ public class ClientConfig {
         return allowOperationOverride;
     }
 
+    /**
+     * If true this config needs to be deep copied.
+     *
+     * @return requiresDeepCopy
+     */
+    public boolean requiresDeepCopy() {
+        return requiresDeepCopy;
+    }
+
     public String renderGetConfigValue() {
-        String getConfigValue = "@config." + getName();
+        String getConfigValue = "config." + getName();
         if (allowOperationOverride()) {
-            getConfigValue = "options.fetch(:" + getName() + ", @config." + getName() + ")";
+            getConfigValue = "options.fetch(:" + getName() + ", config." + getName() + ")";
         }
         return getConfigValue;
     }
@@ -136,6 +145,10 @@ public class ClientConfig {
     @Override
     public int hashCode() {
         return Objects.hash(getName(), getType());
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
