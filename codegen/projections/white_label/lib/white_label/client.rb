@@ -10,7 +10,7 @@
 require 'stringio'
 
 require_relative 'middleware/test_middleware'
-require_relative 'plugin/test_plugin'
+require_relative 'plugins/test_plugin'
 
 module WhiteLabel
   # An API client for WhiteLabel
@@ -63,6 +63,9 @@ module WhiteLabel
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
+
+    # @return [Config] config
+    attr_reader :config
 
     # @param [Hash] params
     #   See {Types::DefaultsTestInput}.
@@ -133,9 +136,7 @@ module WhiteLabel
     #   resp.data.epoch_timestamp #=> Time
     #
     def defaults_test(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params)
       response_body = ::StringIO.new
@@ -195,9 +196,7 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointOperationOutput
     #
     def endpoint_operation(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params)
       response_body = ::StringIO.new
@@ -263,9 +262,7 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     #
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params)
       response_body = ::StringIO.new
@@ -496,9 +493,7 @@ module WhiteLabel
     #   }
     #
     def kitchen_sink(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params)
       response_body = ::StringIO.new
@@ -562,9 +557,7 @@ module WhiteLabel
     #   resp.data.user_id #=> String
     #
     def mixin_test(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params)
       response_body = ::StringIO.new
@@ -629,9 +622,7 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     #
     def paginators_test(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params)
       response_body = ::StringIO.new
@@ -696,9 +687,7 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     #
     def paginators_test_with_items(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params)
       response_body = ::StringIO.new
@@ -761,9 +750,7 @@ module WhiteLabel
     #   resp.data.stream #=> String
     #
     def streaming_operation(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params)
       response_body = output_stream(options, &block)
@@ -824,9 +811,7 @@ module WhiteLabel
     #   resp.data #=> Types::StreamingWithLengthOutput
     #
     def streaming_with_length(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params)
       response_body = ::StringIO.new
@@ -889,9 +874,7 @@ module WhiteLabel
     #   resp.data.status #=> String
     #
     def waiters_test(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params)
       response_body = ::StringIO.new
@@ -957,9 +940,7 @@ module WhiteLabel
     #   resp.data.member___items[0] #=> String
     #
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
       response_body = ::StringIO.new
@@ -1011,6 +992,12 @@ module WhiteLabel
       Client.middleware.apply(middleware_stack)
       @middleware.apply(middleware_stack)
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
+    end
+
+    def operation_config(options)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+      config.freeze
     end
 
     def output_stream(options = {}, &block)

@@ -65,11 +65,11 @@ public class RubyRuntimePlugin {
 
     @FunctionalInterface
     /**
-     * Called to Render the addition of this middleware to the stack.
+     * Called to Render the addition of this plugin to list of client plugins.
      */
     public interface RenderAdd {
         /**
-         * Called to Render the addition of this middleware to the stack.
+         * Called to Render the addition of this plugin to list of client plugins.
          *
          * @param context - additional context
          * @return rendered string used to add this plugin to the list of client plugins
@@ -102,8 +102,8 @@ public class RubyRuntimePlugin {
 
         /**
          * Used to copy a plugin ruby file into the generated SDK. The copied file
-         * must be a plugin class under the Plugin namespace. This method will
-         * apply the generated service's namespace to the middleware file.
+         * must be a plugin class (implements call method) under the Plugins namespace.
+         * This method will apply the generated service's namespace to the plugin file.
          *
          * @param rubyFileName the file name (with path) of the ruby file to copy.
          * @return Return the Builder
@@ -112,7 +112,7 @@ public class RubyRuntimePlugin {
             this.writeAdditionalFiles = (context) -> {
                 try {
                     Path path = Paths.get(rubyFileName);
-                    String relativeName = "plugin/" + path.getFileName();
+                    String relativeName = "plugins/" + path.getFileName();
                     String fileName =
                             context.settings().getGemName() + "/lib/"
                                     + context.settings().getGemName()

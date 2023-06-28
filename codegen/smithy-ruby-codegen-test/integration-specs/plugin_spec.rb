@@ -15,7 +15,7 @@ module WhiteLabel
         config = Config.new
         expect(config.test_config).to eq('default')
         client = Client.new(config)
-        expect(client.instance_variable_get(:@config).test_config).to eq('client_override')
+        expect(client.config.test_config).to eq('client_override')
         expect(config.test_config).to eq('default')
       end
     end
@@ -24,7 +24,7 @@ module WhiteLabel
       it 'applies user configured plugins after client class plugins' do
         config = Config.new(plugins: [WhiteLabel::Plugins::TestPlugin.new(override_value: 'user_override')])
         client = Client.new(config)
-        expect(client.instance_variable_get(:@config).test_config).to eq('user_override')
+        expect(client.config.test_config).to eq('user_override')
       end
     end
 
@@ -39,7 +39,7 @@ module WhiteLabel
           })
         expect(output.metadata[:test_config]).to eq('operation_override')
         # does not modify client config
-        expect(client.instance_variable_get(:@config).test_config).to eq('client_override')
+        expect(client.config.test_config).to eq('client_override')
       end
     end
   end

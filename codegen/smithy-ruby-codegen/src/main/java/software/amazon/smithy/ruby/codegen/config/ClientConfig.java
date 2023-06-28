@@ -30,6 +30,7 @@ public class ClientConfig {
     private final String type;
     private final String documentation;
     private final String documentationDefaultValue;
+    private final String documentationType;
     private final ConfigProviderChain defaults;
     private final boolean allowOperationOverride;
     private final boolean requiresDeepCopy;
@@ -42,6 +43,7 @@ public class ClientConfig {
         this.type = builder.type;
         this.documentation = builder.documentation;
         this.documentationDefaultValue = builder.documentationDefaultValue;
+        this.documentationType = builder.documentationType;
         this.defaults = builder.defaults;
         this.allowOperationOverride = builder.allowOperationOverride;
         this.requiresDeepCopy = builder.requiresDeepCopy;
@@ -83,7 +85,17 @@ public class ClientConfig {
     }
 
     /**
-     * @return chain of deafults to use.
+     * @return Documented type
+     */
+    public String getDocumentationType() {
+        if (documentationType != null) {
+            return documentationType;
+        }
+        return type;
+    }
+
+    /**
+     * @return chain of defaults to use.
      */
     public ConfigProviderChain getDefaults() {
         return defaults;
@@ -159,6 +171,7 @@ public class ClientConfig {
         private String type;
         private String documentation;
         private String documentationDefaultValue;
+        private String documentationType;
         private ConfigProviderChain defaults;
         private boolean allowOperationOverride = false;
         private boolean requiresDeepCopy = false;
@@ -173,7 +186,7 @@ public class ClientConfig {
         }
 
         /**
-         * @param type ruby type for the config.
+         * @param type ruby type for the config.  Used for validation, must be a valid Ruby class.
          * @return this builder.
          */
         public Builder type(String type) {
@@ -196,6 +209,16 @@ public class ClientConfig {
          */
         public Builder documentationDefaultValue(String defaultValue) {
             this.documentationDefaultValue = defaultValue;
+            return this;
+        }
+
+        /**
+         * @param type an optional type to use in documentation (defaults to the type).
+         *             Useful for collection types such as Array[Callable]
+         * @return this builder
+         */
+        public Builder documentationType(String type) {
+            this.documentationType = type;
             return this;
         }
 

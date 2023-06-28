@@ -110,7 +110,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
         clientConfigList.forEach((clientConfig) -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             writer.writeYardAttribute(member, () -> {
-                writer.writeYardReturn(clientConfig.getType(), "");
+                writer.writeYardReturn(clientConfig.getDocumentationType(), "");
             });
         });
     }

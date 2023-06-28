@@ -306,8 +306,11 @@ public class MiddlewareBuilder {
         ClientConfig plugins = (new ClientConfig.Builder())
                 .name("plugins")
                 .type("Array")
+                .documentationType("Array<Callable>")
                 .defaultValue("[]")
-                .documentation("A list of Plugins to apply to the client.")
+                .documentation("A list of Plugins to apply to the client. "
+                        + "Plugins are callables that take one argument: Config.  "
+                        + "Plugins may modify the provided config.")
                 .build();
 
         return Arrays.asList(logger, logLevel, plugins);

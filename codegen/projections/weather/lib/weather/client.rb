@@ -41,6 +41,9 @@ module Weather
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
+    # @return [Config] config
+    attr_reader :config
+
     # @param [Hash] params
     #   See {Types::GetCityInput}.
     #
@@ -66,9 +69,7 @@ module Weather
     #   resp.data.city.case #=> String
     #
     def get_city(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params)
       response_body = ::StringIO.new
@@ -137,9 +138,7 @@ module Weather
     #   resp.data.image #=> String
     #
     def get_city_image(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityImageInput.build(params)
       response_body = output_stream(options, &block)
@@ -197,9 +196,7 @@ module Weather
     #   resp.data.time #=> Time
     #
     def get_current_time(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params)
       response_body = ::StringIO.new
@@ -274,9 +271,7 @@ module Weather
     #   resp.data.precipitation.baz.bar #=> String
     #
     def get_forecast(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params)
       response_body = ::StringIO.new
@@ -356,9 +351,7 @@ module Weather
     #   resp.data.sparse_items #=> Array<CitySummary>
     #
     def list_cities(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params)
       response_body = ::StringIO.new
@@ -423,9 +416,7 @@ module Weather
     #   resp.data.member.member___123foo #=> String
     #
     def operation____789_bad_name(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
       response_body = ::StringIO.new
@@ -474,6 +465,12 @@ module Weather
       Client.middleware.apply(middleware_stack)
       @middleware.apply(middleware_stack)
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
+    end
+
+    def operation_config(options)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+      config.freeze
     end
 
     def output_stream(options = {}, &block)

@@ -43,6 +43,9 @@ module HighScoreService
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
+    # @return [Config] config
+    attr_reader :config
+
     # Create a new high score
     #
     # @param [Hash] params
@@ -74,9 +77,7 @@ module HighScoreService
     #   resp.data.location #=> String
     #
     def create_high_score(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
       response_body = ::StringIO.new
@@ -141,9 +142,7 @@ module HighScoreService
     #   resp.data #=> Types::DeleteHighScoreOutput
     #
     def delete_high_score(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
       response_body = ::StringIO.new
@@ -214,9 +213,7 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     #
     def get_high_score(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
       response_body = ::StringIO.new
@@ -283,9 +280,7 @@ module HighScoreService
     #   resp.data.high_scores[0].updated_at #=> Time
     #
     def list_high_scores(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
       response_body = ::StringIO.new
@@ -363,9 +358,7 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     #
     def update_high_score(params = {}, options = {}, &block)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
-
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
       response_body = ::StringIO.new
@@ -415,6 +408,12 @@ module HighScoreService
       Client.middleware.apply(middleware_stack)
       @middleware.apply(middleware_stack)
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
+    end
+
+    def operation_config(options)
+      config = options[:plugins] ? @config.dup : @config
+      options[:plugins]&.each { |p| p.call(config) }
+      config.freeze
     end
   end
 end

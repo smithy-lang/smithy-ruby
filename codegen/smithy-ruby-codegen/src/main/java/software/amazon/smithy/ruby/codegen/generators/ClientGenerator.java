@@ -109,9 +109,12 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .closeBlock("end\n")
                     .call(() -> renderClassRuntimePlugins(writer))
                     .call(() -> renderInitializeMethod(writer))
+                    .write("\n# @return [Config] config")
+                    .write("attr_reader :config\n")
                     .call(() -> renderOperations(writer))
                     .write("\nprivate")
                     .call(() -> renderApplyMiddlewareMethod(writer))
+                    .call(() -> renderOperationConfigMethod(writer))
                     .call(() -> {
                         if (hasStreamingOperation) {
                             renderOutputStreamMethod(writer);
@@ -137,6 +140,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .write("def self.middleware: () -> untyped\n")
                     .write("def self.plugins: () -> untyped\n")
                     .write("def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void")
+                    .write("attr_reader config: untyped")
+                    .write("")
                     .call(() -> renderRbsOperations(writer))
                     .write("")
                     .closeBlock("end")
@@ -212,8 +217,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("")
                 .writeInline("$L", documentation)
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
-                .write("config = options[:plugins] ? @config.dup : @config")
-                .write("options[:plugins]&.each { |p| p.call(config) }\n")
+                .write("config = operation_config(options)")
                 .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
                 .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> {
@@ -259,11 +263,19 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderApplyMiddlewareMethod(RubyCodeWriter writer) {
         writer
-                .openBlock(
-                        "\ndef apply_middleware(middleware_stack, middleware)")
+                .openBlock("\ndef apply_middleware(middleware_stack, middleware)")
                 .write("Client.middleware.apply(middleware_stack)")
                 .write("@middleware.apply(middleware_stack)")
                 .write("$T.new(middleware).apply(middleware_stack)", Hearth.MIDDLEWARE_BUILDER)
+                .closeBlock("end");
+    }
+
+    private void renderOperationConfigMethod(RubyCodeWriter writer) {
+        writer
+                .openBlock("\ndef operation_config(options)")
+                .write("config = options[:plugins] ? @config.dup : @config")
+                .write("options[:plugins]&.each { |p| p.call(config) }")
+                .write("config.freeze")
                 .closeBlock("end");
     }
 

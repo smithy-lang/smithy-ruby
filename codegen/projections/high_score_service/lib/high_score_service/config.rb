@@ -25,7 +25,7 @@ module HighScoreService
   #     The Logger instance to use for logging.
   #
   #   @option args [Array] :plugins ([])
-  #     A list of Plugins to apply to the client.
+  #     A list of Plugins to apply to the client. Plugins are callables that take one argument: Config.  Plugins may modify the provided config.
   #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes
@@ -56,7 +56,7 @@ module HighScoreService
   #   @return [Logger]
   #
   # @!attribute plugins
-  #   @return [Array]
+  #   @return [Array<Callable>]
   #
   # @!attribute retry_strategy
   #   @return [Hearth::Retry::Strategy]
