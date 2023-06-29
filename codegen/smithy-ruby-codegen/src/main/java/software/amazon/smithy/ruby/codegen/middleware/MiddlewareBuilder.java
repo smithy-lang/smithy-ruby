@@ -175,7 +175,7 @@ public class MiddlewareBuilder {
         ClientConfig validateInput = (new ClientConfig.Builder())
                 .name("validate_input")
                 .type("Boolean")
-                .defaultValue("true")
+                .defaultPrimitiveValue("true")
                 .documentation(
                         "When `true`, request parameters are validated using the modeled shapes.")
                 .build();
@@ -197,7 +197,7 @@ public class MiddlewareBuilder {
         ClientConfig disableHostPrefix = (new ClientConfig.Builder())
                 .name("disable_host_prefix")
                 .type("Boolean")
-                .defaultValue("false")
+                .defaultPrimitiveValue("false")
                 .documentation(
                         "When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.")
                 .build();
@@ -229,7 +229,7 @@ public class MiddlewareBuilder {
         ClientConfig stubResponses = (new ClientConfig.Builder())
                 .name("stub_responses")
                 .type("Boolean")
-                .defaultValue("false")
+                .defaultPrimitiveValue("false")
                 .documentation(
                         "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
                 .build();
@@ -299,15 +299,15 @@ public class MiddlewareBuilder {
         ClientConfig logLevel = (new ClientConfig.Builder())
                 .name("log_level")
                 .type("Symbol")
-                .defaultValue(":info")
+                .defaultPrimitiveValue(":info")
                 .documentation("The default log level to use with the Logger.")
                 .build();
 
         ClientConfig plugins = (new ClientConfig.Builder())
                 .name("plugins")
-                .type("Array")
-                .documentationType("Array<Callable>")
-                .defaultValue("[]")
+                .type("Hearth::PluginList")
+                .defaultValue("Hearth::PluginList.new")
+                .documentationDefaultValue("Hearth::PluginList.new")
                 .documentation("A list of Plugins to apply to the client. "
                         + "Plugins are callables that take one argument: Config.  "
                         + "Plugins may modify the provided config.")

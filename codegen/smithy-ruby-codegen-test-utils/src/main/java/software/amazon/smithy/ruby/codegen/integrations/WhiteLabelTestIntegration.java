@@ -50,7 +50,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .name("test_config")
                         .type("String")
                         .documentation("A Test Config")
-                        .defaultValue("'default'")
+                        .defaultPrimitiveValue("'default'")
                         .build())
                 .step(MiddlewareStackStep.INITIALIZE)
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")

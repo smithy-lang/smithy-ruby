@@ -35,10 +35,7 @@ module HighScoreService
     #   An instance of {Config}
     #
     def initialize(config = HighScoreService::Config.new, options = {})
-      config = config.dup
-      Client.plugins.each { |p| p.call(config) }
-      config.plugins.each { |p| p.call(config) }
-      @config = config.freeze
+      @config = initialize_config(config)
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
@@ -410,9 +407,21 @@ module HighScoreService
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
     end
 
+    def initialize_config(config)
+      config = config.dup
+      config_plugins = config.plugins.is_a?(Hearth::PluginList) ? config.plugins : Hearth::PluginList.new(config.plugins)
+      Client.plugins.apply(config)
+      config_plugins.apply(config)
+      config.freeze
+    end
+
     def operation_config(options)
-      config = options[:plugins] ? @config.dup : @config
-      options[:plugins]&.each { |p| p.call(config) }
+      return @config unless options[:plugins]
+
+      plugins = options[:plugins]
+      plugins = Hearth::PluginList.new(plugins) unless plugins.is_a?(Hearth::PluginList)
+      config = @config.dup
+      plugins.apply(config)
       config.freeze
     end
   end

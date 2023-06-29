@@ -24,7 +24,7 @@ module HighScoreService
   #   @option args [Logger] :logger (Logger.new($stdout, level: cfg.log_level))
   #     The Logger instance to use for logging.
   #
-  #   @option args [Array] :plugins ([])
+  #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
   #     A list of Plugins to apply to the client. Plugins are callables that take one argument: Config.  Plugins may modify the provided config.
   #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
@@ -56,7 +56,7 @@ module HighScoreService
   #   @return [Logger]
   #
   # @!attribute plugins
-  #   @return [Array<Callable>]
+  #   @return [Hearth::PluginList]
   #
   # @!attribute retry_strategy
   #   @return [Hearth::Retry::Strategy]
@@ -89,7 +89,7 @@ module HighScoreService
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
-      Hearth::Validator.validate_types!(plugins, Array, context: 'options[:plugins]')
+      Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'options[:plugins]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
@@ -102,8 +102,8 @@ module HighScoreService
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
-        plugins: [[]],
-        retry_strategy: [Hearth::Retry::Standard.new],
+        plugins: [proc { Hearth::PluginList.new}],
+        retry_strategy: [proc { Hearth::Retry::Standard.new}],
         stub_responses: [false],
         validate_input: [true]
       }.freeze

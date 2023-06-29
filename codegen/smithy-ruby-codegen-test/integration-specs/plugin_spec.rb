@@ -6,11 +6,6 @@ module WhiteLabel
   describe Client do
 
     describe 'client class plugins' do
-      it 'adds plugins to the client class' do
-        expect(Client.plugins.size).to eq(1)
-        expect(Client.plugins.first.class).to eq(Plugins::TestPlugin)
-      end
-
       it 'applies plugins to modify config during initialize' do
         config = Config.new
         expect(config.test_config).to eq('default')
@@ -22,7 +17,8 @@ module WhiteLabel
 
     describe 'configured plugins' do
       it 'applies user configured plugins after client class plugins' do
-        config = Config.new(plugins: [WhiteLabel::Plugins::TestPlugin.new(override_value: 'user_override')])
+        config = Config.new
+        config.plugins << WhiteLabel::Plugins::TestPlugin.new(override_value: 'user_override')
         client = Client.new(config)
         expect(client.config.test_config).to eq('user_override')
       end

@@ -114,6 +114,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .call(() -> renderOperations(writer))
                     .write("\nprivate")
                     .call(() -> renderApplyMiddlewareMethod(writer))
+                    .call(() -> renderInitializeConfigMethod(writer))
                     .call(() -> renderOperationConfigMethod(writer))
                     .call(() -> {
                         if (hasStreamingOperation) {
@@ -162,13 +163,13 @@ public class ClientGenerator extends RubyGeneratorBase {
         if (context.getRuntimePlugins().isEmpty()) {
             writer.write("@plugins = []");
         } else {
-            writer.openBlock("@plugins = [");
+            writer.openBlock("@plugins = Hearth::PluginList.new([");
             writer.write(
                     context.getRuntimePlugins().stream()
                             .map(p -> p.renderAdd(context))
                             .collect(Collectors.joining(",\n"))
             );
-            writer.closeBlock("]");
+            writer.closeBlock("])");
         }
 
         writer.openBlock("\ndef self.plugins")
@@ -181,10 +182,7 @@ public class ClientGenerator extends RubyGeneratorBase {
         writer
                 .writeYardParam("Config", "config", "An instance of {Config}")
                 .openBlock("def initialize(config = $L::Config.new, options = {})", settings.getModule())
-                .write("config = config.dup")
-                .write("Client.plugins.each { |p| p.call(config) }")
-                .write("config.plugins.each { |p| p.call(config) }")
-                .write("@config = config.freeze")
+                .write("@config = initialize_config(config)")
                 .write("@middleware = $T.new(options[:middleware])", Hearth.MIDDLEWARE_BUILDER)
                 .write("@stubs = $T.new", Hearth.STUBS)
                 .closeBlock("end");
@@ -270,11 +268,27 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
     }
 
+    private void renderInitializeConfigMethod(RubyCodeWriter writer) {
+        writer
+                .openBlock("\ndef initialize_config(config)")
+                .write("config = config.dup")
+                .write("config_plugins = config.plugins.is_a?(Hearth::PluginList) ? "
+                        + "config.plugins : Hearth::PluginList.new(config.plugins)")
+                .write("Client.plugins.apply(config)")
+                .write("config_plugins.apply(config)")
+                .write("config.freeze")
+                .closeBlock("end");
+    }
+
     private void renderOperationConfigMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("\ndef operation_config(options)")
-                .write("config = options[:plugins] ? @config.dup : @config")
-                .write("options[:plugins]&.each { |p| p.call(config) }")
+                .write("return @config unless options[:plugins]")
+                .write("")
+                .write("plugins = options[:plugins]")
+                .write("plugins = Hearth::PluginList.new(plugins) unless plugins.is_a?(Hearth::PluginList)")
+                .write("config = @config.dup")
+                .write("plugins.apply(config)")
                 .write("config.freeze")
                 .closeBlock("end");
     }

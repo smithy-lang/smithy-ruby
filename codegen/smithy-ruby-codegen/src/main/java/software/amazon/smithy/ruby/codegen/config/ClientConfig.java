@@ -244,11 +244,23 @@ public class ClientConfig {
         }
 
         /**
-         * @param value a single, static default value to use.
+         * @param value a single, static default value to use. This should only be used for primitives like
+         *              Integer, Boolean or String.
+         * @return this builder
+         */
+        public Builder defaultPrimitiveValue(String value) {
+            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
+            return this;
+        }
+
+        /**
+         * @param value a single non-shared default. Initialized on each creation of Config.
          * @return this builder
          */
         public Builder defaultValue(String value) {
-            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
+            this.defaults = new ConfigProviderChain.Builder()
+                    .dynamicProvider("proc { " + value + "}")
+                    .build();
             return this;
         }
 
