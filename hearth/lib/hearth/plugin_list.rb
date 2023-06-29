@@ -5,18 +5,14 @@ module Hearth
   # that take one argument (config) and are called during client initialization
   # or operation invocation to modify config.
   class PluginList
+    include Enumerable
     def initialize(plugins = [])
-      case plugins
-      when PluginList
-        @plugins = plugins.plugins
-      else
-        unless plugins.respond_to?(:each)
-          raise ArgumentError, 'Plugins must be an enumerable'
-        end
-
-        @plugins = []
-        plugins.each { |p| add(p) }
+      unless plugins.respond_to?(:each)
+        raise ArgumentError, 'Plugins must be an enumerable'
       end
+
+      @plugins = []
+      plugins.each { |p| add(p) }
     end
 
     def add(plugin)
@@ -34,8 +30,8 @@ module Hearth
       @plugins.each { |p| p.call(config) }
     end
 
-    def plugins
-      @plugins.dup
+    def each(&block)
+      @plugins.each(&block)
     end
 
     private
