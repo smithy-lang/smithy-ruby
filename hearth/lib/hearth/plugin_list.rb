@@ -6,12 +6,17 @@ module Hearth
   # or operation invocation to modify config.
   class PluginList
     def initialize(plugins = [])
-      unless plugins.respond_to?(:each)
-        raise ArgumentError, 'Plugins must be an enumerable'
-      end
+      case plugins
+      when PluginList
+        @plugins = plugins.plugins
+      else
+        unless plugins.respond_to?(:each)
+          raise ArgumentError, 'Plugins must be an enumerable'
+        end
 
-      @plugins = []
-      plugins.each { |p| add(p) }
+        @plugins = []
+        plugins.each { |p| add(p) }
+      end
     end
 
     def add(plugin)
@@ -23,11 +28,15 @@ module Hearth
       @plugins << plugin
     end
 
+    alias << add
+
     def apply(config)
       @plugins.each { |p| p.call(config) }
     end
 
-    alias << add
+    def plugins
+      @plugins.dup
+    end
 
     private
 

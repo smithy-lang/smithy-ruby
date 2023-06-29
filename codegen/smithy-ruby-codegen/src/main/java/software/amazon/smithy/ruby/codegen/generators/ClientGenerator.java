@@ -272,10 +272,8 @@ public class ClientGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("\ndef initialize_config(config)")
                 .write("config = config.dup")
-                .write("config_plugins = config.plugins.is_a?($1T) ? "
-                        + "config.plugins : $1T.new(config.plugins)", Hearth.PLUGIN_LIST)
                 .write("Client.plugins.apply(config)")
-                .write("config_plugins.apply(config)")
+                .write("$T.new(config.plugins).apply(config)", Hearth.PLUGIN_LIST)
                 .write("config.freeze")
                 .closeBlock("end");
     }
@@ -285,10 +283,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .openBlock("\ndef operation_config(options)")
                 .write("return @config unless options[:plugins]")
                 .write("")
-                .write("plugins = options[:plugins]")
-                .write("plugins = $1T.new(plugins) unless plugins.is_a?($1T)", Hearth.PLUGIN_LIST)
                 .write("config = @config.dup")
-                .write("plugins.apply(config)")
+                .write("$T.new(options[:plugins]).apply(config)", Hearth.PLUGIN_LIST)
                 .write("config.freeze")
                 .closeBlock("end");
     }

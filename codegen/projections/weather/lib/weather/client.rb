@@ -466,19 +466,16 @@ module Weather
 
     def initialize_config(config)
       config = config.dup
-      config_plugins = config.plugins.is_a?(Hearth::PluginList) ? config.plugins : Hearth::PluginList.new(config.plugins)
       Client.plugins.apply(config)
-      config_plugins.apply(config)
+      Hearth::PluginList.new(config.plugins).apply(config)
       config.freeze
     end
 
     def operation_config(options)
       return @config unless options[:plugins]
 
-      plugins = options[:plugins]
-      plugins = Hearth::PluginList.new(plugins) unless plugins.is_a?(Hearth::PluginList)
       config = @config.dup
-      plugins.apply(config)
+      Hearth::PluginList.new(options[:plugins]).apply(config)
       config.freeze
     end
 
