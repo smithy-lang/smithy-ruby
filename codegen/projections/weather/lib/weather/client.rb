@@ -23,7 +23,7 @@ module Weather
       @middleware
     end
 
-    @plugins = []
+    @plugins = PluginList.new
 
     def self.plugins
       @plugins

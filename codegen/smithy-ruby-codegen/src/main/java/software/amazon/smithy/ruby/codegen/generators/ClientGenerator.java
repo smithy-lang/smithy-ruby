@@ -161,7 +161,7 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderClassRuntimePlugins(RubyCodeWriter writer) {
         if (context.getRuntimePlugins().isEmpty()) {
-            writer.write("@plugins = []");
+            writer.write("@plugins = PluginList.new");
         } else {
             writer.openBlock("@plugins = Hearth::PluginList.new([");
             writer.write(

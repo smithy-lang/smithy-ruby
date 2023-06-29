@@ -24,7 +24,7 @@ module RailsJson
       @middleware
     end
 
-    @plugins = []
+    @plugins = PluginList.new
 
     def self.plugins
       @plugins

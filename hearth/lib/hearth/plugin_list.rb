@@ -1,10 +1,15 @@
-module Hearth
-  class PluginList
+# frozen_string_literal: true
 
+module Hearth
+  # A list of plugins that can be applied to config. Plugins are callables
+  # that take one argument (config) and are called during client initialization
+  # or operation invocation to modify config.
+  class PluginList
     def initialize(plugins = [])
       unless plugins.respond_to?(:each)
         raise ArgumentError, 'Plugins must be an enumerable'
       end
+
       @plugins = []
       plugins.each { |p| add(p) }
     end
@@ -14,6 +19,7 @@ module Hearth
         raise ArgumentError,
               'Plugin must be callable and take one argument (config)'
       end
+
       @plugins << plugin
     end
 
@@ -21,7 +27,7 @@ module Hearth
       @plugins.each { |p| p.call(config) }
     end
 
-    alias_method :<<, :add
+    alias :<< :add
 
     private
 

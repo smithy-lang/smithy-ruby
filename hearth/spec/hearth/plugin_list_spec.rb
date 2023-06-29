@@ -15,7 +15,7 @@ module Hearth
 
       context 'proc with incorrect number of arguments' do
         let(:plugin) do
-          proc { }
+          proc {}
         end
 
         it 'raises an argument error' do
@@ -27,7 +27,7 @@ module Hearth
 
       context 'non-callable object' do
         let(:plugin) do
-          Class.new {}.new
+          Class.new.new
         end
 
         it 'raises an argument error' do

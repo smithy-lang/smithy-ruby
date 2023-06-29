@@ -25,7 +25,7 @@ module HighScoreService
       @middleware
     end
 
-    @plugins = []
+    @plugins = PluginList.new
 
     def self.plugins
       @plugins
