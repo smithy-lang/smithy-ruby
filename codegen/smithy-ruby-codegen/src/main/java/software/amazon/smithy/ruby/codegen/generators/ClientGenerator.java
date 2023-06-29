@@ -161,9 +161,9 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderClassRuntimePlugins(RubyCodeWriter writer) {
         if (context.getRuntimePlugins().isEmpty()) {
-            writer.write("@plugins = PluginList.new");
+            writer.write("@plugins = $T.new", Hearth.PLUGIN_LIST);
         } else {
-            writer.openBlock("@plugins = Hearth::PluginList.new([");
+            writer.openBlock("@plugins = $T.new([", Hearth.PLUGIN_LIST);
             writer.write(
                     context.getRuntimePlugins().stream()
                             .map(p -> p.renderAdd(context))
@@ -272,8 +272,8 @@ public class ClientGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("\ndef initialize_config(config)")
                 .write("config = config.dup")
-                .write("config_plugins = config.plugins.is_a?(Hearth::PluginList) ? "
-                        + "config.plugins : Hearth::PluginList.new(config.plugins)")
+                .write("config_plugins = config.plugins.is_a?($1T) ? "
+                        + "config.plugins : $1T.new(config.plugins)", Hearth.PLUGIN_LIST)
                 .write("Client.plugins.apply(config)")
                 .write("config_plugins.apply(config)")
                 .write("config.freeze")
@@ -286,7 +286,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("return @config unless options[:plugins]")
                 .write("")
                 .write("plugins = options[:plugins]")
-                .write("plugins = Hearth::PluginList.new(plugins) unless plugins.is_a?(Hearth::PluginList)")
+                .write("plugins = $1T.new(plugins) unless plugins.is_a?($1T)", Hearth.PLUGIN_LIST)
                 .write("config = @config.dup")
                 .write("plugins.apply(config)")
                 .write("config.freeze")

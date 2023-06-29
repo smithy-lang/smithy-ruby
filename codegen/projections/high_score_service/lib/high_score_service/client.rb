@@ -25,7 +25,7 @@ module HighScoreService
       @middleware
     end
 
-    @plugins = PluginList.new
+    @plugins = Hearth::PluginList.new
 
     def self.plugins
       @plugins

@@ -27,7 +27,7 @@ module Hearth
       @plugins.each { |p| p.call(config) }
     end
 
-    alias :<< :add
+    alias << add
 
     private
 
