@@ -251,6 +251,7 @@ public class MiddlewareBuilder {
                                 + " throttling.  This is a provisional mode that may change behavior"
                                 + " in the future."
                 )
+                .requiresDeepCopy()
                 .build();
 
         Middleware retry = (new Middleware.Builder())
@@ -294,6 +295,7 @@ public class MiddlewareBuilder {
                         .build()
                 )
                 .documentation("The Logger instance to use for logging.")
+                .requiresDeepCopy()
                 .build();
 
         ClientConfig logLevel = (new ClientConfig.Builder())
@@ -311,6 +313,7 @@ public class MiddlewareBuilder {
                 .documentation("A list of Plugins to apply to the client. "
                         + "Plugins are callables that take one argument: Config.  "
                         + "Plugins may modify the provided config.")
+                .requiresDeepCopy()
                 .build();
 
         return Arrays.asList(logger, logLevel, plugins);

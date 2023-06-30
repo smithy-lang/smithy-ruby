@@ -1,4 +1,14 @@
 module Hearth
+
+  interface _Plugin
+    def call: (untyped config) -> void
+  end
+
   class PluginList
+    def initialize: (::Array[_Plugin] plugins) -> void
+
+    def add: (_Plugin plugin) -> void
+
+    def apply: (untyped config) -> void
   end
 end
