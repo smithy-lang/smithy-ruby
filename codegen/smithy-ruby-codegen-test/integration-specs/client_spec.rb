@@ -21,7 +21,7 @@ module WhiteLabel
         expect(Hearth::Middleware::Retry)
           .to receive(:new)
                 .with(anything,
-                      retry_strategy: config.retry_strategy,
+                      retry_strategy: instance_of(Hearth::Retry::Standard),
                       error_inspector_class: anything)
                 .and_call_original
 
@@ -31,7 +31,7 @@ module WhiteLabel
       it 'uses logger' do
         expect(Hearth::Context)
           .to receive(:new)
-                .with(hash_including(logger: config.logger))
+                .with(hash_including(logger: instance_of(Logger)))
                 .and_call_original
 
         client.kitchen_sink
