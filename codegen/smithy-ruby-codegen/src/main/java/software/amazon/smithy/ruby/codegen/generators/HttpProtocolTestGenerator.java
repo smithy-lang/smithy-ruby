@@ -379,8 +379,8 @@ public class HttpProtocolTestGenerator {
                     case "application/xml":
                         if (body.get().length() > 0) {
                             writer
-                                    .write("expect($T.parse(request.body.read)).to "
-                                                    + "match_xml_node($T.parse('$L'))",
+                                    .write("expect($1T.parse(request.body.read)).to "
+                                                    + "match_xml_node($1T.parse('$2L'))",
                                             Hearth.XML, body.get())
                                     .addUseImports(RubyDependency.HEARTH_XML_MATCHER);
                         } else {
