@@ -123,7 +123,7 @@ public final class ApplicationTransport {
 
             middleware.add(new Middleware.Builder()
                     .klass("Hearth::Middleware::Build")
-                    .step(MiddlewareStackStep.SERIALIZE)
+                    .step(MiddlewareStackStep.BUILD)
                     .operationParams((ctx, operation) -> {
                         Map<String, String> params = new HashMap<>();
                         params.put("builder",
@@ -140,13 +140,13 @@ public final class ApplicationTransport {
                                     !Streaming.isNonFiniteStreaming(
                                             model, model.expectShape(operation.getInputShape(), StructureShape.class))
                     )
-                    .step(MiddlewareStackStep.BUILD)
+                    .step(MiddlewareStackStep.AFTER_BUILD)
                     .build()
             );
 
             middleware.add((new Middleware.Builder())
                     .klass("Hearth::HTTP::Middleware::ContentMD5")
-                    .step(MiddlewareStackStep.BUILD)
+                    .step(MiddlewareStackStep.AFTER_BUILD)
                     .operationPredicate(
                             (model, service, operation) -> operation.hasTrait(HttpChecksumRequiredTrait.class))
                     .build()
@@ -154,7 +154,7 @@ public final class ApplicationTransport {
 
             middleware.add((new Middleware.Builder())
                     .klass("Hearth::Middleware::Parse")
-                    .step(MiddlewareStackStep.DESERIALIZE)
+                    .step(MiddlewareStackStep.PARSE)
                     .operationParams((ctx, operation) -> {
                         Map<String, String> params = new HashMap<>();
                         params.put("data_parser",
