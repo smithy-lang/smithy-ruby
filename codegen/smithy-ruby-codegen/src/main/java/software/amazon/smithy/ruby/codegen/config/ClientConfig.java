@@ -110,11 +110,7 @@ public class ClientConfig {
     }
 
     public String renderGetConfigValue() {
-        String getConfigValue = "config." + getName();
-        if (allowOperationOverride()) {
-            getConfigValue = "options.fetch(:" + getName() + ", config." + getName() + ")";
-        }
-        return getConfigValue;
+        return "config." + getName();
     }
 
     /**
