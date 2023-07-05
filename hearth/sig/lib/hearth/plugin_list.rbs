@@ -3,7 +3,6 @@ module Hearth
   # that take one argument (config) and are called during client initialization
   # or operation invocation to modify config.
   class PluginList
-    include Enumerable
 
     # Initialize a PluginList.
     #
