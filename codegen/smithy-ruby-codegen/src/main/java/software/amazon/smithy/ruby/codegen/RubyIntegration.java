@@ -86,6 +86,16 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     }
 
     /**
+     * Returns a list of RubyRuntimePlugins to be added to the generated Client.
+     *
+     * @param context - Generation context to process within
+     * @return list of RubyRuntimePlugins
+     */
+    default List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
+        return Collections.emptyList();
+    }
+
+    /**
      * Writes additional files.
      *
      * @param context - context for generation

@@ -25,14 +25,23 @@ module HighScoreService
       @middleware
     end
 
+    @plugins = Hearth::PluginList.new
+
+    def self.plugins
+      @plugins
+    end
+
     # @param [Config] config
     #   An instance of {Config}
     #
     def initialize(config = HighScoreService::Config.new, options = {})
-      @config = config
+      @config = initialize_config(config)
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
+
+    # @return [Config] config
+    attr_reader :config
 
     # Create a new high score
     #
@@ -65,19 +74,20 @@ module HighScoreService
     #   resp.data.location #=> String
     #
     def create_high_score(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::CreateHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -86,8 +96,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::CreateHighScore,
         stubs: @stubs,
         params_class: Params::CreateHighScoreOutput
@@ -97,10 +107,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :create_high_score
         )
       )
@@ -129,19 +139,20 @@ module HighScoreService
     #   resp.data #=> Types::DeleteHighScoreOutput
     #
     def delete_high_score(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DeleteHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -150,8 +161,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::DeleteHighScore,
         stubs: @stubs,
         params_class: Params::DeleteHighScoreOutput
@@ -161,10 +172,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :delete_high_score
         )
       )
@@ -199,19 +210,20 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     #
     def get_high_score(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -220,8 +232,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetHighScore,
         stubs: @stubs,
         params_class: Params::GetHighScoreOutput
@@ -231,10 +243,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :get_high_score
         )
       )
@@ -265,19 +277,20 @@ module HighScoreService
     #   resp.data.high_scores[0].updated_at #=> Time
     #
     def list_high_scores(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ListHighScores
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -286,8 +299,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::ListHighScores,
         stubs: @stubs,
         params_class: Params::ListHighScoresOutput
@@ -297,10 +310,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :list_high_scores
         )
       )
@@ -342,19 +355,20 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     #
     def update_high_score(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::UpdateHighScore
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -363,8 +377,8 @@ module HighScoreService
       )
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::UpdateHighScore,
         stubs: @stubs,
         params_class: Params::UpdateHighScoreOutput
@@ -374,10 +388,10 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :update_high_score
         )
       )
@@ -391,6 +405,21 @@ module HighScoreService
       Client.middleware.apply(middleware_stack)
       @middleware.apply(middleware_stack)
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
+    end
+
+    def initialize_config(config)
+      config = config.dup
+      Client.plugins.apply(config)
+      Hearth::PluginList.new(config.plugins).apply(config)
+      config.freeze
+    end
+
+    def operation_config(options)
+      return @config unless options[:plugins]
+
+      config = @config.dup
+      Hearth::PluginList.new(options[:plugins]).apply(config)
+      config.freeze
     end
   end
 end

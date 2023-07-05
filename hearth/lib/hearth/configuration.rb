@@ -7,5 +7,11 @@ module Hearth
       Hearth::Config::Resolver.resolve(self, options, self.class.defaults)
       validate!
     end
+
+    def dup
+      members.each_with_object(super) do |member, copy|
+        copy[member] = self[member].dup
+      end
+    end
   end
 end

@@ -9,6 +9,9 @@
 
 require 'stringio'
 
+require_relative 'middleware/test_middleware'
+require_relative 'plugins/test_plugin'
+
 module WhiteLabel
   # An API client for WhiteLabel
   # See {#initialize} for a full list of supported configuration options
@@ -41,14 +44,25 @@ module WhiteLabel
       @middleware
     end
 
+    @plugins = Hearth::PluginList.new([
+      Plugins::TestPlugin.new
+    ])
+
+    def self.plugins
+      @plugins
+    end
+
     # @param [Config] config
     #   An instance of {Config}
     #
     def initialize(config = WhiteLabel::Config.new, options = {})
-      @config = config
+      @config = initialize_config(config)
       @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
+
+    # @return [Config] config
+    attr_reader :config
 
     # @param [Hash] params
     #   See {Types::DefaultsTestInput}.
@@ -119,19 +133,23 @@ module WhiteLabel
     #   resp.data.epoch_timestamp #=> Time
     #
     def defaults_test(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DefaultsTestInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DefaultsTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -139,8 +157,8 @@ module WhiteLabel
         data_parser: Parsers::DefaultsTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::DefaultsTest,
         stubs: @stubs,
         params_class: Params::DefaultsTestOutput
@@ -150,10 +168,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :defaults_test
         )
       )
@@ -175,23 +193,27 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointOperationOutput
     #
     def endpoint_operation(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
-        disable_host_prefix: @config.disable_host_prefix
+        disable_host_prefix: config.disable_host_prefix
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -199,8 +221,8 @@ module WhiteLabel
         data_parser: Parsers::EndpointOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EndpointOperation,
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
@@ -210,10 +232,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :endpoint_operation
         )
       )
@@ -237,23 +259,27 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     #
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
-        disable_host_prefix: @config.disable_host_prefix
+        disable_host_prefix: config.disable_host_prefix
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -261,8 +287,8 @@ module WhiteLabel
         data_parser: Parsers::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
@@ -272,10 +298,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :endpoint_with_host_label_operation
         )
       )
@@ -464,19 +490,23 @@ module WhiteLabel
     #   }
     #
     def kitchen_sink(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSink
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -484,8 +514,8 @@ module WhiteLabel
         data_parser: Parsers::KitchenSink
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::KitchenSink,
         stubs: @stubs,
         params_class: Params::KitchenSinkOutput
@@ -495,10 +525,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :kitchen_sink
         )
       )
@@ -524,19 +554,23 @@ module WhiteLabel
     #   resp.data.user_id #=> String
     #
     def mixin_test(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::MixinTestInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MixinTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -544,8 +578,8 @@ module WhiteLabel
         data_parser: Parsers::MixinTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::MixinTest,
         stubs: @stubs,
         params_class: Params::MixinTestOutput
@@ -555,10 +589,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :mixin_test
         )
       )
@@ -585,19 +619,23 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     #
     def paginators_test(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -605,8 +643,8 @@ module WhiteLabel
         data_parser: Parsers::PaginatorsTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::PaginatorsTest,
         stubs: @stubs,
         params_class: Params::PaginatorsTestOperationOutput
@@ -616,10 +654,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :paginators_test
         )
       )
@@ -646,19 +684,23 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     #
     def paginators_test_with_items(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestWithItemsInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTestWithItems
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -666,8 +708,8 @@ module WhiteLabel
         data_parser: Parsers::PaginatorsTestWithItems
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::PaginatorsTestWithItems,
         stubs: @stubs,
         params_class: Params::PaginatorsTestWithItemsOutput
@@ -677,10 +719,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :paginators_test_with_items
         )
       )
@@ -705,18 +747,22 @@ module WhiteLabel
     #   resp.data.stream #=> String
     #
     def streaming_operation(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params)
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
       )
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -724,8 +770,8 @@ module WhiteLabel
         data_parser: Parsers::StreamingOperation
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::StreamingOperation,
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
@@ -735,10 +781,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :streaming_operation
         )
       )
@@ -762,19 +808,23 @@ module WhiteLabel
     #   resp.data #=> Types::StreamingWithLengthOutput
     #
     def streaming_with_length(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingWithLengthInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingWithLength
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -782,8 +832,8 @@ module WhiteLabel
         data_parser: Parsers::StreamingWithLength
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::StreamingWithLength,
         stubs: @stubs,
         params_class: Params::StreamingWithLengthOutput
@@ -793,10 +843,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :streaming_with_length
         )
       )
@@ -821,19 +871,23 @@ module WhiteLabel
     #   resp.data.status #=> String
     #
     def waiters_test(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::WaitersTestInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::WaitersTest
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -841,8 +895,8 @@ module WhiteLabel
         data_parser: Parsers::WaitersTest
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::WaitersTest,
         stubs: @stubs,
         params_class: Params::WaitersTestOutput
@@ -852,10 +906,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :waiters_test
         )
       )
@@ -883,19 +937,23 @@ module WhiteLabel
     #   resp.data.member___items[0] #=> String
     #
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
+      config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
-        validate_input: @config.validate_input
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
-        retry_strategy: @config.retry_strategy,
+        retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Parse,
@@ -903,8 +961,8 @@ module WhiteLabel
         data_parser: Parsers::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Hearth::Middleware::Send,
-        stub_responses: @config.stub_responses,
-        client: options.fetch(:http_client, @config.http_client),
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: @stubs,
         params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
@@ -914,10 +972,10 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, @config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
-          logger: @config.logger,
+          logger: config.logger,
           operation_name: :operation____paginators_test_with_bad_names
         )
       )
@@ -931,6 +989,21 @@ module WhiteLabel
       Client.middleware.apply(middleware_stack)
       @middleware.apply(middleware_stack)
       Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
+    end
+
+    def initialize_config(config)
+      config = config.dup
+      Client.plugins.apply(config)
+      Hearth::PluginList.new(config.plugins).apply(config)
+      config.freeze
+    end
+
+    def operation_config(options)
+      return @config unless options[:plugins]
+
+      config = @config.dup
+      Hearth::PluginList.new(options[:plugins]).apply(config)
+      config.freeze
     end
 
     def output_stream(options = {}, &block)

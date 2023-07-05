@@ -43,6 +43,7 @@ buildscript {
 
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
+    implementation(project(":smithy-ruby-codegen-test-utils"))
 }
 
 tasks.register<Copy>("copyWhiteLabelGem") {

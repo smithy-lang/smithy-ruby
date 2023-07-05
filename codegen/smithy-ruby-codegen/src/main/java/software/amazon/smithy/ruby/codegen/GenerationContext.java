@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -49,16 +50,16 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
     /**
-     * @param rubySettings ruby settings
-     * @param fileManifest file manifest for generating files
-     * @param integrations loaded RubyIntegrations
-     * @param model model to generate for
-     * @param service service to generate for
-     * @param protocol the protocol to generate for
-     * @param protocolGenerator the resolved protocol generate to use for generation
+     * @param rubySettings         ruby settings
+     * @param fileManifest         file manifest for generating files
+     * @param integrations         loaded RubyIntegrations
+     * @param model                model to generate for
+     * @param service              service to generate for
+     * @param protocol             the protocol to generate for
+     * @param protocolGenerator    the resolved protocol generate to use for generation
      * @param applicationTransport resolved application transport.
-     * @param rubyDependencies set of Ruby dependencies
-     * @param symbolProvider a symbol provider scoped to the Types module
+     * @param rubyDependencies     set of Ruby dependencies
+     * @param symbolProvider       a symbol provider scoped to the Types module
      */
     public GenerationContext(RubySettings rubySettings,
                              FileManifest fileManifest,
@@ -149,5 +150,15 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
      */
     public Set<RubyDependency> getRubyDependencies() {
         return rubyDependencies;
+    }
+
+    /**
+     * @return list of all RubyRuntimePlugins from all integrations
+     */
+    public List<RubyRuntimePlugin> getRuntimePlugins() {
+        return integrations.stream()
+                .map((i) -> i.getRuntimePlugins(this))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }

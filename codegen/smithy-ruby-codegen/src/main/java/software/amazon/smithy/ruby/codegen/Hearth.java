@@ -117,6 +117,11 @@ public final class Hearth {
             .name("Poller")
             .build();
 
+    public static final Symbol PLUGIN_LIST = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("PluginList")
+            .build();
+
     private Hearth() {
 
     }

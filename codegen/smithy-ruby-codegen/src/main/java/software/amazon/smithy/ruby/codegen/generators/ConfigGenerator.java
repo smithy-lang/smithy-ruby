@@ -54,30 +54,30 @@ public class ConfigGenerator extends RubyGeneratorBase {
             String membersBlock = "nil";
             if (!clientConfigList.isEmpty()) {
                 membersBlock = clientConfigList
-                    .stream()
-                    .map(clientConfig -> RubyFormatter.asSymbol(
-                        RubySymbolProvider.toMemberName(clientConfig.getName())))
-                    .collect(Collectors.joining(",\n"));
+                        .stream()
+                        .map(clientConfig -> RubyFormatter.asSymbol(
+                                RubySymbolProvider.toMemberName(clientConfig.getName())))
+                        .collect(Collectors.joining(",\n"));
             }
             membersBlock += ",";
 
             writer
-                .includePreamble()
-                .includeRequires()
-                .openBlock("module $L", settings.getModule())
-                .call(() -> renderConfigDocumentation(writer))
-                .openBlock("Config = ::Struct.new(")
-                .write(membersBlock)
-                .write("keyword_init: true")
-                .closeBlock(") do")
-                .indent()
-                .write("include $T", Hearth.CONFIGURATION)
-                .write("\nprivate\n")
-                .call(() -> renderValidateMethod(writer))
-                .write("")
-                .call(() -> renderDefaultsMethod(writer))
-                .closeBlock("end")
-                .closeBlock("end\n");
+                    .includePreamble()
+                    .includeRequires()
+                    .openBlock("module $L", settings.getModule())
+                    .call(() -> renderConfigDocumentation(writer))
+                    .openBlock("Config = ::Struct.new(")
+                    .write(membersBlock)
+                    .write("keyword_init: true")
+                    .closeBlock(") do")
+                    .indent()
+                    .write("include $T", Hearth.CONFIGURATION)
+                    .write("\nprivate\n")
+                    .call(() -> renderValidateMethod(writer))
+                    .write("")
+                    .call(() -> renderDefaultsMethod(writer))
+                    .closeBlock("end")
+                    .closeBlock("end\n");
         });
 
         LOGGER.fine("Wrote config to " + rbFile());
@@ -89,9 +89,9 @@ public class ConfigGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                .openBlock("module $L", settings.getModule())
-                .write("Config: untyped")
-                .closeBlock("end");
+                    .openBlock("module $L", settings.getModule())
+                    .write("Config: untyped")
+                    .closeBlock("end");
         });
         LOGGER.fine("Wrote config rbs to " + rbsFile());
     }
@@ -109,7 +109,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
         clientConfigList.forEach((clientConfig) -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             writer.writeYardAttribute(member, () -> {
-                writer.writeYardReturn(clientConfig.getType(), "");
+                writer.writeYardReturn(clientConfig.getDocumentationType(), "");
             });
         });
     }

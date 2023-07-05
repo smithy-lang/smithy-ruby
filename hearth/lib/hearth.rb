@@ -17,6 +17,7 @@ require_relative 'hearth/response'
 
 require_relative 'hearth/http'
 require_relative 'hearth/json'
+require_relative 'hearth/plugin_list'
 require_relative 'hearth/middleware'
 require_relative 'hearth/middleware_builder'
 require_relative 'hearth/middleware_stack'
