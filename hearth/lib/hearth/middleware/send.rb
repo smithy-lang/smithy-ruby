@@ -28,7 +28,7 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        output = Output.new
+        output = Output.new(context: context)
         if @stub_responses
           stub = @stubs.next(context.operation_name)
           apply_stub(stub, input, context, output)

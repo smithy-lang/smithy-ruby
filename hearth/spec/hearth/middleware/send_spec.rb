@@ -51,6 +51,7 @@ module Hearth
 
           output = subject.call(input, context)
           expect(output).to be_a(Hearth::Output)
+          expect(output.context).to eq(context)
         end
 
         it 'sets output error to NetworkingError if the request fails' do

@@ -5,10 +5,12 @@ module Hearth
   class Output
     # @param [StandardError] error The error class to be raised.
     # @param [Struct] data The data returned by a client.
+    # @param [Context] context The request context
     # @param [Hash] metadata Response metadata set by client middleware.
-    def initialize(error: nil, data: nil, metadata: {})
+    def initialize(error: nil, data: nil, context: nil, metadata: {})
       @error = error
       @data = data
+      @context = context
       @metadata = metadata
     end
 
@@ -17,6 +19,9 @@ module Hearth
 
     # @return [Struct, nil]
     attr_accessor :data
+
+    # @return [Context, nil]
+    attr_accessor :context
 
     # @return [Hash, nil]
     attr_accessor :metadata
