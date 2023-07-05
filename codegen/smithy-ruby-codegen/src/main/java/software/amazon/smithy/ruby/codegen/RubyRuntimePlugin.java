@@ -139,14 +139,14 @@ public class RubyRuntimePlugin {
 
         /**
          * Plugins may be implemented via classes with the `call(config)` method.
-         * Setting the pluginKlass will initialize the provided class with no arguments
+         * Setting the pluginClass will initialize the provided class with no arguments
          * and add it to the list of client class plugins.
          *
-         * @param pluginKlass - the fully qualified class name of the plugin to add
+         * @param pluginClass - the fully qualified class name of the plugin to add
          * @return this builder
          */
-        public Builder pluginKlass(String pluginKlass) {
-            this.renderAdd = (context) -> pluginKlass + ".new";
+        public Builder pluginClass(String pluginClass) {
+            this.renderAdd = (context) -> pluginClass + ".new";
             return this;
         }
 

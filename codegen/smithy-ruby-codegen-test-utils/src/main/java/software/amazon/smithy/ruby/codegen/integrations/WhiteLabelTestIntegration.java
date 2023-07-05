@@ -38,7 +38,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
     public List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
         return List.of(RubyRuntimePlugin.builder()
                 .rubySource("smithy-ruby-codegen-test-utils/plugins/test_plugin.rb")
-                .pluginKlass("Plugins::TestPlugin")
+                .pluginClass("Plugins::TestPlugin")
                 .build());
     }
 
