@@ -5,6 +5,7 @@ module Hearth
     let(:config_class) do
       Struct.new(
         :option,
+        :complex_option,
         keyword_init: true
       ) do
         include Hearth::Configuration
@@ -41,6 +42,16 @@ module Hearth
           .and_call_original
 
         config_class.new
+      end
+    end
+
+    describe '#dup' do
+      let(:complex_option) { double }
+      let(:orig) { config_class.new(complex_option: complex_option) }
+
+      it 'deep copies' do
+        expect(complex_option).to receive(:dup)
+        orig.dup
       end
     end
   end

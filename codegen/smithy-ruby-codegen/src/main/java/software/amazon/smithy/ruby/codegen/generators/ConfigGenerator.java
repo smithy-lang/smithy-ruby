@@ -72,7 +72,6 @@ public class ConfigGenerator extends RubyGeneratorBase {
                     .closeBlock(") do")
                     .indent()
                     .write("include $T", Hearth.CONFIGURATION)
-                    .call(() -> renderDupMethod(writer))
                     .write("\nprivate\n")
                     .call(() -> renderValidateMethod(writer))
                     .write("")
@@ -146,22 +145,5 @@ public class ConfigGenerator extends RubyGeneratorBase {
                 .unwrite(",\n")
                 .closeBlock("\n}.freeze")
                 .closeBlock("end");
-    }
-
-    private void renderDupMethod(RubyCodeWriter writer) {
-        if (clientConfigList.stream().anyMatch(ClientConfig::requiresDeepCopy)) {
-            writer
-                    .write("")
-                    .openBlock("def dup")
-                    .write("copy = super");
-
-            clientConfigList.forEach(clientConfig -> {
-                if (clientConfig.requiresDeepCopy()) {
-                    writer.write("copy.$1L = $1L.dup", clientConfig.getName());
-                }
-            });
-
-            writer.write("copy").closeBlock("end");
-        }
     }
 }

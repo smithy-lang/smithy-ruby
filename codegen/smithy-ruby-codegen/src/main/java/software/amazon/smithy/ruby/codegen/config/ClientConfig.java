@@ -33,7 +33,6 @@ public class ClientConfig {
     private final String documentationType;
     private final ConfigProviderChain defaults;
     private final boolean allowOperationOverride;
-    private final boolean requiresDeepCopy;
 
     /**
      * @param builder builder to construct from.
@@ -46,7 +45,6 @@ public class ClientConfig {
         this.documentationType = builder.documentationType;
         this.defaults = builder.defaults;
         this.allowOperationOverride = builder.allowOperationOverride;
-        this.requiresDeepCopy = builder.requiresDeepCopy;
     }
 
     /**
@@ -111,15 +109,6 @@ public class ClientConfig {
         return allowOperationOverride;
     }
 
-    /**
-     * If true this config needs to be deep copied.
-     *
-     * @return requiresDeepCopy
-     */
-    public boolean requiresDeepCopy() {
-        return requiresDeepCopy;
-    }
-
     public String renderGetConfigValue() {
         String getConfigValue = "config." + getName();
         if (allowOperationOverride()) {
@@ -174,7 +163,6 @@ public class ClientConfig {
         private String documentationType;
         private ConfigProviderChain defaults;
         private boolean allowOperationOverride = false;
-        private boolean requiresDeepCopy = false;
 
         /**
          * @param name name of the config option.
@@ -229,17 +217,6 @@ public class ClientConfig {
          */
         public Builder allowOperationOverride() {
             this.allowOperationOverride = true;
-            return this;
-        }
-
-        /**
-         * When the config object is copied, this config will have `dup` called on it individually
-         * This may be required for collections that may be modified in an operation.
-         *
-         * @return this builder
-         */
-        public Builder requiresDeepCopy() {
-            this.requiresDeepCopy = true;
             return this;
         }
 

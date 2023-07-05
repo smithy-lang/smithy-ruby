@@ -81,14 +81,6 @@ module HighScoreService
   ) do
     include Hearth::Configuration
 
-    def dup
-      copy = super
-      copy.logger = logger.dup
-      copy.plugins = plugins.dup
-      copy.retry_strategy = retry_strategy.dup
-      copy
-    end
-
     private
 
     def validate!
