@@ -16,23 +16,20 @@
 package software.amazon.smithy.ruby.codegen.integrations;
 
 import java.util.List;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
+import software.amazon.smithy.ruby.codegen.RubyServiceIntegration;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
-public class WhiteLabelTestIntegration implements RubyIntegration {
+public class PluginTestIntegration extends RubyServiceIntegration {
 
     @Override
-    public boolean includeFor(ServiceShape service, Model model) {
-        return service.toShapeId().getName().equals("WhiteLabel");
+    public String name() {
+        return "plugin-test";
     }
-
 
     @Override
     public List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {

@@ -75,7 +75,8 @@ public class DirectedRubyCodegen
         Model model = directive.model();
         List<RubyIntegration> integrations = directive.integrations().stream()
                 .filter((integration) -> integration
-                        .includeFor(service, model))
+                        .includeFor(service, model)
+                        || directive.settings().getIntegrations().contains(integration.name()))
                 .collect(Collectors.toList());
 
         Map<ShapeId, ProtocolGenerator> supportedProtocols = ProtocolGenerator

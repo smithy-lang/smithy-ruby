@@ -30,6 +30,7 @@
       "plugins": {
         "ruby-codegen": {
           "service": "smithy.ruby.tests#WhiteLabel",
+          "integrations": ["plugin-test"],
           "module": "WhiteLabel",
           "gemspec": {
             "gemName": "white_label",

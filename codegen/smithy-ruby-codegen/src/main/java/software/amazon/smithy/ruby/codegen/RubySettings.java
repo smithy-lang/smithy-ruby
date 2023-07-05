@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -35,6 +36,7 @@ public final class RubySettings {
     private static final Logger LOGGER = Logger.getLogger(RubySettings.class.getName());
 
     private static final String SERVICE = "service";
+    private static final String INTEGRATIONS = "integrations";
     private static final String MODULE = "module";
     private static final String GEMSPEC = "gemspec";
     private static final String GEM_NAME = "gemName";
@@ -42,6 +44,7 @@ public final class RubySettings {
     private static final String GEM_SUMMARY = "gemSummary";
 
     private ShapeId service;
+    private Set<String> integrations = Set.of();
     private String module;
     private String gemName;
     private String gemVersion;
@@ -56,9 +59,15 @@ public final class RubySettings {
     public static RubySettings from(ObjectNode config) {
         RubySettings settings = new RubySettings();
         config.warnIfAdditionalProperties(
-                Arrays.asList(SERVICE, MODULE, GEMSPEC, GEM_NAME, GEM_VERSION, GEM_SUMMARY));
+                Arrays.asList(SERVICE, INTEGRATIONS, MODULE, GEMSPEC, GEM_NAME, GEM_VERSION, GEM_SUMMARY));
 
         settings.setService(config.expectStringMember(SERVICE).expectShapeId());
+        config.getArrayMember(INTEGRATIONS).ifPresent((integrations) -> {
+            settings.setIntegrations(
+                    integrations.getElements().stream().map(
+                            (n) -> n.expectStringNode().getValue()).collect(Collectors.toUnmodifiableSet())
+            );
+        });
         // module and namespace
         settings.setModule(config.expectStringMember(MODULE).getValue());
         // required gemspec values
@@ -80,10 +89,24 @@ public final class RubySettings {
     }
 
     /**
-     * @param service service to generate for
+     * @param service service to generate for.
      */
     public void setService(ShapeId service) {
         this.service = service;
+    }
+
+    /**
+     * @return list of integrations to apply to this service.
+     */
+    public Set<String> getIntegrations() {
+        return integrations;
+    }
+
+    /**
+     * @param integrations integrations to apply to this service.
+     */
+    public void setIntegrations(Set<String> integrations) {
+        this.integrations = integrations;
     }
 
     /**
@@ -151,9 +174,8 @@ public final class RubySettings {
     }
 
     /**
-     *
-     * @param service service to generate for
-     * @param model model used for generation
+     * @param service                 service to generate for
+     * @param model                   model used for generation
      * @param supportedProtocolTraits ordered list of all supported protocols
      * @return the resolved service protocol
      */
