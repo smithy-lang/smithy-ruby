@@ -4,7 +4,6 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
-
     describe 'client class plugins' do
       it 'applies plugins to modify config during initialize' do
         config = Config.new

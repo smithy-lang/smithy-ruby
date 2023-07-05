@@ -9,11 +9,9 @@ module Hearth
     end
 
     def dup
-      copy = super
-      members.each do |member|
+      members.each_with_object(super) do |member, copy|
         copy[member] = self[member].dup
       end
-      copy
     end
   end
 end
