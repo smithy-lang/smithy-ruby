@@ -17,7 +17,8 @@ module Hearth
       def call(input, context)
         # if there are exceptions, execution proceeds to before_completion hooks
         before_execution_error = context.interceptors.apply(
-          :read_before_execution, input, context, nil, aggregate_errors: true
+          hook: :read_before_execution, input: input,
+          context: context, output: nil, aggregate_errors: true
         )
 
         output = if before_execution_error
@@ -27,11 +28,13 @@ module Hearth
                  end
 
         context.interceptors.apply(
-          :modify_before_completion, input, context, output, aggregate_errors: false
+          hook: :modify_before_completion, input: input,
+          context: context, output: output, aggregate_errors: false
         )
 
         context.interceptors.apply(
-          :read_after_execution, input, context, output, aggregate_errors: true
+          hook: :read_after_execution, input: input,
+          context: context, output: output, aggregate_errors: true
         )
 
         output

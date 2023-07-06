@@ -42,7 +42,7 @@ module Hearth
       # if an exception is thrown AND output is not nil,
       # the output will be modified to include the error
       # @return nil if successful, an exception otherwise
-      def apply(hook, input, context, output, aggregate_errors: false)
+      def apply(hook:, input:, context:, output:, aggregate_errors: false)
         ictx = context.interceptor_context(input, output)
         last_error = nil
         @interceptors.each do |i|
