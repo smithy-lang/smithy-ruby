@@ -5,7 +5,6 @@ module Hearth
     let(:operation_name) { :operation }
     let(:request) { double('request') }
     let(:response) { double('response') }
-    let(:config) { double('config') }
     let(:logger) { Logger.new($stdout) }
     let(:params) { { key: 'value' } }
     let(:signer_params) { { region: 'region' } }
@@ -16,7 +15,6 @@ module Hearth
         operation_name: operation_name,
         request: request,
         response: response,
-        config: config,
         logger: logger,
         params: params,
         signer_params: signer_params,
@@ -30,7 +28,6 @@ module Hearth
         expect(context.operation_name).to be_nil
         expect(context.request).to be_nil
         expect(context.response).to be_nil
-        expect(context.config).to be_nil
         expect(context.logger).to be_nil
         expect(context.params).to be_nil
         expect(context.signer_params).to eq({})

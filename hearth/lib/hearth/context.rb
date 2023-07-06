@@ -8,7 +8,6 @@ module Hearth
       @operation_name = options[:operation_name]
       @request = options[:request]
       @response = options[:response]
-      @config = options[:config]
       @logger = options[:logger]
       @params = options[:params]
       @signer_params = options[:signer_params] || {}
@@ -23,9 +22,6 @@ module Hearth
 
     # @return [Hearth::HTTP::Response]
     attr_reader :response
-
-    # @return [Config] client config with operation overrides applied.
-    attr_reader :config
 
     # @return [Logger] An instance of the logger configured for the Client.
     attr_reader :logger

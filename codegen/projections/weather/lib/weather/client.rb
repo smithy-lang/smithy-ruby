@@ -88,7 +88,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetCity,
         stubs: @stubs,
         params_class: Params::GetCityOutput
@@ -98,9 +98,8 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :get_city
@@ -158,7 +157,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetCityImage,
         stubs: @stubs,
         params_class: Params::GetCityImageOutput
@@ -168,9 +167,8 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :get_city_image
@@ -217,7 +215,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetCurrentTime,
         stubs: @stubs,
         params_class: Params::GetCurrentTimeOutput
@@ -227,9 +225,8 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :get_current_time
@@ -293,7 +290,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::GetForecast,
         stubs: @stubs,
         params_class: Params::GetForecastOutput
@@ -303,9 +300,8 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :get_forecast
@@ -374,7 +370,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::ListCities,
         stubs: @stubs,
         params_class: Params::ListCitiesOutput
@@ -384,9 +380,8 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :list_cities
@@ -440,7 +435,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::Operation____789BadName,
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput
@@ -450,9 +445,8 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :operation____789_bad_name
@@ -478,14 +472,10 @@ module Weather
     end
 
     def operation_config(options)
-      return @config unless options && !options.empty?
+      return @config unless options[:plugins]
 
       config = @config.dup
-
-      config.endpoint = options.fetch(:endpoint, config.endpoint)
-      config.http_client = options.fetch(:http_client, config.http_client)
-
-      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
+      Hearth::PluginList.new(options[:plugins]).apply(config)
       config.freeze
     end
 

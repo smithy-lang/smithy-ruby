@@ -158,7 +158,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::DefaultsTest,
         stubs: @stubs,
         params_class: Params::DefaultsTestOutput
@@ -168,9 +168,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :defaults_test
@@ -223,7 +222,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EndpointOperation,
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
@@ -233,9 +232,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :endpoint_operation
@@ -290,7 +288,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
@@ -300,9 +298,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :endpoint_with_host_label_operation
@@ -518,7 +515,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::KitchenSink,
         stubs: @stubs,
         params_class: Params::KitchenSinkOutput
@@ -528,9 +525,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :kitchen_sink
@@ -583,7 +579,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::MixinTest,
         stubs: @stubs,
         params_class: Params::MixinTestOutput
@@ -593,9 +589,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :mixin_test
@@ -649,7 +644,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::PaginatorsTest,
         stubs: @stubs,
         params_class: Params::PaginatorsTestOperationOutput
@@ -659,9 +654,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :paginators_test
@@ -715,7 +709,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::PaginatorsTestWithItems,
         stubs: @stubs,
         params_class: Params::PaginatorsTestWithItemsOutput
@@ -725,9 +719,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :paginators_test_with_items
@@ -778,7 +771,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::StreamingOperation,
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
@@ -788,9 +781,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :streaming_operation
@@ -841,7 +833,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::StreamingWithLength,
         stubs: @stubs,
         params_class: Params::StreamingWithLengthOutput
@@ -851,9 +843,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :streaming_with_length
@@ -905,7 +896,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::WaitersTest,
         stubs: @stubs,
         params_class: Params::WaitersTestOutput
@@ -915,9 +906,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :waiters_test
@@ -972,7 +962,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: config.http_client,
+        client: options.fetch(:http_client, config.http_client),
         stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: @stubs,
         params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
@@ -982,9 +972,8 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
           response: Hearth::HTTP::Response.new(body: response_body),
-          config: config,
           params: params,
           logger: config.logger,
           operation_name: :operation____paginators_test_with_bad_names
@@ -1010,14 +999,10 @@ module WhiteLabel
     end
 
     def operation_config(options)
-      return @config unless options && !options.empty?
+      return @config unless options[:plugins]
 
       config = @config.dup
-
-      config.endpoint = options.fetch(:endpoint, config.endpoint)
-      config.http_client = options.fetch(:http_client, config.http_client)
-
-      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
+      Hearth::PluginList.new(options[:plugins]).apply(config)
       config.freeze
     end
 

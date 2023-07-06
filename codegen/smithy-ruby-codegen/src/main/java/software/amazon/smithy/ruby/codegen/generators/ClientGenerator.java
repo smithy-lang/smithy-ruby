@@ -32,7 +32,6 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -50,19 +49,16 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private final MiddlewareBuilder middlewareBuilder;
 
-    private final List<ClientConfig> clientConfigList;
-
     private boolean hasStreamingOperation;
 
     public ClientGenerator(
             GenerateServiceDirective<GenerationContext, RubySettings> directive,
-            MiddlewareBuilder middlewareBuilder,
-            List<ClientConfig> clientConfigList) {
+            MiddlewareBuilder middlewareBuilder
+    ) {
         super(directive);
         this.hasStreamingOperation = false;
         this.operations = directive.operations();
         this.middlewareBuilder = middlewareBuilder;
-        this.clientConfigList = clientConfigList;
     }
 
     @Override
@@ -243,7 +239,6 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("response: $L,",
                         context.applicationTransport().getResponse()
                                 .render(context))
-                .write("config: config,")
                 .write("params: params,")
                 .write("logger: config.logger,")
                 .write("operation_name: :$L", operationName)
@@ -286,19 +281,10 @@ public class ClientGenerator extends RubyGeneratorBase {
     private void renderOperationConfigMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("\ndef operation_config(options)")
-                .write("return @config unless options && !options.empty?")
+                .write("return @config unless options[:plugins]")
                 .write("")
                 .write("config = @config.dup")
-                .write("")
-                .call(() -> {
-                    for (ClientConfig config : clientConfigList) {
-                        if (config.allowOperationOverride()) {
-                            writer.write("config.$1L = options.fetch(:$1L, config.$1L)", config.getName());
-                        }
-                    }
-                })
-                .write("")
-                .write("$T.new(options[:plugins]).apply(config) if options[:plugins]", Hearth.PLUGIN_LIST)
+                .write("$T.new(options[:plugins]).apply(config)", Hearth.PLUGIN_LIST)
                 .write("config.freeze")
                 .closeBlock("end");
     }
