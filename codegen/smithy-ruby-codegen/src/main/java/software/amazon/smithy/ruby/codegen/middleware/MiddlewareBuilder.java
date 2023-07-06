@@ -172,6 +172,12 @@ public class MiddlewareBuilder {
         ApplicationTransport transport = context.applicationTransport();
         SymbolProvider symbolProvider = context.symbolProvider();
 
+        Middleware initialize = (new Middleware.Builder())
+                .klass("Hearth::Middleware::Initialize")
+                .step(MiddlewareStackStep.INITIALIZE)
+                .order(Byte.MIN_VALUE)
+                .build();
+
         ClientConfig validateInput = (new ClientConfig.Builder())
                 .name("validate_input")
                 .type("Boolean")
@@ -276,6 +282,7 @@ public class MiddlewareBuilder {
                 .addConfig(stubResponses)
                 .build();
 
+        register(initialize);
         register(validate);
         register(hostPrefix);
         register(retry);
@@ -313,6 +320,14 @@ public class MiddlewareBuilder {
                         + "Plugins may modify the provided config.")
                 .build();
 
-        return Arrays.asList(logger, logLevel, plugins);
+        ClientConfig interceptors = (new ClientConfig.Builder())
+                .name("interceptors")
+                .type("Hearth::Interceptor::List")
+                .defaultValue("Hearth::Interceptor::List.new")
+                .documentationDefaultValue("Hearth::Interceptor::List.new")
+                .documentation("A list of Interceptors to apply to the client.")
+                .build();
+
+        return Arrays.asList(logger, logLevel, plugins, interceptors);
     }
 }

@@ -78,6 +78,7 @@ module HighScoreService
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
         validate_input: config.validate_input
@@ -111,7 +112,8 @@ module HighScoreService
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :create_high_score
+          operation_name: :create_high_score,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -143,6 +145,7 @@ module HighScoreService
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
         validate_input: config.validate_input
@@ -176,7 +179,8 @@ module HighScoreService
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :delete_high_score
+          operation_name: :delete_high_score,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -214,6 +218,7 @@ module HighScoreService
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
         validate_input: config.validate_input
@@ -247,7 +252,8 @@ module HighScoreService
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :get_high_score
+          operation_name: :get_high_score,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -281,6 +287,7 @@ module HighScoreService
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
         validate_input: config.validate_input
@@ -314,7 +321,8 @@ module HighScoreService
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :list_high_scores
+          operation_name: :list_high_scores,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -359,6 +367,7 @@ module HighScoreService
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
         validate_input: config.validate_input
@@ -392,7 +401,8 @@ module HighScoreService
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :update_high_score
+          operation_name: :update_high_score,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -409,16 +419,20 @@ module HighScoreService
 
     def initialize_config(config)
       config = config.dup
+      client_interceptors = config.interceptors
+      config.interceptors = Hearth::Interceptor::List.new
       Client.plugins.apply(config)
       Hearth::PluginList.new(config.plugins).apply(config)
+      config.interceptors << client_interceptors
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins]
+      return @config unless options[:plugins] || options[:interceptors]
 
       config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config)
+      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
+      config.interceptors << options[:interceptors] if options[:interceptors]
       config.freeze
     end
   end

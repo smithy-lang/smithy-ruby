@@ -12,7 +12,7 @@ module Hearth
       @params = options[:params]
       @signer_params = options[:signer_params] || {}
       @metadata = options[:metadata] || {}
-      @interceptors = options[:interceptors] || []
+      @interceptors = options[:interceptors] || Interceptor::List.new
       @interceptor_attributes = {}
     end
 

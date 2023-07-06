@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'interceptor/context'
-require_relative 'interceptor/hook'
+require_relative 'interceptor/list'
 
 module Hearth
   # Module for Interceptors - allowing reading and modification or requests

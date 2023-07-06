@@ -100,6 +100,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::AllQueryStringTypesInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::AllQueryStringTypesInput,
         validate_input: config.validate_input
@@ -133,7 +134,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :all_query_string_types
+          operation_name: :all_query_string_types,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -165,6 +167,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantAndVariableQueryStringInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ConstantAndVariableQueryStringInput,
         validate_input: config.validate_input
@@ -198,7 +201,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :constant_and_variable_query_string
+          operation_name: :constant_and_variable_query_string,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -230,6 +234,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantQueryStringInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ConstantQueryStringInput,
         validate_input: config.validate_input
@@ -263,7 +268,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :constant_query_string
+          operation_name: :constant_query_string,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -302,6 +308,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DocumentTypeInput,
         validate_input: config.validate_input
@@ -335,7 +342,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :document_type
+          operation_name: :document_type,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -372,6 +380,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeAsPayloadInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DocumentTypeAsPayloadInput,
         validate_input: config.validate_input
@@ -405,7 +414,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :document_type_as_payload
+          operation_name: :document_type_as_payload,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -430,6 +440,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::EmptyOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EmptyOperationInput,
         validate_input: config.validate_input
@@ -463,7 +474,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :empty_operation
+          operation_name: :empty_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -488,6 +500,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
         validate_input: config.validate_input
@@ -525,7 +538,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :endpoint_operation
+          operation_name: :endpoint_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -552,6 +566,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
         validate_input: config.validate_input
@@ -589,7 +604,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :endpoint_with_host_label_operation
+          operation_name: :endpoint_with_host_label_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -624,6 +640,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::GreetingWithErrorsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GreetingWithErrorsInput,
         validate_input: config.validate_input
@@ -657,7 +674,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :greeting_with_errors
+          operation_name: :greeting_with_errors,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -692,6 +710,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadTraitsInput,
         validate_input: config.validate_input
@@ -725,7 +744,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_payload_traits
+          operation_name: :http_payload_traits,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -758,6 +778,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadTraitsWithMediaTypeInput,
         validate_input: config.validate_input
@@ -791,7 +812,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_payload_traits_with_media_type
+          operation_name: :http_payload_traits_with_media_type,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -829,6 +851,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadWithStructureInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPayloadWithStructureInput,
         validate_input: config.validate_input
@@ -862,7 +885,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_payload_with_structure
+          operation_name: :http_payload_with_structure,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -899,6 +923,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPrefixHeadersInput,
         validate_input: config.validate_input
@@ -932,7 +957,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_prefix_headers
+          operation_name: :http_prefix_headers,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -961,6 +987,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInResponseInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpPrefixHeadersInResponseInput,
         validate_input: config.validate_input
@@ -994,7 +1021,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_prefix_headers_in_response
+          operation_name: :http_prefix_headers_in_response,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1022,6 +1050,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithFloatLabelsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithFloatLabelsInput,
         validate_input: config.validate_input
@@ -1055,7 +1084,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_request_with_float_labels
+          operation_name: :http_request_with_float_labels,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1083,6 +1113,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithGreedyLabelInPathInput,
         validate_input: config.validate_input
@@ -1116,7 +1147,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_request_with_greedy_label_in_path
+          operation_name: :http_request_with_greedy_label_in_path,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1159,6 +1191,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithLabelsInput,
         validate_input: config.validate_input
@@ -1192,7 +1225,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_request_with_labels
+          operation_name: :http_request_with_labels,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1228,6 +1262,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpRequestWithLabelsAndTimestampFormatInput,
         validate_input: config.validate_input
@@ -1261,7 +1296,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_request_with_labels_and_timestamp_format
+          operation_name: :http_request_with_labels_and_timestamp_format,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1287,6 +1323,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpResponseCodeInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::HttpResponseCodeInput,
         validate_input: config.validate_input
@@ -1320,7 +1357,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :http_response_code
+          operation_name: :http_response_code,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1350,6 +1388,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::IgnoreQueryParamsInResponseInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::IgnoreQueryParamsInResponseInput,
         validate_input: config.validate_input
@@ -1383,7 +1422,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :ignore_query_params_in_response
+          operation_name: :ignore_query_params_in_response,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1462,6 +1502,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::InputAndOutputWithHeadersInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::InputAndOutputWithHeadersInput,
         validate_input: config.validate_input
@@ -1495,7 +1536,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :input_and_output_with_headers
+          operation_name: :input_and_output_with_headers,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1544,6 +1586,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonEnumsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonEnumsInput,
         validate_input: config.validate_input
@@ -1577,7 +1620,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :json_enums
+          operation_name: :json_enums,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1653,6 +1697,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonMapsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonMapsInput,
         validate_input: config.validate_input
@@ -1686,7 +1731,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :json_maps
+          operation_name: :json_maps,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1753,6 +1799,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonUnionsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::JsonUnionsInput,
         validate_input: config.validate_input
@@ -1786,7 +1833,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :json_unions
+          operation_name: :json_unions,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1919,6 +1967,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkOperationInput,
         validate_input: config.validate_input
@@ -1952,7 +2001,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :kitchen_sink_operation
+          operation_name: :kitchen_sink_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -1982,6 +2032,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::MediaTypeHeaderInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::MediaTypeHeaderInput,
         validate_input: config.validate_input
@@ -2015,7 +2066,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :media_type_header
+          operation_name: :media_type_header,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2045,6 +2097,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::NestedAttributesOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NestedAttributesOperationInput,
         validate_input: config.validate_input
@@ -2078,7 +2131,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :nested_attributes_operation
+          operation_name: :nested_attributes_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2117,6 +2171,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::NullAndEmptyHeadersClientInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NullAndEmptyHeadersClientInput,
         validate_input: config.validate_input
@@ -2150,7 +2205,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :null_and_empty_headers_client
+          operation_name: :null_and_empty_headers_client,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2188,6 +2244,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::NullOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::NullOperationInput,
         validate_input: config.validate_input
@@ -2221,7 +2278,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :null_operation
+          operation_name: :null_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2251,6 +2309,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::OmitsNullSerializesEmptyStringInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::OmitsNullSerializesEmptyStringInput,
         validate_input: config.validate_input
@@ -2284,7 +2343,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :omits_null_serializes_empty_string
+          operation_name: :omits_null_serializes_empty_string,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2312,6 +2372,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::OperationWithOptionalInputOutputInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::OperationWithOptionalInputOutputInput,
         validate_input: config.validate_input
@@ -2345,7 +2406,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :operation_with_optional_input_output
+          operation_name: :operation_with_optional_input_output,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2376,6 +2438,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::QueryIdempotencyTokenAutoFillInput,
         validate_input: config.validate_input
@@ -2409,7 +2472,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :query_idempotency_token_auto_fill
+          operation_name: :query_idempotency_token_auto_fill,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2441,6 +2505,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryParamsAsStringListMapInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::QueryParamsAsStringListMapInput,
         validate_input: config.validate_input
@@ -2474,7 +2539,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :query_params_as_string_list_map
+          operation_name: :query_params_as_string_list_map,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2502,6 +2568,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params)
       response_body = output_stream(options, &block)
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
         validate_input: config.validate_input
@@ -2534,7 +2601,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :streaming_operation
+          operation_name: :streaming_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2576,6 +2644,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::TimestampFormatHeadersInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::TimestampFormatHeadersInput,
         validate_input: config.validate_input
@@ -2609,7 +2678,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :timestamp_format_headers
+          operation_name: :timestamp_format_headers,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2641,6 +2711,7 @@ module RailsJson
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
         validate_input: config.validate_input
@@ -2674,7 +2745,8 @@ module RailsJson
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :operation____789_bad_name
+          operation_name: :operation____789_bad_name,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -2691,16 +2763,20 @@ module RailsJson
 
     def initialize_config(config)
       config = config.dup
+      client_interceptors = config.interceptors
+      config.interceptors = Hearth::Interceptor::List.new
       Client.plugins.apply(config)
       Hearth::PluginList.new(config.plugins).apply(config)
+      config.interceptors << client_interceptors
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins]
+      return @config unless options[:plugins] || options[:interceptors]
 
       config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config)
+      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
+      config.interceptors << options[:interceptors] if options[:interceptors]
       config.freeze
     end
 

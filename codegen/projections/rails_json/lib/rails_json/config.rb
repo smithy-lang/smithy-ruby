@@ -18,6 +18,9 @@ module RailsJson
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
   #
+  #   @option args [Hearth::Interceptor::List] :interceptors (Hearth::Interceptor::List.new)
+  #     A list of Interceptors to apply to the client.
+  #
   #   @option args [Symbol] :log_level (:info)
   #     The default log level to use with the Logger.
   #
@@ -49,6 +52,9 @@ module RailsJson
   # @!attribute http_client
   #   @return [Hearth::HTTP::Client]
   #
+  # @!attribute interceptors
+  #   @return [Hearth::Interceptor::List]
+  #
   # @!attribute log_level
   #   @return [Symbol]
   #
@@ -71,6 +77,7 @@ module RailsJson
     :disable_host_prefix,
     :endpoint,
     :http_client,
+    :interceptors,
     :log_level,
     :logger,
     :plugins,
@@ -87,6 +94,7 @@ module RailsJson
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
+      Hearth::Validator.validate_types!(interceptors, Hearth::Interceptor::List, context: 'options[:interceptors]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'options[:plugins]')
@@ -100,6 +108,7 @@ module RailsJson
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
+        interceptors: [proc { Hearth::Interceptor::List.new}],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         plugins: [proc { Hearth::PluginList.new}],

@@ -2,6 +2,7 @@
 
 module Hearth
   module Interceptor
+    # Context provided to interceptor hooks methods.
     class Context
       def initialize(input:, request:,
                      response:, output:, attributes: {})
