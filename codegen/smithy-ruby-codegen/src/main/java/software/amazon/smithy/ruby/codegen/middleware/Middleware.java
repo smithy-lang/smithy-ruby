@@ -164,6 +164,10 @@ public final class Middleware {
         return writeAdditionalFiles.writeAdditionalFiles(context);
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @FunctionalInterface
     /**
      * Called to Render the addition of this middleware to the stack.

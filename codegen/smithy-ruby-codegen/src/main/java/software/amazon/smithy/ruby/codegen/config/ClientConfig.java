@@ -30,6 +30,7 @@ public class ClientConfig {
     private final String type;
     private final String documentation;
     private final String documentationDefaultValue;
+    private final String documentationType;
     private final ConfigProviderChain defaults;
     private final boolean allowOperationOverride;
 
@@ -41,6 +42,7 @@ public class ClientConfig {
         this.type = builder.type;
         this.documentation = builder.documentation;
         this.documentationDefaultValue = builder.documentationDefaultValue;
+        this.documentationType = builder.documentationType;
         this.defaults = builder.defaults;
         this.allowOperationOverride = builder.allowOperationOverride;
     }
@@ -81,7 +83,17 @@ public class ClientConfig {
     }
 
     /**
-     * @return chain of deafults to use.
+     * @return Documented type
+     */
+    public String getDocumentationType() {
+        if (documentationType != null) {
+            return documentationType;
+        }
+        return type;
+    }
+
+    /**
+     * @return chain of defaults to use.
      */
     public ConfigProviderChain getDefaults() {
         return defaults;
@@ -98,9 +110,9 @@ public class ClientConfig {
     }
 
     public String renderGetConfigValue() {
-        String getConfigValue = "@config." + getName();
+        String getConfigValue = "config." + getName();
         if (allowOperationOverride()) {
-            getConfigValue = "options.fetch(:" + getName() + ", @config." + getName() + ")";
+            getConfigValue = "options.fetch(:" + getName() + ", config." + getName() + ")";
         }
         return getConfigValue;
     }
@@ -136,6 +148,10 @@ public class ClientConfig {
         return Objects.hash(getName(), getType());
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * Builder for ClientConfig.
      */
@@ -144,6 +160,7 @@ public class ClientConfig {
         private String type;
         private String documentation;
         private String documentationDefaultValue;
+        private String documentationType;
         private ConfigProviderChain defaults;
         private boolean allowOperationOverride = false;
 
@@ -157,7 +174,7 @@ public class ClientConfig {
         }
 
         /**
-         * @param type ruby type for the config.
+         * @param type ruby type for the config.  Used for validation, must be a valid Ruby class.
          * @return this builder.
          */
         public Builder type(String type) {
@@ -184,6 +201,16 @@ public class ClientConfig {
         }
 
         /**
+         * @param type an optional type to use in documentation (defaults to the type).
+         *             Useful for collection types such as Array[Callable]
+         * @return this builder
+         */
+        public Builder documentationType(String type) {
+            this.documentationType = type;
+            return this;
+        }
+
+        /**
          * allows config value to be overridden by values passed on an operation call.
          *
          * @return this builder
@@ -194,11 +221,23 @@ public class ClientConfig {
         }
 
         /**
-         * @param value a single, static default value to use.
+         * @param value a single, static default value to use. This should only be used for primitives like
+         *              Integer, Boolean or String.
+         * @return this builder
+         */
+        public Builder defaultPrimitiveValue(String value) {
+            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
+            return this;
+        }
+
+        /**
+         * @param value a single non-shared default. Initialized on each creation of Config.
          * @return this builder
          */
         public Builder defaultValue(String value) {
-            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
+            this.defaults = new ConfigProviderChain.Builder()
+                    .dynamicProvider("proc { " + value + "}")
+                    .build();
             return this;
         }
 

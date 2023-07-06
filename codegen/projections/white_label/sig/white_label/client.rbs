@@ -13,7 +13,11 @@ module WhiteLabel
 
     def self.middleware: () -> untyped
 
+    def self.plugins: () -> untyped
+
     def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void
+    attr_reader config: untyped
+
     def defaults_test: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def endpoint_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def endpoint_with_host_label_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped

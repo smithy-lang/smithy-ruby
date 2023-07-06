@@ -13,7 +13,11 @@ module RailsJson
 
     def self.middleware: () -> untyped
 
+    def self.plugins: () -> untyped
+
     def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void
+    attr_reader config: untyped
+
     def all_query_string_types: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def constant_and_variable_query_string: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
     def constant_query_string: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
