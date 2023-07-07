@@ -2,6 +2,7 @@
 
 require_relative 'interceptor_context'
 require_relative 'interceptor_list'
+require_relative 'interceptor/hooks'
 
 module Hearth
   # Module for Interceptors - allowing reading and modification or requests

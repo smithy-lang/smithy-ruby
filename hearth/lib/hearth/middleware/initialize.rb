@@ -16,7 +16,7 @@ module Hearth
       def call(input, context)
         # if there are exceptions, execution proceeds to before_completion hooks
         interceptor_error = context.interceptors.apply(
-          hook: :read_before_execution,
+          hook: Interceptor::Hooks::READ_BEFORE_EXECUTION,
           input: input,
           context: context,
           output: nil,
@@ -31,7 +31,7 @@ module Hearth
           end
 
         context.interceptors.apply(
-          hook: :modify_before_completion,
+          hook: Interceptor::Hooks::MODIFY_BEFORE_COMPLETION,
           input: input,
           context: context,
           output: output,
@@ -39,7 +39,7 @@ module Hearth
         )
 
         context.interceptors.apply(
-          hook: :read_after_execution,
+          hook: Interceptor::Hooks::READ_AFTER_EXECUTION,
           input: input,
           context: context,
           output: output,

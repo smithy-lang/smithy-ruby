@@ -26,7 +26,7 @@ module Hearth
       else
         unless valid_interceptor?(interceptor)
           raise ArgumentError,
-                'Invalid Interceptor'
+                'Invalid Interceptor - must implement at least one hook method.'
         end
 
         @interceptors << interceptor
@@ -76,12 +76,8 @@ module Hearth
       output.error = last_error
     end
 
-    # TODO: What makes a valid interceptor? Options:
-    # 1. Check for responds_to for all known hooks
-    # 2. Require all interceptors to include an Interceptor module
-    #   (but currently there is not shared behavior)
-    def valid_interceptor?(_interceptor)
-      true # TODO
+    def valid_interceptor?(interceptor)
+      Interceptor::Hooks.implements_interceptor?(interceptor)
     end
   end
 end

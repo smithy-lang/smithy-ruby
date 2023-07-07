@@ -25,7 +25,7 @@ module Hearth
         output = @app.call(input, context)
 
         interceptor_error = context.interceptors.apply(
-          hook: :modify_before_deserialization,
+          hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION,
           input: input,
           context: context,
           output: output,
@@ -37,7 +37,7 @@ module Hearth
         end
 
         interceptor_error = context.interceptors.apply(
-          hook: :read_before_deserialization,
+          hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION,
           input: input,
           context: context,
           output: output,
@@ -52,7 +52,7 @@ module Hearth
         parse_data(context, output) unless output.error
 
         interceptor_error = context.interceptors.apply(
-          hook: :read_after_deserialization,
+          hook: Interceptor::Hooks::READ_AFTER_DESERIALIZATION,
           input: input,
           context: context,
           output: output,
