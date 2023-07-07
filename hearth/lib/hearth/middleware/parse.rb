@@ -23,8 +23,43 @@ module Hearth
       # @return [Output]
       def call(input, context)
         output = @app.call(input, context)
+
+        interceptor_error = context.interceptors.apply(
+          hook: :modify_before_deserialization,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: false
+        )
+        if interceptor_error
+          output.error = interceptor_error
+          return output
+        end
+
+        interceptor_error = context.interceptors.apply(
+          hook: :read_before_deserialization,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: true
+        )
+        if interceptor_error
+          output.error = interceptor_error
+          return output
+        end
+
         parse_error(context, output) unless output.error
         parse_data(context, output) unless output.error
+
+        interceptor_error = context.interceptors.apply(
+          hook: :read_after_deserialization,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: true
+        )
+        output.error = interceptor_error if interceptor_error
+
         output
       end
 

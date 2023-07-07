@@ -479,7 +479,7 @@ module Weather
     def initialize_config(config)
       config = config.dup
       client_interceptors = config.interceptors
-      config.interceptors = Hearth::Interceptor::List.new
+      config.interceptors = Hearth::InterceptorList.new
       Client.plugins.apply(config)
       Hearth::PluginList.new(config.plugins).apply(config)
       config.interceptors << client_interceptors

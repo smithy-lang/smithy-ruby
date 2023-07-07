@@ -322,9 +322,9 @@ public class MiddlewareBuilder {
 
         ClientConfig interceptors = (new ClientConfig.Builder())
                 .name("interceptors")
-                .type("Hearth::Interceptor::List")
-                .defaultValue("Hearth::Interceptor::List.new")
-                .documentationDefaultValue("Hearth::Interceptor::List.new")
+                .type("Hearth::InterceptorList")
+                .defaultValue("Hearth::InterceptorList.new")
+                .documentationDefaultValue("Hearth::InterceptorList.new")
                 .documentation("A list of Interceptors to apply to the client.")
                 .build();
 

@@ -18,7 +18,7 @@ module Weather
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
   #
-  #   @option args [Hearth::Interceptor::List] :interceptors (Hearth::Interceptor::List.new)
+  #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
   #     A list of Interceptors to apply to the client.
   #
   #   @option args [Symbol] :log_level (:info)
@@ -53,7 +53,7 @@ module Weather
   #   @return [Hearth::HTTP::Client]
   #
   # @!attribute interceptors
-  #   @return [Hearth::Interceptor::List]
+  #   @return [Hearth::InterceptorList]
   #
   # @!attribute log_level
   #   @return [Symbol]
@@ -94,7 +94,7 @@ module Weather
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
-      Hearth::Validator.validate_types!(interceptors, Hearth::Interceptor::List, context: 'options[:interceptors]')
+      Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'options[:interceptors]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'options[:plugins]')
@@ -108,7 +108,7 @@ module Weather
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
-        interceptors: [proc { Hearth::Interceptor::List.new}],
+        interceptors: [proc { Hearth::InterceptorList.new}],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         plugins: [proc { Hearth::PluginList.new}],

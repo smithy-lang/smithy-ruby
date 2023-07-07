@@ -123,8 +123,8 @@ public final class Hearth {
             .build();
 
     public static final Symbol INTERCEPTOR_LIST = Symbol.builder()
-            .namespace("Hearth::Interceptor", "::")
-            .name("List")
+            .namespace("Hearth", "::")
+            .name("InterceptorList")
             .build();
 
     private Hearth() {

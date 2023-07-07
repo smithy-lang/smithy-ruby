@@ -41,7 +41,7 @@ module Hearth
     attr_reader :interceptors
 
     def interceptor_context(input, output)
-      Hearth::Interceptor::Context.new(
+      Hearth::InterceptorContext.new(
         input: input,
         request: request,
         response: response,

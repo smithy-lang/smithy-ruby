@@ -6,7 +6,6 @@ module Hearth
     # @api private
     class Initialize
       # @param [Class] app The next middleware in the stack.
-      # @param [List] interceptors
       def initialize(app)
         @app = app
       end
@@ -16,25 +15,35 @@ module Hearth
       # @return [Output]
       def call(input, context)
         # if there are exceptions, execution proceeds to before_completion hooks
-        before_execution_error = context.interceptors.apply(
-          hook: :read_before_execution, input: input,
-          context: context, output: nil, aggregate_errors: true
+        interceptor_error = context.interceptors.apply(
+          hook: :read_before_execution,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: true
         )
 
-        output = if before_execution_error
-                   Hearth::Output.new(error: before_execution_error)
-                 else
-                   @app.call(input, context)
-                 end
+        output =
+          if interceptor_error
+            Hearth::Output.new(error: interceptor_error)
+          else
+            @app.call(input, context)
+          end
 
         context.interceptors.apply(
-          hook: :modify_before_completion, input: input,
-          context: context, output: output, aggregate_errors: false
+          hook: :modify_before_completion,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: false
         )
 
         context.interceptors.apply(
-          hook: :read_after_execution, input: input,
-          context: context, output: output, aggregate_errors: true
+          hook: :read_after_execution,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: true
         )
 
         output
