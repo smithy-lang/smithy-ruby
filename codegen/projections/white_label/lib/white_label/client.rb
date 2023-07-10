@@ -138,12 +138,12 @@ module WhiteLabel
       input = Params::DefaultsTestInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DefaultsTestInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DefaultsTest
@@ -200,6 +200,9 @@ module WhiteLabel
       input = Params::EndpointOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
         validate_input: config.validate_input
@@ -207,9 +210,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
         disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
@@ -268,6 +268,9 @@ module WhiteLabel
       input = Params::EndpointWithHostLabelOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
         validate_input: config.validate_input
@@ -275,9 +278,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
         disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
@@ -501,12 +501,12 @@ module WhiteLabel
       input = Params::KitchenSinkInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSink
@@ -567,12 +567,12 @@ module WhiteLabel
       input = Params::MixinTestInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::MixinTestInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MixinTest
@@ -634,12 +634,12 @@ module WhiteLabel
       input = Params::PaginatorsTestOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestOperationInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTest
@@ -701,12 +701,12 @@ module WhiteLabel
       input = Params::PaginatorsTestWithItemsInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestWithItemsInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTestWithItems
@@ -766,12 +766,12 @@ module WhiteLabel
       input = Params::StreamingOperationInput.build(params)
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
@@ -829,12 +829,12 @@ module WhiteLabel
       input = Params::StreamingWithLengthInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingWithLengthInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingWithLength
@@ -894,12 +894,12 @@ module WhiteLabel
       input = Params::WaitersTestInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::WaitersTestInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::WaitersTest
@@ -962,12 +962,12 @@ module WhiteLabel
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____PaginatorsTestWithBadNames

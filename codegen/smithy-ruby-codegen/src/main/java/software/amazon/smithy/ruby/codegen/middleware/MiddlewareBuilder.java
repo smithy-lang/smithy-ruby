@@ -188,7 +188,7 @@ public class MiddlewareBuilder {
 
         Middleware validate = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Validate")
-                .step(MiddlewareStackStep.INITIALIZE)
+                .step(MiddlewareStackStep.VALIDATE)
                 .operationParams((ctx, operation) -> {
                     ShapeId inputShapeId = operation.getInputShape();
                     Shape inputShape = ctx.model().expectShape(inputShapeId);
@@ -210,7 +210,10 @@ public class MiddlewareBuilder {
 
         Middleware hostPrefix = (new Middleware.Builder())
                 .klass("Hearth::Middleware::HostPrefix")
-                .step(MiddlewareStackStep.INITIALIZE)
+                .step(MiddlewareStackStep.BUILD)
+                .relative(new Middleware.Relative(
+                        Middleware.Relative.Type.BEFORE, "Hearth::Middleware::Build")
+                )
                 .addConfig(disableHostPrefix)
                 .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
                 .operationParams((ctx, operation) -> {

@@ -19,8 +19,7 @@ module WhiteLabel
   #     The HTTP Client to use for request transport.
   #
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
-  #     A list of Interceptors to apply to the client.  Interceptors are a generic extension point that allows injecting logic at specific stages of execution within the SDK. Logic injection is done with hooks that the interceptor implements.
-  #     Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read the input, transport request, transport response or output messages. Read/write hooks allow an interceptor to modify one of these messages.
+  #     A list of Interceptors to apply to the client.  Interceptors are a generic extension point that allows injecting logic at specific stages of execution within the SDK. Logic injection is done with hooks that the interceptor implements.  Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read the input, transport request, transport response or output messages. Read/write hooks allow an interceptor to modify one of these messages.
   #
   #   @option args [Symbol] :log_level (:info)
   #     The default log level to use with the Logger.

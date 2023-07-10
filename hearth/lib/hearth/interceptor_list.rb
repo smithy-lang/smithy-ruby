@@ -21,7 +21,7 @@ module Hearth
     #
     # @param [Object] interceptor
     def add(interceptor)
-      if interceptor.is_a?(InterceptorList)
+      if interceptor.respond_to?(:each)
         interceptor.each { |i| add(i) }
       else
         unless valid_interceptor?(interceptor)
@@ -53,7 +53,7 @@ module Hearth
         begin
           i.send(hook, ictx)
         rescue StandardError => e
-          context.logger.error(e) if last_error
+          context.logger.error(last_error) if last_error
           last_error = e
           break unless aggregate_errors
         end
@@ -77,7 +77,6 @@ module Hearth
     def set_output_error(last_error, output)
       return unless last_error && output
 
-      output.data = nil
       output.error = last_error
     end
 
