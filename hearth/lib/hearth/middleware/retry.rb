@@ -41,7 +41,7 @@ module Hearth
           )
           output =
             if interceptor_error
-              Hearth::Output.new(error: before_execution_error)
+              Hearth::Output.new(error: interceptor_error)
             else
               @app.call(input, context)
             end
