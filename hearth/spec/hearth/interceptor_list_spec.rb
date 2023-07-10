@@ -70,7 +70,7 @@ module Hearth
       let(:interceptor2) { interceptor_class.new }
       let(:logger) { double('logger') }
       let(:input) { double('input') }
-      let(:output) { double('output') }
+      let(:output) { double('output', error: nil) }
       let(:context) { double('context', logger: logger) }
       let(:ictx) { double('interceptor_context') }
       let(:error) { StandardError.new }
@@ -110,6 +110,24 @@ module Hearth
           context: context,
           output: output
         )
+      end
+
+      context 'previous error on output' do
+        let(:previous_error) { StandardError.new('previous') }
+        let(:output) { double('output', error: previous_error) }
+
+        it 'sets the new error on output and logs the previous' do
+          expect(interceptor1).to receive(hook).and_raise(error)
+          expect(logger).to receive(:error).with(previous_error)
+          expect(output).to receive(:error=).with(error)
+
+          interceptors.apply(
+            hook: hook,
+            input: input,
+            context: context,
+            output: output
+          )
+        end
       end
 
       context 'aggregate_errors: false' do
