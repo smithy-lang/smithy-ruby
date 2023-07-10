@@ -29,7 +29,8 @@ module Hearth
 
       it 'can be initialized from an InterceptorList' do
         interceptors = InterceptorList.new(
-          InterceptorList.new([interceptor]))
+          InterceptorList.new([interceptor])
+        )
         expect(interceptors.to_a).to eq([interceptor])
       end
     end
@@ -65,8 +66,8 @@ module Hearth
     end
 
     describe '#apply' do
-      let(:interceptor_1) { interceptor_class.new }
-      let(:interceptor_2) { interceptor_class.new }
+      let(:interceptor1) { interceptor_class.new }
+      let(:interceptor2) { interceptor_class.new }
       let(:logger) { double('logger') }
       let(:input) { double('input') }
       let(:output) { double('output') }
@@ -75,7 +76,7 @@ module Hearth
       let(:error) { StandardError.new }
 
       let(:interceptors) do
-        InterceptorList.new([interceptor_1, interceptor_2])
+        InterceptorList.new([interceptor1, interceptor2])
       end
       let(:hook) { :read_before_execution }
 
@@ -86,65 +87,68 @@ module Hearth
       it 'calls each interceptor hook with context' do
         expect(context).to receive(:interceptor_context)
           .with(input, output).and_return(ictx)
-        expect(interceptor_1).to receive(hook).with(ictx)
-        expect(interceptor_2).to receive(hook).with(ictx)
+        expect(interceptor1).to receive(hook).with(ictx)
+        expect(interceptor2).to receive(hook).with(ictx)
 
         out = interceptors.apply(
-            hook: hook,
-            input: input,
-            context: context,
-            output: output)
+          hook: hook,
+          input: input,
+          context: context,
+          output: output
+        )
 
         expect(out).to be_nil
       end
 
-
       it 'sets the error on output' do
-        expect(interceptor_1).to receive(hook).and_raise(error)
+        expect(interceptor1).to receive(hook).and_raise(error)
         expect(output).to receive(:error=).with(error)
 
         interceptors.apply(
           hook: hook,
           input: input,
           context: context,
-          output: output)
+          output: output
+        )
       end
 
       context 'aggregate_errors: false' do
         let(:aggregate_errors) { false }
 
         it 'returns the first error immediately' do
-          expect(interceptor_1).to receive(hook).and_raise(error)
-          expect(interceptor_2).not_to receive(hook)
+          expect(interceptor1).to receive(hook).and_raise(error)
+          expect(interceptor2).not_to receive(hook)
 
           out = interceptors.apply(
             hook: hook,
             input: input,
             context: context,
             output: nil,
-            aggregate_errors: aggregate_errors)
+            aggregate_errors: aggregate_errors
+          )
           expect(out).to eq(error)
         end
       end
 
       context 'aggregate_errors: true' do
         let(:aggregate_errors) { true }
-        let(:error_1) { StandardError.new('error 1') }
-        let(:error_2) { StandardError.new('error 2') }
+        let(:error1) { StandardError.new('error 1') }
+        let(:error2) { StandardError.new('error 2') }
 
         it 'calls all interceptors and returns the last error' do
-          expect(interceptor_1).to receive(hook).and_raise(error_1)
-          expect(interceptor_2).to receive(hook).and_raise(error_2)
-          expect(logger).to receive(:error).with(error_1)
+          expect(interceptor1).to receive(hook).and_raise(error1)
+          expect(interceptor2).to receive(hook).and_raise(error2)
+          expect(logger).to receive(:error).with(error1)
 
           out = interceptors.apply(
             hook: hook,
             input: input,
             context: context,
             output: nil,
-            aggregate_errors: aggregate_errors)
+            aggregate_errors: aggregate_errors
+          )
 
-          expect(out).to eq(error_2)
+          expect(out).to eq(error2)
         end
       end
     end
