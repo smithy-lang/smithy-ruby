@@ -17,6 +17,8 @@ require_relative 'hearth/response'
 
 require_relative 'hearth/http'
 require_relative 'hearth/interceptor'
+require_relative 'hearth/interceptor_context'
+require_relative 'hearth/interceptor_list'
 require_relative 'hearth/json'
 require_relative 'hearth/plugin_list'
 require_relative 'hearth/middleware'

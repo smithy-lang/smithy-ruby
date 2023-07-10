@@ -7,7 +7,7 @@ module Hearth
 
     # Initialize an InterceptorList.
     #
-    # @param [Array] ([]) interceptors A list of interceptors
+    # @param [Array] ([]) interceptors A list of interceptors.
     def initialize(interceptors = [])
       unless interceptors.respond_to?(:each)
         raise ArgumentError, 'Interceptors must be an enumerable'
@@ -35,9 +35,14 @@ module Hearth
 
     alias << add
 
-    # TODO: Documentation
-    # if an exception is thrown AND output is not nil,
-    # the output will be modified to include the error
+    # Apply all interceptors that implement the given hook
+    # @param [Symbol] hook the specific hook to apply for
+    # @param input operation input
+    # @param [Hearth::Context] context
+    # @param [Hearth::Output] output may be nil if unavailable
+    # @param [Boolean] aggregate_errors if true all interceptors are run and
+    #   only the last error is returned.  If false, returns immediately if an
+    #   error is encountered.
     # @return nil if successful, an exception otherwise
     def apply(hook:, input:, context:, output:, aggregate_errors: false)
       ictx = context.interceptor_context(input, output)

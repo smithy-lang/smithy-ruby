@@ -325,7 +325,12 @@ public class MiddlewareBuilder {
                 .type("Hearth::InterceptorList")
                 .defaultValue("Hearth::InterceptorList.new")
                 .documentationDefaultValue("Hearth::InterceptorList.new")
-                .documentation("A list of Interceptors to apply to the client.")
+                .documentation("A list of Interceptors to apply to the client.  Interceptors are a generic extension "
+                        + "point that allows injecting logic at specific stages of execution within the SDK. "
+                        + "Logic injection is done with hooks that the interceptor implements.  "
+                        + "Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read "
+                        + "the input, transport request, transport response or output messages. "
+                        + "Read/write hooks allow an interceptor to modify one of these messages.")
                 .build();
 
         return Arrays.asList(logger, logLevel, plugins, interceptors);
