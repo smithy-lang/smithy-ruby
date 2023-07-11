@@ -42,7 +42,7 @@ module Hearth
       # @return [Array<Symbol,Response>]
       def call(client, params = {}, options = {})
         begin
-          options = options.merge(input_output_middleware)
+          options = options.merge(input_output_interceptor)
           response = client.send(@operation_name, params, options)
         rescue Hearth::ApiError => e
           error = e
@@ -58,11 +58,23 @@ module Hearth
 
       private
 
-      def input_output_middleware
-        middleware = lambda do |input, _context|
-          @input = input # get internal details of middleware
+      # allows capture of input before send
+      class InputCaptureInterceptor
+        def initialize(&block)
+          @block = block
         end
-        { middleware: MiddlewareBuilder.before_send(middleware) }
+
+        def read_before_transmit(context)
+          @block.call(context)
+        end
+      end
+
+      def input_output_interceptor
+        interceptor = proc do |context|
+          @input = context.input # get internal details
+        end
+
+        { interceptors: [InputCaptureInterceptor.new(&interceptor)] }
       end
 
       def acceptor_matches?(matcher, response, error)
