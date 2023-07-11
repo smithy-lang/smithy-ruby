@@ -17,13 +17,6 @@ module RailsJson
 
   class Client
     include Hearth::ClientStubs
-
-    @middleware = Hearth::MiddlewareBuilder.new
-
-    def self.middleware
-      @middleware
-    end
-
     @plugins = Hearth::PluginList.new
 
     def self.plugins
@@ -35,7 +28,6 @@ module RailsJson
     #
     def initialize(config = RailsJson::Config.new, options = {})
       @config = initialize_config(config)
-      @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
@@ -124,8 +116,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::AllQueryStringTypesOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -189,8 +179,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::ConstantAndVariableQueryStringOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -254,8 +242,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::ConstantQueryStringOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -326,8 +312,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::DocumentTypeOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -396,8 +380,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::DocumentTypeAsPayloadOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -454,8 +436,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::EmptyOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -516,8 +496,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -580,8 +558,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -648,8 +624,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::GreetingWithErrorsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -716,8 +690,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpPayloadTraitsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -782,8 +754,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpPayloadTraitsWithMediaTypeOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -853,8 +823,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpPayloadWithStructureOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -923,8 +891,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpPrefixHeadersOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -985,8 +951,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpPrefixHeadersInResponseOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1046,8 +1010,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpRequestWithFloatLabelsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1107,8 +1069,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpRequestWithGreedyLabelInPathOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1183,8 +1143,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpRequestWithLabelsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1252,8 +1210,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1311,8 +1267,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::HttpResponseCodeOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1374,8 +1328,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::IgnoreQueryParamsInResponseOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1486,8 +1438,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::InputAndOutputWithHeadersOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1568,8 +1518,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::JsonEnumsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1677,8 +1625,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::JsonMapsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1777,8 +1723,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::JsonUnionsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1943,8 +1887,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::KitchenSinkOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2006,8 +1948,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::MediaTypeHeaderOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2069,8 +2009,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::NestedAttributesOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2141,8 +2079,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::NullAndEmptyHeadersClientOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2212,8 +2148,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::NullOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2275,8 +2209,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::OmitsNullSerializesEmptyStringOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2336,8 +2268,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::OperationWithOptionalInputOutputOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2400,8 +2330,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::QueryIdempotencyTokenAutoFillOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2465,8 +2393,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::QueryParamsAsStringListMapOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2525,8 +2451,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2600,8 +2524,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::TimestampFormatHeadersOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2665,8 +2587,6 @@ module RailsJson
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -2682,12 +2602,6 @@ module RailsJson
     end
 
     private
-
-    def apply_middleware(middleware_stack, middleware)
-      Client.middleware.apply(middleware_stack)
-      @middleware.apply(middleware_stack)
-      Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
-    end
 
     def initialize_config(config)
       config = config.dup

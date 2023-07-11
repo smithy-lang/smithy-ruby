@@ -12,7 +12,15 @@ require 'high_score_service'
 module HighScoreService
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
-    let(:config) { Config.new(stub_responses: true, validate_input: false, endpoint: endpoint) }
+    let(:retry_strategy) { Hearth::Retry::Standard.new(max_attempts: 1) }
+    let(:config) do
+      Config.new(
+        stub_responses: true,
+        validate_input: false,
+        endpoint: endpoint,
+        retry_strategy: retry_strategy
+      )
+    end
     let(:client) { Client.new(config) }
 
     describe '#create_high_score' do

@@ -7,14 +7,20 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'cgi'
-
 require 'weather'
 
 module Weather
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
-    let(:config) { Config.new(stub_responses: true, validate_input: false, endpoint: endpoint) }
+    let(:retry_strategy) { Hearth::Retry::Standard.new(max_attempts: 1) }
+    let(:config) do
+      Config.new(
+        stub_responses: true,
+        validate_input: false,
+        endpoint: endpoint,
+        retry_strategy: retry_strategy
+      )
+    end
     let(:client) { Client.new(config) }
 
     describe '#operation____789_bad_name' do
@@ -23,19 +29,17 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 404
-            response.body.write('{
-                "resourceType": "City",
-                "message": "Your custom message"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 404
+          response.body.write('{
+              "resourceType": "City",
+              "message": "Your custom message"
+          }')
+          response.body.rewind
+          client.stub_responses(:operation____789_bad_name, response)
+          allow(Builders::Operation____789BadName).to receive(:build)
           begin
-            client.__789_bad_name({}, middleware: middleware)
+            client.__789_bad_name({})
           rescue Errors::NoSuchResource => e
             expect(e.data.to_h).to eq({
               resource_type: "City",
@@ -53,14 +57,7 @@ module Weather
         # Does something
         #
         it 'WriteGetCityAssertions' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
-            request = context.request
-            expect(request.http_method).to eq('GET')
-            expect(request.uri.path).to eq('/cities/123')
-            expect(request.body.read).to eq('')
-            Hearth::Output.new
-          end
-          opts = {middleware: middleware}
+          opts = {}
           client.get_city({
             city_id: "123"
           }, **opts)
@@ -71,27 +68,25 @@ module Weather
         # Does something
         #
         it 'WriteGetCityResponseAssertions' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.body.write('{
-                "name": "Seattle",
-                "coordinates": {
-                    "latitude": 12.34,
-                    "longitude": -56.78
-                },
-                "city": {
-                    "cityId": "123",
-                    "name": "Seattle",
-                    "number": "One",
-                    "case": "Upper"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.get_city({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('{
+              "name": "Seattle",
+              "coordinates": {
+                  "latitude": 12.34,
+                  "longitude": -56.78
+              },
+              "city": {
+                  "cityId": "123",
+                  "name": "Seattle",
+                  "number": "One",
+                  "case": "Upper"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:get_city, response)
+          allow(Builders::GetCity).to receive(:build)
+          output = client.get_city({})
           expect(output.data.to_h).to eq({
             name: "Seattle",
             coordinates: {
@@ -112,11 +107,7 @@ module Weather
         # Does something
         #
         it 'stubs WriteGetCityResponseAssertions' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
-          end
-          middleware.remove_build.remove_retry
+          allow(Builders::GetCity).to receive(:build)
           client.stub_responses(:get_city, {
             name: "Seattle",
             coordinates: {
@@ -130,7 +121,7 @@ module Weather
               case: "Upper"
             }
           })
-          output = client.get_city({}, middleware: middleware)
+          output = client.get_city({})
           expect(output.data.to_h).to eq({
             name: "Seattle",
             coordinates: {
@@ -151,19 +142,17 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 404
-            response.body.write('{
-                "resourceType": "City",
-                "message": "Your custom message"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 404
+          response.body.write('{
+              "resourceType": "City",
+              "message": "Your custom message"
+          }')
+          response.body.rewind
+          client.stub_responses(:get_city, response)
+          allow(Builders::GetCity).to receive(:build)
           begin
-            client.get_city({}, middleware: middleware)
+            client.get_city({})
           rescue Errors::NoSuchResource => e
             expect(e.data.to_h).to eq({
               resource_type: "City",
@@ -181,19 +170,17 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 404
-            response.body.write('{
-                "resourceType": "City",
-                "message": "Your custom message"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 404
+          response.body.write('{
+              "resourceType": "City",
+              "message": "Your custom message"
+          }')
+          response.body.rewind
+          client.stub_responses(:get_city_announcements, response)
+          allow(Builders::GetCityAnnouncements).to receive(:build)
           begin
-            client.get_city_announcements({}, middleware: middleware)
+            client.get_city_announcements({})
           rescue Errors::NoSuchResource => e
             expect(e.data.to_h).to eq({
               resource_type: "City",
@@ -211,19 +198,17 @@ module Weather
         # Does something
         #
         it 'WriteNoSuchResourceAssertions' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 404
-            response.body.write('{
-                "resourceType": "City",
-                "message": "Your custom message"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 404
+          response.body.write('{
+              "resourceType": "City",
+              "message": "Your custom message"
+          }')
+          response.body.rewind
+          client.stub_responses(:get_city_image, response)
+          allow(Builders::GetCityImage).to receive(:build)
           begin
-            client.get_city_image({}, middleware: middleware)
+            client.get_city_image({})
           rescue Errors::NoSuchResource => e
             expect(e.data.to_h).to eq({
               resource_type: "City",
@@ -249,24 +234,7 @@ module Weather
         # Does something
         #
         it 'WriteListCitiesAssertions' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
-            request = context.request
-            expect(request.http_method).to eq('GET')
-            expect(request.uri.path).to eq('/cities')
-            expected_query = ::CGI.parse(['pageSize=50'].join('&'))
-            actual_query = ::CGI.parse(request.uri.query)
-            expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
-            end
-            forbid_query = ['nextToken']
-            actual_query = ::CGI.parse(request.uri.query)
-            forbid_query.each do |query|
-              expect(actual_query.key?(query)).to be false
-            end
-            expect(request.body.read).to eq('')
-            Hearth::Output.new
-          end
-          opts = {middleware: middleware}
+          opts = {}
           client.list_cities({
             page_size: 50
           }, **opts)
