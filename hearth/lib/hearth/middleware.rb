@@ -9,6 +9,7 @@ require_relative 'middleware/response_handler'
 require_relative 'middleware/retry'
 require_relative 'middleware/send'
 require_relative 'middleware/validate'
+require_relative 'middleware/initialize'
 
 module Hearth
   # @api private

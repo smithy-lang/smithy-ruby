@@ -137,12 +137,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DefaultsTestInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DefaultsTest
@@ -172,7 +173,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :defaults_test
+          operation_name: :defaults_test,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -197,6 +199,10 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointOperationInput,
         validate_input: config.validate_input
@@ -204,9 +210,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
         disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
@@ -236,7 +239,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :endpoint_operation
+          operation_name: :endpoint_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -263,6 +267,10 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::EndpointWithHostLabelOperationInput,
         validate_input: config.validate_input
@@ -270,9 +278,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
         disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
@@ -302,7 +307,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :endpoint_with_host_label_operation
+          operation_name: :endpoint_with_host_label_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -494,12 +500,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::KitchenSinkInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSink
@@ -529,7 +536,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :kitchen_sink
+          operation_name: :kitchen_sink,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -558,12 +566,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::MixinTestInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MixinTest
@@ -593,7 +602,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :mixin_test
+          operation_name: :mixin_test,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -623,12 +633,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestOperationInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTest
@@ -658,7 +669,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :paginators_test
+          operation_name: :paginators_test,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -688,12 +700,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::PaginatorsTestWithItemsInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTestWithItems
@@ -723,7 +736,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :paginators_test_with_items
+          operation_name: :paginators_test_with_items,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -751,12 +765,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params)
       response_body = output_stream(options, &block)
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingOperationInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
@@ -785,7 +800,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :streaming_operation
+          operation_name: :streaming_operation,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -812,12 +828,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::StreamingWithLengthInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingWithLength
@@ -847,7 +864,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :streaming_with_length
+          operation_name: :streaming_with_length,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -875,12 +893,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::WaitersTestInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::WaitersTest
@@ -910,7 +929,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :waiters_test
+          operation_name: :waiters_test,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -941,12 +961,13 @@ module WhiteLabel
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
         validate_input: config.validate_input
-      )
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____PaginatorsTestWithBadNames
@@ -976,7 +997,8 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :operation____paginators_test_with_bad_names
+          operation_name: :operation____paginators_test_with_bad_names,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -993,16 +1015,20 @@ module WhiteLabel
 
     def initialize_config(config)
       config = config.dup
+      client_interceptors = config.interceptors
+      config.interceptors = Hearth::InterceptorList.new
       Client.plugins.apply(config)
       Hearth::PluginList.new(config.plugins).apply(config)
+      config.interceptors << client_interceptors
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins]
+      return @config unless options[:plugins] || options[:interceptors]
 
       config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config)
+      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
+      config.interceptors << options[:interceptors] if options[:interceptors]
       config.freeze
     end
 

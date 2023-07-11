@@ -18,10 +18,12 @@ module Hearth
         let(:output) { double('output') }
         let(:request) { double('request') }
         let(:response) { double('response') }
+        let(:interceptors) { double('interceptors', apply: nil) }
         let(:context) do
           Context.new(
             request: request,
-            response: response
+            response: response,
+            interceptors: interceptors
           )
         end
 
@@ -33,6 +35,59 @@ module Hearth
 
           resp = subject.call(input, context)
           expect(resp).to be output
+        end
+
+        it 'calls before_serialization interceptors before build' do
+          expect(interceptors).to receive(:apply)
+            .with(hash_including(
+                    hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
+                  )).ordered
+          expect(interceptors).to receive(:apply)
+            .with(hash_including(
+                    hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION
+                  )).ordered
+          expect(builder).to receive(:build).ordered
+          expect(app).to receive(:call).ordered
+
+          subject.call(input, context)
+        end
+
+        context 'modify_before_serialization error' do
+          let(:error) { StandardError.new }
+
+          it 'returns output with the error and skips build' do
+            expect(interceptors).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
+                    ))
+              .and_return(error)
+
+            expect(builder).not_to receive(:build)
+            expect(app).not_to receive(:call)
+
+            resp = subject.call(input, context)
+
+            expect(resp.error).to eq(error)
+          end
+        end
+
+        context 'read_before_serialization error' do
+          let(:error) { StandardError.new }
+
+          it 'returns output with the error and skips build' do
+            expect(interceptors).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION
+                    ))
+              .and_return(error)
+
+            expect(builder).not_to receive(:build)
+            expect(app).not_to receive(:call)
+
+            resp = subject.call(input, context)
+
+            expect(resp.error).to eq(error)
+          end
         end
       end
     end

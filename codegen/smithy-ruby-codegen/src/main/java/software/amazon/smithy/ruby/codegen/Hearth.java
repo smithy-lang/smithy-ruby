@@ -122,6 +122,11 @@ public final class Hearth {
             .name("PluginList")
             .build();
 
+    public static final Symbol INTERCEPTOR_LIST = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("InterceptorList")
+            .build();
+
     private Hearth() {
 
     }

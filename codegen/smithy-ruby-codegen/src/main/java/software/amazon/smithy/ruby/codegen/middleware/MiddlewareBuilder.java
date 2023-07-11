@@ -172,6 +172,12 @@ public class MiddlewareBuilder {
         ApplicationTransport transport = context.applicationTransport();
         SymbolProvider symbolProvider = context.symbolProvider();
 
+        Middleware initialize = (new Middleware.Builder())
+                .klass("Hearth::Middleware::Initialize")
+                .step(MiddlewareStackStep.INITIALIZE)
+                .order(Byte.MIN_VALUE)
+                .build();
+
         ClientConfig validateInput = (new ClientConfig.Builder())
                 .name("validate_input")
                 .type("Boolean")
@@ -182,7 +188,7 @@ public class MiddlewareBuilder {
 
         Middleware validate = (new Middleware.Builder())
                 .klass("Hearth::Middleware::Validate")
-                .step(MiddlewareStackStep.INITIALIZE)
+                .step(MiddlewareStackStep.VALIDATE)
                 .operationParams((ctx, operation) -> {
                     ShapeId inputShapeId = operation.getInputShape();
                     Shape inputShape = ctx.model().expectShape(inputShapeId);
@@ -204,7 +210,10 @@ public class MiddlewareBuilder {
 
         Middleware hostPrefix = (new Middleware.Builder())
                 .klass("Hearth::Middleware::HostPrefix")
-                .step(MiddlewareStackStep.INITIALIZE)
+                .step(MiddlewareStackStep.BUILD)
+                .relative(new Middleware.Relative(
+                        Middleware.Relative.Type.BEFORE, "Hearth::Middleware::Build")
+                )
                 .addConfig(disableHostPrefix)
                 .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
                 .operationParams((ctx, operation) -> {
@@ -276,6 +285,7 @@ public class MiddlewareBuilder {
                 .addConfig(stubResponses)
                 .build();
 
+        register(initialize);
         register(validate);
         register(hostPrefix);
         register(retry);
@@ -313,6 +323,19 @@ public class MiddlewareBuilder {
                         + "Plugins may modify the provided config.")
                 .build();
 
-        return Arrays.asList(logger, logLevel, plugins);
+        ClientConfig interceptors = (new ClientConfig.Builder())
+                .name("interceptors")
+                .type("Hearth::InterceptorList")
+                .defaultValue("Hearth::InterceptorList.new")
+                .documentationDefaultValue("Hearth::InterceptorList.new")
+                .documentation("A list of Interceptors to apply to the client.  Interceptors are a generic extension "
+                        + "point that allows injecting logic at specific stages of execution within the SDK. "
+                        + "Logic injection is done with hooks that the interceptor implements.  "
+                        + "Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read "
+                        + "the input, transport request, transport response or output messages. "
+                        + "Read/write hooks allow an interceptor to modify one of these messages.")
+                .build();
+
+        return Arrays.asList(logger, logLevel, plugins, interceptors);
     }
 }

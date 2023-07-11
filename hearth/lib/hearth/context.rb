@@ -12,6 +12,8 @@ module Hearth
       @params = options[:params]
       @signer_params = options[:signer_params] || {}
       @metadata = options[:metadata] || {}
+      @interceptors = options[:interceptors] || InterceptorList.new
+      @interceptor_attributes = {}
     end
 
     # @return [Symbol] Name of the API operation called.
@@ -34,5 +36,18 @@ module Hearth
 
     # @return [Hash]
     attr_reader :metadata
+
+    # @return [Array] An ordered list of interceptors
+    attr_reader :interceptors
+
+    def interceptor_context(input, output)
+      Hearth::InterceptorContext.new(
+        input: input,
+        request: request,
+        response: response,
+        output: output,
+        attributes: @interceptor_attributes
+      )
+    end
   end
 end

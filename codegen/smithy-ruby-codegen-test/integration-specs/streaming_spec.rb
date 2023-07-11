@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require_relative 'spec_helper'
 
@@ -10,11 +11,11 @@ module WhiteLabel
       let(:output) { 'test' }
 
       before do
-        client.stub_responses(:streaming_operation, { stream: output } )
+        client.stub_responses(:streaming_operation, { stream: output })
       end
 
       context 'block is provided' do
-        let(:block_io) { double("BlockIO") }
+        let(:block_io) { double('BlockIO') }
 
         it 'creates and uses a blockIO as the body' do
           expect(Hearth::BlockIO).to receive(:new).and_return(block_io)
@@ -22,21 +23,21 @@ module WhiteLabel
 
           expect(Hearth::HTTP::Response)
             .to receive(:new)
-                  .with(hash_including(body: block_io))
-                  .and_call_original
+            .with(hash_including(body: block_io))
+            .and_call_original
 
           client.streaming_operation { |resp| resp }
         end
       end
 
       context 'output_stream is set' do
-        let(:output_stream) { double("OutputStream") }
+        let(:output_stream) { double('OutputStream') }
 
         it 'uses the output_stream as the body' do
           expect(Hearth::HTTP::Response)
             .to receive(:new)
-                  .with(hash_including(body: output_stream))
-                  .and_call_original
+            .with(hash_including(body: output_stream))
+            .and_call_original
 
           expect(output_stream).to receive(:write).with(output).and_return(0)
           client.streaming_operation({}, output_stream: output_stream)
@@ -44,7 +45,7 @@ module WhiteLabel
       end
 
       context 'parsers' do
-        let(:output_stream) { double("OutputStream") }
+        let(:output_stream) { double('OutputStream') }
 
         before do
           expect(output_stream).to receive(:write).and_return(0)
@@ -62,7 +63,7 @@ module WhiteLabel
       end
 
       context 'stubs' do
-        let(:output_stream) { double("OutputStream") }
+        let(:output_stream) { double('OutputStream') }
 
         it 'copies the stub to the output stream' do
           middleware = Hearth::MiddlewareBuilder.after_send do |_, context|
@@ -84,22 +85,22 @@ module WhiteLabel
 
       context 'builders' do
         it 'sets the body to the streaming member' do
-          streaming_input = StringIO.new("test")
+          streaming_input = StringIO.new('test')
           middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
             expect(context.request.body).to be(streaming_input)
           end
           expect(streaming_input).not_to receive(:read)
-          client.streaming_operation({stream: streaming_input}, middleware: middleware)
+          client.streaming_operation({ stream: streaming_input }, middleware: middleware)
         end
 
         it 'sets Transfer-Encoding and does not set content length' do
-          streaming_input = StringIO.new("test")
+          streaming_input = StringIO.new('test')
           middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
             expect(context.request.headers['Transfer-Encoding']).to eq('chunked')
             expect(context.request.fields.key?('Content-Length')).to eq(false)
           end
           expect(streaming_input).not_to receive(:size)
-          client.streaming_operation({stream: streaming_input}, middleware: middleware)
+          client.streaming_operation({ stream: streaming_input }, middleware: middleware)
         end
       end
     end
@@ -112,7 +113,7 @@ module WhiteLabel
           expect(context.request.headers['Content-Length']).to eq(data.length.to_s)
           expect(context.request.fields.key?('Transfer-Encoding')).to eq(false)
         end
-        client.streaming_with_length({stream: data}, middleware: middleware)
+        client.streaming_with_length({ stream: data }, middleware: middleware)
       end
     end
   end

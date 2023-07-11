@@ -11,10 +11,10 @@ module WhiteLabel
 
       subject { PaginatorsTest.new(client, params, options) }
       let(:response_1) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: %w[a b c])
       end
       let(:response_2) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: ['1', '2', '3'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: %w[1 2 3])
       end
       let(:response_3) do
         Types::PaginatorsTestOperationOutput.new(items: ['the end'])
@@ -56,7 +56,6 @@ module WhiteLabel
           expect { subject.items }.to raise_error(NoMethodError)
         end
       end
-
     end
 
     describe PaginatorsTestWithItems do
@@ -66,10 +65,10 @@ module WhiteLabel
 
       subject { PaginatorsTestWithItems.new(client, params, options) }
       let(:response_1) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: ['a', 'b', 'c'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: %w[a b c])
       end
       let(:response_2) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: ['1', '2', '3'])
+        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: %w[1 2 3])
       end
       let(:response_3) do
         Types::PaginatorsTestOperationOutput.new(items: ['the end'])
@@ -104,11 +103,13 @@ module WhiteLabel
       subject { Operation____PaginatorsTestWithBadNames.new(client, params, options) }
       let(:response_1) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'foo'), member___items: ['a', 'b', 'c'])
+          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'foo'), member___items: %w[a b c]
+        )
       end
       let(:response_2) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'bar'), member___items: ['1', '2', '3'])
+          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'bar'), member___items: %w[1 2 3]
+        )
       end
       let(:response_3) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(member___items: ['the end'])
@@ -121,11 +122,11 @@ module WhiteLabel
       describe '#items' do
         it 'yields items from paged response data' do
           expect(client).to receive(:operation____paginators_test_with_bad_names)
-                              .with({ param: 'param' }, options).and_return(response_1)
+            .with({ param: 'param' }, options).and_return(response_1)
           expect(client).to receive(:operation____paginators_test_with_bad_names)
-                              .with({ param: 'param', member___next_token: 'foo' }, options).and_return(response_2)
+            .with({ param: 'param', member___next_token: 'foo' }, options).and_return(response_2)
           expect(client).to receive(:operation____paginators_test_with_bad_names)
-                              .with({ param: 'param', member___next_token: 'bar' }, options).and_return(response_3)
+            .with({ param: 'param', member___next_token: 'bar' }, options).and_return(response_3)
 
           paginator = subject.items
           expect(paginator).to be_a(Enumerator)
@@ -134,6 +135,5 @@ module WhiteLabel
         end
       end
     end
-
   end
 end

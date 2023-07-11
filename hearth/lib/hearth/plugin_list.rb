@@ -21,7 +21,7 @@ module Hearth
 
     # Add a plugin
     #
-    # @param [Callable] plugin The options for this HTTP Client
+    # @param [Callable] plugin
     def add(plugin)
       unless valid_plugin?(plugin)
         raise ArgumentError,

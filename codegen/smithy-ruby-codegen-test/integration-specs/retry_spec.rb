@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 
 module WhiteLabel
@@ -13,7 +15,7 @@ module WhiteLabel
           metadata: {}, error_code: 'error'
         )
         # first return error, then some data
-        client.stub_responses(:kitchen_sink, [error, { string: "ok" }])
+        client.stub_responses(:kitchen_sink, [error, { string: 'ok' }])
 
         expect_any_instance_of(Hearth::Retry::Standard).to receive(:acquire_initial_retry_token).and_call_original
         expect_any_instance_of(Hearth::Retry::Standard).to receive(:refresh_retry_token).and_call_original
