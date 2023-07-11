@@ -234,7 +234,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                                 .render(context))
                 .write("params: params,")
                 .write("logger: config.logger,")
-                .write("operation_name: :$L", operationName)
+                .write("operation_name: :$L,", operationName)
+                .write("interceptors: config.interceptors")
                 .closeBlock(")")
                 .closeBlock(")")
                 .write("raise resp.error if resp.error")
@@ -256,8 +257,11 @@ public class ClientGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("\ndef initialize_config(config)")
                 .write("config = config.dup")
+                .write("client_interceptors = config.interceptors")
+                .write("config.interceptors = $T.new", Hearth.INTERCEPTOR_LIST)
                 .write("Client.plugins.apply(config)")
                 .write("$T.new(config.plugins).apply(config)", Hearth.PLUGIN_LIST)
+                .write("config.interceptors << client_interceptors")
                 .write("config.freeze")
                 .closeBlock("end");
     }
@@ -265,10 +269,11 @@ public class ClientGenerator extends RubyGeneratorBase {
     private void renderOperationConfigMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("\ndef operation_config(options)")
-                .write("return @config unless options[:plugins]")
+                .write("return @config unless options[:plugins] || options[:interceptors]")
                 .write("")
                 .write("config = @config.dup")
-                .write("$T.new(options[:plugins]).apply(config)", Hearth.PLUGIN_LIST)
+                .write("$T.new(options[:plugins]).apply(config) if options[:plugins]", Hearth.PLUGIN_LIST)
+                .write("config.interceptors << options[:interceptors] if options[:interceptors]")
                 .write("config.freeze")
                 .closeBlock("end");
     }

@@ -10,6 +10,7 @@ Metrics/AbcSize:
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/hearth/http/client.rb'
+    - 'lib/hearth/middleware/retry.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Metrics/CyclomaticComplexity:
@@ -19,6 +20,7 @@ Metrics/CyclomaticComplexity:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
+    - 'lib/hearth/middleware/retry.rb'
 
 Gemspec/RequireMFA:
   Exclude:
@@ -31,7 +33,7 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - 'spec/**/*.rb'
-    - 'lib/hearth/middleware/send.rb'
+    - 'lib/hearth/middleware/*.rb'
 
 Metrics/ClassLength:
   Exclude:

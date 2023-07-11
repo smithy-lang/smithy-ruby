@@ -117,6 +117,40 @@ public final class Hearth {
             .name("PluginList")
             .build();
 
+    public static final Symbol INTERCEPTOR_LIST = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("InterceptorList")
+            .build();
+
+    public static final Symbol INITIALIZE_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Initialize")
+            .build();
+
+    public static final Symbol VALIDATE_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Validate")
+            .build();
+    public static final Symbol BUILD_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Build")
+            .build();
+
+    public static final Symbol RETRY_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Retry")
+            .build();
+
+    public static final Symbol PARSE_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Parse")
+            .build();
+
+    public static final Symbol SEND_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Send")
+            .build();
+
     private Hearth() {
 
     }

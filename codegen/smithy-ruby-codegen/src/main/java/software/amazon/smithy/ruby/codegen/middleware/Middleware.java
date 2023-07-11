@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -275,6 +276,15 @@ public final class Middleware {
         }
 
         /**
+         * @param klass the Ruby class of the Middleware
+         * @return Returns the builder
+         */
+        public Builder klass(Symbol klass) {
+            this.klass = klass.toString();
+            return this;
+        }
+
+        /**
          * @param order the order within the step. Smaller values are used earlier in the stack.
          * @return Returns the builder
          */
@@ -502,6 +512,10 @@ public final class Middleware {
         public Relative(Type type, String to) {
             this.type = type;
             this.to = to;
+        }
+
+        public Relative(Type type, Symbol to) {
+            this(type, to.toString());
         }
 
         public Type getType() {

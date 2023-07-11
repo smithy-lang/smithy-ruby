@@ -29,9 +29,10 @@ module WhiteLabel
         client = Client.new(config)
         output = client.kitchen_sink(
           {},
-          {plugins: [
-            WhiteLabel::Plugins::TestPlugin.new(override_value: 'operation_override')]
-          })
+          { plugins: [
+            WhiteLabel::Plugins::TestPlugin.new(override_value: 'operation_override')
+          ] }
+        )
         expect(output.metadata[:test_config]).to eq('operation_override')
         # does not modify client config
         expect(client.config.test_config).to eq('client_override')

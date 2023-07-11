@@ -62,6 +62,7 @@ module Weather
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
         validate_input: config.validate_input
@@ -92,7 +93,8 @@ module Weather
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :get_city
+          operation_name: :get_city,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -129,6 +131,7 @@ module Weather
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityImageInput.build(params)
       response_body = output_stream(options, &block)
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityImageInput,
         validate_input: config.validate_input
@@ -159,7 +162,8 @@ module Weather
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :get_city_image
+          operation_name: :get_city_image,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -185,6 +189,7 @@ module Weather
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
         validate_input: config.validate_input
@@ -215,7 +220,8 @@ module Weather
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :get_current_time
+          operation_name: :get_current_time,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -258,6 +264,7 @@ module Weather
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
         validate_input: config.validate_input
@@ -288,7 +295,8 @@ module Weather
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :get_forecast
+          operation_name: :get_forecast,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -336,6 +344,7 @@ module Weather
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
         validate_input: config.validate_input
@@ -366,7 +375,8 @@ module Weather
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :list_cities
+          operation_name: :list_cities,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -399,6 +409,7 @@ module Weather
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params)
       response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
         validate_input: config.validate_input
@@ -429,7 +440,8 @@ module Weather
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :operation____789_bad_name
+          operation_name: :operation____789_bad_name,
+          interceptors: config.interceptors
         )
       )
       raise resp.error if resp.error
@@ -440,16 +452,20 @@ module Weather
 
     def initialize_config(config)
       config = config.dup
+      client_interceptors = config.interceptors
+      config.interceptors = Hearth::InterceptorList.new
       Client.plugins.apply(config)
       Hearth::PluginList.new(config.plugins).apply(config)
+      config.interceptors << client_interceptors
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins]
+      return @config unless options[:plugins] || options[:interceptors]
 
       config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config)
+      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
+      config.interceptors << options[:interceptors] if options[:interceptors]
       config.freeze
     end
 

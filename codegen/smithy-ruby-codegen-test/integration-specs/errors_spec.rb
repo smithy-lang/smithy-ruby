@@ -82,7 +82,7 @@ module WhiteLabel
         error = ServerError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.data).to eq(data)
         expect(error).to be_a(ApiServerError)
-        expect(error.message).to eq("WhiteLabel::Errors::ServerError")
+        expect(error.message).to eq('WhiteLabel::Errors::ServerError')
       end
 
       it 'is retryable with throttling' do
