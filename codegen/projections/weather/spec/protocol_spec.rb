@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require 'cgi'
+
 require 'weather'
 
 module Weather
@@ -22,6 +24,29 @@ module Weather
       )
     end
     let(:client) { Client.new(config) }
+    let(:before_send) do
+      Class.new do
+        def initialize(&block)
+          @block = block
+        end
+
+        def read_before_transmit(context)
+          @block.call(context)
+        end
+      end
+    end
+
+    let(:after_send) do
+      Class.new do
+        def initialize(&block)
+          @block = block
+        end
+
+        def read_after_transmit(context)
+          @block.call(context)
+        end
+      end
+    end
 
     describe '#operation____789_bad_name' do
 
@@ -57,7 +82,13 @@ module Weather
         # Does something
         #
         it 'WriteGetCityAssertions' do
-          opts = {}
+          interceptor = before_send.new do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/cities/123')
+            expect(request.body.read).to eq('')
+          end
+          opts = {interceptors: [interceptor]}
           client.get_city({
             city_id: "123"
           }, **opts)
@@ -107,6 +138,9 @@ module Weather
         # Does something
         #
         it 'stubs WriteGetCityResponseAssertions' do
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
+          end
           allow(Builders::GetCity).to receive(:build)
           client.stub_responses(:get_city, {
             name: "Seattle",
@@ -121,7 +155,7 @@ module Weather
               case: "Upper"
             }
           })
-          output = client.get_city({})
+          output = client.get_city({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             name: "Seattle",
             coordinates: {
@@ -234,7 +268,23 @@ module Weather
         # Does something
         #
         it 'WriteListCitiesAssertions' do
-          opts = {}
+          interceptor = before_send.new do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/cities')
+            expected_query = ::CGI.parse(['pageSize=50'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            forbid_query = ['nextToken']
+            actual_query = ::CGI.parse(request.uri.query)
+            forbid_query.each do |query|
+              expect(actual_query.key?(query)).to be false
+            end
+            expect(request.body.read).to eq('')
+          end
+          opts = {interceptors: [interceptor]}
           client.list_cities({
             page_size: 50
           }, **opts)
