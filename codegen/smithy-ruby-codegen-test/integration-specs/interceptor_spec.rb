@@ -34,9 +34,7 @@ module WhiteLabel
 
     describe 'operation configured interceptor' do
       it 'calls interceptor hook' do
-        config = Config.new(
-          stub_responses: true
-        )
+        config = Config.new(stub_responses: true)
         client = Client.new(config)
 
         expect(interceptor).to receive(hook)
@@ -92,3 +90,4 @@ module WhiteLabel
     end
   end
 end
+

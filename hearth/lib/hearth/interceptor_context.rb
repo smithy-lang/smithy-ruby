@@ -17,20 +17,19 @@ module Hearth
       @attributes = attributes
     end
 
-    # Params object, eg Params::<Operation>Input
+    # @return Params object, eg Params::<Operation>Input
     attr_reader :input
 
-    # Hearth::Request (eg HTTPRequest)
+    # @return [Hearth::Request]
     attr_reader :request
 
-    # Hearth::Response (eg HTTPResponse)
+    # @return [Hearth::Response]
     attr_reader :response
 
-    # Hearth::Output output modeled output,
-    # only available to hooks after transmit
+    # @return [Hearth::Output] only available to hooks after transmit
     attr_reader :output
 
-    # Hash[String,Object] attributes additional interceptor data
+    # @return [Hash] attributes additional interceptor data
     attr_reader :attributes
   end
 end

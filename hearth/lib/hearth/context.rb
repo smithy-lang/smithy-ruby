@@ -40,6 +40,7 @@ module Hearth
     # @return [Array] An ordered list of interceptors
     attr_reader :interceptors
 
+    # @api private
     def interceptor_context(input, output)
       Hearth::InterceptorContext.new(
         input: input,
