@@ -21,7 +21,7 @@ module Hearth
     attr_reader :request
 
     # @return [Hearth::HTTP::Response]
-    attr_accessor :response
+    attr_reader :response
 
     # @return [Logger] An instance of the logger configured for the Client.
     attr_reader :logger

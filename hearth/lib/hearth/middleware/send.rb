@@ -77,7 +77,7 @@ module Hearth
             )
           )
         when Hearth::Response
-          context.response = stub.dup
+          context.response.replace(stub)
         else
           raise ArgumentError, 'Unsupported stub type'
         end

@@ -181,12 +181,10 @@ module Hearth
             before { stubs.add_stubs(operation, [stub_response]) }
 
             it 'sets the response to the stub' do
-              expect(stub_response).to receive(:dup)
-                .and_return(stub_response)
+              expect(context.response).to receive(:replace)
+                .with(stub_response)
 
               subject.call(input, context)
-
-              expect(context.response).to eq(stub_response)
             end
           end
 

@@ -33,14 +33,28 @@ module Hearth
       # @return [Fields::Proxy]
       attr_reader :trailers
 
+      # Replace attributes from other response
+      # @param [Response] other
+      # @return [Response]
+      def replace(other)
+        @status = other.status
+        @reason = other.reason
+
+        @fields = Fields.new
+        other.fields.each { |k, v| @fields[k] = v }
+        @headers = Fields::Proxy.new(@fields, :header)
+        @trailers = Fields::Proxy.new(@fields, :trailer)
+
+        super
+      end
+
       # Resets the HTTP response.
       # @return [Response]
       def reset
         @status = 0
         @reason = nil
         @fields.clear
-        @body.truncate(0)
-        self
+        super
       end
     end
   end
