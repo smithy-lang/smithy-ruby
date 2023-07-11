@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require_relative 'spec_helper'
 
@@ -11,7 +12,7 @@ module WhiteLabel
         middleware = Hearth::MiddlewareBuilder.before_send do |_, context|
           expect(context.request.uri.to_s).to include('foo')
         end
-        client.endpoint_operation( {}, middleware: middleware)
+        client.endpoint_operation({}, middleware: middleware)
       end
     end
 
@@ -21,9 +22,9 @@ module WhiteLabel
       it 'raises when missing host label member' do
         expect { client.endpoint_with_host_label_operation }
           .to raise_error(
-                ArgumentError,
-                'Host label label_member cannot be nil or empty.'
-              )
+            ArgumentError,
+            'Host label label_member cannot be nil or empty.'
+          )
       end
 
       it 'prepends the label to the host' do

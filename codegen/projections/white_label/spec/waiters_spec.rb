@@ -34,7 +34,7 @@ module WhiteLabel
               state: 'failure',
               matcher: {
                 output: {
-                  path: '"status"', comparator: "stringEquals", expected: "failed"
+                  path: '"status"', comparator: 'stringEquals', expected: 'failed'
                 }
               }
             },
@@ -43,8 +43,8 @@ module WhiteLabel
               matcher: {
                 inputOutput: {
                   path: '("input"."status" == `"failed"` || "output"."status" == `"failed"`)',
-                  comparator: "booleanEquals",
-                  expected: "true"
+                  comparator: 'booleanEquals',
+                  expected: 'true'
                 }
               }
             }
@@ -53,7 +53,7 @@ module WhiteLabel
       end
 
       it 'is taggable' do
-        expect(resource_waiter.tags).to eq(["waiter", "test"])
+        expect(resource_waiter.tags).to eq(%w[waiter test])
       end
 
       it 'has a wait method that uses the waiter' do

@@ -36,6 +36,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
@@ -173,7 +174,7 @@ public class MiddlewareBuilder {
         SymbolProvider symbolProvider = context.symbolProvider();
 
         Middleware initialize = (new Middleware.Builder())
-                .klass("Hearth::Middleware::Initialize")
+                .klass(Hearth.INITIALIZE_MIDDLEWARE)
                 .step(MiddlewareStackStep.INITIALIZE)
                 .order(Byte.MIN_VALUE)
                 .build();
@@ -187,7 +188,7 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware validate = (new Middleware.Builder())
-                .klass("Hearth::Middleware::Validate")
+                .klass(Hearth.VALIDATE_MIDDLEWARE)
                 .step(MiddlewareStackStep.VALIDATE)
                 .operationParams((ctx, operation) -> {
                     ShapeId inputShapeId = operation.getInputShape();
@@ -212,7 +213,7 @@ public class MiddlewareBuilder {
                 .klass("Hearth::Middleware::HostPrefix")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(new Middleware.Relative(
-                        Middleware.Relative.Type.BEFORE, "Hearth::Middleware::Build")
+                        Middleware.Relative.Type.BEFORE, Hearth.BUILD_MIDDLEWARE)
                 )
                 .addConfig(disableHostPrefix)
                 .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
@@ -263,14 +264,14 @@ public class MiddlewareBuilder {
                 .build();
 
         Middleware retry = (new Middleware.Builder())
-                .klass("Hearth::Middleware::Retry")
+                .klass(Hearth.RETRY_MIDDLEWARE)
                 .step(MiddlewareStackStep.RETRY)
                 .addConfig(retryStrategy)
                 .addParam("error_inspector_class", transport.getErrorInspector())
                 .build();
 
         Middleware send = (new Middleware.Builder())
-                .klass("Hearth::Middleware::Send")
+                .klass(Hearth.SEND_MIDDLEWARE)
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client",
                         transport.getTransportClient().render(context))

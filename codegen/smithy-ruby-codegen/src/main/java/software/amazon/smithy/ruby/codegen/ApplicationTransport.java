@@ -122,7 +122,7 @@ public final class ApplicationTransport {
             List<Middleware> middleware = new ArrayList<>();
 
             middleware.add(new Middleware.Builder()
-                    .klass("Hearth::Middleware::Build")
+                    .klass(Hearth.BUILD_MIDDLEWARE)
                     .step(MiddlewareStackStep.BUILD)
                     .operationParams((ctx, operation) -> {
                         Map<String, String> params = new HashMap<>();
@@ -153,7 +153,7 @@ public final class ApplicationTransport {
             );
 
             middleware.add((new Middleware.Builder())
-                    .klass("Hearth::Middleware::Parse")
+                    .klass(Hearth.PARSE_MIDDLEWARE)
                     .step(MiddlewareStackStep.PARSE)
                     .operationParams((ctx, operation) -> {
                         Map<String, String> params = new HashMap<>();
