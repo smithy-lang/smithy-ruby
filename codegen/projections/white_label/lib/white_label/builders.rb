@@ -69,6 +69,20 @@ module WhiteLabel
       end
     end
 
+    # Operation Builder for SomeOperation
+    class SomeOperation
+      def self.build(http_req, input:)
+      end
+    end
+
+    # Operation Builder for SomeStreamingOperation
+    class SomeStreamingOperation
+      def self.build(http_req, input:)
+        http_req.body = input[:body]
+        http_req.headers['Content-Type'] = 'application/octet-stream'
+      end
+    end
+
     # Operation Builder for StreamingOperation
     class StreamingOperation
       def self.build(http_req, input:)

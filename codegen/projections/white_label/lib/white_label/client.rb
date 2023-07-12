@@ -745,6 +745,140 @@ module WhiteLabel
     end
 
     # @param [Hash] params
+    #   See {Types::SomeOperationInput}.
+    #
+    # @return [Types::SomeOperationOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.some_operation(
+    #     body: 'body'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::SomeOperationOutput
+    #
+    def some_operation(params = {}, options = {}, &block)
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::SomeOperationInput.build(params)
+      response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::SomeOperationInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::SomeOperation
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::RequestCompression,
+        streaming: false,
+        encodings: ['gzip'],
+        request_min_compression_size_bytes: options.fetch(:request_min_compression_size_bytes, config.request_min_compression_size_bytes),
+        disable_request_compression: options.fetch(:disable_request_compression, config.disable_request_compression)
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::SomeOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
+        stub_class: Stubs::SomeOperation,
+        stubs: @stubs,
+        params_class: Params::SomeOperationOutput
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: config.logger,
+          operation_name: :some_operation,
+          interceptors: config.interceptors
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
+    #   See {Types::SomeStreamingOperationInput}.
+    #
+    # @return [Types::SomeStreamingOperationOutput]
+    #
+    # @example Request syntax with placeholder values
+    #
+    #   resp = client.some_streaming_operation(
+    #     body: 'body'
+    #   )
+    #
+    # @example Response structure
+    #
+    #   resp.data #=> Types::SomeStreamingOperationOutput
+    #
+    def some_streaming_operation(params = {}, options = {}, &block)
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::SomeStreamingOperationInput.build(params)
+      response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::SomeStreamingOperationInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::SomeStreamingOperation
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
+        data_parser: Parsers::SomeStreamingOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
+        stub_class: Stubs::SomeStreamingOperation,
+        stubs: @stubs,
+        params_class: Params::SomeStreamingOperationOutput
+      )
+      apply_middleware(stack, options[:middleware])
+
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: config.logger,
+          operation_name: :some_streaming_operation,
+          interceptors: config.interceptors
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
     #   See {Types::StreamingOperationInput}.
     #
     # @return [Types::StreamingOperationOutput]

@@ -101,6 +101,22 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for SomeOperation
+    class SomeOperation
+      def self.parse(http_resp)
+        data = Types::SomeOperationOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for SomeStreamingOperation
+    class SomeStreamingOperation
+      def self.parse(http_resp)
+        data = Types::SomeStreamingOperationOutput.new
+        data
+      end
+    end
+
     # Operation Parser for StreamingOperation
     class StreamingOperation
       def self.parse(http_resp)

@@ -47,6 +47,14 @@ module WhiteLabel
 
     end
 
+    describe '#some_operation' do
+
+    end
+
+    describe '#some_streaming_operation' do
+
+    end
+
     describe '#streaming_operation' do
 
     end

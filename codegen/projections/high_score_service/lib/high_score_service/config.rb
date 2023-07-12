@@ -12,6 +12,9 @@ module HighScoreService
   #   @option args [Boolean] :disable_host_prefix (false)
   #     When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.
   #
+  #   @option args [Boolean] :disable_request_compression (false)
+  #     When set to 'true' the request body will not be compressed for supported operations.
+  #
   #   @option args [String] :endpoint
   #     Endpoint of the service
   #
@@ -30,6 +33,10 @@ module HighScoreService
   #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
   #     A list of Plugins to apply to the client. Plugins are callables that take one argument: Config.  Plugins may modify the provided config.
   #
+  #   @option args [Integer] :request_min_compression_size_bytes (10240)
+  #     The minimum size bytes that triggers compression for request bodies.
+  #     The value must be non-negative integer value between 0 and 10485780 bytes inclusive.
+  #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes
   #      may have additional options, such as max_retries and backoff strategies.
@@ -44,6 +51,9 @@ module HighScoreService
   #     When `true`, request parameters are validated using the modeled shapes.
   #
   # @!attribute disable_host_prefix
+  #   @return [Boolean]
+  #
+  # @!attribute disable_request_compression
   #   @return [Boolean]
   #
   # @!attribute endpoint
@@ -64,6 +74,9 @@ module HighScoreService
   # @!attribute plugins
   #   @return [Hearth::PluginList]
   #
+  # @!attribute request_min_compression_size_bytes
+  #   @return [Integer]
+  #
   # @!attribute retry_strategy
   #   @return [Hearth::Retry::Strategy]
   #
@@ -75,12 +88,14 @@ module HighScoreService
   #
   Config = ::Struct.new(
     :disable_host_prefix,
+    :disable_request_compression,
     :endpoint,
     :http_client,
     :interceptors,
     :log_level,
     :logger,
     :plugins,
+    :request_min_compression_size_bytes,
     :retry_strategy,
     :stub_responses,
     :validate_input,
@@ -92,12 +107,14 @@ module HighScoreService
 
     def validate!
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
+      Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'options[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'options[:interceptors]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'options[:plugins]')
+      Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'options[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
@@ -106,12 +123,14 @@ module HighScoreService
     def self.defaults
       @defaults ||= {
         disable_host_prefix: [false],
+        disable_request_compression: [Hearth::Config::EnvProvider.new('DISABLE_REQUEST_COMPRESSION', type: 'Boolean'),false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         interceptors: [proc { Hearth::InterceptorList.new}],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         plugins: [proc { Hearth::PluginList.new}],
+        request_min_compression_size_bytes: [Hearth::Config::EnvProvider.new('REQUEST_MIN_COMPRESSION_SIZE_BYTES', type: 'Integer'),10240],
         retry_strategy: [proc { Hearth::Retry::Standard.new}],
         stub_responses: [false],
         validate_input: [true]

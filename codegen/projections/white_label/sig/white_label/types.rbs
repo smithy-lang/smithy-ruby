@@ -44,6 +44,14 @@ module WhiteLabel
 
     ServerError: untyped
 
+    SomeOperationInput: untyped
+
+    SomeOperationOutput: untyped
+
+    SomeStreamingOperationInput: untyped
+
+    SomeStreamingOperationOutput: untyped
+
     StreamingOperationInput: untyped
 
     StreamingOperationOutput: untyped

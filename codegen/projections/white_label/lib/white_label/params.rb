@@ -274,6 +274,44 @@ module WhiteLabel
       end
     end
 
+    module SomeOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeOperationInput, context: context)
+        type = Types::SomeOperationInput.new
+        type.body = params[:body]
+        type
+      end
+    end
+
+    module SomeOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeOperationOutput, context: context)
+        type = Types::SomeOperationOutput.new
+        type
+      end
+    end
+
+    module SomeStreamingOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeStreamingOperationInput, context: context)
+        type = Types::SomeStreamingOperationInput.new
+        io = params[:body] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.body = io
+        type
+      end
+    end
+
+    module SomeStreamingOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeStreamingOperationOutput, context: context)
+        type = Types::SomeStreamingOperationOutput.new
+        type
+      end
+    end
+
     module StreamingOperationInput
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationInput, context: context)

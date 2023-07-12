@@ -736,6 +736,42 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # @!attribute body
+    #
+    #   @return [String]
+    #
+    SomeOperationInput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    SomeOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute body
+    #
+    #   @return [String]
+    #
+    SomeStreamingOperationInput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    SomeStreamingOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute stream
     #
     #   @return [String]

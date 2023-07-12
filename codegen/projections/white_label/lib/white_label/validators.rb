@@ -283,6 +283,38 @@ module WhiteLabel
       end
     end
 
+    class SomeOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SomeOperationInput, context: context)
+        Hearth::Validator.validate_types!(input[:body], ::String, context: "#{context}[:body]")
+      end
+    end
+
+    class SomeOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SomeOperationOutput, context: context)
+      end
+    end
+
+    class SomeStreamingOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SomeStreamingOperationInput, context: context)
+        unless input[:body].respond_to?(:read) || input[:body].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:body].class}"
+        end
+
+        unless input[:body].respond_to?(:size)
+          raise ArgumentError, "Expected #{context} to respond_to(:size)"
+        end
+      end
+    end
+
+    class SomeStreamingOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SomeStreamingOperationOutput, context: context)
+      end
+    end
+
     class StreamingOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StreamingOperationInput, context: context)
