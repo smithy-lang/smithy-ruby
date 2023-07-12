@@ -270,35 +270,22 @@ module WhiteLabel
       end
     end
 
-    class ResultWrapper
+    class RequestCompressionOperationInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::ResultWrapper, context: context)
-        Hearth::Validator.validate_types!(input[:member___123next_token], ::String, context: "#{context}[:member___123next_token]")
-      end
-    end
-
-    class ServerError
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::ServerError, context: context)
-      end
-    end
-
-    class SomeOperationInput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::SomeOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionOperationInput, context: context)
         Hearth::Validator.validate_types!(input[:body], ::String, context: "#{context}[:body]")
       end
     end
 
-    class SomeOperationOutput
+    class RequestCompressionOperationOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::SomeOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionOperationOutput, context: context)
       end
     end
 
-    class SomeStreamingOperationInput
+    class RequestCompressionStreamingOperationInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::SomeStreamingOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingOperationInput, context: context)
         unless input[:body].respond_to?(:read) || input[:body].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:body].class}"
         end
@@ -309,9 +296,22 @@ module WhiteLabel
       end
     end
 
-    class SomeStreamingOperationOutput
+    class RequestCompressionStreamingOperationOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::SomeStreamingOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingOperationOutput, context: context)
+      end
+    end
+
+    class ResultWrapper
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ResultWrapper, context: context)
+        Hearth::Validator.validate_types!(input[:member___123next_token], ::String, context: "#{context}[:member___123next_token]")
+      end
+    end
+
+    class ServerError
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ServerError, context: context)
       end
     end
 

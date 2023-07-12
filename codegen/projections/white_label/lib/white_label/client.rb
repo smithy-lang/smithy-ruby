@@ -745,35 +745,35 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::SomeOperationInput}.
+    #   See {Types::RequestCompressionOperationInput}.
     #
-    # @return [Types::SomeOperationOutput]
+    # @return [Types::RequestCompressionOperationOutput]
     #
     # @example Request syntax with placeholder values
     #
-    #   resp = client.some_operation(
+    #   resp = client.request_compression_operation(
     #     body: 'body'
     #   )
     #
     # @example Response structure
     #
-    #   resp.data #=> Types::SomeOperationOutput
+    #   resp.data #=> Types::RequestCompressionOperationOutput
     #
-    def some_operation(params = {}, options = {}, &block)
+    def request_compression_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::SomeOperationInput.build(params)
+      input = Params::RequestCompressionOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Validate,
-        validator: Validators::SomeOperationInput,
+        validator: Validators::RequestCompressionOperationInput,
         validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::SomeOperation
+        builder: Builders::RequestCompressionOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::RequestCompression,
@@ -788,14 +788,14 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
-        data_parser: Parsers::SomeOperation
+        data_parser: Parsers::RequestCompressionOperation
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::SomeOperation,
+        stub_class: Stubs::RequestCompressionOperation,
         stubs: @stubs,
-        params_class: Params::SomeOperationOutput
+        params_class: Params::RequestCompressionOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -806,7 +806,7 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :some_operation,
+          operation_name: :request_compression_operation,
           interceptors: config.interceptors
         )
       )
@@ -815,35 +815,35 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::SomeStreamingOperationInput}.
+    #   See {Types::RequestCompressionStreamingOperationInput}.
     #
-    # @return [Types::SomeStreamingOperationOutput]
+    # @return [Types::RequestCompressionStreamingOperationOutput]
     #
     # @example Request syntax with placeholder values
     #
-    #   resp = client.some_streaming_operation(
+    #   resp = client.request_compression_streaming_operation(
     #     body: 'body'
     #   )
     #
     # @example Response structure
     #
-    #   resp.data #=> Types::SomeStreamingOperationOutput
+    #   resp.data #=> Types::RequestCompressionStreamingOperationOutput
     #
-    def some_streaming_operation(params = {}, options = {}, &block)
+    def request_compression_streaming_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::SomeStreamingOperationInput.build(params)
+      input = Params::RequestCompressionStreamingOperationInput.build(params)
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Validate,
-        validator: Validators::SomeStreamingOperationInput,
+        validator: Validators::RequestCompressionStreamingOperationInput,
         validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::SomeStreamingOperation
+        builder: Builders::RequestCompressionStreamingOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -852,14 +852,14 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(error_module: Errors, success_status: 200, errors: []),
-        data_parser: Parsers::SomeStreamingOperation
+        data_parser: Parsers::RequestCompressionStreamingOperation
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::SomeStreamingOperation,
+        stub_class: Stubs::RequestCompressionStreamingOperation,
         stubs: @stubs,
-        params_class: Params::SomeStreamingOperationOutput
+        params_class: Params::RequestCompressionStreamingOperationOutput
       )
       apply_middleware(stack, options[:middleware])
 
@@ -870,7 +870,7 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :some_streaming_operation,
+          operation_name: :request_compression_streaming_operation,
           interceptors: config.interceptors
         )
       )

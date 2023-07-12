@@ -5,31 +5,31 @@ namespace smithy.ruby.tests
     encodings: ["gzip"]
 )
 
-@http(method: "POST", uri: "/some_operation")
-operation SomeOperation {
-    input: SomeOperationInput
+@http(method: "POST", uri: "/request_compress_operation")
+operation RequestCompressionOperation {
+    input: RequestCompressionInput
 }
 
-@http(method: "POST", uri: "/some_streaming_operation")
-operation SomeStreamingOperation {
-    input: SomeStreamingInput
+@http(method: "POST", uri: "/request_compress_streaming_operation")
+operation RequestCompressionStreamingOperation {
+    input: RequestCompressionStreamingInput
 }
 
 @input
-structure SomeOperationInput {
+structure RequestCompressionInput {
     @httpPayload
     body: SomeBody
 }
 
 @input
-structure SomeStreamingInput {
+structure RequestCompressionStreamingInput {
     @httpPayload
-    body: SomeStreamingBody
+    body: StreamingBody
 }
 
 blob SomeBody
 
 @streaming
 @requiresLength
-blob SomeStreamingBody
+blob StreamingBody
 

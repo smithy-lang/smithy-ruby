@@ -257,6 +257,44 @@ module WhiteLabel
       end
     end
 
+    module RequestCompressionOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationInput, context: context)
+        type = Types::RequestCompressionOperationInput.new
+        type.body = params[:body]
+        type
+      end
+    end
+
+    module RequestCompressionOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationOutput, context: context)
+        type = Types::RequestCompressionOperationOutput.new
+        type
+      end
+    end
+
+    module RequestCompressionStreamingOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationInput, context: context)
+        type = Types::RequestCompressionStreamingOperationInput.new
+        io = params[:body] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.body = io
+        type
+      end
+    end
+
+    module RequestCompressionStreamingOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationOutput, context: context)
+        type = Types::RequestCompressionStreamingOperationOutput.new
+        type
+      end
+    end
+
     module ResultWrapper
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::ResultWrapper, context: context)
@@ -270,44 +308,6 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::ServerError, context: context)
         type = Types::ServerError.new
-        type
-      end
-    end
-
-    module SomeOperationInput
-      def self.build(params, context: '')
-        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeOperationInput, context: context)
-        type = Types::SomeOperationInput.new
-        type.body = params[:body]
-        type
-      end
-    end
-
-    module SomeOperationOutput
-      def self.build(params, context: '')
-        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeOperationOutput, context: context)
-        type = Types::SomeOperationOutput.new
-        type
-      end
-    end
-
-    module SomeStreamingOperationInput
-      def self.build(params, context: '')
-        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeStreamingOperationInput, context: context)
-        type = Types::SomeStreamingOperationInput.new
-        io = params[:body] || StringIO.new
-        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
-          io = StringIO.new(io)
-        end
-        type.body = io
-        type
-      end
-    end
-
-    module SomeStreamingOperationOutput
-      def self.build(params, context: '')
-        Hearth::Validator.validate_types!(params, ::Hash, Types::SomeStreamingOperationOutput, context: context)
-        type = Types::SomeStreamingOperationOutput.new
         type
       end
     end

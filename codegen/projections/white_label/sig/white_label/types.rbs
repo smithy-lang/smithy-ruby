@@ -40,17 +40,17 @@ module WhiteLabel
 
     PaginatorsTestWithItemsOutput: untyped
 
+    RequestCompressionOperationInput: untyped
+
+    RequestCompressionOperationOutput: untyped
+
+    RequestCompressionStreamingOperationInput: untyped
+
+    RequestCompressionStreamingOperationOutput: untyped
+
     ResultWrapper: untyped
 
     ServerError: untyped
-
-    SomeOperationInput: untyped
-
-    SomeOperationOutput: untyped
-
-    SomeStreamingOperationInput: untyped
-
-    SomeStreamingOperationOutput: untyped
 
     StreamingOperationInput: untyped
 

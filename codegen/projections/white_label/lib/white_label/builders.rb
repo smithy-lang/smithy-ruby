@@ -69,14 +69,14 @@ module WhiteLabel
       end
     end
 
-    # Operation Builder for SomeOperation
-    class SomeOperation
+    # Operation Builder for RequestCompressionOperation
+    class RequestCompressionOperation
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for SomeStreamingOperation
-    class SomeStreamingOperation
+    # Operation Builder for RequestCompressionStreamingOperation
+    class RequestCompressionStreamingOperation
       def self.build(http_req, input:)
         http_req.body = input[:body]
         http_req.headers['Content-Type'] = 'application/octet-stream'

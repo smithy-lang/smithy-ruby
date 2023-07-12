@@ -47,11 +47,11 @@ module WhiteLabel
 
     end
 
-    describe '#some_operation' do
+    describe '#request_compression_operation' do
 
     end
 
-    describe '#some_streaming_operation' do
+    describe '#request_compression_streaming_operation' do
 
     end
 

@@ -207,6 +207,32 @@ module WhiteLabel
       end
     end
 
+    # Operation Stubber for RequestCompressionOperation
+    class RequestCompressionOperation
+      def self.default(visited=[])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    # Operation Stubber for RequestCompressionStreamingOperation
+    class RequestCompressionStreamingOperation
+      def self.default(visited=[])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     # Structure Stubber for ResultWrapper
     class ResultWrapper
       def self.default(visited=[])
@@ -217,32 +243,6 @@ module WhiteLabel
         }
       end
 
-    end
-
-    # Operation Stubber for SomeOperation
-    class SomeOperation
-      def self.default(visited=[])
-        {
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
-      end
-    end
-
-    # Operation Stubber for SomeStreamingOperation
-    class SomeStreamingOperation
-      def self.default(visited=[])
-        {
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
-      end
     end
 
     # Operation Stubber for StreamingOperation

@@ -90,6 +90,22 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for RequestCompressionOperation
+    class RequestCompressionOperation
+      def self.parse(http_resp)
+        data = Types::RequestCompressionOperationOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for RequestCompressionStreamingOperation
+    class RequestCompressionStreamingOperation
+      def self.parse(http_resp)
+        data = Types::RequestCompressionStreamingOperationOutput.new
+        data
+      end
+    end
+
     class ResultWrapper
     end
 
@@ -97,22 +113,6 @@ module WhiteLabel
     class ServerError
       def self.parse(http_resp)
         data = Types::ServerError.new
-        data
-      end
-    end
-
-    # Operation Parser for SomeOperation
-    class SomeOperation
-      def self.parse(http_resp)
-        data = Types::SomeOperationOutput.new
-        data
-      end
-    end
-
-    # Operation Parser for SomeStreamingOperation
-    class SomeStreamingOperation
-      def self.parse(http_resp)
-        data = Types::SomeStreamingOperationOutput.new
         data
       end
     end
