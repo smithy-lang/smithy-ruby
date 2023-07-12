@@ -31,7 +31,6 @@ module Hearth
             selected_encoding = request_encoding_selection(@encodings)
             if selected_encoding
               if @streaming
-                # process encoding based on streaming cases
                 process_streaming_compression(selected_encoding, request)
               elsif request.body.size >= @request_min_compression_size_bytes
                 process_compression(selected_encoding, request)
@@ -41,12 +40,12 @@ module Hearth
           @app.call(input, context)
         end
 
-        # find supported encoding
+        private
+
         def request_encoding_selection(encodings)
           encodings.find { |encoding| SUPPORTED_ENCODINGS.include?(encoding) }
         end
 
-        # update Content-Encoding header
         def update_content_encoding(encoding, request)
           headers = request.headers
           if headers['Content-Encoding']
@@ -56,13 +55,12 @@ module Hearth
           end
         end
 
-        # process non-streaming compression
         def process_compression(encoding, request)
           case encoding
           when 'gzip'
             gzip_compress(request)
           else
-            raise StandardError, 'We currently do not support' /
+            raise StandardError, 'We currently do not support ' \
                                  "#{encoding} encoding"
           end
           update_content_encoding(encoding, request)
@@ -91,14 +89,13 @@ module Hearth
           end
         end
 
-        # process streaming compression
         def process_streaming_compression(encoding, request)
           case encoding
           when 'gzip'
             request.body = GzipIO.new(request.body)
           else
-            raise StandardError, 'We currently do not support' /
-              "#{encoding} encoding"
+            raise StandardError, 'We currently do not support ' \
+                                 "#{encoding} encoding"
           end
           update_content_encoding(encoding, request)
         end
