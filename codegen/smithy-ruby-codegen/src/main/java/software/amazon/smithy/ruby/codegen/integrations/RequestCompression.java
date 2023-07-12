@@ -75,24 +75,24 @@ public class RequestCompression implements RubyIntegration {
                     RequestCompressionTrait requestCompression = operation.expectTrait(RequestCompressionTrait.class);
                     Shape inputShape = ctx.model().expectShape(operation.getInputShape());
 
-                    // need a better way to check if 'encodings' is present
-                    // what is the behavior we want if the list is empty?
-                    if (!requestCompression.getEncodings().isEmpty()) {
-                        params.put("encodings", "[" + requestCompression
+                    params.put("encodings", "[" + requestCompression
                                 .getEncodings()
                                 .stream()
                                 .map((s) -> "'" + s + "'")
                                 .collect(Collectors.joining(", ")) + "]");
-                    }
+
                     if (Streaming.isStreaming(ctx.model(), inputShape)) {
                         params.put("streaming", "true");
+                    } else {
+                        params.put("streaming", "false");
                     }
                     return params;
                 })
                 .addConfig(disableRequestCompression)
                 .addConfig(requestMinCompressionSizeBytes)
                 .klass("Hearth::Middleware::RequestCompression")
-                .step(MiddlewareStackStep.BUILD)
+                .step(MiddlewareStackStep.AFTER_BUILD)
+// commented out since Middleware Relative needs an update to handle this case
 //                .relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE,
 //                        "Hearth::HTTP::Middleware::ContentMD5"))
                 .build();
