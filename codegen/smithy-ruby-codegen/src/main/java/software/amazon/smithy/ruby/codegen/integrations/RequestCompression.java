@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen;
+package software.amazon.smithy.ruby.codegen.integrations;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +22,8 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.RequestCompressionTrait;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
@@ -91,8 +93,8 @@ public class RequestCompression implements RubyIntegration {
                 .addConfig(requestMinCompressionSizeBytes)
                 .klass("Hearth::Middleware::RequestCompression")
                 .step(MiddlewareStackStep.BUILD)
-                .relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE,
-                        "Hearth::HTTP::Middleware::ContentMD5"))
+//                .relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE,
+//                        "Hearth::HTTP::Middleware::ContentMD5"))
                 .build();
         middlewareBuilder.register(compression);
     }
