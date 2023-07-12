@@ -32,7 +32,19 @@ module Hearth
 
         output = nil
         loop do
-          output = @app.call(input, context)
+          interceptor_error = context.interceptors.apply(
+            hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT,
+            input: input,
+            context: context,
+            output: nil,
+            aggregate_errors: false
+          )
+          output =
+            if interceptor_error
+              Hearth::Output.new(error: interceptor_error)
+            else
+              @app.call(input, context)
+            end
 
           if (error = output.error)
             error_info = @error_inspector_class.new(error, context.response)
@@ -42,6 +54,23 @@ module Hearth
           else
             @retry_strategy.record_success(token)
           end
+
+          context.interceptors.apply(
+            hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION,
+            input: input,
+            context: context,
+            output: output,
+            aggregate_errors: false
+          )
+
+          context.interceptors.apply(
+            hook: Interceptor::Hooks::READ_AFTER_ATTEMPT,
+            input: input,
+            context: context,
+            output: output,
+            aggregate_errors: true
+          )
+
           break unless token && output.error
 
           reset_request(context, output)

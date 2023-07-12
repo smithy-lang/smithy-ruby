@@ -31,6 +31,9 @@ java {
 repositories {
     mavenLocal()
     mavenCentral()
+    flatDir {
+        dirs("middleware", "plugins")
+    }
 }
 
 buildscript {

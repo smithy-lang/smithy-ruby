@@ -48,5 +48,18 @@ module Hearth
         expect(subject.metadata).to include(bar: 'baz')
       end
     end
+
+    describe '#interceptor_context' do
+      let(:input) { double('input') }
+      let(:output) { double('output') }
+
+      it 'creates an interceptor context' do
+        ictx = subject.interceptor_context(input, output)
+        expect(ictx.input).to eq(input)
+        expect(ictx.request).to eq(request)
+        expect(ictx.response).to eq(response)
+        expect(ictx.output).to eq(output)
+      end
+    end
   end
 end

@@ -10,7 +10,7 @@ module WhiteLabel
           string: 'simple string',
           struct: struct,
           document: { boolean: true },
-          list_of_strings: ['dank', 'memes'],
+          list_of_strings: %w[dank memes],
           list_of_structs: [struct],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
@@ -51,7 +51,7 @@ module WhiteLabel
       it 'implements to_h for delegation' do
         string_union = Union::String.new('simple string')
         struct_union = Union::Struct.new(struct)
-        unknown_union = Union::Unknown.new({key: 'key', value: 'value'})
+        unknown_union = Union::Unknown.new({ key: 'key', value: 'value' })
         expect(string_union.to_h).to eq({ string: 'simple string' })
         expect(struct_union.to_h).to eq({ struct: { value: 'struct value' } })
         expect(unknown_union.to_h).to eq({ unknown: { key: 'key', value: 'value' } })
@@ -59,7 +59,6 @@ module WhiteLabel
     end
 
     describe DefaultsTestInput do
-
       it 'has a default value for default_number' do
         expect(subject.un_required_number).to be 0
       end
@@ -77,9 +76,9 @@ module WhiteLabel
 
     describe TypedEnum do
       it 'has typed enums' do
-        expect(Types::TypedEnum::YES).to eq "YES"
-        expect(Types::TypedEnum::NO).to eq "NO"
-        expect(Types::TypedEnum::MAYBE).to eq "MAYBE"
+        expect(Types::TypedEnum::YES).to eq 'YES'
+        expect(Types::TypedEnum::NO).to eq 'NO'
+        expect(Types::TypedEnum::MAYBE).to eq 'MAYBE'
       end
     end
   end

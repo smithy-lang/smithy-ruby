@@ -28,6 +28,24 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
+        interceptor_error = context.interceptors.apply(
+          hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: false
+        )
+        return Hearth::Output.new(error: interceptor_error) if interceptor_error
+
+        interceptor_error = context.interceptors.apply(
+          hook: Interceptor::Hooks::READ_BEFORE_TRANSMIT,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: true
+        )
+        return Hearth::Output.new(error: interceptor_error) if interceptor_error
+
         output = Output.new
         if @stub_responses
           stub = @stubs.next(context.operation_name)
@@ -46,6 +64,16 @@ module Hearth
             output.error = resp_or_error
           end
         end
+
+        interceptor_error = context.interceptors.apply(
+          hook: Interceptor::Hooks::READ_AFTER_TRANSMIT,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: true
+        )
+        output.error = interceptor_error if interceptor_error
+
         output
       end
 

@@ -33,12 +33,14 @@ module Hearth
         let(:request) { double('request') }
         let(:body) { StringIO.new }
         let(:response) { double('response', body: body) }
+        let(:interceptors) { double('interceptors', apply: nil) }
         let(:context) do
           Hearth::Context.new(
             request: request,
             response: response,
             operation_name: operation,
-            logger: logger
+            logger: logger,
+            interceptors: interceptors
           )
         end
 
@@ -64,6 +66,27 @@ module Hearth
           output = subject.call(input, context)
           expect(output).to be_a(Hearth::Output)
           expect(output.error).to be_a(Hearth::NetworkingError)
+        end
+
+        it 'calls all of the interceptor hooks' do
+          expect(interceptors).to receive(:apply)
+            .with(hash_including(
+                    hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT
+                  )).ordered
+          expect(interceptors).to receive(:apply)
+            .with(hash_including(
+                    hook: Interceptor::Hooks::READ_BEFORE_TRANSMIT
+                  )).ordered
+
+          expect(client).to receive(:transmit)
+            .and_return(response).ordered
+
+          expect(interceptors).to receive(:apply)
+            .with(hash_including(
+                    hook: Interceptor::Hooks::READ_AFTER_TRANSMIT
+                  )).ordered
+
+          subject.call(input, context)
         end
 
         context 'stub_responses is true' do

@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 # guaranteed to trip validation
 class BadType; end
 
-RSpec.shared_examples "validates params" do |*types|
+RSpec.shared_examples 'validates params' do |*types|
   it "validates params as #{types}" do
     expect do
       shape = Object.const_get(self.class.description)
@@ -17,9 +17,9 @@ end
 module WhiteLabel
   module Params
     describe ListOfStrings do
-      include_examples "validates params", Array
+      include_examples 'validates params', Array
 
-      let(:params) { ['dank', 'memes'] }
+      let(:params) { %w[dank memes] }
 
       it 'builds an array of simple elements' do
         data = ListOfStrings.build(params, context: 'params')
@@ -29,7 +29,7 @@ module WhiteLabel
     end
 
     describe ListOfStructs do
-      include_examples "validates params", Array
+      include_examples 'validates params', Array
 
       let(:struct_1) { Types::Struct.new }
       let(:struct_2) { Types::Struct.new }
@@ -43,7 +43,7 @@ module WhiteLabel
     end
 
     describe MapOfStrings do
-      include_examples "validates params", Hash
+      include_examples 'validates params', Hash
 
       let(:params) { { key: 'value', other_key: 'other value' } }
 
@@ -55,7 +55,7 @@ module WhiteLabel
     end
 
     describe MapOfStructs do
-      include_examples "validates params", Hash
+      include_examples 'validates params', Hash
 
       let(:struct_1) { Types::Struct.new }
       let(:struct_2) { Types::Struct.new }
@@ -69,14 +69,14 @@ module WhiteLabel
     end
 
     describe KitchenSinkInput do
-      include_examples "validates params", Hash, Types::KitchenSinkInput
+      include_examples 'validates params', Hash, Types::KitchenSinkInput
 
       let(:params) do
         {
           string: 'simple string',
           struct: struct,
           document: { boolean: true },
-          list_of_strings: ['dank', 'memes'],
+          list_of_strings: %w[dank memes],
           list_of_structs: [struct],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: struct },
@@ -92,7 +92,7 @@ module WhiteLabel
           string: 'simple string',
           struct: { value: 'struct value' },
           document: { boolean: true },
-          list_of_strings: ['dank', 'memes'],
+          list_of_strings: %w[dank memes],
           list_of_structs: [{ value: 'struct value' }],
           map_of_strings: { key: 'value' },
           map_of_structs: { key: { value: 'struct value' } },
@@ -103,7 +103,7 @@ module WhiteLabel
     end
 
     describe DefaultsTestInput do
-      include_examples "validates params", Hash, Types::DefaultsTestInput
+      include_examples 'validates params', Hash, Types::DefaultsTestInput
       it 'builds with empty parmas input' do
         data = DefaultsTestInput.build({}, context: 'params')
         expect(data).to be_a(Types::DefaultsTestInput)
@@ -121,15 +121,15 @@ module WhiteLabel
           map_document: {},
           list_of_strings: [],
           map_of_strings: {},
-          epoch_timestamp: 1515531081.1234,
-          iso8601_timestamp: "1985-04-12T23:20:50.52Z"
+          epoch_timestamp: 1_515_531_081.1234,
+          iso8601_timestamp: '1985-04-12T23:20:50.52Z'
         }
         expect(data.to_h).to eq(expected)
       end
     end
 
     describe Struct do
-      include_examples "validates params", Hash, Types::Struct
+      include_examples 'validates params', Hash, Types::Struct
 
       let(:params) { { value: 'simple' } }
 
@@ -141,7 +141,7 @@ module WhiteLabel
     end
 
     describe Union do
-      include_examples "validates params", Hash, Types::Union
+      include_examples 'validates params', Hash, Types::Union
 
       it 'builds a union structure with simple data' do
         params = { string: 'simple string' }
@@ -174,22 +174,22 @@ module WhiteLabel
 
     describe StreamingOperationInput do
       it 'converts a string to StringIO' do
-        data = StreamingOperationInput.build({stream: 'string'}, context: 'params')
+        data = StreamingOperationInput.build({ stream: 'string' }, context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)
         expect(data.stream).to be_a(StringIO)
         expect(data.stream.read).to eq('string')
       end
 
       it 'converts a nil to an empty StringIO' do
-        data = StreamingOperationInput.build({stream: nil}, context: 'params')
+        data = StreamingOperationInput.build({ stream: nil }, context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)
         expect(data.stream).to be_a(StringIO)
         expect(data.stream.read).to eq('')
       end
 
       it 'does not convert a readable, io like object' do
-        stream = double("stream", read: 'chunk')
-        data = StreamingOperationInput.build({stream: stream}, context: 'params')
+        stream = double('stream', read: 'chunk')
+        data = StreamingOperationInput.build({ stream: stream }, context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)
         expect(data.stream).to be(stream)
       end
@@ -197,16 +197,15 @@ module WhiteLabel
 
     describe MixinTestInput do
       it 'expects mixins input operation generated' do
-        data = MixinTestInput.build({user_id: 'abc123'}, context: 'params')
+        data = MixinTestInput.build({ user_id: 'abc123' }, context: 'params')
         expect(data).to be_a(Types::MixinTestInput)
         expect(data.user_id).to eq('abc123')
       end
-
     end
 
     describe MixinTestOutput do
       it 'expects mixins output operation generated' do
-        data = MixinTestOutput.build({username: 'ben', user_id: 'abc123'}, context: 'params')
+        data = MixinTestOutput.build({ username: 'ben', user_id: 'abc123' }, context: 'params')
         expect(data).to be_a(Types::MixinTestOutput)
         expect(data.user_id).to eq('abc123')
         expect(data.username).to eq('ben')
