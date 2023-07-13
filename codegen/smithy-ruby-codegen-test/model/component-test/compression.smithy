@@ -18,7 +18,7 @@ operation RequestCompressionStreamingOperation {
 @input
 structure RequestCompressionInput {
     @httpPayload
-    body: NonStreamingBlob
+    body: Blob
 }
 
 @input
@@ -26,6 +26,4 @@ structure RequestCompressionStreamingInput {
     @httpPayload
     body: StreamingBlob
 }
-
-blob NonStreamingBlob
 
