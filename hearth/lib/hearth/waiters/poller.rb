@@ -59,7 +59,7 @@ module Hearth
       private
 
       # allows capture of input before send
-      class InputCaptureInterceptor
+      class InputOutputInterceptor
         def initialize(&block)
           @block = block
         end
@@ -74,7 +74,7 @@ module Hearth
           @input = context.input # get internal details
         end
 
-        { interceptors: [InputCaptureInterceptor.new(&interceptor)] }
+        { interceptors: [InputOutputInterceptor.new(&interceptor)] }
       end
 
       def acceptor_matches?(matcher, response, error)

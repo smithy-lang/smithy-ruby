@@ -18,7 +18,9 @@ module Hearth
     # @param [Response] other
     # @return [Response]
     def replace(other)
-      IO.copy_stream(other.body, body)
+      @body.truncate(0)
+      IO.copy_stream(other.body, @body)
+      @body.rewind
       self
     end
 

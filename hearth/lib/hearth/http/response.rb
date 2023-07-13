@@ -39,9 +39,7 @@ module Hearth
       def replace(other)
         @status = other.status
         @reason = other.reason
-
-        @fields = Fields.new
-        other.fields.each { |k, v| @fields[k] = v }
+        @fields = other.fields
         @headers = Fields::Proxy.new(@fields, :header)
         @trailers = Fields::Proxy.new(@fields, :trailer)
 

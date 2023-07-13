@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 module Hearth
   module HTTP
@@ -13,6 +13,30 @@ module Hearth
         end
       end
 
+      describe '#replace' do
+        it 'replaces the response' do
+          response = Response.new(
+            body: StringIO.new('foo'),
+            reason: 'Because',
+            status: 200,
+            fields: Fields.new([Field.new('key', 'value')])
+          )
+          other = Response.new(
+            body: StringIO.new('bar'),
+            reason: 'Because I said so',
+            status: 400,
+            fields: Fields.new([Field.new('key2', 'value2')])
+          )
+
+          response.replace(other)
+          expect(response.status).to eq(400)
+          expect(response.headers['key']).to be_nil
+          expect(response.headers['key2']).to eq('value2')
+          expect(response.reason).to eq('Because I said so')
+          expect(response.body.read).to eq('bar')
+        end
+      end
+
       describe '#reset' do
         it 'resets to defaults' do
           response = Response.new(
@@ -20,9 +44,9 @@ module Hearth
             status: 200,
             fields: Fields.new([Field.new('key', 'value')])
           )
-          response.headers['key'] = 'value'
           response.body << 'foo bar' # frozen string literal, cannot pass in
           response.reset
+
           expect(response.status).to eq(0)
           expect(response.fields.size).to eq(0)
           expect(response.reason).to be_nil
