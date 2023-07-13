@@ -37,13 +37,6 @@ module WhiteLabel
   #
   class Client
     include Hearth::ClientStubs
-
-    @middleware = Hearth::MiddlewareBuilder.new
-
-    def self.middleware
-      @middleware
-    end
-
     @plugins = Hearth::PluginList.new([
       Plugins::TestPlugin.new
     ])
@@ -57,7 +50,6 @@ module WhiteLabel
     #
     def initialize(config = WhiteLabel::Config.new, options = {})
       @config = initialize_config(config)
-      @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
@@ -164,8 +156,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::DefaultsTestOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -230,8 +220,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -298,8 +286,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -527,8 +513,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::KitchenSinkOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -593,8 +577,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::MixinTestOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -660,8 +642,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::PaginatorsTestOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -727,8 +707,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::PaginatorsTestWithItemsOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -791,8 +769,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -855,8 +831,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::StreamingWithLengthOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -920,8 +894,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::WaitersTestOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -988,8 +960,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -1006,12 +976,6 @@ module WhiteLabel
     end
 
     private
-
-    def apply_middleware(middleware_stack, middleware)
-      Client.middleware.apply(middleware_stack)
-      @middleware.apply(middleware_stack)
-      Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
-    end
 
     def initialize_config(config)
       config = config.dup

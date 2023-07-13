@@ -198,6 +198,19 @@ module Hearth
             end
           end
 
+          context 'stub is a Hearth::Response' do
+            let(:stub_response) { Hearth::Response.new(body: body) }
+
+            before { stubs.add_stubs(operation, [stub_response]) }
+
+            it 'sets the response to the stub' do
+              expect(context.response).to receive(:replace)
+                .with(stub_response)
+
+              subject.call(input, context)
+            end
+          end
+
           context 'stub is something else' do
             before { stubs.add_stubs(operation, ['some string']) }
 

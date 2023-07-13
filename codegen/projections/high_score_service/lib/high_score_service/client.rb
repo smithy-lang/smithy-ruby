@@ -18,13 +18,6 @@ module HighScoreService
   #
   class Client
     include Hearth::ClientStubs
-
-    @middleware = Hearth::MiddlewareBuilder.new
-
-    def self.middleware
-      @middleware
-    end
-
     @plugins = Hearth::PluginList.new
 
     def self.plugins
@@ -36,7 +29,6 @@ module HighScoreService
     #
     def initialize(config = HighScoreService::Config.new, options = {})
       @config = initialize_config(config)
-      @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
@@ -103,8 +95,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::CreateHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -170,8 +160,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::DeleteHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -243,8 +231,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::GetHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -312,8 +298,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::ListHighScoresOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -392,8 +376,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::UpdateHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -410,12 +392,6 @@ module HighScoreService
     end
 
     private
-
-    def apply_middleware(middleware_stack, middleware)
-      Client.middleware.apply(middleware_stack)
-      @middleware.apply(middleware_stack)
-      Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
-    end
 
     def initialize_config(config)
       config = config.dup

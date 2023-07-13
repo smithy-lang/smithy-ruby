@@ -11,7 +11,7 @@ module Hearth
       end
 
       let(:client) { double('client') }
-      let(:input_output_middleware) { double('input_output_middleware') }
+      let(:input_output_interceptor) { double('input_output_interceptor') }
 
       let(:test_operation_struct) do
         Struct.new(
@@ -31,6 +31,10 @@ module Hearth
         )
       end
 
+      let(:interceptor_context) do
+        double('ictx', input: struct)
+      end
+
       let(:error) do
         Hearth::ApiError.new(
           error_code: 'SomeError',
@@ -40,12 +44,12 @@ module Hearth
       end
 
       before do
-        expect(Hearth::MiddlewareBuilder).to receive(:before_send)
-          .and_wrap_original do |_middleware, handler|
-            # middleware captures input for inputOutput matcher
-            handler.call(struct, {})
-            # return a mocked middleware
-            input_output_middleware
+        expect(Hearth::Waiters::Poller::InputCaptureInterceptor)
+          .to receive(:new).and_wrap_original do |_method, *_args, &block|
+            # captures input for inputOutput matcher
+            block.call(interceptor_context, {})
+            # return a mocked interceptor
+            input_output_interceptor
           end
       end
 
@@ -56,7 +60,7 @@ module Hearth
           context 'client error' do
             it 'returns error state with error' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_raise(error)
 
               expect(subject.call(client, {}, {})).to eq [:error, error]
@@ -66,7 +70,7 @@ module Hearth
           context 'client response' do
             it 'returns retry state with response' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:retry, struct]
@@ -83,7 +87,7 @@ module Hearth
 
           it 'can match success' do
             expect(client).to receive(:test_operation)
-              .with({}, { middleware: input_output_middleware })
+              .with({}, { interceptors: [input_output_interceptor] })
               .and_return(struct)
 
             expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -99,7 +103,7 @@ module Hearth
 
           it 'can match error types' do
             expect(client).to receive(:test_operation)
-              .with({}, { middleware: input_output_middleware })
+              .with({}, { interceptors: [input_output_interceptor] })
               .and_raise(error)
 
             expect(subject.call(client, {}, {})).to eq [:retry, error]
@@ -125,7 +129,7 @@ module Hearth
 
             it 'can match string equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -150,7 +154,7 @@ module Hearth
 
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -175,7 +179,7 @@ module Hearth
 
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -200,7 +204,7 @@ module Hearth
 
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -227,7 +231,7 @@ module Hearth
 
             it 'can match string equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -252,7 +256,7 @@ module Hearth
 
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -277,7 +281,7 @@ module Hearth
 
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -302,7 +306,7 @@ module Hearth
 
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
-                .with({}, { middleware: input_output_middleware })
+                .with({}, { interceptors: [input_output_interceptor] })
                 .and_return(struct)
 
               expect(subject.call(client, {}, {})).to eq [:success, struct]
@@ -338,7 +342,7 @@ module Hearth
 
           it 'iterates all matchers' do
             expect(client).to receive(:test_operation)
-              .with({}, { middleware: input_output_middleware })
+              .with({}, { interceptors: [input_output_interceptor] })
               .and_return(struct)
 
             expect(subject.call(client, {}, {})).to eq [:success, struct]

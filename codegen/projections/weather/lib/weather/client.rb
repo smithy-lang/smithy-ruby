@@ -16,13 +16,6 @@ module Weather
   #
   class Client
     include Hearth::ClientStubs
-
-    @middleware = Hearth::MiddlewareBuilder.new
-
-    def self.middleware
-      @middleware
-    end
-
     @plugins = Hearth::PluginList.new
 
     def self.plugins
@@ -34,7 +27,6 @@ module Weather
     #
     def initialize(config = Weather::Config.new, options = {})
       @config = initialize_config(config)
-      @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
@@ -94,8 +86,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetCityOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -165,8 +155,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetCityImageOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -225,8 +213,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetCurrentTimeOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -302,8 +288,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetForecastOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -384,8 +368,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::ListCitiesOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -451,8 +433,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -469,12 +449,6 @@ module Weather
     end
 
     private
-
-    def apply_middleware(middleware_stack, middleware)
-      Client.middleware.apply(middleware_stack)
-      @middleware.apply(middleware_stack)
-      Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
-    end
 
     def initialize_config(config)
       config = config.dup

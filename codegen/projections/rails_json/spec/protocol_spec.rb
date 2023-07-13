@@ -14,8 +14,39 @@ require 'rails_json'
 module RailsJson
   describe Client do
     let(:endpoint) { 'http://127.0.0.1' }
-    let(:config) { Config.new(stub_responses: true, validate_input: false, endpoint: endpoint) }
+    let(:retry_strategy) { Hearth::Retry::Standard.new(max_attempts: 1) }
+    let(:config) do
+      Config.new(
+        stub_responses: true,
+        validate_input: false,
+        endpoint: endpoint,
+        retry_strategy: retry_strategy
+      )
+    end
     let(:client) { Client.new(config) }
+    let(:before_send) do
+      Class.new do
+        def initialize(&block)
+          @block = block
+        end
+
+        def read_before_transmit(context)
+          @block.call(context)
+        end
+      end
+    end
+
+    let(:after_send) do
+      Class.new do
+        def initialize(&block)
+          @block = block
+        end
+
+        def read_after_transmit(context)
+          @block.call(context)
+        end
+      end
+    end
 
     describe '#operation____789_bad_name' do
 
@@ -23,16 +54,15 @@ module RailsJson
         # Serializes requests for operations/members with bad names
         #
         it 'rails_json_serializes_bad_names' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/BadName/abc_value')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.operation____789_bad_name({
             member___123abc: "abc_value",
             member: {
@@ -46,16 +76,14 @@ module RailsJson
         # Parses responses for operations/members with bad names
         #
         it 'rails_json_parses_bad_names' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"member":{"__123foo":"foo value"}}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.operation____789_bad_name({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"member":{"__123foo":"foo value"}}')
+          response.body.rewind
+          client.stub_responses(:operation____789_bad_name, response)
+          allow(Builders::Operation____789BadName).to receive(:build)
+          output = client.operation____789_bad_name({})
           expect(output.data.to_h).to eq({
             member: {
               member___123foo: "foo value"
@@ -68,17 +96,16 @@ module RailsJson
         # Parses responses for operations/members with bad names
         #
         it 'stubs rails_json_parses_bad_names' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::Operation____789BadName).to receive(:build)
           client.stub_responses(:operation____789_bad_name, {
             member: {
               member___123foo: "foo value"
             }
           })
-          output = client.operation____789_bad_name({}, middleware: middleware)
+          output = client.operation____789_bad_name({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             member: {
               member___123foo: "foo value"
@@ -95,7 +122,7 @@ module RailsJson
         # Serializes query string parameters with all supported types
         #
         it 'RailsJsonAllQueryStringTypes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/AllQueryStringTypesInput')
@@ -105,9 +132,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.all_query_string_types({
             query_string: "Hello there",
             query_string_list: [
@@ -175,7 +201,7 @@ module RailsJson
         # Mixes constant and variable query string parameters
         #
         it 'RailsJsonConstantAndVariableQueryStringMissingOneValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/ConstantAndVariableQueryString')
@@ -190,9 +216,8 @@ module RailsJson
               expect(actual_query.key?(query)).to be false
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.constant_and_variable_query_string({
             baz: "bam"
           }, **opts)
@@ -200,7 +225,7 @@ module RailsJson
         # Mixes constant and variable query string parameters
         #
         it 'RailsJsonConstantAndVariableQueryStringAllValues' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/ConstantAndVariableQueryString')
@@ -210,9 +235,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.constant_and_variable_query_string({
             baz: "bam",
             maybe_set: "yes"
@@ -228,7 +252,7 @@ module RailsJson
         # Includes constant query string parameters
         #
         it 'RailsJsonConstantQueryString' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/ConstantQueryString/hi')
@@ -238,9 +262,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.constant_query_string({
             hello: "hi"
           }, **opts)
@@ -255,7 +278,7 @@ module RailsJson
         # Serializes document types as part of the JSON request payload with no escaping.
         #
         it 'RailsJsonDocumentTypeInputWithObject' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -266,9 +289,8 @@ module RailsJson
                     "foo": "bar"
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
             document_value: {'foo' => 'bar'}
@@ -277,7 +299,7 @@ module RailsJson
         # Serializes document types using a string.
         #
         it 'RailsJsonDocumentInputWithString' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -286,9 +308,8 @@ module RailsJson
                 "string_value": "string",
                 "document_value": "hello"
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
             document_value: 'hello'
@@ -297,7 +318,7 @@ module RailsJson
         # Serializes document types using a number.
         #
         it 'RailsJsonDocumentInputWithNumber' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -306,9 +327,8 @@ module RailsJson
                 "string_value": "string",
                 "document_value": 10
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
             document_value: 10
@@ -317,7 +337,7 @@ module RailsJson
         # Serializes document types using a boolean.
         #
         it 'RailsJsonDocumentInputWithBoolean' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -326,9 +346,8 @@ module RailsJson
                 "string_value": "string",
                 "document_value": true
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
             document_value: true
@@ -337,7 +356,7 @@ module RailsJson
         # Serializes document types using a list.
         #
         it 'RailsJsonDocumentInputWithList' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -361,9 +380,8 @@ module RailsJson
                     }
                 ]
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
             document_value: [true, 'hi', [1, 2], {'foo' => {'baz' => [3, 4]}}]
@@ -375,21 +393,19 @@ module RailsJson
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'RailsJsonDocumentOutput' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "string_value": "string",
-                "document_value": {
-                    "foo": "bar"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "string_value": "string",
+              "document_value": {
+                  "foo": "bar"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type, response)
+          allow(Builders::DocumentType).to receive(:build)
+          output = client.document_type({})
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: {'foo' => 'bar'}
@@ -398,19 +414,17 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputString' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "string_value": "string",
-                "document_value": "hello"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "string_value": "string",
+              "document_value": "hello"
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type, response)
+          allow(Builders::DocumentType).to receive(:build)
+          output = client.document_type({})
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 'hello'
@@ -419,19 +433,17 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputNumber' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "string_value": "string",
-                "document_value": 10
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "string_value": "string",
+              "document_value": 10
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type, response)
+          allow(Builders::DocumentType).to receive(:build)
+          output = client.document_type({})
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 10
@@ -440,19 +452,17 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputBoolean' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "string_value": "string",
-                "document_value": false
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "string_value": "string",
+              "document_value": false
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type, response)
+          allow(Builders::DocumentType).to receive(:build)
+          output = client.document_type({})
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: false
@@ -461,22 +471,20 @@ module RailsJson
         # Document types can be JSON arrays.
         #
         it 'RailsJsonDocumentOutputArray' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "string_value": "string",
-                "document_value": [
-                    true,
-                    false
-                ]
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "string_value": "string",
+              "document_value": [
+                  true,
+                  false
+              ]
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type, response)
+          allow(Builders::DocumentType).to receive(:build)
+          output = client.document_type({})
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
@@ -488,16 +496,15 @@ module RailsJson
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'stubs RailsJsonDocumentOutput' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: {'foo' => 'bar'}
           })
-          output = client.document_type({}, middleware: middleware)
+          output = client.document_type({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: {'foo' => 'bar'}
@@ -506,16 +513,15 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputString' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: 'hello'
           })
-          output = client.document_type({}, middleware: middleware)
+          output = client.document_type({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 'hello'
@@ -524,16 +530,15 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputNumber' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: 10
           })
-          output = client.document_type({}, middleware: middleware)
+          output = client.document_type({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 10
@@ -542,16 +547,15 @@ module RailsJson
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputBoolean' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: false
           })
-          output = client.document_type({}, middleware: middleware)
+          output = client.document_type({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: false
@@ -560,16 +564,15 @@ module RailsJson
         # Document types can be JSON arrays.
         #
         it 'stubs RailsJsonDocumentOutputArray' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, {
             string_value: "string",
             document_value: [true, false]
           })
-          output = client.document_type({}, middleware: middleware)
+          output = client.document_type({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
@@ -585,7 +588,7 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'RailsJsonDocumentTypeAsPayloadInput' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentTypeAsPayload')
@@ -593,9 +596,8 @@ module RailsJson
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "foo": "bar"
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type_as_payload({
             document_value: {'foo' => 'bar'}
           }, **opts)
@@ -603,15 +605,14 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait using a string.
         #
         it 'RailsJsonDocumentTypeAsPayloadInputString' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentTypeAsPayload')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.document_type_as_payload({
             document_value: 'hello'
           }, **opts)
@@ -622,18 +623,16 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'RailsJsonDocumentTypeAsPayloadOutput' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "foo": "bar"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type_as_payload({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "foo": "bar"
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type_as_payload, response)
+          allow(Builders::DocumentTypeAsPayload).to receive(:build)
+          output = client.document_type_as_payload({})
           expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
           })
@@ -641,16 +640,14 @@ module RailsJson
         # Serializes a document as a payload string.
         #
         it 'RailsJsonDocumentTypeAsPayloadOutputString' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('"hello"')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.document_type_as_payload({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('"hello"')
+          response.body.rewind
+          client.stub_responses(:document_type_as_payload, response)
+          allow(Builders::DocumentTypeAsPayload).to receive(:build)
+          output = client.document_type_as_payload({})
           expect(output.data.to_h).to eq({
             document_value: 'hello'
           })
@@ -661,15 +658,14 @@ module RailsJson
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentTypeAsPayload).to receive(:build)
           client.stub_responses(:document_type_as_payload, {
             document_value: {'foo' => 'bar'}
           })
-          output = client.document_type_as_payload({}, middleware: middleware)
+          output = client.document_type_as_payload({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
           })
@@ -677,15 +673,14 @@ module RailsJson
         # Serializes a document as a payload string.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::DocumentTypeAsPayload).to receive(:build)
           client.stub_responses(:document_type_as_payload, {
             document_value: 'hello'
           })
-          output = client.document_type_as_payload({}, middleware: middleware)
+          output = client.document_type_as_payload({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             document_value: 'hello'
           })
@@ -703,16 +698,14 @@ module RailsJson
         # then it will not break the client.
         #
         it 'rails_json_handles_empty_output_shape' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.empty_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:empty_operation, response)
+          allow(Builders::EmptyOperation).to receive(:build)
+          output = client.empty_operation({})
           expect(output.data.to_h).to eq({
 
           })
@@ -723,18 +716,16 @@ module RailsJson
         # JSON object data.
         #
         it 'rails_json_handles_unexpected_json_output' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "foo": true
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.empty_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "foo": true
+          }')
+          response.body.rewind
+          client.stub_responses(:empty_operation, response)
+          allow(Builders::EmptyOperation).to receive(:build)
+          output = client.empty_operation({})
           expect(output.data.to_h).to eq({
 
           })
@@ -746,16 +737,14 @@ module RailsJson
         # a service returns no JSON at all.
         #
         it 'rails_json_service_responds_with_no_payload' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.empty_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:empty_operation, response)
+          allow(Builders::EmptyOperation).to receive(:build)
+          output = client.empty_operation({})
           expect(output.data.to_h).to eq({
 
           })
@@ -769,15 +758,14 @@ module RailsJson
         # then it will not break the client.
         #
         it 'stubs rails_json_handles_empty_output_shape' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::EmptyOperation).to receive(:build)
           client.stub_responses(:empty_operation, {
 
           })
-          output = client.empty_operation({}, middleware: middleware)
+          output = client.empty_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -788,15 +776,14 @@ module RailsJson
         # JSON object data.
         #
         it 'stubs rails_json_handles_unexpected_json_output' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::EmptyOperation).to receive(:build)
           client.stub_responses(:empty_operation, {
 
           })
-          output = client.empty_operation({}, middleware: middleware)
+          output = client.empty_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -808,15 +795,14 @@ module RailsJson
         # a service returns no JSON at all.
         #
         it 'stubs rails_json_service_responds_with_no_payload' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::EmptyOperation).to receive(:build)
           client.stub_responses(:empty_operation, {
 
           })
-          output = client.empty_operation({}, middleware: middleware)
+          output = client.empty_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -832,14 +818,13 @@ module RailsJson
         # endpoint trait.
         #
         it 'RailsJsonEndpointTrait' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.example.com')
             expect(request.uri.path).to eq('/endpoint')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
           client.endpoint_operation({
 
@@ -857,15 +842,14 @@ module RailsJson
         # further customization based on user input.
         #
         it 'RailsJsonEndpointTraitWithHostLabel' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.bar.example.com')
             expect(request.uri.path).to eq('/endpointwithhostlabel')
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label_member": "bar"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
           client.endpoint_with_host_label_operation({
             label_member: "bar"
@@ -881,20 +865,18 @@ module RailsJson
         # Parses simple JSON errors
         #
         it 'RailsJsonInvalidGreetingError' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 400
-            response.headers['Content-Type'] = 'application/json'
-            response.headers['x-smithy-rails-error'] = 'InvalidGreeting'
-            response.body.write('{
-                "message": "Hi"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 400
+          response.headers['Content-Type'] = 'application/json'
+          response.headers['x-smithy-rails-error'] = 'InvalidGreeting'
+          response.body.write('{
+              "message": "Hi"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            client.greeting_with_errors({}, middleware: middleware)
+            client.greeting_with_errors({})
           rescue Errors::InvalidGreeting => e
             expect(e.data.to_h).to eq({
               message: "Hi"
@@ -907,23 +889,21 @@ module RailsJson
         # Parses a complex error with no message member
         #
         it 'RailsJsonComplexError' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 400
-            response.headers['Content-Type'] = 'application/json'
-            response.headers['x-smithy-rails-error'] = 'ComplexError'
-            response.body.write('{
-                "top_level": "Top level",
-                "nested": {
-                    "Fooooo": "bar"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 400
+          response.headers['Content-Type'] = 'application/json'
+          response.headers['x-smithy-rails-error'] = 'ComplexError'
+          response.body.write('{
+              "top_level": "Top level",
+              "nested": {
+                  "Fooooo": "bar"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            client.greeting_with_errors({}, middleware: middleware)
+            client.greeting_with_errors({})
           rescue Errors::ComplexError => e
             expect(e.data.to_h).to eq({
               top_level: "Top level",
@@ -936,19 +916,17 @@ module RailsJson
         #
         #
         it 'RailsJsonEmptyComplexError' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 400
-            response.headers['Content-Type'] = 'application/json'
-            response.headers['x-smithy-rails-error'] = 'ComplexError'
-            response.body.write('{
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
+          response = Hearth::HTTP::Response.new
+          response.status = 400
+          response.headers['Content-Type'] = 'application/json'
+          response.headers['x-smithy-rails-error'] = 'ComplexError'
+          response.body.write('{
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            client.greeting_with_errors({}, middleware: middleware)
+            client.greeting_with_errors({})
           rescue Errors::ComplexError => e
             expect(e.data.to_h).to eq({
 
@@ -965,16 +943,15 @@ module RailsJson
         # Serializes a blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/HttpPayloadTraits')
             { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_payload_traits({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -983,15 +960,14 @@ module RailsJson
         # Serializes an empty blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/HttpPayloadTraits')
             { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_payload_traits({
             foo: "Foo"
           }, **opts)
@@ -1002,16 +978,14 @@ module RailsJson
         # Serializes a blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Foo'] = 'Foo'
-            response.body.write('blobby blob blob')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_payload_traits({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('blobby blob blob')
+          response.body.rewind
+          client.stub_responses(:http_payload_traits, response)
+          allow(Builders::HttpPayloadTraits).to receive(:build)
+          output = client.http_payload_traits({})
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1020,16 +994,14 @@ module RailsJson
         # Serializes an empty blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Foo'] = 'Foo'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_payload_traits({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:http_payload_traits, response)
+          allow(Builders::HttpPayloadTraits).to receive(:build)
+          output = client.http_payload_traits({})
           expect(output.data.to_h).to eq({
             foo: "Foo"
           })
@@ -1040,16 +1012,15 @@ module RailsJson
         # Serializes a blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithBlob' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpPayloadTraits).to receive(:build)
           client.stub_responses(:http_payload_traits, {
             foo: "Foo",
             blob: 'blobby blob blob'
           })
-          output = client.http_payload_traits({}, middleware: middleware)
+          output = client.http_payload_traits({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1058,15 +1029,14 @@ module RailsJson
         # Serializes an empty blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpPayloadTraits).to receive(:build)
           client.stub_responses(:http_payload_traits, {
             foo: "Foo"
           })
-          output = client.http_payload_traits({}, middleware: middleware)
+          output = client.http_payload_traits({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             foo: "Foo"
           })
@@ -1081,16 +1051,15 @@ module RailsJson
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/HttpPayloadTraitsWithMediaType')
             { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_payload_traits_with_media_type({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1102,17 +1071,15 @@ module RailsJson
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'text/plain'
-            response.headers['X-Foo'] = 'Foo'
-            response.body.write('blobby blob blob')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_payload_traits_with_media_type({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'text/plain'
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('blobby blob blob')
+          response.body.rewind
+          client.stub_responses(:http_payload_traits_with_media_type, response)
+          allow(Builders::HttpPayloadTraitsWithMediaType).to receive(:build)
+          output = client.http_payload_traits_with_media_type({})
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1124,16 +1091,15 @@ module RailsJson
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpPayloadTraitsWithMediaType).to receive(:build)
           client.stub_responses(:http_payload_traits_with_media_type, {
             foo: "Foo",
             blob: 'blobby blob blob'
           })
-          output = client.http_payload_traits_with_media_type({}, middleware: middleware)
+          output = client.http_payload_traits_with_media_type({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1149,7 +1115,7 @@ module RailsJson
         # Serializes a structure in the payload
         #
         it 'RailsJsonHttpPayloadWithStructure' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/HttpPayloadWithStructure')
@@ -1159,9 +1125,8 @@ module RailsJson
                 "greeting": "hello",
                 "name": "Phreddy"
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_payload_with_structure({
             nested: {
               greeting: "hello",
@@ -1175,19 +1140,17 @@ module RailsJson
         # Serializes a structure in the payload
         #
         it 'RailsJsonHttpPayloadWithStructure' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "greeting": "hello",
-                "name": "Phreddy"
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_payload_with_structure({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "greeting": "hello",
+              "name": "Phreddy"
+          }')
+          response.body.rewind
+          client.stub_responses(:http_payload_with_structure, response)
+          allow(Builders::HttpPayloadWithStructure).to receive(:build)
+          output = client.http_payload_with_structure({})
           expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
@@ -1201,18 +1164,17 @@ module RailsJson
         # Serializes a structure in the payload
         #
         it 'stubs RailsJsonHttpPayloadWithStructure' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpPayloadWithStructure).to receive(:build)
           client.stub_responses(:http_payload_with_structure, {
             nested: {
               greeting: "hello",
               name: "Phreddy"
             }
           })
-          output = client.http_payload_with_structure({}, middleware: middleware)
+          output = client.http_payload_with_structure({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
@@ -1230,15 +1192,14 @@ module RailsJson
         # Adds headers by prefix
         #
         it 'RailsJsonHttpPrefixHeadersArePresent' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpPrefixHeaders')
             { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_prefix_headers({
             foo: "Foo",
             foo_map: {
@@ -1250,15 +1211,14 @@ module RailsJson
         # No prefix headers are serialized because the value is empty
         #
         it 'RailsJsonHttpPrefixHeadersAreNotPresent' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpPrefixHeaders')
             { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_prefix_headers({
             foo: "Foo",
             foo_map: {
@@ -1272,16 +1232,14 @@ module RailsJson
         # Adds headers by prefix
         #
         it 'RailsJsonHttpPrefixHeadersArePresent' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Foo'] = 'Foo'
-            response.headers['X-Foo-Abc'] = 'Abc value'
-            response.headers['X-Foo-Def'] = 'Def value'
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_prefix_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Foo'] = 'Foo'
+          response.headers['X-Foo-Abc'] = 'Abc value'
+          response.headers['X-Foo-Def'] = 'Def value'
+          client.stub_responses(:http_prefix_headers, response)
+          allow(Builders::HttpPrefixHeaders).to receive(:build)
+          output = client.http_prefix_headers({})
           expect(output.data.to_h).to eq({
             foo: "Foo",
             foo_map: {
@@ -1296,11 +1254,10 @@ module RailsJson
         # Adds headers by prefix
         #
         it 'stubs RailsJsonHttpPrefixHeadersArePresent' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpPrefixHeaders).to receive(:build)
           client.stub_responses(:http_prefix_headers, {
             foo: "Foo",
             foo_map: {
@@ -1308,7 +1265,7 @@ module RailsJson
               'Def' => "Def value"
             }
           })
-          output = client.http_prefix_headers({}, middleware: middleware)
+          output = client.http_prefix_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             foo: "Foo",
             foo_map: {
@@ -1327,15 +1284,13 @@ module RailsJson
         # (de)serializes all response headers
         #
         it 'RailsJsonHttpPrefixHeadersResponse' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Hello'] = 'Hello'
-            response.headers['X-Foo'] = 'Foo'
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_prefix_headers_in_response({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Hello'] = 'Hello'
+          response.headers['X-Foo'] = 'Foo'
+          client.stub_responses(:http_prefix_headers_in_response, response)
+          allow(Builders::HttpPrefixHeadersInResponse).to receive(:build)
+          output = client.http_prefix_headers_in_response({})
           expect(output.data.to_h).to eq({
             prefix_headers: {
               'X-Foo' => "Foo",
@@ -1349,18 +1304,17 @@ module RailsJson
         # (de)serializes all response headers
         #
         it 'stubs RailsJsonHttpPrefixHeadersResponse' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpPrefixHeadersInResponse).to receive(:build)
           client.stub_responses(:http_prefix_headers_in_response, {
             prefix_headers: {
               'X-Foo' => "Foo",
               'Hello' => "Hello"
             }
           })
-          output = client.http_prefix_headers_in_response({}, middleware: middleware)
+          output = client.http_prefix_headers_in_response({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             prefix_headers: {
               'X-Foo' => "Foo",
@@ -1378,14 +1332,13 @@ module RailsJson
         # Supports handling NaN float label values.
         #
         it 'RailsJsonSupportsNaNFloatLabels' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/FloatHttpLabels/NaN/NaN')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_float_labels({
             float: Float::NAN,
             double: Float::NAN
@@ -1394,14 +1347,13 @@ module RailsJson
         # Supports handling Infinity float label values.
         #
         it 'RailsJsonSupportsInfinityFloatLabels' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/FloatHttpLabels/Infinity/Infinity')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_float_labels({
             float: Float::INFINITY,
             double: Float::INFINITY
@@ -1410,14 +1362,13 @@ module RailsJson
         # Supports handling -Infinity float label values.
         #
         it 'RailsJsonSupportsNegativeInfinityFloatLabels' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/FloatHttpLabels/-Infinity/-Infinity')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_float_labels({
             float: -Float::INFINITY,
             double: -Float::INFINITY
@@ -1433,14 +1384,13 @@ module RailsJson
         # Serializes greedy labels and normal labels
         #
         it 'RailsJsonHttpRequestWithGreedyLabelInPath' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_greedy_label_in_path({
             foo: "hello/escape",
             baz: "there/guy"
@@ -1456,14 +1406,13 @@ module RailsJson
         # Sends a GET request that uses URI label bindings
         #
         it 'RailsJsonInputWithHeadersAndAllParams' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_labels({
             string: "string",
             short: 1,
@@ -1478,14 +1427,13 @@ module RailsJson
         # Sends a GET request that uses URI label bindings
         #
         it 'RailsJsonHttpRequestLabelEscaping' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_labels({
             string: "%:/?#[]@!$&'()*+,;=😹",
             short: 1,
@@ -1507,14 +1455,13 @@ module RailsJson
         # Serializes different timestamp formats in URI labels
         #
         it 'RailsJsonHttpRequestWithLabelsAndTimestampFormat' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z/2019-12-16T23%3A48%3A18Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.http_request_with_labels_and_timestamp_format({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -1539,16 +1486,14 @@ module RailsJson
         # empty payload without failing to deserialize a response.
         #
         it 'RailsJsonHttpResponseCode' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 201
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_response_code({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 201
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:http_response_code, response)
+          allow(Builders::HttpResponseCode).to receive(:build)
+          output = client.http_response_code({})
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1558,15 +1503,13 @@ module RailsJson
         # object.
         #
         it 'RailsJsonHttpResponseCodeWithNoPayload' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 201
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.http_response_code({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 201
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:http_response_code, response)
+          allow(Builders::HttpResponseCode).to receive(:build)
+          output = client.http_response_code({})
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1581,15 +1524,14 @@ module RailsJson
         # empty payload without failing to deserialize a response.
         #
         it 'stubs RailsJsonHttpResponseCode' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(201)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(201)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpResponseCode).to receive(:build)
           client.stub_responses(:http_response_code, {
             status: 201
           })
-          output = client.http_response_code({}, middleware: middleware)
+          output = client.http_response_code({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1599,15 +1541,14 @@ module RailsJson
         # object.
         #
         it 'stubs RailsJsonHttpResponseCodeWithNoPayload' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(201)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(201)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::HttpResponseCode).to receive(:build)
           client.stub_responses(:http_response_code, {
             status: 201
           })
-          output = client.http_response_code({}, middleware: middleware)
+          output = client.http_response_code({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1625,16 +1566,14 @@ module RailsJson
         # if the output parameters are empty.
         #
         it 'RailsJsonIgnoreQueryParamsInResponse' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.ignore_query_params_in_response({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:ignore_query_params_in_response, response)
+          allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
+          output = client.ignore_query_params_in_response({})
           expect(output.data.to_h).to eq({
 
           })
@@ -1644,15 +1583,13 @@ module RailsJson
         # the server that do not serialize an empty JSON object.
         #
         it 'RailsJsonIgnoreQueryParamsInResponseNoPayload' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.ignore_query_params_in_response({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:ignore_query_params_in_response, response)
+          allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
+          output = client.ignore_query_params_in_response({})
           expect(output.data.to_h).to eq({
 
           })
@@ -1666,15 +1603,14 @@ module RailsJson
         # if the output parameters are empty.
         #
         it 'stubs RailsJsonIgnoreQueryParamsInResponse' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
           client.stub_responses(:ignore_query_params_in_response, {
 
           })
-          output = client.ignore_query_params_in_response({}, middleware: middleware)
+          output = client.ignore_query_params_in_response({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -1684,15 +1620,14 @@ module RailsJson
         # the server that do not serialize an empty JSON object.
         #
         it 'stubs RailsJsonIgnoreQueryParamsInResponseNoPayload' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
           client.stub_responses(:ignore_query_params_in_response, {
 
           })
-          output = client.ignore_query_params_in_response({}, middleware: middleware)
+          output = client.ignore_query_params_in_response({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -1707,15 +1642,14 @@ module RailsJson
         # Tests requests with string header bindings
         #
         it 'RailsJsonInputAndOutputWithStringHeaders' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_string: "Hello",
             header_string_list: [
@@ -1733,15 +1667,14 @@ module RailsJson
         # Tests requests with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_byte: 1,
             header_short: 123,
@@ -1759,15 +1692,14 @@ module RailsJson
         # Tests requests with boolean header bindings
         #
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_true_bool: true,
             header_false_bool: false,
@@ -1781,15 +1713,14 @@ module RailsJson
         # Tests requests with enum header bindings
         #
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_enum: "Foo",
             header_enum_list: [
@@ -1805,18 +1736,16 @@ module RailsJson
         # Tests responses with string header bindings
         #
         it 'RailsJsonInputAndOutputWithStringHeaders' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-String'] = 'Hello'
-            response.headers['X-StringList'] = 'a, b, c'
-            response.headers['X-StringSet'] = 'a, b, c'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-String'] = 'Hello'
+          response.headers['X-StringList'] = 'a, b, c'
+          response.headers['X-StringSet'] = 'a, b, c'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({})
           expect(output.data.to_h).to eq({
             header_string: "Hello",
             header_string_list: [
@@ -1834,16 +1763,14 @@ module RailsJson
         # Tests requests with string list header bindings that require quoting
         #
         it 'RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-StringList'] = '"b,c", "\"def\"", a'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-StringList'] = '"b,c", "\"def\"", a'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({})
           expect(output.data.to_h).to eq({
             header_string_list: [
               "b,c",
@@ -1855,22 +1782,20 @@ module RailsJson
         # Tests responses with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Byte'] = '1'
-            response.headers['X-Double'] = '1.1'
-            response.headers['X-Float'] = '1.1'
-            response.headers['X-Integer'] = '123'
-            response.headers['X-IntegerList'] = '1, 2, 3'
-            response.headers['X-Long'] = '123'
-            response.headers['X-Short'] = '123'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Byte'] = '1'
+          response.headers['X-Double'] = '1.1'
+          response.headers['X-Float'] = '1.1'
+          response.headers['X-Integer'] = '123'
+          response.headers['X-IntegerList'] = '1, 2, 3'
+          response.headers['X-Long'] = '123'
+          response.headers['X-Short'] = '123'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({})
           expect(output.data.to_h).to eq({
             header_byte: 1,
             header_short: 123,
@@ -1888,18 +1813,16 @@ module RailsJson
         # Tests responses with boolean header bindings
         #
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Boolean1'] = 'true'
-            response.headers['X-Boolean2'] = 'false'
-            response.headers['X-BooleanList'] = 'true, false, true'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Boolean1'] = 'true'
+          response.headers['X-Boolean2'] = 'false'
+          response.headers['X-BooleanList'] = 'true, false, true'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({})
           expect(output.data.to_h).to eq({
             header_true_bool: true,
             header_false_bool: false,
@@ -1913,17 +1836,15 @@ module RailsJson
         # Tests responses with enum header bindings
         #
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Enum'] = 'Foo'
-            response.headers['X-EnumList'] = 'Foo, Bar, Baz'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Enum'] = 'Foo'
+          response.headers['X-EnumList'] = 'Foo, Bar, Baz'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({})
           expect(output.data.to_h).to eq({
             header_enum: "Foo",
             header_enum_list: [
@@ -1939,11 +1860,10 @@ module RailsJson
         # Tests responses with string header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithStringHeaders' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, {
             header_string: "Hello",
             header_string_list: [
@@ -1957,7 +1877,7 @@ module RailsJson
               "c"
             ]
           })
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             header_string: "Hello",
             header_string_list: [
@@ -1975,11 +1895,10 @@ module RailsJson
         # Tests requests with string list header bindings that require quoting
         #
         it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, {
             header_string_list: [
               "b,c",
@@ -1987,7 +1906,7 @@ module RailsJson
               "a"
             ]
           })
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             header_string_list: [
               "b,c",
@@ -1999,11 +1918,10 @@ module RailsJson
         # Tests responses with numeric header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithNumericHeaders' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, {
             header_byte: 1,
             header_short: 123,
@@ -2017,7 +1935,7 @@ module RailsJson
               3
             ]
           })
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             header_byte: 1,
             header_short: 123,
@@ -2035,11 +1953,10 @@ module RailsJson
         # Tests responses with boolean header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithBooleanHeaders' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, {
             header_true_bool: true,
             header_false_bool: false,
@@ -2049,7 +1966,7 @@ module RailsJson
               true
             ]
           })
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             header_true_bool: true,
             header_false_bool: false,
@@ -2063,11 +1980,10 @@ module RailsJson
         # Tests responses with enum header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithEnumHeaders' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, {
             header_enum: "Foo",
             header_enum_list: [
@@ -2076,7 +1992,7 @@ module RailsJson
               "Baz"
             ]
           })
-          output = client.input_and_output_with_headers({}, middleware: middleware)
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             header_enum: "Foo",
             header_enum_list: [
@@ -2096,7 +2012,7 @@ module RailsJson
         # Serializes simple scalar properties
         #
         it 'RailsJsonEnums' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonenums')
@@ -2118,9 +2034,8 @@ module RailsJson
                     "zero": "0"
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_enums({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2145,32 +2060,30 @@ module RailsJson
         # Serializes simple scalar properties
         #
         it 'RailsJsonEnums' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "foo_enum1": "Foo",
-                "foo_enum2": "0",
-                "foo_enum3": "1",
-                "foo_enum_list": [
-                    "Foo",
-                    "0"
-                ],
-                "foo_enum_set": [
-                    "Foo",
-                    "0"
-                ],
-                "foo_enum_map": {
-                    "hi": "Foo",
-                    "zero": "0"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_enums({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "foo_enum1": "Foo",
+              "foo_enum2": "0",
+              "foo_enum3": "1",
+              "foo_enum_list": [
+                  "Foo",
+                  "0"
+              ],
+              "foo_enum_set": [
+                  "Foo",
+                  "0"
+              ],
+              "foo_enum_map": {
+                  "hi": "Foo",
+                  "zero": "0"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_enums, response)
+          allow(Builders::JsonEnums).to receive(:build)
+          output = client.json_enums({})
           expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2195,11 +2108,10 @@ module RailsJson
         # Serializes simple scalar properties
         #
         it 'stubs RailsJsonEnums' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonEnums).to receive(:build)
           client.stub_responses(:json_enums, {
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2217,7 +2129,7 @@ module RailsJson
               'zero' => "0"
             }
           })
-          output = client.json_enums({}, middleware: middleware)
+          output = client.json_enums({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2246,7 +2158,7 @@ module RailsJson
         # Serializes JSON maps
         #
         it 'RailsJsonJsonMaps' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2269,9 +2181,8 @@ module RailsJson
                     }
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_maps({
             dense_struct_map: {
               'foo' => {
@@ -2294,7 +2205,7 @@ module RailsJson
         # Serializes JSON map values in sparse maps
         #
         it 'RailsJsonSerializesNullMapValues' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2313,9 +2224,8 @@ module RailsJson
                     "x": null
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_maps({
             sparse_boolean_map: {
               'x' => nil
@@ -2334,7 +2244,7 @@ module RailsJson
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'RailsJsonSerializesZeroValuesInMaps' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2353,9 +2263,8 @@ module RailsJson
                     "x": false
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_maps({
             dense_number_map: {
               'x' => 0
@@ -2374,7 +2283,7 @@ module RailsJson
         # A request that contains a sparse map of sets
         #
         it 'RailsJsonSerializesSparseSetMap' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2385,9 +2294,8 @@ module RailsJson
                     "y": ["a", "b"]
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_maps({
             sparse_set_map: {
               'x' => [
@@ -2403,7 +2311,7 @@ module RailsJson
         # A request that contains a dense map of sets.
         #
         it 'RailsJsonSerializesDenseSetMap' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2414,9 +2322,8 @@ module RailsJson
                     "y": ["a", "b"]
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_maps({
             dense_set_map: {
               'x' => [
@@ -2432,7 +2339,7 @@ module RailsJson
         # A request that contains a sparse map of sets.
         #
         it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2444,9 +2351,8 @@ module RailsJson
                     "z": null
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_maps({
             sparse_set_map: {
               'x' => [
@@ -2466,33 +2372,31 @@ module RailsJson
         # Deserializes JSON maps
         #
         it 'RailsJsonJsonMaps' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "dense_struct_map": {
-                    "foo": {
-                        "hi": "there"
-                    },
-                    "baz": {
-                        "hi": "bye"
-                    }
-                },
-                "sparse_struct_map": {
-                    "foo": {
-                        "hi": "there"
-                    },
-                    "baz": {
-                        "hi": "bye"
-                    }
-               }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dense_struct_map": {
+                  "foo": {
+                      "hi": "there"
+                  },
+                  "baz": {
+                      "hi": "bye"
+                  }
+              },
+              "sparse_struct_map": {
+                  "foo": {
+                      "hi": "there"
+                  },
+                  "baz": {
+                      "hi": "bye"
+                  }
+             }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             dense_struct_map: {
               'foo' => {
@@ -2515,29 +2419,27 @@ module RailsJson
         # Deserializes null JSON map values
         #
         it 'RailsJsonDeserializesNullMapValues' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "sparse_boolean_map": {
-                    "x": null
-                },
-                "sparse_number_map": {
-                    "x": null
-                },
-                "sparse_string_map": {
-                    "x": null
-                },
-                "sparse_struct_map": {
-                    "x": null
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparse_boolean_map": {
+                  "x": null
+              },
+              "sparse_number_map": {
+                  "x": null
+              },
+              "sparse_string_map": {
+                  "x": null
+              },
+              "sparse_struct_map": {
+                  "x": null
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             sparse_boolean_map: {
               'x' => nil
@@ -2556,29 +2458,27 @@ module RailsJson
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'RailsJsonDeserializesZeroValuesInMaps' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "dense_number_map": {
-                    "x": 0
-                },
-                "sparse_number_map": {
-                    "x": 0
-                },
-                "dense_boolean_map": {
-                    "x": false
-                },
-                "sparse_boolean_map": {
-                    "x": false
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dense_number_map": {
+                  "x": 0
+              },
+              "sparse_number_map": {
+                  "x": 0
+              },
+              "dense_boolean_map": {
+                  "x": false
+              },
+              "sparse_boolean_map": {
+                  "x": false
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             dense_number_map: {
               'x' => 0
@@ -2597,21 +2497,19 @@ module RailsJson
         # A response that contains a sparse map of sets
         #
         it 'RailsJsonDeserializesSparseSetMap' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparse_set_map": {
+                  "x": [],
+                  "y": ["a", "b"]
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -2627,21 +2525,19 @@ module RailsJson
         # A response that contains a dense map of sets.
         #
         it 'RailsJsonDeserializesDenseSetMap' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "dense_set_map": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dense_set_map": {
+                  "x": [],
+                  "y": ["a", "b"]
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -2657,22 +2553,20 @@ module RailsJson
         # A response that contains a sparse map of sets.
         #
         it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparse_set_map": {
+                  "x": [],
+                  "y": ["a", "b"],
+                  "z": null
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -2690,22 +2584,20 @@ module RailsJson
         # drop the null key-value pair.
         #
         it 'RailsJsonDeserializesDenseSetMapAndSkipsNull' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "dense_set_map": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_maps({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dense_set_map": {
+                  "x": [],
+                  "y": ["a", "b"],
+                  "z": null
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_maps, response)
+          allow(Builders::JsonMaps).to receive(:build)
+          output = client.json_maps({})
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -2724,11 +2616,10 @@ module RailsJson
         # Deserializes JSON maps
         #
         it 'stubs RailsJsonJsonMaps' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             dense_struct_map: {
               'foo' => {
@@ -2747,7 +2638,7 @@ module RailsJson
               }
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             dense_struct_map: {
               'foo' => {
@@ -2770,11 +2661,10 @@ module RailsJson
         # Deserializes null JSON map values
         #
         it 'stubs RailsJsonDeserializesNullMapValues' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             sparse_boolean_map: {
               'x' => nil
@@ -2789,7 +2679,7 @@ module RailsJson
               'x' => nil
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             sparse_boolean_map: {
               'x' => nil
@@ -2808,11 +2698,10 @@ module RailsJson
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             dense_number_map: {
               'x' => 0
@@ -2827,7 +2716,7 @@ module RailsJson
               'x' => false
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             dense_number_map: {
               'x' => 0
@@ -2846,11 +2735,10 @@ module RailsJson
         # A response that contains a sparse map of sets
         #
         it 'stubs RailsJsonDeserializesSparseSetMap' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             sparse_set_map: {
               'x' => [
@@ -2862,7 +2750,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -2878,11 +2766,10 @@ module RailsJson
         # A response that contains a dense map of sets.
         #
         it 'stubs RailsJsonDeserializesDenseSetMap' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             dense_set_map: {
               'x' => [
@@ -2894,7 +2781,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -2910,11 +2797,10 @@ module RailsJson
         # A response that contains a sparse map of sets.
         #
         it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             sparse_set_map: {
               'x' => [
@@ -2927,7 +2813,7 @@ module RailsJson
               'z' => nil
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -2945,11 +2831,10 @@ module RailsJson
         # drop the null key-value pair.
         #
         it 'stubs RailsJsonDeserializesDenseSetMapAndSkipsNull' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, {
             dense_set_map: {
               'x' => [
@@ -2961,7 +2846,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_maps({}, middleware: middleware)
+          output = client.json_maps({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -2984,7 +2869,7 @@ module RailsJson
         # Serializes a string union value
         #
         it 'RailsJsonSerializeStringUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -2994,9 +2879,8 @@ module RailsJson
                     "string_value": "foo"
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               string_value: "foo"
@@ -3006,7 +2890,7 @@ module RailsJson
         # Serializes a boolean union value
         #
         it 'RailsJsonSerializeBooleanUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3016,9 +2900,8 @@ module RailsJson
                     "boolean_value": true
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               boolean_value: true
@@ -3028,7 +2911,7 @@ module RailsJson
         # Serializes a number union value
         #
         it 'RailsJsonSerializeNumberUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3038,9 +2921,8 @@ module RailsJson
                     "number_value": 1
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               number_value: 1
@@ -3050,7 +2932,7 @@ module RailsJson
         # Serializes a blob union value
         #
         it 'RailsJsonSerializeBlobUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3060,9 +2942,8 @@ module RailsJson
                     "blob_value": "Zm9v"
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               blob_value: 'foo'
@@ -3072,7 +2953,7 @@ module RailsJson
         # Serializes a timestamp union value
         #
         it 'RailsJsonSerializeTimestampUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3082,9 +2963,8 @@ module RailsJson
                     "timestamp_value": "2014-04-29T18:30:38Z"
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               timestamp_value: Time.at(1398796238)
@@ -3094,7 +2974,7 @@ module RailsJson
         # Serializes an enum union value
         #
         it 'RailsJsonSerializeEnumUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3104,9 +2984,8 @@ module RailsJson
                     "enum_value": "Foo"
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               enum_value: "Foo"
@@ -3116,7 +2995,7 @@ module RailsJson
         # Serializes a list union value
         #
         it 'RailsJsonSerializeListUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3126,9 +3005,8 @@ module RailsJson
                     "list_value": ["foo", "bar"]
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               list_value: [
@@ -3141,7 +3019,7 @@ module RailsJson
         # Serializes a map union value
         #
         it 'RailsJsonSerializeMapUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3154,9 +3032,8 @@ module RailsJson
                     }
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               map_value: {
@@ -3169,7 +3046,7 @@ module RailsJson
         # Serializes a structure union value
         #
         it 'RailsJsonSerializeStructureUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3181,9 +3058,8 @@ module RailsJson
                     }
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               structure_value: {
@@ -3195,7 +3071,7 @@ module RailsJson
         # Serializes a renamed structure union value
         #
         it 'RailsJsonSerializeRenamedStructureUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3207,9 +3083,8 @@ module RailsJson
                     }
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
               renamed_structure_value: {
@@ -3224,20 +3099,18 @@ module RailsJson
         # Deserializes a string union value
         #
         it 'RailsJsonDeserializeStringUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "string_value": "foo"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "string_value": "foo"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               string_value: "foo"
@@ -3247,20 +3120,18 @@ module RailsJson
         # Deserializes a boolean union value
         #
         it 'RailsJsonDeserializeBooleanUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "boolean_value": true
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "boolean_value": true
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               boolean_value: true
@@ -3270,20 +3141,18 @@ module RailsJson
         # Deserializes a number union value
         #
         it 'RailsJsonDeserializeNumberUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "number_value": 1
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "number_value": 1
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               number_value: 1
@@ -3293,20 +3162,18 @@ module RailsJson
         # Deserializes a blob union value
         #
         it 'RailsJsonDeserializeBlobUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "blob_value": "Zm9v"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "blob_value": "Zm9v"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               blob_value: 'foo'
@@ -3316,20 +3183,18 @@ module RailsJson
         # Deserializes a timestamp union value
         #
         it 'RailsJsonDeserializeTimestampUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "timestamp_value": "2014-04-29T18:30:38Z"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "timestamp_value": "2014-04-29T18:30:38Z"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               timestamp_value: Time.at(1398796238)
@@ -3339,20 +3204,18 @@ module RailsJson
         # Deserializes an enum union value
         #
         it 'RailsJsonDeserializeEnumUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "enum_value": "Foo"
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "enum_value": "Foo"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               enum_value: "Foo"
@@ -3362,20 +3225,18 @@ module RailsJson
         # Deserializes a list union value
         #
         it 'RailsJsonDeserializeListUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "list_value": ["foo", "bar"]
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "list_value": ["foo", "bar"]
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               list_value: [
@@ -3388,23 +3249,21 @@ module RailsJson
         # Deserializes a map union value
         #
         it 'RailsJsonDeserializeMapUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "map_value": {
-                        "foo": "bar",
-                        "spam": "eggs"
-                    }
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "map_value": {
+                      "foo": "bar",
+                      "spam": "eggs"
+                  }
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               map_value: {
@@ -3417,22 +3276,20 @@ module RailsJson
         # Deserializes a structure union value
         #
         it 'RailsJsonDeserializeStructureUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "contents": {
-                    "structure_value": {
-                        "hi": "hello"
-                    }
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.json_unions({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "structure_value": {
+                      "hi": "hello"
+                  }
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({})
           expect(output.data.to_h).to eq({
             contents: {
               structure_value: {
@@ -3447,17 +3304,16 @@ module RailsJson
         # Deserializes a string union value
         #
         it 'stubs RailsJsonDeserializeStringUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               string_value: "foo"
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               string_value: "foo"
@@ -3467,17 +3323,16 @@ module RailsJson
         # Deserializes a boolean union value
         #
         it 'stubs RailsJsonDeserializeBooleanUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               boolean_value: true
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               boolean_value: true
@@ -3487,17 +3342,16 @@ module RailsJson
         # Deserializes a number union value
         #
         it 'stubs RailsJsonDeserializeNumberUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               number_value: 1
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               number_value: 1
@@ -3507,17 +3361,16 @@ module RailsJson
         # Deserializes a blob union value
         #
         it 'stubs RailsJsonDeserializeBlobUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               blob_value: 'foo'
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               blob_value: 'foo'
@@ -3527,17 +3380,16 @@ module RailsJson
         # Deserializes a timestamp union value
         #
         it 'stubs RailsJsonDeserializeTimestampUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               timestamp_value: Time.at(1398796238)
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               timestamp_value: Time.at(1398796238)
@@ -3547,17 +3399,16 @@ module RailsJson
         # Deserializes an enum union value
         #
         it 'stubs RailsJsonDeserializeEnumUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               enum_value: "Foo"
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               enum_value: "Foo"
@@ -3567,11 +3418,10 @@ module RailsJson
         # Deserializes a list union value
         #
         it 'stubs RailsJsonDeserializeListUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               list_value: [
@@ -3580,7 +3430,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               list_value: [
@@ -3593,11 +3443,10 @@ module RailsJson
         # Deserializes a map union value
         #
         it 'stubs RailsJsonDeserializeMapUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               map_value: {
@@ -3606,7 +3455,7 @@ module RailsJson
               }
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               map_value: {
@@ -3619,11 +3468,10 @@ module RailsJson
         # Deserializes a structure union value
         #
         it 'stubs RailsJsonDeserializeStructureUnionValue' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, {
             contents: {
               structure_value: {
@@ -3631,7 +3479,7 @@ module RailsJson
               }
             }
           })
-          output = client.json_unions({}, middleware: middleware)
+          output = client.json_unions({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             contents: {
               structure_value: {
@@ -3650,16 +3498,15 @@ module RailsJson
         # Serializes string shapes
         #
         it 'rails_json_rails_json_serializes_string_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             string: "abc xyz"
           }, **opts)
@@ -3667,16 +3514,15 @@ module RailsJson
         # Serializes string shapes with jsonvalue trait
         #
         it 'rails_json_serializes_string_shapes_with_jsonvalue_trait' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             json_value: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
           }, **opts)
@@ -3684,16 +3530,15 @@ module RailsJson
         # Serializes integer shapes
         #
         it 'rails_json_serializes_integer_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             integer: 1234
           }, **opts)
@@ -3701,16 +3546,15 @@ module RailsJson
         # Serializes long shapes
         #
         it 'rails_json_serializes_long_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             long: 999999999999
           }, **opts)
@@ -3718,16 +3562,15 @@ module RailsJson
         # Serializes float shapes
         #
         it 'rails_json_serializes_float_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             float: 1234.5
           }, **opts)
@@ -3735,16 +3578,15 @@ module RailsJson
         # Serializes double shapes
         #
         it 'rails_json_serializes_double_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             double: 1234.5
           }, **opts)
@@ -3752,16 +3594,15 @@ module RailsJson
         # Serializes blob shapes
         #
         it 'rails_json_serializes_blob_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             blob: 'binary-value'
           }, **opts)
@@ -3769,16 +3610,15 @@ module RailsJson
         # Serializes boolean shapes (true)
         #
         it 'rails_json_serializes_boolean_shapes_true' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             boolean: true
           }, **opts)
@@ -3786,16 +3626,15 @@ module RailsJson
         # Serializes boolean shapes (false)
         #
         it 'rails_json_serializes_boolean_shapes_false' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             boolean: false
           }, **opts)
@@ -3803,16 +3642,15 @@ module RailsJson
         # Serializes timestamp shapes
         #
         it 'rails_json_serializes_timestamp_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             timestamp: Time.at(946845296)
           }, **opts)
@@ -3820,16 +3658,15 @@ module RailsJson
         # Serializes fractional timestamp shapes
         #
         it 'rails_json_serializes_fractional_timestamp_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56.123Z"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             timestamp: Time.at(946845296, 123, :millisecond)
           }, **opts)
@@ -3837,16 +3674,15 @@ module RailsJson
         # Serializes timestamp shapes with iso8601 timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             iso8601_timestamp: Time.at(946845296)
           }, **opts)
@@ -3854,16 +3690,15 @@ module RailsJson
         # Serializes timestamp shapes with httpdate timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_httpdate_timestampformat' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             httpdate_timestamp: Time.at(946845296)
           }, **opts)
@@ -3871,16 +3706,15 @@ module RailsJson
         # Serializes timestamp shapes with unixTimestamp timestampFormat
         #
         it 'rails_json_serializes_timestamp_shapes_with_unixtimestamp_timestampformat' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             unix_timestamp: Time.at(946845296)
           }, **opts)
@@ -3888,16 +3722,15 @@ module RailsJson
         # Serializes list shapes
         #
         it 'rails_json_serializes_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_strings: [
               "abc",
@@ -3909,16 +3742,15 @@ module RailsJson
         # Serializes empty list shapes
         #
         it 'rails_json_serializes_empty_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_strings: [
 
@@ -3928,16 +3760,15 @@ module RailsJson
         # Serializes list of map shapes
         #
         it 'rails_json_serializes_list_of_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_maps_of_strings: [
               {
@@ -3955,16 +3786,15 @@ module RailsJson
         # Serializes list of structure shapes
         #
         it 'rails_json_serializes_list_of_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_structs: [
               {
@@ -3982,16 +3812,15 @@ module RailsJson
         # Serializes list of recursive structure shapes
         #
         it 'rails_json_serializes_list_of_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             recursive_list: [
               {
@@ -4011,16 +3840,15 @@ module RailsJson
         # Serializes map shapes
         #
         it 'rails_json_serializes_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_strings: {
               'abc' => "xyz",
@@ -4031,16 +3859,15 @@ module RailsJson
         # Serializes empty map shapes
         #
         it 'rails_json_serializes_empty_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_strings: {
 
@@ -4050,16 +3877,15 @@ module RailsJson
         # Serializes map of list shapes
         #
         it 'rails_json_serializes_map_of_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_lists_of_strings: {
               'abc' => [
@@ -4076,16 +3902,15 @@ module RailsJson
         # Serializes map of structure shapes
         #
         it 'rails_json_serializes_map_of_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_structs: {
               'key1' => {
@@ -4100,16 +3925,15 @@ module RailsJson
         # Serializes map of recursive structure shapes
         #
         it 'rails_json_serializes_map_of_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             recursive_map: {
               'key1' => {
@@ -4129,16 +3953,15 @@ module RailsJson
         # Serializes structure shapes
         #
         it 'rails_json_serializes_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             simple_struct: {
               value: "abc"
@@ -4148,16 +3971,15 @@ module RailsJson
         # Serializes structure members with locationName traits
         #
         it 'rails_json_serializes_structure_members_with_locationname_traits' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             struct_with_location_name: {
               value: "some-value"
@@ -4167,16 +3989,15 @@ module RailsJson
         # Serializes empty structure shapes
         #
         it 'rails_json_serializes_empty_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             simple_struct: {
 
@@ -4186,16 +4007,15 @@ module RailsJson
         # Serializes structure which have no members
         #
         it 'rails_json_serializes_structure_which_have_no_members' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             empty_struct: {
 
@@ -4205,16 +4025,15 @@ module RailsJson
         # Serializes recursive structure shapes
         #
         it 'rails_json_serializes_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             string: "top-value",
             boolean: false,
@@ -4243,16 +4062,14 @@ module RailsJson
         # Parses operations with empty JSON bodies
         #
         it 'rails_json_parses_operations_with_empty_json_bodies' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
 
           })
@@ -4260,16 +4077,14 @@ module RailsJson
         # Parses string shapes
         #
         it 'rails_json_parses_string_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"string":"string-value"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"string":"string-value"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             string: "string-value"
           })
@@ -4277,16 +4092,14 @@ module RailsJson
         # Parses integer shapes
         #
         it 'rails_json_parses_integer_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"integer":1234}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"integer":1234}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             integer: 1234
           })
@@ -4294,16 +4107,14 @@ module RailsJson
         # Parses long shapes
         #
         it 'rails_json_parses_long_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"long":1234567890123456789}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"long":1234567890123456789}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             long: 1234567890123456789
           })
@@ -4311,16 +4122,14 @@ module RailsJson
         # Parses float shapes
         #
         it 'rails_json_parses_float_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"float":1234.5}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"float":1234.5}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             float: 1234.5
           })
@@ -4328,16 +4137,14 @@ module RailsJson
         # Parses double shapes
         #
         it 'rails_json_parses_double_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"double":123456789.12345679}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"double":123456789.12345679}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
           })
@@ -4345,16 +4152,14 @@ module RailsJson
         # Parses boolean shapes (true)
         #
         it 'rails_json_parses_boolean_shapes_true' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"boolean":true}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"boolean":true}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             boolean: true
           })
@@ -4362,16 +4167,14 @@ module RailsJson
         # Parses boolean (false)
         #
         it 'rails_json_parses_boolean_false' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"boolean":false}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"boolean":false}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             boolean: false
           })
@@ -4379,16 +4182,14 @@ module RailsJson
         # Parses blob shapes
         #
         it 'rails_json_parses_blob_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"blob":"YmluYXJ5LXZhbHVl"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"blob":"YmluYXJ5LXZhbHVl"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             blob: 'binary-value'
           })
@@ -4396,16 +4197,14 @@ module RailsJson
         # Parses timestamp shapes
         #
         it 'rails_json_parses_timestamp_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"timestamp":"2000-01-02T20:34:56Z"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"timestamp":"2000-01-02T20:34:56Z"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
           })
@@ -4413,16 +4212,14 @@ module RailsJson
         # Parses fractional timestamp shapes
         #
         it 'rails_json_parses_fractional_timestamp_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"timestamp":"2000-01-02T20:34:56.123Z"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"timestamp":"2000-01-02T20:34:56.123Z"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4430,16 +4227,14 @@ module RailsJson
         # Parses iso8601 timestamps
         #
         it 'rails_json_parses_iso8601_timestamps' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
           })
@@ -4447,16 +4242,14 @@ module RailsJson
         # Parses httpdate timestamps
         #
         it 'rails_json_parses_httpdate_timestamps' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
           })
@@ -4464,16 +4257,14 @@ module RailsJson
         # Parses fractional httpdate timestamps
         #
         it 'rails_json_parses_fractional_httpdate_timestamps' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.123 GMT"}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.123 GMT"}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4481,16 +4272,14 @@ module RailsJson
         # Parses list shapes
         #
         it 'rails_json_parses_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"list_of_strings":["abc","mno","xyz"]}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"list_of_strings":["abc","mno","xyz"]}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             list_of_strings: [
               "abc",
@@ -4502,16 +4291,14 @@ module RailsJson
         # Parses list of map shapes
         #
         it 'rails_json_parses_list_of_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
               {
@@ -4526,16 +4313,14 @@ module RailsJson
         # Parses list of list shapes
         #
         it 'rails_json_parses_list_of_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             list_of_lists: [
               [
@@ -4554,16 +4339,14 @@ module RailsJson
         # Parses list of structure shapes
         #
         it 'rails_json_parses_list_of_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             list_of_structs: [
               {
@@ -4578,16 +4361,14 @@ module RailsJson
         # Parses list of recursive structure shapes
         #
         it 'rails_json_parses_list_of_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             recursive_list: [
               {
@@ -4607,16 +4388,14 @@ module RailsJson
         # Parses map shapes
         #
         it 'rails_json_parses_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"map_of_strings":{"size":"large","color":"red"}}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"map_of_strings":{"size":"large","color":"red"}}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             map_of_strings: {
               'size' => "large",
@@ -4627,16 +4406,14 @@ module RailsJson
         # Parses map of list shapes
         #
         it 'rails_json_parses_map_of_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
               'sizes' => [
@@ -4653,16 +4430,14 @@ module RailsJson
         # Parses map of map shapes
         #
         it 'rails_json_parses_map_of_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             map_of_maps: {
               'sizes' => {
@@ -4679,16 +4454,14 @@ module RailsJson
         # Parses map of structure shapes
         #
         it 'rails_json_parses_map_of_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             map_of_structs: {
               'size' => {
@@ -4703,16 +4476,14 @@ module RailsJson
         # Parses map of recursive structure shapes
         #
         it 'rails_json_parses_map_of_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
             recursive_map: {
               'key-1' => {
@@ -4732,17 +4503,15 @@ module RailsJson
         # Parses the request id from the response
         #
         it 'rails_json_parses_the_request_id_from_the_response' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.headers['X-Amzn-Requestid'] = 'amazon-uniq-request-id'
-            response.body.write('{}')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.headers['X-Amzn-Requestid'] = 'amazon-uniq-request-id'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:kitchen_sink_operation, response)
+          allow(Builders::KitchenSinkOperation).to receive(:build)
+          output = client.kitchen_sink_operation({})
           expect(output.data.to_h).to eq({
 
           })
@@ -4753,15 +4522,14 @@ module RailsJson
         # Parses operations with empty JSON bodies
         #
         it 'stubs rails_json_parses_operations_with_empty_json_bodies' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
 
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -4769,15 +4537,14 @@ module RailsJson
         # Parses string shapes
         #
         it 'stubs rails_json_parses_string_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             string: "string-value"
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             string: "string-value"
           })
@@ -4785,15 +4552,14 @@ module RailsJson
         # Parses integer shapes
         #
         it 'stubs rails_json_parses_integer_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             integer: 1234
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             integer: 1234
           })
@@ -4801,15 +4567,14 @@ module RailsJson
         # Parses long shapes
         #
         it 'stubs rails_json_parses_long_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             long: 1234567890123456789
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             long: 1234567890123456789
           })
@@ -4817,15 +4582,14 @@ module RailsJson
         # Parses float shapes
         #
         it 'stubs rails_json_parses_float_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             float: 1234.5
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             float: 1234.5
           })
@@ -4833,15 +4597,14 @@ module RailsJson
         # Parses double shapes
         #
         it 'stubs rails_json_parses_double_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             double: 1.2345678912345679E8
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
           })
@@ -4849,15 +4612,14 @@ module RailsJson
         # Parses boolean shapes (true)
         #
         it 'stubs rails_json_parses_boolean_shapes_true' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             boolean: true
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             boolean: true
           })
@@ -4865,15 +4627,14 @@ module RailsJson
         # Parses boolean (false)
         #
         it 'stubs rails_json_parses_boolean_false' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             boolean: false
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             boolean: false
           })
@@ -4881,15 +4642,14 @@ module RailsJson
         # Parses blob shapes
         #
         it 'stubs rails_json_parses_blob_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             blob: 'binary-value'
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             blob: 'binary-value'
           })
@@ -4897,15 +4657,14 @@ module RailsJson
         # Parses timestamp shapes
         #
         it 'stubs rails_json_parses_timestamp_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             timestamp: Time.at(946845296)
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
           })
@@ -4913,15 +4672,14 @@ module RailsJson
         # Parses fractional timestamp shapes
         #
         it 'stubs rails_json_parses_fractional_timestamp_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             timestamp: Time.at(946845296, 123, :millisecond)
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4929,15 +4687,14 @@ module RailsJson
         # Parses iso8601 timestamps
         #
         it 'stubs rails_json_parses_iso8601_timestamps' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             iso8601_timestamp: Time.at(946845296)
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
           })
@@ -4945,15 +4702,14 @@ module RailsJson
         # Parses httpdate timestamps
         #
         it 'stubs rails_json_parses_httpdate_timestamps' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             httpdate_timestamp: Time.at(946845296)
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
           })
@@ -4961,15 +4717,14 @@ module RailsJson
         # Parses fractional httpdate timestamps
         #
         it 'stubs rails_json_parses_fractional_httpdate_timestamps' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4977,11 +4732,10 @@ module RailsJson
         # Parses list shapes
         #
         it 'stubs rails_json_parses_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             list_of_strings: [
               "abc",
@@ -4989,7 +4743,7 @@ module RailsJson
               "xyz"
             ]
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             list_of_strings: [
               "abc",
@@ -5001,11 +4755,10 @@ module RailsJson
         # Parses list of map shapes
         #
         it 'stubs rails_json_parses_list_of_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             list_of_maps_of_strings: [
               {
@@ -5016,7 +4769,7 @@ module RailsJson
               }
             ]
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
               {
@@ -5031,11 +4784,10 @@ module RailsJson
         # Parses list of list shapes
         #
         it 'stubs rails_json_parses_list_of_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             list_of_lists: [
               [
@@ -5050,7 +4802,7 @@ module RailsJson
               ]
             ]
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             list_of_lists: [
               [
@@ -5069,11 +4821,10 @@ module RailsJson
         # Parses list of structure shapes
         #
         it 'stubs rails_json_parses_list_of_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             list_of_structs: [
               {
@@ -5084,7 +4835,7 @@ module RailsJson
               }
             ]
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             list_of_structs: [
               {
@@ -5099,11 +4850,10 @@ module RailsJson
         # Parses list of recursive structure shapes
         #
         it 'stubs rails_json_parses_list_of_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             recursive_list: [
               {
@@ -5119,7 +4869,7 @@ module RailsJson
               }
             ]
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             recursive_list: [
               {
@@ -5139,18 +4889,17 @@ module RailsJson
         # Parses map shapes
         #
         it 'stubs rails_json_parses_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             map_of_strings: {
               'size' => "large",
               'color' => "red"
             }
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             map_of_strings: {
               'size' => "large",
@@ -5161,11 +4910,10 @@ module RailsJson
         # Parses map of list shapes
         #
         it 'stubs rails_json_parses_map_of_list_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             map_of_lists_of_strings: {
               'sizes' => [
@@ -5178,7 +4926,7 @@ module RailsJson
               ]
             }
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
               'sizes' => [
@@ -5195,11 +4943,10 @@ module RailsJson
         # Parses map of map shapes
         #
         it 'stubs rails_json_parses_map_of_map_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             map_of_maps: {
               'sizes' => {
@@ -5212,7 +4959,7 @@ module RailsJson
               }
             }
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             map_of_maps: {
               'sizes' => {
@@ -5229,11 +4976,10 @@ module RailsJson
         # Parses map of structure shapes
         #
         it 'stubs rails_json_parses_map_of_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             map_of_structs: {
               'size' => {
@@ -5244,7 +4990,7 @@ module RailsJson
               }
             }
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             map_of_structs: {
               'size' => {
@@ -5259,11 +5005,10 @@ module RailsJson
         # Parses map of recursive structure shapes
         #
         it 'stubs rails_json_parses_map_of_recursive_structure_shapes' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
             recursive_map: {
               'key-1' => {
@@ -5279,7 +5024,7 @@ module RailsJson
               }
             }
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             recursive_map: {
               'key-1' => {
@@ -5299,15 +5044,14 @@ module RailsJson
         # Parses the request id from the response
         #
         it 'stubs rails_json_parses_the_request_id_from_the_response' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, {
 
           })
-          output = client.kitchen_sink_operation({}, middleware: middleware)
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -5322,15 +5066,14 @@ module RailsJson
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'RailsJsonMediaTypeHeaderInputBase64' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/MediaTypeHeader')
             { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.media_type_header({
             json: "true"
           }, **opts)
@@ -5341,16 +5084,14 @@ module RailsJson
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'RailsJsonMediaTypeHeaderOutputBase64' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-Json'] = 'dHJ1ZQ=='
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.media_type_header({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Json'] = 'dHJ1ZQ=='
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:media_type_header, response)
+          allow(Builders::MediaTypeHeader).to receive(:build)
+          output = client.media_type_header({})
           expect(output.data.to_h).to eq({
             json: "true"
           })
@@ -5361,15 +5102,14 @@ module RailsJson
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'stubs RailsJsonMediaTypeHeaderOutputBase64' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::MediaTypeHeader).to receive(:build)
           client.stub_responses(:media_type_header, {
             json: "true"
           })
-          output = client.media_type_header({}, middleware: middleware)
+          output = client.media_type_header({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             json: "true"
           })
@@ -5384,15 +5124,14 @@ module RailsJson
         # Serializes members with nestedAttributes
         #
         it 'rails_json_nested_attributes' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nestedattributes')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.nested_attributes_operation({
             simple_struct: {
               value: "simple struct value"
@@ -5409,15 +5148,14 @@ module RailsJson
         # Do not send null values, empty strings, or empty lists over the wire in headers
         #
         it 'RailsJsonNullAndEmptyHeaders' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/NullAndEmptyHeadersClient')
             ['X-A', 'X-B', 'X-C'].each { |k| expect(request.headers.key?(k)).to be(false) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.null_and_empty_headers_client({
             a: nil,
             b: "",
@@ -5436,15 +5174,14 @@ module RailsJson
         # Null structure values are dropped
         #
         it 'RailsJsonStructuresDontSerializeNullValues' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nulloperation')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.null_operation({
             string: nil
           }, **opts)
@@ -5452,7 +5189,7 @@ module RailsJson
         # Serializes null values in maps
         #
         it 'RailsJsonMapsSerializeNullValues' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nulloperation')
@@ -5462,9 +5199,8 @@ module RailsJson
                     "foo": null
                 }
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.null_operation({
             sparse_string_map: {
               'foo' => nil
@@ -5474,7 +5210,7 @@ module RailsJson
         # Serializes null values in lists
         #
         it 'RailsJsonListsSerializeNull' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nulloperation')
@@ -5484,9 +5220,8 @@ module RailsJson
                     null
                 ]
             }'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.null_operation({
             sparse_string_list: [
               nil
@@ -5499,18 +5234,16 @@ module RailsJson
         # Null structure values are dropped
         #
         it 'RailsJsonStructuresDontDeserializeNullValues' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "string": null
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.null_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "string": null
+          }')
+          response.body.rewind
+          client.stub_responses(:null_operation, response)
+          allow(Builders::NullOperation).to receive(:build)
+          output = client.null_operation({})
           expect(output.data.to_h).to eq({
 
           })
@@ -5518,20 +5251,18 @@ module RailsJson
         # Deserializes null values in maps
         #
         it 'RailsJsonMapsDeserializeNullValues' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "sparse_string_map": {
-                    "foo": null
-                }
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.null_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparse_string_map": {
+                  "foo": null
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:null_operation, response)
+          allow(Builders::NullOperation).to receive(:build)
+          output = client.null_operation({})
           expect(output.data.to_h).to eq({
             sparse_string_map: {
               'foo' => nil
@@ -5541,20 +5272,18 @@ module RailsJson
         # Deserializes null values in lists
         #
         it 'RailsJsonListsDeserializeNull' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['Content-Type'] = 'application/json'
-            response.body.write('{
-                "sparse_string_list": [
-                    null
-                ]
-            }')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.null_operation({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparse_string_list": [
+                  null
+              ]
+          }')
+          response.body.rewind
+          client.stub_responses(:null_operation, response)
+          allow(Builders::NullOperation).to receive(:build)
+          output = client.null_operation({})
           expect(output.data.to_h).to eq({
             sparse_string_list: [
               nil
@@ -5567,15 +5296,14 @@ module RailsJson
         # Null structure values are dropped
         #
         it 'stubs RailsJsonStructuresDontDeserializeNullValues' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::NullOperation).to receive(:build)
           client.stub_responses(:null_operation, {
 
           })
-          output = client.null_operation({}, middleware: middleware)
+          output = client.null_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
 
           })
@@ -5583,17 +5311,16 @@ module RailsJson
         # Deserializes null values in maps
         #
         it 'stubs RailsJsonMapsDeserializeNullValues' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::NullOperation).to receive(:build)
           client.stub_responses(:null_operation, {
             sparse_string_map: {
               'foo' => nil
             }
           })
-          output = client.null_operation({}, middleware: middleware)
+          output = client.null_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             sparse_string_map: {
               'foo' => nil
@@ -5603,17 +5330,16 @@ module RailsJson
         # Deserializes null values in lists
         #
         it 'stubs RailsJsonListsDeserializeNull' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::NullOperation).to receive(:build)
           client.stub_responses(:null_operation, {
             sparse_string_list: [
               nil
             ]
           })
-          output = client.null_operation({}, middleware: middleware)
+          output = client.null_operation({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             sparse_string_list: [
               nil
@@ -5630,14 +5356,13 @@ module RailsJson
         # Omits null query values
         #
         it 'RailsJsonOmitsNullQuery' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/OmitsNullSerializesEmptyString')
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.omits_null_serializes_empty_string({
             null_value: nil
           }, **opts)
@@ -5645,7 +5370,7 @@ module RailsJson
         # Serializes empty query strings
         #
         it 'RailsJsonSerializesEmptyQueryValue' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/OmitsNullSerializesEmptyString')
@@ -5655,9 +5380,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.omits_null_serializes_empty_string({
             empty_string: ""
           }, **opts)
@@ -5672,15 +5396,14 @@ module RailsJson
         # Can call operations with no input or output
         #
         it 'rails_json_can_call_operation_with_no_input_or_output' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.operation_with_optional_input_output({
 
           }, **opts)
@@ -5688,15 +5411,14 @@ module RailsJson
         # Can invoke operations with optional input
         #
         it 'rails_json_can_call_operation_with_optional_input' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.operation_with_optional_input_output({
             value: "Hi"
           }, **opts)
@@ -5712,7 +5434,7 @@ module RailsJson
         #
         it 'RailsJsonQueryIdempotencyTokenAutoFill' do
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/QueryIdempotencyTokenAutoFill')
@@ -5722,9 +5444,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.query_idempotency_token_auto_fill({
 
           }, **opts)
@@ -5733,7 +5454,7 @@ module RailsJson
         #
         it 'RailsJsonQueryIdempotencyTokenAutoFillIsSet' do
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/QueryIdempotencyTokenAutoFill')
@@ -5743,9 +5464,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.query_idempotency_token_auto_fill({
             token: "00000000-0000-4000-8000-000000000000"
           }, **opts)
@@ -5760,7 +5480,7 @@ module RailsJson
         # Serialize query params from map of list strings
         #
         it 'RailsJsonQueryParamsStringListMap' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/StringListMap')
@@ -5770,9 +5490,8 @@ module RailsJson
               expect(actual_query[k]).to eq(v)
             end
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.query_params_as_string_list_map({
             qux: "named",
             foo: {
@@ -5797,15 +5516,14 @@ module RailsJson
         # Tests how timestamp request headers are serialized
         #
         it 'RailsJsonTimestampFormatHeaders' do
-          middleware = Hearth::MiddlewareBuilder.before_send do |input, context|
+          interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/TimestampFormatHeaders')
             { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
-            Hearth::Output.new
           end
-          opts = {middleware: middleware}
+          opts = {interceptors: [interceptor]}
           client.timestamp_format_headers({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -5822,22 +5540,20 @@ module RailsJson
         # Tests how timestamp response headers are serialized
         #
         it 'RailsJsonTimestampFormatHeaders' do
-          middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|
-            response = context.response
-            response.status = 200
-            response.headers['X-defaultFormat'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
-            response.headers['X-memberDateTime'] = '2019-12-16T23:48:18Z'
-            response.headers['X-memberEpochSeconds'] = '1576540098'
-            response.headers['X-memberHttpDate'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
-            response.headers['X-targetDateTime'] = '2019-12-16T23:48:18Z'
-            response.headers['X-targetEpochSeconds'] = '1576540098'
-            response.headers['X-targetHttpDate'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
-            response.body.write('')
-            response.body.rewind
-            Hearth::Output.new
-          end
-          middleware.remove_send.remove_build.remove_retry
-          output = client.timestamp_format_headers({}, middleware: middleware)
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-defaultFormat'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
+          response.headers['X-memberDateTime'] = '2019-12-16T23:48:18Z'
+          response.headers['X-memberEpochSeconds'] = '1576540098'
+          response.headers['X-memberHttpDate'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
+          response.headers['X-targetDateTime'] = '2019-12-16T23:48:18Z'
+          response.headers['X-targetEpochSeconds'] = '1576540098'
+          response.headers['X-targetHttpDate'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:timestamp_format_headers, response)
+          allow(Builders::TimestampFormatHeaders).to receive(:build)
+          output = client.timestamp_format_headers({})
           expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -5854,11 +5570,10 @@ module RailsJson
         # Tests how timestamp response headers are serialized
         #
         it 'stubs RailsJsonTimestampFormatHeaders' do
-          middleware = Hearth::MiddlewareBuilder.after_send do |input, context|
-            response = context.response
-            expect(response.status).to eq(200)
+          interceptor = after_send.new do |context|
+            expect(context.response.status).to eq(200)
           end
-          middleware.remove_build.remove_retry
+          allow(Builders::TimestampFormatHeaders).to receive(:build)
           client.stub_responses(:timestamp_format_headers, {
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -5868,7 +5583,7 @@ module RailsJson
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
           })
-          output = client.timestamp_format_headers({}, middleware: middleware)
+          output = client.timestamp_format_headers({}, interceptors: [interceptor])
           expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
