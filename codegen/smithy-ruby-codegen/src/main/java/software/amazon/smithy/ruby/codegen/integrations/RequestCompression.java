@@ -39,17 +39,17 @@ public class RequestCompression implements RubyIntegration {
 
     @Override
     public void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
-//        ClientConfig disableRequestCompression = (new ClientConfig.Builder())
-//                .name("disable_request_compression")
-//                .type("Boolean")
-//                .defaultValue("false")
-//                .documentation("When set to 'true' the request body will not be compressed for supported operations.")
-//                .allowOperationOverride()
-//                .defaults(new ConfigProviderChain.Builder()
-//                        .envProvider("DISABLE_REQUEST_COMPRESSION", "Boolean")
-//                        .staticProvider("false")
-//                        .build())
-//                .build();
+        ClientConfig disableRequestCompression = (new ClientConfig.Builder())
+                .name("disable_request_compression")
+                .type("Boolean")
+                .defaultValue("false")
+                .documentation("When set to 'true' the request body will not be compressed for supported operations.")
+                .allowOperationOverride()
+                .defaults(new ConfigProviderChain.Builder()
+                        .envProvider("DISABLE_REQUEST_COMPRESSION", "Boolean")
+                        .staticProvider("false")
+                        .build())
+                .build();
 
         String minCompressionDocumentation = """
                 The minimum size bytes that triggers compression for request bodies.
@@ -86,7 +86,7 @@ public class RequestCompression implements RubyIntegration {
 
                     return params;
                 })
-//                .addConfig(disableRequestCompression)
+                .addConfig(disableRequestCompression)
                 .addConfig(requestMinCompressionSizeBytes)
                 .klass("Hearth::Middleware::RequestCompression")
                 .step(MiddlewareStackStep.AFTER_BUILD)
