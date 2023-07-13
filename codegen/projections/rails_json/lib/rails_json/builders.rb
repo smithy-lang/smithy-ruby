@@ -112,7 +112,7 @@ module RailsJson
           v.each { |q_v| http_req.append_query_param(k, q_v) }
         end
         if input[:hello].to_s.empty?
-          raise ArgumentError, "HTTP label :hello cannot be nil or empty."
+          raise ArgumentError, "HTTP label :hello cannot be empty."
         end
         http_req.append_path(format(
             '/ConstantQueryString/%<hello>s',
@@ -390,10 +390,10 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:float].to_s.empty?
-          raise ArgumentError, "HTTP label :float cannot be nil or empty."
+          raise ArgumentError, "HTTP label :float cannot be empty."
         end
         if input[:double].to_s.empty?
-          raise ArgumentError, "HTTP label :double cannot be nil or empty."
+          raise ArgumentError, "HTTP label :double cannot be empty."
         end
         http_req.append_path(format(
             '/FloatHttpLabels/%<float>s/%<double>s',
@@ -411,10 +411,10 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:foo].to_s.empty?
-          raise ArgumentError, "HTTP label :foo cannot be nil or empty."
+          raise ArgumentError, "HTTP label :foo cannot be empty."
         end
         if input[:baz].to_s.empty?
-          raise ArgumentError, "HTTP label :baz cannot be nil or empty."
+          raise ArgumentError, "HTTP label :baz cannot be empty."
         end
         http_req.append_path(format(
             '/HttpRequestWithGreedyLabelInPath/foo/%<foo>s/baz/%<baz>s',
@@ -432,28 +432,28 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:string].to_s.empty?
-          raise ArgumentError, "HTTP label :string cannot be nil or empty."
+          raise ArgumentError, "HTTP label :string cannot be empty."
         end
         if input[:short].to_s.empty?
-          raise ArgumentError, "HTTP label :short cannot be nil or empty."
+          raise ArgumentError, "HTTP label :short cannot be empty."
         end
         if input[:integer].to_s.empty?
-          raise ArgumentError, "HTTP label :integer cannot be nil or empty."
+          raise ArgumentError, "HTTP label :integer cannot be empty."
         end
         if input[:long].to_s.empty?
-          raise ArgumentError, "HTTP label :long cannot be nil or empty."
+          raise ArgumentError, "HTTP label :long cannot be empty."
         end
         if input[:float].to_s.empty?
-          raise ArgumentError, "HTTP label :float cannot be nil or empty."
+          raise ArgumentError, "HTTP label :float cannot be empty."
         end
         if input[:double].to_s.empty?
-          raise ArgumentError, "HTTP label :double cannot be nil or empty."
+          raise ArgumentError, "HTTP label :double cannot be empty."
         end
         if input[:boolean].to_s.empty?
-          raise ArgumentError, "HTTP label :boolean cannot be nil or empty."
+          raise ArgumentError, "HTTP label :boolean cannot be empty."
         end
         if Hearth::TimeHelper.to_date_time(input[:timestamp]).empty?
-          raise ArgumentError, "HTTP label :timestamp cannot be nil or empty."
+          raise ArgumentError, "HTTP label :timestamp cannot be empty."
         end
         http_req.append_path(format(
             '/HttpRequestWithLabels/%<string>s/%<short>s/%<integer>s/%<long>s/%<float>s/%<double>s/%<boolean>s/%<timestamp>s',
@@ -477,25 +477,25 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i.to_s.empty?
-          raise ArgumentError, "HTTP label :member_epoch_seconds cannot be nil or empty."
+          raise ArgumentError, "HTTP label :member_epoch_seconds cannot be empty."
         end
         if Hearth::TimeHelper.to_http_date(input[:member_http_date]).empty?
-          raise ArgumentError, "HTTP label :member_http_date cannot be nil or empty."
+          raise ArgumentError, "HTTP label :member_http_date cannot be empty."
         end
         if Hearth::TimeHelper.to_date_time(input[:member_date_time]).empty?
-          raise ArgumentError, "HTTP label :member_date_time cannot be nil or empty."
+          raise ArgumentError, "HTTP label :member_date_time cannot be empty."
         end
         if Hearth::TimeHelper.to_date_time(input[:default_format]).empty?
-          raise ArgumentError, "HTTP label :default_format cannot be nil or empty."
+          raise ArgumentError, "HTTP label :default_format cannot be empty."
         end
         if Hearth::TimeHelper.to_epoch_seconds(input[:target_epoch_seconds]).to_i.to_s.empty?
-          raise ArgumentError, "HTTP label :target_epoch_seconds cannot be nil or empty."
+          raise ArgumentError, "HTTP label :target_epoch_seconds cannot be empty."
         end
         if Hearth::TimeHelper.to_http_date(input[:target_http_date]).empty?
-          raise ArgumentError, "HTTP label :target_http_date cannot be nil or empty."
+          raise ArgumentError, "HTTP label :target_http_date cannot be empty."
         end
         if Hearth::TimeHelper.to_date_time(input[:target_date_time]).empty?
-          raise ArgumentError, "HTTP label :target_date_time cannot be nil or empty."
+          raise ArgumentError, "HTTP label :target_date_time cannot be empty."
         end
         http_req.append_path(format(
             '/HttpRequestWithLabelsAndTimestampFormat/%<memberEpochSeconds>s/%<memberHttpDate>s/%<memberDateTime>s/%<defaultFormat>s/%<targetEpochSeconds>s/%<targetHttpDate>s/%<targetDateTime>s',
@@ -1165,7 +1165,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         if input[:member___123abc].to_s.empty?
-          raise ArgumentError, "HTTP label :member___123abc cannot be nil or empty."
+          raise ArgumentError, "HTTP label :member___123abc cannot be empty."
         end
         http_req.append_path(format(
             '/BadName/%<__123abc>s',

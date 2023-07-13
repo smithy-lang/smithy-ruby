@@ -32,7 +32,7 @@ module WhiteLabel
 
       it 'validates types' do
         expect { Config.new(logger: 'foo') }
-          .to raise_error(ArgumentError, /options\[:logger\]/)
+          .to raise_error(ArgumentError, /config\[:logger\]/)
       end
     end
   end

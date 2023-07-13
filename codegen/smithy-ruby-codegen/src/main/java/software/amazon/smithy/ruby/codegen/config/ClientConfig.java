@@ -236,7 +236,7 @@ public class ClientConfig {
          */
         public Builder defaultValue(String value) {
             this.defaults = new ConfigProviderChain.Builder()
-                    .dynamicProvider("proc { " + value + "}")
+                    .dynamicProvider("proc { " + value + " }")
                     .build();
             return this;
         }

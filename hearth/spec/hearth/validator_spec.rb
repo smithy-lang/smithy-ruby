@@ -91,5 +91,72 @@ module Hearth
         end
       end
     end
+
+    describe '.validate_unknown!' do
+      let(:struct_class) { Struct.new(:foo, :bar, keyword_init: true) }
+      let(:struct) { struct_class.new }
+
+      context 'all members are known' do
+        let(:params) { { foo: 'bar' } }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_unknown!(struct, params, context: context)
+          end.to_not raise_error
+        end
+      end
+
+      context 'some members are unknown' do
+        let(:params) { { foo: 'bar', baz: 'qux' } }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_unknown!(struct, params, context: context)
+          end.to raise_error(
+            ArgumentError,
+            'Unexpected members: [input[:baz]]'
+          )
+        end
+      end
+
+      context 'all members are unknown' do
+        let(:params) { { baz: 'qux', qux: 'baz' } }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_unknown!(struct, params, context: context)
+          end.to raise_error(
+            ArgumentError,
+            'Unexpected members: [input[:baz], input[:qux]]'
+          )
+        end
+      end
+
+      context 'params is a struct' do
+        let(:params_struct_class) do
+          Struct.new(:foo, :baz, keyword_init: true)
+        end
+        let(:params) { params_struct_class.new(foo: 'bar', baz: 'qux') }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_unknown!(struct, params, context: context)
+          end.to raise_error(
+            ArgumentError,
+            'Unexpected members: [input[:baz]]'
+          )
+        end
+      end
+
+      context 'params is nil' do
+        let(:params) { nil }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_unknown!(struct, params, context: context)
+          end.to_not raise_error
+        end
+      end
+    end
   end
 end

@@ -76,7 +76,7 @@ module HighScoreService
     def create_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::CreateHighScoreInput.build(params)
+      input = Params::CreateHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -143,7 +143,7 @@ module HighScoreService
     def delete_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::DeleteHighScoreInput.build(params)
+      input = Params::DeleteHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -216,7 +216,7 @@ module HighScoreService
     def get_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetHighScoreInput.build(params)
+      input = Params::GetHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -285,7 +285,7 @@ module HighScoreService
     def list_high_scores(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::ListHighScoresInput.build(params)
+      input = Params::ListHighScoresInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -365,7 +365,7 @@ module HighScoreService
     def update_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::UpdateHighScoreInput.build(params)
+      input = Params::UpdateHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,

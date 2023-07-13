@@ -135,7 +135,7 @@ module WhiteLabel
     def defaults_test(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::DefaultsTestInput.build(params)
+      input = Params::DefaultsTestInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -197,7 +197,7 @@ module WhiteLabel
     def endpoint_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::EndpointOperationInput.build(params)
+      input = Params::EndpointOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -265,7 +265,7 @@ module WhiteLabel
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::EndpointWithHostLabelOperationInput.build(params)
+      input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -498,7 +498,7 @@ module WhiteLabel
     def kitchen_sink(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::KitchenSinkInput.build(params)
+      input = Params::KitchenSinkInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -564,7 +564,7 @@ module WhiteLabel
     def mixin_test(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::MixinTestInput.build(params)
+      input = Params::MixinTestInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -631,7 +631,7 @@ module WhiteLabel
     def paginators_test(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::PaginatorsTestOperationInput.build(params)
+      input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -698,7 +698,7 @@ module WhiteLabel
     def paginators_test_with_items(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::PaginatorsTestWithItemsInput.build(params)
+      input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -763,7 +763,7 @@ module WhiteLabel
     def streaming_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::StreamingOperationInput.build(params)
+      input = Params::StreamingOperationInput.build(params, context: 'params')
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -826,7 +826,7 @@ module WhiteLabel
     def streaming_with_length(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::StreamingWithLengthInput.build(params)
+      input = Params::StreamingWithLengthInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -891,7 +891,7 @@ module WhiteLabel
     def waiters_test(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::WaitersTestInput.build(params)
+      input = Params::WaitersTestInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -959,7 +959,7 @@ module WhiteLabel
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params)
+      input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,

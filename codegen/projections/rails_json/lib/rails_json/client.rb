@@ -98,7 +98,7 @@ module RailsJson
     def all_query_string_types(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::AllQueryStringTypesInput.build(params)
+      input = Params::AllQueryStringTypesInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -165,7 +165,7 @@ module RailsJson
     def constant_and_variable_query_string(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::ConstantAndVariableQueryStringInput.build(params)
+      input = Params::ConstantAndVariableQueryStringInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -232,7 +232,7 @@ module RailsJson
     def constant_query_string(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::ConstantQueryStringInput.build(params)
+      input = Params::ConstantQueryStringInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -306,7 +306,7 @@ module RailsJson
     def document_type(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::DocumentTypeInput.build(params)
+      input = Params::DocumentTypeInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -378,7 +378,7 @@ module RailsJson
     def document_type_as_payload(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::DocumentTypeAsPayloadInput.build(params)
+      input = Params::DocumentTypeAsPayloadInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -438,7 +438,7 @@ module RailsJson
     def empty_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::EmptyOperationInput.build(params)
+      input = Params::EmptyOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -498,7 +498,7 @@ module RailsJson
     def endpoint_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::EndpointOperationInput.build(params)
+      input = Params::EndpointOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -564,7 +564,7 @@ module RailsJson
     def endpoint_with_host_label_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::EndpointWithHostLabelOperationInput.build(params)
+      input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -638,7 +638,7 @@ module RailsJson
     def greeting_with_errors(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GreetingWithErrorsInput.build(params)
+      input = Params::GreetingWithErrorsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -708,7 +708,7 @@ module RailsJson
     def http_payload_traits(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpPayloadTraitsInput.build(params)
+      input = Params::HttpPayloadTraitsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -776,7 +776,7 @@ module RailsJson
     def http_payload_traits_with_media_type(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params)
+      input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -849,7 +849,7 @@ module RailsJson
     def http_payload_with_structure(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpPayloadWithStructureInput.build(params)
+      input = Params::HttpPayloadWithStructureInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -921,7 +921,7 @@ module RailsJson
     def http_prefix_headers(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpPrefixHeadersInput.build(params)
+      input = Params::HttpPrefixHeadersInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -985,7 +985,7 @@ module RailsJson
     def http_prefix_headers_in_response(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpPrefixHeadersInResponseInput.build(params)
+      input = Params::HttpPrefixHeadersInResponseInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1048,7 +1048,7 @@ module RailsJson
     def http_request_with_float_labels(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpRequestWithFloatLabelsInput.build(params)
+      input = Params::HttpRequestWithFloatLabelsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1111,7 +1111,7 @@ module RailsJson
     def http_request_with_greedy_label_in_path(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpRequestWithGreedyLabelInPathInput.build(params)
+      input = Params::HttpRequestWithGreedyLabelInPathInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1189,7 +1189,7 @@ module RailsJson
     def http_request_with_labels(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpRequestWithLabelsInput.build(params)
+      input = Params::HttpRequestWithLabelsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1260,7 +1260,7 @@ module RailsJson
     def http_request_with_labels_and_timestamp_format(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params)
+      input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1321,7 +1321,7 @@ module RailsJson
     def http_response_code(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::HttpResponseCodeInput.build(params)
+      input = Params::HttpResponseCodeInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1386,7 +1386,7 @@ module RailsJson
     def ignore_query_params_in_response(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::IgnoreQueryParamsInResponseInput.build(params)
+      input = Params::IgnoreQueryParamsInResponseInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1500,7 +1500,7 @@ module RailsJson
     def input_and_output_with_headers(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::InputAndOutputWithHeadersInput.build(params)
+      input = Params::InputAndOutputWithHeadersInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1584,7 +1584,7 @@ module RailsJson
     def json_enums(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::JsonEnumsInput.build(params)
+      input = Params::JsonEnumsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1695,7 +1695,7 @@ module RailsJson
     def json_maps(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::JsonMapsInput.build(params)
+      input = Params::JsonMapsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1797,7 +1797,7 @@ module RailsJson
     def json_unions(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::JsonUnionsInput.build(params)
+      input = Params::JsonUnionsInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -1965,7 +1965,7 @@ module RailsJson
     def kitchen_sink_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::KitchenSinkOperationInput.build(params)
+      input = Params::KitchenSinkOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2030,7 +2030,7 @@ module RailsJson
     def media_type_header(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::MediaTypeHeaderInput.build(params)
+      input = Params::MediaTypeHeaderInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2095,7 +2095,7 @@ module RailsJson
     def nested_attributes_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::NestedAttributesOperationInput.build(params)
+      input = Params::NestedAttributesOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2169,7 +2169,7 @@ module RailsJson
     def null_and_empty_headers_client(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::NullAndEmptyHeadersClientInput.build(params)
+      input = Params::NullAndEmptyHeadersClientInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2242,7 +2242,7 @@ module RailsJson
     def null_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::NullOperationInput.build(params)
+      input = Params::NullOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2307,7 +2307,7 @@ module RailsJson
     def omits_null_serializes_empty_string(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::OmitsNullSerializesEmptyStringInput.build(params)
+      input = Params::OmitsNullSerializesEmptyStringInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2370,7 +2370,7 @@ module RailsJson
     def operation_with_optional_input_output(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::OperationWithOptionalInputOutputInput.build(params)
+      input = Params::OperationWithOptionalInputOutputInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2436,7 +2436,7 @@ module RailsJson
     def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::QueryIdempotencyTokenAutoFillInput.build(params)
+      input = Params::QueryIdempotencyTokenAutoFillInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2503,7 +2503,7 @@ module RailsJson
     def query_params_as_string_list_map(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::QueryParamsAsStringListMapInput.build(params)
+      input = Params::QueryParamsAsStringListMapInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2566,7 +2566,7 @@ module RailsJson
     def streaming_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::StreamingOperationInput.build(params)
+      input = Params::StreamingOperationInput.build(params, context: 'params')
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2642,7 +2642,7 @@ module RailsJson
     def timestamp_format_headers(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::TimestampFormatHeadersInput.build(params)
+      input = Params::TimestampFormatHeadersInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -2709,7 +2709,7 @@ module RailsJson
     def operation____789_bad_name(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::Struct____789BadNameInput.build(params)
+      input = Params::Struct____789BadNameInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,

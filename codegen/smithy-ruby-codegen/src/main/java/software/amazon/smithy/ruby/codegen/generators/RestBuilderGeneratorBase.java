@@ -288,7 +288,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 }
                 writer
                         .openBlock("if $1L.empty?", getter)
-                        .write("raise ArgumentError, \"HTTP label :$L cannot be nil or empty.\"",
+                        .write("raise ArgumentError, \"HTTP label :$L cannot be empty.\"",
                                 symbolProvider.toMemberName(m))
                         .closeBlock("end");
                 LOGGER.finest("Generated label for " + m.getMemberName());
