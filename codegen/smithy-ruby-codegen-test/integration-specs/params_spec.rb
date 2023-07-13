@@ -12,13 +12,6 @@ RSpec.shared_examples 'validates params' do |*types|
       shape.build(BadType.new, context: 'params')
     end.to raise_error(ArgumentError, "Expected params to be in [#{types.map(&:to_s).join(', ')}], got BadType.")
   end
-
-  it 'validates unknown params' do
-    expect do
-      shape = Object.const_get(self.class.description)
-      shape.build({ unknown: 'bar' }, context: 'params')
-    end.to raise_error(ArgumentError, /Unexpected members: params\[:unknown\]/)
-  end
 end
 
 module WhiteLabel
@@ -144,6 +137,15 @@ module WhiteLabel
         data = Struct.build(params, context: 'params')
         expect(data).to be_a(Types::Struct)
         expect(data.to_h).to eq(params)
+      end
+
+      it 'validates unknown params' do
+        expect do
+          Struct.build({ unknown: 'param' }, context: 'params')
+        end.to raise_error(
+          ArgumentError,
+          'Unexpected members: [params[:unknown]]'
+        )
       end
     end
 

@@ -37,7 +37,7 @@ module WhiteLabel
 
       it 'validates unknowns' do
         expect { Config.new(foo: 'bar') }
-          .to raise_error(ArgumentError, /Unexpected members: config\[:foo\]/)
+          .to raise_error(ArgumentError, /Unexpected members: \[config\[:foo\]\]/)
       end
     end
   end

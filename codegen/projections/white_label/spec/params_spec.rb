@@ -138,6 +138,15 @@ module WhiteLabel
         expect(data).to be_a(Types::Struct)
         expect(data.to_h).to eq(params)
       end
+
+      it 'validates unknown params' do
+        expect do
+          Struct.build({ unknown: 'param' }, context: 'params')
+        end.to raise_error(
+          ArgumentError,
+          'Unexpected members: [params[:unknown]]'
+        )
+      end
     end
 
     describe Union do
