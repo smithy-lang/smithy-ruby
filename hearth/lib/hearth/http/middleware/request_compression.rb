@@ -17,7 +17,8 @@ module Hearth
                        streaming:)
           @app = app
           @disable_request_compression = disable_request_compression
-          @request_min_compression_size_bytes = request_min_compression_size_bytes
+          @request_min_compression_size_bytes =
+            request_min_compression_size_bytes
           @encodings = encodings
           @streaming = streaming
         end
