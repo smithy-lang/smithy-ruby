@@ -7,7 +7,7 @@ module Hearth
     describe Client do
       before { WebMock.disable_net_connect! }
       before do
-        ConnectionPool.pools.each(&:empty!)
+        ConnectionPool.instance_variable_set(:@pools, {})
       end
 
       let(:debug_output) { false }
@@ -174,10 +174,11 @@ module Hearth
           end.to raise_error(ArgumentError)
         end
 
-        it 'rescues StandardError and returns an HTTP::NetworkingError' do
+        it 'rescues StandardError and raises HTTP::NetworkingError' do
           stub_request(:any, uri.to_s).to_raise(StandardError)
-          resp_or_error = subject.transmit(request: request, response: response)
-          expect(resp_or_error).to be_a(NetworkingError)
+          expect do
+            subject.transmit(request: request, response: response)
+          end.to raise_error(NetworkingError)
         end
 
         it 'configures timeouts' do
@@ -380,12 +381,13 @@ module Hearth
 
           it 'finishes the connection if there is a networking error' do
             stub_request(http_method, uri.to_s)
-            original_error = StandardError.new('failed')
-            error = Hearth::HTTP::NetworkingError.new(original_error)
-            expect_any_instance_of(Net::HTTP)
-              .to receive(:start).and_raise(original_error)
-            resp = subject.transmit(request: request, response: response)
-            expect(resp).to eq(error)
+            error = StandardError.new('failed')
+            expect_any_instance_of(Net::HTTP).to receive(:request)
+              .and_raise(error)
+            expect_any_instance_of(Net::HTTP).to receive(:finish)
+            expect do
+              subject.transmit(request: request, response: response)
+            end.to raise_error(NetworkingError, /#{error.message}/)
           end
         end
       end

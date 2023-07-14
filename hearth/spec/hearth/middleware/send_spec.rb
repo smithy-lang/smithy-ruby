@@ -61,7 +61,7 @@ module Hearth
             request: request,
             response: response,
             logger: logger
-          ).and_return(error)
+          ).and_raise(error)
 
           output = subject.call(input, context)
           expect(output).to be_a(Hearth::Output)
@@ -149,15 +149,15 @@ module Hearth
           context 'stub is an Exception' do
             let(:exception) { Exception.new }
             before { stubs.add_stubs(operation, [exception]) }
-            it 'sets the output error to a new instance of the class' do
+            it 'sets the output error as the exception' do
               output = subject.call(input, context)
               expect(output.error).to be(exception)
             end
           end
 
-          context 'stub is a class' do
+          context 'stub is an exception class' do
             before { stubs.add_stubs(operation, [Exception]) }
-            it 'sets the output error to a new instance of the class' do
+            it 'sets the output error to a new instance of the exception' do
               output = subject.call(input, context)
               expect(output.error).to be_a(Exception)
             end
@@ -192,6 +192,18 @@ module Hearth
                 .with(stub_hash, context: 'stub')
                 .and_return(output_type)
 
+              expect(stub_class).to receive(:stub)
+                .with(response, stub: output_type)
+              subject.call(input, context)
+            end
+          end
+
+          context 'stub is a Hearth::Structure' do
+            let(:output_type) { StubOutput.new(param1: 'value') }
+
+            before { stubs.add_stubs(operation, [output_type]) }
+
+            it 'uses the stub class to stub the response' do
               expect(stub_class).to receive(:stub)
                 .with(response, stub: output_type)
               subject.call(input, context)

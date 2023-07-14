@@ -2,8 +2,6 @@
 
 module Hearth
   describe ConnectionPool do
-    # Set instance variable instead of calling empty!
-    # to avoid re-use of double rspec error.
     before do
       ConnectionPool.instance_variable_set(:@pools, {})
     end
@@ -84,18 +82,6 @@ module Hearth
         pool.offer(endpoint_path_query, connection)
         actual = pool.connection_for(endpoint)
         expect(actual).to eq(connection)
-      end
-    end
-
-    describe '#empty!' do
-      it 'closes and removes all sessions from the pool' do
-        pool.offer(endpoint, connection)
-        pool.offer(endpoint2, connection2)
-        expect(connection).to receive(:finish)
-        expect(connection2).to receive(:finish)
-        pool.empty!
-        expect(pool.connection_for(endpoint)).to be_nil
-        expect(pool.connection_for(endpoint2)).to be_nil
       end
     end
   end

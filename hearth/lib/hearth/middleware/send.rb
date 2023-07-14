@@ -54,14 +54,14 @@ module Hearth
             context.response.body.rewind
           end
         else
-          # TODO: should this instead raise NetworkingError?
-          resp_or_error = @client.transmit(
-            request: context.request,
-            response: context.response,
-            logger: context.logger
-          )
-          if resp_or_error.is_a?(Hearth::NetworkingError)
-            output.error = resp_or_error
+          begin
+            @client.transmit(
+              request: context.request,
+              response: context.response,
+              logger: context.logger
+            )
+          rescue Hearth::NetworkingError => e
+            output.error = e
           end
         end
 
@@ -103,6 +103,11 @@ module Hearth
               @stub_class.default,
               context: 'stub'
             )
+          )
+        when Hearth::Structure
+          @stub_class.stub(
+            context.response,
+            stub: stub
           )
         when Hearth::Response
           context.response.replace(stub)
