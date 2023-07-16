@@ -145,7 +145,6 @@ module Hearth
             @last_chunk = data
           end
         end
-
       end
     end
   end
