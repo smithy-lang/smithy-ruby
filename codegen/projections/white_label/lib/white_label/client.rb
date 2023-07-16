@@ -845,7 +845,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::RequestCompressionStreamingOperation
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector

@@ -289,10 +289,6 @@ module WhiteLabel
         unless input[:body].respond_to?(:read) || input[:body].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:body].class}"
         end
-
-        unless input[:body].respond_to?(:size)
-          raise ArgumentError, "Expected #{context} to respond_to(:size)"
-        end
       end
     end
 
