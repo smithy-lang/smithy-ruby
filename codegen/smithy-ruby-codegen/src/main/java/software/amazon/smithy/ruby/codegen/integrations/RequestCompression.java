@@ -46,7 +46,6 @@ public class RequestCompression implements RubyIntegration {
                 .documentation("When set to 'true' the request body will not be compressed for supported operations.")
                 .allowOperationOverride()
                 .defaults(new ConfigProviderChain.Builder()
-                        .envProvider("DISABLE_REQUEST_COMPRESSION", "Boolean")
                         .staticProvider("false")
                         .build())
                 .build();
@@ -63,7 +62,6 @@ public class RequestCompression implements RubyIntegration {
                 .documentation(minCompressionDocumentation)
                 .allowOperationOverride()
                 .defaults(new ConfigProviderChain.Builder()
-                        .envProvider("REQUEST_MIN_COMPRESSION_SIZE_BYTES", "Integer")
                         .staticProvider("10240")
                         .build())
                 .build();
