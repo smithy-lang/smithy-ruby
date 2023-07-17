@@ -4,7 +4,7 @@ module Hearth
   describe Configuration do
     let(:config_class) do
       Struct.new(
-        :option,
+        :simple_option,
         :complex_option,
         keyword_init: true
       ) do
@@ -12,9 +12,12 @@ module Hearth
 
         private
 
-        def validate!
+        def validate_types!
           Hearth::Validator.validate_types!(
-            option, String, context: 'options[:option]'
+            simple_option, String, context: 'config[:simple_option]'
+          )
+          Hearth::Validator.validate_types!(
+            complex_option, Hash, context: 'config[:complex_option]'
           )
         end
 
@@ -25,12 +28,10 @@ module Hearth
     end
 
     describe '#initialize' do
-      it 'uses the config resolver and validates the config object' do
-        options = { option: 'test' }
+      it 'uses the config resolver' do
+        options = { simple_option: 'test' }
         expect(Hearth::Config::Resolver).to receive(:resolve)
           .with(an_instance_of(config_class), options, config_class.defaults)
-        expect_any_instance_of(config_class).to receive(:validate!)
-          .and_call_original
 
         config_class.new(**options)
       end
@@ -38,20 +39,41 @@ module Hearth
       it 'resolves correctly when not passed any options' do
         expect(Hearth::Config::Resolver).to receive(:resolve)
           .with(an_instance_of(config_class), {}, config_class.defaults)
-        expect_any_instance_of(config_class).to receive(:validate!)
-          .and_call_original
 
         config_class.new
+      end
+
+      it 'raises on invalid types' do
+        expect do
+          config_class.new(simple_option: 1)
+        end.to raise_error(
+          ArgumentError,
+          'Expected config[:simple_option] to be in [String], got Integer.'
+        )
+      end
+
+      it 'raises on unknown options' do
+        expect do
+          config_class.new(unknown_option: 'test')
+        end.to raise_error(
+          ArgumentError,
+          'Unexpected members: [config[:unknown_option]]'
+        )
       end
     end
 
     describe '#dup' do
-      let(:complex_option) { double }
-      let(:orig) { config_class.new(complex_option: complex_option) }
+      let(:simple_option) { String.new('test') }
+      let(:complex_option) { {} }
 
       it 'deep copies' do
+        config = config_class.new(
+          simple_option: simple_option,
+          complex_option: complex_option
+        )
+        expect(simple_option).to receive(:dup)
         expect(complex_option).to receive(:dup)
-        orig.dup
+        config.dup
       end
     end
   end

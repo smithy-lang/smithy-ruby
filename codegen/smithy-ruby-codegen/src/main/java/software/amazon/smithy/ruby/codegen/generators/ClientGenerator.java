@@ -211,7 +211,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("config = operation_config(options)")
                 .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
-                .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
+                .write("input = Params::$L.build(params, context: 'params')",
+                        symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> {
                     if (outputShape.members().stream()
                             .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())) {

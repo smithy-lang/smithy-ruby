@@ -86,7 +86,7 @@ public final class ApplicationTransport {
                 .documentation("Endpoint of the service")
                 .allowOperationOverride()
                 .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ")
+                        .dynamicProvider("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }")
                         .build()
                 )
                 .build();

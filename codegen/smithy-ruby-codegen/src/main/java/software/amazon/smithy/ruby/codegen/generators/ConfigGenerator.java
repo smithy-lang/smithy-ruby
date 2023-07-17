@@ -115,14 +115,14 @@ public class ConfigGenerator extends RubyGeneratorBase {
     }
 
     private void renderValidateMethod(RubyCodeWriter writer) {
-        writer.openBlock("def validate!");
+        writer.openBlock("def validate_types!");
         clientConfigList.stream().forEach(clientConfig -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             String type = clientConfig.getType();
             if (type.equals("Boolean")) {
                 type = "TrueClass, FalseClass";
             }
-            writer.write("$3T.validate_types!($1L, $2L, context: 'options[:$1L]')",
+            writer.write("$3T.validate_types!($1L, $2L, context: 'config[:$1L]')",
                     member, type, Hearth.VALIDATOR);
             // TODO - add constraints here
         });
