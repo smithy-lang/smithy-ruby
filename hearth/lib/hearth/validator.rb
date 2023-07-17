@@ -22,6 +22,7 @@ module Hearth
 
     # Validate a value is present and not nil.
     # @param value [Object] The value to validate.
+    # @param context [String] The context of the value being validated.
     # @raise [ArgumentError] Raises when the value is nil.
     def self.validate_required!(value, context:)
       raise ArgumentError, "Expected #{context} to be set." if value.nil?
@@ -29,19 +30,11 @@ module Hearth
 
     # Validate unknown parameters are not present for a given Struct.
     # @param struct [Struct] The Struct to validate against.
-    # @param params [Hash|Struct] The parameters to validate.
+    # @param params [Hash] The parameters to validate.
     # @param context [String] The context of the value being validated.
     # @raise [ArgumentError] Raises when unknown parameters are present.
     def self.validate_unknown!(struct, params, context:)
-      members =
-        if params.is_a?(Hash)
-          params.keys
-        elsif params.is_a?(Struct)
-          params.members
-        else
-          []
-        end
-      unknown = members - struct.members
+      unknown = params.keys - struct.members
       return if unknown.empty?
 
       unknown = unknown.map { |key| "#{context}[:#{key}]" }
