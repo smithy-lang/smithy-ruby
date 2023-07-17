@@ -94,14 +94,14 @@ module Hearth
 
           it 'gets the next stub and applies it' do
             expect(stubs).to receive(:next)
-              .with(:operation).and_return(Exception)
+              .with(:operation).and_return(Exception.new)
             output = subject.call(input, context)
             expect(output.error).to be_a(Exception)
           end
 
           it 'rewinds the body' do
             expect(stubs).to receive(:next)
-              .with(:operation).and_return(Exception)
+              .with(:operation).and_return(Exception.new)
             expect(body).to receive(:rewind)
             subject.call(input, context)
           end
@@ -147,19 +147,24 @@ module Hearth
           end
 
           context 'stub is an Exception' do
-            let(:exception) { Exception.new }
-            before { stubs.add_stubs(operation, [exception]) }
+            let(:error) { Exception.new }
+
+            before { stubs.add_stubs(operation, [error]) }
+
             it 'sets the output error as the exception' do
               output = subject.call(input, context)
-              expect(output.error).to be(exception)
+              expect(output.error).to be(error)
             end
           end
 
-          context 'stub is an exception class' do
-            before { stubs.add_stubs(operation, [Exception]) }
-            it 'sets the output error to a new instance of the exception' do
+          context 'stub is an ApiError' do
+            let(:error) { Hearth::ApiError.new(error_code: 'error') }
+
+            before { stubs.add_stubs(operation, [error]) }
+
+            it 'sets the output error as the error' do
               output = subject.call(input, context)
-              expect(output.error).to be_a(Exception)
+              expect(output.error).to be(error)
             end
           end
 

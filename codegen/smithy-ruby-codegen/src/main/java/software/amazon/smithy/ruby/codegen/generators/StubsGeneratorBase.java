@@ -246,6 +246,10 @@ public abstract class StubsGeneratorBase {
         });
     }
 
+    private void renderErrorStubs() {
+
+    }
+
     // The Output shape is combined with the OperationStub
     // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
     private void renderStubsForOperation(OperationShape operation, Shape outputShape) {

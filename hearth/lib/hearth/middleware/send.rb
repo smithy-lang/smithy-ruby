@@ -48,21 +48,9 @@ module Hearth
 
         output = Output.new
         if @stub_responses
-          stub = @stubs.next(context.operation_name)
-          apply_stub(stub, input, context, output)
-          if context.response.body.respond_to?(:rewind)
-            context.response.body.rewind
-          end
+          stub_response(input, context, output)
         else
-          begin
-            @client.transmit(
-              request: context.request,
-              response: context.response,
-              logger: context.logger
-            )
-          rescue Hearth::NetworkingError => e
-            output.error = e
-          end
+          send_request(context, output)
         end
 
         interceptor_error = context.interceptors.apply(
@@ -79,15 +67,31 @@ module Hearth
 
       private
 
+      def stub_response(input, context, output)
+        stub = @stubs.next(context.operation_name)
+        apply_stub(stub, input, context, output)
+        return unless context.response.body.respond_to?(:rewind)
+
+        context.response.body.rewind
+      end
+
+      def send_request(context, output)
+        @client.transmit(
+          request: context.request,
+          response: context.response,
+          logger: context.logger
+        )
+      rescue Hearth::NetworkingError => e
+        output.error = e
+      end
+
       def apply_stub(stub, input, context, output)
         case stub
         when Proc
           stub = stub.call(input, context)
           apply_stub(stub, input, context, output) if stub
-        when Exception
+        when Exception, ApiError
           output.error = stub
-        when Class
-          output.error = stub.new
         when Hash
           @stub_class.stub(
             context.response,
