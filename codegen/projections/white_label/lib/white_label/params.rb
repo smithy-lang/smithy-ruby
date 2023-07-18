@@ -15,6 +15,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::ClientError, context: context)
         type = Types::ClientError.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.message = params[:message]
         type
       end
@@ -24,6 +25,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)
         type = Types::DefaultsTestInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.un_required_number = params[:un_required_number]
@@ -52,6 +54,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestOutput, context: context)
         type = Types::DefaultsTestOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.un_required_number = params[:un_required_number]
@@ -80,6 +83,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationInput, context: context)
         type = Types::EndpointOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
@@ -88,6 +92,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationOutput, context: context)
         type = Types::EndpointOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
@@ -96,6 +101,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
         type = Types::EndpointWithHostLabelOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.label_member = params[:label_member]
         type
       end
@@ -105,6 +111,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
         type = Types::EndpointWithHostLabelOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
@@ -124,6 +131,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkInput, context: context)
         type = Types::KitchenSinkInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.simple_enum = params[:simple_enum]
         type.typed_enum = params[:typed_enum]
@@ -142,6 +150,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkOutput, context: context)
         type = Types::KitchenSinkOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.simple_enum = params[:simple_enum]
         type.typed_enum = params[:typed_enum]
@@ -204,6 +213,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestInput, context: context)
         type = Types::MixinTestInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.user_id = params[:user_id]
         type
       end
@@ -213,6 +223,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestOutput, context: context)
         type = Types::MixinTestOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.username = params[:username]
         type.user_id = params[:user_id]
         type
@@ -223,6 +234,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
         type = Types::PaginatorsTestOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.next_token = params[:next_token]
         type
       end
@@ -232,6 +244,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationOutput, context: context)
         type = Types::PaginatorsTestOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.next_token = params[:next_token]
         type.items = Items.build(params[:items], context: "#{context}[:items]") unless params[:items].nil?
         type
@@ -242,6 +255,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
         type = Types::PaginatorsTestWithItemsInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.next_token = params[:next_token]
         type
       end
@@ -251,6 +265,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestWithItemsOutput, context: context)
         type = Types::PaginatorsTestWithItemsOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.next_token = params[:next_token]
         type.items = Items.build(params[:items], context: "#{context}[:items]") unless params[:items].nil?
         type
@@ -299,6 +314,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::ResultWrapper, context: context)
         type = Types::ResultWrapper.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.member___123next_token = params[:member___123next_token]
         type
       end
@@ -308,6 +324,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::ServerError, context: context)
         type = Types::ServerError.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
@@ -316,6 +333,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationInput, context: context)
         type = Types::StreamingOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:stream] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)
           io = StringIO.new(io)
@@ -329,6 +347,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationOutput, context: context)
         type = Types::StreamingOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:stream] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)
           io = StringIO.new(io)
@@ -342,6 +361,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingWithLengthInput, context: context)
         type = Types::StreamingWithLengthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:stream] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)
           io = StringIO.new(io)
@@ -355,6 +375,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingWithLengthOutput, context: context)
         type = Types::StreamingWithLengthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
@@ -363,6 +384,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct, context: context)
         type = Types::Struct.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.value = params[:value]
         type
       end
@@ -397,6 +419,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::WaitersTestInput, context: context)
         type = Types::WaitersTestInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.status = params[:status]
         type
       end
@@ -406,6 +429,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::WaitersTestOutput, context: context)
         type = Types::WaitersTestOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.status = params[:status]
         type
       end
@@ -415,6 +439,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.member___next_token = params[:member___next_token]
         type
       end
@@ -424,6 +449,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesOutput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.member___wrapper = ResultWrapper.build(params[:member___wrapper], context: "#{context}[:member___wrapper]") unless params[:member___wrapper].nil?
         type.member___items = Items.build(params[:member___items], context: "#{context}[:member___items]") unless params[:member___items].nil?
         type

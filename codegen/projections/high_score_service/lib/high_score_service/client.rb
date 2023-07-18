@@ -18,13 +18,6 @@ module HighScoreService
   #
   class Client
     include Hearth::ClientStubs
-
-    @middleware = Hearth::MiddlewareBuilder.new
-
-    def self.middleware
-      @middleware
-    end
-
     @plugins = Hearth::PluginList.new
 
     def self.plugins
@@ -36,7 +29,6 @@ module HighScoreService
     #
     def initialize(config = HighScoreService::Config.new, options = {})
       @config = initialize_config(config)
-      @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
@@ -76,7 +68,7 @@ module HighScoreService
     def create_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::CreateHighScoreInput.build(params)
+      input = Params::CreateHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -103,8 +95,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::CreateHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -143,7 +133,7 @@ module HighScoreService
     def delete_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::DeleteHighScoreInput.build(params)
+      input = Params::DeleteHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -170,8 +160,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::DeleteHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -216,7 +204,7 @@ module HighScoreService
     def get_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetHighScoreInput.build(params)
+      input = Params::GetHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -243,8 +231,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::GetHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -285,7 +271,7 @@ module HighScoreService
     def list_high_scores(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::ListHighScoresInput.build(params)
+      input = Params::ListHighScoresInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -312,8 +298,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::ListHighScoresOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -365,7 +349,7 @@ module HighScoreService
     def update_high_score(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::UpdateHighScoreInput.build(params)
+      input = Params::UpdateHighScoreInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -392,8 +376,6 @@ module HighScoreService
         stubs: @stubs,
         params_class: Params::UpdateHighScoreOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -410,12 +392,6 @@ module HighScoreService
     end
 
     private
-
-    def apply_middleware(middleware_stack, middleware)
-      Client.middleware.apply(middleware_stack)
-      @middleware.apply(middleware_stack)
-      Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
-    end
 
     def initialize_config(config)
       config = config.dup

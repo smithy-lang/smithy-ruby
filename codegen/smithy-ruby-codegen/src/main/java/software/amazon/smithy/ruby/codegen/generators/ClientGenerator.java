@@ -103,17 +103,12 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .writeInline("$L", documentation)
                     .openBlock("class Client")
                     .write("include $T", Hearth.CLIENT_STUBS)
-                    .write("\n@middleware = $T.new", Hearth.MIDDLEWARE_BUILDER)
-                    .openBlock("\ndef self.middleware")
-                    .write("@middleware")
-                    .closeBlock("end\n")
                     .call(() -> renderClassRuntimePlugins(writer))
                     .call(() -> renderInitializeMethod(writer))
                     .write("\n# @return [Config] config")
                     .write("attr_reader :config\n")
                     .call(() -> renderOperations(writer))
                     .write("\nprivate")
-                    .call(() -> renderApplyMiddlewareMethod(writer))
                     .call(() -> renderInitializeConfigMethod(writer))
                     .call(() -> renderOperationConfigMethod(writer))
                     .call(() -> {
@@ -183,7 +178,6 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .writeYardParam("Config", "config", "An instance of {Config}")
                 .openBlock("def initialize(config = $L::Config.new, options = {})", settings.getModule())
                 .write("@config = initialize_config(config)")
-                .write("@middleware = $T.new(options[:middleware])", Hearth.MIDDLEWARE_BUILDER)
                 .write("@stubs = $T.new", Hearth.STUBS)
                 .closeBlock("end");
     }
@@ -217,7 +211,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("config = operation_config(options)")
                 .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
-                .write("input = Params::$L.build(params)", symbolProvider.toSymbol(inputShape).getName())
+                .write("input = Params::$L.build(params, context: 'params')",
+                        symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> {
                     if (outputShape.members().stream()
                             .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())) {
@@ -229,7 +224,6 @@ public class ClientGenerator extends RubyGeneratorBase {
                 })
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
-                .write("apply_middleware(stack, options[:middleware])\n")
                 .openBlock("resp = stack.run(")
                 .write("input: input,")
                 .openBlock("context: $T.new(", Hearth.CONTEXT)
@@ -258,15 +252,6 @@ public class ClientGenerator extends RubyGeneratorBase {
 
         writer.write("def $L: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options)"
                 + "{ () -> untyped } -> untyped", operationName);
-    }
-
-    private void renderApplyMiddlewareMethod(RubyCodeWriter writer) {
-        writer
-                .openBlock("\ndef apply_middleware(middleware_stack, middleware)")
-                .write("Client.middleware.apply(middleware_stack)")
-                .write("@middleware.apply(middleware_stack)")
-                .write("$T.new(middleware).apply(middleware_stack)", Hearth.MIDDLEWARE_BUILDER)
-                .closeBlock("end");
     }
 
     private void renderInitializeConfigMethod(RubyCodeWriter writer) {

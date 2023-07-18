@@ -105,19 +105,17 @@ module HighScoreService
 
     private
 
-    def validate!
-      Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'options[:disable_host_prefix]')
-      Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'options[:disable_request_compression]')
-      Hearth::Validator.validate_types!(endpoint, String, context: 'options[:endpoint]')
-      Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'options[:http_client]')
-      Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'options[:interceptors]')
-      Hearth::Validator.validate_types!(log_level, Symbol, context: 'options[:log_level]')
-      Hearth::Validator.validate_types!(logger, Logger, context: 'options[:logger]')
-      Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'options[:plugins]')
-      Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'options[:request_min_compression_size_bytes]')
-      Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'options[:retry_strategy]')
-      Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'options[:stub_responses]')
-      Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'options[:validate_input]')
+    def validate_types!
+      Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
+      Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
+      Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
+      Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
+      Hearth::Validator.validate_types!(log_level, Symbol, context: 'config[:log_level]')
+      Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
+      Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
+      Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
+      Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
+      Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
     def self.defaults
@@ -130,7 +128,6 @@ module HighScoreService
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
         plugins: [proc { Hearth::PluginList.new}],
-        request_min_compression_size_bytes: [Hearth::Config::EnvProvider.new('REQUEST_MIN_COMPRESSION_SIZE_BYTES', type: 'Integer'),10240],
         retry_strategy: [proc { Hearth::Retry::Standard.new}],
         stub_responses: [false],
         validate_input: [true]

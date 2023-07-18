@@ -13,6 +13,10 @@ Metrics/AbcSize:
     - 'lib/hearth/middleware/retry.rb'
     - 'lib/hearth/middleware/send.rb'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/hearth/middleware/send.rb'
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'

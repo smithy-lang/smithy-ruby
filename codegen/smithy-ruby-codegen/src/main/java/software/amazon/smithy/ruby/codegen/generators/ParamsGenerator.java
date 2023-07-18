@@ -132,7 +132,9 @@ public class ParamsGenerator extends RubyGeneratorBase {
             writer
                     .write("$T.validate_types!(params, ::Hash, $T, context: context)",
                             Hearth.VALIDATOR, symbol)
-                    .write("type = $T.new", symbol);
+                    .write("type = $T.new", symbol)
+                    .write("$T.validate_unknown!(type, params, context: context) if params.is_a?(Hash)",
+                            Hearth.VALIDATOR);
 
             members.forEach(member -> {
                 Shape target = model.expectShape(member.getTarget());

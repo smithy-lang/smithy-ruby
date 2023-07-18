@@ -27,11 +27,6 @@ public final class Hearth {
             .name("ClientStubs")
             .build();
 
-    public static final Symbol MIDDLEWARE_BUILDER = Symbol.builder()
-            .namespace("Hearth", "::")
-            .name("MiddlewareBuilder")
-            .build();
-
     public static final Symbol MIDDLEWARE_STACK = Symbol.builder()
             .namespace("Hearth", "::")
             .name("MiddlewareStack")

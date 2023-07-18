@@ -16,13 +16,6 @@ module Weather
   #
   class Client
     include Hearth::ClientStubs
-
-    @middleware = Hearth::MiddlewareBuilder.new
-
-    def self.middleware
-      @middleware
-    end
-
     @plugins = Hearth::PluginList.new
 
     def self.plugins
@@ -34,7 +27,6 @@ module Weather
     #
     def initialize(config = Weather::Config.new, options = {})
       @config = initialize_config(config)
-      @middleware = Hearth::MiddlewareBuilder.new(options[:middleware])
       @stubs = Hearth::Stubbing::Stubs.new
     end
 
@@ -68,7 +60,7 @@ module Weather
     def get_city(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetCityInput.build(params)
+      input = Params::GetCityInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -94,8 +86,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetCityOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -139,7 +129,7 @@ module Weather
     def get_city_image(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetCityImageInput.build(params)
+      input = Params::GetCityImageInput.build(params, context: 'params')
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -165,8 +155,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetCityImageOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -199,7 +187,7 @@ module Weather
     def get_current_time(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetCurrentTimeInput.build(params)
+      input = Params::GetCurrentTimeInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -225,8 +213,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetCurrentTimeOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -276,7 +262,7 @@ module Weather
     def get_forecast(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetForecastInput.build(params)
+      input = Params::GetForecastInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -302,8 +288,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::GetForecastOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -358,7 +342,7 @@ module Weather
     def list_cities(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::ListCitiesInput.build(params)
+      input = Params::ListCitiesInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -384,8 +368,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::ListCitiesOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -425,7 +407,7 @@ module Weather
     def operation____789_bad_name(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::Struct____789BadNameInput.build(params)
+      input = Params::Struct____789BadNameInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -451,8 +433,6 @@ module Weather
         stubs: @stubs,
         params_class: Params::Struct____789BadNameOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -469,12 +449,6 @@ module Weather
     end
 
     private
-
-    def apply_middleware(middleware_stack, middleware)
-      Client.middleware.apply(middleware_stack)
-      @middleware.apply(middleware_stack)
-      Hearth::MiddlewareBuilder.new(middleware).apply(middleware_stack)
-    end
 
     def initialize_config(config)
       config = config.dup

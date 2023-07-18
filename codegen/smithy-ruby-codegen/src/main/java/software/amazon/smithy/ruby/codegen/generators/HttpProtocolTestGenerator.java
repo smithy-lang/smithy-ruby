@@ -90,8 +90,17 @@ public class HttpProtocolTestGenerator {
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
                 .write("let(:endpoint) { 'http://127.0.0.1' } ")
-                .write("let(:config) { Config.new(stub_responses: true, validate_input: false, endpoint: endpoint) }")
+                .write("let(:retry_strategy) { Hearth::Retry::Standard.new(max_attempts: 1) }")
+                .openBlock("let(:config) do")
+                .openBlock("Config.new(")
+                .write("stub_responses: true,")
+                .write("validate_input: false,")
+                .write("endpoint: endpoint,")
+                .write("retry_strategy: retry_strategy")
+                .closeBlock(")")
+                .closeBlock("end")
                 .write("let(:client) { Client.new(config) }")
+                .call(() -> renderInterceptorClasses())
                 .write("")
                 .call(() -> renderTests())
                 .closeBlock("end")
@@ -136,9 +145,9 @@ public class HttpProtocolTestGenerator {
             writer
                     .writeDocstring(documentation)
                     .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
-                    .call(() -> renderResponseMiddleware(testCase))
-                    .write("middleware.remove_send.remove_build.remove_retry")
-                    .write("output = client.$L({}, middleware: middleware)", operationName)
+                    .call(() -> renderResponseStubResponse(operation, testCase))
+                    .call(() -> renderSkipBuild(operation))
+                    .write("output = client.$L({})", operationName)
                     .call(() -> {
                         if (Streaming.isStreaming(model, outputShape)) {
                             renderStreamingParamReader(outputShape);
@@ -170,11 +179,11 @@ public class HttpProtocolTestGenerator {
                     .writeDocstring(documentation)
                     .openBlock("it 'stubs $L'$L do", testCase.getId(),
                             skipTest(operation, testCase.getId(), "response"))
-                    .call(() -> renderResponseStubMiddleware(testCase))
-                    .write("middleware.remove_build.remove_retry")
+                    .call(() -> renderResponseStubInterceptor(testCase))
+                    .call(() -> renderSkipBuild(operation))
                     .write("client.stub_responses(:$L, $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
-                    .write("output = client.$L({}, middleware: middleware)", operationName)
+                    .write("output = client.$L({}, interceptors: [interceptor])", operationName)
                     // Note: This part is not required, but its an additional check on parsers
                     .call(() -> {
                         if (Streaming.isStreaming(model, outputShape)) {
@@ -210,8 +219,8 @@ public class HttpProtocolTestGenerator {
                                     + "receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')");
                         }
                     })
-                    .call(() -> renderRequestMiddleware(testCase))
-                    .write("opts = {middleware: middleware}")
+                    .call(() -> renderRequestInterceptor(testCase))
+                    .write("opts = {interceptors: [interceptor]}")
                     .call(() -> {
                         if (testCase.getHost().isPresent()) {
                             writer.write("opts[:endpoint] = 'http://$L'", testCase.getHost().get());
@@ -260,10 +269,10 @@ public class HttpProtocolTestGenerator {
                     writer
                             .writeDocstring(documentation)
                             .openBlock("it '$L' do", testCase.getId())
-                            .call(() -> renderResponseMiddleware(testCase))
-                            .write("middleware.remove_send.remove_build.remove_retry")
+                            .call(() -> renderResponseStubResponse(operation, testCase))
+                            .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
-                            .write("client.$L({}, middleware: middleware)", operationName)
+                            .write("client.$L({})", operationName)
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
@@ -319,25 +328,30 @@ public class HttpProtocolTestGenerator {
         return buffer.toString();
     }
 
-    private void renderResponseMiddleware(HttpResponseTestCase testCase) {
-        writer
-                .openBlock("middleware = Hearth::MiddlewareBuilder.around_send do |app, input, context|")
-                .write("response = context.response")
-                .write("response.status = $L", testCase.getCode())
-                .call(() -> renderResponseMiddlewareHeaders(testCase.getHeaders()))
-                .call(() -> renderResponseMiddlewareBody(testCase.getBody()))
-                .write("Hearth::Output.new")
-                .closeBlock("end");
+    private void renderSkipBuild(OperationShape operation) {
+        String builderName = "Builders::" + context.symbolProvider().toSymbol(operation).getName();
+        writer.write("allow($L).to receive(:build)", builderName);
     }
 
-    private void renderResponseMiddlewareBody(Optional<String> body) {
+    private void renderResponseStubResponse(OperationShape operation, HttpResponseTestCase testCase) {
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
+        writer
+                .write("response = Hearth::HTTP::Response.new")
+                .write("response.status = $L", testCase.getCode())
+                .call(() -> renderResponseStubHeaders(testCase.getHeaders()))
+                .call(() -> renderResponseStubBody(testCase.getBody()))
+                .write("client.stub_responses(:$L, response)", operationName);
+    }
+
+    private void renderResponseStubBody(Optional<String> body) {
         if (body.isPresent()) {
             writer.write("response.body.write('$L')", body.get());
             writer.write("response.body.rewind");
         }
     }
 
-    private void renderResponseMiddlewareHeaders(Map<String, String> headers) {
+    private void renderResponseStubHeaders(Map<String, String> headers) {
         Iterator<Map.Entry<String, String>> iterator = headers.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry header = iterator.next();
@@ -345,31 +359,30 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private void renderRequestMiddleware(HttpRequestTestCase testCase) {
+    private void renderRequestInterceptor(HttpRequestTestCase testCase) {
         writer
-                .openBlock("middleware = Hearth::MiddlewareBuilder.before_send do |input, context|")
+                .openBlock("interceptor = before_send.new do |context|")
                 .write("request = context.request")
                 .write("expect(request.http_method).to eq('$L')", testCase.getMethod())
-                .call(() -> renderRequestMiddlewareHost(testCase.getResolvedHost()))
+                .call(() -> renderRequestInterceptorHost(testCase.getResolvedHost()))
                 .write("expect(request.uri.path).to eq('$L')", testCase.getUri())
-                .call(() -> renderRequestMiddlewareQueryParams(testCase.getQueryParams()))
-                .call(() -> renderRequestMiddlewareForbidQueryParams(testCase.getForbidQueryParams()))
-                .call(() -> renderRequestMiddlewareRequireQueryParams(testCase.getRequireQueryParams()))
-                .call(() -> renderRequestMiddlewareHeaders(testCase.getHeaders()))
-                .call(() -> renderRequestMiddlewareForbiddenHeaders(testCase.getForbidHeaders()))
-                .call(() -> renderRequestMiddlewareRequiredHeaders(testCase.getRequireHeaders()))
-                .call(() -> renderRequestMiddlewareBody(testCase.getBody(), testCase.getBodyMediaType()))
-                .write("Hearth::Output.new")
+                .call(() -> renderRequestInterceptorQueryParams(testCase.getQueryParams()))
+                .call(() -> renderRequestInterceptorForbidQueryParams(testCase.getForbidQueryParams()))
+                .call(() -> renderRequestInterceptorRequireQueryParams(testCase.getRequireQueryParams()))
+                .call(() -> renderRequestInterceptorHeaders(testCase.getHeaders()))
+                .call(() -> renderRequestInterceptorForbiddenHeaders(testCase.getForbidHeaders()))
+                .call(() -> renderRequestInterceptorRequiredHeaders(testCase.getRequireHeaders()))
+                .call(() -> renderRequestInterceptorBody(testCase.getBody(), testCase.getBodyMediaType()))
                 .closeBlock("end");
     }
 
-    private void renderRequestMiddlewareHost(Optional<String> resolvedHost) {
+    private void renderRequestInterceptorHost(Optional<String> resolvedHost) {
         if (resolvedHost.isPresent()) {
             writer.write("expect(request.uri.host).to eq('$L')", resolvedHost.get());
         }
     }
 
-    private void renderRequestMiddlewareBody(Optional<String> body, Optional<String> bodyMediaType) {
+    private void renderRequestInterceptorBody(Optional<String> body, Optional<String> bodyMediaType) {
         if (body.isPresent()) {
             if (bodyMediaType.isPresent()) {
                 switch (bodyMediaType.get()) {
@@ -404,27 +417,27 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private void renderRequestMiddlewareHeaders(Map<String, String> headers) {
+    private void renderRequestInterceptorHeaders(Map<String, String> headers) {
         if (!headers.isEmpty()) {
             writer.write("$L.each { |k, v| expect(request.headers[k]).to eq(v) } ", getRubyHashFromMap(headers));
         }
     }
 
-    private void renderRequestMiddlewareForbiddenHeaders(List<String> forbiddenHeaders) {
+    private void renderRequestInterceptorForbiddenHeaders(List<String> forbiddenHeaders) {
         if (!forbiddenHeaders.isEmpty()) {
             writer.write("$L.each { |k| expect(request.headers.key?(k)).to be(false) } ",
                     getRubyArrayFromList(forbiddenHeaders));
         }
     }
 
-    private void renderRequestMiddlewareRequiredHeaders(List<String> requiredHeaders) {
+    private void renderRequestInterceptorRequiredHeaders(List<String> requiredHeaders) {
         if (!requiredHeaders.isEmpty()) {
             writer.write("$L.each { |k| expect(request.headers.key?(k)).to be(true) } ",
                     getRubyArrayFromList(requiredHeaders));
         }
     }
 
-    private void renderRequestMiddlewareQueryParams(List<String> queryParams) {
+    private void renderRequestInterceptorQueryParams(List<String> queryParams) {
         if (!queryParams.isEmpty()) {
             writer
                     .write("expected_query = $T.parse($L.join('&'))",
@@ -437,7 +450,7 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private void renderRequestMiddlewareForbidQueryParams(List<String> forbidQueryParams) {
+    private void renderRequestInterceptorForbidQueryParams(List<String> forbidQueryParams) {
         if (!forbidQueryParams.isEmpty()) {
             writer
                     .write("forbid_query = $L", getRubyArrayFromList(forbidQueryParams))
@@ -449,7 +462,7 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private void renderRequestMiddlewareRequireQueryParams(List<String> requireQueryParams) {
+    private void renderRequestInterceptorRequireQueryParams(List<String> requireQueryParams) {
         if (!requireQueryParams.isEmpty()) {
             writer
                     .write("require_query = $L", getRubyArrayFromList(requireQueryParams))
@@ -461,12 +474,10 @@ public class HttpProtocolTestGenerator {
         }
     }
 
-    private void renderResponseStubMiddleware(HttpResponseTestCase testCase) {
+    private void renderResponseStubInterceptor(HttpResponseTestCase testCase) {
         writer
-                .openBlock("middleware = $T.after_send do |input, context|",
-                        Hearth.MIDDLEWARE_BUILDER)
-                .write("response = context.response")
-                .write("expect(response.status).to eq($L)", testCase.getCode())
+                .openBlock("interceptor = after_send.new do |context|")
+                .write("expect(context.response.status).to eq($L)", testCase.getCode())
                 .closeBlock("end");
     }
 
@@ -483,5 +494,33 @@ public class HttpProtocolTestGenerator {
                 .write("output.data.$L.rewind", memberName)
                 .write("output.data.$1L = output.data.$1L.read", memberName)
                 .write("output.data.$1L = nil if output.data.$1L.empty?", memberName);
+    }
+
+    private void renderInterceptorClasses() {
+        writer
+                .openBlock("let(:before_send) do")
+                .openBlock("Class.new do")
+                .openBlock("def initialize(&block)")
+                .write("@block = block")
+                .closeBlock("end")
+                .write("")
+                .openBlock("def read_before_transmit(context)")
+                .write("@block.call(context)")
+                .closeBlock("end")
+                .closeBlock("end")
+                .closeBlock("end\n");
+
+        writer
+                .openBlock("let(:after_send) do")
+                .openBlock("Class.new do")
+                .openBlock("def initialize(&block)")
+                .write("@block = block")
+                .closeBlock("end")
+                .write("")
+                .openBlock("def read_after_transmit(context)")
+                .write("@block.call(context)")
+                .closeBlock("end")
+                .closeBlock("end")
+                .closeBlock("end");
     }
 }
