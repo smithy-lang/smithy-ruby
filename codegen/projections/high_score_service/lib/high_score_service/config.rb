@@ -107,12 +107,14 @@ module HighScoreService
 
     def validate_types!
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
+      Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'config[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
+      Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
@@ -121,14 +123,15 @@ module HighScoreService
     def self.defaults
       @defaults ||= {
         disable_host_prefix: [false],
-        disable_request_compression: [Hearth::Config::EnvProvider.new('DISABLE_REQUEST_COMPRESSION', type: 'Boolean'),false],
-        endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil } ],
+        disable_request_compression: [false],
+        endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
-        interceptors: [proc { Hearth::InterceptorList.new}],
+        interceptors: [proc { Hearth::InterceptorList.new }],
         log_level: [:info],
-        logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ],
-        plugins: [proc { Hearth::PluginList.new}],
-        retry_strategy: [proc { Hearth::Retry::Standard.new}],
+        logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
+        plugins: [proc { Hearth::PluginList.new }],
+        request_min_compression_size_bytes: [10240],
+        retry_strategy: [proc { Hearth::Retry::Standard.new }],
         stub_responses: [false],
         validate_input: [true]
       }.freeze
