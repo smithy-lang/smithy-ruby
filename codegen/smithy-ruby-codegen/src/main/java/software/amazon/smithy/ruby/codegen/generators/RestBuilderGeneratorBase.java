@@ -322,16 +322,15 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 HttpPrefixHeadersTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
         if (serializeBody) {
             //determine if there is an httpPayload member
-            List<MemberShape> httpPayloadMembers = inputShape.members()
+            Optional<MemberShape> httpPayloadMember =  inputShape.members()
                     .stream()
                     .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
-                    .collect(Collectors.toList());
-            if (httpPayloadMembers.size() == 0) {
+                    .findFirst();
+            if (httpPayloadMember.isEmpty()) {
                 renderBodyBuilder(operation, inputShape);
             } else {
-                MemberShape payloadMember = httpPayloadMembers.get(0);
-                Shape target = model.expectShape(payloadMember.getTarget());
-                renderPayloadBodyBuilder(operation, inputShape, payloadMember, target);
+                Shape target = model.expectShape(httpPayloadMember.get().getTarget());
+                renderPayloadBodyBuilder(operation, inputShape, httpPayloadMember.get(), target);
             }
         }
     }
