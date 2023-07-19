@@ -15,12 +15,15 @@
 
 package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
 
+import java.util.Optional;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -39,11 +42,23 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     @Override
     protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
         writer.openBlock("def self.build(http_req, input:)");
-        if (Streaming.isStreaming(model, inputShape)) {
-            renderStreamingBodyBuilder(inputShape);
+
+        // checks for Payload member
+        Optional<MemberShape> httpPayloadMember = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
+                .findFirst();
+        if (httpPayloadMember.isPresent()) {
+            if (Streaming.isStreaming(model, inputShape)) {
+                renderStreamingBodyBuilder(inputShape);
+            } else {
+                writer.write("http_req.body = StringIO.new(input[:$L] || '')",
+                        symbolProvider.toMemberName(httpPayloadMember.get()));
+            }
         }
         writer.closeBlock("end");
     }
+
 
     @Override
     protected void renderStructureBuildMethod(StructureShape shape) {
