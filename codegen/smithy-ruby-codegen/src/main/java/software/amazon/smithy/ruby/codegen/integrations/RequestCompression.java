@@ -17,8 +17,11 @@ package software.amazon.smithy.ruby.codegen.integrations;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.RequestCompressionTrait;
@@ -34,7 +37,9 @@ import software.amazon.smithy.ruby.codegen.util.Streaming;
 public class RequestCompression implements RubyIntegration {
     @Override
     public boolean includeFor(ServiceShape service, Model model) {
-        return model.isTraitApplied(RequestCompressionTrait.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<OperationShape> containedOperations = topDownIndex.getContainedOperations(service);
+        return containedOperations.stream().anyMatch((o) -> o.hasTrait(RequestCompressionTrait.class));
     }
 
     @Override
@@ -74,19 +79,19 @@ public class RequestCompression implements RubyIntegration {
                     Shape inputShape = ctx.model().expectShape(operation.getInputShape());
 
                     params.put("encodings", "[" + requestCompression
-                                .getEncodings()
-                                .stream()
-                                .map((s) -> "'" + s + "'")
-                                .collect(Collectors.joining(", ")) + "]");
+                            .getEncodings()
+                            .stream()
+                            .map((s) -> "'" + s + "'")
+                            .collect(Collectors.joining(", ")) + "]");
 
                     params.put("streaming",
                             Streaming.isStreaming(ctx.model(), inputShape) ? "true" : "false");
 
                     return params;
                 })
+                .klass("Hearth::HTTP::Middleware::RequestCompression")
                 .addConfig(disableRequestCompression)
                 .addConfig(requestMinCompressionSizeBytes)
-                .klass("Hearth::Middleware::RequestCompression")
                 .step(MiddlewareStackStep.AFTER_BUILD)
 // commented out since Middleware Relative needs an update to handle this case
 //                .relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE,
