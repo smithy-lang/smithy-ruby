@@ -174,9 +174,6 @@ public class DirectedRubyCodegen
 
     @Override
     public void generateError(GenerateErrorDirective<GenerationContext, RubySettings> directive) {
-        if (directive.context().protocolGenerator().isPresent()) {
-            directive.context().protocolGenerator().get().generateErrors(directive.context());
-        }
         new StructureGenerator(directive).render();
     }
 
@@ -205,6 +202,7 @@ public class DirectedRubyCodegen
             ProtocolGenerator generator = directive.context().protocolGenerator().get();
             generator.generateBuilders(directive.context());
             generator.generateParsers(directive.context());
+            generator.generateErrors(directive.context());
             generator.generateStubs(directive.context());
         }
 
