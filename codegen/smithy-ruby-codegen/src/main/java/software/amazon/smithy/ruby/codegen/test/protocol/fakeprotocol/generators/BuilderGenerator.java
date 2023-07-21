@@ -52,6 +52,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             if (Streaming.isStreaming(model, inputShape)) {
                 renderStreamingBodyBuilder(inputShape);
             } else {
+                // only works for String/Blob/Number data types
                 writer.write("http_req.body = StringIO.new(input[:$L] || '')",
                         symbolProvider.toMemberName(httpPayloadMember.get()));
             }
