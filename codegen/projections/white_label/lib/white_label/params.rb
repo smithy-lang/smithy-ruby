@@ -272,6 +272,48 @@ module WhiteLabel
       end
     end
 
+    module RequestCompressionOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationInput, context: context)
+        type = Types::RequestCompressionOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.body = params[:body]
+        type
+      end
+    end
+
+    module RequestCompressionOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationOutput, context: context)
+        type = Types::RequestCompressionOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module RequestCompressionStreamingOperationInput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationInput, context: context)
+        type = Types::RequestCompressionStreamingOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        io = params[:body] || StringIO.new
+        unless io.respond_to?(:read) || io.respond_to?(:readpartial)
+          io = StringIO.new(io)
+        end
+        type.body = io
+        type
+      end
+    end
+
+    module RequestCompressionStreamingOperationOutput
+      def self.build(params, context: '')
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationOutput, context: context)
+        type = Types::RequestCompressionStreamingOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
     module ResultWrapper
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::ResultWrapper, context: context)

@@ -78,6 +78,14 @@ module WhiteLabel
 
     end
 
+    describe '#request_compression_operation' do
+
+    end
+
+    describe '#request_compression_streaming_operation' do
+
+    end
+
     describe '#streaming_operation' do
 
     end
