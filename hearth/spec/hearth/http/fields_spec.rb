@@ -169,6 +169,12 @@ module Hearth
             end
           end
         end
+
+        describe '#inspect' do
+          it 'is just the class name' do
+            expect(proxy.inspect).to eq('#<Hearth::HTTP::Fields::Proxy>')
+          end
+        end
       end
     end
   end

@@ -5,7 +5,7 @@ module Hearth
     describe ApiError do
       let(:http_status) { 404 }
       let(:http_fields) { Fields.new }
-      let(:http_body) { 'body' }
+      let(:http_body) { StringIO.new('body') }
       let(:http_resp) do
         Response.new(
           status: http_status,

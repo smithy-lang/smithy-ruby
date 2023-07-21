@@ -13,7 +13,6 @@ module RailsJson
   # @api private
   module Builders
 
-    # Operation Builder for AllQueryStringTypes
     class AllQueryStringTypes
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -78,7 +77,6 @@ module RailsJson
       end
     end
 
-    # List Builder for BooleanList
     class BooleanList
       def self.build(input)
         data = []
@@ -89,7 +87,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for ConstantAndVariableQueryString
     class ConstantAndVariableQueryString
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -104,7 +101,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for ConstantQueryString
     class ConstantQueryString
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -124,7 +120,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for DenseBooleanMap
     class DenseBooleanMap
       def self.build(input)
         data = {}
@@ -135,7 +130,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for DenseNumberMap
     class DenseNumberMap
       def self.build(input)
         data = {}
@@ -146,7 +140,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for DenseSetMap
     class DenseSetMap
       def self.build(input)
         data = {}
@@ -157,7 +150,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for DenseStringMap
     class DenseStringMap
       def self.build(input)
         data = {}
@@ -168,7 +160,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for DenseStructMap
     class DenseStructMap
       def self.build(input)
         data = {}
@@ -179,7 +170,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for DocumentType
     class DocumentType
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
@@ -195,7 +185,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for DocumentTypeAsPayload
     class DocumentTypeAsPayload
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
@@ -207,7 +196,6 @@ module RailsJson
       end
     end
 
-    # List Builder for DoubleList
     class DoubleList
       def self.build(input)
         data = []
@@ -218,7 +206,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for EmptyOperation
     class EmptyOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -228,7 +215,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for EmptyStruct
     class EmptyStruct
       def self.build(input)
         data = {}
@@ -236,7 +222,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for EndpointOperation
     class EndpointOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -246,7 +231,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -261,7 +245,6 @@ module RailsJson
       end
     end
 
-    # List Builder for FooEnumList
     class FooEnumList
       def self.build(input)
         data = []
@@ -272,7 +255,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for FooEnumMap
     class FooEnumMap
       def self.build(input)
         data = {}
@@ -283,7 +265,6 @@ module RailsJson
       end
     end
 
-    # List Builder for FooEnumSet
     class FooEnumSet
       def self.build(input)
         data = []
@@ -294,7 +275,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for GreetingStruct
     class RenamedGreeting
       def self.build(input)
         data = {}
@@ -303,7 +283,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for GreetingStruct
     class GreetingStruct
       def self.build(input)
         data = {}
@@ -312,7 +291,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for GreetingWithErrors
     class GreetingWithErrors
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -322,7 +300,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpPayloadTraits
     class HttpPayloadTraits
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -335,7 +312,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpPayloadTraitsWithMediaType
     class HttpPayloadTraitsWithMediaType
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -348,7 +324,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpPayloadWithStructure
     class HttpPayloadWithStructure
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
@@ -361,7 +336,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpPrefixHeaders
     class HttpPrefixHeaders
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -375,7 +349,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpPrefixHeadersInResponse
     class HttpPrefixHeadersInResponse
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -385,7 +358,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpRequestWithFloatLabels
     class HttpRequestWithFloatLabels
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -406,7 +378,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpRequestWithGreedyLabelInPath
     class HttpRequestWithGreedyLabelInPath
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -427,7 +398,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpRequestWithLabels
     class HttpRequestWithLabels
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -472,7 +442,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpRequestWithLabelsAndTimestampFormat
     class HttpRequestWithLabelsAndTimestampFormat
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -513,7 +482,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for HttpResponseCode
     class HttpResponseCode
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
@@ -523,7 +491,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for IgnoreQueryParamsInResponse
     class IgnoreQueryParamsInResponse
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -533,7 +500,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for InputAndOutputWithHeaders
     class InputAndOutputWithHeaders
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -559,7 +525,6 @@ module RailsJson
       end
     end
 
-    # List Builder for IntegerList
     class IntegerList
       def self.build(input)
         data = []
@@ -570,7 +535,6 @@ module RailsJson
       end
     end
 
-    # List Builder for IntegerSet
     class IntegerSet
       def self.build(input)
         data = []
@@ -581,7 +545,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for JsonEnums
     class JsonEnums
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -601,7 +564,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for JsonMaps
     class JsonMaps
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -625,7 +587,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for JsonUnions
     class JsonUnions
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -640,7 +601,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for KitchenSink
     class KitchenSink
       def self.build(input)
         data = {}
@@ -674,7 +634,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for KitchenSinkOperation
     class KitchenSinkOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -714,7 +673,6 @@ module RailsJson
       end
     end
 
-    # List Builder for ListOfKitchenSinks
     class ListOfKitchenSinks
       def self.build(input)
         data = []
@@ -725,7 +683,6 @@ module RailsJson
       end
     end
 
-    # List Builder for ListOfListOfStrings
     class ListOfListOfStrings
       def self.build(input)
         data = []
@@ -736,7 +693,6 @@ module RailsJson
       end
     end
 
-    # List Builder for ListOfMapsOfStrings
     class ListOfMapsOfStrings
       def self.build(input)
         data = []
@@ -747,7 +703,6 @@ module RailsJson
       end
     end
 
-    # List Builder for ListOfStrings
     class ListOfStrings
       def self.build(input)
         data = []
@@ -758,7 +713,6 @@ module RailsJson
       end
     end
 
-    # List Builder for ListOfStructs
     class ListOfStructs
       def self.build(input)
         data = []
@@ -769,7 +723,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for MapOfKitchenSinks
     class MapOfKitchenSinks
       def self.build(input)
         data = {}
@@ -780,7 +733,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for MapOfListsOfStrings
     class MapOfListsOfStrings
       def self.build(input)
         data = {}
@@ -791,7 +743,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for MapOfMapOfStrings
     class MapOfMapOfStrings
       def self.build(input)
         data = {}
@@ -802,7 +753,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for MapOfStrings
     class MapOfStrings
       def self.build(input)
         data = {}
@@ -813,7 +763,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for MapOfStructs
     class MapOfStructs
       def self.build(input)
         data = {}
@@ -824,7 +773,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for MediaTypeHeader
     class MediaTypeHeader
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -835,7 +783,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for MyUnion
     class MyUnion
       def self.build(input)
         data = {}
@@ -869,7 +816,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for NestedAttributesOperation
     class NestedAttributesOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -884,7 +830,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for NestedPayload
     class NestedPayload
       def self.build(input)
         data = {}
@@ -894,7 +839,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for NullAndEmptyHeadersClient
     class NullAndEmptyHeadersClient
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -907,7 +851,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for NullOperation
     class NullOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -924,7 +867,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for OmitsNullSerializesEmptyString
     class OmitsNullSerializesEmptyString
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -936,7 +878,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for OperationWithOptionalInputOutput
     class OperationWithOptionalInputOutput
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -951,7 +892,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for QueryIdempotencyTokenAutoFill
     class QueryIdempotencyTokenAutoFill
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -962,7 +902,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -982,7 +921,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for SimpleStruct
     class SimpleStruct
       def self.build(input)
         data = {}
@@ -991,7 +929,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseBooleanMap
     class SparseBooleanMap
       def self.build(input)
         data = {}
@@ -1002,7 +939,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseNumberMap
     class SparseNumberMap
       def self.build(input)
         data = {}
@@ -1013,7 +949,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseSetMap
     class SparseSetMap
       def self.build(input)
         data = {}
@@ -1024,7 +959,6 @@ module RailsJson
       end
     end
 
-    # List Builder for SparseStringList
     class SparseStringList
       def self.build(input)
         data = []
@@ -1035,7 +969,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseStringMap
     class SparseStringMap
       def self.build(input)
         data = {}
@@ -1046,7 +979,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for SparseStructMap
     class SparseStructMap
       def self.build(input)
         data = {}
@@ -1057,7 +989,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for StreamingOperation
     class StreamingOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -1070,7 +1001,6 @@ module RailsJson
       end
     end
 
-    # List Builder for StringList
     class StringList
       def self.build(input)
         data = []
@@ -1081,7 +1011,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for StringListMap
     class StringListMap
       def self.build(input)
         data = {}
@@ -1092,7 +1021,6 @@ module RailsJson
       end
     end
 
-    # Map Builder for StringMap
     class StringMap
       def self.build(input)
         data = {}
@@ -1103,7 +1031,6 @@ module RailsJson
       end
     end
 
-    # List Builder for StringSet
     class StringSet
       def self.build(input)
         data = []
@@ -1114,7 +1041,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for StructWithLocationName
     class StructWithLocationName
       def self.build(input)
         data = {}
@@ -1123,7 +1049,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -1140,7 +1065,6 @@ module RailsJson
       end
     end
 
-    # List Builder for TimestampList
     class TimestampList
       def self.build(input)
         data = []
@@ -1151,7 +1075,6 @@ module RailsJson
       end
     end
 
-    # Structure Builder for __456efg
     class Struct____456efg
       def self.build(input)
         data = {}
@@ -1160,7 +1083,6 @@ module RailsJson
       end
     end
 
-    # Operation Builder for __789BadName
     class Operation____789BadName
       def self.build(http_req, input:)
         http_req.http_method = 'POST'

@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -30,6 +31,8 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
@@ -92,13 +95,11 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
      * end
      * }</pre>
      *
-     * @param operation     operation to genreate body for
      * @param outputShape   outputShape of the operation
      * @param payloadMember the member marked with payload
      * @param target        the target of the payload member
      */
-    protected abstract void renderPayloadBodyStub(OperationShape operation, Shape outputShape,
-                                                  MemberShape payloadMember, Shape target);
+    protected abstract void renderPayloadBodyStub(Shape outputShape, MemberShape payloadMember, Shape target);
 
     /**
      * Called to render an operation's body stubber when it does not have a payload member.
@@ -130,32 +131,43 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
      * end
      * }</pre>
      *
-     * @param operation   operation to render for
      * @param outputShape operation's output shape
      */
-    protected abstract void renderBodyStub(OperationShape operation, Shape outputShape);
+    protected abstract void renderBodyStub(Shape outputShape);
 
     @Override
     protected void renderOperationStubMethod(OperationShape operation, Shape outputShape) {
         writer
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("data = {}")
-                .call(() -> renderStatusCodeStubber(operation, outputShape))
-                .call(() -> renderHeaderStubbers(operation, outputShape))
-                .call(() -> renderPrefixHeadersStubbers(operation, outputShape))
-                .call(() -> renderResponseCodeStubber(operation, outputShape))
-                .call(() -> renderOperationBodyStubber(operation, outputShape))
+                .call(() -> renderStatusCodeDataStubber(operation))
+                .call(() -> renderHeaderStubbers(outputShape))
+                .call(() -> renderPrefixHeadersStubbers(outputShape))
+                .call(() -> renderResponseCodeStubber(outputShape))
+                .call(() -> renderBodyStubber(outputShape))
                 .closeBlock("end");
-        LOGGER.finer("Generated stub method for operation " + operation.getId().getName());
+    }
+
+    // TODO: this is not entirely correct and will need to change later.
+    @Override
+    protected void renderErrorStubMethod(Shape errorShape) {
+        writer
+                .openBlock("def self.stub(http_resp, stub:)")
+                .write("data = {}")
+                .call(() -> renderStatusCodeErrorStubber(errorShape))
+                .call(() -> renderHeaderStubbers(errorShape))
+                .call(() -> renderPrefixHeadersStubbers(errorShape))
+                .call(() -> renderResponseCodeStubber(errorShape))
+                .call(() -> renderBodyStubber(errorShape))
+                .closeBlock("end");
     }
 
     /**
      * The Output shape is combined with the OperationStub.
      * This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output.
-     * @param operation operation to render for
      * @param outputShape outputShape for the operation
      */
-    protected void renderOperationBodyStubber(OperationShape operation, Shape outputShape) {
+    protected void renderBodyStubber(Shape outputShape) {
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
                 && !m.hasTrait(HttpQueryTrait.class)
@@ -170,30 +182,49 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
                 .collect(Collectors.toList());
         if (httpPayloadMembers.size() == 0) {
             if (serializeBody) {
-                renderBodyStub(operation, outputShape);
+                renderBodyStub(outputShape);
             }
         } else {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
-            renderPayloadBodyStub(operation, outputShape, payloadMember, target);
+            renderPayloadBodyStub(outputShape, payloadMember, target);
         }
     }
 
     /**
      * @param operation operation to render for
-     * @param outputShape outputShape for the operation
      */
-    protected void renderStatusCodeStubber(OperationShape operation, Shape outputShape) {
+    protected void renderStatusCodeDataStubber(OperationShape operation) {
         operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
             writer.write("http_resp.status = $1L", httpTrait.getCode());
         });
     }
 
     /**
-     * @param operation operation to render for
+     * @param errorShape error shape to render for
+     */
+    protected void renderStatusCodeErrorStubber(Shape errorShape) {
+        String statusCode = "";
+
+        Optional<HttpErrorTrait> optionalHttpErrorTrait = errorShape.getTrait(HttpErrorTrait.class);
+        if (optionalHttpErrorTrait.isPresent()) {
+            statusCode = Integer.toString(optionalHttpErrorTrait.get().getCode());
+        } else {
+            ErrorTrait errorTrait = errorShape.getTrait(ErrorTrait.class).get();
+            if (errorTrait.isClientError()) {
+                statusCode = "400";
+            } else if (errorTrait.isServerError()) {
+                statusCode = "500";
+            }
+        }
+
+        writer.write("http_resp.status = $1L", statusCode);
+    }
+
+    /**
      * @param outputShape outputShape for the operation
      */
-    protected void renderHeaderStubbers(OperationShape operation, Shape outputShape) {
+    protected void renderHeaderStubbers(Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -210,10 +241,9 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
     }
 
     /**
-     * @param operation operation to render for
      * @param outputShape outputShape for the operation
      */
-    protected void renderPrefixHeadersStubbers(OperationShape operation, Shape outputShape) {
+    protected void renderPrefixHeadersStubbers(Shape outputShape) {
         // get a list of all of HttpLabel members
         List<MemberShape> headerMembers = outputShape.members()
                 .stream()
@@ -236,7 +266,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
-    protected void renderResponseCodeStubber(OperationShape operation, Shape outputShape) {
+    protected void renderResponseCodeStubber(Shape outputShape) {
         List<MemberShape> responseCodeMembers = outputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpResponseCodeTrait.class))

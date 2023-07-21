@@ -91,7 +91,8 @@ module HighScoreService
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::CreateHighScore,
+        stub_error_classes: [Stubs::UnprocessableEntityError],
+        stub_data_class: Stubs::CreateHighScore,
         stubs: @stubs,
         params_class: Params::CreateHighScoreOutput
       )
@@ -156,7 +157,8 @@ module HighScoreService
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::DeleteHighScore,
+        stub_error_classes: [],
+        stub_data_class: Stubs::DeleteHighScore,
         stubs: @stubs,
         params_class: Params::DeleteHighScoreOutput
       )
@@ -227,7 +229,8 @@ module HighScoreService
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::GetHighScore,
+        stub_error_classes: [],
+        stub_data_class: Stubs::GetHighScore,
         stubs: @stubs,
         params_class: Params::GetHighScoreOutput
       )
@@ -294,7 +297,8 @@ module HighScoreService
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::ListHighScores,
+        stub_error_classes: [],
+        stub_data_class: Stubs::ListHighScores,
         stubs: @stubs,
         params_class: Params::ListHighScoresOutput
       )
@@ -372,7 +376,8 @@ module HighScoreService
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::UpdateHighScore,
+        stub_error_classes: [Stubs::UnprocessableEntityError],
+        stub_data_class: Stubs::UpdateHighScore,
         stubs: @stubs,
         params_class: Params::UpdateHighScoreOutput
       )

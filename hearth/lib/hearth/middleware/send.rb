@@ -8,18 +8,23 @@ module Hearth
       # @param [Class] _app The next middleware in the stack.
       # @param [Boolean] stub_responses If true, a request is not sent and a
       #   stubbed response is returned.
-      # @param [Class] stub_class A stub object that is responsible for creating
-      #   a stubbed response. It must respond to #stub and take the response
-      #   and stub data as arguments.
+      # @param [Class] stub_data_class A stub object that is responsible for
+      #   creating a stubbed data response. It must respond to #stub and take
+      #   the response and stub data as arguments.
+      # @param [Array<Class>] stub_error_classes An array of error classes
+      #   that are responsible for creating a stubbed error response. They
+      #   must respond to #stub and take the response and stub data as
+      #   arguments.
       # @param [Class] params_class A Params class responsible for
       #   converting a ruby hash into the operation's modeled output Type.
       # @param [Stubs] stubs A {Hearth::Stubbing:Stubs} object containing
       #   stubbed data for any given operation.
-      def initialize(_app, client:, stub_responses:,
-                     stub_class:, params_class:, stubs:)
+      def initialize(_app, client:, stub_responses:, stub_data_class:,
+                     stub_error_classes:, params_class:, stubs:)
         @client = client
         @stub_responses = stub_responses
-        @stub_class = stub_class
+        @stub_data_class = stub_data_class
+        @stub_error_classes = stub_error_classes
         @params_class = params_class
         @stubs = stubs
       end
@@ -86,6 +91,8 @@ module Hearth
       end
 
       def apply_stub(stub, input, context, output)
+        # require 'byebug'
+        # byebug
         case stub
         when Proc
           stub = stub.call(input, context)
@@ -93,23 +100,41 @@ module Hearth
         when Exception, ApiError
           output.error = stub
         when Hash
-          @stub_class.stub(
-            context.response,
-            stub: @params_class.build(
-              stub,
-              context: 'stub'
+          if stub.key?(:error)
+            klass, params = stub[:error]
+            error = @stub_error_classes.find do |stub_error_class|
+              stub_error_class.error_class == klass
+            end
+            if error
+              error.stub(
+                context.response,
+                stub: error.params_class.build(
+                  params || {},
+                  context: 'stub'
+                )
+              )
+            else
+              raise ArgumentError, 'Unsupported stub error class'
+            end
+          elsif stub.key?(:data)
+            @stub_data_class.stub(
+              context.response,
+              stub: @params_class.build(
+                stub[:data],
+                context: 'stub'
+              )
             )
-          )
+          end
         when NilClass
-          @stub_class.stub(
+          @stub_data_class.stub(
             context.response,
             stub: @params_class.build(
-              @stub_class.default,
+              @stub_data_class.default,
               context: 'stub'
             )
           )
         when Hearth::Structure
-          @stub_class.stub(
+          @stub_data_class.stub(
             context.response,
             stub: stub
           )

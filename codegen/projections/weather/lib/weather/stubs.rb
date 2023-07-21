@@ -11,7 +11,6 @@ module Weather
   # @api private
   module Stubs
 
-    # Union Stubber for Announcements
     class Announcements
       def self.default(visited=[])
         return nil if visited.include?('Announcements')
@@ -23,7 +22,6 @@ module Weather
 
     end
 
-    # Structure Stubber for Baz
     class Baz
       def self.default(visited=[])
         return nil if visited.include?('Baz')
@@ -36,7 +34,6 @@ module Weather
 
     end
 
-    # Structure Stubber for CityCoordinates
     class CityCoordinates
       def self.default(visited=[])
         return nil if visited.include?('CityCoordinates')
@@ -49,7 +46,6 @@ module Weather
 
     end
 
-    # List Stubber for CitySummaries
     class CitySummaries
       def self.default(visited=[])
         return nil if visited.include?('CitySummaries')
@@ -61,7 +57,6 @@ module Weather
 
     end
 
-    # Structure Stubber for CitySummary
     class CitySummary
       def self.default(visited=[])
         return nil if visited.include?('CitySummary')
@@ -76,7 +71,6 @@ module Weather
 
     end
 
-    # Structure Stubber for Foo
     class Foo
       def self.default(visited=[])
         return nil if visited.include?('Foo')
@@ -89,7 +83,6 @@ module Weather
 
     end
 
-    # Operation Stubber for GetCity
     class GetCity
       def self.default(visited=[])
         {
@@ -105,7 +98,6 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetCityAnnouncements
     class GetCityAnnouncements
       def self.default(visited=[])
         {
@@ -122,7 +114,6 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetCityImage
     class GetCityImage
       def self.default(visited=[])
         {
@@ -137,7 +128,6 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetCurrentTime
     class GetCurrentTime
       def self.default(visited=[])
         {
@@ -151,7 +141,6 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetForecast
     class GetForecast
       def self.default(visited=[])
         {
@@ -166,7 +155,6 @@ module Weather
       end
     end
 
-    # Operation Stubber for ListCities
     class ListCities
       def self.default(visited=[])
         {
@@ -188,7 +176,6 @@ module Weather
       end
     end
 
-    # Structure Stubber for Message
     class Message
       def self.default(visited=[])
         return nil if visited.include?('Message')
@@ -201,7 +188,30 @@ module Weather
 
     end
 
-    # Structure Stubber for OtherStructure
+    class NoSuchResource
+      def self.error_class
+        Errors::NoSuchResource
+      end
+
+      def self.params_class
+        Params::NoSuchResource
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('NoSuchResource')
+        visited = visited + ['NoSuchResource']
+        {
+          resource_type: 'resource_type',
+          message: 'message',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 404
+      end
+    end
+
     class OtherStructure
       def self.default(visited=[])
         return nil if visited.include?('OtherStructure')
@@ -212,7 +222,6 @@ module Weather
 
     end
 
-    # Union Stubber for Precipitation
     class Precipitation
       def self.default(visited=[])
         return nil if visited.include?('Precipitation')
@@ -224,7 +233,6 @@ module Weather
 
     end
 
-    # List Stubber for SparseCitySummaries
     class SparseCitySummaries
       def self.default(visited=[])
         return nil if visited.include?('SparseCitySummaries')
@@ -236,19 +244,17 @@ module Weather
 
     end
 
-    # Map Stubber for StringMap
     class StringMap
       def self.default(visited=[])
         return nil if visited.include?('StringMap')
         visited = visited + ['StringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
     end
 
-    # Structure Stubber for __456efg
     class Struct____456efg
       def self.default(visited=[])
         return nil if visited.include?('Struct____456efg')
@@ -260,7 +266,6 @@ module Weather
 
     end
 
-    # Operation Stubber for __789BadName
     class Operation____789BadName
       def self.default(visited=[])
         {

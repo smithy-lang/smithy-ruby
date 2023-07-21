@@ -13,7 +13,6 @@ module RailsJson
   # @api private
   module Stubs
 
-    # Operation Stubber for AllQueryStringTypes
     class AllQueryStringTypes
       def self.default(visited=[])
         {
@@ -26,7 +25,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for BooleanList
     class BooleanList
       def self.default(visited=[])
         return nil if visited.include?('BooleanList')
@@ -46,7 +44,51 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for ConstantAndVariableQueryString
+    class ComplexError
+      def self.error_class
+        Errors::ComplexError
+      end
+
+      def self.params_class
+        Params::ComplexError
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('ComplexError')
+        visited = visited + ['ComplexError']
+        {
+          top_level: 'top_level',
+          nested: ComplexNestedErrorData.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:top_level] = stub[:top_level] unless stub[:top_level].nil?
+        data[:nested] = Stubs::ComplexNestedErrorData.stub(stub[:nested]) unless stub[:nested].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class ComplexNestedErrorData
+      def self.default(visited=[])
+        return nil if visited.include?('ComplexNestedErrorData')
+        visited = visited + ['ComplexNestedErrorData']
+        {
+          foo: 'foo',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::ComplexNestedErrorData.new
+        data = {}
+        data['Fooooo'] = stub[:foo] unless stub[:foo].nil?
+        data
+      end
+    end
+
     class ConstantAndVariableQueryString
       def self.default(visited=[])
         {
@@ -59,7 +101,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for ConstantQueryString
     class ConstantQueryString
       def self.default(visited=[])
         {
@@ -72,13 +113,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseBooleanMap
     class DenseBooleanMap
       def self.default(visited=[])
         return nil if visited.include?('DenseBooleanMap')
         visited = visited + ['DenseBooleanMap']
         {
-          test_key: false
+          key: false
         }
       end
 
@@ -92,13 +132,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseNumberMap
     class DenseNumberMap
       def self.default(visited=[])
         return nil if visited.include?('DenseNumberMap')
         visited = visited + ['DenseNumberMap']
         {
-          test_key: 1
+          key: 1
         }
       end
 
@@ -112,13 +151,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseSetMap
     class DenseSetMap
       def self.default(visited=[])
         return nil if visited.include?('DenseSetMap')
         visited = visited + ['DenseSetMap']
         {
-          test_key: StringSet.default(visited)
+          key: StringSet.default(visited)
         }
       end
 
@@ -132,13 +170,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseStringMap
     class DenseStringMap
       def self.default(visited=[])
         return nil if visited.include?('DenseStringMap')
         visited = visited + ['DenseStringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -152,13 +189,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseStructMap
     class DenseStructMap
       def self.default(visited=[])
         return nil if visited.include?('DenseStructMap')
         visited = visited + ['DenseStructMap']
         {
-          test_key: GreetingStruct.default(visited)
+          key: GreetingStruct.default(visited)
         }
       end
 
@@ -172,7 +208,6 @@ module RailsJson
       end
     end
 
-    # Document Type Stubber for Document
     class Document
       def self.default(visited=[])
         return nil if visited.include?('Document')
@@ -185,7 +220,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for DocumentType
     class DocumentType
       def self.default(visited=[])
         {
@@ -204,7 +238,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for DocumentTypeAsPayload
     class DocumentTypeAsPayload
       def self.default(visited=[])
         {
@@ -220,7 +253,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for EmptyOperation
     class EmptyOperation
       def self.default(visited=[])
         {
@@ -233,7 +265,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for EmptyStruct
     class EmptyStruct
       def self.default(visited=[])
         return nil if visited.include?('EmptyStruct')
@@ -249,7 +280,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for EndpointOperation
     class EndpointOperation
       def self.default(visited=[])
         {
@@ -262,7 +292,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
       def self.default(visited=[])
         {
@@ -275,7 +304,66 @@ module RailsJson
       end
     end
 
-    # List Stubber for FooEnumList
+    class ErrorWithMembers
+      def self.error_class
+        Errors::ErrorWithMembers
+      end
+
+      def self.params_class
+        Params::ErrorWithMembers
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('ErrorWithMembers')
+        visited = visited + ['ErrorWithMembers']
+        {
+          code: 'code',
+          complex_data: KitchenSink.default(visited),
+          integer_field: 1,
+          list_field: ListOfStrings.default(visited),
+          map_field: MapOfStrings.default(visited),
+          message: 'message',
+          string_field: 'string_field',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:code] = stub[:code] unless stub[:code].nil?
+        data[:complex_data] = Stubs::KitchenSink.stub(stub[:complex_data]) unless stub[:complex_data].nil?
+        data[:integer_field] = stub[:integer_field] unless stub[:integer_field].nil?
+        data[:list_field] = Stubs::ListOfStrings.stub(stub[:list_field]) unless stub[:list_field].nil?
+        data[:map_field] = Stubs::MapOfStrings.stub(stub[:map_field]) unless stub[:map_field].nil?
+        data[:message] = stub[:message] unless stub[:message].nil?
+        data[:string_field] = stub[:string_field] unless stub[:string_field].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class ErrorWithoutMembers
+      def self.error_class
+        Errors::ErrorWithoutMembers
+      end
+
+      def self.params_class
+        Params::ErrorWithoutMembers
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('ErrorWithoutMembers')
+        visited = visited + ['ErrorWithoutMembers']
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 500
+      end
+    end
+
     class FooEnumList
       def self.default(visited=[])
         return nil if visited.include?('FooEnumList')
@@ -295,13 +383,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for FooEnumMap
     class FooEnumMap
       def self.default(visited=[])
         return nil if visited.include?('FooEnumMap')
         visited = visited + ['FooEnumMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -315,7 +402,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for FooEnumSet
     class FooEnumSet
       def self.default(visited=[])
         return nil if visited.include?('FooEnumSet')
@@ -335,7 +421,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for GreetingStruct
     class RenamedGreeting
       def self.default(visited=[])
         return nil if visited.include?('RenamedGreeting')
@@ -353,7 +438,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for GreetingStruct
     class GreetingStruct
       def self.default(visited=[])
         return nil if visited.include?('GreetingStruct')
@@ -371,7 +455,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for GreetingWithErrors
     class GreetingWithErrors
       def self.default(visited=[])
         {
@@ -388,7 +471,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPayloadTraits
     class HttpPayloadTraits
       def self.default(visited=[])
         {
@@ -406,7 +488,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPayloadTraitsWithMediaType
     class HttpPayloadTraitsWithMediaType
       def self.default(visited=[])
         {
@@ -424,7 +505,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPayloadWithStructure
     class HttpPayloadWithStructure
       def self.default(visited=[])
         {
@@ -441,7 +521,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPrefixHeaders
     class HttpPrefixHeaders
       def self.default(visited=[])
         {
@@ -460,7 +539,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPrefixHeadersInResponse
     class HttpPrefixHeadersInResponse
       def self.default(visited=[])
         {
@@ -477,7 +555,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithFloatLabels
     class HttpRequestWithFloatLabels
       def self.default(visited=[])
         {
@@ -490,7 +567,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithGreedyLabelInPath
     class HttpRequestWithGreedyLabelInPath
       def self.default(visited=[])
         {
@@ -503,7 +579,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithLabels
     class HttpRequestWithLabels
       def self.default(visited=[])
         {
@@ -516,7 +591,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithLabelsAndTimestampFormat
     class HttpRequestWithLabelsAndTimestampFormat
       def self.default(visited=[])
         {
@@ -529,7 +603,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpResponseCode
     class HttpResponseCode
       def self.default(visited=[])
         {
@@ -544,7 +617,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for IgnoreQueryParamsInResponse
     class IgnoreQueryParamsInResponse
       def self.default(visited=[])
         {
@@ -558,7 +630,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for InputAndOutputWithHeaders
     class InputAndOutputWithHeaders
       def self.default(visited=[])
         {
@@ -633,7 +704,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for IntegerList
     class IntegerList
       def self.default(visited=[])
         return nil if visited.include?('IntegerList')
@@ -653,7 +723,32 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for JsonEnums
+    class InvalidGreeting
+      def self.error_class
+        Errors::InvalidGreeting
+      end
+
+      def self.params_class
+        Params::InvalidGreeting
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('InvalidGreeting')
+        visited = visited + ['InvalidGreeting']
+        {
+          message: 'message',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:message] = stub[:message] unless stub[:message].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class JsonEnums
       def self.default(visited=[])
         {
@@ -680,7 +775,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for JsonMaps
     class JsonMaps
       def self.default(visited=[])
         {
@@ -715,7 +809,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for JsonUnions
     class JsonUnions
       def self.default(visited=[])
         {
@@ -732,7 +825,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for KitchenSink
     class KitchenSink
       def self.default(visited=[])
         return nil if visited.include?('KitchenSink')
@@ -800,7 +892,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for KitchenSinkOperation
     class KitchenSinkOperation
       def self.default(visited=[])
         {
@@ -867,7 +958,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfKitchenSinks
     class ListOfKitchenSinks
       def self.default(visited=[])
         return nil if visited.include?('ListOfKitchenSinks')
@@ -887,7 +977,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfListOfStrings
     class ListOfListOfStrings
       def self.default(visited=[])
         return nil if visited.include?('ListOfListOfStrings')
@@ -907,7 +996,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfMapsOfStrings
     class ListOfMapsOfStrings
       def self.default(visited=[])
         return nil if visited.include?('ListOfMapsOfStrings')
@@ -927,7 +1015,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfStrings
     class ListOfStrings
       def self.default(visited=[])
         return nil if visited.include?('ListOfStrings')
@@ -947,7 +1034,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfStructs
     class ListOfStructs
       def self.default(visited=[])
         return nil if visited.include?('ListOfStructs')
@@ -967,13 +1053,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfKitchenSinks
     class MapOfKitchenSinks
       def self.default(visited=[])
         return nil if visited.include?('MapOfKitchenSinks')
         visited = visited + ['MapOfKitchenSinks']
         {
-          test_key: KitchenSink.default(visited)
+          key: KitchenSink.default(visited)
         }
       end
 
@@ -987,13 +1072,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfListsOfStrings
     class MapOfListsOfStrings
       def self.default(visited=[])
         return nil if visited.include?('MapOfListsOfStrings')
         visited = visited + ['MapOfListsOfStrings']
         {
-          test_key: ListOfStrings.default(visited)
+          key: ListOfStrings.default(visited)
         }
       end
 
@@ -1007,13 +1091,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfMapOfStrings
     class MapOfMapOfStrings
       def self.default(visited=[])
         return nil if visited.include?('MapOfMapOfStrings')
         visited = visited + ['MapOfMapOfStrings']
         {
-          test_key: MapOfStrings.default(visited)
+          key: MapOfStrings.default(visited)
         }
       end
 
@@ -1027,13 +1110,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfStrings
     class MapOfStrings
       def self.default(visited=[])
         return nil if visited.include?('MapOfStrings')
         visited = visited + ['MapOfStrings']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -1047,13 +1129,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfStructs
     class MapOfStructs
       def self.default(visited=[])
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          test_key: SimpleStruct.default(visited)
+          key: SimpleStruct.default(visited)
         }
       end
 
@@ -1067,7 +1148,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for MediaTypeHeader
     class MediaTypeHeader
       def self.default(visited=[])
         {
@@ -1082,7 +1162,6 @@ module RailsJson
       end
     end
 
-    # Union Stubber for MyUnion
     class MyUnion
       def self.default(visited=[])
         return nil if visited.include?('MyUnion')
@@ -1124,7 +1203,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for NestedAttributesOperation
     class NestedAttributesOperation
       def self.default(visited=[])
         {
@@ -1141,7 +1219,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for NestedPayload
     class NestedPayload
       def self.default(visited=[])
         return nil if visited.include?('NestedPayload')
@@ -1161,7 +1238,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for NullAndEmptyHeadersClient
     class NullAndEmptyHeadersClient
       def self.default(visited=[])
         {
@@ -1185,7 +1261,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for NullOperation
     class NullOperation
       def self.default(visited=[])
         {
@@ -1206,7 +1281,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for OmitsNullSerializesEmptyString
     class OmitsNullSerializesEmptyString
       def self.default(visited=[])
         {
@@ -1219,7 +1293,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for OperationWithOptionalInputOutput
     class OperationWithOptionalInputOutput
       def self.default(visited=[])
         {
@@ -1236,7 +1309,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for QueryIdempotencyTokenAutoFill
     class QueryIdempotencyTokenAutoFill
       def self.default(visited=[])
         {
@@ -1249,7 +1321,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
       def self.default(visited=[])
         {
@@ -1262,7 +1333,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for SimpleStruct
     class SimpleStruct
       def self.default(visited=[])
         return nil if visited.include?('SimpleStruct')
@@ -1280,13 +1350,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseBooleanMap
     class SparseBooleanMap
       def self.default(visited=[])
         return nil if visited.include?('SparseBooleanMap')
         visited = visited + ['SparseBooleanMap']
         {
-          test_key: false
+          key: false
         }
       end
 
@@ -1300,13 +1369,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseNumberMap
     class SparseNumberMap
       def self.default(visited=[])
         return nil if visited.include?('SparseNumberMap')
         visited = visited + ['SparseNumberMap']
         {
-          test_key: 1
+          key: 1
         }
       end
 
@@ -1320,13 +1388,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseSetMap
     class SparseSetMap
       def self.default(visited=[])
         return nil if visited.include?('SparseSetMap')
         visited = visited + ['SparseSetMap']
         {
-          test_key: StringSet.default(visited)
+          key: StringSet.default(visited)
         }
       end
 
@@ -1340,7 +1407,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for SparseStringList
     class SparseStringList
       def self.default(visited=[])
         return nil if visited.include?('SparseStringList')
@@ -1360,13 +1426,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseStringMap
     class SparseStringMap
       def self.default(visited=[])
         return nil if visited.include?('SparseStringMap')
         visited = visited + ['SparseStringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -1380,13 +1445,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseStructMap
     class SparseStructMap
       def self.default(visited=[])
         return nil if visited.include?('SparseStructMap')
         visited = visited + ['SparseStructMap']
         {
-          test_key: GreetingStruct.default(visited)
+          key: GreetingStruct.default(visited)
         }
       end
 
@@ -1400,7 +1464,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for StreamingOperation
     class StreamingOperation
       def self.default(visited=[])
         {
@@ -1415,7 +1478,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for StringList
     class StringList
       def self.default(visited=[])
         return nil if visited.include?('StringList')
@@ -1435,13 +1497,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for StringMap
     class StringMap
       def self.default(visited=[])
         return nil if visited.include?('StringMap')
         visited = visited + ['StringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -1455,7 +1516,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for StringSet
     class StringSet
       def self.default(visited=[])
         return nil if visited.include?('StringSet')
@@ -1475,7 +1535,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for StructWithLocationName
     class StructWithLocationName
       def self.default(visited=[])
         return nil if visited.include?('StructWithLocationName')
@@ -1493,7 +1552,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.default(visited=[])
         {
@@ -1520,7 +1578,6 @@ module RailsJson
       end
     end
 
-    # List Stubber for TimestampList
     class TimestampList
       def self.default(visited=[])
         return nil if visited.include?('TimestampList')
@@ -1540,7 +1597,6 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for __456efg
     class Struct____456efg
       def self.default(visited=[])
         return nil if visited.include?('Struct____456efg')
@@ -1558,7 +1614,6 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for __789BadName
     class Operation____789BadName
       def self.default(visited=[])
         {

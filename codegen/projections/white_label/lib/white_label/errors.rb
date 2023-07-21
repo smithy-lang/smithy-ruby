@@ -41,7 +41,7 @@ module WhiteLabel
         @data = Parsers::ClientError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp: http_resp, **kwargs)
+        super(http_resp:, **kwargs)
       end
 
       # @return [Types::ClientError]
@@ -58,7 +58,7 @@ module WhiteLabel
         @data = Parsers::ServerError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp: http_resp, **kwargs)
+        super(http_resp:, **kwargs)
       end
 
       # @return [Types::ServerError]

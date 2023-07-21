@@ -280,17 +280,17 @@ public abstract class BuilderGeneratorBase {
 
         writer
                 .write("")
-                .write("# Operation Builder for $L", operation.getId().getName())
                 .openBlock("class $L", symbol.getName())
                 .call(() -> renderOperationBuildMethod(operation, inputShape))
                 .closeBlock("end");
 
-        LOGGER.finer("Generated operation builder for: " + operation.getId().getName());
+        LOGGER.finer("Generated builder for operation " + operation.getId().getName());
     }
 
     /**
      * @param inputShape inputShape from a streaming operation to render for.
      */
+    // TODO: should probably be in Rest Base
     protected void renderStreamingBodyBuilder(Shape inputShape) {
         MemberShape streamingMember = inputShape.members().stream()
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
@@ -323,7 +323,6 @@ public abstract class BuilderGeneratorBase {
             Symbol symbol = symbolProvider.toSymbol(shape);
             writer
                     .write("")
-                    .write("# Structure Builder for $L", shape.getId().getName())
                     .openBlock("class $L", symbol.getName())
                     .call(() -> renderStructureBuildMethod(shape))
                     .closeBlock("end");
@@ -335,7 +334,6 @@ public abstract class BuilderGeneratorBase {
             Symbol symbol = symbolProvider.toSymbol(shape);
             writer
                     .write("")
-                    .write("# List Builder for $L", shape.getId().getName())
                     .openBlock("class $L", symbol.getName())
                     .call(() -> renderListBuildMethod(shape))
                     .closeBlock("end");
@@ -348,7 +346,6 @@ public abstract class BuilderGeneratorBase {
             Symbol symbol = symbolProvider.toSymbol(shape);
             writer
                     .write("")
-                    .write("# Map Builder for $L", shape.getId().getName())
                     .openBlock("class $L", symbol.getName())
                     .call(() -> renderMapBuildMethod(shape))
                     .closeBlock("end");
@@ -362,7 +359,6 @@ public abstract class BuilderGeneratorBase {
             Symbol symbol = symbolProvider.toSymbol(shape);
             writer
                     .write("")
-                    .write("# Structure Builder for $L", shape.getId().getName())
                     .openBlock("class $L", symbol.getName())
                     .call(() -> renderUnionBuildMethod(shape))
                     .closeBlock("end");

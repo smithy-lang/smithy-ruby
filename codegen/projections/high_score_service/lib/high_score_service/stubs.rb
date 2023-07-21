@@ -11,7 +11,25 @@ module HighScoreService
   # @api private
   module Stubs
 
-    # Operation Stubber for CreateHighScore
+    class AttributeErrors
+      def self.default(visited=[])
+        return nil if visited.include?('AttributeErrors')
+        visited = visited + ['AttributeErrors']
+        {
+          key: ErrorMessages.default(visited)
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = Stubs::ErrorMessages.stub(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     class CreateHighScore
       def self.default(visited=[])
         {
@@ -30,7 +48,6 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for DeleteHighScore
     class DeleteHighScore
       def self.default(visited=[])
         {
@@ -43,7 +60,25 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for GetHighScore
+    class ErrorMessages
+      def self.default(visited=[])
+        return nil if visited.include?('ErrorMessages')
+        visited = visited + ['ErrorMessages']
+        [
+          'member'
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
     class GetHighScore
       def self.default(visited=[])
         {
@@ -60,7 +95,6 @@ module HighScoreService
       end
     end
 
-    # Structure Stubber for HighScoreAttributes
     class HighScoreAttributes
       def self.default(visited=[])
         return nil if visited.include?('HighScoreAttributes')
@@ -86,7 +120,6 @@ module HighScoreService
       end
     end
 
-    # List Stubber for HighScores
     class HighScores
       def self.default(visited=[])
         return nil if visited.include?('HighScores')
@@ -106,7 +139,6 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for ListHighScores
     class ListHighScores
       def self.default(visited=[])
         {
@@ -123,7 +155,32 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for UpdateHighScore
+    class UnprocessableEntityError
+      def self.error_class
+        Errors::UnprocessableEntityError
+      end
+
+      def self.params_class
+        Params::UnprocessableEntityError
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('UnprocessableEntityError')
+        visited = visited + ['UnprocessableEntityError']
+        {
+          errors: AttributeErrors.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 422
+        http_resp.headers['Content-Type'] = 'application/json'
+        data = Stubs::AttributeErrors.stub(stub[:errors]) unless stub[:errors].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class UpdateHighScore
       def self.default(visited=[])
         {

@@ -154,6 +154,7 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.info("Wrote errors rbs to " + fileName);
     }
 
+    // TODO: redirect error is protocol (http) specific
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
@@ -251,7 +252,7 @@ public abstract class ErrorsGeneratorBase {
                     .openBlock("def initialize(http_resp:, **kwargs)")
                     .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(shape).getName())
                     .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                    .write("super(http_resp: http_resp, **kwargs)")
+                    .write("super(http_resp:, **kwargs)")
                     .closeBlock("end")
                     .write("")
                     .writeYardReturn("Types::" + errorName, "")

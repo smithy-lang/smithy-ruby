@@ -11,7 +11,6 @@ module HighScoreService
   # @api private
   module Builders
 
-    # Operation Builder for CreateHighScore
     class CreateHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -26,7 +25,6 @@ module HighScoreService
       end
     end
 
-    # Operation Builder for DeleteHighScore
     class DeleteHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'DELETE'
@@ -43,7 +41,6 @@ module HighScoreService
       end
     end
 
-    # Operation Builder for GetHighScore
     class GetHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -60,7 +57,6 @@ module HighScoreService
       end
     end
 
-    # Structure Builder for HighScoreParams
     class HighScoreParams
       def self.build(input)
         data = {}
@@ -70,7 +66,6 @@ module HighScoreService
       end
     end
 
-    # Operation Builder for ListHighScores
     class ListHighScores
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -80,7 +75,6 @@ module HighScoreService
       end
     end
 
-    # Operation Builder for UpdateHighScore
     class UpdateHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'

@@ -152,7 +152,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::DefaultsTest,
+        stub_error_classes: [],
+        stub_data_class: Stubs::DefaultsTest,
         stubs: @stubs,
         params_class: Params::DefaultsTestOutput
       )
@@ -216,7 +217,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EndpointOperation,
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointOperation,
         stubs: @stubs,
         params_class: Params::EndpointOperationOutput
       )
@@ -282,7 +284,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EndpointWithHostLabelOperation,
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs,
         params_class: Params::EndpointWithHostLabelOperationOutput
       )
@@ -509,7 +512,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::KitchenSink,
+        stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
+        stub_data_class: Stubs::KitchenSink,
         stubs: @stubs,
         params_class: Params::KitchenSinkOutput
       )
@@ -573,7 +577,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::MixinTest,
+        stub_error_classes: [],
+        stub_data_class: Stubs::MixinTest,
         stubs: @stubs,
         params_class: Params::MixinTestOutput
       )
@@ -638,7 +643,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::PaginatorsTest,
+        stub_error_classes: [],
+        stub_data_class: Stubs::PaginatorsTest,
         stubs: @stubs,
         params_class: Params::PaginatorsTestOperationOutput
       )
@@ -703,7 +709,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::PaginatorsTestWithItems,
+        stub_error_classes: [],
+        stub_data_class: Stubs::PaginatorsTestWithItems,
         stubs: @stubs,
         params_class: Params::PaginatorsTestWithItemsOutput
       )
@@ -765,7 +772,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::StreamingOperation,
+        stub_error_classes: [],
+        stub_data_class: Stubs::StreamingOperation,
         stubs: @stubs,
         params_class: Params::StreamingOperationOutput
       )
@@ -827,7 +835,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::StreamingWithLength,
+        stub_error_classes: [],
+        stub_data_class: Stubs::StreamingWithLength,
         stubs: @stubs,
         params_class: Params::StreamingWithLengthOutput
       )
@@ -890,7 +899,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::WaitersTest,
+        stub_error_classes: [],
+        stub_data_class: Stubs::WaitersTest,
         stubs: @stubs,
         params_class: Params::WaitersTestOutput
       )
@@ -956,7 +966,8 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
+        stub_error_classes: [],
+        stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: @stubs,
         params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
       )

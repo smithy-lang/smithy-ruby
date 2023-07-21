@@ -11,7 +11,29 @@ module WhiteLabel
   # @api private
   module Stubs
 
-    # Operation Stubber for DefaultsTest
+    class ClientError
+      def self.error_class
+        Errors::ClientError
+      end
+
+      def self.params_class
+        Params::ClientError
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('ClientError')
+        visited = visited + ['ClientError']
+        {
+          message: 'message',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+      end
+    end
+
     class DefaultsTest
       def self.default(visited=[])
         {
@@ -43,7 +65,6 @@ module WhiteLabel
       end
     end
 
-    # Document Type Stubber for Document
     class Document
       def self.default(visited=[])
         return nil if visited.include?('Document')
@@ -56,7 +77,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for EndpointOperation
     class EndpointOperation
       def self.default(visited=[])
         {
@@ -69,7 +89,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
       def self.default(visited=[])
         {
@@ -82,7 +101,6 @@ module WhiteLabel
       end
     end
 
-    # List Stubber for Items
     class Items
       def self.default(visited=[])
         return nil if visited.include?('Items')
@@ -94,7 +112,6 @@ module WhiteLabel
 
     end
 
-    # Operation Stubber for KitchenSink
     class KitchenSink
       def self.default(visited=[])
         {
@@ -117,7 +134,6 @@ module WhiteLabel
       end
     end
 
-    # List Stubber for ListOfStrings
     class ListOfStrings
       def self.default(visited=[])
         return nil if visited.include?('ListOfStrings')
@@ -129,7 +145,6 @@ module WhiteLabel
 
     end
 
-    # List Stubber for ListOfStructs
     class ListOfStructs
       def self.default(visited=[])
         return nil if visited.include?('ListOfStructs')
@@ -141,31 +156,28 @@ module WhiteLabel
 
     end
 
-    # Map Stubber for MapOfStrings
     class MapOfStrings
       def self.default(visited=[])
         return nil if visited.include?('MapOfStrings')
         visited = visited + ['MapOfStrings']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
     end
 
-    # Map Stubber for MapOfStructs
     class MapOfStructs
       def self.default(visited=[])
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          test_key: Struct.default(visited)
+          key: Struct.default(visited)
         }
       end
 
     end
 
-    # Operation Stubber for MixinTest
     class MixinTest
       def self.default(visited=[])
         {
@@ -179,7 +191,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for PaginatorsTest
     class PaginatorsTest
       def self.default(visited=[])
         {
@@ -193,7 +204,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.default(visited=[])
         {
@@ -207,7 +217,6 @@ module WhiteLabel
       end
     end
 
-    # Structure Stubber for ResultWrapper
     class ResultWrapper
       def self.default(visited=[])
         return nil if visited.include?('ResultWrapper')
@@ -219,7 +228,28 @@ module WhiteLabel
 
     end
 
-    # Operation Stubber for StreamingOperation
+    class ServerError
+      def self.error_class
+        Errors::ServerError
+      end
+
+      def self.params_class
+        Params::ServerError
+      end
+
+      def self.default(visited=[])
+        return nil if visited.include?('ServerError')
+        visited = visited + ['ServerError']
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 500
+      end
+    end
+
     class StreamingOperation
       def self.default(visited=[])
         {
@@ -234,7 +264,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for StreamingWithLength
     class StreamingWithLength
       def self.default(visited=[])
         {
@@ -247,7 +276,6 @@ module WhiteLabel
       end
     end
 
-    # Structure Stubber for Struct
     class Struct
       def self.default(visited=[])
         return nil if visited.include?('Struct')
@@ -259,7 +287,6 @@ module WhiteLabel
 
     end
 
-    # Union Stubber for Union
     class Union
       def self.default(visited=[])
         return nil if visited.include?('Union')
@@ -271,7 +298,6 @@ module WhiteLabel
 
     end
 
-    # Operation Stubber for WaitersTest
     class WaitersTest
       def self.default(visited=[])
         {
@@ -284,7 +310,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
       def self.default(visited=[])
         {

@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generator
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -53,15 +52,14 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     }
 
     @Override
-    protected void renderPayloadBodyStub(OperationShape operation, Shape outputShape, MemberShape payloadMember,
-                                         Shape target) {
+    protected void renderPayloadBodyStub(Shape outputShape, MemberShape payloadMember, Shape target) {
         if (target.hasTrait(StreamingTrait.class)) {
             renderStreamingStub(outputShape);
         }
     }
 
     @Override
-    protected void renderBodyStub(OperationShape operation, Shape outputShape) {
+    protected void renderBodyStub(Shape outputShape) {
 
     }
 }
