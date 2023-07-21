@@ -276,6 +276,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationInput, context: context)
         type = Types::RequestCompressionOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.body = params[:body]
         type
       end
@@ -285,6 +286,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationOutput, context: context)
         type = Types::RequestCompressionOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
@@ -293,6 +295,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationInput, context: context)
         type = Types::RequestCompressionStreamingOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:body] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)
           io = StringIO.new(io)
@@ -306,6 +309,7 @@ module WhiteLabel
       def self.build(params, context: '')
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationOutput, context: context)
         type = Types::RequestCompressionStreamingOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end

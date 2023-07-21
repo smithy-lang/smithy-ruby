@@ -740,7 +740,7 @@ module WhiteLabel
     def request_compression_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::RequestCompressionOperationInput.build(params)
+      input = Params::RequestCompressionOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -754,7 +754,7 @@ module WhiteLabel
         builder: Builders::RequestCompressionOperation
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::RequestCompression,
+      stack.use(Hearth::HTTP::Middleware::RequestCompression,
         streaming: false,
         encodings: ['gzip'],
         request_min_compression_size_bytes: options.fetch(:request_min_compression_size_bytes, config.request_min_compression_size_bytes),
@@ -775,8 +775,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::RequestCompressionOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
@@ -810,7 +808,7 @@ module WhiteLabel
     def request_compression_streaming_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::RequestCompressionStreamingOperationInput.build(params)
+      input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
@@ -822,6 +820,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::RequestCompressionStreamingOperation
+      )
+      stack.use(Hearth::HTTP::Middleware::RequestCompression,
+        streaming: true,
+        encodings: ['gzip'],
+        request_min_compression_size_bytes: options.fetch(:request_min_compression_size_bytes, config.request_min_compression_size_bytes),
+        disable_request_compression: options.fetch(:disable_request_compression, config.disable_request_compression)
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -838,8 +842,6 @@ module WhiteLabel
         stubs: @stubs,
         params_class: Params::RequestCompressionStreamingOperationOutput
       )
-      apply_middleware(stack, options[:middleware])
-
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(

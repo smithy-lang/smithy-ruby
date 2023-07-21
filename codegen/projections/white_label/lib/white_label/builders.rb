@@ -72,6 +72,7 @@ module WhiteLabel
     # Operation Builder for RequestCompressionOperation
     class RequestCompressionOperation
       def self.build(http_req, input:)
+        http_req.body = StringIO.new(input[:body] || '')
       end
     end
 
