@@ -1,0 +1,38 @@
+name: Benchmark
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  id-token: write # required for OIDC
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [3.3]
+
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+
+      - uses: actions/checkout@v3
+
+      - name: Install gems
+        run: bundle install
+        working-directory: benchmark
+
+      - name: Benchmark
+        run: EXECUTION_ENV=github-action bundle exec rake benchmark
+        working-directory: benchmark
