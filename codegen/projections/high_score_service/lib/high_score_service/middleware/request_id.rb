@@ -1,4 +1,6 @@
 module HighScoreService
+  # frozen_string_literal: true
+
   module Middleware
     # A middleware that extracts a request id from a response and sets it
     # on output's metadata.
@@ -15,4 +17,5 @@ module HighScoreService
       end
     end
   end
+
 end
