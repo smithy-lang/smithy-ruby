@@ -305,7 +305,7 @@ public class MiddlewareBuilder {
                 .type("Logger")
                 .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
                 .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) } ")
+                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }")
                         .build()
                 )
                 .documentation("The Logger instance to use for logging.")

@@ -60,7 +60,7 @@ module Weather
     def get_city(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetCityInput.build(params)
+      input = Params::GetCityInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -129,7 +129,7 @@ module Weather
     def get_city_image(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetCityImageInput.build(params)
+      input = Params::GetCityImageInput.build(params, context: 'params')
       response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -187,7 +187,7 @@ module Weather
     def get_current_time(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetCurrentTimeInput.build(params)
+      input = Params::GetCurrentTimeInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -262,7 +262,7 @@ module Weather
     def get_forecast(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::GetForecastInput.build(params)
+      input = Params::GetForecastInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -342,7 +342,7 @@ module Weather
     def list_cities(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::ListCitiesInput.build(params)
+      input = Params::ListCitiesInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
@@ -407,7 +407,7 @@ module Weather
     def operation____789_bad_name(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::Struct____789BadNameInput.build(params)
+      input = Params::Struct____789BadNameInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,

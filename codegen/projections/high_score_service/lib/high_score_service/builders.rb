@@ -29,7 +29,7 @@ module HighScoreService
       def self.build(http_req, input:)
         http_req.http_method = 'DELETE'
         if input[:id].to_s.empty?
-          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+          raise ArgumentError, "HTTP label :id cannot be empty."
         end
         http_req.append_path(format(
             '/high_scores/%<id>s',
@@ -45,7 +45,7 @@ module HighScoreService
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         if input[:id].to_s.empty?
-          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+          raise ArgumentError, "HTTP label :id cannot be empty."
         end
         http_req.append_path(format(
             '/high_scores/%<id>s',
@@ -79,7 +79,7 @@ module HighScoreService
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         if input[:id].to_s.empty?
-          raise ArgumentError, "HTTP label :id cannot be nil or empty."
+          raise ArgumentError, "HTTP label :id cannot be empty."
         end
         http_req.append_path(format(
             '/high_scores/%<id>s',

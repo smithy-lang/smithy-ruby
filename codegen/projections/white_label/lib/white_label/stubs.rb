@@ -226,6 +226,34 @@ module WhiteLabel
       end
     end
 
+    class RequestCompressionOperation
+      PARAMS_CLASS = Params::RequestCompressionOperationOutput
+
+      def self.default(visited = Set.new)
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class RequestCompressionStreamingOperation
+      PARAMS_CLASS = Params::RequestCompressionStreamingOperationOutput
+
+      def self.default(visited = Set.new)
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class ResultWrapper
       def self.default(visited = Set.new)
         return nil if visited.include?('ResultWrapper')

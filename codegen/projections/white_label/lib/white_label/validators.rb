@@ -160,6 +160,22 @@ module WhiteLabel
       end
     end
 
+    class RequestCompressionOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionOperationInput, context: context)
+        Hearth::Validator.validate_types!(input[:body], ::String, context: "#{context}[:body]")
+      end
+    end
+
+    class RequestCompressionStreamingOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingOperationInput, context: context)
+        unless input[:body].respond_to?(:read) || input[:body].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:body].class}"
+        end
+      end
+    end
+
     class StreamingOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StreamingOperationInput, context: context)
