@@ -44,16 +44,19 @@ public final class RubyDependency
             .version("~> 1.0.0.pre1")
             .build();
 
-    public static final RubyDependency TIME = new Builder()
-            .type(Type.STANDARD_LIBRARY)
-            .importPath("time")
+    public static final RubyDependency HEARTH_XML_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/xml/node_matcher")
             .build();
 
-    public static final RubyDependency BIG_DECIMAL = new Builder()
-            .type(Type.STANDARD_LIBRARY)
-            .importPath("bigdecimal")
+    public static final RubyDependency HEARTH_QUERY_PARAM_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/query/param_matcher")
             .build();
 
+    /**
+     * Ruby stdlib dependencies.
+     */
     public static final RubyDependency SECURE_RANDOM = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("securerandom")
@@ -62,6 +65,11 @@ public final class RubyDependency
     public static final RubyDependency BASE64 = new Builder()
             .type(Type.STANDARD_LIBRARY)
             .importPath("base64")
+            .build();
+
+    public static final RubyDependency BIG_DECIMAL = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("bigdecimal")
             .build();
 
     public static final RubyDependency STRING_IO = new Builder()
@@ -74,14 +82,9 @@ public final class RubyDependency
             .importPath("cgi")
             .build();
 
-    public static final RubyDependency HEARTH_XML_MATCHER = new Builder()
-            .type(Type.DEPENDENCY)
-            .importPath("hearth/xml/node_matcher")
-            .build();
-
-    public static final RubyDependency HEARTH_QUERY_PARAM_MATCHER = new Builder()
-            .type(Type.DEPENDENCY)
-            .importPath("hearth/query/param_matcher")
+    public static final RubyDependency TIME = new Builder()
+            .type(Type.STANDARD_LIBRARY)
+            .importPath("time")
             .build();
 
     private final Type type;

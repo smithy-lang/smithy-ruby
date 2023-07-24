@@ -84,8 +84,7 @@ module Weather
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::NoSuchResource],
         stub_data_class: Stubs::GetCity,
-        stubs: @stubs,
-        params_class: Params::GetCityOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -154,8 +153,7 @@ module Weather
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::NoSuchResource],
         stub_data_class: Stubs::GetCityImage,
-        stubs: @stubs,
-        params_class: Params::GetCityImageOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -213,8 +211,7 @@ module Weather
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::GetCurrentTime,
-        stubs: @stubs,
-        params_class: Params::GetCurrentTimeOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -289,8 +286,7 @@ module Weather
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::GetForecast,
-        stubs: @stubs,
-        params_class: Params::GetForecastOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -370,8 +366,7 @@ module Weather
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::ListCities,
-        stubs: @stubs,
-        params_class: Params::ListCitiesOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -436,8 +431,7 @@ module Weather
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::NoSuchResource],
         stub_data_class: Stubs::Operation____789BadName,
-        stubs: @stubs,
-        params_class: Params::Struct____789BadNameOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

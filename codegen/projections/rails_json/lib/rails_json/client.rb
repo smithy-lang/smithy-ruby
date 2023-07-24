@@ -115,8 +115,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::AllQueryStringTypes,
-        stubs: @stubs,
-        params_class: Params::AllQueryStringTypesOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -181,8 +180,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::ConstantAndVariableQueryString,
-        stubs: @stubs,
-        params_class: Params::ConstantAndVariableQueryStringOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -247,8 +245,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::ConstantQueryString,
-        stubs: @stubs,
-        params_class: Params::ConstantQueryStringOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -320,8 +317,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::DocumentType,
-        stubs: @stubs,
-        params_class: Params::DocumentTypeOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -391,8 +387,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::DocumentTypeAsPayload,
-        stubs: @stubs,
-        params_class: Params::DocumentTypeAsPayloadOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -450,8 +445,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::EmptyOperation,
-        stubs: @stubs,
-        params_class: Params::EmptyOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -513,8 +507,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -578,8 +571,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointWithHostLabelOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointWithHostLabelOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -647,8 +639,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
         stub_data_class: Stubs::GreetingWithErrors,
-        stubs: @stubs,
-        params_class: Params::GreetingWithErrorsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -716,8 +707,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPayloadTraits,
-        stubs: @stubs,
-        params_class: Params::HttpPayloadTraitsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -783,8 +773,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
-        stubs: @stubs,
-        params_class: Params::HttpPayloadTraitsWithMediaTypeOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -855,8 +844,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPayloadWithStructure,
-        stubs: @stubs,
-        params_class: Params::HttpPayloadWithStructureOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -926,8 +914,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPrefixHeaders,
-        stubs: @stubs,
-        params_class: Params::HttpPrefixHeadersOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -989,8 +976,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPrefixHeadersInResponse,
-        stubs: @stubs,
-        params_class: Params::HttpPrefixHeadersInResponseOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1051,8 +1037,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithFloatLabels,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithFloatLabelsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1113,8 +1098,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithGreedyLabelInPathOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1190,8 +1174,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithLabels,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithLabelsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1260,8 +1243,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1320,8 +1302,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::HttpResponseCode,
-        stubs: @stubs,
-        params_class: Params::HttpResponseCodeOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1384,8 +1365,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::IgnoreQueryParamsInResponse,
-        stubs: @stubs,
-        params_class: Params::IgnoreQueryParamsInResponseOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1497,8 +1477,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::InputAndOutputWithHeaders,
-        stubs: @stubs,
-        params_class: Params::InputAndOutputWithHeadersOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1580,8 +1559,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::JsonEnums,
-        stubs: @stubs,
-        params_class: Params::JsonEnumsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1690,8 +1668,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::JsonMaps,
-        stubs: @stubs,
-        params_class: Params::JsonMapsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1791,8 +1768,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::JsonUnions,
-        stubs: @stubs,
-        params_class: Params::JsonUnionsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1958,8 +1934,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::ErrorWithMembers, Stubs::ErrorWithoutMembers],
         stub_data_class: Stubs::KitchenSinkOperation,
-        stubs: @stubs,
-        params_class: Params::KitchenSinkOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2022,8 +1997,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::MediaTypeHeader,
-        stubs: @stubs,
-        params_class: Params::MediaTypeHeaderOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2086,8 +2060,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::NestedAttributesOperation,
-        stubs: @stubs,
-        params_class: Params::NestedAttributesOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2159,8 +2132,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::NullAndEmptyHeadersClient,
-        stubs: @stubs,
-        params_class: Params::NullAndEmptyHeadersClientOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2231,8 +2203,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::NullOperation,
-        stubs: @stubs,
-        params_class: Params::NullOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2295,8 +2266,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::OmitsNullSerializesEmptyString,
-        stubs: @stubs,
-        params_class: Params::OmitsNullSerializesEmptyStringOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2357,8 +2327,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::OperationWithOptionalInputOutput,
-        stubs: @stubs,
-        params_class: Params::OperationWithOptionalInputOutputOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2422,8 +2391,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
-        stubs: @stubs,
-        params_class: Params::QueryIdempotencyTokenAutoFillOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2488,8 +2456,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::QueryParamsAsStringListMap,
-        stubs: @stubs,
-        params_class: Params::QueryParamsAsStringListMapOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2549,8 +2516,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::StreamingOperation,
-        stubs: @stubs,
-        params_class: Params::StreamingOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2625,8 +2591,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::TimestampFormatHeaders,
-        stubs: @stubs,
-        params_class: Params::TimestampFormatHeadersOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2691,8 +2656,7 @@ module RailsJson
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::Operation____789BadName,
-        stubs: @stubs,
-        params_class: Params::Struct____789BadNameOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

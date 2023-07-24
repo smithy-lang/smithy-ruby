@@ -15,17 +15,14 @@ module Hearth
       #   that are responsible for creating a stubbed error response. They
       #   must respond to #stub and take the response and stub data as
       #   arguments.
-      # @param [Class] params_class A Params class responsible for
-      #   converting a ruby hash into the operation's modeled output Type.
       # @param [Stubs] stubs A {Hearth::Stubbing:Stubs} object containing
       #   stubbed data for any given operation.
-      def initialize(_app, client:, stub_responses:, stub_data_class:,
-                     stub_error_classes:, params_class:, stubs:)
+      def initialize(_app, client:, stub_responses:,
+                     stub_data_class:, stub_error_classes:, stubs:)
         @client = client
         @stub_responses = stub_responses
         @stub_data_class = stub_data_class
         @stub_error_classes = stub_error_classes
-        @params_class = params_class
         @stubs = stubs
       end
 
@@ -91,8 +88,6 @@ module Hearth
       end
 
       def apply_stub(stub, input, context, output)
-        # require 'byebug'
-        # byebug
         case stub
         when Proc
           stub = stub.call(input, context)
@@ -100,49 +95,72 @@ module Hearth
         when Exception, ApiError
           output.error = stub
         when Hash
-          if stub.key?(:error)
-            klass, params = stub[:error]
-            error = @stub_error_classes.find do |stub_error_class|
-              stub_error_class.error_class == klass
-            end
-            if error
-              error.stub(
-                context.response,
-                stub: error.params_class.build(
-                  params || {},
-                  context: 'stub'
-                )
-              )
-            else
-              raise ArgumentError, 'Unsupported stub error class'
-            end
-          elsif stub.key?(:data)
-            @stub_data_class.stub(
-              context.response,
-              stub: @params_class.build(
-                stub[:data],
-                context: 'stub'
-              )
-            )
-          end
+          apply_stub_hash(stub, context)
         when NilClass
-          @stub_data_class.stub(
-            context.response,
-            stub: @params_class.build(
-              @stub_data_class.default,
-              context: 'stub'
-            )
-          )
+          apply_stub_nil(context)
         when Hearth::Structure
-          @stub_data_class.stub(
-            context.response,
-            stub: stub
-          )
+          apply_stub_hearth_structure(stub, context)
         when Hearth::Response
           context.response.replace(stub)
         else
           raise ArgumentError, 'Unsupported stub type'
         end
+      end
+
+      def apply_stub_hash(stub, context)
+        if stub.key?(:error)
+          apply_stub_hash_error(stub, context)
+        elsif stub.key?(:data)
+          apply_stub_hash_data(stub, context)
+        else
+          raise ArgumentError, 'Unsupported stub hash, must be :data or :error'
+        end
+      end
+
+      def apply_stub_hash_data(stub, context)
+        @stub_data_class.stub(
+          context.response,
+          stub: @stub_data_class::PARAMS_CLASS.build(
+            stub[:data],
+            context: 'stub'
+          )
+        )
+      end
+
+      def apply_stub_hash_error(stub, context)
+        klass = stub[:error][:class]
+        data = stub[:error][:data] || {}
+        raise ArgumentError, 'Missing stub error class' unless klass
+
+        error_class = @stub_error_classes.find do |stub_error_class|
+          klass == stub_error_class::ERROR_CLASS
+        end
+        raise ArgumentError, 'Unsupported stub error class' unless error_class
+
+        error_class.stub(
+          context.response,
+          stub: error_class::PARAMS_CLASS.build(
+            data,
+            context: 'stub'
+          )
+        )
+      end
+
+      def apply_stub_nil(context)
+        @stub_data_class.stub(
+          context.response,
+          stub: @stub_data_class::PARAMS_CLASS.build(
+            @stub_data_class.default,
+            context: 'stub'
+          )
+        )
+      end
+
+      def apply_stub_hearth_structure(stub, context)
+        @stub_data_class.stub(
+          context.response,
+          stub: stub
+        )
       end
     end
   end

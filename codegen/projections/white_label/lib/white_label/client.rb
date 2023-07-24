@@ -154,8 +154,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::DefaultsTest,
-        stubs: @stubs,
-        params_class: Params::DefaultsTestOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -219,8 +218,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -286,8 +284,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointWithHostLabelOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointWithHostLabelOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -514,8 +511,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
         stub_data_class: Stubs::KitchenSink,
-        stubs: @stubs,
-        params_class: Params::KitchenSinkOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -579,8 +575,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::MixinTest,
-        stubs: @stubs,
-        params_class: Params::MixinTestOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -645,8 +640,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::PaginatorsTest,
-        stubs: @stubs,
-        params_class: Params::PaginatorsTestOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -711,8 +705,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::PaginatorsTestWithItems,
-        stubs: @stubs,
-        params_class: Params::PaginatorsTestWithItemsOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -774,8 +767,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::StreamingOperation,
-        stubs: @stubs,
-        params_class: Params::StreamingOperationOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -837,8 +829,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::StreamingWithLength,
-        stubs: @stubs,
-        params_class: Params::StreamingWithLengthOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -901,8 +892,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::WaitersTest,
-        stubs: @stubs,
-        params_class: Params::WaitersTestOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -968,8 +958,7 @@ module WhiteLabel
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
-        stubs: @stubs,
-        params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

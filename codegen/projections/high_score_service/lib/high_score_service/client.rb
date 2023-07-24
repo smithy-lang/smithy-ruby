@@ -93,8 +93,7 @@ module HighScoreService
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::UnprocessableEntityError],
         stub_data_class: Stubs::CreateHighScore,
-        stubs: @stubs,
-        params_class: Params::CreateHighScoreOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -159,8 +158,7 @@ module HighScoreService
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::DeleteHighScore,
-        stubs: @stubs,
-        params_class: Params::DeleteHighScoreOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -231,8 +229,7 @@ module HighScoreService
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::GetHighScore,
-        stubs: @stubs,
-        params_class: Params::GetHighScoreOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -299,8 +296,7 @@ module HighScoreService
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
         stub_data_class: Stubs::ListHighScores,
-        stubs: @stubs,
-        params_class: Params::ListHighScoresOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -378,8 +374,7 @@ module HighScoreService
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [Stubs::UnprocessableEntityError],
         stub_data_class: Stubs::UpdateHighScore,
-        stubs: @stubs,
-        params_class: Params::UpdateHighScoreOutput
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

@@ -12,9 +12,9 @@ module HighScoreService
   module Stubs
 
     class AttributeErrors
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('AttributeErrors')
-        visited = visited + ['AttributeErrors']
+        visited.add('AttributeErrors')
         {
           key: ErrorMessages.default(visited)
         }
@@ -31,7 +31,9 @@ module HighScoreService
     end
 
     class CreateHighScore
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::CreateHighScoreOutput
+
+      def self.default(visited = Set.new)
         {
           high_score: HighScoreAttributes.default(visited),
           location: 'location',
@@ -49,7 +51,9 @@ module HighScoreService
     end
 
     class DeleteHighScore
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::DeleteHighScoreOutput
+
+      def self.default(visited = Set.new)
         {
         }
       end
@@ -61,9 +65,9 @@ module HighScoreService
     end
 
     class ErrorMessages
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('ErrorMessages')
-        visited = visited + ['ErrorMessages']
+        visited.add('ErrorMessages')
         [
           'member'
         ]
@@ -80,7 +84,9 @@ module HighScoreService
     end
 
     class GetHighScore
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::GetHighScoreOutput
+
+      def self.default(visited = Set.new)
         {
           high_score: HighScoreAttributes.default(visited),
         }
@@ -96,9 +102,9 @@ module HighScoreService
     end
 
     class HighScoreAttributes
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('HighScoreAttributes')
-        visited = visited + ['HighScoreAttributes']
+        visited.add('HighScoreAttributes')
         {
           id: 'id',
           game: 'game',
@@ -121,9 +127,9 @@ module HighScoreService
     end
 
     class HighScores
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('HighScores')
-        visited = visited + ['HighScores']
+        visited.add('HighScores')
         [
           HighScoreAttributes.default(visited)
         ]
@@ -140,7 +146,9 @@ module HighScoreService
     end
 
     class ListHighScores
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::ListHighScoresOutput
+
+      def self.default(visited = Set.new)
         {
           high_scores: HighScores.default(visited),
         }
@@ -156,17 +164,12 @@ module HighScoreService
     end
 
     class UnprocessableEntityError
-      def self.error_class
-        Errors::UnprocessableEntityError
-      end
+      ERROR_CLASS = Errors::UnprocessableEntityError
+      PARAMS_CLASS = Params::UnprocessableEntityError
 
-      def self.params_class
-        Params::UnprocessableEntityError
-      end
-
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('UnprocessableEntityError')
-        visited = visited + ['UnprocessableEntityError']
+        visited.add('UnprocessableEntityError')
         {
           errors: AttributeErrors.default(visited),
         }
@@ -182,7 +185,9 @@ module HighScoreService
     end
 
     class UpdateHighScore
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::UpdateHighScoreOutput
+
+      def self.default(visited = Set.new)
         {
           high_score: HighScoreAttributes.default(visited),
         }

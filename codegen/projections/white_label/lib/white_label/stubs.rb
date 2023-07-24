@@ -12,17 +12,12 @@ module WhiteLabel
   module Stubs
 
     class ClientError
-      def self.error_class
-        Errors::ClientError
-      end
+      ERROR_CLASS = Errors::ClientError
+      PARAMS_CLASS = Params::ClientError
 
-      def self.params_class
-        Params::ClientError
-      end
-
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('ClientError')
-        visited = visited + ['ClientError']
+        visited.add('ClientError')
         {
           message: 'message',
         }
@@ -35,7 +30,9 @@ module WhiteLabel
     end
 
     class DefaultsTest
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::DefaultsTestOutput
+
+      def self.default(visited = Set.new)
         {
           string: 'string',
           struct: Struct.default(visited),
@@ -66,9 +63,9 @@ module WhiteLabel
     end
 
     class Document
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Document')
-        visited = visited + ['Document']
+        visited.add('Document')
         { 'Document' => [0, 1, 2] }
       end
 
@@ -78,7 +75,9 @@ module WhiteLabel
     end
 
     class EndpointOperation
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::EndpointOperationOutput
+
+      def self.default(visited = Set.new)
         {
         }
       end
@@ -90,7 +89,9 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::EndpointWithHostLabelOperationOutput
+
+      def self.default(visited = Set.new)
         {
         }
       end
@@ -102,9 +103,9 @@ module WhiteLabel
     end
 
     class Items
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Items')
-        visited = visited + ['Items']
+        visited.add('Items')
         [
           'member'
         ]
@@ -113,7 +114,9 @@ module WhiteLabel
     end
 
     class KitchenSink
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::KitchenSinkOutput
+
+      def self.default(visited = Set.new)
         {
           string: 'string',
           simple_enum: 'simple_enum',
@@ -135,9 +138,9 @@ module WhiteLabel
     end
 
     class ListOfStrings
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('ListOfStrings')
-        visited = visited + ['ListOfStrings']
+        visited.add('ListOfStrings')
         [
           'member'
         ]
@@ -146,9 +149,9 @@ module WhiteLabel
     end
 
     class ListOfStructs
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('ListOfStructs')
-        visited = visited + ['ListOfStructs']
+        visited.add('ListOfStructs')
         [
           Struct.default(visited)
         ]
@@ -157,9 +160,9 @@ module WhiteLabel
     end
 
     class MapOfStrings
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('MapOfStrings')
-        visited = visited + ['MapOfStrings']
+        visited.add('MapOfStrings')
         {
           key: 'value'
         }
@@ -168,9 +171,9 @@ module WhiteLabel
     end
 
     class MapOfStructs
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('MapOfStructs')
-        visited = visited + ['MapOfStructs']
+        visited.add('MapOfStructs')
         {
           key: Struct.default(visited)
         }
@@ -179,7 +182,9 @@ module WhiteLabel
     end
 
     class MixinTest
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::MixinTestOutput
+
+      def self.default(visited = Set.new)
         {
           username: 'username',
           user_id: 'user_id',
@@ -192,7 +197,9 @@ module WhiteLabel
     end
 
     class PaginatorsTest
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::PaginatorsTestOperationOutput
+
+      def self.default(visited = Set.new)
         {
           next_token: 'next_token',
           items: Items.default(visited),
@@ -205,7 +212,9 @@ module WhiteLabel
     end
 
     class PaginatorsTestWithItems
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::PaginatorsTestWithItemsOutput
+
+      def self.default(visited = Set.new)
         {
           next_token: 'next_token',
           items: Items.default(visited),
@@ -218,9 +227,9 @@ module WhiteLabel
     end
 
     class ResultWrapper
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('ResultWrapper')
-        visited = visited + ['ResultWrapper']
+        visited.add('ResultWrapper')
         {
           member___123next_token: 'member___123next_token',
         }
@@ -229,17 +238,12 @@ module WhiteLabel
     end
 
     class ServerError
-      def self.error_class
-        Errors::ServerError
-      end
+      ERROR_CLASS = Errors::ServerError
+      PARAMS_CLASS = Params::ServerError
 
-      def self.params_class
-        Params::ServerError
-      end
-
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('ServerError')
-        visited = visited + ['ServerError']
+        visited.add('ServerError')
         {
         }
       end
@@ -251,7 +255,9 @@ module WhiteLabel
     end
 
     class StreamingOperation
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::StreamingOperationOutput
+
+      def self.default(visited = Set.new)
         {
           stream: 'stream',
         }
@@ -265,7 +271,9 @@ module WhiteLabel
     end
 
     class StreamingWithLength
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::StreamingWithLengthOutput
+
+      def self.default(visited = Set.new)
         {
         }
       end
@@ -277,9 +285,9 @@ module WhiteLabel
     end
 
     class Struct
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Struct')
-        visited = visited + ['Struct']
+        visited.add('Struct')
         {
           value: 'value',
         }
@@ -288,9 +296,9 @@ module WhiteLabel
     end
 
     class Union
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Union')
-        visited = visited + ['Union']
+        visited.add('Union')
         {
           string: 'string',
         }
@@ -299,7 +307,9 @@ module WhiteLabel
     end
 
     class WaitersTest
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::WaitersTestOutput
+
+      def self.default(visited = Set.new)
         {
           status: 'status',
         }
@@ -311,7 +321,9 @@ module WhiteLabel
     end
 
     class Operation____PaginatorsTestWithBadNames
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::Struct____PaginatorsTestWithBadNamesOutput
+
+      def self.default(visited = Set.new)
         {
           member___wrapper: ResultWrapper.default(visited),
           member___items: Items.default(visited),

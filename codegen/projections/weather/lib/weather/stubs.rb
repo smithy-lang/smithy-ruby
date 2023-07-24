@@ -12,9 +12,9 @@ module Weather
   module Stubs
 
     class Announcements
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Announcements')
-        visited = visited + ['Announcements']
+        visited.add('Announcements')
         {
           police: Message.default(visited),
         }
@@ -23,9 +23,9 @@ module Weather
     end
 
     class Baz
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Baz')
-        visited = visited + ['Baz']
+        visited.add('Baz')
         {
           baz: 'baz',
           bar: 'bar',
@@ -35,9 +35,9 @@ module Weather
     end
 
     class CityCoordinates
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('CityCoordinates')
-        visited = visited + ['CityCoordinates']
+        visited.add('CityCoordinates')
         {
           latitude: 1.0,
           longitude: 1.0,
@@ -47,9 +47,9 @@ module Weather
     end
 
     class CitySummaries
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('CitySummaries')
-        visited = visited + ['CitySummaries']
+        visited.add('CitySummaries')
         [
           CitySummary.default(visited)
         ]
@@ -58,9 +58,9 @@ module Weather
     end
 
     class CitySummary
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('CitySummary')
-        visited = visited + ['CitySummary']
+        visited.add('CitySummary')
         {
           city_id: 'city_id',
           name: 'name',
@@ -72,9 +72,9 @@ module Weather
     end
 
     class Foo
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Foo')
-        visited = visited + ['Foo']
+        visited.add('Foo')
         {
           baz: 'baz',
           bar: 'bar',
@@ -84,7 +84,9 @@ module Weather
     end
 
     class GetCity
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::GetCityOutput
+
+      def self.default(visited = Set.new)
         {
           name: 'name',
           coordinates: CityCoordinates.default(visited),
@@ -99,7 +101,9 @@ module Weather
     end
 
     class GetCityAnnouncements
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::GetCityAnnouncementsOutput
+
+      def self.default(visited = Set.new)
         {
           last_updated: Time.now,
           announcements: Announcements.default(visited),
@@ -115,7 +119,9 @@ module Weather
     end
 
     class GetCityImage
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::GetCityImageOutput
+
+      def self.default(visited = Set.new)
         {
           image: 'image',
         }
@@ -129,7 +135,9 @@ module Weather
     end
 
     class GetCurrentTime
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::GetCurrentTimeOutput
+
+      def self.default(visited = Set.new)
         {
           time: Time.now,
         }
@@ -142,7 +150,9 @@ module Weather
     end
 
     class GetForecast
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::GetForecastOutput
+
+      def self.default(visited = Set.new)
         {
           chance_of_rain: 1.0,
           precipitation: Precipitation.default(visited),
@@ -156,7 +166,9 @@ module Weather
     end
 
     class ListCities
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::ListCitiesOutput
+
+      def self.default(visited = Set.new)
         {
           next_token: 'next_token',
           some_enum: 'some_enum',
@@ -177,9 +189,9 @@ module Weather
     end
 
     class Message
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Message')
-        visited = visited + ['Message']
+        visited.add('Message')
         {
           message: 'message',
           author: 'author',
@@ -189,17 +201,12 @@ module Weather
     end
 
     class NoSuchResource
-      def self.error_class
-        Errors::NoSuchResource
-      end
+      ERROR_CLASS = Errors::NoSuchResource
+      PARAMS_CLASS = Params::NoSuchResource
 
-      def self.params_class
-        Params::NoSuchResource
-      end
-
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('NoSuchResource')
-        visited = visited + ['NoSuchResource']
+        visited.add('NoSuchResource')
         {
           resource_type: 'resource_type',
           message: 'message',
@@ -213,9 +220,9 @@ module Weather
     end
 
     class OtherStructure
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('OtherStructure')
-        visited = visited + ['OtherStructure']
+        visited.add('OtherStructure')
         {
         }
       end
@@ -223,9 +230,9 @@ module Weather
     end
 
     class Precipitation
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Precipitation')
-        visited = visited + ['Precipitation']
+        visited.add('Precipitation')
         {
           rain: false,
         }
@@ -234,9 +241,9 @@ module Weather
     end
 
     class SparseCitySummaries
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('SparseCitySummaries')
-        visited = visited + ['SparseCitySummaries']
+        visited.add('SparseCitySummaries')
         [
           CitySummary.default(visited)
         ]
@@ -245,9 +252,9 @@ module Weather
     end
 
     class StringMap
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('StringMap')
-        visited = visited + ['StringMap']
+        visited.add('StringMap')
         {
           key: 'value'
         }
@@ -256,9 +263,9 @@ module Weather
     end
 
     class Struct____456efg
-      def self.default(visited=[])
+      def self.default(visited = Set.new)
         return nil if visited.include?('Struct____456efg')
-        visited = visited + ['Struct____456efg']
+        visited.add('Struct____456efg')
         {
           member___123foo: 'member___123foo',
         }
@@ -267,7 +274,9 @@ module Weather
     end
 
     class Operation____789BadName
-      def self.default(visited=[])
+      PARAMS_CLASS = Params::Struct____789BadNameOutput
+
+      def self.default(visited = Set.new)
         {
           member___123abc: 'member___123abc',
           member: Struct____456efg.default(visited),

@@ -149,6 +149,8 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
     }
 
     // TODO: this is not entirely correct and will need to change later.
+    // Error stub methods will need to be aware of how to populate a response code
+    // that is parsed. Response code could be in headers or body etc.
     @Override
     protected void renderErrorStubMethod(Shape errorShape) {
         writer
