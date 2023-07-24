@@ -54,7 +54,6 @@ task 'archive' do
   folder =
     if ENV['GH_EVENT'] == 'pull_request'
       "pr/#{ENV['GH_REF']}"
-      end
     else
       'release'
     end
