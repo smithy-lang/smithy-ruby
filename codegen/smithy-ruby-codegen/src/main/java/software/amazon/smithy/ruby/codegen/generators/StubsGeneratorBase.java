@@ -291,7 +291,7 @@ public abstract class StubsGeneratorBase {
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .write("PARAMS_CLASS = Params::$L", symbolProvider.toSymbol(outputShape).getName())
                 .write("")
-                .openBlock("def self.default(visited = Set.new)")
+                .openBlock("def self.default(visited = [])")
                 .call(() -> renderMemberDefaults(outputShape))
                 .closeBlock("end")
                 .write("")
@@ -309,9 +309,9 @@ public abstract class StubsGeneratorBase {
                 .write("ERROR_CLASS = Errors::$L", name)
                 .write("PARAMS_CLASS = Params::$L", name)
                 .write("")
-                .openBlock("def self.default(visited = Set.new)")
+                .openBlock("def self.default(visited = [])")
                 .write("return nil if visited.include?('$L')", name)
-                .write("visited.add('$L')", name)
+                .write("visited = visited + ['$L']", name)
                 .call(() -> renderMemberDefaults(errorShape))
                 .closeBlock("end")
                 .write("")
@@ -356,9 +356,9 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .openBlock("class $L", name)
-                    .openBlock("def self.default(visited = Set.new)")
+                    .openBlock("def self.default(visited = [])")
                     .write("return nil if visited.include?('$L')", name)
-                    .write("visited.add('$L')", name)
+                    .write("visited = visited + ['$L']", name)
                     .call(() -> renderMemberDefaults(shape))
                     .closeBlock("end")
                     .write("")
@@ -378,9 +378,9 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .openBlock("class $L", name)
-                    .openBlock("def self.default(visited = Set.new)")
+                    .openBlock("def self.default(visited = [])")
                     .write("return nil if visited.include?('$L')", name)
-                    .write("visited.add('$L')", name)
+                    .write("visited = visited + ['$L']", name)
                     .openBlock("[")
                     .call(() -> memberTarget.accept(new MemberDefaults("", "",
                             symbolProvider.toMemberName(shape.getMember()))))
@@ -405,9 +405,9 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .openBlock("class $L", name)
-                    .openBlock("def self.default(visited = Set.new)")
+                    .openBlock("def self.default(visited = [])")
                     .write("return nil if visited.include?('$L')", name)
-                    .write("visited.add('$L')", name)
+                    .write("visited = visited + ['$L']", name)
                     .openBlock("{")
                     .call(() -> valueTarget
                             .accept(new MemberDefaults(dataSetter, "",
@@ -429,9 +429,9 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .openBlock("class $L", name)
-                    .openBlock("def self.default(visited = Set.new)")
+                    .openBlock("def self.default(visited = [])")
                     .write("return nil if visited.include?('$L')", name)
-                    .write("visited.add('$L')", name)
+                    .write("visited = visited + ['$L']", name)
                     .call(() -> {
                         writer.openBlock("{");
                         MemberShape defaultMember = shape.members().iterator().next();
@@ -457,9 +457,9 @@ public abstract class StubsGeneratorBase {
             writer
                     .write("")
                     .openBlock("class $L", name)
-                    .openBlock("def self.default(visited = Set.new)")
+                    .openBlock("def self.default(visited = [])")
                     .write("return nil if visited.include?('$L')", name)
-                    .write("visited.add('$L')", name)
+                    .write("visited = visited + ['$L']", name)
                     .write("{ '$L' => [0, 1, 2] }", name)
                     .closeBlock("end")
                     .write("")

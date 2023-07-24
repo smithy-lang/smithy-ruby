@@ -142,7 +142,7 @@ module Weather
             expect(context.response.status).to eq(200)
           end
           allow(Builders::GetCity).to receive(:build)
-          client.stub_responses(:get_city, {
+          client.stub_responses(:get_city, data: {
             name: "Seattle",
             coordinates: {
               latitude: 12.34,

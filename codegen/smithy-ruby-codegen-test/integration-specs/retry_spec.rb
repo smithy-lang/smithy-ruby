@@ -9,13 +9,11 @@ module WhiteLabel
 
     describe '#kitchen_sink' do
       it 'does a retry' do
-        # this error is retryable
-        error = Errors::ServerError.new(
-          http_resp: Hearth::HTTP::Response.new,
-          metadata: {}, error_code: 'error'
+        client.stub_responses(
+          :kitchen_sink,
+          { error: { class: Errors::ServerError } },
+          { data: { string: 'ok' } }
         )
-        # first return error, then some data
-        client.stub_responses(:kitchen_sink, [error, { string: 'ok' }])
 
         expect_any_instance_of(Hearth::Retry::Standard).to receive(:acquire_initial_retry_token).and_call_original
         expect_any_instance_of(Hearth::Retry::Standard).to receive(:refresh_retry_token).and_call_original

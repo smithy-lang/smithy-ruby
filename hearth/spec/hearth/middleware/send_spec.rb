@@ -2,16 +2,50 @@
 
 module Hearth
   module Middleware
-    StubOutput = ::Struct.new(:param1, keyword_init: true) do
-      include Hearth::Structure
+    module Types
+      StubData = ::Struct.new(:member, keyword_init: true) do
+        include Hearth::Structure
+      end
+
+      StubErrorData = ::Struct.new(:message, keyword_init: true) do
+        include Hearth::Structure
+      end
+    end
+
+    module Errors
+      class StubError < StandardError; end
+    end
+
+
+    module Params
+      class StubData
+        def self.build(params, context: ''); end
+      end
+
+      class StubError
+        def self.build(params, context: ''); end
+      end
+    end
+
+    module Stubs
+      class StubData
+        PARAMS_CLASS = Params::StubData
+        def self.default(visited = []); end
+        def self.stub(resp, stub:); end
+      end
+
+      class StubError
+        ERROR_CLASS = Errors::StubError
+        PARAMS_CLASS = Params::StubError
+        def self.default(visited = []); end
+        def self.stub(resp, stub:); end
+      end
     end
 
     describe Send do
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
       let(:stub_responses) { false }
-      let(:stub_class) { double('stub_class') }
-      let(:params_class) { double('params_class') }
       let(:stubs) { Hearth::Stubbing::Stubs.new }
       let(:logger) { double('Logger') }
 
@@ -20,8 +54,8 @@ module Hearth
           app,
           client: client,
           stub_responses: stub_responses,
-          stub_class: stub_class,
-          params_class: params_class,
+          stub_data_class: Stubs::StubData,
+          stub_error_classes: [Stubs::StubError],
           stubs: stubs
         )
       end
@@ -138,7 +172,7 @@ module Hearth
               it 'allows stubbing of request, response, and context' do
                 expect(stub_proc).to receive(:call)
                   .with(input, context).and_call_original
-                expect(stub_class).to_not receive(:stub)
+                expect(Stubs::StubData).to_not receive(:stub)
                 subject.call(input, context)
                 expect(response.status).to eq status
                 expect(context.metadata[:more_context]).to eq(more_context)
@@ -169,48 +203,96 @@ module Hearth
           end
 
           context 'stub is a hash' do
-            let(:stub_hash) { { param1: 'value' } }
-            let(:output_type) { StubOutput.new(**stub_hash) }
+            context 'data stub' do
+              let(:stub_hash) { { member: 'value' } }
+              let(:stub_data) { Types::StubData.new(**stub_hash) }
 
-            before { stubs.add_stubs(operation, [stub_hash]) }
+              before { stubs.add_stubs(operation, [{ data: stub_hash }]) }
 
-            it 'uses the stub class to stub the response' do
-              expect(params_class).to receive(:build)
-                .with(stub_hash, context: 'stub')
-                .and_return(output_type)
-              expect(stub_class).to receive(:stub)
-                .with(response, stub: output_type)
-              subject.call(input, context)
+              it 'uses the data hash to stub the response' do
+                expect(Params::StubData).to receive(:build)
+                  .with(stub_hash, context: 'stub')
+                  .and_return(stub_data)
+                expect(Stubs::StubData).to receive(:stub)
+                  .with(response, stub: stub_data)
+                subject.call(input, context)
+              end
+            end
+
+            context 'error stub' do
+              let(:stub_hash) { { class: Errors::StubError, data: stub_data } }
+              let(:stub_data) { { message: 'error' } }
+              let(:stub_error_data) { Types::StubErrorData.new(**stub_data) }
+
+              before { stubs.add_stubs(operation, [{ error: stub_hash }]) }
+
+              it 'uses the error hash to stub the response' do
+                expect(Params::StubError).to receive(:build)
+                  .with(stub_data, context: 'stub')
+                  .and_return(stub_error_data)
+                expect(Stubs::StubError).to receive(:stub)
+                  .with(response, stub: stub_error_data)
+                subject.call(input, context)
+              end
+
+              it 'raises when missing an error class' do
+                stub_hash.delete(:class)
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(
+                  ArgumentError,
+                  /Missing stub error class/
+                )
+              end
+
+              it 'raises with unknown error class' do
+                stub_hash[:class] = 'UnknownError'
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(
+                  ArgumentError,
+                  /Unsupported stub error class/
+                )
+              end
+            end
+
+            context 'neither' do
+              it 'raises an error' do
+                stubs.add_stubs(operation, [{ member: 'value' }])
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(ArgumentError, /:data or :error/)
+              end
             end
           end
 
           context 'stub is nil' do
-            let(:stub_hash) { { param1: 'value' } }
-            let(:output_type) { StubOutput.new(**stub_hash) }
+            let(:stub_hash) { { member: 'value' } }
+            let(:stub_data) { Types::StubData.new(**stub_hash) }
 
             before { stubs.add_stubs(operation, [nil]) }
 
             it 'uses the stub class default' do
-              expect(stub_class).to receive(:default)
+              expect(Stubs::StubData).to receive(:default)
                 .and_return(stub_hash)
-              expect(params_class).to receive(:build)
+              expect(Params::StubData).to receive(:build)
                 .with(stub_hash, context: 'stub')
-                .and_return(output_type)
+                .and_return(stub_data)
 
-              expect(stub_class).to receive(:stub)
-                .with(response, stub: output_type)
+              expect(Stubs::StubData).to receive(:stub)
+                .with(response, stub: stub_data)
               subject.call(input, context)
             end
           end
 
           context 'stub is a Hearth::Structure' do
-            let(:output_type) { StubOutput.new(param1: 'value') }
+            let(:stub_data) { Types::StubData.new(member: 'value') }
 
-            before { stubs.add_stubs(operation, [output_type]) }
+            before { stubs.add_stubs(operation, [stub_data]) }
 
             it 'uses the stub class to stub the response' do
-              expect(stub_class).to receive(:stub)
-                .with(response, stub: output_type)
+              expect(Stubs::StubData).to receive(:stub)
+                .with(response, stub: stub_data)
               subject.call(input, context)
             end
           end

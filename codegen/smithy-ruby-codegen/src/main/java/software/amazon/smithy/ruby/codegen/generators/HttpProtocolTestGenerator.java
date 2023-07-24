@@ -181,7 +181,7 @@ public class HttpProtocolTestGenerator {
                             skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubInterceptor(testCase))
                     .call(() -> renderSkipBuild(operation))
-                    .write("client.stub_responses(:$L, $L)", operationName,
+                    .write("client.stub_responses(:$L, data: $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, interceptors: [interceptor])", operationName)
                     // Note: This part is not required, but its an additional check on parsers

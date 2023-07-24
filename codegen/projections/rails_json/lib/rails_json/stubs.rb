@@ -16,7 +16,7 @@ module RailsJson
     class AllQueryStringTypes
       PARAMS_CLASS = Params::AllQueryStringTypesOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -28,9 +28,9 @@ module RailsJson
     end
 
     class BooleanList
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('BooleanList')
-        visited.add('BooleanList')
+        visited = visited + ['BooleanList']
         [
           false
         ]
@@ -50,9 +50,9 @@ module RailsJson
       ERROR_CLASS = Errors::ComplexError
       PARAMS_CLASS = Params::ComplexError
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ComplexError')
-        visited.add('ComplexError')
+        visited = visited + ['ComplexError']
         {
           top_level: 'top_level',
           nested: ComplexNestedErrorData.default(visited),
@@ -70,9 +70,9 @@ module RailsJson
     end
 
     class ComplexNestedErrorData
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ComplexNestedErrorData')
-        visited.add('ComplexNestedErrorData')
+        visited = visited + ['ComplexNestedErrorData']
         {
           foo: 'foo',
         }
@@ -89,7 +89,7 @@ module RailsJson
     class ConstantAndVariableQueryString
       PARAMS_CLASS = Params::ConstantAndVariableQueryStringOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -103,7 +103,7 @@ module RailsJson
     class ConstantQueryString
       PARAMS_CLASS = Params::ConstantQueryStringOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -115,9 +115,9 @@ module RailsJson
     end
 
     class DenseBooleanMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('DenseBooleanMap')
-        visited.add('DenseBooleanMap')
+        visited = visited + ['DenseBooleanMap']
         {
           key: false
         }
@@ -134,9 +134,9 @@ module RailsJson
     end
 
     class DenseNumberMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('DenseNumberMap')
-        visited.add('DenseNumberMap')
+        visited = visited + ['DenseNumberMap']
         {
           key: 1
         }
@@ -153,9 +153,9 @@ module RailsJson
     end
 
     class DenseSetMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('DenseSetMap')
-        visited.add('DenseSetMap')
+        visited = visited + ['DenseSetMap']
         {
           key: StringSet.default(visited)
         }
@@ -172,9 +172,9 @@ module RailsJson
     end
 
     class DenseStringMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('DenseStringMap')
-        visited.add('DenseStringMap')
+        visited = visited + ['DenseStringMap']
         {
           key: 'value'
         }
@@ -191,9 +191,9 @@ module RailsJson
     end
 
     class DenseStructMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('DenseStructMap')
-        visited.add('DenseStructMap')
+        visited = visited + ['DenseStructMap']
         {
           key: GreetingStruct.default(visited)
         }
@@ -210,9 +210,9 @@ module RailsJson
     end
 
     class Document
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('Document')
-        visited.add('Document')
+        visited = visited + ['Document']
         { 'Document' => [0, 1, 2] }
       end
 
@@ -224,7 +224,7 @@ module RailsJson
     class DocumentType
       PARAMS_CLASS = Params::DocumentTypeOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           string_value: 'string_value',
           document_value: nil,
@@ -244,7 +244,7 @@ module RailsJson
     class DocumentTypeAsPayload
       PARAMS_CLASS = Params::DocumentTypeAsPayloadOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           document_value: nil,
         }
@@ -261,7 +261,7 @@ module RailsJson
     class EmptyOperation
       PARAMS_CLASS = Params::EmptyOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -273,9 +273,9 @@ module RailsJson
     end
 
     class EmptyStruct
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('EmptyStruct')
-        visited.add('EmptyStruct')
+        visited = visited + ['EmptyStruct']
         {
         }
       end
@@ -290,7 +290,7 @@ module RailsJson
     class EndpointOperation
       PARAMS_CLASS = Params::EndpointOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -304,7 +304,7 @@ module RailsJson
     class EndpointWithHostLabelOperation
       PARAMS_CLASS = Params::EndpointWithHostLabelOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -319,9 +319,9 @@ module RailsJson
       ERROR_CLASS = Errors::ErrorWithMembers
       PARAMS_CLASS = Params::ErrorWithMembers
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ErrorWithMembers')
-        visited.add('ErrorWithMembers')
+        visited = visited + ['ErrorWithMembers']
         {
           code: 'code',
           complex_data: KitchenSink.default(visited),
@@ -352,9 +352,9 @@ module RailsJson
       ERROR_CLASS = Errors::ErrorWithoutMembers
       PARAMS_CLASS = Params::ErrorWithoutMembers
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ErrorWithoutMembers')
-        visited.add('ErrorWithoutMembers')
+        visited = visited + ['ErrorWithoutMembers']
         {
         }
       end
@@ -366,9 +366,9 @@ module RailsJson
     end
 
     class FooEnumList
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('FooEnumList')
-        visited.add('FooEnumList')
+        visited = visited + ['FooEnumList']
         [
           'member'
         ]
@@ -385,9 +385,9 @@ module RailsJson
     end
 
     class FooEnumMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('FooEnumMap')
-        visited.add('FooEnumMap')
+        visited = visited + ['FooEnumMap']
         {
           key: 'value'
         }
@@ -404,9 +404,9 @@ module RailsJson
     end
 
     class FooEnumSet
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('FooEnumSet')
-        visited.add('FooEnumSet')
+        visited = visited + ['FooEnumSet']
         [
           'member'
         ]
@@ -423,9 +423,9 @@ module RailsJson
     end
 
     class RenamedGreeting
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('RenamedGreeting')
-        visited.add('RenamedGreeting')
+        visited = visited + ['RenamedGreeting']
         {
           salutation: 'salutation',
         }
@@ -440,9 +440,9 @@ module RailsJson
     end
 
     class GreetingStruct
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('GreetingStruct')
-        visited.add('GreetingStruct')
+        visited = visited + ['GreetingStruct']
         {
           hi: 'hi',
         }
@@ -459,7 +459,7 @@ module RailsJson
     class GreetingWithErrors
       PARAMS_CLASS = Params::GreetingWithErrorsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           greeting: 'greeting',
         }
@@ -477,7 +477,7 @@ module RailsJson
     class HttpPayloadTraits
       PARAMS_CLASS = Params::HttpPayloadTraitsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           foo: 'foo',
           blob: 'blob',
@@ -496,7 +496,7 @@ module RailsJson
     class HttpPayloadTraitsWithMediaType
       PARAMS_CLASS = Params::HttpPayloadTraitsWithMediaTypeOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           foo: 'foo',
           blob: 'blob',
@@ -515,7 +515,7 @@ module RailsJson
     class HttpPayloadWithStructure
       PARAMS_CLASS = Params::HttpPayloadWithStructureOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           nested: NestedPayload.default(visited),
         }
@@ -533,7 +533,7 @@ module RailsJson
     class HttpPrefixHeaders
       PARAMS_CLASS = Params::HttpPrefixHeadersOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           foo: 'foo',
           foo_map: StringMap.default(visited),
@@ -553,7 +553,7 @@ module RailsJson
     class HttpPrefixHeadersInResponse
       PARAMS_CLASS = Params::HttpPrefixHeadersInResponseOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           prefix_headers: StringMap.default(visited),
         }
@@ -571,7 +571,7 @@ module RailsJson
     class HttpRequestWithFloatLabels
       PARAMS_CLASS = Params::HttpRequestWithFloatLabelsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -585,7 +585,7 @@ module RailsJson
     class HttpRequestWithGreedyLabelInPath
       PARAMS_CLASS = Params::HttpRequestWithGreedyLabelInPathOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -599,7 +599,7 @@ module RailsJson
     class HttpRequestWithLabels
       PARAMS_CLASS = Params::HttpRequestWithLabelsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -613,7 +613,7 @@ module RailsJson
     class HttpRequestWithLabelsAndTimestampFormat
       PARAMS_CLASS = Params::HttpRequestWithLabelsAndTimestampFormatOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -627,7 +627,7 @@ module RailsJson
     class HttpResponseCode
       PARAMS_CLASS = Params::HttpResponseCodeOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           status: 1,
         }
@@ -643,7 +643,7 @@ module RailsJson
     class IgnoreQueryParamsInResponse
       PARAMS_CLASS = Params::IgnoreQueryParamsInResponseOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           baz: 'baz',
         }
@@ -658,7 +658,7 @@ module RailsJson
     class InputAndOutputWithHeaders
       PARAMS_CLASS = Params::InputAndOutputWithHeadersOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           header_string: 'header_string',
           header_byte: 1,
@@ -732,9 +732,9 @@ module RailsJson
     end
 
     class IntegerList
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('IntegerList')
-        visited.add('IntegerList')
+        visited = visited + ['IntegerList']
         [
           1
         ]
@@ -754,9 +754,9 @@ module RailsJson
       ERROR_CLASS = Errors::InvalidGreeting
       PARAMS_CLASS = Params::InvalidGreeting
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('InvalidGreeting')
-        visited.add('InvalidGreeting')
+        visited = visited + ['InvalidGreeting']
         {
           message: 'message',
         }
@@ -774,7 +774,7 @@ module RailsJson
     class JsonEnums
       PARAMS_CLASS = Params::JsonEnumsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           foo_enum1: 'foo_enum1',
           foo_enum2: 'foo_enum2',
@@ -802,7 +802,7 @@ module RailsJson
     class JsonMaps
       PARAMS_CLASS = Params::JsonMapsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           dense_struct_map: DenseStructMap.default(visited),
           sparse_struct_map: SparseStructMap.default(visited),
@@ -838,7 +838,7 @@ module RailsJson
     class JsonUnions
       PARAMS_CLASS = Params::JsonUnionsOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           contents: MyUnion.default(visited),
         }
@@ -854,9 +854,9 @@ module RailsJson
     end
 
     class KitchenSink
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('KitchenSink')
-        visited.add('KitchenSink')
+        visited = visited + ['KitchenSink']
         {
           blob: 'blob',
           boolean: false,
@@ -923,7 +923,7 @@ module RailsJson
     class KitchenSinkOperation
       PARAMS_CLASS = Params::KitchenSinkOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           blob: 'blob',
           boolean: false,
@@ -989,9 +989,9 @@ module RailsJson
     end
 
     class ListOfKitchenSinks
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ListOfKitchenSinks')
-        visited.add('ListOfKitchenSinks')
+        visited = visited + ['ListOfKitchenSinks']
         [
           KitchenSink.default(visited)
         ]
@@ -1008,9 +1008,9 @@ module RailsJson
     end
 
     class ListOfListOfStrings
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ListOfListOfStrings')
-        visited.add('ListOfListOfStrings')
+        visited = visited + ['ListOfListOfStrings']
         [
           ListOfStrings.default(visited)
         ]
@@ -1027,9 +1027,9 @@ module RailsJson
     end
 
     class ListOfMapsOfStrings
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ListOfMapsOfStrings')
-        visited.add('ListOfMapsOfStrings')
+        visited = visited + ['ListOfMapsOfStrings']
         [
           MapOfStrings.default(visited)
         ]
@@ -1046,9 +1046,9 @@ module RailsJson
     end
 
     class ListOfStrings
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ListOfStrings')
-        visited.add('ListOfStrings')
+        visited = visited + ['ListOfStrings']
         [
           'member'
         ]
@@ -1065,9 +1065,9 @@ module RailsJson
     end
 
     class ListOfStructs
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('ListOfStructs')
-        visited.add('ListOfStructs')
+        visited = visited + ['ListOfStructs']
         [
           SimpleStruct.default(visited)
         ]
@@ -1084,9 +1084,9 @@ module RailsJson
     end
 
     class MapOfKitchenSinks
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('MapOfKitchenSinks')
-        visited.add('MapOfKitchenSinks')
+        visited = visited + ['MapOfKitchenSinks']
         {
           key: KitchenSink.default(visited)
         }
@@ -1103,9 +1103,9 @@ module RailsJson
     end
 
     class MapOfListsOfStrings
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('MapOfListsOfStrings')
-        visited.add('MapOfListsOfStrings')
+        visited = visited + ['MapOfListsOfStrings']
         {
           key: ListOfStrings.default(visited)
         }
@@ -1122,9 +1122,9 @@ module RailsJson
     end
 
     class MapOfMapOfStrings
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('MapOfMapOfStrings')
-        visited.add('MapOfMapOfStrings')
+        visited = visited + ['MapOfMapOfStrings']
         {
           key: MapOfStrings.default(visited)
         }
@@ -1141,9 +1141,9 @@ module RailsJson
     end
 
     class MapOfStrings
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('MapOfStrings')
-        visited.add('MapOfStrings')
+        visited = visited + ['MapOfStrings']
         {
           key: 'value'
         }
@@ -1160,9 +1160,9 @@ module RailsJson
     end
 
     class MapOfStructs
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('MapOfStructs')
-        visited.add('MapOfStructs')
+        visited = visited + ['MapOfStructs']
         {
           key: SimpleStruct.default(visited)
         }
@@ -1181,7 +1181,7 @@ module RailsJson
     class MediaTypeHeader
       PARAMS_CLASS = Params::MediaTypeHeaderOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           json: 'json',
         }
@@ -1195,9 +1195,9 @@ module RailsJson
     end
 
     class MyUnion
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('MyUnion')
-        visited.add('MyUnion')
+        visited = visited + ['MyUnion']
         {
           string_value: 'string_value',
         }
@@ -1238,7 +1238,7 @@ module RailsJson
     class NestedAttributesOperation
       PARAMS_CLASS = Params::NestedAttributesOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           value: 'value',
         }
@@ -1254,9 +1254,9 @@ module RailsJson
     end
 
     class NestedPayload
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('NestedPayload')
-        visited.add('NestedPayload')
+        visited = visited + ['NestedPayload']
         {
           greeting: 'greeting',
           name: 'name',
@@ -1275,7 +1275,7 @@ module RailsJson
     class NullAndEmptyHeadersClient
       PARAMS_CLASS = Params::NullAndEmptyHeadersClientOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           a: 'a',
           b: 'b',
@@ -1300,7 +1300,7 @@ module RailsJson
     class NullOperation
       PARAMS_CLASS = Params::NullOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           string: 'string',
           sparse_string_list: SparseStringList.default(visited),
@@ -1322,7 +1322,7 @@ module RailsJson
     class OmitsNullSerializesEmptyString
       PARAMS_CLASS = Params::OmitsNullSerializesEmptyStringOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -1336,7 +1336,7 @@ module RailsJson
     class OperationWithOptionalInputOutput
       PARAMS_CLASS = Params::OperationWithOptionalInputOutputOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           value: 'value',
         }
@@ -1354,7 +1354,7 @@ module RailsJson
     class QueryIdempotencyTokenAutoFill
       PARAMS_CLASS = Params::QueryIdempotencyTokenAutoFillOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -1368,7 +1368,7 @@ module RailsJson
     class QueryParamsAsStringListMap
       PARAMS_CLASS = Params::QueryParamsAsStringListMapOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
         }
       end
@@ -1380,9 +1380,9 @@ module RailsJson
     end
 
     class SimpleStruct
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SimpleStruct')
-        visited.add('SimpleStruct')
+        visited = visited + ['SimpleStruct']
         {
           value: 'value',
         }
@@ -1397,9 +1397,9 @@ module RailsJson
     end
 
     class SparseBooleanMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SparseBooleanMap')
-        visited.add('SparseBooleanMap')
+        visited = visited + ['SparseBooleanMap']
         {
           key: false
         }
@@ -1416,9 +1416,9 @@ module RailsJson
     end
 
     class SparseNumberMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SparseNumberMap')
-        visited.add('SparseNumberMap')
+        visited = visited + ['SparseNumberMap']
         {
           key: 1
         }
@@ -1435,9 +1435,9 @@ module RailsJson
     end
 
     class SparseSetMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SparseSetMap')
-        visited.add('SparseSetMap')
+        visited = visited + ['SparseSetMap']
         {
           key: StringSet.default(visited)
         }
@@ -1454,9 +1454,9 @@ module RailsJson
     end
 
     class SparseStringList
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SparseStringList')
-        visited.add('SparseStringList')
+        visited = visited + ['SparseStringList']
         [
           'member'
         ]
@@ -1473,9 +1473,9 @@ module RailsJson
     end
 
     class SparseStringMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SparseStringMap')
-        visited.add('SparseStringMap')
+        visited = visited + ['SparseStringMap']
         {
           key: 'value'
         }
@@ -1492,9 +1492,9 @@ module RailsJson
     end
 
     class SparseStructMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('SparseStructMap')
-        visited.add('SparseStructMap')
+        visited = visited + ['SparseStructMap']
         {
           key: GreetingStruct.default(visited)
         }
@@ -1513,7 +1513,7 @@ module RailsJson
     class StreamingOperation
       PARAMS_CLASS = Params::StreamingOperationOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           output: 'output',
         }
@@ -1527,9 +1527,9 @@ module RailsJson
     end
 
     class StringList
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('StringList')
-        visited.add('StringList')
+        visited = visited + ['StringList']
         [
           'member'
         ]
@@ -1546,9 +1546,9 @@ module RailsJson
     end
 
     class StringMap
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('StringMap')
-        visited.add('StringMap')
+        visited = visited + ['StringMap']
         {
           key: 'value'
         }
@@ -1565,9 +1565,9 @@ module RailsJson
     end
 
     class StringSet
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('StringSet')
-        visited.add('StringSet')
+        visited = visited + ['StringSet']
         [
           'member'
         ]
@@ -1584,9 +1584,9 @@ module RailsJson
     end
 
     class StructWithLocationName
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('StructWithLocationName')
-        visited.add('StructWithLocationName')
+        visited = visited + ['StructWithLocationName']
         {
           value: 'value',
         }
@@ -1603,7 +1603,7 @@ module RailsJson
     class TimestampFormatHeaders
       PARAMS_CLASS = Params::TimestampFormatHeadersOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           member_epoch_seconds: Time.now,
           member_http_date: Time.now,
@@ -1629,9 +1629,9 @@ module RailsJson
     end
 
     class TimestampList
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('TimestampList')
-        visited.add('TimestampList')
+        visited = visited + ['TimestampList']
         [
           Time.now
         ]
@@ -1648,9 +1648,9 @@ module RailsJson
     end
 
     class Struct____456efg
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         return nil if visited.include?('Struct____456efg')
-        visited.add('Struct____456efg')
+        visited = visited + ['Struct____456efg']
         {
           member___123foo: 'member___123foo',
         }
@@ -1667,7 +1667,7 @@ module RailsJson
     class Operation____789BadName
       PARAMS_CLASS = Params::Struct____789BadNameOutput
 
-      def self.default(visited = Set.new)
+      def self.default(visited = [])
         {
           member: Struct____456efg.default(visited),
         }
