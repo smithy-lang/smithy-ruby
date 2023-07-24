@@ -7,11 +7,11 @@ AllCops:
 
 Metrics:
   Exclude:
-    - '**/integration-specs/*_spec.rb'
+    - '**/**/*_spec.rb'
 
 Metrics/BlockLength:
   Exclude:
-    - '**/integration-specs/*_spec.rb'
+    - '**/**/*_spec.rb'
 
 Layout/LineLength:
   Max: 80
@@ -22,7 +22,6 @@ Metrics/MethodLength:
 Style/Documentation:
   Exclude:
     - '**/integration-specs/*_spec.rb'
-    - 'smithy-ruby-codegen-test-utils/**/*'
 
 Lint/EmptyClass:
   Exclude:
