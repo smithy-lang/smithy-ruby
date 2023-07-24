@@ -54,7 +54,8 @@ module WhiteLabel
         unknown_union = Union::Unknown.new({ key: 'key', value: 'value' })
         expect(string_union.to_h).to eq({ string: 'simple string' })
         expect(struct_union.to_h).to eq({ struct: { value: 'struct value' } })
-        expect(unknown_union.to_h).to eq({ unknown: { key: 'key', value: 'value' } })
+        expect(unknown_union.to_h).to eq({ unknown: { key: 'key',
+                                                      value: 'value' } })
       end
     end
 

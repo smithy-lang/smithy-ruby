@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleware
   class TestMiddleware
     def initialize(app, test_config:)
