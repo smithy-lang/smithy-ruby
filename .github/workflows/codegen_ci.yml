@@ -117,3 +117,23 @@ jobs:
       - name: Integration specs
         run: rspec
         working-directory: ./white_label
+
+  codegen-rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: Copy Gemfile
+        run: cp hearth/Gemfile codegen/
+
+      - name: Install gems
+        run: bundle install
+        working-directory: ./codegen
+
+      - name: Run rubocop
+        run: bundle exec rubocop -E -S
+        working-directory: ./codegen
