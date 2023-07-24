@@ -9,10 +9,10 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'white_label'
-  spec.version       = '0.0.1'
+  spec.version       = File.read(File.expand_path('VERSION', __dir__)).strip
   spec.author        = 'Amazon Web Services'
   spec.summary       = 'White Label Test Service'
-  spec.files         = Dir['lib/**/*.rb']
+  spec.files         = Dir['lib/**/*.rb', 'VERSION']
 
   spec.add_runtime_dependency 'hearth', '~> 1.0.0.pre1'
 end

@@ -22,5 +22,5 @@ require_relative 'weather/validators'
 require_relative 'weather/waiters'
 
 module Weather
-  GEM_VERSION = '0.0.1'
+  VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 end
