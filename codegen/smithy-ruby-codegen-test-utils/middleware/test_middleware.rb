@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Middleware
+  # Middleware used for testing plugins and interceptors -
+  # applies test_config to the output metadata.
   class TestMiddleware
     def initialize(app, test_config:)
       @app = app
