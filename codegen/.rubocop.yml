@@ -1,0 +1,25 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.0
+  Exclude:
+    - 'projections/**/*'
+    - '**/build/**/*'
+
+Metrics:
+  Exclude:
+    - '**/integration-specs/*_spec.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - '**/integration-specs/*_spec.rb'
+
+Layout/LineLength:
+  Max: 80
+
+Metrics/MethodLength:
+  Max: 20
+
+Style/Documentation:
+  Exclude:
+    - '**/integration-specs/*_spec.rb'
+    - 'smithy-ruby-codegen-test-utils/**/*'
