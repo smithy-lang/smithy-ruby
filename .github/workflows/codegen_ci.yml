@@ -129,8 +129,8 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Copy Gemfile
-        run: cp hearth/Gemfile codegen/
+      - name: Copy Gemfile and dependencies
+        run: cp hearth/Gemfile hearth/hearth.gemspec hearth/VERSION codegen/
 
       - name: Install gems
         run: bundle install
