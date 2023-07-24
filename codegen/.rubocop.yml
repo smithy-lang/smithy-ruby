@@ -23,3 +23,7 @@ Style/Documentation:
   Exclude:
     - '**/integration-specs/*_spec.rb'
     - 'smithy-ruby-codegen-test-utils/**/*'
+
+Lint/EmptyClass:
+  Exclude:
+    - 'smithy-ruby-codegen-test/integration-specs/params_spec.rb'
