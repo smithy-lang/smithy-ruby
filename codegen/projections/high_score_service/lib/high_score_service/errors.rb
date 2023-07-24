@@ -88,7 +88,7 @@ module HighScoreService
         @data = Parsers::UnprocessableEntityError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp:, **kwargs)
+        super(http_resp: http_resp, **kwargs)
       end
 
       # @return [Types::UnprocessableEntityError]

@@ -16,7 +16,6 @@ module Hearth
       class StubError < StandardError; end
     end
 
-
     module Params
       class StubData
         def self.build(params, context: ''); end

@@ -252,7 +252,7 @@ public abstract class ErrorsGeneratorBase {
                     .openBlock("def initialize(http_resp:, **kwargs)")
                     .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(shape).getName())
                     .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                    .write("super(http_resp:, **kwargs)")
+                    .write("super(http_resp: http_resp, **kwargs)")
                     .closeBlock("end")
                     .write("")
                     .writeYardReturn("Types::" + errorName, "")

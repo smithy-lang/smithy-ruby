@@ -41,7 +41,7 @@ module RailsJson
         @data = Parsers::ComplexError.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp:, **kwargs)
+        super(http_resp: http_resp, **kwargs)
       end
 
       # @return [Types::ComplexError]
@@ -54,7 +54,7 @@ module RailsJson
         @data = Parsers::ErrorWithMembers.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp:, **kwargs)
+        super(http_resp: http_resp, **kwargs)
       end
 
       # @return [Types::ErrorWithMembers]
@@ -67,7 +67,7 @@ module RailsJson
         @data = Parsers::ErrorWithoutMembers.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp:, **kwargs)
+        super(http_resp: http_resp, **kwargs)
       end
 
       # @return [Types::ErrorWithoutMembers]
@@ -80,7 +80,7 @@ module RailsJson
         @data = Parsers::InvalidGreeting.parse(http_resp)
         kwargs[:message] = @data.message if @data.respond_to?(:message)
 
-        super(http_resp:, **kwargs)
+        super(http_resp: http_resp, **kwargs)
       end
 
       # @return [Types::InvalidGreeting]

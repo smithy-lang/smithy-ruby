@@ -38,7 +38,7 @@ Metrics/MethodLength:
 Metrics/ClassLength:
   Exclude:
     - 'lib/hearth/http/client.rb'
-    - 'lib/hearth/middleware_builder.rb'
+    - 'lib/hearth/middleware/send.rb'
 
 Metrics/ParameterLists:
   Exclude:
