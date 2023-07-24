@@ -53,11 +53,7 @@ task 'archive' do
        "repo: #{ENV['GH_REPO']}, ref: #{ENV['GH_REF']}, event: #{ENV['GH_EVENT']}"
   folder =
     if ENV['GH_EVENT'] == 'pull_request'
-      ref = ENV['GH_REF']
-      if ENV['GH_REPO'] == 'aws/aws-sdk-ruby-staging'
-        "staging-pr/#{ref}"
-      else
-        "pr/#{ref}"
+      "pr/#{ENV['GH_REF']}"
       end
     else
       'release'
@@ -67,7 +63,7 @@ task 'archive' do
   puts "Uploading report to: #{key}"
   client = Aws::S3::Client.new
   client.put_object(
-    bucket: 'aws-sdk-ruby-performance-benchmark-archive',
+    bucket: 'hearth-performance-benchmark-archive',
     key: key,
     body: File.read('benchmark_report.json')
   )
@@ -77,7 +73,7 @@ end
 desc 'Upload benchmarking data to cloudwatch'
 task 'put-metrics' do
   require 'aws-sdk-cloudwatch'
-  require_relative '../benchmark/metrics'
+  require_relative 'metrics'
 
   event =
     if ENV['GH_EVENT'] == 'pull_request'
