@@ -127,6 +127,12 @@ jobs:
         with:
           ruby-version: 3.2
 
+      - name: Build and install Hearth
+        run: |
+          gem build hearth.gemspec
+          gem install hearth-$(<VERSION).gem
+        working-directory: ./hearth
+
       - name: Copy Gemfile
         run: cp hearth/Gemfile codegen/
 
