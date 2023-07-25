@@ -557,7 +557,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
-        stub[:foo_map].each do |key, value|
+        stub[:foo_map]&.each do |key, value|
           http_resp.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
         end
       end
@@ -576,7 +576,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        stub[:prefix_headers].each do |key, value|
+        stub[:prefix_headers]&.each do |key, value|
           http_resp.headers["#{key}"] = value unless value.nil? || value.empty?
         end
       end

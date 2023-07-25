@@ -37,7 +37,8 @@ module RailsJson
         expect(resp.data.recursive_map['key'].blob).to eq('blob')
         expect(resp.data.recursive_map['key'].recursive_struct).to be_nil
 
-        expect(resp.data.struct_with_location_name).to be_a(Types::StructWithLocationName)
+        expect(resp.data.struct_with_location_name)
+          .to be_a(Types::StructWithLocationName)
         expect(resp.data.struct_with_location_name.value).to eq('value')
       end
 

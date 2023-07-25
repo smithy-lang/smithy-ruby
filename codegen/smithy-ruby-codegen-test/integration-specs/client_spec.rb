@@ -11,7 +11,9 @@ module WhiteLabel
       it 'uses validate_input' do
         expect(Hearth::Middleware::Validate)
           .to receive(:new)
-          .with(anything, validate_input: config.validate_input, validator: anything)
+          .with(anything,
+                validate_input: config.validate_input,
+                validator: anything)
           .and_call_original
 
         client.kitchen_sink

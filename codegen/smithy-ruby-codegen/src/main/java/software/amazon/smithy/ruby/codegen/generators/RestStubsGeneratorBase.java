@@ -262,7 +262,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
             String symbolName = ":" + symbolProvider.toMemberName(m);
             String headerSetter = "http_resp.headers[\"" + prefix + "#{key}\"] = ";
             writer
-                    .openBlock("stub[$L].each do |key, value|", symbolName)
+                    .openBlock("stub[$L]&.each do |key, value|", symbolName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
                     .closeBlock("end");
         }

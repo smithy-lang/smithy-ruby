@@ -15,9 +15,12 @@ module WhiteLabel
           { data: { string: 'ok' } }
         )
 
-        expect_any_instance_of(Hearth::Retry::Standard).to receive(:acquire_initial_retry_token).and_call_original
-        expect_any_instance_of(Hearth::Retry::Standard).to receive(:refresh_retry_token).and_call_original
-        expect_any_instance_of(Hearth::Retry::Standard).to receive(:record_success).and_call_original
+        expect_any_instance_of(Hearth::Retry::Standard)
+          .to receive(:acquire_initial_retry_token).and_call_original
+        expect_any_instance_of(Hearth::Retry::Standard)
+          .to receive(:refresh_retry_token).and_call_original
+        expect_any_instance_of(Hearth::Retry::Standard)
+          .to receive(:record_success).and_call_original
         expect(Kernel).to receive(:sleep).once
 
         client.kitchen_sink

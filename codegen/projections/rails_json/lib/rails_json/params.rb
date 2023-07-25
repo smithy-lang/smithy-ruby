@@ -27,8 +27,8 @@ module RailsJson
         type.query_integer_list = IntegerList.build(params[:query_integer_list], context: "#{context}[:query_integer_list]") unless params[:query_integer_list].nil?
         type.query_integer_set = IntegerSet.build(params[:query_integer_set], context: "#{context}[:query_integer_set]") unless params[:query_integer_set].nil?
         type.query_long = params[:query_long]
-        type.query_float = params[:query_float]
-        type.query_double = params[:query_double]
+        type.query_float = params[:query_float]&.to_f
+        type.query_double = params[:query_double]&.to_f
         type.query_double_list = DoubleList.build(params[:query_double_list], context: "#{context}[:query_double_list]") unless params[:query_double_list].nil?
         type.query_boolean = params[:query_boolean]
         type.query_boolean_list = BooleanList.build(params[:query_boolean_list], context: "#{context}[:query_boolean_list]") unless params[:query_boolean_list].nil?
@@ -223,7 +223,7 @@ module RailsJson
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element&.to_f
         end
         data
       end
@@ -500,8 +500,8 @@ module RailsJson
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithFloatLabelsInput, context: context)
         type = Types::HttpRequestWithFloatLabelsInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.float = params[:float]
-        type.double = params[:double]
+        type.float = params[:float]&.to_f
+        type.double = params[:double]&.to_f
         type
       end
     end
@@ -569,8 +569,8 @@ module RailsJson
         type.short = params[:short]
         type.integer = params[:integer]
         type.long = params[:long]
-        type.float = params[:float]
-        type.double = params[:double]
+        type.float = params[:float]&.to_f
+        type.double = params[:double]&.to_f
         type.boolean = params[:boolean]
         type.timestamp = params[:timestamp]
         type
@@ -634,8 +634,8 @@ module RailsJson
         type.header_short = params[:header_short]
         type.header_integer = params[:header_integer]
         type.header_long = params[:header_long]
-        type.header_float = params[:header_float]
-        type.header_double = params[:header_double]
+        type.header_float = params[:header_float]&.to_f
+        type.header_double = params[:header_double]&.to_f
         type.header_true_bool = params[:header_true_bool]
         type.header_false_bool = params[:header_false_bool]
         type.header_string_list = StringList.build(params[:header_string_list], context: "#{context}[:header_string_list]") unless params[:header_string_list].nil?
@@ -659,8 +659,8 @@ module RailsJson
         type.header_short = params[:header_short]
         type.header_integer = params[:header_integer]
         type.header_long = params[:header_long]
-        type.header_float = params[:header_float]
-        type.header_double = params[:header_double]
+        type.header_float = params[:header_float]&.to_f
+        type.header_double = params[:header_double]&.to_f
         type.header_true_bool = params[:header_true_bool]
         type.header_false_bool = params[:header_false_bool]
         type.header_string_list = StringList.build(params[:header_string_list], context: "#{context}[:header_string_list]") unless params[:header_string_list].nil?
@@ -801,9 +801,9 @@ module RailsJson
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.blob = params[:blob]
         type.boolean = params[:boolean]
-        type.double = params[:double]
+        type.double = params[:double]&.to_f
         type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
-        type.float = params[:float]
+        type.float = params[:float]&.to_f
         type.httpdate_timestamp = params[:httpdate_timestamp]
         type.integer = params[:integer]
         type.iso8601_timestamp = params[:iso8601_timestamp]
@@ -836,9 +836,9 @@ module RailsJson
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.blob = params[:blob]
         type.boolean = params[:boolean]
-        type.double = params[:double]
+        type.double = params[:double]&.to_f
         type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
-        type.float = params[:float]
+        type.float = params[:float]&.to_f
         type.httpdate_timestamp = params[:httpdate_timestamp]
         type.integer = params[:integer]
         type.iso8601_timestamp = params[:iso8601_timestamp]
@@ -871,9 +871,9 @@ module RailsJson
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.blob = params[:blob]
         type.boolean = params[:boolean]
-        type.double = params[:double]
+        type.double = params[:double]&.to_f
         type.empty_struct = EmptyStruct.build(params[:empty_struct], context: "#{context}[:empty_struct]") unless params[:empty_struct].nil?
-        type.float = params[:float]
+        type.float = params[:float]&.to_f
         type.httpdate_timestamp = params[:httpdate_timestamp]
         type.integer = params[:integer]
         type.iso8601_timestamp = params[:iso8601_timestamp]
