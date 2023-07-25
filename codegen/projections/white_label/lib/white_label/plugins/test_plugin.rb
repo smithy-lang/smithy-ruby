@@ -1,12 +1,13 @@
 module WhiteLabel
+  # frozen_string_literal: true
+
   module Plugins
     class TestPlugin
-
       TEST_CLASS_INTERCEPTOR = Class.new do
         def read_before_execution(_context); end
       end.new
 
-      def initialize(override_value: "client_override")
+      def initialize(override_value: 'client_override')
         @override_value = override_value
       end
 

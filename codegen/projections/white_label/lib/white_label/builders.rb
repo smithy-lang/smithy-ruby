@@ -69,6 +69,22 @@ module WhiteLabel
       end
     end
 
+    # Operation Builder for RequestCompressionOperation
+    class RequestCompressionOperation
+      def self.build(http_req, input:)
+        http_req.body = StringIO.new(input[:body] || '')
+      end
+    end
+
+    # Operation Builder for RequestCompressionStreamingOperation
+    class RequestCompressionStreamingOperation
+      def self.build(http_req, input:)
+        http_req.body = input[:body]
+        http_req.headers['Transfer-Encoding'] = 'chunked'
+        http_req.headers['Content-Type'] = 'application/octet-stream'
+      end
+    end
+
     # Operation Builder for StreamingOperation
     class StreamingOperation
       def self.build(http_req, input:)

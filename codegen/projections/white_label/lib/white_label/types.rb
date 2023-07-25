@@ -718,6 +718,42 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # @!attribute body
+    #
+    #   @return [String]
+    #
+    RequestCompressionOperationInput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    RequestCompressionOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!attribute body
+    #
+    #   @return [String]
+    #
+    RequestCompressionStreamingOperationInput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    RequestCompressionStreamingOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute member___123next_token
     #
     #   @return [String]

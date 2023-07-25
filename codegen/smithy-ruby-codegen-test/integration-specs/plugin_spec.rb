@@ -17,7 +17,9 @@ module WhiteLabel
     describe 'configured plugins' do
       it 'applies user configured plugins after client class plugins' do
         config = Config.new
-        config.plugins << WhiteLabel::Plugins::TestPlugin.new(override_value: 'user_override')
+        config.plugins << WhiteLabel::Plugins::TestPlugin.new(
+          override_value: 'user_override'
+        )
         client = Client.new(config)
         expect(client.config.test_config).to eq('user_override')
       end
@@ -30,7 +32,9 @@ module WhiteLabel
         output = client.kitchen_sink(
           {},
           { plugins: [
-            WhiteLabel::Plugins::TestPlugin.new(override_value: 'operation_override')
+            WhiteLabel::Plugins::TestPlugin.new(
+              override_value: 'operation_override'
+            )
           ] }
         )
         expect(output.metadata[:test_config]).to eq('operation_override')

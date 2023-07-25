@@ -10,7 +10,9 @@ RSpec.shared_examples 'validates params' do |*types|
     expect do
       shape = Object.const_get(self.class.description)
       shape.build(BadType.new, context: 'params')
-    end.to raise_error(ArgumentError, "Expected params to be in [#{types.map(&:to_s).join(', ')}], got BadType.")
+    end.to raise_error(ArgumentError,
+                       'Expected params to be in ' \
+                       "[#{types.map(&:to_s).join(', ')}], got BadType.")
   end
 end
 
@@ -31,9 +33,9 @@ module WhiteLabel
     describe ListOfStructs do
       include_examples 'validates params', Array
 
-      let(:struct_1) { Types::Struct.new }
-      let(:struct_2) { Types::Struct.new }
-      let(:params) { [struct_1, struct_2] }
+      let(:struct1) { Types::Struct.new }
+      let(:struct2) { Types::Struct.new }
+      let(:params) { [struct1, struct2] }
 
       it 'builds an array of complex elements' do
         data = ListOfStructs.build(params, context: 'params[:list_of_structs]')
@@ -57,9 +59,9 @@ module WhiteLabel
     describe MapOfStructs do
       include_examples 'validates params', Hash
 
-      let(:struct_1) { Types::Struct.new }
-      let(:struct_2) { Types::Struct.new }
-      let(:params) { { key: struct_1, other_key: struct_2 } }
+      let(:struct1) { Types::Struct.new }
+      let(:struct2) { Types::Struct.new }
+      let(:params) { { key: struct1, other_key: struct2 } }
 
       it 'builds a map of complex values' do
         data = MapOfStructs.build(params, context: 'params[:map_of_structs]')
@@ -183,7 +185,8 @@ module WhiteLabel
 
     describe StreamingOperationInput do
       it 'converts a string to StringIO' do
-        data = StreamingOperationInput.build({ stream: 'string' }, context: 'params')
+        data = StreamingOperationInput.build({ stream: 'string' },
+                                             context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)
         expect(data.stream).to be_a(StringIO)
         expect(data.stream.read).to eq('string')
@@ -198,7 +201,8 @@ module WhiteLabel
 
       it 'does not convert a readable, io like object' do
         stream = double('stream', read: 'chunk')
-        data = StreamingOperationInput.build({ stream: stream }, context: 'params')
+        data = StreamingOperationInput.build({ stream: stream },
+                                             context: 'params')
         expect(data).to be_a(Types::StreamingOperationInput)
         expect(data.stream).to be(stream)
       end
@@ -214,7 +218,8 @@ module WhiteLabel
 
     describe MixinTestOutput do
       it 'expects mixins output operation generated' do
-        data = MixinTestOutput.build({ username: 'ben', user_id: 'abc123' }, context: 'params')
+        data = MixinTestOutput.build({ username: 'ben', user_id: 'abc123' },
+                                     context: 'params')
         expect(data).to be_a(Types::MixinTestOutput)
         expect(data.user_id).to eq('abc123')
         expect(data.username).to eq('ben')

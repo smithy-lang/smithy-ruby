@@ -18,7 +18,9 @@ service WhiteLabel {
         StreamingWithLength,
         EndpointOperation,
         EndpointWithHostLabelOperation,
-        MixinTest
+        MixinTest,
+        RequestCompressionOperation,
+        RequestCompressionStreamingOperation
     ]
 }
 
