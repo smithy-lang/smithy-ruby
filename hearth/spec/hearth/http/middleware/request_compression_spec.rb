@@ -108,17 +108,21 @@ module Hearth
             context 'unsupported encoding is given' do
               it 'raises a standard error in compression' do
                 expect do
-                  subject.send(:process_compression,
-                               'custom',
-                               request)
+                  subject.send(
+                    :process_compression,
+                    'custom',
+                    request
+                  )
                 end.to raise_error(StandardError)
               end
 
               it 'raises a standard error in streaming compression' do
                 expect do
-                  subject.send(:process_streaming_compression,
-                               'custom',
-                               request)
+                  subject.send(
+                    :process_streaming_compression,
+                    'custom',
+                    request
+                  )
                 end.to raise_error(StandardError)
               end
             end
