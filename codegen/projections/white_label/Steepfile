@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 D = Steep::Diagnostic
 
 target :app do
@@ -5,8 +7,8 @@ target :app do
 
   check 'lib/white_label/types'
 
-  library "hearth"
-  library "set"
+  library 'hearth'
+  library 'set'
 
   configure_code_diagnostics(D::Ruby.strict)
 end
