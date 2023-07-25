@@ -31,8 +31,8 @@ module HighScoreService
     end
 
     class CreateHighScore
-      TYPES_CLASS = Types::CreateHighScoreOutput
-      PARAMS_CLASS = Params::CreateHighScoreOutput
+      TYPES_CLASS = HighScoreService::Types::CreateHighScoreOutput
+      PARAMS_CLASS = HighScoreService::Params::CreateHighScoreOutput
 
       def self.default(visited = [])
         {
@@ -52,8 +52,8 @@ module HighScoreService
     end
 
     class DeleteHighScore
-      TYPES_CLASS = Types::DeleteHighScoreOutput
-      PARAMS_CLASS = Params::DeleteHighScoreOutput
+      TYPES_CLASS = HighScoreService::Types::DeleteHighScoreOutput
+      PARAMS_CLASS = HighScoreService::Params::DeleteHighScoreOutput
 
       def self.default(visited = [])
         {
@@ -86,8 +86,8 @@ module HighScoreService
     end
 
     class GetHighScore
-      TYPES_CLASS = Types::GetHighScoreOutput
-      PARAMS_CLASS = Params::GetHighScoreOutput
+      TYPES_CLASS = HighScoreService::Types::GetHighScoreOutput
+      PARAMS_CLASS = HighScoreService::Params::GetHighScoreOutput
 
       def self.default(visited = [])
         {
@@ -149,8 +149,8 @@ module HighScoreService
     end
 
     class ListHighScores
-      TYPES_CLASS = Types::ListHighScoresOutput
-      PARAMS_CLASS = Params::ListHighScoresOutput
+      TYPES_CLASS = HighScoreService::Types::ListHighScoresOutput
+      PARAMS_CLASS = HighScoreService::Params::ListHighScoresOutput
 
       def self.default(visited = [])
         {
@@ -168,8 +168,8 @@ module HighScoreService
     end
 
     class UnprocessableEntityError
-      ERROR_CLASS = Errors::UnprocessableEntityError
-      PARAMS_CLASS = Params::UnprocessableEntityError
+      ERROR_CLASS = HighScoreService::Errors::UnprocessableEntityError
+      PARAMS_CLASS = HighScoreService::Params::UnprocessableEntityError
 
       def self.default(visited = [])
         return nil if visited.include?('UnprocessableEntityError')
@@ -189,8 +189,8 @@ module HighScoreService
     end
 
     class UpdateHighScore
-      TYPES_CLASS = Types::UpdateHighScoreOutput
-      PARAMS_CLASS = Params::UpdateHighScoreOutput
+      TYPES_CLASS = HighScoreService::Types::UpdateHighScoreOutput
+      PARAMS_CLASS = HighScoreService::Params::UpdateHighScoreOutput
 
       def self.default(visited = [])
         {

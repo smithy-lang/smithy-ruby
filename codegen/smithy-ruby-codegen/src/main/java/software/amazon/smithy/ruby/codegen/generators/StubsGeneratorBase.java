@@ -285,13 +285,14 @@ public abstract class StubsGeneratorBase {
     // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
     private void renderStubsForOperation(OperationShape operation, Shape outputShape) {
         generatedStubs.add(outputShape.getId());
-        String name = symbolProvider.toSymbol(outputShape).getName();
+        String namespace = settings.getModule();
+        String outputName = symbolProvider.toSymbol(outputShape).getName();
 
         writer
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
-                .write("TYPES_CLASS = Types::$L", name)
-                .write("PARAMS_CLASS = Params::$L", name)
+                .write("TYPES_CLASS = $L::Types::$L", namespace, outputName)
+                .write("PARAMS_CLASS = $L::Params::$L", namespace, outputName)
                 .write("")
                 .openBlock("def self.default(visited = [])")
                 .call(() -> renderMemberDefaults(outputShape))
@@ -304,16 +305,18 @@ public abstract class StubsGeneratorBase {
     }
 
     private void renderErrorStub(Shape errorShape) {
-        String name = symbolProvider.toSymbol(errorShape).getName();
+        String namespace = settings.getModule();
+        String errorName = symbolProvider.toSymbol(errorShape).getName();
+
         writer
                 .write("")
-                .openBlock("class $L", name)
-                .write("ERROR_CLASS = Errors::$L", name)
-                .write("PARAMS_CLASS = Params::$L", name)
+                .openBlock("class $L", errorName)
+                .write("ERROR_CLASS = $L::Errors::$L", namespace, errorName)
+                .write("PARAMS_CLASS = $L::Params::$L", namespace, errorName)
                 .write("")
                 .openBlock("def self.default(visited = [])")
-                .write("return nil if visited.include?('$L')", name)
-                .write("visited = visited + ['$L']", name)
+                .write("return nil if visited.include?('$L')", errorName)
+                .write("visited = visited + ['$L']", errorName)
                 .call(() -> renderMemberDefaults(errorShape))
                 .closeBlock("end")
                 .write("")

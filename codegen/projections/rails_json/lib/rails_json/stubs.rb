@@ -14,8 +14,8 @@ module RailsJson
   module Stubs
 
     class AllQueryStringTypes
-      TYPES_CLASS = Types::AllQueryStringTypesOutput
-      PARAMS_CLASS = Params::AllQueryStringTypesOutput
+      TYPES_CLASS = RailsJson::Types::AllQueryStringTypesOutput
+      PARAMS_CLASS = RailsJson::Params::AllQueryStringTypesOutput
 
       def self.default(visited = [])
         {
@@ -48,8 +48,8 @@ module RailsJson
     end
 
     class ComplexError
-      ERROR_CLASS = Errors::ComplexError
-      PARAMS_CLASS = Params::ComplexError
+      ERROR_CLASS = RailsJson::Errors::ComplexError
+      PARAMS_CLASS = RailsJson::Params::ComplexError
 
       def self.default(visited = [])
         return nil if visited.include?('ComplexError')
@@ -88,8 +88,8 @@ module RailsJson
     end
 
     class ConstantAndVariableQueryString
-      TYPES_CLASS = Types::ConstantAndVariableQueryStringOutput
-      PARAMS_CLASS = Params::ConstantAndVariableQueryStringOutput
+      TYPES_CLASS = RailsJson::Types::ConstantAndVariableQueryStringOutput
+      PARAMS_CLASS = RailsJson::Params::ConstantAndVariableQueryStringOutput
 
       def self.default(visited = [])
         {
@@ -103,8 +103,8 @@ module RailsJson
     end
 
     class ConstantQueryString
-      TYPES_CLASS = Types::ConstantQueryStringOutput
-      PARAMS_CLASS = Params::ConstantQueryStringOutput
+      TYPES_CLASS = RailsJson::Types::ConstantQueryStringOutput
+      PARAMS_CLASS = RailsJson::Params::ConstantQueryStringOutput
 
       def self.default(visited = [])
         {
@@ -225,8 +225,8 @@ module RailsJson
     end
 
     class DocumentType
-      TYPES_CLASS = Types::DocumentTypeOutput
-      PARAMS_CLASS = Params::DocumentTypeOutput
+      TYPES_CLASS = RailsJson::Types::DocumentTypeOutput
+      PARAMS_CLASS = RailsJson::Params::DocumentTypeOutput
 
       def self.default(visited = [])
         {
@@ -246,8 +246,8 @@ module RailsJson
     end
 
     class DocumentTypeAsPayload
-      TYPES_CLASS = Types::DocumentTypeAsPayloadOutput
-      PARAMS_CLASS = Params::DocumentTypeAsPayloadOutput
+      TYPES_CLASS = RailsJson::Types::DocumentTypeAsPayloadOutput
+      PARAMS_CLASS = RailsJson::Params::DocumentTypeAsPayloadOutput
 
       def self.default(visited = [])
         {
@@ -264,8 +264,8 @@ module RailsJson
     end
 
     class EmptyOperation
-      TYPES_CLASS = Types::EmptyOperationOutput
-      PARAMS_CLASS = Params::EmptyOperationOutput
+      TYPES_CLASS = RailsJson::Types::EmptyOperationOutput
+      PARAMS_CLASS = RailsJson::Params::EmptyOperationOutput
 
       def self.default(visited = [])
         {
@@ -294,8 +294,8 @@ module RailsJson
     end
 
     class EndpointOperation
-      TYPES_CLASS = Types::EndpointOperationOutput
-      PARAMS_CLASS = Params::EndpointOperationOutput
+      TYPES_CLASS = RailsJson::Types::EndpointOperationOutput
+      PARAMS_CLASS = RailsJson::Params::EndpointOperationOutput
 
       def self.default(visited = [])
         {
@@ -309,8 +309,8 @@ module RailsJson
     end
 
     class EndpointWithHostLabelOperation
-      TYPES_CLASS = Types::EndpointWithHostLabelOperationOutput
-      PARAMS_CLASS = Params::EndpointWithHostLabelOperationOutput
+      TYPES_CLASS = RailsJson::Types::EndpointWithHostLabelOperationOutput
+      PARAMS_CLASS = RailsJson::Params::EndpointWithHostLabelOperationOutput
 
       def self.default(visited = [])
         {
@@ -324,8 +324,8 @@ module RailsJson
     end
 
     class ErrorWithMembers
-      ERROR_CLASS = Errors::ErrorWithMembers
-      PARAMS_CLASS = Params::ErrorWithMembers
+      ERROR_CLASS = RailsJson::Errors::ErrorWithMembers
+      PARAMS_CLASS = RailsJson::Params::ErrorWithMembers
 
       def self.default(visited = [])
         return nil if visited.include?('ErrorWithMembers')
@@ -357,8 +357,8 @@ module RailsJson
     end
 
     class ErrorWithoutMembers
-      ERROR_CLASS = Errors::ErrorWithoutMembers
-      PARAMS_CLASS = Params::ErrorWithoutMembers
+      ERROR_CLASS = RailsJson::Errors::ErrorWithoutMembers
+      PARAMS_CLASS = RailsJson::Params::ErrorWithoutMembers
 
       def self.default(visited = [])
         return nil if visited.include?('ErrorWithoutMembers')
@@ -465,8 +465,8 @@ module RailsJson
     end
 
     class GreetingWithErrors
-      TYPES_CLASS = Types::GreetingWithErrorsOutput
-      PARAMS_CLASS = Params::GreetingWithErrorsOutput
+      TYPES_CLASS = RailsJson::Types::GreetingWithErrorsOutput
+      PARAMS_CLASS = RailsJson::Params::GreetingWithErrorsOutput
 
       def self.default(visited = [])
         {
@@ -484,8 +484,8 @@ module RailsJson
     end
 
     class HttpPayloadTraits
-      TYPES_CLASS = Types::HttpPayloadTraitsOutput
-      PARAMS_CLASS = Params::HttpPayloadTraitsOutput
+      TYPES_CLASS = RailsJson::Types::HttpPayloadTraitsOutput
+      PARAMS_CLASS = RailsJson::Params::HttpPayloadTraitsOutput
 
       def self.default(visited = [])
         {
@@ -504,8 +504,8 @@ module RailsJson
     end
 
     class HttpPayloadTraitsWithMediaType
-      TYPES_CLASS = Types::HttpPayloadTraitsWithMediaTypeOutput
-      PARAMS_CLASS = Params::HttpPayloadTraitsWithMediaTypeOutput
+      TYPES_CLASS = RailsJson::Types::HttpPayloadTraitsWithMediaTypeOutput
+      PARAMS_CLASS = RailsJson::Params::HttpPayloadTraitsWithMediaTypeOutput
 
       def self.default(visited = [])
         {
@@ -524,8 +524,8 @@ module RailsJson
     end
 
     class HttpPayloadWithStructure
-      TYPES_CLASS = Types::HttpPayloadWithStructureOutput
-      PARAMS_CLASS = Params::HttpPayloadWithStructureOutput
+      TYPES_CLASS = RailsJson::Types::HttpPayloadWithStructureOutput
+      PARAMS_CLASS = RailsJson::Params::HttpPayloadWithStructureOutput
 
       def self.default(visited = [])
         {
@@ -543,8 +543,8 @@ module RailsJson
     end
 
     class HttpPrefixHeaders
-      TYPES_CLASS = Types::HttpPrefixHeadersOutput
-      PARAMS_CLASS = Params::HttpPrefixHeadersOutput
+      TYPES_CLASS = RailsJson::Types::HttpPrefixHeadersOutput
+      PARAMS_CLASS = RailsJson::Params::HttpPrefixHeadersOutput
 
       def self.default(visited = [])
         {
@@ -564,8 +564,8 @@ module RailsJson
     end
 
     class HttpPrefixHeadersInResponse
-      TYPES_CLASS = Types::HttpPrefixHeadersInResponseOutput
-      PARAMS_CLASS = Params::HttpPrefixHeadersInResponseOutput
+      TYPES_CLASS = RailsJson::Types::HttpPrefixHeadersInResponseOutput
+      PARAMS_CLASS = RailsJson::Params::HttpPrefixHeadersInResponseOutput
 
       def self.default(visited = [])
         {
@@ -583,8 +583,8 @@ module RailsJson
     end
 
     class HttpRequestWithFloatLabels
-      TYPES_CLASS = Types::HttpRequestWithFloatLabelsOutput
-      PARAMS_CLASS = Params::HttpRequestWithFloatLabelsOutput
+      TYPES_CLASS = RailsJson::Types::HttpRequestWithFloatLabelsOutput
+      PARAMS_CLASS = RailsJson::Params::HttpRequestWithFloatLabelsOutput
 
       def self.default(visited = [])
         {
@@ -598,8 +598,8 @@ module RailsJson
     end
 
     class HttpRequestWithGreedyLabelInPath
-      TYPES_CLASS = Types::HttpRequestWithGreedyLabelInPathOutput
-      PARAMS_CLASS = Params::HttpRequestWithGreedyLabelInPathOutput
+      TYPES_CLASS = RailsJson::Types::HttpRequestWithGreedyLabelInPathOutput
+      PARAMS_CLASS = RailsJson::Params::HttpRequestWithGreedyLabelInPathOutput
 
       def self.default(visited = [])
         {
@@ -613,8 +613,8 @@ module RailsJson
     end
 
     class HttpRequestWithLabels
-      TYPES_CLASS = Types::HttpRequestWithLabelsOutput
-      PARAMS_CLASS = Params::HttpRequestWithLabelsOutput
+      TYPES_CLASS = RailsJson::Types::HttpRequestWithLabelsOutput
+      PARAMS_CLASS = RailsJson::Params::HttpRequestWithLabelsOutput
 
       def self.default(visited = [])
         {
@@ -628,8 +628,8 @@ module RailsJson
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
-      TYPES_CLASS = Types::HttpRequestWithLabelsAndTimestampFormatOutput
-      PARAMS_CLASS = Params::HttpRequestWithLabelsAndTimestampFormatOutput
+      TYPES_CLASS = RailsJson::Types::HttpRequestWithLabelsAndTimestampFormatOutput
+      PARAMS_CLASS = RailsJson::Params::HttpRequestWithLabelsAndTimestampFormatOutput
 
       def self.default(visited = [])
         {
@@ -643,8 +643,8 @@ module RailsJson
     end
 
     class HttpResponseCode
-      TYPES_CLASS = Types::HttpResponseCodeOutput
-      PARAMS_CLASS = Params::HttpResponseCodeOutput
+      TYPES_CLASS = RailsJson::Types::HttpResponseCodeOutput
+      PARAMS_CLASS = RailsJson::Params::HttpResponseCodeOutput
 
       def self.default(visited = [])
         {
@@ -660,8 +660,8 @@ module RailsJson
     end
 
     class IgnoreQueryParamsInResponse
-      TYPES_CLASS = Types::IgnoreQueryParamsInResponseOutput
-      PARAMS_CLASS = Params::IgnoreQueryParamsInResponseOutput
+      TYPES_CLASS = RailsJson::Types::IgnoreQueryParamsInResponseOutput
+      PARAMS_CLASS = RailsJson::Params::IgnoreQueryParamsInResponseOutput
 
       def self.default(visited = [])
         {
@@ -676,8 +676,8 @@ module RailsJson
     end
 
     class InputAndOutputWithHeaders
-      TYPES_CLASS = Types::InputAndOutputWithHeadersOutput
-      PARAMS_CLASS = Params::InputAndOutputWithHeadersOutput
+      TYPES_CLASS = RailsJson::Types::InputAndOutputWithHeadersOutput
+      PARAMS_CLASS = RailsJson::Params::InputAndOutputWithHeadersOutput
 
       def self.default(visited = [])
         {
@@ -772,8 +772,8 @@ module RailsJson
     end
 
     class InvalidGreeting
-      ERROR_CLASS = Errors::InvalidGreeting
-      PARAMS_CLASS = Params::InvalidGreeting
+      ERROR_CLASS = RailsJson::Errors::InvalidGreeting
+      PARAMS_CLASS = RailsJson::Params::InvalidGreeting
 
       def self.default(visited = [])
         return nil if visited.include?('InvalidGreeting')
@@ -793,8 +793,8 @@ module RailsJson
     end
 
     class JsonEnums
-      TYPES_CLASS = Types::JsonEnumsOutput
-      PARAMS_CLASS = Params::JsonEnumsOutput
+      TYPES_CLASS = RailsJson::Types::JsonEnumsOutput
+      PARAMS_CLASS = RailsJson::Params::JsonEnumsOutput
 
       def self.default(visited = [])
         {
@@ -822,8 +822,8 @@ module RailsJson
     end
 
     class JsonMaps
-      TYPES_CLASS = Types::JsonMapsOutput
-      PARAMS_CLASS = Params::JsonMapsOutput
+      TYPES_CLASS = RailsJson::Types::JsonMapsOutput
+      PARAMS_CLASS = RailsJson::Params::JsonMapsOutput
 
       def self.default(visited = [])
         {
@@ -859,8 +859,8 @@ module RailsJson
     end
 
     class JsonUnions
-      TYPES_CLASS = Types::JsonUnionsOutput
-      PARAMS_CLASS = Params::JsonUnionsOutput
+      TYPES_CLASS = RailsJson::Types::JsonUnionsOutput
+      PARAMS_CLASS = RailsJson::Params::JsonUnionsOutput
 
       def self.default(visited = [])
         {
@@ -945,8 +945,8 @@ module RailsJson
     end
 
     class KitchenSinkOperation
-      TYPES_CLASS = Types::KitchenSinkOperationOutput
-      PARAMS_CLASS = Params::KitchenSinkOperationOutput
+      TYPES_CLASS = RailsJson::Types::KitchenSinkOperationOutput
+      PARAMS_CLASS = RailsJson::Params::KitchenSinkOperationOutput
 
       def self.default(visited = [])
         {
@@ -1204,8 +1204,8 @@ module RailsJson
     end
 
     class MediaTypeHeader
-      TYPES_CLASS = Types::MediaTypeHeaderOutput
-      PARAMS_CLASS = Params::MediaTypeHeaderOutput
+      TYPES_CLASS = RailsJson::Types::MediaTypeHeaderOutput
+      PARAMS_CLASS = RailsJson::Params::MediaTypeHeaderOutput
 
       def self.default(visited = [])
         {
@@ -1262,8 +1262,8 @@ module RailsJson
     end
 
     class NestedAttributesOperation
-      TYPES_CLASS = Types::NestedAttributesOperationOutput
-      PARAMS_CLASS = Params::NestedAttributesOperationOutput
+      TYPES_CLASS = RailsJson::Types::NestedAttributesOperationOutput
+      PARAMS_CLASS = RailsJson::Params::NestedAttributesOperationOutput
 
       def self.default(visited = [])
         {
@@ -1300,8 +1300,8 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersClient
-      TYPES_CLASS = Types::NullAndEmptyHeadersClientOutput
-      PARAMS_CLASS = Params::NullAndEmptyHeadersClientOutput
+      TYPES_CLASS = RailsJson::Types::NullAndEmptyHeadersClientOutput
+      PARAMS_CLASS = RailsJson::Params::NullAndEmptyHeadersClientOutput
 
       def self.default(visited = [])
         {
@@ -1326,8 +1326,8 @@ module RailsJson
     end
 
     class NullOperation
-      TYPES_CLASS = Types::NullOperationOutput
-      PARAMS_CLASS = Params::NullOperationOutput
+      TYPES_CLASS = RailsJson::Types::NullOperationOutput
+      PARAMS_CLASS = RailsJson::Params::NullOperationOutput
 
       def self.default(visited = [])
         {
@@ -1349,8 +1349,8 @@ module RailsJson
     end
 
     class OmitsNullSerializesEmptyString
-      TYPES_CLASS = Types::OmitsNullSerializesEmptyStringOutput
-      PARAMS_CLASS = Params::OmitsNullSerializesEmptyStringOutput
+      TYPES_CLASS = RailsJson::Types::OmitsNullSerializesEmptyStringOutput
+      PARAMS_CLASS = RailsJson::Params::OmitsNullSerializesEmptyStringOutput
 
       def self.default(visited = [])
         {
@@ -1364,8 +1364,8 @@ module RailsJson
     end
 
     class OperationWithOptionalInputOutput
-      TYPES_CLASS = Types::OperationWithOptionalInputOutputOutput
-      PARAMS_CLASS = Params::OperationWithOptionalInputOutputOutput
+      TYPES_CLASS = RailsJson::Types::OperationWithOptionalInputOutputOutput
+      PARAMS_CLASS = RailsJson::Params::OperationWithOptionalInputOutputOutput
 
       def self.default(visited = [])
         {
@@ -1383,8 +1383,8 @@ module RailsJson
     end
 
     class QueryIdempotencyTokenAutoFill
-      TYPES_CLASS = Types::QueryIdempotencyTokenAutoFillOutput
-      PARAMS_CLASS = Params::QueryIdempotencyTokenAutoFillOutput
+      TYPES_CLASS = RailsJson::Types::QueryIdempotencyTokenAutoFillOutput
+      PARAMS_CLASS = RailsJson::Params::QueryIdempotencyTokenAutoFillOutput
 
       def self.default(visited = [])
         {
@@ -1398,8 +1398,8 @@ module RailsJson
     end
 
     class QueryParamsAsStringListMap
-      TYPES_CLASS = Types::QueryParamsAsStringListMapOutput
-      PARAMS_CLASS = Params::QueryParamsAsStringListMapOutput
+      TYPES_CLASS = RailsJson::Types::QueryParamsAsStringListMapOutput
+      PARAMS_CLASS = RailsJson::Params::QueryParamsAsStringListMapOutput
 
       def self.default(visited = [])
         {
@@ -1544,8 +1544,8 @@ module RailsJson
     end
 
     class StreamingOperation
-      TYPES_CLASS = Types::StreamingOperationOutput
-      PARAMS_CLASS = Params::StreamingOperationOutput
+      TYPES_CLASS = RailsJson::Types::StreamingOperationOutput
+      PARAMS_CLASS = RailsJson::Params::StreamingOperationOutput
 
       def self.default(visited = [])
         {
@@ -1635,8 +1635,8 @@ module RailsJson
     end
 
     class TimestampFormatHeaders
-      TYPES_CLASS = Types::TimestampFormatHeadersOutput
-      PARAMS_CLASS = Params::TimestampFormatHeadersOutput
+      TYPES_CLASS = RailsJson::Types::TimestampFormatHeadersOutput
+      PARAMS_CLASS = RailsJson::Params::TimestampFormatHeadersOutput
 
       def self.default(visited = [])
         {
@@ -1700,8 +1700,8 @@ module RailsJson
     end
 
     class Operation____789BadName
-      TYPES_CLASS = Types::Struct____789BadNameOutput
-      PARAMS_CLASS = Params::Struct____789BadNameOutput
+      TYPES_CLASS = RailsJson::Types::Struct____789BadNameOutput
+      PARAMS_CLASS = RailsJson::Params::Struct____789BadNameOutput
 
       def self.default(visited = [])
         {

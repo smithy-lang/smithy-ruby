@@ -24,7 +24,8 @@ module RailsJson
         expect(resp.data.json_value).to eq('json_value')
         expect(resp.data.list_of_lists).to eq([['member']])
         expect(resp.data.list_of_maps_of_strings).to eq([{ 'key' => 'value' }])
-        expect(resp.data.to_h[:map_of_structs]).to eq({ 'key' => { value: 'value' } })
+        expect(resp.data.to_h[:map_of_structs])
+          .to eq({ 'key' => { value: 'value' } })
 
         expect(resp.data.simple_struct).to be_a(Types::SimpleStruct)
         expect(resp.data.simple_struct.value).to eq('value')
@@ -60,7 +61,8 @@ module RailsJson
         expect(resp.data.boolean).to eq(true)
         expect(resp.data.timestamp).to be_within(1).of(t)
         expect(resp.data.simple_struct.to_h).to eq({ value: 'my value' })
-        expect(resp.data.to_h[:recursive_map]).to eq({ 'key' => { blob: 'blob 2' } })
+        expect(resp.data.to_h[:recursive_map])
+          .to eq({ 'key' => { blob: 'blob 2' } })
       end
 
       it 'stubs an empty body when given empty hash' do

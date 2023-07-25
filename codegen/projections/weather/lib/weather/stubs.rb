@@ -84,8 +84,8 @@ module Weather
     end
 
     class GetCity
-      TYPES_CLASS = Types::GetCityOutput
-      PARAMS_CLASS = Params::GetCityOutput
+      TYPES_CLASS = Weather::Types::GetCityOutput
+      PARAMS_CLASS = Weather::Params::GetCityOutput
 
       def self.default(visited = [])
         {
@@ -102,8 +102,8 @@ module Weather
     end
 
     class GetCityAnnouncements
-      TYPES_CLASS = Types::GetCityAnnouncementsOutput
-      PARAMS_CLASS = Params::GetCityAnnouncementsOutput
+      TYPES_CLASS = Weather::Types::GetCityAnnouncementsOutput
+      PARAMS_CLASS = Weather::Params::GetCityAnnouncementsOutput
 
       def self.default(visited = [])
         {
@@ -121,8 +121,8 @@ module Weather
     end
 
     class GetCityImage
-      TYPES_CLASS = Types::GetCityImageOutput
-      PARAMS_CLASS = Params::GetCityImageOutput
+      TYPES_CLASS = Weather::Types::GetCityImageOutput
+      PARAMS_CLASS = Weather::Params::GetCityImageOutput
 
       def self.default(visited = [])
         {
@@ -138,8 +138,8 @@ module Weather
     end
 
     class GetCurrentTime
-      TYPES_CLASS = Types::GetCurrentTimeOutput
-      PARAMS_CLASS = Params::GetCurrentTimeOutput
+      TYPES_CLASS = Weather::Types::GetCurrentTimeOutput
+      PARAMS_CLASS = Weather::Params::GetCurrentTimeOutput
 
       def self.default(visited = [])
         {
@@ -154,8 +154,8 @@ module Weather
     end
 
     class GetForecast
-      TYPES_CLASS = Types::GetForecastOutput
-      PARAMS_CLASS = Params::GetForecastOutput
+      TYPES_CLASS = Weather::Types::GetForecastOutput
+      PARAMS_CLASS = Weather::Params::GetForecastOutput
 
       def self.default(visited = [])
         {
@@ -171,8 +171,8 @@ module Weather
     end
 
     class ListCities
-      TYPES_CLASS = Types::ListCitiesOutput
-      PARAMS_CLASS = Params::ListCitiesOutput
+      TYPES_CLASS = Weather::Types::ListCitiesOutput
+      PARAMS_CLASS = Weather::Params::ListCitiesOutput
 
       def self.default(visited = [])
         {
@@ -207,8 +207,8 @@ module Weather
     end
 
     class NoSuchResource
-      ERROR_CLASS = Errors::NoSuchResource
-      PARAMS_CLASS = Params::NoSuchResource
+      ERROR_CLASS = Weather::Errors::NoSuchResource
+      PARAMS_CLASS = Weather::Params::NoSuchResource
 
       def self.default(visited = [])
         return nil if visited.include?('NoSuchResource')
@@ -280,8 +280,8 @@ module Weather
     end
 
     class Operation____789BadName
-      TYPES_CLASS = Types::Struct____789BadNameOutput
-      PARAMS_CLASS = Params::Struct____789BadNameOutput
+      TYPES_CLASS = Weather::Types::Struct____789BadNameOutput
+      PARAMS_CLASS = Weather::Params::Struct____789BadNameOutput
 
       def self.default(visited = [])
         {
