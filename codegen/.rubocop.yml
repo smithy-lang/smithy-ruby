@@ -1,10 +1,6 @@
 inherit_from:
   - ../hearth/.rubocop.yml
 
-inherit_mode:
-  override:
-    - Exclude
-
 AllCops:
   Exclude:
     - 'projections/**/*'
