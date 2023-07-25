@@ -25,8 +25,8 @@ module RailsJson
         IntegerList.validate!(input[:query_integer_list], context: "#{context}[:query_integer_list]") unless input[:query_integer_list].nil?
         IntegerSet.validate!(input[:query_integer_set], context: "#{context}[:query_integer_set]") unless input[:query_integer_set].nil?
         Hearth::Validator.validate_types!(input[:query_long], ::Integer, context: "#{context}[:query_long]")
-        Hearth::Validator.validate_types!(input[:query_float], ::Numeric, context: "#{context}[:query_float]")
-        Hearth::Validator.validate_types!(input[:query_double], ::Numeric, context: "#{context}[:query_double]")
+        Hearth::Validator.validate_types!(input[:query_float], ::Float, context: "#{context}[:query_float]")
+        Hearth::Validator.validate_types!(input[:query_double], ::Float, context: "#{context}[:query_double]")
         DoubleList.validate!(input[:query_double_list], context: "#{context}[:query_double_list]") unless input[:query_double_list].nil?
         Hearth::Validator.validate_types!(input[:query_boolean], ::TrueClass, ::FalseClass, context: "#{context}[:query_boolean]")
         BooleanList.validate!(input[:query_boolean_list], context: "#{context}[:query_boolean_list]") unless input[:query_boolean_list].nil?
@@ -196,7 +196,7 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Array, context: context)
         input.each_with_index do |element, index|
-          Hearth::Validator.validate_types!(element, ::Numeric, context: "#{context}[#{index}]")
+          Hearth::Validator.validate_types!(element, ::Float, context: "#{context}[#{index}]")
         end
       end
     end
@@ -398,9 +398,9 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::HttpRequestWithFloatLabelsInput, context: context)
         Hearth::Validator.validate_required!(input[:float], context: "#{context}[:float]")
-        Hearth::Validator.validate_types!(input[:float], ::Numeric, context: "#{context}[:float]")
+        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate_required!(input[:double], context: "#{context}[:double]")
-        Hearth::Validator.validate_types!(input[:double], ::Numeric, context: "#{context}[:double]")
+        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
       end
     end
 
@@ -464,9 +464,9 @@ module RailsJson
         Hearth::Validator.validate_required!(input[:long], context: "#{context}[:long]")
         Hearth::Validator.validate_types!(input[:long], ::Integer, context: "#{context}[:long]")
         Hearth::Validator.validate_required!(input[:float], context: "#{context}[:float]")
-        Hearth::Validator.validate_types!(input[:float], ::Numeric, context: "#{context}[:float]")
+        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate_required!(input[:double], context: "#{context}[:double]")
-        Hearth::Validator.validate_types!(input[:double], ::Numeric, context: "#{context}[:double]")
+        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
         Hearth::Validator.validate_required!(input[:boolean], context: "#{context}[:boolean]")
         Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
         Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
@@ -514,8 +514,8 @@ module RailsJson
         Hearth::Validator.validate_types!(input[:header_short], ::Integer, context: "#{context}[:header_short]")
         Hearth::Validator.validate_types!(input[:header_integer], ::Integer, context: "#{context}[:header_integer]")
         Hearth::Validator.validate_types!(input[:header_long], ::Integer, context: "#{context}[:header_long]")
-        Hearth::Validator.validate_types!(input[:header_float], ::Numeric, context: "#{context}[:header_float]")
-        Hearth::Validator.validate_types!(input[:header_double], ::Numeric, context: "#{context}[:header_double]")
+        Hearth::Validator.validate_types!(input[:header_float], ::Float, context: "#{context}[:header_float]")
+        Hearth::Validator.validate_types!(input[:header_double], ::Float, context: "#{context}[:header_double]")
         Hearth::Validator.validate_types!(input[:header_true_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_true_bool]")
         Hearth::Validator.validate_types!(input[:header_false_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_false_bool]")
         StringList.validate!(input[:header_string_list], context: "#{context}[:header_string_list]") unless input[:header_string_list].nil?
@@ -536,8 +536,8 @@ module RailsJson
         Hearth::Validator.validate_types!(input[:header_short], ::Integer, context: "#{context}[:header_short]")
         Hearth::Validator.validate_types!(input[:header_integer], ::Integer, context: "#{context}[:header_integer]")
         Hearth::Validator.validate_types!(input[:header_long], ::Integer, context: "#{context}[:header_long]")
-        Hearth::Validator.validate_types!(input[:header_float], ::Numeric, context: "#{context}[:header_float]")
-        Hearth::Validator.validate_types!(input[:header_double], ::Numeric, context: "#{context}[:header_double]")
+        Hearth::Validator.validate_types!(input[:header_float], ::Float, context: "#{context}[:header_float]")
+        Hearth::Validator.validate_types!(input[:header_double], ::Float, context: "#{context}[:header_double]")
         Hearth::Validator.validate_types!(input[:header_true_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_true_bool]")
         Hearth::Validator.validate_types!(input[:header_false_bool], ::TrueClass, ::FalseClass, context: "#{context}[:header_false_bool]")
         StringList.validate!(input[:header_string_list], context: "#{context}[:header_string_list]") unless input[:header_string_list].nil?
@@ -650,9 +650,9 @@ module RailsJson
         Hearth::Validator.validate_types!(input, Types::KitchenSink, context: context)
         Hearth::Validator.validate_types!(input[:blob], ::String, context: "#{context}[:blob]")
         Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
-        Hearth::Validator.validate_types!(input[:double], ::Numeric, context: "#{context}[:double]")
+        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
         EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
-        Hearth::Validator.validate_types!(input[:float], ::Numeric, context: "#{context}[:float]")
+        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate_types!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
         Hearth::Validator.validate_types!(input[:integer], ::Integer, context: "#{context}[:integer]")
         Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
@@ -682,9 +682,9 @@ module RailsJson
         Hearth::Validator.validate_types!(input, Types::KitchenSinkOperationInput, context: context)
         Hearth::Validator.validate_types!(input[:blob], ::String, context: "#{context}[:blob]")
         Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
-        Hearth::Validator.validate_types!(input[:double], ::Numeric, context: "#{context}[:double]")
+        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
         EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
-        Hearth::Validator.validate_types!(input[:float], ::Numeric, context: "#{context}[:float]")
+        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate_types!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
         Hearth::Validator.validate_types!(input[:integer], ::Integer, context: "#{context}[:integer]")
         Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
@@ -714,9 +714,9 @@ module RailsJson
         Hearth::Validator.validate_types!(input, Types::KitchenSinkOperationOutput, context: context)
         Hearth::Validator.validate_types!(input[:blob], ::String, context: "#{context}[:blob]")
         Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
-        Hearth::Validator.validate_types!(input[:double], ::Numeric, context: "#{context}[:double]")
+        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
         EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
-        Hearth::Validator.validate_types!(input[:float], ::Numeric, context: "#{context}[:float]")
+        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
         Hearth::Validator.validate_types!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
         Hearth::Validator.validate_types!(input[:integer], ::Integer, context: "#{context}[:integer]")
         Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")

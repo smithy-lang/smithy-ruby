@@ -2,6 +2,9 @@ module WhiteLabel
   # frozen_string_literal: true
 
   module Plugins
+    # Test plugin used for testing plugins and middleware -
+    # modifies config to add a read_before_execution interceptor
+    # and overrides the test_config
     class TestPlugin
       TEST_CLASS_INTERCEPTOR = Class.new do
         def read_before_execution(_context); end

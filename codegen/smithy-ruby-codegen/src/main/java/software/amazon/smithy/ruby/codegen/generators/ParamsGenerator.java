@@ -315,6 +315,27 @@ public class ParamsGenerator extends RubyGeneratorBase {
             }
 
             @Override
+            public Void floatShape(FloatShape shape) {
+                if (defaultValue.isPresent()) {
+                    writer.write("$1Lparams.fetch($2L, $3L).to_f", memberSetter, rubySymbol, defaultValue.get());
+                } else {
+                    writer.write("$L$L&.to_f", memberSetter, input);
+                }
+                return null;
+            }
+
+
+            @Override
+            public Void doubleShape(DoubleShape shape) {
+                if (defaultValue.isPresent()) {
+                    writer.write("$1Lparams.fetch($2L, $3L).to_f", memberSetter, rubySymbol, defaultValue.get());
+                } else {
+                    writer.write("$L$L&.to_f", memberSetter, input);
+                }
+                return null;
+            }
+
+            @Override
             public Void blobShape(BlobShape shape) {
                 if (shape.hasTrait(StreamingTrait.class)) {
                     writer
