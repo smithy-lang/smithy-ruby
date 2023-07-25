@@ -38,5 +38,6 @@ module RailsJson
         end
       end
     end
+
   end
 end

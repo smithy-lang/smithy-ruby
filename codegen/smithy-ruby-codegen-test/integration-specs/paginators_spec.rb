@@ -10,47 +10,39 @@ module WhiteLabel
       let(:options) { { stub_responses: true } }
 
       subject { PaginatorsTest.new(client, params, options) }
-      let(:response1) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'foo',
-                                                 items: %w[
-                                                   a b c
-                                                 ])
+      let(:response_1) do
+        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: %w[a b c])
       end
-      let(:response2) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'bar',
-                                                 items: %w[
-                                                   1 2 3
-                                                 ])
+      let(:response_2) do
+        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: %w[1 2 3])
       end
-      let(:response3) do
+      let(:response_3) do
         Types::PaginatorsTestOperationOutput.new(items: ['the end'])
       end
 
       describe '#pages' do
         it 'yields page responses' do
           expect(client).to receive(:paginators_test)
-            .with({ param: 'param' }, options).and_return(response1)
+            .with({ param: 'param' }, options).and_return(response_1)
           expect(client).to receive(:paginators_test)
-            .with({ param: 'param',
-                    next_token: 'foo' }, options).and_return(response2)
+            .with({ param: 'param', next_token: 'foo' }, options).and_return(response_2)
           expect(client).to receive(:paginators_test)
-            .with({ param: 'param',
-                    next_token: 'bar' }, options).and_return(response3)
+            .with({ param: 'param', next_token: 'bar' }, options).and_return(response_3)
 
           paginator = subject.pages
           expect(paginator).to be_a(Enumerator)
           page = paginator.next
-          expect(page).to eq(response1)
+          expect(page).to eq(response_1)
           page = paginator.next
-          expect(page).to eq(response2)
+          expect(page).to eq(response_2)
           page = paginator.next
-          expect(page).to eq(response3)
+          expect(page).to eq(response_3)
           expect { paginator.next }.to raise_error(StopIteration)
         end
 
         it 'does not modify original params' do
           expect(client).to receive(:paginators_test)
-            .with({ param: 'param' }, options).and_return(response1)
+            .with({ param: 'param' }, options).and_return(response_1)
 
           original_params = params
           paginator = subject.pages
@@ -72,19 +64,13 @@ module WhiteLabel
       let(:options) { { stub_responses: true } }
 
       subject { PaginatorsTestWithItems.new(client, params, options) }
-      let(:response1) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'foo',
-                                                 items: %w[
-                                                   a b c
-                                                 ])
+      let(:response_1) do
+        Types::PaginatorsTestOperationOutput.new(next_token: 'foo', items: %w[a b c])
       end
-      let(:response2) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'bar',
-                                                 items: %w[
-                                                   1 2 3
-                                                 ])
+      let(:response_2) do
+        Types::PaginatorsTestOperationOutput.new(next_token: 'bar', items: %w[1 2 3])
       end
-      let(:response3) do
+      let(:response_3) do
         Types::PaginatorsTestOperationOutput.new(items: ['the end'])
       end
 
@@ -95,13 +81,11 @@ module WhiteLabel
       describe '#items' do
         it 'yields items from paged response data' do
           expect(client).to receive(:paginators_test_with_items)
-            .with({ param: 'param' }, options).and_return(response1)
+            .with({ param: 'param' }, options).and_return(response_1)
           expect(client).to receive(:paginators_test_with_items)
-            .with({ param: 'param',
-                    next_token: 'foo' }, options).and_return(response2)
+            .with({ param: 'param', next_token: 'foo' }, options).and_return(response_2)
           expect(client).to receive(:paginators_test_with_items)
-            .with({ param: 'param',
-                    next_token: 'bar' }, options).and_return(response3)
+            .with({ param: 'param', next_token: 'bar' }, options).and_return(response_3)
 
           paginator = subject.items
           expect(paginator).to be_a(Enumerator)
@@ -116,27 +100,19 @@ module WhiteLabel
       let(:params) { { param: 'param' } }
       let(:options) { { stub_responses: true } }
 
-      subject do
-        Operation____PaginatorsTestWithBadNames.new(client, params, options)
-      end
-      let(:response1) do
+      subject { Operation____PaginatorsTestWithBadNames.new(client, params, options) }
+      let(:response_1) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(
-            member___123next_token: 'foo'
-          ), member___items: %w[a b c]
+          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'foo'), member___items: %w[a b c]
         )
       end
-      let(:response2) do
+      let(:response_2) do
         Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(
-            member___123next_token: 'bar'
-          ), member___items: %w[1 2 3]
+          member___wrapper: Types::ResultWrapper.new(member___123next_token: 'bar'), member___items: %w[1 2 3]
         )
       end
-      let(:response3) do
-        Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___items: ['the end']
-        )
+      let(:response_3) do
+        Types::Struct____PaginatorsTestWithBadNamesOutput.new(member___items: ['the end'])
       end
 
       describe '.pages' do
@@ -145,20 +121,12 @@ module WhiteLabel
 
       describe '#items' do
         it 'yields items from paged response data' do
-          expect(client)
-            .to receive(:operation____paginators_test_with_bad_names)
-            .with({ param: 'param' }, options)
-            .and_return(response1)
-          expect(client)
-            .to receive(:operation____paginators_test_with_bad_names)
-            .with({ param: 'param',
-                    member___next_token: 'foo' }, options)
-            .and_return(response2)
-          expect(client)
-            .to receive(:operation____paginators_test_with_bad_names)
-            .with({ param: 'param',
-                    member___next_token: 'bar' }, options)
-            .and_return(response3)
+          expect(client).to receive(:operation____paginators_test_with_bad_names)
+            .with({ param: 'param' }, options).and_return(response_1)
+          expect(client).to receive(:operation____paginators_test_with_bad_names)
+            .with({ param: 'param', member___next_token: 'foo' }, options).and_return(response_2)
+          expect(client).to receive(:operation____paginators_test_with_bad_names)
+            .with({ param: 'param', member___next_token: 'bar' }, options).and_return(response_3)
 
           paginator = subject.items
           expect(paginator).to be_a(Enumerator)

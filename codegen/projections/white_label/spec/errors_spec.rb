@@ -7,8 +7,7 @@ module WhiteLabel
     describe ApiError do
       it 'inherits the base protocol api error' do
         http_resp = Hearth::HTTP::Response.new
-        error = ApiError.new(http_resp: http_resp, metadata: {},
-                             error_code: 'error')
+        error = ApiError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error).to be_a(Hearth::HTTP::ApiError)
       end
     end
@@ -16,8 +15,7 @@ module WhiteLabel
     describe ApiClientError do
       it 'inherits the base client api error' do
         http_resp = Hearth::HTTP::Response.new
-        error = ApiClientError.new(http_resp: http_resp, metadata: {},
-                                   error_code: 'error')
+        error = ApiClientError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error).to be_a(ApiError)
       end
     end
@@ -25,8 +23,7 @@ module WhiteLabel
     describe ApiServerError do
       it 'inherits the base client api error' do
         http_resp = Hearth::HTTP::Response.new
-        error = ApiServerError.new(http_resp: http_resp, metadata: {},
-                                   error_code: 'error')
+        error = ApiServerError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error).to be_a(ApiError)
       end
     end
@@ -58,15 +55,11 @@ module WhiteLabel
 
     describe ClientError do
       it 'parses the data with a modeled message' do
-        http_resp = Hearth::HTTP::Response.new(
-          body: StringIO.new('error message')
-        )
+        http_resp = Hearth::HTTP::Response.new(body: StringIO.new('error message'))
         data = Types::ClientError.new(message: 'error message')
         # don't test fakeProtocol parsers
-        expect(Parsers::ClientError).to receive(:parse)
-          .with(http_resp).and_return(data)
-        error = ClientError.new(http_resp: http_resp, metadata: {},
-                                error_code: 'error')
+        expect(Parsers::ClientError).to receive(:parse).with(http_resp).and_return(data)
+        error = ClientError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.data).to eq(data)
         expect(error).to be_a(ApiClientError)
         expect(error.message).to eq('error message')
@@ -74,8 +67,7 @@ module WhiteLabel
 
       it 'is retryable without throttling' do
         http_resp = Hearth::HTTP::Response.new
-        error = ClientError.new(http_resp: http_resp, metadata: {},
-                                error_code: 'error')
+        error = ClientError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.retryable?).to be true
         expect(error.throttling?).to be false
       end
@@ -83,15 +75,11 @@ module WhiteLabel
 
     describe ServerError do
       it 'parses the data without a modeled message' do
-        http_resp = Hearth::HTTP::Response.new(
-          body: StringIO.new('hidden error message')
-        )
+        http_resp = Hearth::HTTP::Response.new(body: StringIO.new('hidden error message'))
         data = Types::ServerError.new
         # don't test fakeProtocol parsers
-        expect(Parsers::ServerError).to receive(:parse)
-          .with(http_resp).and_return(data)
-        error = ServerError.new(http_resp: http_resp, metadata: {},
-                                error_code: 'error')
+        expect(Parsers::ServerError).to receive(:parse).with(http_resp).and_return(data)
+        error = ServerError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.data).to eq(data)
         expect(error).to be_a(ApiServerError)
         expect(error.message).to eq('WhiteLabel::Errors::ServerError')
@@ -99,8 +87,7 @@ module WhiteLabel
 
       it 'is retryable with throttling' do
         http_resp = Hearth::HTTP::Response.new
-        error = ServerError.new(http_resp: http_resp, metadata: {},
-                                error_code: 'error')
+        error = ServerError.new(http_resp: http_resp, metadata: {}, error_code: 'error')
         expect(error.retryable?).to be true
         expect(error.throttling?).to be true
       end

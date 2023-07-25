@@ -23,7 +23,8 @@ Metrics/BlockLength:
     - 'lib/hearth/middleware/retry.rb'
 
 Gemspec/RequireMFA:
-  Enabled: false
+  Exclude:
+    - '**/*.gemspec'
 
 Layout/LineLength:
   Max: 80

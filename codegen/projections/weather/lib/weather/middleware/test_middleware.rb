@@ -1,4 +1,4 @@
-module WhiteLabel
+module Weather
   module Middleware
     class TestMiddleware
       def initialize(app, test_config:)
