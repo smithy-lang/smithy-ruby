@@ -25,3 +25,4 @@ Style/Documentation:
 Lint/EmptyClass:
   Exclude:
     - 'smithy-ruby-codegen-test/integration-specs/params_spec.rb'
+
