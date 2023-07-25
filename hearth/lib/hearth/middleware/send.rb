@@ -108,9 +108,9 @@ module Hearth
       end
 
       def apply_stub_hash(stub, context)
-        if stub.key?(:error)
+        if stub.key?(:error) && !stub.key?(:data)
           apply_stub_hash_error(stub, context)
-        elsif stub.key?(:data)
+        elsif stub.key?(:data) && !stub.key?(:error)
           apply_stub_hash_data(stub, context)
         else
           raise ArgumentError, 'Unsupported stub hash, must be :data or :error'
@@ -157,6 +157,12 @@ module Hearth
       end
 
       def apply_stub_hearth_structure(stub, context)
+        type = @stub_data_class::TYPES_CLASS
+        unless stub.is_a?(type)
+          raise ArgumentError,
+                "Only stubs of type #{type} are supported for this operation"
+        end
+
         @stub_data_class.stub(
           context.response,
           stub: stub

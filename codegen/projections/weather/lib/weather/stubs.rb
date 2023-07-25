@@ -84,6 +84,7 @@ module Weather
     end
 
     class GetCity
+      TYPES_CLASS = Types::GetCityOutput
       PARAMS_CLASS = Params::GetCityOutput
 
       def self.default(visited = [])
@@ -101,6 +102,7 @@ module Weather
     end
 
     class GetCityAnnouncements
+      TYPES_CLASS = Types::GetCityAnnouncementsOutput
       PARAMS_CLASS = Params::GetCityAnnouncementsOutput
 
       def self.default(visited = [])
@@ -119,6 +121,7 @@ module Weather
     end
 
     class GetCityImage
+      TYPES_CLASS = Types::GetCityImageOutput
       PARAMS_CLASS = Params::GetCityImageOutput
 
       def self.default(visited = [])
@@ -135,6 +138,7 @@ module Weather
     end
 
     class GetCurrentTime
+      TYPES_CLASS = Types::GetCurrentTimeOutput
       PARAMS_CLASS = Params::GetCurrentTimeOutput
 
       def self.default(visited = [])
@@ -150,6 +154,7 @@ module Weather
     end
 
     class GetForecast
+      TYPES_CLASS = Types::GetForecastOutput
       PARAMS_CLASS = Params::GetForecastOutput
 
       def self.default(visited = [])
@@ -166,6 +171,7 @@ module Weather
     end
 
     class ListCities
+      TYPES_CLASS = Types::ListCitiesOutput
       PARAMS_CLASS = Params::ListCitiesOutput
 
       def self.default(visited = [])
@@ -274,6 +280,7 @@ module Weather
     end
 
     class Operation____789BadName
+      TYPES_CLASS = Types::Struct____789BadNameOutput
       PARAMS_CLASS = Params::Struct____789BadNameOutput
 
       def self.default(visited = [])

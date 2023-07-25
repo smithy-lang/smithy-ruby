@@ -30,6 +30,7 @@ module WhiteLabel
     end
 
     class DefaultsTest
+      TYPES_CLASS = Types::DefaultsTestOutput
       PARAMS_CLASS = Params::DefaultsTestOutput
 
       def self.default(visited = [])
@@ -75,6 +76,7 @@ module WhiteLabel
     end
 
     class EndpointOperation
+      TYPES_CLASS = Types::EndpointOperationOutput
       PARAMS_CLASS = Params::EndpointOperationOutput
 
       def self.default(visited = [])
@@ -89,6 +91,7 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
+      TYPES_CLASS = Types::EndpointWithHostLabelOperationOutput
       PARAMS_CLASS = Params::EndpointWithHostLabelOperationOutput
 
       def self.default(visited = [])
@@ -114,6 +117,7 @@ module WhiteLabel
     end
 
     class KitchenSink
+      TYPES_CLASS = Types::KitchenSinkOutput
       PARAMS_CLASS = Params::KitchenSinkOutput
 
       def self.default(visited = [])
@@ -182,6 +186,7 @@ module WhiteLabel
     end
 
     class MixinTest
+      TYPES_CLASS = Types::MixinTestOutput
       PARAMS_CLASS = Params::MixinTestOutput
 
       def self.default(visited = [])
@@ -197,6 +202,7 @@ module WhiteLabel
     end
 
     class PaginatorsTest
+      TYPES_CLASS = Types::PaginatorsTestOperationOutput
       PARAMS_CLASS = Params::PaginatorsTestOperationOutput
 
       def self.default(visited = [])
@@ -212,6 +218,7 @@ module WhiteLabel
     end
 
     class PaginatorsTestWithItems
+      TYPES_CLASS = Types::PaginatorsTestWithItemsOutput
       PARAMS_CLASS = Params::PaginatorsTestWithItemsOutput
 
       def self.default(visited = [])
@@ -227,6 +234,7 @@ module WhiteLabel
     end
 
     class RequestCompressionOperation
+      TYPES_CLASS = Types::RequestCompressionOperationOutput
       PARAMS_CLASS = Params::RequestCompressionOperationOutput
 
       def self.default(visited = [])
@@ -241,6 +249,7 @@ module WhiteLabel
     end
 
     class RequestCompressionStreamingOperation
+      TYPES_CLASS = Types::RequestCompressionStreamingOperationOutput
       PARAMS_CLASS = Params::RequestCompressionStreamingOperationOutput
 
       def self.default(visited = [])
@@ -283,6 +292,7 @@ module WhiteLabel
     end
 
     class StreamingOperation
+      TYPES_CLASS = Types::StreamingOperationOutput
       PARAMS_CLASS = Params::StreamingOperationOutput
 
       def self.default(visited = [])
@@ -299,6 +309,7 @@ module WhiteLabel
     end
 
     class StreamingWithLength
+      TYPES_CLASS = Types::StreamingWithLengthOutput
       PARAMS_CLASS = Params::StreamingWithLengthOutput
 
       def self.default(visited = [])
@@ -335,6 +346,7 @@ module WhiteLabel
     end
 
     class WaitersTest
+      TYPES_CLASS = Types::WaitersTestOutput
       PARAMS_CLASS = Params::WaitersTestOutput
 
       def self.default(visited = [])
@@ -349,6 +361,7 @@ module WhiteLabel
     end
 
     class Operation____PaginatorsTestWithBadNames
+      TYPES_CLASS = Types::Struct____PaginatorsTestWithBadNamesOutput
       PARAMS_CLASS = Params::Struct____PaginatorsTestWithBadNamesOutput
 
       def self.default(visited = [])

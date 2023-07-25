@@ -31,6 +31,7 @@ module HighScoreService
     end
 
     class CreateHighScore
+      TYPES_CLASS = Types::CreateHighScoreOutput
       PARAMS_CLASS = Params::CreateHighScoreOutput
 
       def self.default(visited = [])
@@ -51,6 +52,7 @@ module HighScoreService
     end
 
     class DeleteHighScore
+      TYPES_CLASS = Types::DeleteHighScoreOutput
       PARAMS_CLASS = Params::DeleteHighScoreOutput
 
       def self.default(visited = [])
@@ -84,6 +86,7 @@ module HighScoreService
     end
 
     class GetHighScore
+      TYPES_CLASS = Types::GetHighScoreOutput
       PARAMS_CLASS = Params::GetHighScoreOutput
 
       def self.default(visited = [])
@@ -146,6 +149,7 @@ module HighScoreService
     end
 
     class ListHighScores
+      TYPES_CLASS = Types::ListHighScoresOutput
       PARAMS_CLASS = Params::ListHighScoresOutput
 
       def self.default(visited = [])
@@ -185,6 +189,7 @@ module HighScoreService
     end
 
     class UpdateHighScore
+      TYPES_CLASS = Types::UpdateHighScoreOutput
       PARAMS_CLASS = Params::UpdateHighScoreOutput
 
       def self.default(visited = [])

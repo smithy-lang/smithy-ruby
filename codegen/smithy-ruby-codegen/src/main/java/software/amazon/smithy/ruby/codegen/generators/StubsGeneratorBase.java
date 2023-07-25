@@ -285,11 +285,13 @@ public abstract class StubsGeneratorBase {
     // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
     private void renderStubsForOperation(OperationShape operation, Shape outputShape) {
         generatedStubs.add(outputShape.getId());
+        String name = symbolProvider.toSymbol(outputShape).getName();
 
         writer
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
-                .write("PARAMS_CLASS = Params::$L", symbolProvider.toSymbol(outputShape).getName())
+                .write("TYPES_CLASS = Types::$L", name)
+                .write("PARAMS_CLASS = Params::$L", name)
                 .write("")
                 .openBlock("def self.default(visited = [])")
                 .call(() -> renderMemberDefaults(outputShape))

@@ -14,6 +14,7 @@ module RailsJson
   module Stubs
 
     class AllQueryStringTypes
+      TYPES_CLASS = Types::AllQueryStringTypesOutput
       PARAMS_CLASS = Params::AllQueryStringTypesOutput
 
       def self.default(visited = [])
@@ -87,6 +88,7 @@ module RailsJson
     end
 
     class ConstantAndVariableQueryString
+      TYPES_CLASS = Types::ConstantAndVariableQueryStringOutput
       PARAMS_CLASS = Params::ConstantAndVariableQueryStringOutput
 
       def self.default(visited = [])
@@ -101,6 +103,7 @@ module RailsJson
     end
 
     class ConstantQueryString
+      TYPES_CLASS = Types::ConstantQueryStringOutput
       PARAMS_CLASS = Params::ConstantQueryStringOutput
 
       def self.default(visited = [])
@@ -222,6 +225,7 @@ module RailsJson
     end
 
     class DocumentType
+      TYPES_CLASS = Types::DocumentTypeOutput
       PARAMS_CLASS = Params::DocumentTypeOutput
 
       def self.default(visited = [])
@@ -242,6 +246,7 @@ module RailsJson
     end
 
     class DocumentTypeAsPayload
+      TYPES_CLASS = Types::DocumentTypeAsPayloadOutput
       PARAMS_CLASS = Params::DocumentTypeAsPayloadOutput
 
       def self.default(visited = [])
@@ -259,6 +264,7 @@ module RailsJson
     end
 
     class EmptyOperation
+      TYPES_CLASS = Types::EmptyOperationOutput
       PARAMS_CLASS = Params::EmptyOperationOutput
 
       def self.default(visited = [])
@@ -288,6 +294,7 @@ module RailsJson
     end
 
     class EndpointOperation
+      TYPES_CLASS = Types::EndpointOperationOutput
       PARAMS_CLASS = Params::EndpointOperationOutput
 
       def self.default(visited = [])
@@ -302,6 +309,7 @@ module RailsJson
     end
 
     class EndpointWithHostLabelOperation
+      TYPES_CLASS = Types::EndpointWithHostLabelOperationOutput
       PARAMS_CLASS = Params::EndpointWithHostLabelOperationOutput
 
       def self.default(visited = [])
@@ -457,6 +465,7 @@ module RailsJson
     end
 
     class GreetingWithErrors
+      TYPES_CLASS = Types::GreetingWithErrorsOutput
       PARAMS_CLASS = Params::GreetingWithErrorsOutput
 
       def self.default(visited = [])
@@ -475,6 +484,7 @@ module RailsJson
     end
 
     class HttpPayloadTraits
+      TYPES_CLASS = Types::HttpPayloadTraitsOutput
       PARAMS_CLASS = Params::HttpPayloadTraitsOutput
 
       def self.default(visited = [])
@@ -494,6 +504,7 @@ module RailsJson
     end
 
     class HttpPayloadTraitsWithMediaType
+      TYPES_CLASS = Types::HttpPayloadTraitsWithMediaTypeOutput
       PARAMS_CLASS = Params::HttpPayloadTraitsWithMediaTypeOutput
 
       def self.default(visited = [])
@@ -513,6 +524,7 @@ module RailsJson
     end
 
     class HttpPayloadWithStructure
+      TYPES_CLASS = Types::HttpPayloadWithStructureOutput
       PARAMS_CLASS = Params::HttpPayloadWithStructureOutput
 
       def self.default(visited = [])
@@ -531,6 +543,7 @@ module RailsJson
     end
 
     class HttpPrefixHeaders
+      TYPES_CLASS = Types::HttpPrefixHeadersOutput
       PARAMS_CLASS = Params::HttpPrefixHeadersOutput
 
       def self.default(visited = [])
@@ -551,6 +564,7 @@ module RailsJson
     end
 
     class HttpPrefixHeadersInResponse
+      TYPES_CLASS = Types::HttpPrefixHeadersInResponseOutput
       PARAMS_CLASS = Params::HttpPrefixHeadersInResponseOutput
 
       def self.default(visited = [])
@@ -569,6 +583,7 @@ module RailsJson
     end
 
     class HttpRequestWithFloatLabels
+      TYPES_CLASS = Types::HttpRequestWithFloatLabelsOutput
       PARAMS_CLASS = Params::HttpRequestWithFloatLabelsOutput
 
       def self.default(visited = [])
@@ -583,6 +598,7 @@ module RailsJson
     end
 
     class HttpRequestWithGreedyLabelInPath
+      TYPES_CLASS = Types::HttpRequestWithGreedyLabelInPathOutput
       PARAMS_CLASS = Params::HttpRequestWithGreedyLabelInPathOutput
 
       def self.default(visited = [])
@@ -597,6 +613,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabels
+      TYPES_CLASS = Types::HttpRequestWithLabelsOutput
       PARAMS_CLASS = Params::HttpRequestWithLabelsOutput
 
       def self.default(visited = [])
@@ -611,6 +628,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
+      TYPES_CLASS = Types::HttpRequestWithLabelsAndTimestampFormatOutput
       PARAMS_CLASS = Params::HttpRequestWithLabelsAndTimestampFormatOutput
 
       def self.default(visited = [])
@@ -625,6 +643,7 @@ module RailsJson
     end
 
     class HttpResponseCode
+      TYPES_CLASS = Types::HttpResponseCodeOutput
       PARAMS_CLASS = Params::HttpResponseCodeOutput
 
       def self.default(visited = [])
@@ -641,6 +660,7 @@ module RailsJson
     end
 
     class IgnoreQueryParamsInResponse
+      TYPES_CLASS = Types::IgnoreQueryParamsInResponseOutput
       PARAMS_CLASS = Params::IgnoreQueryParamsInResponseOutput
 
       def self.default(visited = [])
@@ -656,6 +676,7 @@ module RailsJson
     end
 
     class InputAndOutputWithHeaders
+      TYPES_CLASS = Types::InputAndOutputWithHeadersOutput
       PARAMS_CLASS = Params::InputAndOutputWithHeadersOutput
 
       def self.default(visited = [])
@@ -772,6 +793,7 @@ module RailsJson
     end
 
     class JsonEnums
+      TYPES_CLASS = Types::JsonEnumsOutput
       PARAMS_CLASS = Params::JsonEnumsOutput
 
       def self.default(visited = [])
@@ -800,6 +822,7 @@ module RailsJson
     end
 
     class JsonMaps
+      TYPES_CLASS = Types::JsonMapsOutput
       PARAMS_CLASS = Params::JsonMapsOutput
 
       def self.default(visited = [])
@@ -836,6 +859,7 @@ module RailsJson
     end
 
     class JsonUnions
+      TYPES_CLASS = Types::JsonUnionsOutput
       PARAMS_CLASS = Params::JsonUnionsOutput
 
       def self.default(visited = [])
@@ -921,6 +945,7 @@ module RailsJson
     end
 
     class KitchenSinkOperation
+      TYPES_CLASS = Types::KitchenSinkOperationOutput
       PARAMS_CLASS = Params::KitchenSinkOperationOutput
 
       def self.default(visited = [])
@@ -1179,6 +1204,7 @@ module RailsJson
     end
 
     class MediaTypeHeader
+      TYPES_CLASS = Types::MediaTypeHeaderOutput
       PARAMS_CLASS = Params::MediaTypeHeaderOutput
 
       def self.default(visited = [])
@@ -1236,6 +1262,7 @@ module RailsJson
     end
 
     class NestedAttributesOperation
+      TYPES_CLASS = Types::NestedAttributesOperationOutput
       PARAMS_CLASS = Params::NestedAttributesOperationOutput
 
       def self.default(visited = [])
@@ -1273,6 +1300,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersClient
+      TYPES_CLASS = Types::NullAndEmptyHeadersClientOutput
       PARAMS_CLASS = Params::NullAndEmptyHeadersClientOutput
 
       def self.default(visited = [])
@@ -1298,6 +1326,7 @@ module RailsJson
     end
 
     class NullOperation
+      TYPES_CLASS = Types::NullOperationOutput
       PARAMS_CLASS = Params::NullOperationOutput
 
       def self.default(visited = [])
@@ -1320,6 +1349,7 @@ module RailsJson
     end
 
     class OmitsNullSerializesEmptyString
+      TYPES_CLASS = Types::OmitsNullSerializesEmptyStringOutput
       PARAMS_CLASS = Params::OmitsNullSerializesEmptyStringOutput
 
       def self.default(visited = [])
@@ -1334,6 +1364,7 @@ module RailsJson
     end
 
     class OperationWithOptionalInputOutput
+      TYPES_CLASS = Types::OperationWithOptionalInputOutputOutput
       PARAMS_CLASS = Params::OperationWithOptionalInputOutputOutput
 
       def self.default(visited = [])
@@ -1352,6 +1383,7 @@ module RailsJson
     end
 
     class QueryIdempotencyTokenAutoFill
+      TYPES_CLASS = Types::QueryIdempotencyTokenAutoFillOutput
       PARAMS_CLASS = Params::QueryIdempotencyTokenAutoFillOutput
 
       def self.default(visited = [])
@@ -1366,6 +1398,7 @@ module RailsJson
     end
 
     class QueryParamsAsStringListMap
+      TYPES_CLASS = Types::QueryParamsAsStringListMapOutput
       PARAMS_CLASS = Params::QueryParamsAsStringListMapOutput
 
       def self.default(visited = [])
@@ -1511,6 +1544,7 @@ module RailsJson
     end
 
     class StreamingOperation
+      TYPES_CLASS = Types::StreamingOperationOutput
       PARAMS_CLASS = Params::StreamingOperationOutput
 
       def self.default(visited = [])
@@ -1601,6 +1635,7 @@ module RailsJson
     end
 
     class TimestampFormatHeaders
+      TYPES_CLASS = Types::TimestampFormatHeadersOutput
       PARAMS_CLASS = Params::TimestampFormatHeadersOutput
 
       def self.default(visited = [])
@@ -1665,6 +1700,7 @@ module RailsJson
     end
 
     class Operation____789BadName
+      TYPES_CLASS = Types::Struct____789BadNameOutput
       PARAMS_CLASS = Params::Struct____789BadNameOutput
 
       def self.default(visited = [])

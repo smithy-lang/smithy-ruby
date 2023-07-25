@@ -28,6 +28,7 @@ module Hearth
 
     module Stubs
       class StubData
+        TYPES_CLASS = Types::StubData
         PARAMS_CLASS = Params::StubData
         def self.default(visited = []); end
         def self.stub(resp, stub:); end
@@ -263,6 +264,15 @@ module Hearth
                 end.to raise_error(ArgumentError, /:data or :error/)
               end
             end
+
+            context 'both' do
+              it 'raises an error' do
+                stubs.add_stubs(operation, [{ data: {}, error: {} }])
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(ArgumentError, /:data or :error/)
+              end
+            end
           end
 
           context 'stub is nil' do
@@ -285,14 +295,26 @@ module Hearth
           end
 
           context 'stub is a Hearth::Structure' do
-            let(:stub_data) { Types::StubData.new(member: 'value') }
-
             before { stubs.add_stubs(operation, [stub_data]) }
 
-            it 'uses the stub class to stub the response' do
-              expect(Stubs::StubData).to receive(:stub)
-                .with(response, stub: stub_data)
-              subject.call(input, context)
+            context 'correct output type' do
+              let(:stub_data) { Types::StubData.new(member: 'value') }
+
+              it 'uses the stub class to stub the response' do
+                expect(Stubs::StubData).to receive(:stub)
+                  .with(response, stub: stub_data)
+                subject.call(input, context)
+              end
+            end
+
+            context 'incorrect output type' do
+              let(:stub_data) { Types::StubErrorData.new }
+
+              it 'raises an error' do
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(ArgumentError, /StubData/)
+              end
             end
           end
 
