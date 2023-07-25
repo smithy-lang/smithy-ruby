@@ -119,9 +119,9 @@ module Hearth
               it 'raises a standard error in streaming compression' do
                 expect do
                   subject.send(
-                   :process_streaming_compression,
-                   'custom',
-                   request
+                    :process_streaming_compression,
+                    'custom',
+                    request
                   )
                 end.to raise_error(StandardError)
               end
