@@ -7,8 +7,8 @@ module Hearth
   # return when a client is using stubbed responses.
   # This module should be included in generated service clients.
   #
-  # Pass `stub_responses: true` to a client constructor to enable this
-  # behavior.
+  # Pass `stub_responses: true` to a Client's Config constructor
+  # to enable this behavior.
   module ClientStubs
     # Configures what data / errors should be returned from the named operation
     # when response stubbing is enabled.
@@ -16,38 +16,51 @@ module Hearth
     # ## Basic usage
     #
     # When you enable response stubbing, the client will generate fake
-    # responses and will not make any HTTP requests.
+    # responses and will not make any HTTP requests. The SDK will default
+    # to generate fake responses with placeholder values. You can override
+    # the data returned using {#stub_responses}. You can also specify errors
+    # (with error data) that it should raise.
     #
     #     client = Service::Client.new(stub_responses: true)
     #     client.operation
     #     #=> #<struct Service:Types::Operation param1=[], param2=nil>
     #
-    # You can specify the stub data using {#stub_responses}
+    # You can specify the modeled stub data using the :data key.
     #
     #     client = Service::Client.new(stub_responses: true)
-    #     client.stub_responses(:operation, {
-    #       param1: [{ name: 'value1' }]
-    #     })
-    #
+    #     client.stub_responses(
+    #       :operation,
+    #       data: { param1: [{ name: 'value1' }] }
+    #     )
     #     client.operation.param1.map(&:name)
     #     #=> ['value1']
     #
-    # ## Stubbing Errors
+    # Stub data can also be provided as an output Type.
     #
-    # When stubbing is enabled, the SDK will default to generate
-    # fake responses with placeholder values. You can override the data
-    # returned. You can also specify errors it should raise.
-    #
-    #     # to simulate errors, give the error class, you must
-    #     # be able to construct an instance with `.new`
-    #     client.stub_responses(:operation, Timeout::Error)
+    #     client = Service::Client.new(stub_responses: true)
+    #     output = Service::Types::OperationOutput.new(
+    #       param1: [{ name: 'value1' }]
+    #     )
+    #     client.stub_responses(:operation, output)
     #     client.operation(param1: 'value')
-    #     #=> raises new Timeout::Error
+    #     #=> #<struct Service:Types::OperationOutput ..>
     #
-    #     # or you can give an instance of an error class
-    #     client.stub_responses(:operation, RuntimeError.new('custom message'))
+    # You can also specify modeled errors or exceptions it should raise using
+    # the :error key. The error hash must have a :class and optionally any
+    # :data to populate the error with.
+    #
+    #     client = Service::Client.new(stub_responses: true)
+    #     client.stub_responses(
+    #       :operation,
+    #       error: { class: ModeledError, data: { message: 'error message' } }
+    #     )
+    #     #=> raises ModeledError.new('error message')
+    #
+    # Constructed Exceptions will also be raised if provided.
+    #
+    #     client.stub_responses(:operation, Hearth::NetworkingError.new)
     #     client.operation(param1: 'value')
-    #     #=> raises the given runtime error object
+    #     #=> raises Hearth::NetworkingError
     #
     # ## Dynamic Stubbing
     #
@@ -57,40 +70,42 @@ module Hearth
     #
     #     client.stub_responses(:operation, -> (input, context) {
     #       if input[:param] == 'foo'
-    #         # return a stub
-    #         { param1: [{ name: 'value1'}]}
+    #         # return a data stub
+    #         { data: { param1: [{ name: 'value1'}]} }
     #       else
-    #         # return an error
-    #         Services::Errors::NotFound
+    #         # return an error stub
+    #         { error: Service::Errors::NotFound }
     #       end
     #     })
     #
     # ## Stubbing Raw Protocol Responses
     #
-    # As an alternative to providing the response data, you can modify the
-    # response object provided by the `Proc` object and then
-    # return nil.
+    # As an alternative to providing the response data, you can provide an
+    # instance of Hearth::Response to stub with.
     #
-    #     client.stub_responses(:operation, -> (input, context) {
-    #       context.response.status = 404 # simulate an error
-    #       nil
-    #     })
+    #     response = Hearth::HTTP::Response.new(
+    #       status: 200,
+    #       body: StringIO.new('{param1: "value1"}'),
+    #     )
+    #     client.stub_responses(:operation, response)
+    #     #=> #<struct Service:Types::OperationOutput param1="value1">
     #
     # ## Stubbing Multiple Responses
     #
     # Calling an operation multiple times will return similar responses.
     # You can configure multiple stubs and they will be returned in sequence.
     #
-    #     client.stub_responses(:operation, [
-    #       Errors::NotFound,
-    #       { content_length: 150 },
+    #     client.stub_responses(
+    #       :operation,
+    #       { error: Service::Errors::NotFound },
+    #       { data: { content_length: 150 } },
     #     ])
     #
     #     client.operation(param1: 'value1')
-    #     #=> raises Errors::NotFound
+    #     #=> raises Service::Errors::NotFound
     #
     #     resp = client.operation(param1: 'value2')
-    #     resp.content_length #=> 150
+    #     resp.data.content_length #=> 150
     #
     # @param [Symbol] operation_name
     #
