@@ -60,9 +60,9 @@ module Weather
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::CityCoordinates, context: context)
         Hearth::Validator.validate_required!(input[:latitude], context: "#{context}[:latitude]")
-        Hearth::Validator.validate_types!(input[:latitude], ::Float, context: "#{context}[:latitude]")
+        Hearth::Validator.validate_types!(input[:latitude], ::Numeric, context: "#{context}[:latitude]")
         Hearth::Validator.validate_required!(input[:longitude], context: "#{context}[:longitude]")
-        Hearth::Validator.validate_types!(input[:longitude], ::Float, context: "#{context}[:longitude]")
+        Hearth::Validator.validate_types!(input[:longitude], ::Numeric, context: "#{context}[:longitude]")
       end
     end
 
@@ -177,7 +177,7 @@ module Weather
     class GetForecastOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::GetForecastOutput, context: context)
-        Hearth::Validator.validate_types!(input[:chance_of_rain], ::Float, context: "#{context}[:chance_of_rain]")
+        Hearth::Validator.validate_types!(input[:chance_of_rain], ::Numeric, context: "#{context}[:chance_of_rain]")
         Precipitation.validate!(input[:precipitation], context: "#{context}[:precipitation]") unless input[:precipitation].nil?
       end
     end
