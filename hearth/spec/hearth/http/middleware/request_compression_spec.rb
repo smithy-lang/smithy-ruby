@@ -81,24 +81,55 @@ module Hearth
             end
           end
 
-          context 'no supported encodings' do
-            let(:encodings) { ['custom'] }
+          context 'encodings' do
+            context 'none supported by client' do
+              let(:encodings) { ['custom'] }
 
-            it 'skips compression' do
-              expect(app).to receive(:call).with(input, context)
-              resp = subject.call(input, context)
-              expect_uncompressed_body(request, body)
-              expect(resp).to be output
+              it 'skips compression' do
+                expect(app).to receive(:call).with(input, context)
+                resp = subject.call(input, context)
+                expect_uncompressed_body(request, body)
+                expect(resp).to be output
+              end
+            end
+
+            context 'multiple encodings' do
+              let(:encodings) { %w[custom gzip] }
+              let(:body) { StringIO.new('a' * 16_385) }
+
+              it 'processes the first supported encoding found' do
+                expect(app).to receive(:call).with(input, context)
+                resp = subject.call(input, context)
+                expect(request.headers['Content-Encoding']).to eq('gzip')
+                expect(resp).to be output
+              end
+            end
+
+            context 'unsupported encoding is given' do
+              it 'raises a standard error in compression' do
+                expect do
+                  subject.send(:process_compression,
+                               'custom',
+                               request)
+                end.to raise_error(StandardError)
+              end
+
+              it 'raises a standard error in streaming compression' do
+                expect do
+                  subject.send(:process_streaming_compression,
+                               'custom',
+                               request)
+                end.to raise_error(StandardError)
+              end
             end
           end
 
-          context 'multiple encodings' do
-            let(:encodings) { %w[custom gzip] }
-
-            it 'processes the first supported encoding found' do
+          context 'Content-Encoding header already exists' do
+            it 'adds an encoding to the header' do
+              request.headers['Content-Encoding'] = 'foo'
               expect(app).to receive(:call).with(input, context)
               resp = subject.call(input, context)
-              expect(request.headers['Content-Encoding']).to eq('gzip')
+              expect(request.headers['Content-Encoding']).to eq('foo,gzip')
               expect(resp).to be output
             end
           end
