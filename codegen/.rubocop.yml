@@ -1,27 +1,26 @@
+inherit_from:
+  - ../hearth/.rubocop.yml
+
+inherit_mode:
+  override:
+    - Exclude
+
 AllCops:
-  NewCops: enable
-  TargetRubyVersion: 3.0
   Exclude:
     - 'projections/**/*'
     - '**/build/**/*'
 
 Metrics:
   Exclude:
-    - '**/**/*_spec.rb'
+    - '**/*_spec.rb'
 
 Metrics/BlockLength:
   Exclude:
-    - '**/**/*_spec.rb'
-
-Layout/LineLength:
-  Max: 80
-
-Metrics/MethodLength:
-  Max: 20
+    - '**/*_spec.rb'
 
 Style/Documentation:
   Exclude:
-    - '**/integration-specs/*_spec.rb'
+    - '**/*_spec.rb'
 
 Lint/EmptyClass:
   Exclude:
