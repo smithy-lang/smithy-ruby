@@ -56,8 +56,8 @@ module Weather
         Hearth::Validator.validate_types!(params, ::Hash, Types::CityCoordinates, context: context)
         type = Types::CityCoordinates.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.latitude = params.fetch(:latitude, 0)
-        type.longitude = params[:longitude]
+        type.latitude = params.fetch(:latitude, 0).to_f
+        type.longitude = params[:longitude]&.to_f
         type
       end
     end
@@ -200,7 +200,7 @@ module Weather
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetForecastOutput, context: context)
         type = Types::GetForecastOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.chance_of_rain = params[:chance_of_rain]
+        type.chance_of_rain = params[:chance_of_rain]&.to_f
         type.precipitation = Precipitation.build(params[:precipitation], context: "#{context}[:precipitation]") unless params[:precipitation].nil?
         type
       end

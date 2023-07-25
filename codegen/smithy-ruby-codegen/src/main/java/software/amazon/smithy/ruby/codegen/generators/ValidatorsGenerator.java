@@ -343,7 +343,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
 
             @Override
             public Void floatShape(FloatShape shape) {
-                writer.write("$T.validate_types!($L, ::Numeric, context: $L)", Hearth.VALIDATOR, input, context);
+                writer.write("$T.validate_types!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
                 return null;
             }
 
@@ -359,7 +359,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
 
             @Override
             public Void doubleShape(DoubleShape shape) {
-                writer.write("$T.validate_types!($L, ::Numeric, context: $L)", Hearth.VALIDATOR, input, context);
+                writer.write("$T.validate_types!($L, ::Float, context: $L)", Hearth.VALIDATOR, input, context);
                 return null;
             }
 
