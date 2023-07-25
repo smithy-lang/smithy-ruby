@@ -9,7 +9,8 @@ module WhiteLabel
         expect { Config.new(disable_request_compression: 'string') }
           .to raise_error(
             ArgumentError,
-            'Expected config[:disable_request_compression] to be in [TrueClass, FalseClass], got String.'
+            'Expected config[:disable_request_compression] ' \
+            'to be in [TrueClass, FalseClass], got String.'
           )
       end
     end
@@ -45,7 +46,8 @@ module WhiteLabel
           expect(uncompressed.read).to eq(input_body)
           expect(context.request.headers['Content-Encoding']).to eq('gzip')
         end
-        client.request_compression_operation({ body: input_body }, interceptors: [interceptor])
+        client.request_compression_operation({ body: input_body },
+                                             interceptors: [interceptor])
       end
 
       it 'does not compress when body does not meet the minimum' do
@@ -54,7 +56,8 @@ module WhiteLabel
           expect(context.request.body.read).to eq(input_body)
           expect(context.request.headers['Content-Encoding']).to be_nil
         end
-        client.request_compression_operation({ body: input_body }, interceptors: [interceptor])
+        client.request_compression_operation({ body: input_body },
+                                             interceptors: [interceptor])
       end
     end
 
@@ -65,14 +68,17 @@ module WhiteLabel
           expect(context.request.headers['Content-Encoding']).to eq('gzip')
           # capture the body by reading it into a new IO object
           body = StringIO.new
-          # IO.copy_stream is the same method used by Net::Http to write our body to the socket
+          # IO.copy_stream is the same method used by Net::Http
+          # to write our body to the socket
           IO.copy_stream(context.request.body, body)
           body.rewind
           streaming_input.rewind
           uncompressed = Zlib::GzipReader.new(body)
           expect(uncompressed.read).to eq(streaming_input.read)
         end
-        client.request_compression_streaming_operation({ body: streaming_input }, interceptors: [interceptor])
+        client.request_compression_streaming_operation(
+          { body: streaming_input }, interceptors: [interceptor]
+        )
       end
     end
   end

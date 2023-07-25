@@ -75,7 +75,8 @@ module WhiteLabel
       let(:client) { Client.new(config) }
 
       it 'applies interceptors in expected order' do
-        expect(Plugins::TestPlugin::TEST_CLASS_INTERCEPTOR).to receive(hook).ordered
+        expect(Plugins::TestPlugin::TEST_CLASS_INTERCEPTOR)
+          .to receive(hook).ordered
         expect(config_plugin_interceptor).to receive(hook).ordered
         expect(config_interceptor).to receive(hook).ordered
         expect(operation_plugin_interceptor).to receive(hook).ordered
