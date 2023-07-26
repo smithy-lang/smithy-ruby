@@ -104,28 +104,6 @@ module Hearth
                 expect(resp).to be output
               end
             end
-
-            context 'unsupported encoding is given' do
-              it 'raises a standard error in compression' do
-                expect do
-                  subject.send(
-                    :process_compression,
-                    'custom',
-                    request
-                  )
-                end.to raise_error(RuntimeError)
-              end
-
-              it 'raises a standard error in streaming compression' do
-                expect do
-                  subject.send(
-                    :process_streaming_compression,
-                    'custom',
-                    request
-                  )
-                end.to raise_error(RuntimeError)
-              end
-            end
           end
 
           context 'Content-Encoding header already exists' do

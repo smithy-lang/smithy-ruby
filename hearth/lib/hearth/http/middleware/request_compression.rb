@@ -60,9 +60,6 @@ module Hearth
           case encoding
           when 'gzip'
             gzip_compress(request)
-          else
-            raise 'We currently do not support ' \
-                  "#{encoding} encoding"
           end
           update_content_encoding(encoding, request)
         end
@@ -94,9 +91,6 @@ module Hearth
           case encoding
           when 'gzip'
             request.body = GzipIO.new(request.body)
-          else
-            raise 'We currently do not support ' \
-                  "#{encoding} encoding"
           end
           update_content_encoding(encoding, request)
         end
