@@ -29,7 +29,9 @@ module Hearth
         def call(input, context)
           request = context.request
           unless @disable_request_compression
-            selected_encoding = request_encoding_selection(@encodings)
+            selected_encoding = @encodings.find do |encoding|
+              SUPPORTED_ENCODINGS.include?(encoding)
+            end
             if selected_encoding
               if @streaming
                 process_streaming_compression(selected_encoding, request)
@@ -42,10 +44,6 @@ module Hearth
         end
 
         private
-
-        def request_encoding_selection(encodings)
-          encodings.find { |encoding| SUPPORTED_ENCODINGS.include?(encoding) }
-        end
 
         def update_content_encoding(encoding, request)
           headers = request.headers
