@@ -56,21 +56,6 @@ module Hearth
       end
     end
 
-    # Closes and removes all connections from the pool.
-    # If empty! is called while there are outstanding requests they may
-    # get checked back into the pool, leaving the pool in a non-empty
-    # state.
-    # @return [nil]
-    def empty!
-      @pool_mutex.synchronize do
-        @pool.each_pair do |_endpoint, connections|
-          connections.each(&:finish)
-        end
-        @pool.clear
-      end
-      nil
-    end
-
     private
 
     # Removes stale connections from the pool.  This method *must* be called

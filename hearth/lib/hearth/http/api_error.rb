@@ -18,7 +18,7 @@ module Hearth
       # @return [Fields]
       attr_reader :http_fields
 
-      # @return [String]
+      # @return [IO]
       attr_reader :http_body
     end
   end

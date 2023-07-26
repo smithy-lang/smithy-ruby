@@ -100,7 +100,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::Operation____789BadName).to receive(:build)
-          client.stub_responses(:operation____789_bad_name, {
+          client.stub_responses(:operation____789_bad_name, data: {
             member: {
               member___123foo: "foo value"
             }
@@ -500,7 +500,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentType).to receive(:build)
-          client.stub_responses(:document_type, {
+          client.stub_responses(:document_type, data: {
             string_value: "string",
             document_value: {'foo' => 'bar'}
           })
@@ -517,7 +517,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentType).to receive(:build)
-          client.stub_responses(:document_type, {
+          client.stub_responses(:document_type, data: {
             string_value: "string",
             document_value: 'hello'
           })
@@ -534,7 +534,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentType).to receive(:build)
-          client.stub_responses(:document_type, {
+          client.stub_responses(:document_type, data: {
             string_value: "string",
             document_value: 10
           })
@@ -551,7 +551,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentType).to receive(:build)
-          client.stub_responses(:document_type, {
+          client.stub_responses(:document_type, data: {
             string_value: "string",
             document_value: false
           })
@@ -568,7 +568,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentType).to receive(:build)
-          client.stub_responses(:document_type, {
+          client.stub_responses(:document_type, data: {
             string_value: "string",
             document_value: [true, false]
           })
@@ -662,7 +662,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentTypeAsPayload).to receive(:build)
-          client.stub_responses(:document_type_as_payload, {
+          client.stub_responses(:document_type_as_payload, data: {
             document_value: {'foo' => 'bar'}
           })
           output = client.document_type_as_payload({}, interceptors: [interceptor])
@@ -677,7 +677,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::DocumentTypeAsPayload).to receive(:build)
-          client.stub_responses(:document_type_as_payload, {
+          client.stub_responses(:document_type_as_payload, data: {
             document_value: 'hello'
           })
           output = client.document_type_as_payload({}, interceptors: [interceptor])
@@ -762,7 +762,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::EmptyOperation).to receive(:build)
-          client.stub_responses(:empty_operation, {
+          client.stub_responses(:empty_operation, data: {
 
           })
           output = client.empty_operation({}, interceptors: [interceptor])
@@ -780,7 +780,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::EmptyOperation).to receive(:build)
-          client.stub_responses(:empty_operation, {
+          client.stub_responses(:empty_operation, data: {
 
           })
           output = client.empty_operation({}, interceptors: [interceptor])
@@ -799,7 +799,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::EmptyOperation).to receive(:build)
-          client.stub_responses(:empty_operation, {
+          client.stub_responses(:empty_operation, data: {
 
           })
           output = client.empty_operation({}, interceptors: [interceptor])
@@ -1016,7 +1016,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::HttpPayloadTraits).to receive(:build)
-          client.stub_responses(:http_payload_traits, {
+          client.stub_responses(:http_payload_traits, data: {
             foo: "Foo",
             blob: 'blobby blob blob'
           })
@@ -1033,7 +1033,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::HttpPayloadTraits).to receive(:build)
-          client.stub_responses(:http_payload_traits, {
+          client.stub_responses(:http_payload_traits, data: {
             foo: "Foo"
           })
           output = client.http_payload_traits({}, interceptors: [interceptor])
@@ -1095,7 +1095,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::HttpPayloadTraitsWithMediaType).to receive(:build)
-          client.stub_responses(:http_payload_traits_with_media_type, {
+          client.stub_responses(:http_payload_traits_with_media_type, data: {
             foo: "Foo",
             blob: 'blobby blob blob'
           })
@@ -1168,7 +1168,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::HttpPayloadWithStructure).to receive(:build)
-          client.stub_responses(:http_payload_with_structure, {
+          client.stub_responses(:http_payload_with_structure, data: {
             nested: {
               greeting: "hello",
               name: "Phreddy"
@@ -1258,7 +1258,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::HttpPrefixHeaders).to receive(:build)
-          client.stub_responses(:http_prefix_headers, {
+          client.stub_responses(:http_prefix_headers, data: {
             foo: "Foo",
             foo_map: {
               'Abc' => "Abc value",
@@ -1308,7 +1308,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::HttpPrefixHeadersInResponse).to receive(:build)
-          client.stub_responses(:http_prefix_headers_in_response, {
+          client.stub_responses(:http_prefix_headers_in_response, data: {
             prefix_headers: {
               'X-Foo' => "Foo",
               'Hello' => "Hello"
@@ -1528,7 +1528,7 @@ module RailsJson
             expect(context.response.status).to eq(201)
           end
           allow(Builders::HttpResponseCode).to receive(:build)
-          client.stub_responses(:http_response_code, {
+          client.stub_responses(:http_response_code, data: {
             status: 201
           })
           output = client.http_response_code({}, interceptors: [interceptor])
@@ -1545,7 +1545,7 @@ module RailsJson
             expect(context.response.status).to eq(201)
           end
           allow(Builders::HttpResponseCode).to receive(:build)
-          client.stub_responses(:http_response_code, {
+          client.stub_responses(:http_response_code, data: {
             status: 201
           })
           output = client.http_response_code({}, interceptors: [interceptor])
@@ -1607,7 +1607,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
-          client.stub_responses(:ignore_query_params_in_response, {
+          client.stub_responses(:ignore_query_params_in_response, data: {
 
           })
           output = client.ignore_query_params_in_response({}, interceptors: [interceptor])
@@ -1624,7 +1624,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
-          client.stub_responses(:ignore_query_params_in_response, {
+          client.stub_responses(:ignore_query_params_in_response, data: {
 
           })
           output = client.ignore_query_params_in_response({}, interceptors: [interceptor])
@@ -1864,7 +1864,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          client.stub_responses(:input_and_output_with_headers, {
+          client.stub_responses(:input_and_output_with_headers, data: {
             header_string: "Hello",
             header_string_list: [
               "a",
@@ -1899,7 +1899,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          client.stub_responses(:input_and_output_with_headers, {
+          client.stub_responses(:input_and_output_with_headers, data: {
             header_string_list: [
               "b,c",
               "\"def\"",
@@ -1922,7 +1922,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          client.stub_responses(:input_and_output_with_headers, {
+          client.stub_responses(:input_and_output_with_headers, data: {
             header_byte: 1,
             header_short: 123,
             header_integer: 123,
@@ -1957,7 +1957,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          client.stub_responses(:input_and_output_with_headers, {
+          client.stub_responses(:input_and_output_with_headers, data: {
             header_true_bool: true,
             header_false_bool: false,
             header_boolean_list: [
@@ -1984,7 +1984,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          client.stub_responses(:input_and_output_with_headers, {
+          client.stub_responses(:input_and_output_with_headers, data: {
             header_enum: "Foo",
             header_enum_list: [
               "Foo",
@@ -2112,7 +2112,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonEnums).to receive(:build)
-          client.stub_responses(:json_enums, {
+          client.stub_responses(:json_enums, data: {
             foo_enum1: "Foo",
             foo_enum2: "0",
             foo_enum3: "1",
@@ -2620,7 +2620,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             dense_struct_map: {
               'foo' => {
                 hi: "there"
@@ -2665,7 +2665,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             sparse_boolean_map: {
               'x' => nil
             },
@@ -2702,7 +2702,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             dense_number_map: {
               'x' => 0
             },
@@ -2739,7 +2739,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             sparse_set_map: {
               'x' => [
 
@@ -2770,7 +2770,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             dense_set_map: {
               'x' => [
 
@@ -2801,7 +2801,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             sparse_set_map: {
               'x' => [
 
@@ -2835,7 +2835,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, {
+          client.stub_responses(:json_maps, data: {
             dense_set_map: {
               'x' => [
 
@@ -3308,7 +3308,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               string_value: "foo"
             }
@@ -3327,7 +3327,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               boolean_value: true
             }
@@ -3346,7 +3346,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               number_value: 1
             }
@@ -3365,7 +3365,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               blob_value: 'foo'
             }
@@ -3384,7 +3384,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               timestamp_value: Time.at(1398796238)
             }
@@ -3403,7 +3403,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               enum_value: "Foo"
             }
@@ -3422,7 +3422,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               list_value: [
                 "foo",
@@ -3447,7 +3447,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               map_value: {
                 'foo' => "bar",
@@ -3472,7 +3472,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, {
+          client.stub_responses(:json_unions, data: {
             contents: {
               structure_value: {
                 hi: "hello"
@@ -4526,7 +4526,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
 
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4541,7 +4541,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             string: "string-value"
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4556,7 +4556,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             integer: 1234
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4571,7 +4571,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             long: 1234567890123456789
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4586,7 +4586,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             float: 1234.5
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4601,7 +4601,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             double: 1.2345678912345679E8
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4616,7 +4616,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             boolean: true
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4631,7 +4631,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             boolean: false
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4646,7 +4646,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             blob: 'binary-value'
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4661,7 +4661,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             timestamp: Time.at(946845296)
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4676,7 +4676,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             timestamp: Time.at(946845296, 123, :millisecond)
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4691,7 +4691,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             iso8601_timestamp: Time.at(946845296)
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4706,7 +4706,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             httpdate_timestamp: Time.at(946845296)
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4721,7 +4721,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -4736,7 +4736,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             list_of_strings: [
               "abc",
               "mno",
@@ -4759,7 +4759,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             list_of_maps_of_strings: [
               {
                 'size' => "large"
@@ -4788,7 +4788,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             list_of_lists: [
               [
                 "abc",
@@ -4825,7 +4825,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             list_of_structs: [
               {
                 value: "value-1"
@@ -4854,7 +4854,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             recursive_list: [
               {
                 recursive_list: [
@@ -4893,7 +4893,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             map_of_strings: {
               'size' => "large",
               'color' => "red"
@@ -4914,7 +4914,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             map_of_lists_of_strings: {
               'sizes' => [
                 "large",
@@ -4947,7 +4947,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             map_of_maps: {
               'sizes' => {
                 'large' => "L",
@@ -4980,7 +4980,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             map_of_structs: {
               'size' => {
                 value: "small"
@@ -5009,7 +5009,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
             recursive_map: {
               'key-1' => {
                 recursive_map: {
@@ -5048,7 +5048,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, {
+          client.stub_responses(:kitchen_sink_operation, data: {
 
           })
           output = client.kitchen_sink_operation({}, interceptors: [interceptor])
@@ -5106,7 +5106,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::MediaTypeHeader).to receive(:build)
-          client.stub_responses(:media_type_header, {
+          client.stub_responses(:media_type_header, data: {
             json: "true"
           })
           output = client.media_type_header({}, interceptors: [interceptor])
@@ -5300,7 +5300,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::NullOperation).to receive(:build)
-          client.stub_responses(:null_operation, {
+          client.stub_responses(:null_operation, data: {
 
           })
           output = client.null_operation({}, interceptors: [interceptor])
@@ -5315,7 +5315,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::NullOperation).to receive(:build)
-          client.stub_responses(:null_operation, {
+          client.stub_responses(:null_operation, data: {
             sparse_string_map: {
               'foo' => nil
             }
@@ -5334,7 +5334,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::NullOperation).to receive(:build)
-          client.stub_responses(:null_operation, {
+          client.stub_responses(:null_operation, data: {
             sparse_string_list: [
               nil
             ]
@@ -5574,7 +5574,7 @@ module RailsJson
             expect(context.response.status).to eq(200)
           end
           allow(Builders::TimestampFormatHeaders).to receive(:build)
-          client.stub_responses(:timestamp_format_headers, {
+          client.stub_responses(:timestamp_format_headers, data: {
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
             member_date_time: Time.at(1576540098),

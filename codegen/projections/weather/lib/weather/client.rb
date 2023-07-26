@@ -82,9 +82,9 @@ module Weather
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::GetCity,
-        stubs: @stubs,
-        params_class: Params::GetCityOutput
+        stub_error_classes: [Stubs::NoSuchResource],
+        stub_data_class: Stubs::GetCity,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -151,9 +151,9 @@ module Weather
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::GetCityImage,
-        stubs: @stubs,
-        params_class: Params::GetCityImageOutput
+        stub_error_classes: [Stubs::NoSuchResource],
+        stub_data_class: Stubs::GetCityImage,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -209,9 +209,9 @@ module Weather
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::GetCurrentTime,
-        stubs: @stubs,
-        params_class: Params::GetCurrentTimeOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::GetCurrentTime,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -284,9 +284,9 @@ module Weather
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::GetForecast,
-        stubs: @stubs,
-        params_class: Params::GetForecastOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::GetForecast,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -364,9 +364,9 @@ module Weather
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::ListCities,
-        stubs: @stubs,
-        params_class: Params::ListCitiesOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::ListCities,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -429,9 +429,9 @@ module Weather
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::Operation____789BadName,
-        stubs: @stubs,
-        params_class: Params::Struct____789BadNameOutput
+        stub_error_classes: [Stubs::NoSuchResource],
+        stub_data_class: Stubs::Operation____789BadName,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

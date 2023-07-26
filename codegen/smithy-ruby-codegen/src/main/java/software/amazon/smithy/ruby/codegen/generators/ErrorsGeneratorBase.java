@@ -154,6 +154,7 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.info("Wrote errors rbs to " + fileName);
     }
 
+    // TODO: redirect error is protocol (http) specific
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")

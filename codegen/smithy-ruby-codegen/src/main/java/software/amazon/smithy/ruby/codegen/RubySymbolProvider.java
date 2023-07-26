@@ -94,6 +94,14 @@ public class RubySymbolProvider implements SymbolProvider,
         for (String w : reserved) {
             reservedNames.put(w, w + "_");
         }
+
+        // Reserved base Error classes
+        reservedNames.put("ApiError", "ApiError_");
+        reservedNames.put("ApiClientError", "ApiClientError_");
+        reservedNames.put("ApiServerError", "ApiServerError_");
+        // TODO: should be protocol specific from ProtocolGenerator
+        reservedNames.put("ApiRedirectError", "ApiRedirectError_");
+
         return reservedNames.build();
     }
 

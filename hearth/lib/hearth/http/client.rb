@@ -110,7 +110,7 @@ module Hearth
         # Invalid verb, ArgumentError is a StandardError
         raise e
       rescue StandardError => e
-        Hearth::HTTP::NetworkingError.new(e)
+        raise Hearth::HTTP::NetworkingError, e
       end
 
       private

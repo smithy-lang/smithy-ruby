@@ -55,7 +55,6 @@ public class RubyImportContainer
             .addDependency(RubyDependency.TIME)
             .build();
 
-
     private final String namespace;
     private final Set<String> requires = new TreeSet<>();
 

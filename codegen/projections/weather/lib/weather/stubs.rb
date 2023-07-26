@@ -11,9 +11,8 @@ module Weather
   # @api private
   module Stubs
 
-    # Union Stubber for Announcements
     class Announcements
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Announcements')
         visited = visited + ['Announcements']
         {
@@ -23,9 +22,8 @@ module Weather
 
     end
 
-    # Structure Stubber for Baz
     class Baz
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Baz')
         visited = visited + ['Baz']
         {
@@ -36,9 +34,8 @@ module Weather
 
     end
 
-    # Structure Stubber for CityCoordinates
     class CityCoordinates
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('CityCoordinates')
         visited = visited + ['CityCoordinates']
         {
@@ -49,9 +46,8 @@ module Weather
 
     end
 
-    # List Stubber for CitySummaries
     class CitySummaries
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('CitySummaries')
         visited = visited + ['CitySummaries']
         [
@@ -61,9 +57,8 @@ module Weather
 
     end
 
-    # Structure Stubber for CitySummary
     class CitySummary
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('CitySummary')
         visited = visited + ['CitySummary']
         {
@@ -76,9 +71,8 @@ module Weather
 
     end
 
-    # Structure Stubber for Foo
     class Foo
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Foo')
         visited = visited + ['Foo']
         {
@@ -89,9 +83,16 @@ module Weather
 
     end
 
-    # Operation Stubber for GetCity
     class GetCity
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GetCityOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCityOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           name: 'name',
           coordinates: CityCoordinates.default(visited),
@@ -105,9 +106,16 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetCityAnnouncements
     class GetCityAnnouncements
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GetCityAnnouncementsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCityAnnouncementsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           last_updated: Time.now,
           announcements: Announcements.default(visited),
@@ -122,9 +130,16 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetCityImage
     class GetCityImage
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GetCityImageOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCityImageOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           image: 'image',
         }
@@ -137,9 +152,16 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetCurrentTime
     class GetCurrentTime
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GetCurrentTimeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCurrentTimeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           time: Time.now,
         }
@@ -151,9 +173,16 @@ module Weather
       end
     end
 
-    # Operation Stubber for GetForecast
     class GetForecast
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GetForecastOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetForecastOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           chance_of_rain: 1.0,
           precipitation: Precipitation.default(visited),
@@ -166,9 +195,16 @@ module Weather
       end
     end
 
-    # Operation Stubber for ListCities
     class ListCities
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::ListCitiesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ListCitiesOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           next_token: 'next_token',
           some_enum: 'some_enum',
@@ -188,9 +224,8 @@ module Weather
       end
     end
 
-    # Structure Stubber for Message
     class Message
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Message')
         visited = visited + ['Message']
         {
@@ -201,9 +236,30 @@ module Weather
 
     end
 
-    # Structure Stubber for OtherStructure
+    class NoSuchResource
+      def self.build(params, context:)
+        Params::NoSuchResource.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NoSuchResource.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          resource_type: 'resource_type',
+          message: 'message',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 404
+      end
+    end
+
     class OtherStructure
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('OtherStructure')
         visited = visited + ['OtherStructure']
         {
@@ -212,9 +268,8 @@ module Weather
 
     end
 
-    # Union Stubber for Precipitation
     class Precipitation
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Precipitation')
         visited = visited + ['Precipitation']
         {
@@ -224,9 +279,8 @@ module Weather
 
     end
 
-    # List Stubber for SparseCitySummaries
     class SparseCitySummaries
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseCitySummaries')
         visited = visited + ['SparseCitySummaries']
         [
@@ -236,21 +290,19 @@ module Weather
 
     end
 
-    # Map Stubber for StringMap
     class StringMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('StringMap')
         visited = visited + ['StringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
     end
 
-    # Structure Stubber for __456efg
     class Struct____456efg
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Struct____456efg')
         visited = visited + ['Struct____456efg']
         {
@@ -260,9 +312,16 @@ module Weather
 
     end
 
-    # Operation Stubber for __789BadName
     class Operation____789BadName
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::Struct____789BadNameOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::Struct____789BadNameOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           member___123abc: 'member___123abc',
           member: Struct____456efg.default(visited),

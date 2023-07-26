@@ -35,7 +35,7 @@ module WhiteLabel
       let(:output) { 'test' }
 
       before do
-        client.stub_responses(:streaming_operation, { stream: output })
+        client.stub_responses(:streaming_operation, data: { stream: output })
       end
 
       context 'block is provided' do

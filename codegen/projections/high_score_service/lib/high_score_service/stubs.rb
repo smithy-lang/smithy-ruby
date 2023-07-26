@@ -11,9 +11,35 @@ module HighScoreService
   # @api private
   module Stubs
 
-    # Operation Stubber for CreateHighScore
+    class AttributeErrors
+      def self.default(visited = [])
+        return nil if visited.include?('AttributeErrors')
+        visited = visited + ['AttributeErrors']
+        {
+          key: ErrorMessages.default(visited)
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = Stubs::ErrorMessages.stub(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     class CreateHighScore
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::CreateHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::CreateHighScoreOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           high_score: HighScoreAttributes.default(visited),
           location: 'location',
@@ -30,9 +56,16 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for DeleteHighScore
     class DeleteHighScore
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::DeleteHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DeleteHighScoreOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -43,9 +76,35 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for GetHighScore
+    class ErrorMessages
+      def self.default(visited = [])
+        return nil if visited.include?('ErrorMessages')
+        visited = visited + ['ErrorMessages']
+        [
+          'member'
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
     class GetHighScore
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GetHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetHighScoreOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           high_score: HighScoreAttributes.default(visited),
         }
@@ -60,9 +119,8 @@ module HighScoreService
       end
     end
 
-    # Structure Stubber for HighScoreAttributes
     class HighScoreAttributes
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('HighScoreAttributes')
         visited = visited + ['HighScoreAttributes']
         {
@@ -86,9 +144,8 @@ module HighScoreService
       end
     end
 
-    # List Stubber for HighScores
     class HighScores
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('HighScores')
         visited = visited + ['HighScores']
         [
@@ -106,9 +163,16 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for ListHighScores
     class ListHighScores
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::ListHighScoresOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ListHighScoresOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           high_scores: HighScores.default(visited),
         }
@@ -123,9 +187,40 @@ module HighScoreService
       end
     end
 
-    # Operation Stubber for UpdateHighScore
+    class UnprocessableEntityError
+      def self.build(params, context:)
+        Params::UnprocessableEntityError.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::UnprocessableEntityError.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          errors: AttributeErrors.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 422
+        http_resp.headers['Content-Type'] = 'application/json'
+        data = Stubs::AttributeErrors.stub(stub[:errors]) unless stub[:errors].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class UpdateHighScore
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::UpdateHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::UpdateHighScoreOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           high_score: HighScoreAttributes.default(visited),
         }
