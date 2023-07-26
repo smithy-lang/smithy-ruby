@@ -197,8 +197,6 @@ module HighScoreService
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('UnprocessableEntityError')
-        visited = visited + ['UnprocessableEntityError']
         {
           errors: AttributeErrors.default(visited),
         }

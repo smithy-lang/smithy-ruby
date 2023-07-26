@@ -290,17 +290,11 @@ public abstract class StubsGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
-                .openBlock("def self.build(params, context:)")
-                .write("Params::$L.build(params, context: context)", outputShapeName)
-                .closeBlock("end")
+                .call(() -> renderBuildMethod(outputShapeName))
                 .write("")
-                .openBlock("def self.validate!(output, context:)")
-                .write("Validators::$L.validate!(output, context: context)", outputShapeName)
-                .closeBlock("end")
+                .call(() -> renderValidateMethod(outputShapeName))
                 .write("")
-                .openBlock("def self.default(visited = [])")
-                .call(() -> renderMemberDefaults(outputShape))
-                .closeBlock("end")
+                .call(() -> renderDefaultMethod(outputShape))
                 .write("")
                 .call(() -> renderOperationStubMethod(operation, outputShape))
                 .closeBlock("end");
@@ -314,24 +308,37 @@ public abstract class StubsGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L", errorShapeName)
-                .openBlock("def self.build(params, context:)")
-                .write("Params::$L.build(params, context: context)", errorShapeName)
-                .closeBlock("end")
+                .call(() -> renderBuildMethod(errorShapeName))
                 .write("")
-                .openBlock("def self.validate!(output, context:)")
-                .write("Validators::$L.validate!(output, context: context)", errorShapeName)
-                .closeBlock("end")
+                .call(() -> renderValidateMethod(errorShapeName))
                 .write("")
-                .openBlock("def self.default(visited = [])")
-                .write("return nil if visited.include?('$L')", errorShapeName)
-                .write("visited = visited + ['$L']", errorShapeName)
-                .call(() -> renderMemberDefaults(errorShape))
-                .closeBlock("end")
+                .call(() -> renderDefaultMethod(errorShape))
                 .write("")
                 .call(() -> renderErrorStubMethod(errorShape))
                 .closeBlock("end");
 
         LOGGER.finer("Generated stubber for error " + errorShape.getId().getName());
+    }
+
+    private void renderBuildMethod(String className) {
+        writer
+                .openBlock("def self.build(params, context:)")
+                .write("Params::$L.build(params, context: context)", className)
+                .closeBlock("end");
+    }
+
+    private void renderValidateMethod(String className) {
+        writer
+                .openBlock("def self.validate!(output, context:)")
+                .write("Validators::$L.validate!(output, context: context)", className)
+                .closeBlock("end");
+    }
+
+    private void renderDefaultMethod(Shape shape) {
+        writer
+                .openBlock("def self.default(visited = [])")
+                .call(() -> renderMemberDefaults(shape))
+                .closeBlock("end");
     }
 
     protected void renderMemberDefaults(Shape s) {

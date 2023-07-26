@@ -246,8 +246,6 @@ module Weather
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('NoSuchResource')
-        visited = visited + ['NoSuchResource']
         {
           resource_type: 'resource_type',
           message: 'message',

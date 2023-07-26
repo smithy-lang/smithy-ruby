@@ -62,8 +62,6 @@ module RailsJson
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('ComplexError')
-        visited = visited + ['ComplexError']
         {
           top_level: 'top_level',
           nested: ComplexNestedErrorData.default(visited),
@@ -378,8 +376,6 @@ module RailsJson
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('ErrorWithMembers')
-        visited = visited + ['ErrorWithMembers']
         {
           code: 'code',
           complex_data: KitchenSink.default(visited),
@@ -416,8 +412,6 @@ module RailsJson
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('ErrorWithoutMembers')
-        visited = visited + ['ErrorWithoutMembers']
         {
         }
       end
@@ -901,8 +895,6 @@ module RailsJson
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('InvalidGreeting')
-        visited = visited + ['InvalidGreeting']
         {
           message: 'message',
         }

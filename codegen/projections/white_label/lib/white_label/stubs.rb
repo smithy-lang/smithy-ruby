@@ -21,8 +21,6 @@ module WhiteLabel
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('ClientError')
-        visited = visited + ['ClientError']
         {
           message: 'message',
         }
@@ -334,8 +332,6 @@ module WhiteLabel
       end
 
       def self.default(visited = [])
-        return nil if visited.include?('ServerError')
-        visited = visited + ['ServerError']
         {
         }
       end
