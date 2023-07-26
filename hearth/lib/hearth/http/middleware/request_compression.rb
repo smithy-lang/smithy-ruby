@@ -61,8 +61,8 @@ module Hearth
           when 'gzip'
             gzip_compress(request)
           else
-            raise StandardError, 'We currently do not support ' \
-                                 "#{encoding} encoding"
+            raise 'We currently do not support ' \
+                  "#{encoding} encoding"
           end
           update_content_encoding(encoding, request)
         end
@@ -95,8 +95,8 @@ module Hearth
           when 'gzip'
             request.body = GzipIO.new(request.body)
           else
-            raise StandardError, 'We currently do not support ' \
-                                 "#{encoding} encoding"
+            raise 'We currently do not support ' \
+                  "#{encoding} encoding"
           end
           update_content_encoding(encoding, request)
         end

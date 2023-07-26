@@ -113,7 +113,7 @@ module Hearth
                     'custom',
                     request
                   )
-                end.to raise_error(StandardError)
+                end.to raise_error(RuntimeError)
               end
 
               it 'raises a standard error in streaming compression' do
@@ -123,7 +123,7 @@ module Hearth
                     'custom',
                     request
                   )
-                end.to raise_error(StandardError)
+                end.to raise_error(RuntimeError)
               end
             end
           end
