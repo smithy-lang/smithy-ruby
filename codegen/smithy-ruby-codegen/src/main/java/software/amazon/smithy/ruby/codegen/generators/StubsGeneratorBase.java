@@ -285,14 +285,18 @@ public abstract class StubsGeneratorBase {
     // This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output
     private void renderStubsForOperation(OperationShape operation, Shape outputShape) {
         generatedStubs.add(outputShape.getId());
-        String namespace = settings.getModule();
-        String outputName = symbolProvider.toSymbol(outputShape).getName();
+        String outputShapeName = symbolProvider.toSymbol(outputShape).getName();
 
         writer
                 .write("")
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
-                .write("TYPES_CLASS = $L::Types::$L", namespace, outputName)
-                .write("PARAMS_CLASS = $L::Params::$L", namespace, outputName)
+                .openBlock("def self.build(params, context:)")
+                .write("Params::$L.build(params, context: context)", outputShapeName)
+                .closeBlock("end")
+                .write("")
+                .openBlock("def self.validate!(output, context:)")
+                .write("Validators::$L.validate!(output, context: context)", outputShapeName)
+                .closeBlock("end")
                 .write("")
                 .openBlock("def self.default(visited = [])")
                 .call(() -> renderMemberDefaults(outputShape))
@@ -305,18 +309,18 @@ public abstract class StubsGeneratorBase {
     }
 
     private void renderErrorStub(Shape errorShape) {
-        String namespace = settings.getModule();
-        String errorName = symbolProvider.toSymbol(errorShape).getName();
+        String errorShapeName = symbolProvider.toSymbol(errorShape).getName();
 
         writer
                 .write("")
-                .openBlock("class $L", errorName)
-                .write("ERROR_CLASS = $L::Errors::$L", namespace, errorName)
-                .write("PARAMS_CLASS = $L::Params::$L", namespace, errorName)
+                .openBlock("class $L", errorShapeName)
+                .openBlock("def self.build(params, context:)")
+                .write("Params::$L.build(params, context: context)", errorShapeName)
+                .closeBlock("end")
                 .write("")
                 .openBlock("def self.default(visited = [])")
-                .write("return nil if visited.include?('$L')", errorName)
-                .write("visited = visited + ['$L']", errorName)
+                .write("return nil if visited.include?('$L')", errorShapeName)
+                .write("visited = visited + ['$L']", errorShapeName)
                 .call(() -> renderMemberDefaults(errorShape))
                 .closeBlock("end")
                 .write("")

@@ -16,15 +16,12 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Comparator;
 import java.util.logging.Logger;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
-import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -38,9 +35,7 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -50,7 +45,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
-import software.amazon.smithy.ruby.codegen.CodegenUtils;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -63,11 +58,8 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
     private static final Logger LOGGER =
             Logger.getLogger(ValidatorsGenerator.class.getName());
 
-    protected final Set<ShapeId> generatedValidators;
-
     public ValidatorsGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.generatedValidators = new HashSet<>();
     }
 
     @Override
@@ -92,27 +84,14 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
     }
 
     private void renderValidators(RubyCodeWriter writer) {
-        TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-        Set<OperationShape> containedOperations = new TreeSet<>(
-                topDownIndex.getContainedOperations(context.service()));
-        containedOperations.stream()
-                .forEach(o -> {
-                    Shape inputShape = model.expectShape(o.getInputShape());
-                    shapesToBeRendered.add(inputShape);
-                    generatedValidators.add(inputShape.toShapeId());
+        Model modelWithoutTraitShapes = ModelTransformer.create()
+                .getModelWithoutTraitShapes(model);
 
-                    Iterator<Shape> it = new Walker(model).iterateShapes(inputShape);
-                    while (it.hasNext()) {
-                        Shape s = it.next();
-                        if (!shapesToBeRendered.contains(s)) {
-                            generatedValidators.add(s.getId());
-                            shapesToBeRendered.add(s);
-                        }
-                    }
-                });
-
-        shapesToBeRendered.forEach((shape) -> shape.accept(new Visitor(writer)));
+        new Walker(modelWithoutTraitShapes)
+                .walkShapes(context.service())
+                .stream()
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .forEach((shape) -> shape.accept(new Visitor(writer)));
     }
 
     private final class Visitor extends ShapeVisitor.Default<Void> {

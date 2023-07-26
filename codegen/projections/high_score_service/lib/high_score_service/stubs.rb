@@ -31,8 +31,13 @@ module HighScoreService
     end
 
     class CreateHighScore
-      TYPES_CLASS = HighScoreService::Types::CreateHighScoreOutput
-      PARAMS_CLASS = HighScoreService::Params::CreateHighScoreOutput
+      def self.build(params, context:)
+        Params::CreateHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::CreateHighScoreOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -52,8 +57,13 @@ module HighScoreService
     end
 
     class DeleteHighScore
-      TYPES_CLASS = HighScoreService::Types::DeleteHighScoreOutput
-      PARAMS_CLASS = HighScoreService::Params::DeleteHighScoreOutput
+      def self.build(params, context:)
+        Params::DeleteHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DeleteHighScoreOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -86,8 +96,13 @@ module HighScoreService
     end
 
     class GetHighScore
-      TYPES_CLASS = HighScoreService::Types::GetHighScoreOutput
-      PARAMS_CLASS = HighScoreService::Params::GetHighScoreOutput
+      def self.build(params, context:)
+        Params::GetHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetHighScoreOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -149,8 +164,13 @@ module HighScoreService
     end
 
     class ListHighScores
-      TYPES_CLASS = HighScoreService::Types::ListHighScoresOutput
-      PARAMS_CLASS = HighScoreService::Params::ListHighScoresOutput
+      def self.build(params, context:)
+        Params::ListHighScoresOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ListHighScoresOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -168,8 +188,9 @@ module HighScoreService
     end
 
     class UnprocessableEntityError
-      ERROR_CLASS = HighScoreService::Errors::UnprocessableEntityError
-      PARAMS_CLASS = HighScoreService::Params::UnprocessableEntityError
+      def self.build(params, context:)
+        Params::UnprocessableEntityError.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('UnprocessableEntityError')
@@ -189,8 +210,13 @@ module HighScoreService
     end
 
     class UpdateHighScore
-      TYPES_CLASS = HighScoreService::Types::UpdateHighScoreOutput
-      PARAMS_CLASS = HighScoreService::Params::UpdateHighScoreOutput
+      def self.build(params, context:)
+        Params::UpdateHighScoreOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::UpdateHighScoreOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {

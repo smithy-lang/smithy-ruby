@@ -84,8 +84,13 @@ module Weather
     end
 
     class GetCity
-      TYPES_CLASS = Weather::Types::GetCityOutput
-      PARAMS_CLASS = Weather::Params::GetCityOutput
+      def self.build(params, context:)
+        Params::GetCityOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCityOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -102,8 +107,13 @@ module Weather
     end
 
     class GetCityAnnouncements
-      TYPES_CLASS = Weather::Types::GetCityAnnouncementsOutput
-      PARAMS_CLASS = Weather::Params::GetCityAnnouncementsOutput
+      def self.build(params, context:)
+        Params::GetCityAnnouncementsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCityAnnouncementsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -121,8 +131,13 @@ module Weather
     end
 
     class GetCityImage
-      TYPES_CLASS = Weather::Types::GetCityImageOutput
-      PARAMS_CLASS = Weather::Params::GetCityImageOutput
+      def self.build(params, context:)
+        Params::GetCityImageOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCityImageOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -138,8 +153,13 @@ module Weather
     end
 
     class GetCurrentTime
-      TYPES_CLASS = Weather::Types::GetCurrentTimeOutput
-      PARAMS_CLASS = Weather::Params::GetCurrentTimeOutput
+      def self.build(params, context:)
+        Params::GetCurrentTimeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetCurrentTimeOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -154,8 +174,13 @@ module Weather
     end
 
     class GetForecast
-      TYPES_CLASS = Weather::Types::GetForecastOutput
-      PARAMS_CLASS = Weather::Params::GetForecastOutput
+      def self.build(params, context:)
+        Params::GetForecastOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GetForecastOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -171,8 +196,13 @@ module Weather
     end
 
     class ListCities
-      TYPES_CLASS = Weather::Types::ListCitiesOutput
-      PARAMS_CLASS = Weather::Params::ListCitiesOutput
+      def self.build(params, context:)
+        Params::ListCitiesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ListCitiesOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -207,8 +237,9 @@ module Weather
     end
 
     class NoSuchResource
-      ERROR_CLASS = Weather::Errors::NoSuchResource
-      PARAMS_CLASS = Weather::Params::NoSuchResource
+      def self.build(params, context:)
+        Params::NoSuchResource.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('NoSuchResource')
@@ -280,8 +311,13 @@ module Weather
     end
 
     class Operation____789BadName
-      TYPES_CLASS = Weather::Types::Struct____789BadNameOutput
-      PARAMS_CLASS = Weather::Params::Struct____789BadNameOutput
+      def self.build(params, context:)
+        Params::Struct____789BadNameOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::Struct____789BadNameOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {

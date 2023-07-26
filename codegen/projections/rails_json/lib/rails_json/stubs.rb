@@ -14,8 +14,13 @@ module RailsJson
   module Stubs
 
     class AllQueryStringTypes
-      TYPES_CLASS = RailsJson::Types::AllQueryStringTypesOutput
-      PARAMS_CLASS = RailsJson::Params::AllQueryStringTypesOutput
+      def self.build(params, context:)
+        Params::AllQueryStringTypesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::AllQueryStringTypesOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -48,8 +53,9 @@ module RailsJson
     end
 
     class ComplexError
-      ERROR_CLASS = RailsJson::Errors::ComplexError
-      PARAMS_CLASS = RailsJson::Params::ComplexError
+      def self.build(params, context:)
+        Params::ComplexError.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('ComplexError')
@@ -88,8 +94,13 @@ module RailsJson
     end
 
     class ConstantAndVariableQueryString
-      TYPES_CLASS = RailsJson::Types::ConstantAndVariableQueryStringOutput
-      PARAMS_CLASS = RailsJson::Params::ConstantAndVariableQueryStringOutput
+      def self.build(params, context:)
+        Params::ConstantAndVariableQueryStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ConstantAndVariableQueryStringOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -103,8 +114,13 @@ module RailsJson
     end
 
     class ConstantQueryString
-      TYPES_CLASS = RailsJson::Types::ConstantQueryStringOutput
-      PARAMS_CLASS = RailsJson::Params::ConstantQueryStringOutput
+      def self.build(params, context:)
+        Params::ConstantQueryStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ConstantQueryStringOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -225,8 +241,13 @@ module RailsJson
     end
 
     class DocumentType
-      TYPES_CLASS = RailsJson::Types::DocumentTypeOutput
-      PARAMS_CLASS = RailsJson::Params::DocumentTypeOutput
+      def self.build(params, context:)
+        Params::DocumentTypeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DocumentTypeOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -246,8 +267,13 @@ module RailsJson
     end
 
     class DocumentTypeAsPayload
-      TYPES_CLASS = RailsJson::Types::DocumentTypeAsPayloadOutput
-      PARAMS_CLASS = RailsJson::Params::DocumentTypeAsPayloadOutput
+      def self.build(params, context:)
+        Params::DocumentTypeAsPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DocumentTypeAsPayloadOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -264,8 +290,13 @@ module RailsJson
     end
 
     class EmptyOperation
-      TYPES_CLASS = RailsJson::Types::EmptyOperationOutput
-      PARAMS_CLASS = RailsJson::Params::EmptyOperationOutput
+      def self.build(params, context:)
+        Params::EmptyOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EmptyOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -294,8 +325,13 @@ module RailsJson
     end
 
     class EndpointOperation
-      TYPES_CLASS = RailsJson::Types::EndpointOperationOutput
-      PARAMS_CLASS = RailsJson::Params::EndpointOperationOutput
+      def self.build(params, context:)
+        Params::EndpointOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -309,8 +345,13 @@ module RailsJson
     end
 
     class EndpointWithHostLabelOperation
-      TYPES_CLASS = RailsJson::Types::EndpointWithHostLabelOperationOutput
-      PARAMS_CLASS = RailsJson::Params::EndpointWithHostLabelOperationOutput
+      def self.build(params, context:)
+        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -324,8 +365,9 @@ module RailsJson
     end
 
     class ErrorWithMembers
-      ERROR_CLASS = RailsJson::Errors::ErrorWithMembers
-      PARAMS_CLASS = RailsJson::Params::ErrorWithMembers
+      def self.build(params, context:)
+        Params::ErrorWithMembers.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('ErrorWithMembers')
@@ -357,8 +399,9 @@ module RailsJson
     end
 
     class ErrorWithoutMembers
-      ERROR_CLASS = RailsJson::Errors::ErrorWithoutMembers
-      PARAMS_CLASS = RailsJson::Params::ErrorWithoutMembers
+      def self.build(params, context:)
+        Params::ErrorWithoutMembers.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('ErrorWithoutMembers')
@@ -465,8 +508,13 @@ module RailsJson
     end
 
     class GreetingWithErrors
-      TYPES_CLASS = RailsJson::Types::GreetingWithErrorsOutput
-      PARAMS_CLASS = RailsJson::Params::GreetingWithErrorsOutput
+      def self.build(params, context:)
+        Params::GreetingWithErrorsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GreetingWithErrorsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -484,8 +532,13 @@ module RailsJson
     end
 
     class HttpPayloadTraits
-      TYPES_CLASS = RailsJson::Types::HttpPayloadTraitsOutput
-      PARAMS_CLASS = RailsJson::Params::HttpPayloadTraitsOutput
+      def self.build(params, context:)
+        Params::HttpPayloadTraitsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadTraitsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -504,8 +557,13 @@ module RailsJson
     end
 
     class HttpPayloadTraitsWithMediaType
-      TYPES_CLASS = RailsJson::Types::HttpPayloadTraitsWithMediaTypeOutput
-      PARAMS_CLASS = RailsJson::Params::HttpPayloadTraitsWithMediaTypeOutput
+      def self.build(params, context:)
+        Params::HttpPayloadTraitsWithMediaTypeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadTraitsWithMediaTypeOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -524,8 +582,13 @@ module RailsJson
     end
 
     class HttpPayloadWithStructure
-      TYPES_CLASS = RailsJson::Types::HttpPayloadWithStructureOutput
-      PARAMS_CLASS = RailsJson::Params::HttpPayloadWithStructureOutput
+      def self.build(params, context:)
+        Params::HttpPayloadWithStructureOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadWithStructureOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -543,8 +606,13 @@ module RailsJson
     end
 
     class HttpPrefixHeaders
-      TYPES_CLASS = RailsJson::Types::HttpPrefixHeadersOutput
-      PARAMS_CLASS = RailsJson::Params::HttpPrefixHeadersOutput
+      def self.build(params, context:)
+        Params::HttpPrefixHeadersOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPrefixHeadersOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -564,8 +632,13 @@ module RailsJson
     end
 
     class HttpPrefixHeadersInResponse
-      TYPES_CLASS = RailsJson::Types::HttpPrefixHeadersInResponseOutput
-      PARAMS_CLASS = RailsJson::Params::HttpPrefixHeadersInResponseOutput
+      def self.build(params, context:)
+        Params::HttpPrefixHeadersInResponseOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPrefixHeadersInResponseOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -583,8 +656,13 @@ module RailsJson
     end
 
     class HttpRequestWithFloatLabels
-      TYPES_CLASS = RailsJson::Types::HttpRequestWithFloatLabelsOutput
-      PARAMS_CLASS = RailsJson::Params::HttpRequestWithFloatLabelsOutput
+      def self.build(params, context:)
+        Params::HttpRequestWithFloatLabelsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithFloatLabelsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -598,8 +676,13 @@ module RailsJson
     end
 
     class HttpRequestWithGreedyLabelInPath
-      TYPES_CLASS = RailsJson::Types::HttpRequestWithGreedyLabelInPathOutput
-      PARAMS_CLASS = RailsJson::Params::HttpRequestWithGreedyLabelInPathOutput
+      def self.build(params, context:)
+        Params::HttpRequestWithGreedyLabelInPathOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithGreedyLabelInPathOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -613,8 +696,13 @@ module RailsJson
     end
 
     class HttpRequestWithLabels
-      TYPES_CLASS = RailsJson::Types::HttpRequestWithLabelsOutput
-      PARAMS_CLASS = RailsJson::Params::HttpRequestWithLabelsOutput
+      def self.build(params, context:)
+        Params::HttpRequestWithLabelsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithLabelsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -628,8 +716,13 @@ module RailsJson
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
-      TYPES_CLASS = RailsJson::Types::HttpRequestWithLabelsAndTimestampFormatOutput
-      PARAMS_CLASS = RailsJson::Params::HttpRequestWithLabelsAndTimestampFormatOutput
+      def self.build(params, context:)
+        Params::HttpRequestWithLabelsAndTimestampFormatOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithLabelsAndTimestampFormatOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -643,8 +736,13 @@ module RailsJson
     end
 
     class HttpResponseCode
-      TYPES_CLASS = RailsJson::Types::HttpResponseCodeOutput
-      PARAMS_CLASS = RailsJson::Params::HttpResponseCodeOutput
+      def self.build(params, context:)
+        Params::HttpResponseCodeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpResponseCodeOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -660,8 +758,13 @@ module RailsJson
     end
 
     class IgnoreQueryParamsInResponse
-      TYPES_CLASS = RailsJson::Types::IgnoreQueryParamsInResponseOutput
-      PARAMS_CLASS = RailsJson::Params::IgnoreQueryParamsInResponseOutput
+      def self.build(params, context:)
+        Params::IgnoreQueryParamsInResponseOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::IgnoreQueryParamsInResponseOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -676,8 +779,13 @@ module RailsJson
     end
 
     class InputAndOutputWithHeaders
-      TYPES_CLASS = RailsJson::Types::InputAndOutputWithHeadersOutput
-      PARAMS_CLASS = RailsJson::Params::InputAndOutputWithHeadersOutput
+      def self.build(params, context:)
+        Params::InputAndOutputWithHeadersOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::InputAndOutputWithHeadersOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -772,8 +880,9 @@ module RailsJson
     end
 
     class InvalidGreeting
-      ERROR_CLASS = RailsJson::Errors::InvalidGreeting
-      PARAMS_CLASS = RailsJson::Params::InvalidGreeting
+      def self.build(params, context:)
+        Params::InvalidGreeting.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('InvalidGreeting')
@@ -793,8 +902,13 @@ module RailsJson
     end
 
     class JsonEnums
-      TYPES_CLASS = RailsJson::Types::JsonEnumsOutput
-      PARAMS_CLASS = RailsJson::Params::JsonEnumsOutput
+      def self.build(params, context:)
+        Params::JsonEnumsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonEnumsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -822,8 +936,13 @@ module RailsJson
     end
 
     class JsonMaps
-      TYPES_CLASS = RailsJson::Types::JsonMapsOutput
-      PARAMS_CLASS = RailsJson::Params::JsonMapsOutput
+      def self.build(params, context:)
+        Params::JsonMapsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonMapsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -859,8 +978,13 @@ module RailsJson
     end
 
     class JsonUnions
-      TYPES_CLASS = RailsJson::Types::JsonUnionsOutput
-      PARAMS_CLASS = RailsJson::Params::JsonUnionsOutput
+      def self.build(params, context:)
+        Params::JsonUnionsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonUnionsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -945,8 +1069,13 @@ module RailsJson
     end
 
     class KitchenSinkOperation
-      TYPES_CLASS = RailsJson::Types::KitchenSinkOperationOutput
-      PARAMS_CLASS = RailsJson::Params::KitchenSinkOperationOutput
+      def self.build(params, context:)
+        Params::KitchenSinkOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::KitchenSinkOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1204,8 +1333,13 @@ module RailsJson
     end
 
     class MediaTypeHeader
-      TYPES_CLASS = RailsJson::Types::MediaTypeHeaderOutput
-      PARAMS_CLASS = RailsJson::Params::MediaTypeHeaderOutput
+      def self.build(params, context:)
+        Params::MediaTypeHeaderOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MediaTypeHeaderOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1262,8 +1396,13 @@ module RailsJson
     end
 
     class NestedAttributesOperation
-      TYPES_CLASS = RailsJson::Types::NestedAttributesOperationOutput
-      PARAMS_CLASS = RailsJson::Params::NestedAttributesOperationOutput
+      def self.build(params, context:)
+        Params::NestedAttributesOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NestedAttributesOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1300,8 +1439,13 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersClient
-      TYPES_CLASS = RailsJson::Types::NullAndEmptyHeadersClientOutput
-      PARAMS_CLASS = RailsJson::Params::NullAndEmptyHeadersClientOutput
+      def self.build(params, context:)
+        Params::NullAndEmptyHeadersClientOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NullAndEmptyHeadersClientOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1326,8 +1470,13 @@ module RailsJson
     end
 
     class NullOperation
-      TYPES_CLASS = RailsJson::Types::NullOperationOutput
-      PARAMS_CLASS = RailsJson::Params::NullOperationOutput
+      def self.build(params, context:)
+        Params::NullOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NullOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1349,8 +1498,13 @@ module RailsJson
     end
 
     class OmitsNullSerializesEmptyString
-      TYPES_CLASS = RailsJson::Types::OmitsNullSerializesEmptyStringOutput
-      PARAMS_CLASS = RailsJson::Params::OmitsNullSerializesEmptyStringOutput
+      def self.build(params, context:)
+        Params::OmitsNullSerializesEmptyStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OmitsNullSerializesEmptyStringOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1364,8 +1518,13 @@ module RailsJson
     end
 
     class OperationWithOptionalInputOutput
-      TYPES_CLASS = RailsJson::Types::OperationWithOptionalInputOutputOutput
-      PARAMS_CLASS = RailsJson::Params::OperationWithOptionalInputOutputOutput
+      def self.build(params, context:)
+        Params::OperationWithOptionalInputOutputOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OperationWithOptionalInputOutputOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1383,8 +1542,13 @@ module RailsJson
     end
 
     class QueryIdempotencyTokenAutoFill
-      TYPES_CLASS = RailsJson::Types::QueryIdempotencyTokenAutoFillOutput
-      PARAMS_CLASS = RailsJson::Params::QueryIdempotencyTokenAutoFillOutput
+      def self.build(params, context:)
+        Params::QueryIdempotencyTokenAutoFillOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::QueryIdempotencyTokenAutoFillOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1398,8 +1562,13 @@ module RailsJson
     end
 
     class QueryParamsAsStringListMap
-      TYPES_CLASS = RailsJson::Types::QueryParamsAsStringListMapOutput
-      PARAMS_CLASS = RailsJson::Params::QueryParamsAsStringListMapOutput
+      def self.build(params, context:)
+        Params::QueryParamsAsStringListMapOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::QueryParamsAsStringListMapOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1544,8 +1713,13 @@ module RailsJson
     end
 
     class StreamingOperation
-      TYPES_CLASS = RailsJson::Types::StreamingOperationOutput
-      PARAMS_CLASS = RailsJson::Params::StreamingOperationOutput
+      def self.build(params, context:)
+        Params::StreamingOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1635,8 +1809,13 @@ module RailsJson
     end
 
     class TimestampFormatHeaders
-      TYPES_CLASS = RailsJson::Types::TimestampFormatHeadersOutput
-      PARAMS_CLASS = RailsJson::Params::TimestampFormatHeadersOutput
+      def self.build(params, context:)
+        Params::TimestampFormatHeadersOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TimestampFormatHeadersOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -1700,8 +1879,13 @@ module RailsJson
     end
 
     class Operation____789BadName
-      TYPES_CLASS = RailsJson::Types::Struct____789BadNameOutput
-      PARAMS_CLASS = RailsJson::Params::Struct____789BadNameOutput
+      def self.build(params, context:)
+        Params::Struct____789BadNameOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::Struct____789BadNameOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {

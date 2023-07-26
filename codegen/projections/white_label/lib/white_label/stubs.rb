@@ -12,8 +12,9 @@ module WhiteLabel
   module Stubs
 
     class ClientError
-      ERROR_CLASS = WhiteLabel::Errors::ClientError
-      PARAMS_CLASS = WhiteLabel::Params::ClientError
+      def self.build(params, context:)
+        Params::ClientError.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('ClientError')
@@ -30,8 +31,13 @@ module WhiteLabel
     end
 
     class DefaultsTest
-      TYPES_CLASS = WhiteLabel::Types::DefaultsTestOutput
-      PARAMS_CLASS = WhiteLabel::Params::DefaultsTestOutput
+      def self.build(params, context:)
+        Params::DefaultsTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DefaultsTestOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -76,8 +82,13 @@ module WhiteLabel
     end
 
     class EndpointOperation
-      TYPES_CLASS = WhiteLabel::Types::EndpointOperationOutput
-      PARAMS_CLASS = WhiteLabel::Params::EndpointOperationOutput
+      def self.build(params, context:)
+        Params::EndpointOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -91,8 +102,13 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
-      TYPES_CLASS = WhiteLabel::Types::EndpointWithHostLabelOperationOutput
-      PARAMS_CLASS = WhiteLabel::Params::EndpointWithHostLabelOperationOutput
+      def self.build(params, context:)
+        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -117,8 +133,13 @@ module WhiteLabel
     end
 
     class KitchenSink
-      TYPES_CLASS = WhiteLabel::Types::KitchenSinkOutput
-      PARAMS_CLASS = WhiteLabel::Params::KitchenSinkOutput
+      def self.build(params, context:)
+        Params::KitchenSinkOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::KitchenSinkOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -186,8 +207,13 @@ module WhiteLabel
     end
 
     class MixinTest
-      TYPES_CLASS = WhiteLabel::Types::MixinTestOutput
-      PARAMS_CLASS = WhiteLabel::Params::MixinTestOutput
+      def self.build(params, context:)
+        Params::MixinTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MixinTestOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -202,8 +228,13 @@ module WhiteLabel
     end
 
     class PaginatorsTest
-      TYPES_CLASS = WhiteLabel::Types::PaginatorsTestOperationOutput
-      PARAMS_CLASS = WhiteLabel::Params::PaginatorsTestOperationOutput
+      def self.build(params, context:)
+        Params::PaginatorsTestOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PaginatorsTestOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -218,8 +249,13 @@ module WhiteLabel
     end
 
     class PaginatorsTestWithItems
-      TYPES_CLASS = WhiteLabel::Types::PaginatorsTestWithItemsOutput
-      PARAMS_CLASS = WhiteLabel::Params::PaginatorsTestWithItemsOutput
+      def self.build(params, context:)
+        Params::PaginatorsTestWithItemsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PaginatorsTestWithItemsOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -234,8 +270,13 @@ module WhiteLabel
     end
 
     class RequestCompressionOperation
-      TYPES_CLASS = WhiteLabel::Types::RequestCompressionOperationOutput
-      PARAMS_CLASS = WhiteLabel::Params::RequestCompressionOperationOutput
+      def self.build(params, context:)
+        Params::RequestCompressionOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::RequestCompressionOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -249,8 +290,13 @@ module WhiteLabel
     end
 
     class RequestCompressionStreamingOperation
-      TYPES_CLASS = WhiteLabel::Types::RequestCompressionStreamingOperationOutput
-      PARAMS_CLASS = WhiteLabel::Params::RequestCompressionStreamingOperationOutput
+      def self.build(params, context:)
+        Params::RequestCompressionStreamingOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::RequestCompressionStreamingOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -275,8 +321,9 @@ module WhiteLabel
     end
 
     class ServerError
-      ERROR_CLASS = WhiteLabel::Errors::ServerError
-      PARAMS_CLASS = WhiteLabel::Params::ServerError
+      def self.build(params, context:)
+        Params::ServerError.build(params, context: context)
+      end
 
       def self.default(visited = [])
         return nil if visited.include?('ServerError')
@@ -292,8 +339,13 @@ module WhiteLabel
     end
 
     class StreamingOperation
-      TYPES_CLASS = WhiteLabel::Types::StreamingOperationOutput
-      PARAMS_CLASS = WhiteLabel::Params::StreamingOperationOutput
+      def self.build(params, context:)
+        Params::StreamingOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingOperationOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -309,8 +361,13 @@ module WhiteLabel
     end
 
     class StreamingWithLength
-      TYPES_CLASS = WhiteLabel::Types::StreamingWithLengthOutput
-      PARAMS_CLASS = WhiteLabel::Params::StreamingWithLengthOutput
+      def self.build(params, context:)
+        Params::StreamingWithLengthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingWithLengthOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -346,8 +403,13 @@ module WhiteLabel
     end
 
     class WaitersTest
-      TYPES_CLASS = WhiteLabel::Types::WaitersTestOutput
-      PARAMS_CLASS = WhiteLabel::Params::WaitersTestOutput
+      def self.build(params, context:)
+        Params::WaitersTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::WaitersTestOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {
@@ -361,8 +423,13 @@ module WhiteLabel
     end
 
     class Operation____PaginatorsTestWithBadNames
-      TYPES_CLASS = WhiteLabel::Types::Struct____PaginatorsTestWithBadNamesOutput
-      PARAMS_CLASS = WhiteLabel::Params::Struct____PaginatorsTestWithBadNamesOutput
+      def self.build(params, context:)
+        Params::Struct____PaginatorsTestWithBadNamesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::Struct____PaginatorsTestWithBadNamesOutput.validate!(output, context: context)
+      end
 
       def self.default(visited = [])
         {

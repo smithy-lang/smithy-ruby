@@ -118,55 +118,49 @@ module Hearth
       end
 
       def apply_stub_hash_data(stub, context)
-        @stub_data_class.stub(
-          context.response,
-          stub: @stub_data_class::PARAMS_CLASS.build(
-            stub[:data],
-            context: 'stub'
-          )
-        )
+        output = @stub_data_class.build(stub[:data], context: 'stub')
+        @stub_data_class.validate!(output, context: 'stub')
+        @stub_data_class.stub(context.response, stub: output)
       end
 
       def apply_stub_hash_error(stub, context)
-        klass = stub[:error][:class]
-        data = stub[:error][:data] || {}
-        raise ArgumentError, 'Missing stub error class' unless klass
-
-        error_class = @stub_error_classes.find do |stub_error_class|
-          klass == stub_error_class::ERROR_CLASS
-        end
-        raise ArgumentError, 'Unsupported stub error class' unless error_class
-
-        error_class.stub(
-          context.response,
-          stub: error_class::PARAMS_CLASS.build(
-            data,
-            context: 'stub'
-          )
+        stub_error_class = stub_error_class(stub[:error][:class])
+        output = stub_error_class.build(
+          stub[:error][:data] || {},
+          context: 'stub'
         )
+        stub_error_class.validate!(output, context: 'stub')
+        stub_error_class.stub(context.response, stub: output)
+      end
+
+      def stub_error_class(error_class)
+        raise ArgumentError, 'Missing stub error class' unless error_class
+
+        unless error_class.is_a?(Class)
+          raise ArgumentError, 'Stub error class must be a class'
+        end
+
+        error_base_name = error_class.name.split('::').last
+        stub_class = @stub_error_classes.find do |stub_error_class|
+          stub_base_name = stub_error_class.name.split('::').last
+          error_base_name == stub_base_name
+        end
+        raise ArgumentError, 'Unsupported stub error class' unless stub_class
+
+        stub_class
       end
 
       def apply_stub_nil(context)
-        @stub_data_class.stub(
-          context.response,
-          stub: @stub_data_class::PARAMS_CLASS.build(
-            @stub_data_class.default,
-            context: 'stub'
-          )
+        output = @stub_data_class.build(
+          @stub_data_class.default,
+          context: 'stub'
         )
+        @stub_data_class.stub(context.response, stub: output)
       end
 
       def apply_stub_hearth_structure(stub, context)
-        type = @stub_data_class::TYPES_CLASS
-        unless stub.is_a?(type)
-          raise ArgumentError,
-                "Only stubs of type #{type} are supported for this operation"
-        end
-
-        @stub_data_class.stub(
-          context.response,
-          stub: stub
-        )
+        @stub_data_class.validate!(stub, context: 'stub')
+        @stub_data_class.stub(context.response, stub: stub)
       end
     end
   end
