@@ -16,6 +16,7 @@ module Benchmark
         {
           empty_operation: {
             setup: proc do |client|
+              client.stub_responses(:empty_operation, data: {})
               {}
             end,
             test: proc do |client, req|
@@ -32,7 +33,7 @@ module Benchmark
           },
           kitchen_sink_small: {
             setup: proc do |client|
-              client.stub_responses(:kitchen_sink_operation, [{}])
+              client.stub_responses(:kitchen_sink_operation, data: {})
               {}
             end,
             test: proc do |client, req|
@@ -90,7 +91,7 @@ module Benchmark
                 timestamp: Time.now,
                 unix_timestamp: Time.now
               }
-              client.stub_responses(:kitchen_sink_operation, [kitchen_sink])
+              client.stub_responses(:kitchen_sink_operation, data: kitchen_sink)
               kitchen_sink
             end,
             test: proc do |client, req|

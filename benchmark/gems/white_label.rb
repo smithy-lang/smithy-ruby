@@ -16,7 +16,7 @@ module Benchmark
         {
           kitchen_sink_small: {
             setup: proc do |client|
-              client.stub_responses(:kitchen_sink, [{}])
+              client.stub_responses(:kitchen_sink, data: {})
               {string: "test string"}
             end,
             test: proc do |client, req|
