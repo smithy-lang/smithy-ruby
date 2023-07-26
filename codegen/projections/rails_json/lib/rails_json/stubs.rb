@@ -13,9 +13,16 @@ module RailsJson
   # @api private
   module Stubs
 
-    # Operation Stubber for AllQueryStringTypes
     class AllQueryStringTypes
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::AllQueryStringTypesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::AllQueryStringTypesOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -26,9 +33,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for BooleanList
     class BooleanList
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('BooleanList')
         visited = visited + ['BooleanList']
         [
@@ -46,9 +52,59 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for ConstantAndVariableQueryString
+    class ComplexError
+      def self.build(params, context:)
+        Params::ComplexError.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ComplexError.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          top_level: 'top_level',
+          nested: ComplexNestedErrorData.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:top_level] = stub[:top_level] unless stub[:top_level].nil?
+        data[:nested] = Stubs::ComplexNestedErrorData.stub(stub[:nested]) unless stub[:nested].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class ComplexNestedErrorData
+      def self.default(visited = [])
+        return nil if visited.include?('ComplexNestedErrorData')
+        visited = visited + ['ComplexNestedErrorData']
+        {
+          foo: 'foo',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::ComplexNestedErrorData.new
+        data = {}
+        data['Fooooo'] = stub[:foo] unless stub[:foo].nil?
+        data
+      end
+    end
+
     class ConstantAndVariableQueryString
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::ConstantAndVariableQueryStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ConstantAndVariableQueryStringOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -59,9 +115,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for ConstantQueryString
     class ConstantQueryString
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::ConstantQueryStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ConstantQueryStringOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -72,13 +135,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseBooleanMap
     class DenseBooleanMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('DenseBooleanMap')
         visited = visited + ['DenseBooleanMap']
         {
-          test_key: false
+          key: false
         }
       end
 
@@ -92,13 +154,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseNumberMap
     class DenseNumberMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('DenseNumberMap')
         visited = visited + ['DenseNumberMap']
         {
-          test_key: 1
+          key: 1
         }
       end
 
@@ -112,13 +173,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseSetMap
     class DenseSetMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('DenseSetMap')
         visited = visited + ['DenseSetMap']
         {
-          test_key: StringSet.default(visited)
+          key: StringSet.default(visited)
         }
       end
 
@@ -132,13 +192,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseStringMap
     class DenseStringMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('DenseStringMap')
         visited = visited + ['DenseStringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -152,13 +211,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for DenseStructMap
     class DenseStructMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('DenseStructMap')
         visited = visited + ['DenseStructMap']
         {
-          test_key: GreetingStruct.default(visited)
+          key: GreetingStruct.default(visited)
         }
       end
 
@@ -172,9 +230,8 @@ module RailsJson
       end
     end
 
-    # Document Type Stubber for Document
     class Document
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Document')
         visited = visited + ['Document']
         { 'Document' => [0, 1, 2] }
@@ -185,9 +242,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for DocumentType
     class DocumentType
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::DocumentTypeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DocumentTypeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           string_value: 'string_value',
           document_value: nil,
@@ -204,9 +268,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for DocumentTypeAsPayload
     class DocumentTypeAsPayload
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::DocumentTypeAsPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DocumentTypeAsPayloadOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           document_value: nil,
         }
@@ -220,9 +291,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for EmptyOperation
     class EmptyOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::EmptyOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EmptyOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -233,9 +311,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for EmptyStruct
     class EmptyStruct
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('EmptyStruct')
         visited = visited + ['EmptyStruct']
         {
@@ -249,9 +326,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for EndpointOperation
     class EndpointOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::EndpointOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -262,9 +346,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -275,9 +366,64 @@ module RailsJson
       end
     end
 
-    # List Stubber for FooEnumList
+    class ErrorWithMembers
+      def self.build(params, context:)
+        Params::ErrorWithMembers.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ErrorWithMembers.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          code: 'code',
+          complex_data: KitchenSink.default(visited),
+          integer_field: 1,
+          list_field: ListOfStrings.default(visited),
+          map_field: MapOfStrings.default(visited),
+          message: 'message',
+          string_field: 'string_field',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:code] = stub[:code] unless stub[:code].nil?
+        data[:complex_data] = Stubs::KitchenSink.stub(stub[:complex_data]) unless stub[:complex_data].nil?
+        data[:integer_field] = stub[:integer_field] unless stub[:integer_field].nil?
+        data[:list_field] = Stubs::ListOfStrings.stub(stub[:list_field]) unless stub[:list_field].nil?
+        data[:map_field] = Stubs::MapOfStrings.stub(stub[:map_field]) unless stub[:map_field].nil?
+        data[:message] = stub[:message] unless stub[:message].nil?
+        data[:string_field] = stub[:string_field] unless stub[:string_field].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class ErrorWithoutMembers
+      def self.build(params, context:)
+        Params::ErrorWithoutMembers.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ErrorWithoutMembers.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 500
+      end
+    end
+
     class FooEnumList
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('FooEnumList')
         visited = visited + ['FooEnumList']
         [
@@ -295,13 +441,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for FooEnumMap
     class FooEnumMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('FooEnumMap')
         visited = visited + ['FooEnumMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -315,9 +460,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for FooEnumSet
     class FooEnumSet
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('FooEnumSet')
         visited = visited + ['FooEnumSet']
         [
@@ -335,9 +479,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for GreetingStruct
     class RenamedGreeting
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('RenamedGreeting')
         visited = visited + ['RenamedGreeting']
         {
@@ -353,9 +496,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for GreetingStruct
     class GreetingStruct
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('GreetingStruct')
         visited = visited + ['GreetingStruct']
         {
@@ -371,9 +513,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for GreetingWithErrors
     class GreetingWithErrors
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::GreetingWithErrorsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::GreetingWithErrorsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           greeting: 'greeting',
         }
@@ -388,9 +537,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPayloadTraits
     class HttpPayloadTraits
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpPayloadTraitsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadTraitsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           foo: 'foo',
           blob: 'blob',
@@ -406,9 +562,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPayloadTraitsWithMediaType
     class HttpPayloadTraitsWithMediaType
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpPayloadTraitsWithMediaTypeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadTraitsWithMediaTypeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           foo: 'foo',
           blob: 'blob',
@@ -424,9 +587,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPayloadWithStructure
     class HttpPayloadWithStructure
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpPayloadWithStructureOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadWithStructureOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           nested: NestedPayload.default(visited),
         }
@@ -441,9 +611,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPrefixHeaders
     class HttpPrefixHeaders
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpPrefixHeadersOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPrefixHeadersOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           foo: 'foo',
           foo_map: StringMap.default(visited),
@@ -460,9 +637,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpPrefixHeadersInResponse
     class HttpPrefixHeadersInResponse
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpPrefixHeadersInResponseOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPrefixHeadersInResponseOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           prefix_headers: StringMap.default(visited),
         }
@@ -477,9 +661,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithFloatLabels
     class HttpRequestWithFloatLabels
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpRequestWithFloatLabelsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithFloatLabelsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -490,9 +681,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithGreedyLabelInPath
     class HttpRequestWithGreedyLabelInPath
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpRequestWithGreedyLabelInPathOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithGreedyLabelInPathOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -503,9 +701,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithLabels
     class HttpRequestWithLabels
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpRequestWithLabelsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithLabelsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -516,9 +721,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpRequestWithLabelsAndTimestampFormat
     class HttpRequestWithLabelsAndTimestampFormat
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpRequestWithLabelsAndTimestampFormatOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithLabelsAndTimestampFormatOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -529,9 +741,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for HttpResponseCode
     class HttpResponseCode
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::HttpResponseCodeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpResponseCodeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           status: 1,
         }
@@ -544,9 +763,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for IgnoreQueryParamsInResponse
     class IgnoreQueryParamsInResponse
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::IgnoreQueryParamsInResponseOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::IgnoreQueryParamsInResponseOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           baz: 'baz',
         }
@@ -558,9 +784,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for InputAndOutputWithHeaders
     class InputAndOutputWithHeaders
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::InputAndOutputWithHeadersOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::InputAndOutputWithHeadersOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           header_string: 'header_string',
           header_byte: 1,
@@ -633,9 +866,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for IntegerList
     class IntegerList
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('IntegerList')
         visited = visited + ['IntegerList']
         [
@@ -653,9 +885,40 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for JsonEnums
+    class InvalidGreeting
+      def self.build(params, context:)
+        Params::InvalidGreeting.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::InvalidGreeting.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          message: 'message',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:message] = stub[:message] unless stub[:message].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class JsonEnums
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::JsonEnumsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonEnumsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           foo_enum1: 'foo_enum1',
           foo_enum2: 'foo_enum2',
@@ -680,9 +943,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for JsonMaps
     class JsonMaps
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::JsonMapsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonMapsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           dense_struct_map: DenseStructMap.default(visited),
           sparse_struct_map: SparseStructMap.default(visited),
@@ -715,9 +985,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for JsonUnions
     class JsonUnions
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::JsonUnionsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonUnionsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           contents: MyUnion.default(visited),
         }
@@ -732,9 +1009,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for KitchenSink
     class KitchenSink
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('KitchenSink')
         visited = visited + ['KitchenSink']
         {
@@ -800,9 +1076,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for KitchenSinkOperation
     class KitchenSinkOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::KitchenSinkOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::KitchenSinkOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           blob: 'blob',
           boolean: false,
@@ -867,9 +1150,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfKitchenSinks
     class ListOfKitchenSinks
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfKitchenSinks')
         visited = visited + ['ListOfKitchenSinks']
         [
@@ -887,9 +1169,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfListOfStrings
     class ListOfListOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfListOfStrings')
         visited = visited + ['ListOfListOfStrings']
         [
@@ -907,9 +1188,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfMapsOfStrings
     class ListOfMapsOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfMapsOfStrings')
         visited = visited + ['ListOfMapsOfStrings']
         [
@@ -927,9 +1207,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfStrings
     class ListOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfStrings')
         visited = visited + ['ListOfStrings']
         [
@@ -947,9 +1226,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for ListOfStructs
     class ListOfStructs
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfStructs')
         visited = visited + ['ListOfStructs']
         [
@@ -967,13 +1245,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfKitchenSinks
     class MapOfKitchenSinks
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfKitchenSinks')
         visited = visited + ['MapOfKitchenSinks']
         {
-          test_key: KitchenSink.default(visited)
+          key: KitchenSink.default(visited)
         }
       end
 
@@ -987,13 +1264,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfListsOfStrings
     class MapOfListsOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfListsOfStrings')
         visited = visited + ['MapOfListsOfStrings']
         {
-          test_key: ListOfStrings.default(visited)
+          key: ListOfStrings.default(visited)
         }
       end
 
@@ -1007,13 +1283,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfMapOfStrings
     class MapOfMapOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfMapOfStrings')
         visited = visited + ['MapOfMapOfStrings']
         {
-          test_key: MapOfStrings.default(visited)
+          key: MapOfStrings.default(visited)
         }
       end
 
@@ -1027,13 +1302,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfStrings
     class MapOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfStrings')
         visited = visited + ['MapOfStrings']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -1047,13 +1321,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for MapOfStructs
     class MapOfStructs
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          test_key: SimpleStruct.default(visited)
+          key: SimpleStruct.default(visited)
         }
       end
 
@@ -1067,9 +1340,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for MediaTypeHeader
     class MediaTypeHeader
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::MediaTypeHeaderOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MediaTypeHeaderOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           json: 'json',
         }
@@ -1082,9 +1362,8 @@ module RailsJson
       end
     end
 
-    # Union Stubber for MyUnion
     class MyUnion
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MyUnion')
         visited = visited + ['MyUnion']
         {
@@ -1124,9 +1403,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for NestedAttributesOperation
     class NestedAttributesOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::NestedAttributesOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NestedAttributesOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           value: 'value',
         }
@@ -1141,9 +1427,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for NestedPayload
     class NestedPayload
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('NestedPayload')
         visited = visited + ['NestedPayload']
         {
@@ -1161,9 +1446,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for NullAndEmptyHeadersClient
     class NullAndEmptyHeadersClient
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::NullAndEmptyHeadersClientOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NullAndEmptyHeadersClientOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           a: 'a',
           b: 'b',
@@ -1185,9 +1477,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for NullOperation
     class NullOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::NullOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NullOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           string: 'string',
           sparse_string_list: SparseStringList.default(visited),
@@ -1206,9 +1505,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for OmitsNullSerializesEmptyString
     class OmitsNullSerializesEmptyString
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::OmitsNullSerializesEmptyStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OmitsNullSerializesEmptyStringOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -1219,9 +1525,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for OperationWithOptionalInputOutput
     class OperationWithOptionalInputOutput
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::OperationWithOptionalInputOutputOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OperationWithOptionalInputOutputOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           value: 'value',
         }
@@ -1236,9 +1549,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for QueryIdempotencyTokenAutoFill
     class QueryIdempotencyTokenAutoFill
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::QueryIdempotencyTokenAutoFillOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::QueryIdempotencyTokenAutoFillOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -1249,9 +1569,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::QueryParamsAsStringListMapOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::QueryParamsAsStringListMapOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -1262,9 +1589,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for SimpleStruct
     class SimpleStruct
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SimpleStruct')
         visited = visited + ['SimpleStruct']
         {
@@ -1280,13 +1606,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseBooleanMap
     class SparseBooleanMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseBooleanMap')
         visited = visited + ['SparseBooleanMap']
         {
-          test_key: false
+          key: false
         }
       end
 
@@ -1300,13 +1625,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseNumberMap
     class SparseNumberMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseNumberMap')
         visited = visited + ['SparseNumberMap']
         {
-          test_key: 1
+          key: 1
         }
       end
 
@@ -1320,13 +1644,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseSetMap
     class SparseSetMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseSetMap')
         visited = visited + ['SparseSetMap']
         {
-          test_key: StringSet.default(visited)
+          key: StringSet.default(visited)
         }
       end
 
@@ -1340,9 +1663,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for SparseStringList
     class SparseStringList
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseStringList')
         visited = visited + ['SparseStringList']
         [
@@ -1360,13 +1682,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseStringMap
     class SparseStringMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseStringMap')
         visited = visited + ['SparseStringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -1380,13 +1701,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for SparseStructMap
     class SparseStructMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('SparseStructMap')
         visited = visited + ['SparseStructMap']
         {
-          test_key: GreetingStruct.default(visited)
+          key: GreetingStruct.default(visited)
         }
       end
 
@@ -1400,9 +1720,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for StreamingOperation
     class StreamingOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::StreamingOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           output: 'output',
         }
@@ -1415,9 +1742,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for StringList
     class StringList
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('StringList')
         visited = visited + ['StringList']
         [
@@ -1435,13 +1761,12 @@ module RailsJson
       end
     end
 
-    # Map Stubber for StringMap
     class StringMap
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('StringMap')
         visited = visited + ['StringMap']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
@@ -1455,9 +1780,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for StringSet
     class StringSet
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('StringSet')
         visited = visited + ['StringSet']
         [
@@ -1475,9 +1799,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for StructWithLocationName
     class StructWithLocationName
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('StructWithLocationName')
         visited = visited + ['StructWithLocationName']
         {
@@ -1493,9 +1816,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for TimestampFormatHeaders
     class TimestampFormatHeaders
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::TimestampFormatHeadersOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TimestampFormatHeadersOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           member_epoch_seconds: Time.now,
           member_http_date: Time.now,
@@ -1520,9 +1850,8 @@ module RailsJson
       end
     end
 
-    # List Stubber for TimestampList
     class TimestampList
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('TimestampList')
         visited = visited + ['TimestampList']
         [
@@ -1540,9 +1869,8 @@ module RailsJson
       end
     end
 
-    # Structure Stubber for __456efg
     class Struct____456efg
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Struct____456efg')
         visited = visited + ['Struct____456efg']
         {
@@ -1558,9 +1886,16 @@ module RailsJson
       end
     end
 
-    # Operation Stubber for __789BadName
     class Operation____789BadName
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::Struct____789BadNameOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::Struct____789BadNameOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           member: Struct____456efg.default(visited),
         }

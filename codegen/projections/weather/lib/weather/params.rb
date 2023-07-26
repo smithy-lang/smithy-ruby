@@ -12,7 +12,7 @@ module Weather
   module Params
 
     module Announcements
-      def self.build(params, context: '')
+      def self.build(params, context:)
         return params if params.is_a?(Types::Announcements)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Announcements, context: context)
         unless params.size == 1
@@ -41,7 +41,7 @@ module Weather
     end
 
     module Baz
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Baz, context: context)
         type = Types::Baz.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -52,7 +52,7 @@ module Weather
     end
 
     module CityCoordinates
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CityCoordinates, context: context)
         type = Types::CityCoordinates.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -63,7 +63,7 @@ module Weather
     end
 
     module CitySummaries
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each_with_index do |element, index|
@@ -74,7 +74,7 @@ module Weather
     end
 
     module CitySummary
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CitySummary, context: context)
         type = Types::CitySummary.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -87,7 +87,7 @@ module Weather
     end
 
     module Foo
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Foo, context: context)
         type = Types::Foo.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -98,7 +98,7 @@ module Weather
     end
 
     module GetCityAnnouncementsInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityAnnouncementsInput, context: context)
         type = Types::GetCityAnnouncementsInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -108,7 +108,7 @@ module Weather
     end
 
     module GetCityAnnouncementsOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityAnnouncementsOutput, context: context)
         type = Types::GetCityAnnouncementsOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -119,7 +119,7 @@ module Weather
     end
 
     module GetCityImageInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityImageInput, context: context)
         type = Types::GetCityImageInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -131,7 +131,7 @@ module Weather
     end
 
     module GetCityImageOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityImageOutput, context: context)
         type = Types::GetCityImageOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -145,7 +145,7 @@ module Weather
     end
 
     module GetCityInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityInput, context: context)
         type = Types::GetCityInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -155,7 +155,7 @@ module Weather
     end
 
     module GetCityOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityOutput, context: context)
         type = Types::GetCityOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -167,7 +167,7 @@ module Weather
     end
 
     module GetCurrentTimeInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCurrentTimeInput, context: context)
         type = Types::GetCurrentTimeInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -176,7 +176,7 @@ module Weather
     end
 
     module GetCurrentTimeOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCurrentTimeOutput, context: context)
         type = Types::GetCurrentTimeOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -186,7 +186,7 @@ module Weather
     end
 
     module GetForecastInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetForecastInput, context: context)
         type = Types::GetForecastInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -196,7 +196,7 @@ module Weather
     end
 
     module GetForecastOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetForecastOutput, context: context)
         type = Types::GetForecastOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -207,7 +207,7 @@ module Weather
     end
 
     module ImageType
-      def self.build(params, context: '')
+      def self.build(params, context:)
         return params if params.is_a?(Types::ImageType)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ImageType, context: context)
         unless params.size == 1
@@ -232,7 +232,7 @@ module Weather
     end
 
     module ListCitiesInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListCitiesInput, context: context)
         type = Types::ListCitiesInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -249,7 +249,7 @@ module Weather
     end
 
     module ListCitiesOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListCitiesOutput, context: context)
         type = Types::ListCitiesOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -267,7 +267,7 @@ module Weather
     end
 
     module Message
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Message, context: context)
         type = Types::Message.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -278,7 +278,7 @@ module Weather
     end
 
     module NoSuchResource
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NoSuchResource, context: context)
         type = Types::NoSuchResource.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -289,7 +289,7 @@ module Weather
     end
 
     module OtherStructure
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OtherStructure, context: context)
         type = Types::OtherStructure.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -298,7 +298,7 @@ module Weather
     end
 
     module PNGImage
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PNGImage, context: context)
         type = Types::PNGImage.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -309,7 +309,7 @@ module Weather
     end
 
     module Precipitation
-      def self.build(params, context: '')
+      def self.build(params, context:)
         return params if params.is_a?(Types::Precipitation)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Precipitation, context: context)
         unless params.size == 1
@@ -362,7 +362,7 @@ module Weather
     end
 
     module SparseCitySummaries
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each_with_index do |element, index|
@@ -373,7 +373,7 @@ module Weather
     end
 
     module StringMap
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
@@ -384,7 +384,7 @@ module Weather
     end
 
     module Struct____456efg
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____456efg, context: context)
         type = Types::Struct____456efg.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -394,7 +394,7 @@ module Weather
     end
 
     module Struct____789BadNameInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____789BadNameInput, context: context)
         type = Types::Struct____789BadNameInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -405,7 +405,7 @@ module Weather
     end
 
     module Struct____789BadNameOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____789BadNameOutput, context: context)
         type = Types::Struct____789BadNameOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)

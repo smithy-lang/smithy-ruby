@@ -278,14 +278,14 @@ public abstract class ParserGeneratorBase {
     }
 
     protected void renderParsersForOperation(OperationShape operation, Shape outputShape) {
-
         writer
                 .write("")
                 .write("# Operation Parser for $L", operation.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .call(() -> renderOperationParseMethod(operation, outputShape))
                 .closeBlock("end");
-        LOGGER.finer("Generated parser class for " + operation.getId().getName());
+
+        LOGGER.finer("Generated parser for operation " + operation.getId().getName());
     }
 
     protected void renderErrorParser(Shape s) {
@@ -295,7 +295,8 @@ public abstract class ParserGeneratorBase {
                 .openBlock("class $L", symbolProvider.toSymbol(s).getName())
                 .call(() -> renderErrorParseMethod(s))
                 .closeBlock("end");
-        LOGGER.finer("Generated Error parser for " + s.getId().getName());
+
+        LOGGER.finer("Generated parser for error " + s.getId().getName());
     }
 
     protected void renderStreamingBodyParser(Shape outputShape) {

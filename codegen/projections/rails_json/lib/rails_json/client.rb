@@ -113,9 +113,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::AllQueryStringTypes,
-        stubs: @stubs,
-        params_class: Params::AllQueryStringTypesOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::AllQueryStringTypes,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -178,9 +178,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::ConstantAndVariableQueryString,
-        stubs: @stubs,
-        params_class: Params::ConstantAndVariableQueryStringOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::ConstantAndVariableQueryString,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -243,9 +243,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::ConstantQueryString,
-        stubs: @stubs,
-        params_class: Params::ConstantQueryStringOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::ConstantQueryString,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -315,9 +315,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::DocumentType,
-        stubs: @stubs,
-        params_class: Params::DocumentTypeOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::DocumentType,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -385,9 +385,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::DocumentTypeAsPayload,
-        stubs: @stubs,
-        params_class: Params::DocumentTypeAsPayloadOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::DocumentTypeAsPayload,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -443,9 +443,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EmptyOperation,
-        stubs: @stubs,
-        params_class: Params::EmptyOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::EmptyOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -505,9 +505,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EndpointOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -569,9 +569,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EndpointWithHostLabelOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointWithHostLabelOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointWithHostLabelOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -637,9 +637,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::GreetingWithErrors,
-        stubs: @stubs,
-        params_class: Params::GreetingWithErrorsOutput
+        stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
+        stub_data_class: Stubs::GreetingWithErrors,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -705,9 +705,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpPayloadTraits,
-        stubs: @stubs,
-        params_class: Params::HttpPayloadTraitsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpPayloadTraits,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -771,9 +771,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpPayloadTraitsWithMediaType,
-        stubs: @stubs,
-        params_class: Params::HttpPayloadTraitsWithMediaTypeOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -842,9 +842,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpPayloadWithStructure,
-        stubs: @stubs,
-        params_class: Params::HttpPayloadWithStructureOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpPayloadWithStructure,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -912,9 +912,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpPrefixHeaders,
-        stubs: @stubs,
-        params_class: Params::HttpPrefixHeadersOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpPrefixHeaders,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -974,9 +974,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpPrefixHeadersInResponse,
-        stubs: @stubs,
-        params_class: Params::HttpPrefixHeadersInResponseOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpPrefixHeadersInResponse,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1035,9 +1035,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpRequestWithFloatLabels,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithFloatLabelsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpRequestWithFloatLabels,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1096,9 +1096,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpRequestWithGreedyLabelInPath,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithGreedyLabelInPathOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1172,9 +1172,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpRequestWithLabels,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithLabelsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpRequestWithLabels,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1241,9 +1241,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
-        stubs: @stubs,
-        params_class: Params::HttpRequestWithLabelsAndTimestampFormatOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1300,9 +1300,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::HttpResponseCode,
-        stubs: @stubs,
-        params_class: Params::HttpResponseCodeOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::HttpResponseCode,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1363,9 +1363,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::IgnoreQueryParamsInResponse,
-        stubs: @stubs,
-        params_class: Params::IgnoreQueryParamsInResponseOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::IgnoreQueryParamsInResponse,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1475,9 +1475,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::InputAndOutputWithHeaders,
-        stubs: @stubs,
-        params_class: Params::InputAndOutputWithHeadersOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::InputAndOutputWithHeaders,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1557,9 +1557,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::JsonEnums,
-        stubs: @stubs,
-        params_class: Params::JsonEnumsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::JsonEnums,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1666,9 +1666,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::JsonMaps,
-        stubs: @stubs,
-        params_class: Params::JsonMapsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::JsonMaps,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1766,9 +1766,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::JsonUnions,
-        stubs: @stubs,
-        params_class: Params::JsonUnionsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::JsonUnions,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1932,9 +1932,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::KitchenSinkOperation,
-        stubs: @stubs,
-        params_class: Params::KitchenSinkOperationOutput
+        stub_error_classes: [Stubs::ErrorWithMembers, Stubs::ErrorWithoutMembers],
+        stub_data_class: Stubs::KitchenSinkOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1995,9 +1995,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::MediaTypeHeader,
-        stubs: @stubs,
-        params_class: Params::MediaTypeHeaderOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::MediaTypeHeader,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2058,9 +2058,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::NestedAttributesOperation,
-        stubs: @stubs,
-        params_class: Params::NestedAttributesOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::NestedAttributesOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2130,9 +2130,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::NullAndEmptyHeadersClient,
-        stubs: @stubs,
-        params_class: Params::NullAndEmptyHeadersClientOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::NullAndEmptyHeadersClient,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2201,9 +2201,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::NullOperation,
-        stubs: @stubs,
-        params_class: Params::NullOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::NullOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2264,9 +2264,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::OmitsNullSerializesEmptyString,
-        stubs: @stubs,
-        params_class: Params::OmitsNullSerializesEmptyStringOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::OmitsNullSerializesEmptyString,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2325,9 +2325,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::OperationWithOptionalInputOutput,
-        stubs: @stubs,
-        params_class: Params::OperationWithOptionalInputOutputOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::OperationWithOptionalInputOutput,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2389,9 +2389,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::QueryIdempotencyTokenAutoFill,
-        stubs: @stubs,
-        params_class: Params::QueryIdempotencyTokenAutoFillOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2454,9 +2454,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::QueryParamsAsStringListMap,
-        stubs: @stubs,
-        params_class: Params::QueryParamsAsStringListMapOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::QueryParamsAsStringListMap,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2514,9 +2514,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::StreamingOperation,
-        stubs: @stubs,
-        params_class: Params::StreamingOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::StreamingOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2589,9 +2589,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::TimestampFormatHeaders,
-        stubs: @stubs,
-        params_class: Params::TimestampFormatHeadersOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::TimestampFormatHeaders,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -2654,9 +2654,9 @@ module RailsJson
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::Operation____789BadName,
-        stubs: @stubs,
-        params_class: Params::Struct____789BadNameOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::Operation____789BadName,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

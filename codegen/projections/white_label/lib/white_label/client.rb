@@ -152,9 +152,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::DefaultsTest,
-        stubs: @stubs,
-        params_class: Params::DefaultsTestOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::DefaultsTest,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -216,9 +216,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EndpointOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -282,9 +282,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::EndpointWithHostLabelOperation,
-        stubs: @stubs,
-        params_class: Params::EndpointWithHostLabelOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointWithHostLabelOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -509,9 +509,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::KitchenSink,
-        stubs: @stubs,
-        params_class: Params::KitchenSinkOutput
+        stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
+        stub_data_class: Stubs::KitchenSink,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -573,9 +573,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::MixinTest,
-        stubs: @stubs,
-        params_class: Params::MixinTestOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::MixinTest,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -638,9 +638,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::PaginatorsTest,
-        stubs: @stubs,
-        params_class: Params::PaginatorsTestOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::PaginatorsTest,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -703,9 +703,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::PaginatorsTestWithItems,
-        stubs: @stubs,
-        params_class: Params::PaginatorsTestWithItemsOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::PaginatorsTestWithItems,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -771,9 +771,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::RequestCompressionOperation,
-        stubs: @stubs,
-        params_class: Params::RequestCompressionOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::RequestCompressionOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -838,9 +838,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::RequestCompressionStreamingOperation,
-        stubs: @stubs,
-        params_class: Params::RequestCompressionStreamingOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::RequestCompressionStreamingOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -900,9 +900,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::StreamingOperation,
-        stubs: @stubs,
-        params_class: Params::StreamingOperationOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::StreamingOperation,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -962,9 +962,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::StreamingWithLength,
-        stubs: @stubs,
-        params_class: Params::StreamingWithLengthOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::StreamingWithLength,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1025,9 +1025,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::WaitersTest,
-        stubs: @stubs,
-        params_class: Params::WaitersTestOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::WaitersTest,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,
@@ -1091,9 +1091,9 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
-        stub_class: Stubs::Operation____PaginatorsTestWithBadNames,
-        stubs: @stubs,
-        params_class: Params::Struct____PaginatorsTestWithBadNamesOutput
+        stub_error_classes: [],
+        stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
+        stubs: @stubs
       )
       resp = stack.run(
         input: input,

@@ -12,7 +12,7 @@ module HighScoreService
   module Params
 
     module AttributeErrors
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
@@ -23,7 +23,7 @@ module HighScoreService
     end
 
     module CreateHighScoreInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CreateHighScoreInput, context: context)
         type = Types::CreateHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -33,7 +33,7 @@ module HighScoreService
     end
 
     module CreateHighScoreOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CreateHighScoreOutput, context: context)
         type = Types::CreateHighScoreOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -44,7 +44,7 @@ module HighScoreService
     end
 
     module DeleteHighScoreInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
         type = Types::DeleteHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -54,7 +54,7 @@ module HighScoreService
     end
 
     module DeleteHighScoreOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreOutput, context: context)
         type = Types::DeleteHighScoreOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -63,7 +63,7 @@ module HighScoreService
     end
 
     module ErrorMessages
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each do |element|
@@ -74,7 +74,7 @@ module HighScoreService
     end
 
     module GetHighScoreInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreInput, context: context)
         type = Types::GetHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -84,7 +84,7 @@ module HighScoreService
     end
 
     module GetHighScoreOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreOutput, context: context)
         type = Types::GetHighScoreOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -94,7 +94,7 @@ module HighScoreService
     end
 
     module HighScoreAttributes
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreAttributes, context: context)
         type = Types::HighScoreAttributes.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -108,7 +108,7 @@ module HighScoreService
     end
 
     module HighScoreParams
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreParams, context: context)
         type = Types::HighScoreParams.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -119,7 +119,7 @@ module HighScoreService
     end
 
     module HighScores
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each_with_index do |element, index|
@@ -130,7 +130,7 @@ module HighScoreService
     end
 
     module ListHighScoresInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresInput, context: context)
         type = Types::ListHighScoresInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -139,7 +139,7 @@ module HighScoreService
     end
 
     module ListHighScoresOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresOutput, context: context)
         type = Types::ListHighScoresOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -149,7 +149,7 @@ module HighScoreService
     end
 
     module UnprocessableEntityError
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::UnprocessableEntityError, context: context)
         type = Types::UnprocessableEntityError.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -159,7 +159,7 @@ module HighScoreService
     end
 
     module UpdateHighScoreInput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
         type = Types::UpdateHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
@@ -170,7 +170,7 @@ module HighScoreService
     end
 
     module UpdateHighScoreOutput
-      def self.build(params, context: '')
+      def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreOutput, context: context)
         type = Types::UpdateHighScoreOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)

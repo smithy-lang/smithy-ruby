@@ -11,72 +11,59 @@ module WhiteLabel
   # @api private
   module Builders
 
-    # Operation Builder for DefaultsTest
     class DefaultsTest
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for EndpointOperation
     class EndpointOperation
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for KitchenSink
     class KitchenSink
       def self.build(http_req, input:)
       end
     end
 
-    # List Builder for ListOfStrings
     class ListOfStrings
     end
 
-    # List Builder for ListOfStructs
     class ListOfStructs
     end
 
-    # Map Builder for MapOfStrings
     class MapOfStrings
     end
 
-    # Map Builder for MapOfStructs
     class MapOfStructs
     end
 
-    # Operation Builder for MixinTest
     class MixinTest
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for PaginatorsTest
     class PaginatorsTest
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for RequestCompressionOperation
     class RequestCompressionOperation
       def self.build(http_req, input:)
         http_req.body = StringIO.new(input[:body] || '')
       end
     end
 
-    # Operation Builder for RequestCompressionStreamingOperation
     class RequestCompressionStreamingOperation
       def self.build(http_req, input:)
         http_req.body = input[:body]
@@ -85,7 +72,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Builder for StreamingOperation
     class StreamingOperation
       def self.build(http_req, input:)
         http_req.body = input[:stream]
@@ -94,7 +80,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Builder for StreamingWithLength
     class StreamingWithLength
       def self.build(http_req, input:)
         http_req.body = input[:stream]
@@ -102,21 +87,17 @@ module WhiteLabel
       end
     end
 
-    # Structure Builder for Struct
     class Struct
     end
 
-    # Structure Builder for Union
     class Union
     end
 
-    # Operation Builder for WaitersTest
     class WaitersTest
       def self.build(http_req, input:)
       end
     end
 
-    # Operation Builder for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
       def self.build(http_req, input:)
       end

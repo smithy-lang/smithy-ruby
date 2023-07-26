@@ -11,9 +11,37 @@ module WhiteLabel
   # @api private
   module Stubs
 
-    # Operation Stubber for DefaultsTest
+    class ClientError
+      def self.build(params, context:)
+        Params::ClientError.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ClientError.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          message: 'message',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 400
+      end
+    end
+
     class DefaultsTest
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::DefaultsTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DefaultsTestOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           string: 'string',
           struct: Struct.default(visited),
@@ -43,9 +71,8 @@ module WhiteLabel
       end
     end
 
-    # Document Type Stubber for Document
     class Document
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Document')
         visited = visited + ['Document']
         { 'Document' => [0, 1, 2] }
@@ -56,9 +83,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for EndpointOperation
     class EndpointOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::EndpointOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -69,9 +103,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -82,9 +123,8 @@ module WhiteLabel
       end
     end
 
-    # List Stubber for Items
     class Items
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Items')
         visited = visited + ['Items']
         [
@@ -94,9 +134,16 @@ module WhiteLabel
 
     end
 
-    # Operation Stubber for KitchenSink
     class KitchenSink
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::KitchenSinkOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::KitchenSinkOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           string: 'string',
           simple_enum: 'simple_enum',
@@ -117,9 +164,8 @@ module WhiteLabel
       end
     end
 
-    # List Stubber for ListOfStrings
     class ListOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfStrings')
         visited = visited + ['ListOfStrings']
         [
@@ -129,9 +175,8 @@ module WhiteLabel
 
     end
 
-    # List Stubber for ListOfStructs
     class ListOfStructs
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ListOfStructs')
         visited = visited + ['ListOfStructs']
         [
@@ -141,33 +186,38 @@ module WhiteLabel
 
     end
 
-    # Map Stubber for MapOfStrings
     class MapOfStrings
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfStrings')
         visited = visited + ['MapOfStrings']
         {
-          test_key: 'value'
+          key: 'value'
         }
       end
 
     end
 
-    # Map Stubber for MapOfStructs
     class MapOfStructs
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          test_key: Struct.default(visited)
+          key: Struct.default(visited)
         }
       end
 
     end
 
-    # Operation Stubber for MixinTest
     class MixinTest
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::MixinTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MixinTestOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           username: 'username',
           user_id: 'user_id',
@@ -179,9 +229,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for PaginatorsTest
     class PaginatorsTest
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::PaginatorsTestOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PaginatorsTestOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           next_token: 'next_token',
           items: Items.default(visited),
@@ -193,9 +250,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for PaginatorsTestWithItems
     class PaginatorsTestWithItems
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::PaginatorsTestWithItemsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PaginatorsTestWithItemsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           next_token: 'next_token',
           items: Items.default(visited),
@@ -207,9 +271,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for RequestCompressionOperation
     class RequestCompressionOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::RequestCompressionOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::RequestCompressionOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -220,9 +291,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for RequestCompressionStreamingOperation
     class RequestCompressionStreamingOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::RequestCompressionStreamingOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::RequestCompressionStreamingOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -233,9 +311,8 @@ module WhiteLabel
       end
     end
 
-    # Structure Stubber for ResultWrapper
     class ResultWrapper
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('ResultWrapper')
         visited = visited + ['ResultWrapper']
         {
@@ -245,9 +322,36 @@ module WhiteLabel
 
     end
 
-    # Operation Stubber for StreamingOperation
+    class ServerError
+      def self.build(params, context:)
+        Params::ServerError.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ServerError.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 500
+      end
+    end
+
     class StreamingOperation
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::StreamingOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           stream: 'stream',
         }
@@ -260,9 +364,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for StreamingWithLength
     class StreamingWithLength
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::StreamingWithLengthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingWithLengthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
         }
       end
@@ -273,9 +384,8 @@ module WhiteLabel
       end
     end
 
-    # Structure Stubber for Struct
     class Struct
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Struct')
         visited = visited + ['Struct']
         {
@@ -285,9 +395,8 @@ module WhiteLabel
 
     end
 
-    # Union Stubber for Union
     class Union
-      def self.default(visited=[])
+      def self.default(visited = [])
         return nil if visited.include?('Union')
         visited = visited + ['Union']
         {
@@ -297,9 +406,16 @@ module WhiteLabel
 
     end
 
-    # Operation Stubber for WaitersTest
     class WaitersTest
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::WaitersTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::WaitersTestOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           status: 'status',
         }
@@ -310,9 +426,16 @@ module WhiteLabel
       end
     end
 
-    # Operation Stubber for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
-      def self.default(visited=[])
+      def self.build(params, context:)
+        Params::Struct____PaginatorsTestWithBadNamesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::Struct____PaginatorsTestWithBadNamesOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
         {
           member___wrapper: ResultWrapper.default(visited),
           member___items: Items.default(visited),

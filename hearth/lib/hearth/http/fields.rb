@@ -103,6 +103,10 @@ module Hearth
                  .each(&block)
         end
         alias each_pair each
+
+        def inspect
+          "#<#{self.class.name}>"
+        end
       end
     end
   end

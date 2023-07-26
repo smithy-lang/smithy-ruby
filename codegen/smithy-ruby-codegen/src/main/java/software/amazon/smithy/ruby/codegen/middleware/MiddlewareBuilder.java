@@ -278,9 +278,13 @@ public class MiddlewareBuilder {
                 .addParam("stubs", "@stubs")
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
-                    Shape outputShape = ctx.model().expectShape(operation.getOutputShape());
-                    params.put("stub_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
-                    params.put("params_class", "Params::" + symbolProvider.toSymbol(outputShape).getName());
+                    params.put("stub_data_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
+                    String errors = operation.getErrors()
+                            .stream()
+                            .map((error) -> "Stubs::"
+                                    + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
+                            .collect(Collectors.joining(", "));
+                    params.put("stub_error_classes", "[" + errors + "]");
                     return params;
                 })
                 .addConfig(stubResponses)

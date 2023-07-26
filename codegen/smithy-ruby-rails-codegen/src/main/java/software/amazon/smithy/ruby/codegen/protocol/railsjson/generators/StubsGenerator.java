@@ -23,7 +23,6 @@ import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -111,7 +110,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     }
 
     @Override
-    protected void renderBodyStub(OperationShape operation, Shape outputShape) {
+    protected void renderBodyStub(Shape outputShape) {
         writer
                 .write("http_resp.headers['Content-Type'] = 'application/json'")
                 .call(() -> renderMemberStubbers(outputShape))
@@ -119,8 +118,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     }
 
     @Override
-    protected void renderPayloadBodyStub(OperationShape operation, Shape outputShape, MemberShape payloadMember,
-                                         Shape target) {
+    protected void renderPayloadBodyStub(Shape outputShape, MemberShape payloadMember, Shape target) {
         String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
         String inputGetter = "stub[" + symbolName + "]";
         if (target.hasTrait(StreamingTrait.class)) {
