@@ -155,6 +155,7 @@ module Hearth
           @stub_data_class.default,
           context: 'stub'
         )
+        @stub_data_class.validate!(output, context: 'stub')
         @stub_data_class.stub(context.response, stub: output)
       end
 

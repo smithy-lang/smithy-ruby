@@ -294,6 +294,7 @@ module Hearth
               expect(Stubs::StubData).to receive(:build)
                 .with(stub_hash, context: 'stub')
                 .and_return(stub_data)
+              expect(Stubs::StubData).to receive(:validate!)
               expect(Stubs::StubData).to receive(:stub)
                 .with(response, stub: stub_data)
               subject.call(input, context)
