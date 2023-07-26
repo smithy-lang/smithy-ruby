@@ -16,6 +16,10 @@ module WhiteLabel
         Params::ClientError.build(params, context: context)
       end
 
+      def self.validate!(output, context:)
+        Validators::ClientError.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
         return nil if visited.include?('ClientError')
         visited = visited + ['ClientError']
@@ -323,6 +327,10 @@ module WhiteLabel
     class ServerError
       def self.build(params, context:)
         Params::ServerError.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ServerError.validate!(output, context: context)
       end
 
       def self.default(visited = [])

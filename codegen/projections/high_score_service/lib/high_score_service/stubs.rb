@@ -192,6 +192,10 @@ module HighScoreService
         Params::UnprocessableEntityError.build(params, context: context)
       end
 
+      def self.validate!(output, context:)
+        Validators::UnprocessableEntityError.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
         return nil if visited.include?('UnprocessableEntityError')
         visited = visited + ['UnprocessableEntityError']

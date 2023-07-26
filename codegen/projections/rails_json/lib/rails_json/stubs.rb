@@ -57,6 +57,10 @@ module RailsJson
         Params::ComplexError.build(params, context: context)
       end
 
+      def self.validate!(output, context:)
+        Validators::ComplexError.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
         return nil if visited.include?('ComplexError')
         visited = visited + ['ComplexError']
@@ -369,6 +373,10 @@ module RailsJson
         Params::ErrorWithMembers.build(params, context: context)
       end
 
+      def self.validate!(output, context:)
+        Validators::ErrorWithMembers.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
         return nil if visited.include?('ErrorWithMembers')
         visited = visited + ['ErrorWithMembers']
@@ -401,6 +409,10 @@ module RailsJson
     class ErrorWithoutMembers
       def self.build(params, context:)
         Params::ErrorWithoutMembers.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ErrorWithoutMembers.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -882,6 +894,10 @@ module RailsJson
     class InvalidGreeting
       def self.build(params, context:)
         Params::InvalidGreeting.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::InvalidGreeting.validate!(output, context: context)
       end
 
       def self.default(visited = [])

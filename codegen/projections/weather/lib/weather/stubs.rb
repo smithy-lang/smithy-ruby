@@ -241,6 +241,10 @@ module Weather
         Params::NoSuchResource.build(params, context: context)
       end
 
+      def self.validate!(output, context:)
+        Validators::NoSuchResource.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
         return nil if visited.include?('NoSuchResource')
         visited = visited + ['NoSuchResource']
