@@ -162,10 +162,6 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
                 .closeBlock("end");
     }
 
-    /**
-     * This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output.
-     * @param shape shape for the operation
-     */
     protected void renderBodyStubber(Shape shape) {
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = shape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
@@ -190,18 +186,12 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
-    /**
-     * @param operation operation to render for
-     */
     protected void renderStatusCodeStubber(OperationShape operation) {
         operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
             writer.write("http_resp.status = $1L", httpTrait.getCode());
         });
     }
 
-    /**
-     * @param errorShape Shape to render for
-     */
     protected void renderStatusCodeStubber(Shape errorShape) {
         String statusCode = "";
 

@@ -86,7 +86,7 @@ module RailsJson
 
         begin
           client.kitchen_sink_operation
-        rescue => e
+        rescue RailsJson::Errors::ApiError => e
           expect(e).to be_a(RailsJson::Errors::ErrorWithMembers)
           expect(e.data.code).to eq('code')
           expect(e.data.message).to eq('message')
