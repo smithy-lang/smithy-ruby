@@ -41,5 +41,20 @@ module Hearth
       raise ArgumentError,
             "Unexpected members: [#{unknown.join(', ')}]"
     end
+
+    # draft of what validate_range *could* look like
+    # valid_range param consists of min and max keys
+    def self.validate_range(value, valid_range, context:)
+      # need to validate the valid_range object before proceeding
+      # does it make sense us to use existing method - validate_type!
+      valid_range.each { |context, value| self.validate_type!(value, Integer, context: context) }
+
+      return if value.between?(valid_range[:min], valid_range[:max])
+
+      raise ArgumentError,
+            "Expected #{context} to be between " \
+            "#{minimum} to #{maximum}, got #{value}."
+    end
+
   end
 end

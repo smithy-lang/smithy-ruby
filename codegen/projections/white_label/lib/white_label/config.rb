@@ -128,6 +128,13 @@ module WhiteLabel
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
+    def validate_range!
+      Hearth::Validator.validate_range(
+        request_min_compression_size_bytes,
+        { :min_value => 0, :max_value => 10485760 },
+        context: 'config[:request_min_compression_size_bytes]')
+    end
+
     def self.defaults
       @defaults ||= {
         disable_host_prefix: [false],
