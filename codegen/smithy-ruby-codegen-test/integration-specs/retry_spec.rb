@@ -14,6 +14,12 @@ module WhiteLabel
           { error: { class: Errors::ServerError } },
           { data: { string: 'ok' } }
         )
+        # Do not test fake protocol
+        expect(WhiteLabel::Stubs::ServerError)
+          .to receive(:stub).and_wrap_original do |_m, *args|
+          http_resp, = *args
+          http_resp.headers['x-smithy-error'] = 'ServerError'
+        end
 
         expect_any_instance_of(Hearth::Retry::Standard)
           .to receive(:acquire_initial_retry_token).and_call_original

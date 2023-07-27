@@ -9,7 +9,7 @@ use smithy.test#httpResponseTests
 
 @httpRequestTests([
     {
-        id: "rails_json_serializes_bad_names",
+        id: "RailsJsonSerializesBadNames",
         protocol: railsJson,
         documentation: "Serializes requests for operations/members with bad names",
         body: "{\"member\":{\"__123foo\":\"foo value\"}}",
@@ -30,7 +30,7 @@ use smithy.test#httpResponseTests
 ])
 @httpResponseTests([
     {
-        id: "rails_json_parses_bad_names",
+        id: "RailsJsonParsesBadNames",
         protocol: railsJson,
         documentation: "Parses responses for operations/members with bad names",
         body: "{\"member\":{\"__123foo\":\"foo value\"}}",

@@ -26,10 +26,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 400
-      end
     end
 
     class DefaultsTest
@@ -336,10 +332,6 @@ module WhiteLabel
         }
       end
 
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 500
-      end
     end
 
     class StreamingOperation

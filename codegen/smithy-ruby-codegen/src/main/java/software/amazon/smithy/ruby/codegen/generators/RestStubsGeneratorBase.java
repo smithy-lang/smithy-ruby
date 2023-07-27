@@ -42,6 +42,7 @@ import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -140,7 +141,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         writer
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("data = {}")
-                .call(() -> renderStatusCodeDataStubber(operation))
+                .call(() -> renderStatusCodeStubber(operation))
                 .call(() -> renderHeaderStubbers(outputShape))
                 .call(() -> renderPrefixHeadersStubbers(outputShape))
                 .call(() -> renderResponseCodeStubber(outputShape))
@@ -148,15 +149,12 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
                 .closeBlock("end");
     }
 
-    // TODO: this is not entirely correct and will need to change later.
-    // Error stub methods will need to be aware of how to populate a response code
-    // that is parsed. Response code could be in headers or body etc.
     @Override
     protected void renderErrorStubMethod(Shape errorShape) {
         writer
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("data = {}")
-                .call(() -> renderStatusCodeErrorStubber(errorShape))
+                .call(() -> renderStatusCodeStubber(errorShape))
                 .call(() -> renderHeaderStubbers(errorShape))
                 .call(() -> renderPrefixHeadersStubbers(errorShape))
                 .call(() -> renderResponseCodeStubber(errorShape))
@@ -164,48 +162,37 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
                 .closeBlock("end");
     }
 
-    /**
-     * The Output shape is combined with the OperationStub.
-     * This generates the setting of the body (if any non-http input) as if it was the Stubber for the Output.
-     * @param outputShape outputShape for the operation
-     */
-    protected void renderBodyStubber(Shape outputShape) {
+    protected void renderBodyStubber(Shape shape) {
         //determine if there are any members of the input that need to be serialized to the body
-        boolean serializeBody = outputShape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
+        boolean serializeBody = shape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
                 && !m.hasTrait(HttpQueryTrait.class)
                 && !m.hasTrait(HttpQueryParamsTrait.class)
                 && !m.hasTrait(HttpHeaderTrait.class)
                 && !m.hasTrait(HttpPrefixHeadersTrait.class)
                 && !m.hasTrait(HttpResponseCodeTrait.class));
         //determine if there is an httpPayload member
-        List<MemberShape> httpPayloadMembers = outputShape.members()
+        List<MemberShape> httpPayloadMembers = shape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
                 .collect(Collectors.toList());
         if (httpPayloadMembers.size() == 0) {
             if (serializeBody) {
-                renderBodyStub(outputShape);
+                renderBodyStub(shape);
             }
         } else {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
-            renderPayloadBodyStub(outputShape, payloadMember, target);
+            renderPayloadBodyStub(shape, payloadMember, target);
         }
     }
 
-    /**
-     * @param operation operation to render for
-     */
-    protected void renderStatusCodeDataStubber(OperationShape operation) {
+    protected void renderStatusCodeStubber(OperationShape operation) {
         operation.getTrait(HttpTrait.class).ifPresent((httpTrait) -> {
             writer.write("http_resp.status = $1L", httpTrait.getCode());
         });
     }
 
-    /**
-     * @param errorShape error shape to render for
-     */
-    protected void renderStatusCodeErrorStubber(Shape errorShape) {
+    protected void renderStatusCodeStubber(Shape errorShape) {
         String statusCode = "";
 
         Optional<HttpErrorTrait> optionalHttpErrorTrait = errorShape.getTrait(HttpErrorTrait.class);
@@ -223,12 +210,9 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         writer.write("http_resp.status = $1L", statusCode);
     }
 
-    /**
-     * @param outputShape outputShape for the operation
-     */
-    protected void renderHeaderStubbers(Shape outputShape) {
+    protected void renderHeaderStubbers(Shape shape) {
         // get a list of all of HttpLabel members
-        List<MemberShape> headerMembers = outputShape.members()
+        List<MemberShape> headerMembers = shape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpHeaderTrait.class))
                 .collect(Collectors.toList());
@@ -242,12 +226,9 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
-    /**
-     * @param outputShape outputShape for the operation
-     */
-    protected void renderPrefixHeadersStubbers(Shape outputShape) {
+    protected void renderPrefixHeadersStubbers(Shape shape) {
         // get a list of all of HttpLabel members
-        List<MemberShape> headerMembers = outputShape.members()
+        List<MemberShape> headerMembers = shape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpPrefixHeadersTrait.class))
                 .collect(Collectors.toList());
@@ -268,8 +249,8 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         }
     }
 
-    protected void renderResponseCodeStubber(Shape outputShape) {
-        List<MemberShape> responseCodeMembers = outputShape.members()
+    protected void renderResponseCodeStubber(Shape shape) {
+        List<MemberShape> responseCodeMembers = shape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpResponseCodeTrait.class))
                 .collect(Collectors.toList());
@@ -278,6 +259,15 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
             MemberShape responseCodeMember = responseCodeMembers.get(0);
             writer.write("http_resp.status = stub[:$L]", symbolProvider.toMemberName(responseCodeMember));
         }
+    }
+
+    protected void renderStreamingStub(Shape inputShape) {
+        MemberShape streamingMember = inputShape.members().stream()
+                .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())
+                .findFirst().get();
+
+        writer.write("IO.copy_stream(stub[:$L], http_resp.body)",
+                symbolProvider.toMemberName(streamingMember));
     }
 
     private class HeaderSerializer extends ShapeVisitor.Default<Void> {

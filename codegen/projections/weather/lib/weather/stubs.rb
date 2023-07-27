@@ -252,10 +252,6 @@ module Weather
         }
       end
 
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 404
-      end
     end
 
     class OtherStructure

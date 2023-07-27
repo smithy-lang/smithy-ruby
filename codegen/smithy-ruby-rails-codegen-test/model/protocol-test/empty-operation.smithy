@@ -9,7 +9,7 @@ use smithy.test#httpResponseTests
 
 @httpResponseTests([
     {
-        id: "rails_json_handles_empty_output_shape",
+        id: "RailsJsonHandlesEmptyOutputShape",
         protocol: railsJson,
         documentation: """
                 When no output is defined, the service is expected to return
@@ -26,7 +26,7 @@ use smithy.test#httpResponseTests
         appliesTo: "client"
     },
     {
-        id: "rails_json_handles_unexpected_json_output",
+        id: "RailsJsonHandlesUnexpectedJsonOutput",
         protocol: railsJson,
         documentation: """
                 This client-only test builds on handles_empty_output_shape,
@@ -46,7 +46,7 @@ use smithy.test#httpResponseTests
         appliesTo: "client"
     },
     {
-        id: "rails_json_service_responds_with_no_payload",
+        id: "RailsJsonServiceRespondsWithNoPayload",
         protocol: railsJson,
         documentation: """
                 When no output is defined, the service is expected to return

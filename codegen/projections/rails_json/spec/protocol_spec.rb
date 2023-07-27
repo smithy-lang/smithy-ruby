@@ -13,16 +13,15 @@ require 'rails_json'
 
 module RailsJson
   describe Client do
-    let(:endpoint) { 'http://127.0.0.1' }
-    let(:retry_strategy) { Hearth::Retry::Standard.new(max_attempts: 1) }
     let(:config) do
       Config.new(
         stub_responses: true,
         validate_input: false,
-        endpoint: endpoint,
-        retry_strategy: retry_strategy
+        endpoint: 'http://127.0.0.1',
+        retry_strategy: Hearth::Retry::Standard.new(max_attempts: 0)
       )
     end
+
     let(:client) { Client.new(config) }
     let(:before_send) do
       Class.new do
@@ -51,9 +50,10 @@ module RailsJson
     describe '#operation____789_bad_name' do
 
       describe 'requests' do
+
         # Serializes requests for operations/members with bad names
         #
-        it 'rails_json_serializes_bad_names' do
+        it 'RailsJsonSerializesBadNames' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -70,12 +70,14 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Parses responses for operations/members with bad names
         #
-        it 'rails_json_parses_bad_names' do
+        it 'RailsJsonParsesBadNames' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -90,12 +92,14 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Parses responses for operations/members with bad names
         #
-        it 'stubs rails_json_parses_bad_names' do
+        it 'stubs RailsJsonParsesBadNames' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -112,6 +116,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -119,6 +124,7 @@ module RailsJson
     describe '#all_query_string_types' do
 
       describe 'requests' do
+
         # Serializes query string parameters with all supported types
         #
         it 'RailsJsonAllQueryStringTypes' do
@@ -191,6 +197,7 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
     end
@@ -198,6 +205,7 @@ module RailsJson
     describe '#constant_and_variable_query_string' do
 
       describe 'requests' do
+
         # Mixes constant and variable query string parameters
         #
         it 'RailsJsonConstantAndVariableQueryStringMissingOneValue' do
@@ -222,6 +230,7 @@ module RailsJson
             baz: "bam"
           }, **opts)
         end
+
         # Mixes constant and variable query string parameters
         #
         it 'RailsJsonConstantAndVariableQueryStringAllValues' do
@@ -242,6 +251,7 @@ module RailsJson
             maybe_set: "yes"
           }, **opts)
         end
+
       end
 
     end
@@ -249,6 +259,7 @@ module RailsJson
     describe '#constant_query_string' do
 
       describe 'requests' do
+
         # Includes constant query string parameters
         #
         it 'RailsJsonConstantQueryString' do
@@ -268,6 +279,7 @@ module RailsJson
             hello: "hi"
           }, **opts)
         end
+
       end
 
     end
@@ -275,6 +287,7 @@ module RailsJson
     describe '#document_type' do
 
       describe 'requests' do
+
         # Serializes document types as part of the JSON request payload with no escaping.
         #
         it 'RailsJsonDocumentTypeInputWithObject' do
@@ -296,6 +309,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           }, **opts)
         end
+
         # Serializes document types using a string.
         #
         it 'RailsJsonDocumentInputWithString' do
@@ -315,6 +329,7 @@ module RailsJson
             document_value: 'hello'
           }, **opts)
         end
+
         # Serializes document types using a number.
         #
         it 'RailsJsonDocumentInputWithNumber' do
@@ -334,6 +349,7 @@ module RailsJson
             document_value: 10
           }, **opts)
         end
+
         # Serializes document types using a boolean.
         #
         it 'RailsJsonDocumentInputWithBoolean' do
@@ -353,6 +369,7 @@ module RailsJson
             document_value: true
           }, **opts)
         end
+
         # Serializes document types using a list.
         #
         it 'RailsJsonDocumentInputWithList' do
@@ -387,9 +404,11 @@ module RailsJson
             document_value: [true, 'hi', [1, 2], {'foo' => {'baz' => [3, 4]}}]
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'RailsJsonDocumentOutput' do
@@ -411,6 +430,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           })
         end
+
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputString' do
@@ -430,6 +450,7 @@ module RailsJson
             document_value: 'hello'
           })
         end
+
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputNumber' do
@@ -449,6 +470,7 @@ module RailsJson
             document_value: 10
           })
         end
+
         # Document types can be JSON scalars too.
         #
         it 'RailsJsonDocumentOutputBoolean' do
@@ -468,6 +490,7 @@ module RailsJson
             document_value: false
           })
         end
+
         # Document types can be JSON arrays.
         #
         it 'RailsJsonDocumentOutputArray' do
@@ -490,9 +513,11 @@ module RailsJson
             document_value: [true, false]
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Serializes documents as part of the JSON response payload with no escaping.
         #
         it 'stubs RailsJsonDocumentOutput' do
@@ -510,6 +535,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           })
         end
+
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputString' do
@@ -527,6 +553,7 @@ module RailsJson
             document_value: 'hello'
           })
         end
+
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputNumber' do
@@ -544,6 +571,7 @@ module RailsJson
             document_value: 10
           })
         end
+
         # Document types can be JSON scalars too.
         #
         it 'stubs RailsJsonDocumentOutputBoolean' do
@@ -561,6 +589,7 @@ module RailsJson
             document_value: false
           })
         end
+
         # Document types can be JSON arrays.
         #
         it 'stubs RailsJsonDocumentOutputArray' do
@@ -578,6 +607,7 @@ module RailsJson
             document_value: [true, false]
           })
         end
+
       end
 
     end
@@ -585,6 +615,7 @@ module RailsJson
     describe '#document_type_as_payload' do
 
       describe 'requests' do
+
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'RailsJsonDocumentTypeAsPayloadInput' do
@@ -602,6 +633,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           }, **opts)
         end
+
         # Serializes a document as the target of the httpPayload trait using a string.
         #
         it 'RailsJsonDocumentTypeAsPayloadInputString' do
@@ -617,9 +649,11 @@ module RailsJson
             document_value: 'hello'
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'RailsJsonDocumentTypeAsPayloadOutput' do
@@ -637,6 +671,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           })
         end
+
         # Serializes a document as a payload string.
         #
         it 'RailsJsonDocumentTypeAsPayloadOutputString' do
@@ -652,9 +687,11 @@ module RailsJson
             document_value: 'hello'
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Serializes a document as the target of the httpPayload trait.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
@@ -670,6 +707,7 @@ module RailsJson
             document_value: {'foo' => 'bar'}
           })
         end
+
         # Serializes a document as a payload string.
         #
         it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
@@ -685,6 +723,7 @@ module RailsJson
             document_value: 'hello'
           })
         end
+
       end
 
     end
@@ -692,12 +731,13 @@ module RailsJson
     describe '#empty_operation' do
 
       describe 'responses' do
+
         # When no output is defined, the service is expected to return
         # an empty payload, however, client must ignore a JSON payload
         # if one is returned. This ensures that if output is added later,
         # then it will not break the client.
         #
-        it 'rails_json_handles_empty_output_shape' do
+        it 'RailsJsonHandlesEmptyOutputShape' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -710,12 +750,13 @@ module RailsJson
 
           })
         end
+
         # This client-only test builds on handles_empty_output_shape,
         # by including unexpected fields in the JSON. A client
         # needs to ignore JSON output that is empty or that contains
         # JSON object data.
         #
-        it 'rails_json_handles_unexpected_json_output' do
+        it 'RailsJsonHandlesUnexpectedJsonOutput' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -730,13 +771,14 @@ module RailsJson
 
           })
         end
+
         # When no output is defined, the service is expected to return
         # an empty payload. Despite the lack of a payload, the service
         # is expected to always send a Content-Type header. Clients must
         # handle cases where a service returns a JSON object and where
         # a service returns no JSON at all.
         #
-        it 'rails_json_service_responds_with_no_payload' do
+        it 'RailsJsonServiceRespondsWithNoPayload' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -749,15 +791,17 @@ module RailsJson
 
           })
         end
+
       end
 
       describe 'stubs' do
+
         # When no output is defined, the service is expected to return
         # an empty payload, however, client must ignore a JSON payload
         # if one is returned. This ensures that if output is added later,
         # then it will not break the client.
         #
-        it 'stubs rails_json_handles_empty_output_shape' do
+        it 'stubs RailsJsonHandlesEmptyOutputShape' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -770,12 +814,13 @@ module RailsJson
 
           })
         end
+
         # This client-only test builds on handles_empty_output_shape,
         # by including unexpected fields in the JSON. A client
         # needs to ignore JSON output that is empty or that contains
         # JSON object data.
         #
-        it 'stubs rails_json_handles_unexpected_json_output' do
+        it 'stubs RailsJsonHandlesUnexpectedJsonOutput' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -788,13 +833,14 @@ module RailsJson
 
           })
         end
+
         # When no output is defined, the service is expected to return
         # an empty payload. Despite the lack of a payload, the service
         # is expected to always send a Content-Type header. Clients must
         # handle cases where a service returns a JSON object and where
         # a service returns no JSON at all.
         #
-        it 'stubs rails_json_service_responds_with_no_payload' do
+        it 'stubs RailsJsonServiceRespondsWithNoPayload' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -807,6 +853,7 @@ module RailsJson
 
           })
         end
+
       end
 
     end
@@ -814,6 +861,7 @@ module RailsJson
     describe '#endpoint_operation' do
 
       describe 'requests' do
+
         # Operations can prepend to the given host if they define the
         # endpoint trait.
         #
@@ -830,6 +878,7 @@ module RailsJson
 
           }, **opts)
         end
+
       end
 
     end
@@ -837,6 +886,7 @@ module RailsJson
     describe '#endpoint_with_host_label_operation' do
 
       describe 'requests' do
+
         # Operations can prepend to the given host if they define the
         # endpoint trait, and can use the host label trait to define
         # further customization based on user input.
@@ -855,13 +905,15 @@ module RailsJson
             label_member: "bar"
           }, **opts)
         end
+
       end
 
     end
 
     describe '#greeting_with_errors' do
 
-      describe 'InvalidGreeting Errors' do
+      describe 'InvalidGreeting error' do
+
         # Parses simple JSON errors
         #
         it 'RailsJsonInvalidGreetingError' do
@@ -883,9 +935,27 @@ module RailsJson
             })
           end
         end
+
+        # Parses simple JSON errors
+        #
+        it 'stubs RailsJsonInvalidGreetingError' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::InvalidGreeting, data: {
+            message: "Hi"
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            client.greeting_with_errors({})
+          rescue Errors::InvalidGreeting => e
+            expect(e.http_status).to eq(400)
+            expect(e.data.to_h).to eq({
+              message: "Hi"
+            })
+          end
+        end
       end
 
-      describe 'ComplexError Errors' do
+      describe 'ComplexError error' do
+
         # Parses a complex error with no message member
         #
         it 'RailsJsonComplexError' do
@@ -913,6 +983,30 @@ module RailsJson
             })
           end
         end
+
+        # Parses a complex error with no message member
+        #
+        it 'stubs RailsJsonComplexError' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {
+            top_level: "Top level",
+            nested: {
+              foo: "bar"
+            }
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            client.greeting_with_errors({})
+          rescue Errors::ComplexError => e
+            expect(e.http_status).to eq(400)
+            expect(e.data.to_h).to eq({
+              top_level: "Top level",
+              nested: {
+                foo: "bar"
+              }
+            })
+          end
+        end
+
         #
         #
         it 'RailsJsonEmptyComplexError' do
@@ -933,6 +1027,23 @@ module RailsJson
             })
           end
         end
+
+        #
+        #
+        it 'stubs RailsJsonEmptyComplexError' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            client.greeting_with_errors({})
+          rescue Errors::ComplexError => e
+            expect(e.http_status).to eq(400)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
       end
 
     end
@@ -940,6 +1051,7 @@ module RailsJson
     describe '#http_payload_traits' do
 
       describe 'requests' do
+
         # Serializes a blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
@@ -957,6 +1069,7 @@ module RailsJson
             blob: 'blobby blob blob'
           }, **opts)
         end
+
         # Serializes an empty blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
@@ -972,9 +1085,11 @@ module RailsJson
             foo: "Foo"
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Serializes a blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
@@ -991,6 +1106,7 @@ module RailsJson
             blob: 'blobby blob blob'
           })
         end
+
         # Serializes an empty blob in the HTTP payload
         #
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
@@ -1006,9 +1122,11 @@ module RailsJson
             foo: "Foo"
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Serializes a blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithBlob' do
@@ -1026,6 +1144,7 @@ module RailsJson
             blob: 'blobby blob blob'
           })
         end
+
         # Serializes an empty blob in the HTTP payload
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithNoBlobBody' do
@@ -1041,6 +1160,7 @@ module RailsJson
             foo: "Foo"
           })
         end
+
       end
 
     end
@@ -1048,6 +1168,7 @@ module RailsJson
     describe '#http_payload_traits_with_media_type' do
 
       describe 'requests' do
+
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
@@ -1065,9 +1186,11 @@ module RailsJson
             blob: 'blobby blob blob'
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
@@ -1085,9 +1208,11 @@ module RailsJson
             blob: 'blobby blob blob'
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Serializes a blob in the HTTP payload with a content-type
         #
         it 'stubs RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
@@ -1105,6 +1230,7 @@ module RailsJson
             blob: 'blobby blob blob'
           })
         end
+
       end
 
     end
@@ -1112,6 +1238,7 @@ module RailsJson
     describe '#http_payload_with_structure' do
 
       describe 'requests' do
+
         # Serializes a structure in the payload
         #
         it 'RailsJsonHttpPayloadWithStructure' do
@@ -1134,9 +1261,11 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Serializes a structure in the payload
         #
         it 'RailsJsonHttpPayloadWithStructure' do
@@ -1158,9 +1287,11 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Serializes a structure in the payload
         #
         it 'stubs RailsJsonHttpPayloadWithStructure' do
@@ -1182,6 +1313,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -1189,6 +1321,7 @@ module RailsJson
     describe '#http_prefix_headers' do
 
       describe 'requests' do
+
         # Adds headers by prefix
         #
         it 'RailsJsonHttpPrefixHeadersArePresent' do
@@ -1208,6 +1341,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # No prefix headers are serialized because the value is empty
         #
         it 'RailsJsonHttpPrefixHeadersAreNotPresent' do
@@ -1226,9 +1360,11 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Adds headers by prefix
         #
         it 'RailsJsonHttpPrefixHeadersArePresent' do
@@ -1248,9 +1384,11 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Adds headers by prefix
         #
         it 'stubs RailsJsonHttpPrefixHeadersArePresent' do
@@ -1274,6 +1412,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -1281,6 +1420,7 @@ module RailsJson
     describe '#http_prefix_headers_in_response' do
 
       describe 'responses' do
+
         # (de)serializes all response headers
         #
         it 'RailsJsonHttpPrefixHeadersResponse' do
@@ -1298,9 +1438,11 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # (de)serializes all response headers
         #
         it 'stubs RailsJsonHttpPrefixHeadersResponse' do
@@ -1322,6 +1464,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -1329,6 +1472,7 @@ module RailsJson
     describe '#http_request_with_float_labels' do
 
       describe 'requests' do
+
         # Supports handling NaN float label values.
         #
         it 'RailsJsonSupportsNaNFloatLabels' do
@@ -1344,6 +1488,7 @@ module RailsJson
             double: Float::NAN
           }, **opts)
         end
+
         # Supports handling Infinity float label values.
         #
         it 'RailsJsonSupportsInfinityFloatLabels' do
@@ -1359,6 +1504,7 @@ module RailsJson
             double: Float::INFINITY
           }, **opts)
         end
+
         # Supports handling -Infinity float label values.
         #
         it 'RailsJsonSupportsNegativeInfinityFloatLabels' do
@@ -1374,6 +1520,7 @@ module RailsJson
             double: -Float::INFINITY
           }, **opts)
         end
+
       end
 
     end
@@ -1381,6 +1528,7 @@ module RailsJson
     describe '#http_request_with_greedy_label_in_path' do
 
       describe 'requests' do
+
         # Serializes greedy labels and normal labels
         #
         it 'RailsJsonHttpRequestWithGreedyLabelInPath' do
@@ -1396,6 +1544,7 @@ module RailsJson
             baz: "there/guy"
           }, **opts)
         end
+
       end
 
     end
@@ -1403,6 +1552,7 @@ module RailsJson
     describe '#http_request_with_labels' do
 
       describe 'requests' do
+
         # Sends a GET request that uses URI label bindings
         #
         it 'RailsJsonInputWithHeadersAndAllParams' do
@@ -1424,6 +1574,7 @@ module RailsJson
             timestamp: Time.at(1576540098)
           }, **opts)
         end
+
         # Sends a GET request that uses URI label bindings
         #
         it 'RailsJsonHttpRequestLabelEscaping' do
@@ -1445,6 +1596,7 @@ module RailsJson
             timestamp: Time.at(1576540098)
           }, **opts)
         end
+
       end
 
     end
@@ -1452,6 +1604,7 @@ module RailsJson
     describe '#http_request_with_labels_and_timestamp_format' do
 
       describe 'requests' do
+
         # Serializes different timestamp formats in URI labels
         #
         it 'RailsJsonHttpRequestWithLabelsAndTimestampFormat' do
@@ -1472,6 +1625,7 @@ module RailsJson
             target_date_time: Time.at(1576540098)
           }, **opts)
         end
+
       end
 
     end
@@ -1479,6 +1633,7 @@ module RailsJson
     describe '#http_response_code' do
 
       describe 'responses' do
+
         # Binds the http response code to an output structure. Note that
         # even though all members are bound outside of the payload, an
         # empty JSON object is serialized in the response. However,
@@ -1498,6 +1653,7 @@ module RailsJson
             status: 201
           })
         end
+
         # This test ensures that clients gracefully handle cases where
         # the service responds with no payload rather than an empty JSON
         # object.
@@ -1514,9 +1670,11 @@ module RailsJson
             status: 201
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Binds the http response code to an output structure. Note that
         # even though all members are bound outside of the payload, an
         # empty JSON object is serialized in the response. However,
@@ -1536,6 +1694,7 @@ module RailsJson
             status: 201
           })
         end
+
         # This test ensures that clients gracefully handle cases where
         # the service responds with no payload rather than an empty JSON
         # object.
@@ -1553,6 +1712,7 @@ module RailsJson
             status: 201
           })
         end
+
       end
 
     end
@@ -1560,6 +1720,7 @@ module RailsJson
     describe '#ignore_query_params_in_response' do
 
       describe 'responses' do
+
         # Query parameters must be ignored when serializing the output
         # of an operation. As of January 2021, server implementations
         # are expected to respond with a JSON object regardless of
@@ -1578,6 +1739,7 @@ module RailsJson
 
           })
         end
+
         # This test is similar to RestJsonIgnoreQueryParamsInResponse,
         # but it ensures that clients gracefully handle responses from
         # the server that do not serialize an empty JSON object.
@@ -1594,9 +1756,11 @@ module RailsJson
 
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Query parameters must be ignored when serializing the output
         # of an operation. As of January 2021, server implementations
         # are expected to respond with a JSON object regardless of
@@ -1615,6 +1779,7 @@ module RailsJson
 
           })
         end
+
         # This test is similar to RestJsonIgnoreQueryParamsInResponse,
         # but it ensures that clients gracefully handle responses from
         # the server that do not serialize an empty JSON object.
@@ -1632,6 +1797,7 @@ module RailsJson
 
           })
         end
+
       end
 
     end
@@ -1639,6 +1805,7 @@ module RailsJson
     describe '#input_and_output_with_headers' do
 
       describe 'requests' do
+
         # Tests requests with string header bindings
         #
         it 'RailsJsonInputAndOutputWithStringHeaders' do
@@ -1664,6 +1831,7 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Tests requests with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
@@ -1689,6 +1857,7 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Tests requests with boolean header bindings
         #
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
@@ -1710,6 +1879,7 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Tests requests with enum header bindings
         #
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
@@ -1730,9 +1900,11 @@ module RailsJson
             ]
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Tests responses with string header bindings
         #
         it 'RailsJsonInputAndOutputWithStringHeaders' do
@@ -1760,6 +1932,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests requests with string list header bindings that require quoting
         #
         it 'RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
@@ -1779,6 +1952,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests responses with numeric header bindings
         #
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
@@ -1810,6 +1984,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests responses with boolean header bindings
         #
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
@@ -1833,6 +2008,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests responses with enum header bindings
         #
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
@@ -1854,9 +2030,11 @@ module RailsJson
             ]
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Tests responses with string header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithStringHeaders' do
@@ -1892,6 +2070,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests requests with string list header bindings that require quoting
         #
         it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
@@ -1915,6 +2094,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests responses with numeric header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithNumericHeaders' do
@@ -1950,6 +2130,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests responses with boolean header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithBooleanHeaders' do
@@ -1977,6 +2158,7 @@ module RailsJson
             ]
           })
         end
+
         # Tests responses with enum header bindings
         #
         it 'stubs RailsJsonInputAndOutputWithEnumHeaders' do
@@ -2002,6 +2184,7 @@ module RailsJson
             ]
           })
         end
+
       end
 
     end
@@ -2009,6 +2192,7 @@ module RailsJson
     describe '#json_enums' do
 
       describe 'requests' do
+
         # Serializes simple scalar properties
         #
         it 'RailsJsonEnums' do
@@ -2054,9 +2238,11 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Serializes simple scalar properties
         #
         it 'RailsJsonEnums' do
@@ -2102,9 +2288,11 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Serializes simple scalar properties
         #
         it 'stubs RailsJsonEnums' do
@@ -2148,6 +2336,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -2155,6 +2344,7 @@ module RailsJson
     describe '#json_maps' do
 
       describe 'requests' do
+
         # Serializes JSON maps
         #
         it 'RailsJsonJsonMaps' do
@@ -2202,6 +2392,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes JSON map values in sparse maps
         #
         it 'RailsJsonSerializesNullMapValues' do
@@ -2241,6 +2432,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'RailsJsonSerializesZeroValuesInMaps' do
@@ -2280,6 +2472,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # A request that contains a sparse map of sets
         #
         it 'RailsJsonSerializesSparseSetMap' do
@@ -2308,6 +2501,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # A request that contains a dense map of sets.
         #
         it 'RailsJsonSerializesDenseSetMap' do
@@ -2336,6 +2530,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # A request that contains a sparse map of sets.
         #
         it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
@@ -2366,9 +2561,11 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Deserializes JSON maps
         #
         it 'RailsJsonJsonMaps' do
@@ -2416,6 +2613,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes null JSON map values
         #
         it 'RailsJsonDeserializesNullMapValues' do
@@ -2455,6 +2653,7 @@ module RailsJson
             }
           })
         end
+
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'RailsJsonDeserializesZeroValuesInMaps' do
@@ -2494,6 +2693,7 @@ module RailsJson
             }
           })
         end
+
         # A response that contains a sparse map of sets
         #
         it 'RailsJsonDeserializesSparseSetMap' do
@@ -2522,6 +2722,7 @@ module RailsJson
             }
           })
         end
+
         # A response that contains a dense map of sets.
         #
         it 'RailsJsonDeserializesDenseSetMap' do
@@ -2550,6 +2751,7 @@ module RailsJson
             }
           })
         end
+
         # A response that contains a sparse map of sets.
         #
         it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
@@ -2580,6 +2782,7 @@ module RailsJson
             }
           })
         end
+
         # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
         # drop the null key-value pair.
         #
@@ -2610,9 +2813,11 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Deserializes JSON maps
         #
         it 'stubs RailsJsonJsonMaps' do
@@ -2658,6 +2863,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes null JSON map values
         #
         it 'stubs RailsJsonDeserializesNullMapValues' do
@@ -2695,6 +2901,7 @@ module RailsJson
             }
           })
         end
+
         # Ensure that 0 and false are sent over the wire in all maps and lists
         #
         it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
@@ -2732,6 +2939,7 @@ module RailsJson
             }
           })
         end
+
         # A response that contains a sparse map of sets
         #
         it 'stubs RailsJsonDeserializesSparseSetMap' do
@@ -2763,6 +2971,7 @@ module RailsJson
             }
           })
         end
+
         # A response that contains a dense map of sets.
         #
         it 'stubs RailsJsonDeserializesDenseSetMap' do
@@ -2794,6 +3003,7 @@ module RailsJson
             }
           })
         end
+
         # A response that contains a sparse map of sets.
         #
         it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
@@ -2827,6 +3037,7 @@ module RailsJson
             }
           })
         end
+
         # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
         # drop the null key-value pair.
         #
@@ -2859,6 +3070,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -2866,6 +3078,7 @@ module RailsJson
     describe '#json_unions' do
 
       describe 'requests' do
+
         # Serializes a string union value
         #
         it 'RailsJsonSerializeStringUnionValue' do
@@ -2887,6 +3100,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a boolean union value
         #
         it 'RailsJsonSerializeBooleanUnionValue' do
@@ -2908,6 +3122,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a number union value
         #
         it 'RailsJsonSerializeNumberUnionValue' do
@@ -2929,6 +3144,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a blob union value
         #
         it 'RailsJsonSerializeBlobUnionValue' do
@@ -2950,6 +3166,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a timestamp union value
         #
         it 'RailsJsonSerializeTimestampUnionValue' do
@@ -2971,6 +3188,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes an enum union value
         #
         it 'RailsJsonSerializeEnumUnionValue' do
@@ -2992,6 +3210,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a list union value
         #
         it 'RailsJsonSerializeListUnionValue' do
@@ -3016,6 +3235,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a map union value
         #
         it 'RailsJsonSerializeMapUnionValue' do
@@ -3043,6 +3263,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a structure union value
         #
         it 'RailsJsonSerializeStructureUnionValue' do
@@ -3068,6 +3289,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes a renamed structure union value
         #
         it 'RailsJsonSerializeRenamedStructureUnionValue' do
@@ -3093,9 +3315,11 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Deserializes a string union value
         #
         it 'RailsJsonDeserializeStringUnionValue' do
@@ -3117,6 +3341,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a boolean union value
         #
         it 'RailsJsonDeserializeBooleanUnionValue' do
@@ -3138,6 +3363,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a number union value
         #
         it 'RailsJsonDeserializeNumberUnionValue' do
@@ -3159,6 +3385,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a blob union value
         #
         it 'RailsJsonDeserializeBlobUnionValue' do
@@ -3180,6 +3407,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a timestamp union value
         #
         it 'RailsJsonDeserializeTimestampUnionValue' do
@@ -3201,6 +3429,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes an enum union value
         #
         it 'RailsJsonDeserializeEnumUnionValue' do
@@ -3222,6 +3451,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a list union value
         #
         it 'RailsJsonDeserializeListUnionValue' do
@@ -3246,6 +3476,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a map union value
         #
         it 'RailsJsonDeserializeMapUnionValue' do
@@ -3273,6 +3504,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a structure union value
         #
         it 'RailsJsonDeserializeStructureUnionValue' do
@@ -3298,9 +3530,11 @@ module RailsJson
             }
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Deserializes a string union value
         #
         it 'stubs RailsJsonDeserializeStringUnionValue' do
@@ -3320,6 +3554,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a boolean union value
         #
         it 'stubs RailsJsonDeserializeBooleanUnionValue' do
@@ -3339,6 +3574,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a number union value
         #
         it 'stubs RailsJsonDeserializeNumberUnionValue' do
@@ -3358,6 +3594,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a blob union value
         #
         it 'stubs RailsJsonDeserializeBlobUnionValue' do
@@ -3377,6 +3614,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a timestamp union value
         #
         it 'stubs RailsJsonDeserializeTimestampUnionValue' do
@@ -3396,6 +3634,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes an enum union value
         #
         it 'stubs RailsJsonDeserializeEnumUnionValue' do
@@ -3415,6 +3654,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a list union value
         #
         it 'stubs RailsJsonDeserializeListUnionValue' do
@@ -3440,6 +3680,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a map union value
         #
         it 'stubs RailsJsonDeserializeMapUnionValue' do
@@ -3465,6 +3706,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes a structure union value
         #
         it 'stubs RailsJsonDeserializeStructureUnionValue' do
@@ -3488,6 +3730,7 @@ module RailsJson
             }
           })
         end
+
       end
 
     end
@@ -3495,9 +3738,10 @@ module RailsJson
     describe '#kitchen_sink_operation' do
 
       describe 'requests' do
+
         # Serializes string shapes
         #
-        it 'rails_json_rails_json_serializes_string_shapes' do
+        it 'RailsJsonSerializesStringShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3511,9 +3755,10 @@ module RailsJson
             string: "abc xyz"
           }, **opts)
         end
+
         # Serializes string shapes with jsonvalue trait
         #
-        it 'rails_json_serializes_string_shapes_with_jsonvalue_trait' do
+        it 'RailsJsonSerializesStringShapesWithJsonvalueTrait' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3527,9 +3772,10 @@ module RailsJson
             json_value: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
           }, **opts)
         end
+
         # Serializes integer shapes
         #
-        it 'rails_json_serializes_integer_shapes' do
+        it 'RailsJsonSerializesIntegerShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3543,9 +3789,10 @@ module RailsJson
             integer: 1234
           }, **opts)
         end
+
         # Serializes long shapes
         #
-        it 'rails_json_serializes_long_shapes' do
+        it 'RailsJsonSerializesLongShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3559,9 +3806,10 @@ module RailsJson
             long: 999999999999
           }, **opts)
         end
+
         # Serializes float shapes
         #
-        it 'rails_json_serializes_float_shapes' do
+        it 'RailsJsonSerializesFloatShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3575,9 +3823,10 @@ module RailsJson
             float: 1234.5
           }, **opts)
         end
+
         # Serializes double shapes
         #
-        it 'rails_json_serializes_double_shapes' do
+        it 'RailsJsonSerializesDoubleShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3591,9 +3840,10 @@ module RailsJson
             double: 1234.5
           }, **opts)
         end
+
         # Serializes blob shapes
         #
-        it 'rails_json_serializes_blob_shapes' do
+        it 'RailsJsonSerializesBlobShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3607,9 +3857,10 @@ module RailsJson
             blob: 'binary-value'
           }, **opts)
         end
+
         # Serializes boolean shapes (true)
         #
-        it 'rails_json_serializes_boolean_shapes_true' do
+        it 'RailsJsonSerializesBooleanShapesTrue' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3623,9 +3874,10 @@ module RailsJson
             boolean: true
           }, **opts)
         end
+
         # Serializes boolean shapes (false)
         #
-        it 'rails_json_serializes_boolean_shapes_false' do
+        it 'RailsJsonSerializesBooleanShapesFalse' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3639,9 +3891,10 @@ module RailsJson
             boolean: false
           }, **opts)
         end
+
         # Serializes timestamp shapes
         #
-        it 'rails_json_serializes_timestamp_shapes' do
+        it 'RailsJsonSerializesTimestampShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3655,9 +3908,10 @@ module RailsJson
             timestamp: Time.at(946845296)
           }, **opts)
         end
+
         # Serializes fractional timestamp shapes
         #
-        it 'rails_json_serializes_fractional_timestamp_shapes' do
+        it 'RailsJsonSerializesFractionalTimestampShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3671,9 +3925,10 @@ module RailsJson
             timestamp: Time.at(946845296, 123, :millisecond)
           }, **opts)
         end
+
         # Serializes timestamp shapes with iso8601 timestampFormat
         #
-        it 'rails_json_serializes_timestamp_shapes_with_iso8601_timestampformat' do
+        it 'RailsJsonSerializesTimestampShapesWithIso8601Timestampformat' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3687,9 +3942,10 @@ module RailsJson
             iso8601_timestamp: Time.at(946845296)
           }, **opts)
         end
+
         # Serializes timestamp shapes with httpdate timestampFormat
         #
-        it 'rails_json_serializes_timestamp_shapes_with_httpdate_timestampformat' do
+        it 'RailsJsonSerializesTimestampShapesWithHttpdateTimestampformat' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3703,9 +3959,10 @@ module RailsJson
             httpdate_timestamp: Time.at(946845296)
           }, **opts)
         end
+
         # Serializes timestamp shapes with unixTimestamp timestampFormat
         #
-        it 'rails_json_serializes_timestamp_shapes_with_unixtimestamp_timestampformat' do
+        it 'RailsJsonSerializesTimestampShapesWithUnixtimestampTimestampformat' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3719,9 +3976,10 @@ module RailsJson
             unix_timestamp: Time.at(946845296)
           }, **opts)
         end
+
         # Serializes list shapes
         #
-        it 'rails_json_serializes_list_shapes' do
+        it 'RailsJsonSerializesListShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3739,9 +3997,10 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Serializes empty list shapes
         #
-        it 'rails_json_serializes_empty_list_shapes' do
+        it 'RailsJsonSerializesEmptyListShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3757,9 +4016,10 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Serializes list of map shapes
         #
-        it 'rails_json_serializes_list_of_map_shapes' do
+        it 'RailsJsonSerializesListOfMapShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3783,9 +4043,10 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Serializes list of structure shapes
         #
-        it 'rails_json_serializes_list_of_structure_shapes' do
+        it 'RailsJsonSerializesListOfStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3809,9 +4070,10 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Serializes list of recursive structure shapes
         #
-        it 'rails_json_serializes_list_of_recursive_structure_shapes' do
+        it 'RailsJsonSerializesListOfRecursiveStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3837,9 +4099,10 @@ module RailsJson
             ]
           }, **opts)
         end
+
         # Serializes map shapes
         #
-        it 'rails_json_serializes_map_shapes' do
+        it 'RailsJsonSerializesMapShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3856,9 +4119,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes empty map shapes
         #
-        it 'rails_json_serializes_empty_map_shapes' do
+        it 'RailsJsonSerializesEmptyMapShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3874,9 +4138,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes map of list shapes
         #
-        it 'rails_json_serializes_map_of_list_shapes' do
+        it 'RailsJsonSerializesMapOfListShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3899,9 +4164,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes map of structure shapes
         #
-        it 'rails_json_serializes_map_of_structure_shapes' do
+        it 'RailsJsonSerializesMapOfStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3922,9 +4188,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes map of recursive structure shapes
         #
-        it 'rails_json_serializes_map_of_recursive_structure_shapes' do
+        it 'RailsJsonSerializesMapOfRecursiveStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3950,9 +4217,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes structure shapes
         #
-        it 'rails_json_serializes_structure_shapes' do
+        it 'RailsJsonSerializesStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3968,9 +4236,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes structure members with locationName traits
         #
-        it 'rails_json_serializes_structure_members_with_locationname_traits' do
+        it 'RailsJsonSerializesStructureMembersWithLocationnameTraits' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3986,9 +4255,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes empty structure shapes
         #
-        it 'rails_json_serializes_empty_structure_shapes' do
+        it 'RailsJsonSerializesEmptyStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -4004,9 +4274,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes structure which have no members
         #
-        it 'rails_json_serializes_structure_which_have_no_members' do
+        it 'RailsJsonSerializesStructureWhichHaveNoMembers' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -4022,9 +4293,10 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes recursive structure shapes
         #
-        it 'rails_json_serializes_recursive_structure_shapes' do
+        it 'RailsJsonSerializesRecursiveStructureShapes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -4056,12 +4328,14 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Parses operations with empty JSON bodies
         #
-        it 'rails_json_parses_operations_with_empty_json_bodies' do
+        it 'RailsJsonParsesOperationsWithEmptyJsonBodies' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4074,9 +4348,10 @@ module RailsJson
 
           })
         end
+
         # Parses string shapes
         #
-        it 'rails_json_parses_string_shapes' do
+        it 'RailsJsonParsesStringShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4089,9 +4364,10 @@ module RailsJson
             string: "string-value"
           })
         end
+
         # Parses integer shapes
         #
-        it 'rails_json_parses_integer_shapes' do
+        it 'RailsJsonParsesIntegerShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4104,9 +4380,10 @@ module RailsJson
             integer: 1234
           })
         end
+
         # Parses long shapes
         #
-        it 'rails_json_parses_long_shapes' do
+        it 'RailsJsonParsesLongShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4119,9 +4396,10 @@ module RailsJson
             long: 1234567890123456789
           })
         end
+
         # Parses float shapes
         #
-        it 'rails_json_parses_float_shapes' do
+        it 'RailsJsonParsesFloatShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4134,9 +4412,10 @@ module RailsJson
             float: 1234.5
           })
         end
+
         # Parses double shapes
         #
-        it 'rails_json_parses_double_shapes' do
+        it 'RailsJsonParsesDoubleShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4149,9 +4428,10 @@ module RailsJson
             double: 1.2345678912345679E8
           })
         end
+
         # Parses boolean shapes (true)
         #
-        it 'rails_json_parses_boolean_shapes_true' do
+        it 'RailsJsonParsesBooleanShapesTrue' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4164,9 +4444,10 @@ module RailsJson
             boolean: true
           })
         end
+
         # Parses boolean (false)
         #
-        it 'rails_json_parses_boolean_false' do
+        it 'RailsJsonParsesBooleanFalse' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4179,9 +4460,10 @@ module RailsJson
             boolean: false
           })
         end
+
         # Parses blob shapes
         #
-        it 'rails_json_parses_blob_shapes' do
+        it 'RailsJsonParsesBlobShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4194,9 +4476,10 @@ module RailsJson
             blob: 'binary-value'
           })
         end
+
         # Parses timestamp shapes
         #
-        it 'rails_json_parses_timestamp_shapes' do
+        it 'RailsJsonParsesTimestampShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4209,9 +4492,10 @@ module RailsJson
             timestamp: Time.at(946845296)
           })
         end
+
         # Parses fractional timestamp shapes
         #
-        it 'rails_json_parses_fractional_timestamp_shapes' do
+        it 'RailsJsonParsesFractionalTimestampShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4224,9 +4508,10 @@ module RailsJson
             timestamp: Time.at(946845296, 123, :millisecond)
           })
         end
+
         # Parses iso8601 timestamps
         #
-        it 'rails_json_parses_iso8601_timestamps' do
+        it 'RailsJsonParsesIso8601Timestamps' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4239,9 +4524,10 @@ module RailsJson
             iso8601_timestamp: Time.at(946845296)
           })
         end
+
         # Parses httpdate timestamps
         #
-        it 'rails_json_parses_httpdate_timestamps' do
+        it 'RailsJsonParsesHttpdateTimestamps' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4254,9 +4540,10 @@ module RailsJson
             httpdate_timestamp: Time.at(946845296)
           })
         end
+
         # Parses fractional httpdate timestamps
         #
-        it 'rails_json_parses_fractional_httpdate_timestamps' do
+        it 'RailsJsonParsesFractionalHttpdateTimestamps' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4269,9 +4556,10 @@ module RailsJson
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
         end
+
         # Parses list shapes
         #
-        it 'rails_json_parses_list_shapes' do
+        it 'RailsJsonParsesListShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4288,9 +4576,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of map shapes
         #
-        it 'rails_json_parses_list_of_map_shapes' do
+        it 'RailsJsonParsesListOfMapShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4310,9 +4599,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of list shapes
         #
-        it 'rails_json_parses_list_of_list_shapes' do
+        it 'RailsJsonParsesListOfListShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4336,9 +4626,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of structure shapes
         #
-        it 'rails_json_parses_list_of_structure_shapes' do
+        it 'RailsJsonParsesListOfStructureShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4358,9 +4649,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of recursive structure shapes
         #
-        it 'rails_json_parses_list_of_recursive_structure_shapes' do
+        it 'RailsJsonParsesListOfRecursiveStructureShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4385,9 +4677,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses map shapes
         #
-        it 'rails_json_parses_map_shapes' do
+        it 'RailsJsonParsesMapShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4403,9 +4696,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of list shapes
         #
-        it 'rails_json_parses_map_of_list_shapes' do
+        it 'RailsJsonParsesMapOfListShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4427,9 +4721,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of map shapes
         #
-        it 'rails_json_parses_map_of_map_shapes' do
+        it 'RailsJsonParsesMapOfMapShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4451,9 +4746,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of structure shapes
         #
-        it 'rails_json_parses_map_of_structure_shapes' do
+        it 'RailsJsonParsesMapOfStructureShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4473,9 +4769,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of recursive structure shapes
         #
-        it 'rails_json_parses_map_of_recursive_structure_shapes' do
+        it 'RailsJsonParsesMapOfRecursiveStructureShapes' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4500,9 +4797,10 @@ module RailsJson
             }
           })
         end
+
         # Parses the request id from the response
         #
-        it 'rails_json_parses_the_request_id_from_the_response' do
+        it 'RailsJsonParsesTheRequestIdFromTheResponse' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4516,12 +4814,14 @@ module RailsJson
 
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Parses operations with empty JSON bodies
         #
-        it 'stubs rails_json_parses_operations_with_empty_json_bodies' do
+        it 'stubs RailsJsonParsesOperationsWithEmptyJsonBodies' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4534,9 +4834,10 @@ module RailsJson
 
           })
         end
+
         # Parses string shapes
         #
-        it 'stubs rails_json_parses_string_shapes' do
+        it 'stubs RailsJsonParsesStringShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4549,9 +4850,10 @@ module RailsJson
             string: "string-value"
           })
         end
+
         # Parses integer shapes
         #
-        it 'stubs rails_json_parses_integer_shapes' do
+        it 'stubs RailsJsonParsesIntegerShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4564,9 +4866,10 @@ module RailsJson
             integer: 1234
           })
         end
+
         # Parses long shapes
         #
-        it 'stubs rails_json_parses_long_shapes' do
+        it 'stubs RailsJsonParsesLongShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4579,9 +4882,10 @@ module RailsJson
             long: 1234567890123456789
           })
         end
+
         # Parses float shapes
         #
-        it 'stubs rails_json_parses_float_shapes' do
+        it 'stubs RailsJsonParsesFloatShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4594,9 +4898,10 @@ module RailsJson
             float: 1234.5
           })
         end
+
         # Parses double shapes
         #
-        it 'stubs rails_json_parses_double_shapes' do
+        it 'stubs RailsJsonParsesDoubleShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4609,9 +4914,10 @@ module RailsJson
             double: 1.2345678912345679E8
           })
         end
+
         # Parses boolean shapes (true)
         #
-        it 'stubs rails_json_parses_boolean_shapes_true' do
+        it 'stubs RailsJsonParsesBooleanShapesTrue' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4624,9 +4930,10 @@ module RailsJson
             boolean: true
           })
         end
+
         # Parses boolean (false)
         #
-        it 'stubs rails_json_parses_boolean_false' do
+        it 'stubs RailsJsonParsesBooleanFalse' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4639,9 +4946,10 @@ module RailsJson
             boolean: false
           })
         end
+
         # Parses blob shapes
         #
-        it 'stubs rails_json_parses_blob_shapes' do
+        it 'stubs RailsJsonParsesBlobShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4654,9 +4962,10 @@ module RailsJson
             blob: 'binary-value'
           })
         end
+
         # Parses timestamp shapes
         #
-        it 'stubs rails_json_parses_timestamp_shapes' do
+        it 'stubs RailsJsonParsesTimestampShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4669,9 +4978,10 @@ module RailsJson
             timestamp: Time.at(946845296)
           })
         end
+
         # Parses fractional timestamp shapes
         #
-        it 'stubs rails_json_parses_fractional_timestamp_shapes' do
+        it 'stubs RailsJsonParsesFractionalTimestampShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4684,9 +4994,10 @@ module RailsJson
             timestamp: Time.at(946845296, 123, :millisecond)
           })
         end
+
         # Parses iso8601 timestamps
         #
-        it 'stubs rails_json_parses_iso8601_timestamps' do
+        it 'stubs RailsJsonParsesIso8601Timestamps' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4699,9 +5010,10 @@ module RailsJson
             iso8601_timestamp: Time.at(946845296)
           })
         end
+
         # Parses httpdate timestamps
         #
-        it 'stubs rails_json_parses_httpdate_timestamps' do
+        it 'stubs RailsJsonParsesHttpdateTimestamps' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4714,9 +5026,10 @@ module RailsJson
             httpdate_timestamp: Time.at(946845296)
           })
         end
+
         # Parses fractional httpdate timestamps
         #
-        it 'stubs rails_json_parses_fractional_httpdate_timestamps' do
+        it 'stubs RailsJsonParsesFractionalHttpdateTimestamps' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4729,9 +5042,10 @@ module RailsJson
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
         end
+
         # Parses list shapes
         #
-        it 'stubs rails_json_parses_list_shapes' do
+        it 'stubs RailsJsonParsesListShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4752,9 +5066,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of map shapes
         #
-        it 'stubs rails_json_parses_list_of_map_shapes' do
+        it 'stubs RailsJsonParsesListOfMapShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4781,9 +5096,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of list shapes
         #
-        it 'stubs rails_json_parses_list_of_list_shapes' do
+        it 'stubs RailsJsonParsesListOfListShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4818,9 +5134,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of structure shapes
         #
-        it 'stubs rails_json_parses_list_of_structure_shapes' do
+        it 'stubs RailsJsonParsesListOfStructureShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4847,9 +5164,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses list of recursive structure shapes
         #
-        it 'stubs rails_json_parses_list_of_recursive_structure_shapes' do
+        it 'stubs RailsJsonParsesListOfRecursiveStructureShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4886,9 +5204,10 @@ module RailsJson
             ]
           })
         end
+
         # Parses map shapes
         #
-        it 'stubs rails_json_parses_map_shapes' do
+        it 'stubs RailsJsonParsesMapShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4907,9 +5226,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of list shapes
         #
-        it 'stubs rails_json_parses_map_of_list_shapes' do
+        it 'stubs RailsJsonParsesMapOfListShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4940,9 +5260,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of map shapes
         #
-        it 'stubs rails_json_parses_map_of_map_shapes' do
+        it 'stubs RailsJsonParsesMapOfMapShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4973,9 +5294,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of structure shapes
         #
-        it 'stubs rails_json_parses_map_of_structure_shapes' do
+        it 'stubs RailsJsonParsesMapOfStructureShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5002,9 +5324,10 @@ module RailsJson
             }
           })
         end
+
         # Parses map of recursive structure shapes
         #
-        it 'stubs rails_json_parses_map_of_recursive_structure_shapes' do
+        it 'stubs RailsJsonParsesMapOfRecursiveStructureShapes' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5041,9 +5364,10 @@ module RailsJson
             }
           })
         end
+
         # Parses the request id from the response
         #
-        it 'stubs rails_json_parses_the_request_id_from_the_response' do
+        it 'stubs RailsJsonParsesTheRequestIdFromTheResponse' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5056,6 +5380,7 @@ module RailsJson
 
           })
         end
+
       end
 
     end
@@ -5063,6 +5388,7 @@ module RailsJson
     describe '#media_type_header' do
 
       describe 'requests' do
+
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'RailsJsonMediaTypeHeaderInputBase64' do
@@ -5078,9 +5404,11 @@ module RailsJson
             json: "true"
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'RailsJsonMediaTypeHeaderOutputBase64' do
@@ -5096,9 +5424,11 @@ module RailsJson
             json: "true"
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Headers that target strings with a mediaType are base64 encoded
         #
         it 'stubs RailsJsonMediaTypeHeaderOutputBase64' do
@@ -5114,6 +5444,7 @@ module RailsJson
             json: "true"
           })
         end
+
       end
 
     end
@@ -5121,9 +5452,10 @@ module RailsJson
     describe '#nested_attributes_operation' do
 
       describe 'requests' do
+
         # Serializes members with nestedAttributes
         #
-        it 'rails_json_nested_attributes' do
+        it 'RailsJsonNestedAttributes' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -5138,6 +5470,7 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
     end
@@ -5145,6 +5478,7 @@ module RailsJson
     describe '#null_and_empty_headers_client' do
 
       describe 'requests' do
+
         # Do not send null values, empty strings, or empty lists over the wire in headers
         #
         it 'RailsJsonNullAndEmptyHeaders' do
@@ -5164,6 +5498,7 @@ module RailsJson
             ]
           }, **opts)
         end
+
       end
 
     end
@@ -5171,6 +5506,7 @@ module RailsJson
     describe '#null_operation' do
 
       describe 'requests' do
+
         # Null structure values are dropped
         #
         it 'RailsJsonStructuresDontSerializeNullValues' do
@@ -5186,6 +5522,7 @@ module RailsJson
             string: nil
           }, **opts)
         end
+
         # Serializes null values in maps
         #
         it 'RailsJsonMapsSerializeNullValues' do
@@ -5207,6 +5544,7 @@ module RailsJson
             }
           }, **opts)
         end
+
         # Serializes null values in lists
         #
         it 'RailsJsonListsSerializeNull' do
@@ -5228,9 +5566,11 @@ module RailsJson
             ]
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Null structure values are dropped
         #
         it 'RailsJsonStructuresDontDeserializeNullValues' do
@@ -5248,6 +5588,7 @@ module RailsJson
 
           })
         end
+
         # Deserializes null values in maps
         #
         it 'RailsJsonMapsDeserializeNullValues' do
@@ -5269,6 +5610,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes null values in lists
         #
         it 'RailsJsonListsDeserializeNull' do
@@ -5290,9 +5632,11 @@ module RailsJson
             ]
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Null structure values are dropped
         #
         it 'stubs RailsJsonStructuresDontDeserializeNullValues' do
@@ -5308,6 +5652,7 @@ module RailsJson
 
           })
         end
+
         # Deserializes null values in maps
         #
         it 'stubs RailsJsonMapsDeserializeNullValues' do
@@ -5327,6 +5672,7 @@ module RailsJson
             }
           })
         end
+
         # Deserializes null values in lists
         #
         it 'stubs RailsJsonListsDeserializeNull' do
@@ -5346,6 +5692,7 @@ module RailsJson
             ]
           })
         end
+
       end
 
     end
@@ -5353,6 +5700,7 @@ module RailsJson
     describe '#omits_null_serializes_empty_string' do
 
       describe 'requests' do
+
         # Omits null query values
         #
         it 'RailsJsonOmitsNullQuery' do
@@ -5367,6 +5715,7 @@ module RailsJson
             null_value: nil
           }, **opts)
         end
+
         # Serializes empty query strings
         #
         it 'RailsJsonSerializesEmptyQueryValue' do
@@ -5386,6 +5735,7 @@ module RailsJson
             empty_string: ""
           }, **opts)
         end
+
       end
 
     end
@@ -5393,9 +5743,10 @@ module RailsJson
     describe '#operation_with_optional_input_output' do
 
       describe 'requests' do
+
         # Can call operations with no input or output
         #
-        it 'rails_json_can_call_operation_with_no_input_or_output' do
+        it 'RailsJsonCanCallOperationWithNoInputOrOutput' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -5408,9 +5759,10 @@ module RailsJson
 
           }, **opts)
         end
+
         # Can invoke operations with optional input
         #
-        it 'rails_json_can_call_operation_with_optional_input' do
+        it 'RailsJsonCanCallOperationWithOptionalInput' do
           interceptor = before_send.new do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -5423,6 +5775,7 @@ module RailsJson
             value: "Hi"
           }, **opts)
         end
+
       end
 
     end
@@ -5430,6 +5783,7 @@ module RailsJson
     describe '#query_idempotency_token_auto_fill' do
 
       describe 'requests' do
+
         # Automatically adds idempotency token when not set
         #
         it 'RailsJsonQueryIdempotencyTokenAutoFill' do
@@ -5450,6 +5804,7 @@ module RailsJson
 
           }, **opts)
         end
+
         # Uses the given idempotency token as-is
         #
         it 'RailsJsonQueryIdempotencyTokenAutoFillIsSet' do
@@ -5470,6 +5825,7 @@ module RailsJson
             token: "00000000-0000-4000-8000-000000000000"
           }, **opts)
         end
+
       end
 
     end
@@ -5477,6 +5833,7 @@ module RailsJson
     describe '#query_params_as_string_list_map' do
 
       describe 'requests' do
+
         # Serialize query params from map of list strings
         #
         it 'RailsJsonQueryParamsStringListMap' do
@@ -5502,6 +5859,7 @@ module RailsJson
             }
           }, **opts)
         end
+
       end
 
     end
@@ -5513,6 +5871,7 @@ module RailsJson
     describe '#timestamp_format_headers' do
 
       describe 'requests' do
+
         # Tests how timestamp request headers are serialized
         #
         it 'RailsJsonTimestampFormatHeaders' do
@@ -5534,9 +5893,11 @@ module RailsJson
             target_date_time: Time.at(1576540098)
           }, **opts)
         end
+
       end
 
       describe 'responses' do
+
         # Tests how timestamp response headers are serialized
         #
         it 'RailsJsonTimestampFormatHeaders' do
@@ -5564,9 +5925,11 @@ module RailsJson
             target_date_time: Time.at(1576540098)
           })
         end
+
       end
 
       describe 'stubs' do
+
         # Tests how timestamp response headers are serialized
         #
         it 'stubs RailsJsonTimestampFormatHeaders' do
@@ -5594,6 +5957,7 @@ module RailsJson
             target_date_time: Time.at(1576540098)
           })
         end
+
       end
 
     end

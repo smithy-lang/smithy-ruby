@@ -10,7 +10,7 @@ use smithy.test#httpResponseTests
 
 @httpRequestTests([
     {
-        id: "rails_json_nested_attributes",
+        id: "RailsJsonNestedAttributes",
         protocol: railsJson,
         documentation: "Serializes members with nestedAttributes",
         body: "{\"simple_struct_attributes\":{\"value\":\"simple struct value\"}}",

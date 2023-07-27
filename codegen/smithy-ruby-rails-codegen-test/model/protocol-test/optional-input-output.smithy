@@ -8,7 +8,7 @@ use smithy.test#httpResponseTests
 
 @httpRequestTests([
     {
-        id: "rails_json_can_call_operation_with_no_input_or_output",
+        id: "RailsJsonCanCallOperationWithNoInputOrOutput",
         protocol: railsJson,
         documentation: "Can call operations with no input or output",
         body: "{}",
@@ -20,7 +20,7 @@ use smithy.test#httpResponseTests
         uri: "/operationwithoptionalinputoutput",
     },
     {
-        id: "rails_json_can_call_operation_with_optional_input",
+        id: "RailsJsonCanCallOperationWithOptionalInput",
         protocol: railsJson,
         documentation: "Can invoke operations with optional input",
         body: "{\"value\":\"Hi\"}",
