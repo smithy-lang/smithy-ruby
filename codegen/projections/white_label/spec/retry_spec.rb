@@ -16,8 +16,8 @@ module WhiteLabel
         )
         # Do not test fake protocol
         expect(WhiteLabel::Stubs::ServerError)
-          .to receive(:stub).and_wrap_original do |m, *args|
-          http_resp, stub = *args
+          .to receive(:stub).and_wrap_original do |_m, *args|
+          http_resp, = *args
           http_resp.headers['x-smithy-error'] = 'ServerError'
         end
 

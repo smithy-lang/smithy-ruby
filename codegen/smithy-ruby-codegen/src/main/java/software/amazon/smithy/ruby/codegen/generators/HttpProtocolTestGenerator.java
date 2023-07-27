@@ -89,16 +89,15 @@ public class HttpProtocolTestGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
-                .write("let(:endpoint) { 'http://127.0.0.1' } ")
-                .write("let(:retry_strategy) { Hearth::Retry::Standard.new(max_attempts: 1) }")
                 .openBlock("let(:config) do")
                 .openBlock("Config.new(")
                 .write("stub_responses: true,")
                 .write("validate_input: false,")
-                .write("endpoint: endpoint,")
-                .write("retry_strategy: retry_strategy")
+                .write("endpoint: 'http://127.0.0.1',")
+                .write("retry_strategy: Hearth::Retry::Standard.new(max_attempts: 0)")
                 .closeBlock(")")
                 .closeBlock("end")
+                .write("")
                 .write("let(:client) { Client.new(config) }")
                 .call(() -> renderInterceptorClasses())
                 .write("")
@@ -143,6 +142,7 @@ public class HttpProtocolTestGenerator {
             }
             String documentation = testCase.getDocumentation().orElse("");
             writer
+                    .write("")
                     .writeDocstring(documentation)
                     .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubResponse(operation, testCase))
@@ -160,7 +160,7 @@ public class HttpProtocolTestGenerator {
                     "Generated protocol response test for operation " + operationName + " test: " + testCase.getId());
 
         });
-        writer.closeBlock("end");
+        writer.closeBlock("\nend");
     }
 
     private void renderResponseStubberTests(OperationShape operation,
@@ -176,6 +176,7 @@ public class HttpProtocolTestGenerator {
             }
             String documentation = testCase.getDocumentation().orElse("");
             writer
+                    .write("")
                     .writeDocstring(documentation)
                     .openBlock("it 'stubs $L'$L do", testCase.getId(),
                             skipTest(operation, testCase.getId(), "response"))
@@ -197,7 +198,7 @@ public class HttpProtocolTestGenerator {
                     + testCase.getId());
 
         });
-        writer.closeBlock("end");
+        writer.closeBlock("\nend");
     }
 
     private void renderRequestTests(OperationShape operation, HttpRequestTestsTrait requestTests) {
@@ -210,6 +211,7 @@ public class HttpProtocolTestGenerator {
             }
             String documentation = testCase.getDocumentation().orElse("");
             writer
+                    .write("")
                     .writeDocstring(documentation)
                     .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "request"))
                     .call(() -> {
@@ -233,7 +235,7 @@ public class HttpProtocolTestGenerator {
                     "Generated protocol request test for operation " + operationName + " test: " + testCase.getId());
 
         });
-        writer.closeBlock("end");
+        writer.closeBlock("\nend");
     }
 
     private String skipTest(OperationShape operation, String testCaseId, String testType) {
@@ -258,7 +260,7 @@ public class HttpProtocolTestGenerator {
 
         for (StructureShape error : OperationIndex.of(model).getErrors(operation)) {
             error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
-                writer.openBlock("\ndescribe '$L Errors' do", error.getId().getName());
+                writer.openBlock("\ndescribe '$L error' do", error.getId().getName());
                 responseTests.getTestCases().forEach((testCase) -> {
                     if (testCase.getAppliesTo().isPresent()
                             && testCase.getAppliesTo().get().toString().equals("server")) {
@@ -267,6 +269,7 @@ public class HttpProtocolTestGenerator {
                     String documentation = testCase.getDocumentation().orElse("");
 
                     writer
+                            .write("")
                             .writeDocstring(documentation)
                             .openBlock("it '$L' do", testCase.getId())
                             .call(() -> renderResponseStubResponse(operation, testCase))
@@ -281,7 +284,29 @@ public class HttpProtocolTestGenerator {
                             .closeBlock("end")
                             .closeBlock("end");
 
-                    LOGGER.finer("Generated protocol error test for operation " + operationName + " test: "
+                    LOGGER.finer("Generated protocol error response test for operation " + operationName + " test: "
+                            + testCase.getId());
+
+                    writer
+                            .write("")
+                            .writeDocstring(documentation)
+                            .openBlock("it 'stubs $L' do", testCase.getId())
+                            .write("client.stub_responses(:$L, error: { class: Errors::$L, data: $L })",
+                                    operationName, error.getId().getName(),
+                                    getRubyHashFromParams(error, testCase.getParams()))
+                            .call(() -> renderSkipBuild(operation))
+                            .openBlock("begin")
+                            .write("client.$L({})", operationName)
+                            .dedent()
+                            .write("rescue Errors::$L => e", error.getId().getName())
+                            .indent()
+                            .write("expect(e.http_status).to eq($L)", testCase.getCode())
+                            .write("expect(e.data.to_h).to eq($L)",
+                                    getRubyHashFromParams(error, testCase.getParams()))
+                            .closeBlock("end")
+                            .closeBlock("end");
+
+                    LOGGER.finer("Generated protocol error stub test for operation " + operationName + " test: "
                             + testCase.getId());
 
                 });
