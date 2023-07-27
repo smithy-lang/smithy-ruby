@@ -62,6 +62,11 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     protected void renderBodyStub(Shape outputShape) {
 
     }
+
+    @Override
+    protected void renderErrorStubMethod(Shape errorShape) {
+
+    }
 }
 
 

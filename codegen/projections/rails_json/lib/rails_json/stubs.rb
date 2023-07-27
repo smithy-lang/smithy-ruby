@@ -71,6 +71,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 400
+        http_resp.headers['x-smithy-rails-error'] = 'ComplexError'
         http_resp.headers['Content-Type'] = 'application/json'
         data[:top_level] = stub[:top_level] unless stub[:top_level].nil?
         data[:nested] = Stubs::ComplexNestedErrorData.stub(stub[:nested]) unless stub[:nested].nil?
@@ -390,6 +391,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 400
+        http_resp.headers['x-smithy-rails-error'] = 'ErrorWithMembers'
         http_resp.headers['Content-Type'] = 'application/json'
         data[:code] = stub[:code] unless stub[:code].nil?
         data[:complex_data] = Stubs::KitchenSink.stub(stub[:complex_data]) unless stub[:complex_data].nil?
@@ -419,6 +421,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 500
+        http_resp.headers['x-smithy-rails-error'] = 'ErrorWithoutMembers'
       end
     end
 
@@ -903,6 +906,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 400
+        http_resp.headers['x-smithy-rails-error'] = 'InvalidGreeting'
         http_resp.headers['Content-Type'] = 'application/json'
         data[:message] = stub[:message] unless stub[:message].nil?
         http_resp.body.write(Hearth::JSON.dump(data))

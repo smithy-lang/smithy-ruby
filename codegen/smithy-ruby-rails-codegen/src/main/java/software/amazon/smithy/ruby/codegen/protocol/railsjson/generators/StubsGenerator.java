@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
@@ -43,6 +44,7 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
 import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
+import software.amazon.smithy.ruby.codegen.traits.RailsJsonTrait;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 /**
@@ -129,6 +131,20 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     }
 
     @Override
+    protected void renderHeaderStubbers(Shape shape) {
+        if (shape.hasTrait(ErrorTrait.class)) {
+            RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
+            String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
+
+            if (errorLocation.equalsIgnoreCase("header")) {
+                String errorShapeName = symbolProvider.toSymbol(shape).getName();
+                writer.write("http_resp.headers['x-smithy-rails-error'] = '$L'", errorShapeName);
+            }
+        }
+        super.renderHeaderStubbers(shape);
+    }
+
+    @Override
     protected void renderUnionStubMethod(UnionShape shape) {
         Symbol symbol = symbolProvider.toSymbol(shape);
         writer
@@ -192,7 +208,6 @@ public class StubsGenerator extends RestStubsGeneratorBase {
             });
         }
     }
-
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {
 

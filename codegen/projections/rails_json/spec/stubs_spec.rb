@@ -75,24 +75,23 @@ module RailsJson
         expect(resp.data.recursive_map).to be_nil
       end
 
-      # This is not supported yet
-      # it 'stubs an error' do
-      #   client.stub_responses(
-      #     :kitchen_sink_operation,
-      #     error: {
-      #       class: RailsJson::Errors::ErrorWithMembers,
-      #       data: { code: 'code', message: 'message' }
-      #     }
-      #   )
-      #
-      #   begin
-      #     client.kitchen_sink_operation
-      #   rescue => e
-      #     expect(e).to be_a(RailsJson::Errors::ErrorWithMembers)
-      #     expect(e.data.code).to eq('code')
-      #     expect(e.data.message).to eq('message')
-      #   end
-      # end
+      it 'stubs an error' do
+        client.stub_responses(
+          :kitchen_sink_operation,
+          error: {
+            class: RailsJson::Errors::ErrorWithMembers,
+            data: { code: 'code', message: 'message' }
+          }
+        )
+
+        begin
+          client.kitchen_sink_operation
+        rescue => e
+          expect(e).to be_a(RailsJson::Errors::ErrorWithMembers)
+          expect(e.data.code).to eq('code')
+          expect(e.data.message).to eq('message')
+        end
+      end
     end
   end
 end
