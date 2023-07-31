@@ -98,7 +98,12 @@ task 'put-metrics' do
   benchmark_data.each do |gem_name, gem_data|
     dims = report_dims.merge(gem: gem_name)
     gem_data.each do |k, v|
-      Benchmark::Metrics.put_metric(client, dims, report['timestamp'] || Time.now, k, v)
+      Benchmark::Metrics.put_metric(
+        client: client, 
+        dims: dims, 
+        timestamp: report['timestamp'] || Time.now, 
+        metric_name: k, 
+        value: v)
     end
   end
   puts "Benchmarking metrics uploaded"

@@ -2,7 +2,7 @@
 
 module Benchmark
   module Gems
-    class Core < Benchmark::Gem
+    class Hearth < Benchmark::Gem
 
       def gem_name
         'hearth'
@@ -12,7 +12,7 @@ module Benchmark
         'hearth'
       end
 
-      # Core does not have a client and does not have any operation benchmarks
+      # Hearth does not have a client and does not have any operation benchmarks
     end
   end
 end
