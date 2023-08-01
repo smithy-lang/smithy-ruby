@@ -32,6 +32,8 @@ public class ClientConfig {
     private final String documentationDefaultValue;
     private final String documentationType;
     private final ConfigProviderChain defaults;
+
+    private final String defaultLiteral;
     private final boolean allowOperationOverride;
 
     /**
@@ -44,6 +46,7 @@ public class ClientConfig {
         this.documentationDefaultValue = builder.documentationDefaultValue;
         this.documentationType = builder.documentationType;
         this.defaults = builder.defaults;
+        this.defaultLiteral = builder.defaultLiteral;
         this.allowOperationOverride = builder.allowOperationOverride;
     }
 
@@ -79,7 +82,10 @@ public class ClientConfig {
         if (documentationDefaultValue != null) {
             return documentationDefaultValue;
         }
-        return defaults.getDocumentationDefault().orElse("");
+        if (defaults != null) {
+            return defaults.getDocumentationDefault().orElse("");
+        }
+        return "";
     }
 
     /**
@@ -97,6 +103,13 @@ public class ClientConfig {
      */
     public ConfigProviderChain getDefaults() {
         return defaults;
+    }
+
+    /**
+     * @return a literal default value to be rendered. Must result in an array of defaults in Ruby.
+     */
+    public String getDefaultLiteral() {
+        return defaultLiteral;
     }
 
     /**
@@ -123,10 +136,12 @@ public class ClientConfig {
     public void addToConfigCollection(Set<ClientConfig> configCollection) {
         if (!configCollection.contains(this)) {
             configCollection.add(this);
-            defaults.getProviders().forEach((p) -> {
-                p.providerFragment().getClientConfig()
-                        .forEach((c) -> c.addToConfigCollection(configCollection));
-            });
+            if (defaults != null) {
+                defaults.getProviders().forEach((p) -> {
+                    p.providerFragment().getClientConfig()
+                            .forEach((c) -> c.addToConfigCollection(configCollection));
+                });
+            }
         }
     }
 
@@ -162,6 +177,7 @@ public class ClientConfig {
         private String documentationDefaultValue;
         private String documentationType;
         private ConfigProviderChain defaults;
+        private String defaultLiteral;
         private boolean allowOperationOverride = false;
 
         /**
@@ -246,7 +262,24 @@ public class ClientConfig {
          * @return this builder.
          */
         public Builder defaults(ConfigProviderChain defaults) {
+            if (defaultLiteral != null) {
+                throw new IllegalArgumentException("ConfigProviderChain defaults are incompatible "
+                        + "with defaultLiteral. You must provide only one.");
+            }
             this.defaults = defaults;
+            return this;
+        }
+
+        /**
+         * @param defaultLiteral a literal to render for defaults.  Must result in an array of providers in Ruby.
+         * @return this builder
+         */
+        public Builder defaultLiteral(String defaultLiteral) {
+            if (defaults != null) {
+                throw new IllegalArgumentException("ConfigProviderChain defaults are incompatible "
+                        + "with defaultLiteral. You must provide only one.");
+            }
+            this.defaultLiteral = defaultLiteral;
             return this;
         }
 
