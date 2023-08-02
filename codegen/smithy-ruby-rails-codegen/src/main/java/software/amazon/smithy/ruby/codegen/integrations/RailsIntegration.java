@@ -37,7 +37,7 @@ public class RailsIntegration implements RubyIntegration {
 
     @Override
     public void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
-        Middleware requestId = (new Middleware.Builder())
+        Middleware requestId = Middleware.builder()
                 .klass("Middleware::RequestId")
                 .step(MiddlewareStackStep.PARSE)
                 .rubySource("smithy-ruby-rails-codegen/middleware/request_id.rb")

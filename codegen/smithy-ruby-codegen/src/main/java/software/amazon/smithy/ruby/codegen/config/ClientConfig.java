@@ -17,6 +17,8 @@ package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Objects;
 import java.util.Set;
+import software.amazon.smithy.ruby.codegen.ClientFragment;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -29,11 +31,8 @@ public class ClientConfig {
     private final String name;
     private final String type;
     private final String documentation;
-    private final String documentationDefaultValue;
     private final String documentationType;
-    private final ConfigProviderChain defaults;
-
-    private final String defaultLiteral;
+    private final ConfigDefaults defaults;
     private final boolean allowOperationOverride;
 
     /**
@@ -43,11 +42,20 @@ public class ClientConfig {
         this.name = builder.name;
         this.type = builder.type;
         this.documentation = builder.documentation;
-        this.documentationDefaultValue = builder.documentationDefaultValue;
         this.documentationType = builder.documentationType;
-        this.defaults = builder.defaults;
-        this.defaultLiteral = builder.defaultLiteral;
+        if (builder.defaults != null) {
+            this.defaults = builder.defaults;
+        } else {
+            this.defaults = new DefaultLiteral("[]");
+        }
+        if (builder.documentationDefaultValue != null) {
+            this.defaults.setDocumentationDefault(builder.documentationDefaultValue);
+        }
         this.allowOperationOverride = builder.allowOperationOverride;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -79,13 +87,7 @@ public class ClientConfig {
      * @return Documented default value.
      */
     public String getDocumentationDefaultValue() {
-        if (documentationDefaultValue != null) {
-            return documentationDefaultValue;
-        }
-        if (defaults != null) {
-            return defaults.getDocumentationDefault().orElse("");
-        }
-        return "";
+        return defaults.getDocumentationDefault().orElse("");
     }
 
     /**
@@ -99,17 +101,12 @@ public class ClientConfig {
     }
 
     /**
-     * @return chain of defaults to use.
+     * Render the defaults for this config.
+     *
+     * @param context generation context
      */
-    public ConfigProviderChain getDefaults() {
-        return defaults;
-    }
-
-    /**
-     * @return a literal default value to be rendered. Must result in an array of defaults in Ruby.
-     */
-    public String getDefaultLiteral() {
-        return defaultLiteral;
+    public String renderDefaults(GenerationContext context) {
+        return defaults.renderDefault(context);
     }
 
     /**
@@ -136,12 +133,7 @@ public class ClientConfig {
     public void addToConfigCollection(Set<ClientConfig> configCollection) {
         if (!configCollection.contains(this)) {
             configCollection.add(this);
-            if (defaults != null) {
-                defaults.getProviders().forEach((p) -> {
-                    p.providerFragment().getClientConfig()
-                            .forEach((c) -> c.addToConfigCollection(configCollection));
-                });
-            }
+            defaults.addToConfigCollection(configCollection);
         }
     }
 
@@ -163,10 +155,6 @@ public class ClientConfig {
         return Objects.hash(getName(), getType());
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     /**
      * Builder for ClientConfig.
      */
@@ -176,9 +164,12 @@ public class ClientConfig {
         private String documentation;
         private String documentationDefaultValue;
         private String documentationType;
-        private ConfigProviderChain defaults;
-        private String defaultLiteral;
+        private ConfigDefaults defaults;
         private boolean allowOperationOverride = false;
+
+        protected Builder() {
+
+        }
 
         /**
          * @param name name of the config option.
@@ -208,7 +199,7 @@ public class ClientConfig {
         }
 
         /**
-         * @param defaultValue an optional default value
+         * @param defaultValue an optional default value to be use in documentation.
          * @return this builder
          */
         public Builder documentationDefaultValue(String defaultValue) {
@@ -242,7 +233,20 @@ public class ClientConfig {
          * @return this builder
          */
         public Builder defaultPrimitiveValue(String value) {
-            this.defaults = new ConfigProviderChain.Builder().staticProvider(value).build();
+            validateDefaultNotSet();
+            this.defaults = ConfigProviderChain.builder().staticProvider(value).build();
+            return this;
+        }
+
+        public Builder defaultDynamicValue(String rubyDefaultBlock) {
+            validateDefaultNotSet();
+            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
+            return this;
+        }
+
+        public Builder defaultDynamicValue(ClientFragment rubyDefaultBlock) {
+            validateDefaultNotSet();
+            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
             return this;
         }
 
@@ -251,7 +255,8 @@ public class ClientConfig {
          * @return this builder
          */
         public Builder defaultValue(String value) {
-            this.defaults = new ConfigProviderChain.Builder()
+            validateDefaultNotSet();
+            this.defaults = ConfigProviderChain.builder()
                     .dynamicProvider("proc { " + value + " }")
                     .build();
             return this;
@@ -261,11 +266,8 @@ public class ClientConfig {
          * @param defaults chain of default providers to use.
          * @return this builder.
          */
-        public Builder defaults(ConfigProviderChain defaults) {
-            if (defaultLiteral != null) {
-                throw new IllegalArgumentException("ConfigProviderChain defaults are incompatible "
-                        + "with defaultLiteral. You must provide only one.");
-            }
+        public Builder defaults(ConfigDefaults defaults) {
+            validateDefaultNotSet();
             this.defaults = defaults;
             return this;
         }
@@ -275,17 +277,20 @@ public class ClientConfig {
          * @return this builder
          */
         public Builder defaultLiteral(String defaultLiteral) {
-            if (defaults != null) {
-                throw new IllegalArgumentException("ConfigProviderChain defaults are incompatible "
-                        + "with defaultLiteral. You must provide only one.");
-            }
-            this.defaultLiteral = defaultLiteral;
+            validateDefaultNotSet();
+            this.defaults = new DefaultLiteral(defaultLiteral);
             return this;
         }
 
         @Override
         public ClientConfig build() {
             return new ClientConfig(this);
+        }
+
+        private void validateDefaultNotSet() {
+            if (defaults != null) {
+                throw new IllegalArgumentException("ConfigDefaults have already been set.");
+            }
         }
     }
 }

@@ -40,7 +40,6 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -173,13 +172,13 @@ public class MiddlewareBuilder {
         ApplicationTransport transport = context.applicationTransport();
         SymbolProvider symbolProvider = context.symbolProvider();
 
-        Middleware initialize = (new Middleware.Builder())
+        Middleware initialize = Middleware.builder()
                 .klass(Hearth.INITIALIZE_MIDDLEWARE)
                 .step(MiddlewareStackStep.INITIALIZE)
                 .order(Byte.MIN_VALUE)
                 .build();
 
-        ClientConfig validateInput = (new ClientConfig.Builder())
+        ClientConfig validateInput = ClientConfig.builder()
                 .name("validate_input")
                 .type("Boolean")
                 .defaultPrimitiveValue("true")
@@ -187,7 +186,7 @@ public class MiddlewareBuilder {
                         "When `true`, request parameters are validated using the modeled shapes.")
                 .build();
 
-        Middleware validate = (new Middleware.Builder())
+        Middleware validate = Middleware.builder()
                 .klass(Hearth.VALIDATE_MIDDLEWARE)
                 .step(MiddlewareStackStep.VALIDATE)
                 .operationParams((ctx, operation) -> {
@@ -201,7 +200,7 @@ public class MiddlewareBuilder {
                 .addConfig(validateInput)
                 .build();
 
-        ClientConfig disableHostPrefix = (new ClientConfig.Builder())
+        ClientConfig disableHostPrefix = ClientConfig.builder()
                 .name("disable_host_prefix")
                 .type("Boolean")
                 .defaultPrimitiveValue("false")
@@ -209,7 +208,7 @@ public class MiddlewareBuilder {
                         "When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.")
                 .build();
 
-        Middleware hostPrefix = (new Middleware.Builder())
+        Middleware hostPrefix = Middleware.builder()
                 .klass("Hearth::Middleware::HostPrefix")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(new Middleware.Relative(
@@ -236,7 +235,7 @@ public class MiddlewareBuilder {
                 })
                 .build();
 
-        ClientConfig stubResponses = (new ClientConfig.Builder())
+        ClientConfig stubResponses = ClientConfig.builder()
                 .name("stub_responses")
                 .type("Boolean")
                 .defaultPrimitiveValue("false")
@@ -244,7 +243,7 @@ public class MiddlewareBuilder {
                         "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
                 .build();
 
-        ClientConfig retryStrategy = (new ClientConfig.Builder())
+        ClientConfig retryStrategy = ClientConfig.builder()
                 .name("retry_strategy")
                 .type("Hearth::Retry::Strategy")
                 .documentationDefaultValue("Hearth::Retry::Standard.new")
@@ -263,14 +262,14 @@ public class MiddlewareBuilder {
                 )
                 .build();
 
-        Middleware retry = (new Middleware.Builder())
+        Middleware retry = Middleware.builder()
                 .klass(Hearth.RETRY_MIDDLEWARE)
                 .step(MiddlewareStackStep.RETRY)
                 .addConfig(retryStrategy)
                 .addParam("error_inspector_class", transport.getErrorInspector())
                 .build();
 
-        Middleware send = (new Middleware.Builder())
+        Middleware send = Middleware.builder()
                 .klass(Hearth.SEND_MIDDLEWARE)
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client",
@@ -300,25 +299,22 @@ public class MiddlewareBuilder {
     }
 
     private Collection<? extends ClientConfig> getDefaultClientConfig() {
-        ClientConfig logger = (new ClientConfig.Builder())
+        ClientConfig logger = ClientConfig.builder()
                 .name("logger")
                 .type("Logger")
                 .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
-                .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }")
-                        .build()
-                )
+                .defaultDynamicValue("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }")
                 .documentation("The Logger instance to use for logging.")
                 .build();
 
-        ClientConfig logLevel = (new ClientConfig.Builder())
+        ClientConfig logLevel = ClientConfig.builder()
                 .name("log_level")
                 .type("Symbol")
                 .defaultPrimitiveValue(":info")
                 .documentation("The default log level to use with the Logger.")
                 .build();
 
-        ClientConfig plugins = (new ClientConfig.Builder())
+        ClientConfig plugins = ClientConfig.builder()
                 .name("plugins")
                 .type("Hearth::PluginList")
                 .defaultValue("Hearth::PluginList.new")
@@ -328,7 +324,7 @@ public class MiddlewareBuilder {
                         + "Plugins may modify the provided config.")
                 .build();
 
-        ClientConfig interceptors = (new ClientConfig.Builder())
+        ClientConfig interceptors = ClientConfig.builder()
                 .name("interceptors")
                 .type("Hearth::InterceptorList")
                 .defaultValue("Hearth::InterceptorList.new")

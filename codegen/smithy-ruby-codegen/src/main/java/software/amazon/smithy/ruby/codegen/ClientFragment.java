@@ -40,6 +40,10 @@ public class ClientFragment {
         this.render = builder.render;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * @return set of client config to apply to support this fragment.
      */
@@ -80,7 +84,6 @@ public class ClientFragment {
         };
 
         /**
-         *
          * @param config config to be added to support this fragment.
          * @return this builder.
          */
