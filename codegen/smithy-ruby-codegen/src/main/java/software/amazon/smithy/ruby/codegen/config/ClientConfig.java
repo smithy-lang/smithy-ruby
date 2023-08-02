@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -32,9 +34,10 @@ public class ClientConfig {
     private final String documentationDefaultValue;
     private final String documentationType;
     private final ConfigProviderChain defaults;
-
     private final String defaultLiteral;
     private final boolean allowOperationOverride;
+
+    private final List<ConfigConstraint> constraints;
 
     /**
      * @param builder builder to construct from.
@@ -48,6 +51,7 @@ public class ClientConfig {
         this.defaults = builder.defaults;
         this.defaultLiteral = builder.defaultLiteral;
         this.allowOperationOverride = builder.allowOperationOverride;
+        this.constraints = builder.constraints;
     }
 
     /**
@@ -112,9 +116,13 @@ public class ClientConfig {
         return defaultLiteral;
     }
 
+    public List<ConfigConstraint> getConstraints() {
+        return List.copyOf(this.constraints);
+    }
+
     /**
      * If true, this config can be overridden
-     * per operation.
+     * per operationF.
      *
      * @return allowOperationOverride
      */
@@ -179,6 +187,11 @@ public class ClientConfig {
         private ConfigProviderChain defaults;
         private String defaultLiteral;
         private boolean allowOperationOverride = false;
+        private final List<ConfigConstraint> constraints;
+
+        public Builder() {
+            constraints = new ArrayList<>();
+        }
 
         /**
          * @param name name of the config option.
@@ -280,6 +293,11 @@ public class ClientConfig {
                         + "with defaultLiteral. You must provide only one.");
             }
             this.defaultLiteral = defaultLiteral;
+            return this;
+        }
+
+        public Builder constraint(ConfigConstraint constraint) {
+            this.constraints.add(constraint);
             return this;
         }
 
