@@ -22,5 +22,5 @@ require_relative 'white_label/validators'
 require_relative 'white_label/waiters'
 
 module WhiteLabel
-  GEM_VERSION = '0.0.1'
+  VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 end

@@ -143,16 +143,8 @@ public class ConfigGenerator extends RubyGeneratorBase {
                 .openBlock("@defaults ||= {");
 
         clientConfigList.forEach(clientConfig -> {
-            if (clientConfig.getDefaults() == null) {
-                if (clientConfig.getDefaultLiteral() != null) {
-                    writer.write("$L: $L,", clientConfig.getName(), clientConfig.getDefaultLiteral());
-                }
-            } else {
-                String defaults = clientConfig.getDefaults().getProviders().stream()
-                        .map((p) -> p.providerFragment().render(context))
-                        .collect(Collectors.joining(","));
-                writer.write("$L: [$L],", clientConfig.getName(), defaults);
-            }
+            writer.write("$L: $L,", clientConfig.getName(), clientConfig.renderDefaults(context));
+
         });
 
         writer

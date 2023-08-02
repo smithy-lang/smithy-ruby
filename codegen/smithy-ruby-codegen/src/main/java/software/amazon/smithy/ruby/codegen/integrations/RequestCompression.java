@@ -45,15 +45,12 @@ public class RequestCompression implements RubyIntegration {
 
     @Override
     public void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
-        ClientConfig disableRequestCompression = (new ClientConfig.Builder())
+        ClientConfig disableRequestCompression = ClientConfig.builder()
                 .name("disable_request_compression")
                 .type("Boolean")
-                .defaultValue("false")
+                .defaultPrimitiveValue("false")
                 .documentation("When set to 'true' the request body will not be compressed for supported operations.")
                 .allowOperationOverride()
-                .defaults(new ConfigProviderChain.Builder()
-                        .staticProvider("false")
-                        .build())
                 .build();
 
         String minCompressionDocumentation = """
@@ -61,20 +58,17 @@ public class RequestCompression implements RubyIntegration {
                 The value must be non-negative integer value between 0 and 10485780 bytes inclusive.
                 """;
 
-        ClientConfig requestMinCompressionSizeBytes = (new ClientConfig.Builder())
+        ClientConfig requestMinCompressionSizeBytes = ClientConfig.builder()
                 .name("request_min_compression_size_bytes")
                 .type("Integer")
-                .defaultValue("10240")
                 .documentation(minCompressionDocumentation)
                 .allowOperationOverride()
+                .defaultPrimitiveValue("10240")
                 .constraint(new RangeConstraint(0, 100))
                 .constraint(new RangeConstraint(20, 20000)) // to see how this renders
-                .defaults(new ConfigProviderChain.Builder()
-                        .staticProvider("10240")
-                        .build())
                 .build();
 
-        Middleware compression = (new Middleware.Builder())
+        Middleware compression = Middleware.builder()
                 .operationPredicate(((model, service, operation) -> operation.hasTrait(RequestCompressionTrait.class)))
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();

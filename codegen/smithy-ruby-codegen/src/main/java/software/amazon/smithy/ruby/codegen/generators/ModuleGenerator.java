@@ -80,7 +80,7 @@ public class ModuleGenerator {
             writer.write("");
 
             writer.openBlock("module $L", settings.getModule())
-                .write("GEM_VERSION = '$L'", settings.getGemVersion())
+                .write("VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip")
                 .closeBlock("end");
         });
         LOGGER.fine("Wrote module file to " + fileName);
