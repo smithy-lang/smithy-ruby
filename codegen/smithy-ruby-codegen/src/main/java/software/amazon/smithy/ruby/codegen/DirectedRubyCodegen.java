@@ -52,6 +52,7 @@ import software.amazon.smithy.ruby.codegen.generators.StructureGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesFileBlockGenerator;
 import software.amazon.smithy.ruby.codegen.generators.UnionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
+import software.amazon.smithy.ruby.codegen.generators.VersionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
@@ -210,6 +211,7 @@ public class DirectedRubyCodegen
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
 
+        new VersionGenerator(directive).render();
         new ModuleGenerator(directive).render();
         new GemspecGenerator(context).render();
         new YardOptsGenerator(context).render();

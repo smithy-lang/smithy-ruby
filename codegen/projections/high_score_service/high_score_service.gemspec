@@ -9,10 +9,10 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'high_score_service'
-  spec.version       = '0.0.1'
+  spec.version       = File.read(File.expand_path('VERSION', __dir__)).strip
   spec.author        = 'Amazon Web Services'
   spec.summary       = 'Sample Rails JSON Service'
-  spec.files         = Dir['lib/**/*.rb']
+  spec.files         = Dir['lib/**/*.rb', 'VERSION']
 
   spec.add_runtime_dependency 'hearth', '~> 1.0.0.pre1'
 end

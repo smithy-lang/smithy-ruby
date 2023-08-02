@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'rake', require: false
+gem 'memory_profiler'
+gem 'jmespath'
+gem 'rexml'
+
+# required for uploading archive/metrics
+gem 'aws-sdk-cloudwatch'
+gem 'aws-sdk-s3'

@@ -65,10 +65,10 @@ public class GemspecGenerator {
                 .includePreamble()
                 .openBlock("Gem::Specification.new do |spec|")
                 .write("spec.name          = '$L'", settings.getGemName())
-                .write("spec.version       = '$L'", settings.getGemVersion())
+                .write("spec.version       = File.read(File.expand_path('VERSION', __dir__)).strip")
                 .write("spec.author        = 'Amazon Web Services'")
                 .write("spec.summary       = '$L'", settings.getGemSummary())
-                .write("spec.files         = Dir['lib/**/*.rb']")
+                .write("spec.files         = Dir['lib/**/*.rb', 'VERSION']")
                 .write("")
                 .call(() -> {
                     // determine set of indirect dependencies - covered by requiring another
