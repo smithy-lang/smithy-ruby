@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.config;
 
 import java.util.Objects;
 import java.util.Set;
+import software.amazon.smithy.ruby.codegen.ClientFragment;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -238,6 +239,12 @@ public class ClientConfig {
         }
 
         public Builder defaultDynamicValue(String rubyDefaultBlock) {
+            validateDefaultNotSet();
+            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
+            return this;
+        }
+
+        public Builder defaultDynamicValue(ClientFragment rubyDefaultBlock) {
             validateDefaultNotSet();
             this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
             return this;
