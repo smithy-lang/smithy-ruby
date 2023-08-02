@@ -21,6 +21,9 @@ import software.amazon.smithy.ruby.codegen.ClientFragment;
 public interface ConfigProvider {
 
     /**
+     * Config defaults may depend on other config (eg a logger that uses log_level).
+     * The ClientFragment can be used to express these dependencies.
+     *
      * @return the provider rendered into Ruby code
      */
     ClientFragment providerFragment();

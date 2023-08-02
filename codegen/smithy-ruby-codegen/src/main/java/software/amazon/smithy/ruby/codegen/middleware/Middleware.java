@@ -82,6 +82,10 @@ public final class Middleware {
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * @return the Ruby class to use for the middleware.
      */
@@ -125,7 +129,7 @@ public final class Middleware {
     }
 
     /**
-     * @param model model
+     * @param model   model
      * @param service service to test for
      * @return true if this middleware should be included for the service
      */
@@ -134,9 +138,8 @@ public final class Middleware {
     }
 
     /**
-     *
-     * @param model model
-     * @param service service to test for
+     * @param model     model
+     * @param service   service to test for
      * @param operation operation in the service to test for
      * @return true if this midldeware should be included for this operation/service
      */
@@ -147,8 +150,9 @@ public final class Middleware {
 
     /**
      * Generate code to add this middleware to an operation method.
-     * @param writer writer
-     * @param context generation context
+     *
+     * @param writer    writer
+     * @param context   generation context
      * @param operation operation to add to
      */
     public void renderAdd(RubyCodeWriter writer, GenerationContext context,
@@ -158,15 +162,12 @@ public final class Middleware {
 
     /**
      * Write additional files required by this middleware.
+     *
      * @param context generation context
      * @return List of additional files written out
      */
     public List<String> writeAdditionalFiles(GenerationContext context) {
         return writeAdditionalFiles.writeAdditionalFiles(context);
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     @FunctionalInterface
@@ -265,6 +266,9 @@ public final class Middleware {
         private RenderAdd renderAdd = DEFAULT_RENDER_ADD;
         private WriteAdditionalFiles writeAdditionalFiles =
                 (context) -> Collections.emptyList();
+
+        protected Builder() {
+        }
 
         /**
          * @param klass the Ruby class of the Middleware

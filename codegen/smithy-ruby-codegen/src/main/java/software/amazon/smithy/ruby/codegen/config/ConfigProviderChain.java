@@ -18,7 +18,10 @@ package software.amazon.smithy.ruby.codegen.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.ruby.codegen.ClientFragment;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -26,32 +29,55 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Describes config values to be added to generated Client classes.
  */
 @SmithyUnstableApi
-public class ConfigProviderChain {
+public class ConfigProviderChain implements ConfigDefaults {
 
     private final List<ConfigProvider> providers;
+    private Optional<String> documentationDefaultOverride;
 
     /**
      * @param builder builder to construct the chain from.
      */
     public ConfigProviderChain(Builder builder) {
         this.providers = builder.providers;
+        documentationDefaultOverride = Optional.empty();
     }
 
     /**
-     * @return an ordered list of all of the providers.
+     * @return a new builder
      */
-    public List<ConfigProvider> getProviders() {
-        return List.copyOf(this.providers);
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public String renderDefault(GenerationContext context) {
+        return "[" + providers.stream()
+                .map((p) -> p.providerFragment().render(context))
+                .collect(Collectors.joining(",")) + "]";
     }
 
     /**
      * @return a string if there should be documentation for the default.
      */
     public Optional<String> getDocumentationDefault() {
+        if (documentationDefaultOverride.isPresent()) {
+            return documentationDefaultOverride;
+        }
+
         return providers.stream().map((p) -> p.getDocumentationDefault())
                 .filter((d) -> d.isPresent())
                 .map((d) -> d.get())
                 .findFirst();
+    }
+
+    @Override
+    public void setDocumentationDefault(String documentationDefault) {
+        this.documentationDefaultOverride = Optional.of(documentationDefault);
+    }
+
+    @Override
+    public void addToConfigCollection(Set<ClientConfig> configCollection) {
+        providers.forEach(p -> configCollection.addAll(p.providerFragment().getClientConfig()));
     }
 
     /**
@@ -60,7 +86,7 @@ public class ConfigProviderChain {
     public static class Builder implements SmithyBuilder<ConfigProviderChain> {
         private final List<ConfigProvider> providers;
 
-        public Builder() {
+        protected Builder() {
             providers = new ArrayList<>();
         }
 
@@ -98,7 +124,7 @@ public class ConfigProviderChain {
 
         /**
          * @param environmentKey ENV key to get value from
-         * @param type ruby type to attempt to coerce the value to
+         * @param type           ruby type to attempt to coerce the value to
          * @return this builder
          */
         public Builder envProvider(String environmentKey, String type) {
@@ -108,7 +134,7 @@ public class ConfigProviderChain {
 
         /**
          * @param configKey the key in the shared config files
-         * @param type ruby type to attempt to coerce the value to
+         * @param type      ruby type to attempt to coerce the value to
          * @return this builder
          */
         public Builder sharedConfigProvider(String configKey, String type) {

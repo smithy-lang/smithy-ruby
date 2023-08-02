@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.config.ConfigProviderChain;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -80,40 +79,34 @@ public final class ApplicationTransport {
      */
     public static ApplicationTransport createDefaultHttpApplicationTransport() {
 
-        ClientConfig endpoint = (new ClientConfig.Builder())
+        ClientConfig endpoint = ClientConfig.builder()
                 .name("endpoint")
                 .type("String")
                 .documentation("Endpoint of the service")
                 .allowOperationOverride()
-                .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }")
-                        .build()
-                )
+                .defaultDynamicValue("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }")
                 .build();
 
-        ClientFragment request = (new ClientFragment.Builder())
+        ClientFragment request = ClientFragment.builder()
                 .addConfig(endpoint)
                 // TODO: Replace URI with Endpoint middleware - should be a blank request
                 .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.renderGetConfigValue() + "))")
                 .build();
 
-        ClientFragment response = (new ClientFragment.Builder())
+        ClientFragment response = ClientFragment.builder()
                 .render((self, ctx) -> "Hearth::HTTP::Response.new(body: response_body)")
                 .build();
 
-        ClientConfig httpClient = (new ClientConfig.Builder())
+        ClientConfig httpClient = ClientConfig.builder()
                 .name("http_client")
                 .type("Hearth::HTTP::Client")
                 .documentation("The HTTP Client to use for request transport.")
                 .documentationDefaultValue("Hearth::HTTP::Client.new")
                 .allowOperationOverride()
-                .defaults(new ConfigProviderChain.Builder()
-                        .dynamicProvider("proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }")
-                        .build()
-                )
+                .defaultDynamicValue("proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }")
                 .build();
 
-        ClientFragment client = (new ClientFragment.Builder())
+        ClientFragment client = ClientFragment.builder()
                 .addConfig(httpClient)
                 .render((self, ctx) -> httpClient.renderGetConfigValue())
                 .build();
@@ -121,7 +114,7 @@ public final class ApplicationTransport {
         MiddlewareList defaultMiddleware = (transport, context) -> {
             List<Middleware> middleware = new ArrayList<>();
 
-            middleware.add(new Middleware.Builder()
+            middleware.add(Middleware.builder()
                     .klass(Hearth.BUILD_MIDDLEWARE)
                     .step(MiddlewareStackStep.BUILD)
                     .operationParams((ctx, operation) -> {
@@ -133,7 +126,7 @@ public final class ApplicationTransport {
                     .build()
             );
 
-            middleware.add((new Middleware.Builder())
+            middleware.add(Middleware.builder()
                     .klass("Hearth::HTTP::Middleware::ContentLength")
                     .operationPredicate(
                             (model, service, operation) ->
@@ -144,7 +137,7 @@ public final class ApplicationTransport {
                     .build()
             );
 
-            middleware.add((new Middleware.Builder())
+            middleware.add(Middleware.builder()
                     .klass("Hearth::HTTP::Middleware::ContentMD5")
                     .step(MiddlewareStackStep.AFTER_BUILD)
                     .operationPredicate(
@@ -152,7 +145,7 @@ public final class ApplicationTransport {
                     .build()
             );
 
-            middleware.add((new Middleware.Builder())
+            middleware.add(Middleware.builder()
                     .klass(Hearth.PARSE_MIDDLEWARE)
                     .step(MiddlewareStackStep.PARSE)
                     .operationParams((ctx, operation) -> {
@@ -165,10 +158,10 @@ public final class ApplicationTransport {
                             successCode = "" + httpTrait.get().getCode();
                         }
                         String errors = operation.getErrors()
-                            .stream()
-                            .map((error) -> "Errors::"
-                                    + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
-                            .collect(Collectors.joining(", "));
+                                .stream()
+                                .map((error) -> "Errors::"
+                                        + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
+                                .collect(Collectors.joining(", "));
                         params.put("error_parser",
                                 "Hearth::HTTP::ErrorParser.new("
                                         + "error_module: Errors, success_status: " + successCode
