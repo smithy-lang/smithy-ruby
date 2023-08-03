@@ -6,7 +6,7 @@ module Hearth
     def initialize(**options)
       Hearth::Validator.validate_unknown!(self, options, context: 'config')
       Hearth::Config::Resolver.resolve(self, options, self.class.defaults)
-      validate_types!
+      validate!
     end
 
     def dup

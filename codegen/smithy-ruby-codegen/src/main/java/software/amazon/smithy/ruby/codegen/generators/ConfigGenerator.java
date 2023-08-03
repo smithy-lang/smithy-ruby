@@ -115,7 +115,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
     }
 
     private void renderValidateMethod(RubyCodeWriter writer) {
-        writer.openBlock("def validate_types!");
+        writer.openBlock("def validate!");
         clientConfigList.stream().forEach(clientConfig -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             String type = clientConfig.getType();
@@ -124,10 +124,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
             }
             writer.write("$3T.validate_types!($1L, $2L, context: 'config[:$1L]')",
                     member, type, Hearth.VALIDATOR);
-            // TODO - add constraints here
-            // checks to see if there's any constraint objects in the array
-            if (clientConfig.getConstraints().size() != 0) {
-                writer.write("# hey constraint validator is here! hip hip horray!");
+            if (clientConfig.getConstraints().size() > 0) {
                 String constraints = clientConfig.getConstraints().stream()
                         .map((c) -> c.render(member))
                         .collect(Collectors.joining("\n"));
