@@ -41,5 +41,15 @@ module Hearth
       raise ArgumentError,
             "Unexpected members: [#{unknown.join(', ')}]"
     end
+
+    def self.validate_range!(value, min:, max:, context:)
+      return if value.nil? || value.between?(min, max)
+
+      raise ArgumentError,
+            "Expected #{context} to be between " \
+            "#{min} to #{max}, got #{value}."
+
+    end
+
   end
 end
