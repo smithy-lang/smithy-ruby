@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.config;
 
 public interface ConfigConstraint {
 
+    // any ConfigConstraint need to implement this method
     String render(String configName);
 
 }
