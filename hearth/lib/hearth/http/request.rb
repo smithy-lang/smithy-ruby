@@ -114,6 +114,8 @@ module Hearth
       #   querystring parameters to add. The names and values are URI escaped.
       #
       def append_query_param_list(param_list)
+        return if param_list.empty?
+
         uri.query = uri.query ? "#{uri.query}&#{param_list}" : param_list.to_s
       end
 

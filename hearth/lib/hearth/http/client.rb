@@ -85,6 +85,9 @@ module Hearth
       #   optionally other keyword args similar to Addrinfo.getaddrinfo's
       #   positional parameters.
       def initialize(options = {})
+        unknown = options.keys - OPTIONS.keys
+        raise ArgumentError, "Unknown options: #{unknown}" unless unknown.empty?
+
         OPTIONS.each_pair do |opt_name, default_value|
           value = options.key?(opt_name) ? options[opt_name] : default_value
           instance_variable_set("@#{opt_name}", value)
@@ -202,8 +205,10 @@ module Hearth
       # @param [Http::Request] request
       # @return [Net::HTTP::Request]
       def build_net_request(request)
-        request_class = net_http_request_class(request)
-        req = request_class.new(request.uri.to_s, net_headers_for(request))
+        req = net_http_request_class(request).new(
+          request.uri.request_uri,
+          net_headers_for(request)
+        )
 
         # Net::HTTP adds a default Content-Type when a body is present.
         # Set the body stream when it has an unknown size or when it is > 0.

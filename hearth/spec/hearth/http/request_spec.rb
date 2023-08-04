@@ -118,6 +118,12 @@ module Hearth
           expect(subject.uri.to_s)
             .to eq('http://example.com?original&key%201&key%202=&key%203=value&key%204=value&key%204=value2')
         end
+
+        it 'does not append empty param lists' do
+          params = Hearth::Query::ParamList.new
+          subject.append_query_param_list(params)
+          expect(subject.uri.to_s).to eq('http://example.com')
+        end
       end
 
       describe '#prefix_host' do

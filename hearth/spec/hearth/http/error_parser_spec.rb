@@ -97,7 +97,7 @@ module Hearth
 
         context 'error code on response' do
           before do
-            allow(TestErrors).to receive(:error_code)
+            expect(TestErrors).to receive(:error_code)
               .with(http_resp).and_return('TestModeledError')
           end
 

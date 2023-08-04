@@ -39,10 +39,13 @@ module Hearth
 
       # Parse and return the error if the response is not successful.
       #
-      # @param [Response] response The HTTP response
+      # @param [HTTP::Response] http_resp The HTTP Response
       # @param [Hash] metadata The metadata from {Hearth::Output}
-      def parse(response, metadata)
-        create_error(response, metadata) if error?(response)
+      def parse(http_resp, metadata)
+        error_code = @error_module.method(:error_code).call(http_resp)
+        return unless error?(error_code, http_resp)
+
+        create_error(error_code, http_resp, metadata)
       end
 
       private
@@ -56,15 +59,14 @@ module Hearth
       # 6. Response code 5xx -> unknown server error
       #   [MODIFIED, 3xx, 4xx, 5xx mapped, everything else is Generic ApiError]
       # 7. Everything else -> unknown client error
-      def error?(http_resp)
-        return true if @error_module.method(:error_code).call(http_resp)
+      def error?(error_code, http_resp)
+        return true if error_code
         return false if http_resp.status == @success_status
 
         !(200..299).cover?(http_resp.status)
       end
 
-      def create_error(http_resp, metadata)
-        error_code = @error_module.method(:error_code).call(http_resp)
+      def create_error(error_code, http_resp, metadata)
         error_class = error_class(error_code) if error_code
 
         error_opts = {
@@ -82,9 +84,7 @@ module Hearth
       end
 
       def error_class(error_code)
-        @errors.find do |e|
-          e.name.include? error_code
-        end
+        @errors.find { |e| e.name.include? error_code }
       end
 
       def generic_error(error_opts)

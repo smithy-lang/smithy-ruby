@@ -54,6 +54,14 @@ module Hearth
       end
       let(:response) { Response.new }
 
+      describe '#initialize' do
+        it 'raises when given unknown keys' do
+          expect do
+            Client.new(unknown: 'foo')
+          end.to raise_error(ArgumentError, /unknown/)
+        end
+      end
+
       describe '#transmit' do
         it 'sends the request to the uri' do
           stub_request(:any, uri.to_s)
