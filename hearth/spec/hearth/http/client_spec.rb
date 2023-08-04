@@ -40,7 +40,7 @@ module Hearth
       end
 
       let(:http_method) { :get }
-      let(:uri) { URI('http://example.com') }
+      let(:uri) { URI('http://example.com/some/path?query') }
       let(:fields) { Fields.new }
       let(:request_body) { StringIO.new('') }
 
@@ -65,6 +65,8 @@ module Hearth
       describe '#transmit' do
         it 'sends the request to the uri' do
           stub_request(:any, uri.to_s)
+          expect(Net::HTTP::Get).to receive(:new)
+            .with(request.uri, anything).and_call_original
           subject.transmit(request: request, response: response)
         end
 
