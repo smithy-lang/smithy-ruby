@@ -205,10 +205,8 @@ module Hearth
       # @param [Http::Request] request
       # @return [Net::HTTP::Request]
       def build_net_request(request)
-        req = net_http_request_class(request).new(
-          request.uri.request_uri,
-          net_headers_for(request)
-        )
+        request_class = net_http_request_class(request)
+        req = request_class.new(request.uri, net_headers_for(request))
 
         # Net::HTTP adds a default Content-Type when a body is present.
         # Set the body stream when it has an unknown size or when it is > 0.
