@@ -63,8 +63,7 @@ public class RequestCompression implements RubyIntegration {
                 .documentation(minCompressionDocumentation)
                 .allowOperationOverride()
                 .defaultPrimitiveValue("10240")
-                .constraint(new RangeConstraint(0, 100))
-                .constraint(new RangeConstraint(20, 20000)) // to see how a second constraint renders
+                .constraint(new RangeConstraint(0, 10485760))
                 .build();
 
         Middleware compression = Middleware.builder()

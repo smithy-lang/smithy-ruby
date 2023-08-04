@@ -124,12 +124,8 @@ public class ConfigGenerator extends RubyGeneratorBase {
             }
             writer.write("$3T.validate_types!($1L, $2L, context: 'config[:$1L]')",
                     member, type, Hearth.VALIDATOR);
-            if (clientConfig.getConstraints().size() > 0) {
-                String constraints = clientConfig.getConstraints().stream()
-                        .map((c) -> c.render(member))
-                        .collect(Collectors.joining("\n"));
-                writer.write(constraints);
-            }
+            clientConfig.getConstraints().stream().forEach(c ->
+                    writer.write(c.render(member)));
         });
         writer.closeBlock("end");
     }
