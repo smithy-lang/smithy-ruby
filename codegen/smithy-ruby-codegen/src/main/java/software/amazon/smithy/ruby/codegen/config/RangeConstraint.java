@@ -17,10 +17,10 @@ package software.amazon.smithy.ruby.codegen.config;
 
 public class RangeConstraint implements ConfigConstraint {
 
-    private final Integer minValue;
-    private final Integer maxValue;
+    private final long minValue;
+    private final long maxValue;
 
-    public RangeConstraint(Integer minValue, Integer maxValue) {
+    public RangeConstraint(long minValue, long maxValue) {
         this.maxValue = maxValue;
         this.minValue = minValue;
     }
