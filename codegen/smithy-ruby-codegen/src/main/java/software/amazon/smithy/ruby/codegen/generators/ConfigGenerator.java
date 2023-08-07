@@ -118,12 +118,12 @@ public class ConfigGenerator extends RubyGeneratorBase {
         writer.openBlock("def validate!");
         clientConfigList.stream().forEach(clientConfig -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
-            String type = clientConfig.getType();
-            if (type.equals("Boolean")) {
-                type = "TrueClass, FalseClass";
-            }
-            writer.write("$3T.validate_types!($1L, $2L, context: 'config[:$1L]')",
-                    member, type, Hearth.VALIDATOR);
+//            String type = clientConfig.getType();
+//            if (type.equals("Boolean")) {
+//                type = "TrueClass, FalseClass";
+//            }
+//            writer.write("$3T.validate_types!($1L, $2L, context: 'config[:$1L]')",
+//                    member, type, Hearth.VALIDATOR);
             clientConfig.getConstraints().stream().forEach(c ->
                     writer.write(c.render(member)));
         });
