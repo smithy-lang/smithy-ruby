@@ -100,7 +100,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
         writer.writeYardMethod("initialize(*options)", () -> {
             clientConfigList.forEach((clientConfig) -> {
                 String member = RubyFormatter.asSymbol(RubySymbolProvider.toMemberName(clientConfig.getName()));
-                String returnType = clientConfig.getType();
+                String returnType = clientConfig.getDocumentationType();
                 String defaultValue = clientConfig.getDocumentationDefaultValue();
                 String documentation = clientConfig.getDocumentation();
                 writer.writeYardOption("args", returnType, member, defaultValue, documentation);
@@ -116,15 +116,9 @@ public class ConfigGenerator extends RubyGeneratorBase {
 
     private void renderValidateMethod(RubyCodeWriter writer) {
         writer.openBlock("def validate!");
-        clientConfigList.stream().forEach(clientConfig -> {
+        clientConfigList.forEach(clientConfig -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
-//            String type = clientConfig.getType();
-//            if (type.equals("Boolean")) {
-//                type = "TrueClass, FalseClass";
-//            }
-//            writer.write("$3T.validate_types!($1L, $2L, context: 'config[:$1L]')",
-//                    member, type, Hearth.VALIDATOR);
-            clientConfig.getConstraints().stream().forEach(c ->
+            clientConfig.getConstraints().forEach(c ->
                     writer.write(c.render(member)));
         });
         writer.closeBlock("end");

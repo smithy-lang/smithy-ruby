@@ -31,7 +31,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public class ClientConfig {
 
     private final String name;
-    private final String type;
     private final String documentation;
     private final String documentationType;
     private final ConfigDefaults defaults;
@@ -43,9 +42,8 @@ public class ClientConfig {
      */
     public ClientConfig(Builder builder) {
         this.name = builder.name;
-        this.type = builder.type;
         this.documentation = builder.documentation;
-        this.documentationType = builder.documentationType;
+        this.documentationType = builder.documentationType != null ? builder.documentationType : builder.type;
         if (builder.defaults != null) {
             this.defaults = builder.defaults;
         } else {
@@ -71,13 +69,6 @@ public class ClientConfig {
     }
 
     /**
-     * @return The Ruby type of the config (eg String, Integer, Boolean, ect).
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
      * @return Documentation string to be added to the initialize method.
      */
     public String getDocumentation() {
@@ -98,10 +89,7 @@ public class ClientConfig {
      * @return Documented type
      */
     public String getDocumentationType() {
-        if (documentationType != null) {
-            return documentationType;
-        }
-        return type;
+        return documentationType;
     }
 
     /**
@@ -114,7 +102,7 @@ public class ClientConfig {
     }
 
     public List<ConfigConstraint> getConstraints() {
-        return List.copyOf(this.constraints);
+        return constraints;
     }
 
     /**
@@ -155,12 +143,12 @@ public class ClientConfig {
         }
         ClientConfig that = (ClientConfig) o;
         return Objects.equals(getName(), that.getName())
-                && Objects.equals(getType(), that.getType());
+                && Objects.equals(getDocumentationType(), that.getDocumentationType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getType());
+        return Objects.hash(getName(), getDocumentationType());
     }
 
     /**
