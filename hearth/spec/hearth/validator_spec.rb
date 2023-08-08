@@ -132,5 +132,40 @@ module Hearth
         end
       end
     end
+
+    describe '.validate_range!' do
+      context 'value is the type' do
+        let(:params) { { foo: 10 } }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_range!(
+              input[:foo],
+              min: 0,
+              max: 10,
+              context: context
+            )
+          end.to_not raise_error
+        end
+      end
+
+      context 'value is not the type' do
+        let(:params) { { foo: -1 } }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_range!(
+              input[:foo],
+              min: 0,
+              max: 10,
+              context: context
+            )
+          end.to raise_error(
+            ArgumentError,
+            "Expected #{context} to be between 0 to 10, got -1."
+          )
+        end
+      end
+    end
   end
 end
