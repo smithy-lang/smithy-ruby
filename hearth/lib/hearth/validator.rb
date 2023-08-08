@@ -44,8 +44,8 @@ module Hearth
 
     # Validate the given value is within the expected range (inclusive).
     # @param value [Object] The value to validate.
-    # @param min [Integer] The minimum that the given value should be.
-    # @param max [Integer] The maximum that the given value should be.
+    # @param min [Numeric] The minimum that the given value should be.
+    # @param max [Numeric] The maximum that the given value should be.
     # @param context [String] The context of the value being validated.
     # @raise [ArgumentError] Raises when the value is not within expected range.
     def self.validate_range!(value, min:, max:, context:)
