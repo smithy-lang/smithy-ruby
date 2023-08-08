@@ -3,7 +3,7 @@
 module Hearth
   # Utility module for working with request parameters.
   #
-  # * Validate structure of parameters against the expected type.
+  # * Validate structure of parameters against the expected input.
   # * Raise errors with context when validation fails.
   # @api private
   module Validator
@@ -42,14 +42,18 @@ module Hearth
             "Unexpected members: [#{unknown.join(', ')}]"
     end
 
+    # Validate the given value is within the expected range (inclusive).
+    # @param value [Object] The value to validate.
+    # @param min [Integer] The minimum that the given value should be.
+    # @param max [Integer] The maximum that the given value should be.
+    # @param context [String] The context of the value being validated.
+    # @raise [ArgumentError] Raises when the value is not within expected range.
     def self.validate_range!(value, min:, max:, context:)
       return if value.nil? || value.between?(min, max)
 
       raise ArgumentError,
             "Expected #{context} to be between " \
             "#{min} to #{max}, got #{value}."
-
     end
-
   end
 end
