@@ -134,7 +134,7 @@ module Hearth
     end
 
     describe '.validate_range!' do
-      context 'value is the type' do
+      context 'value is the within the expected range' do
         let(:params) { { foo: 10 } }
 
         it 'does not raise an error' do
@@ -149,7 +149,7 @@ module Hearth
         end
       end
 
-      context 'value is not the type' do
+      context 'value is outside of the expected range' do
         let(:params) { { foo: -1 } }
 
         it 'raises an ArgumentError' do
