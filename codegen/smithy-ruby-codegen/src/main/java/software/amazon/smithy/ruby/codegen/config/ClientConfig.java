@@ -53,7 +53,7 @@ public class ClientConfig {
             this.defaults.setDocumentationDefault(builder.documentationDefaultValue);
         }
         this.allowOperationOverride = builder.allowOperationOverride;
-        this.constraints = builder.constraints;
+        this.constraints = List.copyOf(builder.constraints);
     }
 
     public static Builder builder() {
