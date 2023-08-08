@@ -23,7 +23,7 @@ public class TypeConstraint implements ConfigConstraint {
     private final String type;
 
     /**
-     * @param type ruby type for the config. Used for validation, must be a valid Ruby class.
+     * @param type ruby type for the config. Used for validation, must be a valid Ruby class or Boolean.
      */
     public TypeConstraint(String type) {
         if (type.equals("Boolean")) {
