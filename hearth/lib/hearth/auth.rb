@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'auth/anonymous_identity'
-require_relative 'auth/http'
-require_relative 'auth/identity'
-require_relative 'auth/identity_resolver'
-require_relative 'auth/refreshing_identity_resolver'
+require_relative 'auth/scheme'
+require_relative 'auth/scheme_resolver'
 
 module Hearth
   # Contains all authentication related code.

@@ -3,7 +3,7 @@
 module Hearth
   module Auth
     # Resolves an identity from identity properties.
-    class RefreshingIdentityResolver
+    class RefreshingIdentity
       SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
       ASYNC_EXPIRATION_LENGTH = 600 # 10 minutes
 

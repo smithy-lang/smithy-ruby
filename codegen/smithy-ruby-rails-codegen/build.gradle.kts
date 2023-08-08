@@ -61,3 +61,7 @@ tasks.withType<JacocoReport> {
         html.destination = file("$buildDir/reports/jacoco")
     }
 }
+
+java.sourceSets["main"].java {
+    srcDirs("model", "src/main/smithy")
+}

@@ -4,8 +4,6 @@ module Hearth
   module Auth
     # Basic Identity resolver that uses a proc to resolve an Identity.
     class IdentityResolver
-      include RefreshingIdentity
-
       # @param [Proc] proc A proc that takes identity properties (Hash)
       #   and returns an identity (Identity).
       def initialize(proc)
@@ -13,8 +11,8 @@ module Hearth
       end
 
       # @param [Hash] properties
-      def refresh(properties)
-        @identity = @proc.call(properties)
+      def identity(properties)
+        @proc.call(properties)
       end
     end
   end

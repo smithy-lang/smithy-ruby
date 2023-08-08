@@ -70,3 +70,7 @@ tasks["build"].finalizedBy(
     tasks["copyWhiteLabelGem"],
     tasks["copyWeatherServiceGem"]
 )
+
+java.sourceSets["main"].java {
+    srcDirs("model", "src/main/smithy")
+}
