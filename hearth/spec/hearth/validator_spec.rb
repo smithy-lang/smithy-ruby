@@ -49,9 +49,9 @@ module Hearth
           expect do
             subject.validate_types!(input[:foo], String, context: context)
           end.to raise_error(
-             ArgumentError,
-             "Expected #{context} to be in [String], got FalseClass."
-           )
+            ArgumentError,
+            "Expected #{context} to be in [String], got FalseClass."
+          )
         end
       end
 
