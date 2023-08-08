@@ -17,7 +17,7 @@ module WhiteLabel
 
     context 'request_min_compression_size_bytes' do
       it 'raises error when given invalid integer' do
-        expect { Config.new(request_min_compression_size_bytes: -1 ) }
+        expect { Config.new(request_min_compression_size_bytes: -1) }
           .to raise_error(
             ArgumentError,
             'Expected config[:request_min_compression_size_bytes] ' \
