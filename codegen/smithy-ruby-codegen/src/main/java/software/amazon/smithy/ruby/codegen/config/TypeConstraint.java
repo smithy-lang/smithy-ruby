@@ -15,10 +15,16 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+/**
+ * Type Constraint for config value.
+ */
 public class TypeConstraint implements ConfigConstraint {
 
     private final String type;
 
+    /**
+     * @param type ruby type for the config. Used for validation, must be a valid Ruby class.
+     */
     public TypeConstraint(String type) {
         if (type.equals("Boolean")) {
             this.type = "TrueClass, FalseClass";
@@ -33,5 +39,4 @@ public class TypeConstraint implements ConfigConstraint {
                 "Hearth::Validator.validate_type!(%s, %s, context: 'config[:%s]')",
                 configName, type, configName);
     }
-
 }

@@ -15,8 +15,16 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+/**
+ * Represents config value constraints for a ClientConfig.
+ */
+
 public interface ConfigConstraint {
-
+    /**
+     *  Render the constraint validator for the config value.
+     *
+     * @param configName the name of the config.
+     * @return the string to be rendered into Ruby code.
+     */
     String render(String configName);
-
 }

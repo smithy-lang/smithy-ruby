@@ -15,11 +15,20 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+/**
+ * Range Constraint for config value.
+ */
 public class RangeConstraint implements ConfigConstraint {
 
     private final long minValue;
     private final long maxValue;
 
+    /**
+     * Sets the minimum and maximum (inclusive) range for the config value.
+     *
+     * @param minValue the minimum value
+     * @param maxValue the maximum value
+     */
     public RangeConstraint(long minValue, long maxValue) {
         this.maxValue = maxValue;
         this.minValue = minValue;

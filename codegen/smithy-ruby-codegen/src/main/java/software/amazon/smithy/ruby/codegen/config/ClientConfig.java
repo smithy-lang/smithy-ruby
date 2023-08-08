@@ -101,6 +101,9 @@ public class ClientConfig {
         return defaults.renderDefault(context);
     }
 
+    /**
+     * @return a list of ConfigConstraint objects.
+     */
     public List<ConfigConstraint> getConstraints() {
         return constraints;
     }
@@ -280,6 +283,10 @@ public class ClientConfig {
             return this;
         }
 
+        /**
+         * @param constraint a ConfigConstraint object.
+         * @return this builder.
+         */
         public Builder constraint(ConfigConstraint constraint) {
             this.constraints.add(constraint);
             return this;
