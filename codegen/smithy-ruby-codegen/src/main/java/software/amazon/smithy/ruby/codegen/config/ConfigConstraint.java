@@ -16,7 +16,7 @@
 package software.amazon.smithy.ruby.codegen.config;
 
 /**
- * Represents config value constraints for a ClientConfig.
+ * Represents the config value constraints for ClientConfig.
  */
 
 public interface ConfigConstraint {
