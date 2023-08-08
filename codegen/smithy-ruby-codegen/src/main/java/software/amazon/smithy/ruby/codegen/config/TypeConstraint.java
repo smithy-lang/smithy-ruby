@@ -36,7 +36,7 @@ public class TypeConstraint implements ConfigConstraint {
     @Override
     public String render(String configName) {
         return String.format(
-                "Hearth::Validator.validate_type!(%s, %s, context: 'config[:%s]')",
+                "Hearth::Validator.validate_types!(%s, %s, context: 'config[:%s]')",
                 configName, type, configName);
     }
 }
