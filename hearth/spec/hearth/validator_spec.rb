@@ -42,6 +42,19 @@ module Hearth
         end
       end
 
+      context 'value is a boolean' do
+        let(:params) { { foo: false } }
+
+        it 'raises an ArgumentError when type is non-boolean' do
+          expect do
+            subject.validate_types!(input[:foo], String, context: context)
+          end.to raise_error(
+             ArgumentError,
+             "Expected #{context} to be in [String], got FalseClass."
+           )
+        end
+      end
+
       context 'value is not set' do
         let(:params) { {} }
 
