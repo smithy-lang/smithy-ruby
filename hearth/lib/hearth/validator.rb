@@ -13,7 +13,7 @@ module Hearth
     # @param context [String] The context of the value being validated.
     # @raise [ArgumentError] Raises when the value is not one of given type(s).
     def self.validate_types!(value, *types, context:)
-      return if !value || types.any? { |type| value.is_a?(type) }
+      return if value.nil? || types.any? { |type| value.is_a?(type) }
 
       raise ArgumentError,
             "Expected #{context} to be in " \
