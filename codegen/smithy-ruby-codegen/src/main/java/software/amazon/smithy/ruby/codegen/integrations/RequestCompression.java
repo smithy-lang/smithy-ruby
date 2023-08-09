@@ -28,6 +28,7 @@ import software.amazon.smithy.model.traits.RequestCompressionTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.RangeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -62,6 +63,7 @@ public class RequestCompression implements RubyIntegration {
                 .documentation(minCompressionDocumentation)
                 .allowOperationOverride()
                 .defaultPrimitiveValue("10240")
+                .constraint(new RangeConstraint(0, 10485760))
                 .build();
 
         Middleware compression = Middleware.builder()
