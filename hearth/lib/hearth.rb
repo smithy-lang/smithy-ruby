@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'hearth/api_error'
+require_relative 'hearth/auth_option'
 require_relative 'hearth/block_io'
 require_relative 'hearth/checksums'
 require_relative 'hearth/configuration'

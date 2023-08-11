@@ -12,6 +12,10 @@ module WhiteLabel
 
     ClientError: untyped
 
+    CustomAuthInput: untyped
+
+    CustomAuthOutput: untyped
+
     DefaultsTestInput: untyped
 
     DefaultsTestOutput: untyped
@@ -24,6 +28,22 @@ module WhiteLabel
 
     EndpointWithHostLabelOperationOutput: untyped
 
+    HttpApiKeyAuthInput: untyped
+
+    HttpApiKeyAuthOutput: untyped
+
+    HttpBasicAuthInput: untyped
+
+    HttpBasicAuthOutput: untyped
+
+    HttpBearerAuthInput: untyped
+
+    HttpBearerAuthOutput: untyped
+
+    HttpDigestAuthInput: untyped
+
+    HttpDigestAuthOutput: untyped
+
     KitchenSinkInput: untyped
 
     KitchenSinkOutput: untyped
@@ -31,6 +51,18 @@ module WhiteLabel
     MixinTestInput: untyped
 
     MixinTestOutput: untyped
+
+    NoAuthInput: untyped
+
+    NoAuthOutput: untyped
+
+    OptionalAuthInput: untyped
+
+    OptionalAuthOutput: untyped
+
+    OrderedAuthInput: untyped
+
+    OrderedAuthOutput: untyped
 
     PaginatorsTestOperationInput: untyped
 

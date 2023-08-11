@@ -11,6 +11,11 @@ module WhiteLabel
   # @api private
   module Builders
 
+    class CustomAuth
+      def self.build(http_req, input:)
+      end
+    end
+
     class DefaultsTest
       def self.build(http_req, input:)
       end
@@ -22,6 +27,26 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
+      def self.build(http_req, input:)
+      end
+    end
+
+    class HttpApiKeyAuth
+      def self.build(http_req, input:)
+      end
+    end
+
+    class HttpBasicAuth
+      def self.build(http_req, input:)
+      end
+    end
+
+    class HttpBearerAuth
+      def self.build(http_req, input:)
+      end
+    end
+
+    class HttpDigestAuth
       def self.build(http_req, input:)
       end
     end
@@ -44,6 +69,21 @@ module WhiteLabel
     end
 
     class MixinTest
+      def self.build(http_req, input:)
+      end
+    end
+
+    class NoAuth
+      def self.build(http_req, input:)
+      end
+    end
+
+    class OptionalAuth
+      def self.build(http_req, input:)
+      end
+    end
+
+    class OrderedAuth
       def self.build(http_req, input:)
       end
     end

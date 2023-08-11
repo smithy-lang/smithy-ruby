@@ -21,6 +21,24 @@ module WhiteLabel
       end
     end
 
+    module CustomAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::CustomAuthInput, context: context)
+        type = Types::CustomAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module CustomAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::CustomAuthOutput, context: context)
+        type = Types::CustomAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
     module DefaultsTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)
@@ -111,6 +129,78 @@ module WhiteLabel
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
         type = Types::EndpointWithHostLabelOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpApiKeyAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpApiKeyAuthInput, context: context)
+        type = Types::HttpApiKeyAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpApiKeyAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpApiKeyAuthOutput, context: context)
+        type = Types::HttpApiKeyAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpBasicAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBasicAuthInput, context: context)
+        type = Types::HttpBasicAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpBasicAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBasicAuthOutput, context: context)
+        type = Types::HttpBasicAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpBearerAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBearerAuthInput, context: context)
+        type = Types::HttpBearerAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpBearerAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBearerAuthOutput, context: context)
+        type = Types::HttpBearerAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpDigestAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpDigestAuthInput, context: context)
+        type = Types::HttpDigestAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module HttpDigestAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::HttpDigestAuthOutput, context: context)
+        type = Types::HttpDigestAuthOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
@@ -226,6 +316,60 @@ module WhiteLabel
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.username = params[:username]
         type.user_id = params[:user_id]
+        type
+      end
+    end
+
+    module NoAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::NoAuthInput, context: context)
+        type = Types::NoAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module NoAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::NoAuthOutput, context: context)
+        type = Types::NoAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module OptionalAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::OptionalAuthInput, context: context)
+        type = Types::OptionalAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module OptionalAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::OptionalAuthOutput, context: context)
+        type = Types::OptionalAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module OrderedAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::OrderedAuthInput, context: context)
+        type = Types::OrderedAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module OrderedAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::OrderedAuthOutput, context: context)
+        type = Types::OrderedAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end

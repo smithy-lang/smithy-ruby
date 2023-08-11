@@ -32,8 +32,8 @@ public class ModuleGenerator {
             Logger.getLogger(ModuleGenerator.class.getName());
 
     private static final String[] DEFAULT_REQUIRES = {
-        "builders", "client", "config", "errors", "paginators", "params",
-        "parsers", "stubs", "types", "validators", "waiters"
+        "auth_resolver", "builders", "client", "config", "errors", "paginators",
+        "params", "parsers", "stubs", "types", "validators", "waiters"
     };
 
     private final GenerationContext context;

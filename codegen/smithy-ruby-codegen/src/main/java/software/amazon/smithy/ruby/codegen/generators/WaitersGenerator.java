@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
+import software.amazon.smithy.codegen.core.directed.CustomizeDirective;
 import software.amazon.smithy.jmespath.ExpressionSerializer;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
@@ -66,7 +66,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
 
-    public WaitersGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
+    public WaitersGenerator(CustomizeDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         this.operations = directive.operations();
     }

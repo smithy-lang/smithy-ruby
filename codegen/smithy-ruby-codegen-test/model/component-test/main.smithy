@@ -20,7 +20,15 @@ service WhiteLabel {
         EndpointWithHostLabelOperation,
         MixinTest,
         RequestCompressionOperation,
-        RequestCompressionStreamingOperation
+        RequestCompressionStreamingOperation,
+        HttpBasicAuth,
+        HttpDigestAuth,
+        HttpBearerAuth,
+        HttpApiKeyAuth,
+        OptionalAuth,
+        NoAuth,
+        OrderedAuth,
+        CustomAuth
     ]
 }
 

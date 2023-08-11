@@ -21,6 +21,20 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    CustomAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    CustomAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # @!attribute string
     #
     #   @return [String]
@@ -369,6 +383,62 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    HttpApiKeyAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpApiKeyAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpBasicAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpBasicAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpBearerAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpBearerAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpDigestAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    HttpDigestAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # Includes enum constants for IntEnumType
     #
     module IntEnumType
@@ -659,6 +729,48 @@ module WhiteLabel
     MixinTestOutput = ::Struct.new(
       :username,
       :user_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    NoAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    NoAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    OptionalAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    OptionalAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    OrderedAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    OrderedAuthOutput = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Hearth::Structure

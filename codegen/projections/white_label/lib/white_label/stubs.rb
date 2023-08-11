@@ -28,6 +28,26 @@ module WhiteLabel
 
     end
 
+    class CustomAuth
+      def self.build(params, context:)
+        Params::CustomAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::CustomAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class DefaultsTest
       def self.build(params, context:)
         Params::DefaultsTestOutput.build(params, context: context)
@@ -106,6 +126,86 @@ module WhiteLabel
 
       def self.validate!(output, context:)
         Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class HttpApiKeyAuth
+      def self.build(params, context:)
+        Params::HttpApiKeyAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpApiKeyAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class HttpBasicAuth
+      def self.build(params, context:)
+        Params::HttpBasicAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpBasicAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class HttpBearerAuth
+      def self.build(params, context:)
+        Params::HttpBearerAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpBearerAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class HttpDigestAuth
+      def self.build(params, context:)
+        Params::HttpDigestAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpDigestAuthOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -222,6 +322,66 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+      end
+    end
+
+    class NoAuth
+      def self.build(params, context:)
+        Params::NoAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NoAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class OptionalAuth
+      def self.build(params, context:)
+        Params::OptionalAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OptionalAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class OrderedAuth
+      def self.build(params, context:)
+        Params::OrderedAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OrderedAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
       end
     end
 

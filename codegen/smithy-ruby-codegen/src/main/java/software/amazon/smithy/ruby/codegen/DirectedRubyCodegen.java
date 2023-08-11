@@ -39,6 +39,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.generators.AuthResolverGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EnumGenerator;
@@ -154,10 +155,6 @@ public class DirectedRubyCodegen
         clientGenerator.render();
         clientGenerator.renderRbs();
         LOGGER.info("generated client");
-
-        WaitersGenerator waitersGenerator = new WaitersGenerator(directive);
-        waitersGenerator.render();
-        waitersGenerator.renderRbs();
     }
 
     @Override
@@ -207,9 +204,17 @@ public class DirectedRubyCodegen
             generator.generateStubs(directive.context());
         }
 
+        new AuthResolverGenerator(directive).render();
+
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(directive);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
+        LOGGER.info("generated paginators");
+
+        WaitersGenerator waitersGenerator = new WaitersGenerator(directive);
+        waitersGenerator.render();
+        waitersGenerator.renderRbs();
+        LOGGER.info("generated waiters");
 
         new VersionGenerator(directive).render();
         new ModuleGenerator(directive).render();

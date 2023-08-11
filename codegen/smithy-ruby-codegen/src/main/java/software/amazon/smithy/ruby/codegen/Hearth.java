@@ -27,11 +27,6 @@ public final class Hearth {
             .name("ClientStubs")
             .build();
 
-    public static final Symbol MIDDLEWARE_STACK = Symbol.builder()
-            .namespace("Hearth", "::")
-            .name("MiddlewareStack")
-            .build();
-
     public static final Symbol CONTEXT = Symbol.builder()
             .namespace("Hearth", "::")
             .name("Context")
@@ -120,6 +115,17 @@ public final class Hearth {
     public static final Symbol INTERCEPTOR_LIST = Symbol.builder()
             .namespace("Hearth", "::")
             .name("InterceptorList")
+            .build();
+
+    public static final Symbol AUTH_OPTION = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("AuthOption")
+            .build();
+
+    // Middleware
+    public static final Symbol MIDDLEWARE_STACK = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("MiddlewareStack")
             .build();
 
     public static final Symbol INITIALIZE_MIDDLEWARE = Symbol.builder()

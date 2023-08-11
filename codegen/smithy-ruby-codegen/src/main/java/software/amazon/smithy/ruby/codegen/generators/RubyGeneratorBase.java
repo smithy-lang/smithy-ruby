@@ -21,6 +21,7 @@ import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
 abstract class RubyGeneratorBase {
@@ -58,10 +59,12 @@ abstract class RubyGeneratorBase {
     }
 
     public String rbFile() {
-        return settings.getGemName() + "/lib/" + settings.getGemName() + "/" + getModule().toLowerCase() + ".rb";
+        return settings.getGemName() + "/lib/" + settings.getGemName()
+                + "/" + RubyFormatter.toSnakeCase(getModule()) + ".rb";
     }
 
     public String rbsFile() {
-        return settings.getGemName() + "/sig/" + settings.getGemName() + "/" + getModule().toLowerCase()  + ".rbs";
+        return settings.getGemName() + "/sig/" + settings.getGemName()
+                + "/" + RubyFormatter.toSnakeCase(getModule())  + ".rbs";
     }
 }
