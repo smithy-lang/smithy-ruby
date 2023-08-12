@@ -8,11 +8,13 @@
 # WARNING ABOUT GENERATED CODE
 
 module Weather
+  AuthParams = Struct.new(:operation_name)
+
   class AuthResolver
 
-    def resolve(auth_params = {})
+    def resolve(auth_params)
       options = []
-      case auth_params[:operation_name]
+      case auth_params.operation_name
       when :operation____789_bad_name
         options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
       when :get_city

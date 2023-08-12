@@ -8,11 +8,13 @@
 # WARNING ABOUT GENERATED CODE
 
 module RailsJson
+  AuthParams = Struct.new(:operation_name)
+
   class AuthResolver
 
-    def resolve(auth_params = {})
+    def resolve(auth_params)
       options = []
-      case auth_params[:operation_name]
+      case auth_params.operation_name
       when :operation____789_bad_name
         options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
       when :all_query_string_types

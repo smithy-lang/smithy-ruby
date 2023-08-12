@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Auth
+  module Identities
     # Identity class for login authentication.
-    class HTTPLoginIdentity < Identity
+    class HTTPLogin < Identities::Base
       def initialize(username:, password:, **kwargs)
         super(**kwargs)
         @username = username

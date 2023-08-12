@@ -59,6 +59,8 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
                     .includePreamble()
                     .includeRequires()
                     .addModule(settings.getModule())
+                    .call(() -> renderAuthParams(writer))
+                    .write("")
                     .call(() -> renderAuthResolver(writer))
                     .closeAllModules();
         });
@@ -69,7 +71,7 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("class AuthResolver")
                 .write("")
-                .openBlock("def resolve(auth_params = {})")
+                .openBlock("def resolve(auth_params)")
                 .write("options = []")
                 .call(() -> renderSwitchCase(writer))
                 .closeBlock("end")
@@ -77,9 +79,14 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
     }
 
+    private void renderAuthParams(RubyCodeWriter writer) {
+        // TODO: this should have more params when hooked up with endpoint/auth rules?
+        writer.write("AuthParams = Struct.new(:operation_name)");
+    }
+
     private void renderSwitchCase(RubyCodeWriter writer) {
         writer
-                .write("case auth_params[:operation_name]")
+                .write("case auth_params.operation_name")
                 .call(() -> {
                     for (OperationShape operation : operations) {
                         renderOperationAuthOptions(writer, operation);

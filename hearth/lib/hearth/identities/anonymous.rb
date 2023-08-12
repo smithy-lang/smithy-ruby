@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Auth
+  module Identities
     # Anonymous identity.
-    class AnonymousIdentity < Identity; end
+    class Anonymous < Identities::Base; end
   end
 end

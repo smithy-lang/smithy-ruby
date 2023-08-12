@@ -8,11 +8,13 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
+  AuthParams = Struct.new(:operation_name)
+
   class AuthResolver
 
-    def resolve(auth_params = {})
+    def resolve(auth_params)
       options = []
-      case auth_params[:operation_name]
+      case auth_params.operation_name
       when :operation____paginators_test_with_bad_names
         options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signing_properties: { name: 'X-API-Key', in: 'header', scheme: 'Authorization' })
         options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')

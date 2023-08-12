@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Auth
+  module Identities
     # Identity class for API Key authentication.
-    class HTTPApiKeyIdentity < Identity
+    class HTTPApiKey < Identities::Base
       def initialize(key:, **kwargs)
         super(**kwargs)
         @key = key

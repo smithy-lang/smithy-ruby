@@ -6,9 +6,10 @@ module Hearth
     # @api private
     class Auth
       # @param [Class] app The next middleware in the stack.
-      def initialize(app, auth_scheme_resolver:, **kwargs)
+      def initialize(app, auth_resolver:, auth_params:, **kwargs)
         @app = app
-        @auth_scheme_resolver = auth_scheme_resolver
+        @auth_resolver = auth_resolver
+        @auth_params = auth_params
 
         # Identity resolvers
         kwargs.each do |key, value|
@@ -22,7 +23,15 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
+        auth_options = @auth_resolver.resolve(@auth_params)
+        auth_scheme = select_auth_scheme(auth_options)
         @app.call(input, context)
+      end
+
+      private
+
+      def select_auth_scheme(auth_options)
+
       end
     end
   end
