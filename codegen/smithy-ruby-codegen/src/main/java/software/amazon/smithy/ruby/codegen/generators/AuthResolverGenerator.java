@@ -25,6 +25,9 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
+import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
+import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
+import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.OptionalAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -41,16 +44,18 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final ServiceShape service;
+    private final Map<ShapeId, Trait> serviceAuthSchemes;
 
     public AuthResolverGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         this.operations = directive.operations();
         this.service = directive.service();
+        serviceAuthSchemes = ServiceIndex.of(model).getEffectiveAuthSchemes(service);
     }
 
     @Override
     String getModule() {
-        return "AuthResolver";
+        return "Auth";
     }
 
     public void render() {
@@ -59,17 +64,52 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
                     .includePreamble()
                     .includeRequires()
                     .addModule(settings.getModule())
-                    .call(() -> renderAuthParams(writer))
+                    .addModule("Auth")
+                    .call(() -> renderAuthParamsClass(writer))
+                    .write("")
+                    .call(() -> renderAuthSchemesConstant(writer))
                     .write("")
                     .call(() -> renderAuthResolver(writer))
                     .closeAllModules();
         });
-        LOGGER.fine("Wrote auth resolver to " + rbFile());
+        LOGGER.fine("Wrote auth module to " + rbFile());
+    }
+
+    private void renderAuthParamsClass(RubyCodeWriter writer) {
+        // TODO: this should have more params when hooked up with endpoint/auth rules?
+        writer.write("Params = Struct.new(:operation_name)");
+    }
+
+    private void renderAuthSchemesConstant(RubyCodeWriter writer) {
+        writer
+                .openBlock("SCHEMES = [")
+                .call(() -> {
+                    serviceAuthSchemes.forEach((shapeId, trait) -> {
+                        renderAuthScheme(writer, trait);
+                    });
+                })
+                .unwrite(",\n")
+                .write("")
+                .closeBlock("].freeze");
+    }
+
+    private void renderAuthScheme(RubyCodeWriter writer, Trait trait) {
+        if (trait instanceof HttpApiKeyAuthTrait) {
+            writer.write("$L::HTTPApiKey.new,", Hearth.AUTH_SCHEMES);
+        } else if (trait instanceof HttpBasicAuthTrait) {
+            writer.write("$L::HTTPBasic.new,", Hearth.AUTH_SCHEMES);
+        } else if (trait instanceof HttpBearerAuthTrait) {
+            writer.write("$L::HTTPBearer.new,", Hearth.AUTH_SCHEMES);
+        } else if (trait instanceof HttpDigestAuthTrait) {
+            writer.write("$L::HTTPDigest.new,", Hearth.AUTH_SCHEMES);
+        } else {
+            LOGGER.warning("Unknown auth scheme: " + trait);
+        }
     }
 
     private void renderAuthResolver(RubyCodeWriter writer) {
         writer
-                .openBlock("class AuthResolver")
+                .openBlock("class Resolver")
                 .write("")
                 .openBlock("def resolve(auth_params)")
                 .write("options = []")
@@ -77,11 +117,6 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
                 .closeBlock("end")
                 .write("")
                 .closeBlock("end");
-    }
-
-    private void renderAuthParams(RubyCodeWriter writer) {
-        // TODO: this should have more params when hooked up with endpoint/auth rules?
-        writer.write("AuthParams = Struct.new(:operation_name)");
     }
 
     private void renderSwitchCase(RubyCodeWriter writer) {
@@ -118,9 +153,7 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
     }
 
     private void renderServiceDefaultAuthOptions(RubyCodeWriter writer) {
-        Map<ShapeId, Trait> authSchemes =
-                ServiceIndex.of(model).getEffectiveAuthSchemes(service);
-        renderAuthOptions(writer, authSchemes);
+        renderAuthOptions(writer, serviceAuthSchemes);
     }
 
     private void renderAuthOptions(RubyCodeWriter writer, Map<ShapeId, Trait> authSchemes) {

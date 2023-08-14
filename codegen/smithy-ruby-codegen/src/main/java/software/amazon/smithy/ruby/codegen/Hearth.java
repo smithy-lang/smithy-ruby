@@ -122,6 +122,11 @@ public final class Hearth {
             .name("AuthOption")
             .build();
 
+    public static final Symbol AUTH_SCHEMES = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("AuthSchemes")
+            .build();
+
     // Middleware
     public static final Symbol MIDDLEWARE_STACK = Symbol.builder()
             .namespace("Hearth", "::")

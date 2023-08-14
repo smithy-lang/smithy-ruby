@@ -9,7 +9,7 @@
 
 require 'hearth'
 
-require_relative 'high_score_service/auth_resolver'
+require_relative 'high_score_service/auth'
 require_relative 'high_score_service/builders'
 require_relative 'high_score_service/client'
 require_relative 'high_score_service/config'

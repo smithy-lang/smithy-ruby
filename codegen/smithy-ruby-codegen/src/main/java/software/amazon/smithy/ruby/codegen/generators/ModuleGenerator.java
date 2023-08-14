@@ -32,7 +32,7 @@ public class ModuleGenerator {
             Logger.getLogger(ModuleGenerator.class.getName());
 
     private static final String[] DEFAULT_REQUIRES = {
-        "auth_resolver", "builders", "client", "config", "errors", "paginators",
+        "auth", "builders", "client", "config", "errors", "paginators",
         "params", "parsers", "stubs", "types", "validators", "waiters"
     };
 
