@@ -90,7 +90,7 @@ module Weather
 
     private
 
-    def validate_types!
+    def validate!
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')

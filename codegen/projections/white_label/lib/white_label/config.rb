@@ -112,7 +112,7 @@ module WhiteLabel
 
     private
 
-    def validate_types!
+    def validate!
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
@@ -122,6 +122,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
       Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'config[:request_min_compression_size_bytes]')
+      Hearth::Validator.validate_range!(request_min_compression_size_bytes, min: 0, max: 10485760, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(test_config, String, context: 'config[:test_config]')

@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.ruby.codegen.ClientFragment;
@@ -29,20 +31,19 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public class ClientConfig {
 
     private final String name;
-    private final String type;
     private final String documentation;
     private final String documentationType;
     private final ConfigDefaults defaults;
     private final boolean allowOperationOverride;
+    private final List<ConfigConstraint> constraints;
 
     /**
      * @param builder builder to construct from.
      */
     public ClientConfig(Builder builder) {
         this.name = builder.name;
-        this.type = builder.type;
         this.documentation = builder.documentation;
-        this.documentationType = builder.documentationType;
+        this.documentationType = builder.documentationType != null ? builder.documentationType : builder.type;
         if (builder.defaults != null) {
             this.defaults = builder.defaults;
         } else {
@@ -52,6 +53,7 @@ public class ClientConfig {
             this.defaults.setDocumentationDefault(builder.documentationDefaultValue);
         }
         this.allowOperationOverride = builder.allowOperationOverride;
+        this.constraints = List.copyOf(builder.constraints);
     }
 
     public static Builder builder() {
@@ -64,13 +66,6 @@ public class ClientConfig {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return The Ruby type of the config (eg String, Integer, Boolean, ect).
-     */
-    public String getType() {
-        return type;
     }
 
     /**
@@ -94,10 +89,7 @@ public class ClientConfig {
      * @return Documented type
      */
     public String getDocumentationType() {
-        if (documentationType != null) {
-            return documentationType;
-        }
-        return type;
+        return documentationType;
     }
 
     /**
@@ -107,6 +99,13 @@ public class ClientConfig {
      */
     public String renderDefaults(GenerationContext context) {
         return defaults.renderDefault(context);
+    }
+
+    /**
+     * @return a list of ConfigConstraint objects.
+     */
+    public List<ConfigConstraint> getConstraints() {
+        return constraints;
     }
 
     /**
@@ -147,12 +146,12 @@ public class ClientConfig {
         }
         ClientConfig that = (ClientConfig) o;
         return Objects.equals(getName(), that.getName())
-                && Objects.equals(getType(), that.getType());
+                && Objects.equals(getDocumentationType(), that.getDocumentationType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getType());
+        return Objects.hash(getName(), getDocumentationType());
     }
 
     /**
@@ -166,9 +165,10 @@ public class ClientConfig {
         private String documentationType;
         private ConfigDefaults defaults;
         private boolean allowOperationOverride = false;
+        private final List<ConfigConstraint> constraints;
 
         protected Builder() {
-
+            constraints = new ArrayList<>();
         }
 
         /**
@@ -186,6 +186,7 @@ public class ClientConfig {
          */
         public Builder type(String type) {
             this.type = type;
+            this.constraints.add(0, new TypeConstraint(type));
             return this;
         }
 
@@ -279,6 +280,15 @@ public class ClientConfig {
         public Builder defaultLiteral(String defaultLiteral) {
             validateDefaultNotSet();
             this.defaults = new DefaultLiteral(defaultLiteral);
+            return this;
+        }
+
+        /**
+         * @param constraint a ConfigConstraint object.
+         * @return this builder.
+         */
+        public Builder constraint(ConfigConstraint constraint) {
+            this.constraints.add(constraint);
             return this;
         }
 
