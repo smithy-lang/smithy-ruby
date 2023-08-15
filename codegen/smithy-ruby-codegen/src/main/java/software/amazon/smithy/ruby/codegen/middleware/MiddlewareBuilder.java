@@ -172,130 +172,140 @@ public class MiddlewareBuilder {
         ApplicationTransport transport = context.applicationTransport();
         SymbolProvider symbolProvider = context.symbolProvider();
 
-        Middleware initialize = Middleware.builder()
-                .klass(Hearth.INITIALIZE_MIDDLEWARE)
-                .step(MiddlewareStackStep.INITIALIZE)
-                .order(Byte.MIN_VALUE)
-                .build();
-
-        ClientConfig validateInput = ClientConfig.builder()
-                .name("validate_input")
-                .type("Boolean")
-                .defaultPrimitiveValue("true")
-                .documentation(
-                        "When `true`, request parameters are validated using the modeled shapes.")
-                .build();
-
-        Middleware validate = Middleware.builder()
-                .klass(Hearth.VALIDATE_MIDDLEWARE)
-                .step(MiddlewareStackStep.VALIDATE)
-                .operationParams((ctx, operation) -> {
-                    ShapeId inputShapeId = operation.getInputShape();
-                    Shape inputShape = ctx.model().expectShape(inputShapeId);
-                    Map<String, String> params = new HashMap<>();
-                    params.put("validator",
-                            "Validators::" + symbolProvider.toSymbol(inputShape).getName());
-                    return params;
-                })
-                .addConfig(validateInput)
-                .build();
-
-        ClientConfig disableHostPrefix = ClientConfig.builder()
-                .name("disable_host_prefix")
-                .type("Boolean")
-                .defaultPrimitiveValue("false")
-                .documentation(
-                        "When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.")
-                .build();
-
-        Middleware hostPrefix = Middleware.builder()
-                .klass("Hearth::Middleware::HostPrefix")
-                .step(MiddlewareStackStep.BUILD)
-                .relative(new Middleware.Relative(
-                        Middleware.Relative.Type.BEFORE, Hearth.BUILD_MIDDLEWARE)
-                )
-                .addConfig(disableHostPrefix)
-                .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
-                .operationParams((ctx, operation) -> {
-                    Map<String, String> params = new HashMap<>();
-                    SmithyPattern pattern = operation.getTrait(EndpointTrait.class).get().getHostPrefix();
-                    StringBuffer prefix = new StringBuffer();
-                    for (SmithyPattern.Segment segment : pattern.getSegments()) {
-                        if (segment.isLabel()) {
-                            // Here, we rebuild the smithy pattern with reserved word support.
-                            // Otherwise we could use pattern.toString()
-                            String label = RubySymbolProvider.toMemberName(segment.getContent());
-                            prefix.append("{" + label + "}");
-                        } else {
-                            prefix.append(segment);
-                        }
-                    }
-                    params.put("host_prefix", "\"" + prefix + "\"");
-                    return params;
-                })
-                .build();
-
-        ClientConfig stubResponses = ClientConfig.builder()
-                .name("stub_responses")
-                .type("Boolean")
-                .defaultPrimitiveValue("false")
-                .documentation(
-                        "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
-                .build();
-
-        ClientConfig retryStrategy = ClientConfig.builder()
-                .name("retry_strategy")
-                .type("Hearth::Retry::Strategy")
-                .documentationDefaultValue("Hearth::Retry::Standard.new")
-                .defaultValue("Hearth::Retry::Standard.new")
-                .documentation(
-                        "Specifies which retry strategy class to use. Strategy classes\n"
-                                + " may have additional options, such as max_retries and backoff strategies.\n"
-                                + " Available options are: \n"
-                                + " * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. "
-                                + "This includes support for retry quotas, which limit the number of"
-                                + " unsuccessful retries a client can make.\n"
-                                + " * `Retry::Adaptive` - An experimental retry mode that includes all the"
-                                + " functionality of `standard` mode along with automatic client side"
-                                + " throttling.  This is a provisional mode that may change behavior"
-                                + " in the future."
-                )
-                .build();
-
-        Middleware retry = Middleware.builder()
-                .klass(Hearth.RETRY_MIDDLEWARE)
-                .step(MiddlewareStackStep.RETRY)
-                .addConfig(retryStrategy)
-                .addParam("error_inspector_class", transport.getErrorInspector())
-                .build();
-
-        Middleware send = Middleware.builder()
-                .klass(Hearth.SEND_MIDDLEWARE)
-                .step(MiddlewareStackStep.SEND)
-                .addParam("client",
-                        transport.getTransportClient().render(context))
-                .addParam("stubs", "@stubs")
-                .operationParams((ctx, operation) -> {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("stub_data_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
-                    String errors = operation.getErrors()
-                            .stream()
-                            .map((error) -> "Stubs::"
-                                    + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
-                            .collect(Collectors.joining(", "));
-                    params.put("stub_error_classes", "[" + errors + "]");
-                    return params;
-                })
-                .addConfig(stubResponses)
-                .build();
-
-        register(initialize);
-        register(validate);
-        register(hostPrefix);
-        register(retry);
-        register(send);
+        register(initializeMiddleware());
+        register(validateMiddleware(symbolProvider));
+        register(hostPrefixMiddleware());
+        register(retryMiddleware(transport));
+        register(sendMiddleware(context, transport, symbolProvider));
 
         register(transport.defaultMiddleware(context));
+    }
+
+    private Middleware initializeMiddleware() {
+        return Middleware.builder()
+            .klass(Hearth.INITIALIZE_MIDDLEWARE)
+            .step(MiddlewareStackStep.INITIALIZE)
+            .order(Byte.MIN_VALUE)
+            .build();
+    }
+
+    private Middleware validateMiddleware(SymbolProvider symbolProvider) {
+        ClientConfig validateInput = ClientConfig.builder()
+            .name("validate_input")
+            .type("Boolean")
+            .defaultPrimitiveValue("true")
+            .documentation(
+                    "When `true`, request parameters are validated using the modeled shapes.")
+            .build();
+
+        return Middleware.builder()
+            .klass(Hearth.VALIDATE_MIDDLEWARE)
+            .step(MiddlewareStackStep.VALIDATE)
+            .operationParams((ctx, operation) -> {
+                ShapeId inputShapeId = operation.getInputShape();
+                Shape inputShape = ctx.model().expectShape(inputShapeId);
+                Map<String, String> params = new HashMap<>();
+                params.put("validator",
+                        "Validators::" + symbolProvider.toSymbol(inputShape).getName());
+                return params;
+            })
+            .addConfig(validateInput)
+            .build();
+    }
+
+    private Middleware hostPrefixMiddleware() {
+        ClientConfig disableHostPrefix = ClientConfig.builder()
+            .name("disable_host_prefix")
+            .type("Boolean")
+            .defaultPrimitiveValue("false")
+            .documentation(
+                    "When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.")
+            .build();
+
+        return Middleware.builder()
+            .klass("Hearth::Middleware::HostPrefix")
+            .step(MiddlewareStackStep.BUILD)
+            .relative(new Middleware.Relative(
+                    Middleware.Relative.Type.BEFORE, Hearth.BUILD_MIDDLEWARE)
+            )
+            .addConfig(disableHostPrefix)
+            .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
+            .operationParams((ctx, operation) -> {
+                Map<String, String> params = new HashMap<>();
+                SmithyPattern pattern = operation.getTrait(EndpointTrait.class).get().getHostPrefix();
+                StringBuffer prefix = new StringBuffer();
+                for (SmithyPattern.Segment segment : pattern.getSegments()) {
+                    if (segment.isLabel()) {
+                        // Here, we rebuild the smithy pattern with reserved word support.
+                        // Otherwise we could use pattern.toString()
+                        String label = RubySymbolProvider.toMemberName(segment.getContent());
+                        prefix.append("{" + label + "}");
+                    } else {
+                        prefix.append(segment);
+                    }
+                }
+                params.put("host_prefix", "\"" + prefix + "\"");
+                return params;
+            })
+            .build();
+    }
+
+    private Middleware retryMiddleware(ApplicationTransport transport) {
+        ClientConfig retryStrategy = ClientConfig.builder()
+            .name("retry_strategy")
+            .type("Hearth::Retry::Strategy")
+            .documentationDefaultValue("Hearth::Retry::Standard.new")
+            .defaultValue("Hearth::Retry::Standard.new")
+            .documentation(
+                    "Specifies which retry strategy class to use. Strategy classes\n"
+                            + " may have additional options, such as max_retries and backoff strategies.\n"
+                            + " Available options are: \n"
+                            + " * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. "
+                            + "This includes support for retry quotas, which limit the number of"
+                            + " unsuccessful retries a client can make.\n"
+                            + " * `Retry::Adaptive` - An experimental retry mode that includes all the"
+                            + " functionality of `standard` mode along with automatic client side"
+                            + " throttling.  This is a provisional mode that may change behavior"
+                            + " in the future."
+                )
+                .build();
+
+        return Middleware.builder()
+            .klass(Hearth.RETRY_MIDDLEWARE)
+            .step(MiddlewareStackStep.RETRY)
+            .addConfig(retryStrategy)
+            .addParam("error_inspector_class", transport.getErrorInspector())
+            .build();
+    }
+
+    private Middleware sendMiddleware(GenerationContext context, ApplicationTransport transport,
+                                      SymbolProvider symbolProvider) {
+        ClientConfig stubResponses = ClientConfig.builder()
+            .name("stub_responses")
+            .type("Boolean")
+            .defaultPrimitiveValue("false")
+            .documentation(
+                    "Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.")
+            .build();
+
+        return Middleware.builder()
+            .klass(Hearth.SEND_MIDDLEWARE)
+            .step(MiddlewareStackStep.SEND)
+            .addParam("client", transport.getTransportClient().render(context))
+            .addParam("stubs", "@stubs")
+            .operationParams((ctx, operation) -> {
+                Map<String, String> params = new HashMap<>();
+                params.put("stub_data_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
+                String errors = operation.getErrors()
+                        .stream()
+                        .map((error) -> "Stubs::"
+                                + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
+                        .collect(Collectors.joining(", "));
+                params.put("stub_error_classes", "[" + errors + "]");
+                return params;
+            })
+            .addConfig(stubResponses)
+            .build();
     }
 
     private Collection<? extends ClientConfig> getDefaultClientConfig() {
