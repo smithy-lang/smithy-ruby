@@ -6,7 +6,7 @@ module Hearth
     class HTTPDigest < AuthSchemes::Base
       def initialize
         super(scheme_id: 'smithy.api#httpDigestAuth')
-        @identity_type = Identities::HTTPDigest
+        @identity_type = Identities::HTTPLogin
         @signer = Signers::HTTPDigest.new
       end
     end

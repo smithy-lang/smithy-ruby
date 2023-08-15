@@ -28,22 +28,19 @@ module WhiteLabel
   #   @option args [String] :endpoint
   #     Endpoint of the service
   #
-  #   @option args [Hearth::IdentityResolver] :http_api_key_auth_identity_resolver
+  #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
   #     A Hearth::IdentityResolver for the smithy.api httpApiKeyAuth auth scheme.
   #
-  #   @option args [Hearth::IdentityResolver] :http_basic_auth_identity_resolver
+  #   @option args [Hearth::IdentityResolver] :http_basic_identity_resolver
   #     A Hearth::IdentityResolver for the smithy.api httpBasicAuth auth scheme.
   #
-  #   @option args [Hearth::IdentityResolver] :http_bearer_auth_identity_resolver
+  #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
   #     A Hearth::IdentityResolver for the smithy.api httpBearerAuth auth scheme.
   #
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
   #
-  #   @option args [Hearth::IdentityResolver] :http_custom_auth_identity_resolver
-  #     A Hearth::IdentityResolver for the smithy.ruby.tests httpCustomAuth auth scheme.
-  #
-  #   @option args [Hearth::IdentityResolver] :http_digest_auth_identity_resolver
+  #   @option args [Hearth::IdentityResolver] :http_digest_identity_resolver
   #     A Hearth::IdentityResolver for the smithy.api httpDigestAuth auth scheme.
   #
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
@@ -98,22 +95,19 @@ module WhiteLabel
   # @!attribute endpoint
   #   @return [String]
   #
-  # @!attribute http_api_key_auth_identity_resolver
+  # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   #
-  # @!attribute http_basic_auth_identity_resolver
+  # @!attribute http_basic_identity_resolver
   #   @return [Hearth::IdentityResolver]
   #
-  # @!attribute http_bearer_auth_identity_resolver
+  # @!attribute http_bearer_identity_resolver
   #   @return [Hearth::IdentityResolver]
   #
   # @!attribute http_client
   #   @return [Hearth::HTTP::Client]
   #
-  # @!attribute http_custom_auth_identity_resolver
-  #   @return [Hearth::IdentityResolver]
-  #
-  # @!attribute http_digest_auth_identity_resolver
+  # @!attribute http_digest_identity_resolver
   #   @return [Hearth::IdentityResolver]
   #
   # @!attribute interceptors
@@ -149,12 +143,11 @@ module WhiteLabel
     :disable_host_prefix,
     :disable_request_compression,
     :endpoint,
-    :http_api_key_auth_identity_resolver,
-    :http_basic_auth_identity_resolver,
-    :http_bearer_auth_identity_resolver,
+    :http_api_key_identity_resolver,
+    :http_basic_identity_resolver,
+    :http_bearer_identity_resolver,
     :http_client,
-    :http_custom_auth_identity_resolver,
-    :http_digest_auth_identity_resolver,
+    :http_digest_identity_resolver,
     :interceptors,
     :log_level,
     :logger,
@@ -176,12 +169,11 @@ module WhiteLabel
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
-      Hearth::Validator.validate_types!(http_api_key_auth_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_auth_identity_resolver]')
-      Hearth::Validator.validate_types!(http_basic_auth_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_basic_auth_identity_resolver]')
-      Hearth::Validator.validate_types!(http_bearer_auth_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_auth_identity_resolver]')
+      Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
+      Hearth::Validator.validate_types!(http_basic_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_basic_identity_resolver]')
+      Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
-      Hearth::Validator.validate_types!(http_custom_auth_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_custom_auth_identity_resolver]')
-      Hearth::Validator.validate_types!(http_digest_auth_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_digest_auth_identity_resolver]')
+      Hearth::Validator.validate_types!(http_digest_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_digest_identity_resolver]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'config[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
@@ -197,16 +189,15 @@ module WhiteLabel
     def self.defaults
       @defaults ||= {
         auth_resolver: [proc { Auth::Resolver.new }],
-        auth_schemes: Auth::SCHEMES,
+        auth_schemes: [proc { Auth::SCHEMES }],
         disable_host_prefix: [false],
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
-        http_api_key_auth_identity_resolver: [],
-        http_basic_auth_identity_resolver: [],
-        http_bearer_auth_identity_resolver: [],
+        http_api_key_identity_resolver: [Hearth::IdentityResolver.new(proc { |cfg| cfg[:stub_responses] ? Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') : nil })],
+        http_basic_identity_resolver: [Hearth::IdentityResolver.new(proc { |cfg| cfg[:stub_responses] ? Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') : nil })],
+        http_bearer_identity_resolver: [Hearth::IdentityResolver.new(proc { |cfg| cfg[:stub_responses] ? Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') : nil })],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
-        http_custom_auth_identity_resolver: [],
-        http_digest_auth_identity_resolver: [],
+        http_digest_identity_resolver: [Hearth::IdentityResolver.new(proc { |cfg| cfg[:stub_responses] ? Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') : nil })],
         interceptors: [proc { Hearth::InterceptorList.new }],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],

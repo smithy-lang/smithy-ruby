@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'middleware/auth'
 require_relative 'middleware/build'
 require_relative 'middleware/host_prefix'
 require_relative 'middleware/parse'

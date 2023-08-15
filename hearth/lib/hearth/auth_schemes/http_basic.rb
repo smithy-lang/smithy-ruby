@@ -6,7 +6,7 @@ module Hearth
     class HTTPBasic < AuthSchemes::Base
       def initialize
         super(scheme_id: 'smithy.api#httpBasicAuth')
-        @identity_type = Identities::HTTPBasic
+        @identity_type = Identities::HTTPLogin
         @signer = Signers::HTTPBasic.new
       end
     end

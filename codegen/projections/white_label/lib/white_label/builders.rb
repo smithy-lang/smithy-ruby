@@ -11,11 +11,6 @@ module WhiteLabel
   # @api private
   module Builders
 
-    class CustomAuth
-      def self.build(http_req, input:)
-      end
-    end
-
     class DefaultsTest
       def self.build(http_req, input:)
       end

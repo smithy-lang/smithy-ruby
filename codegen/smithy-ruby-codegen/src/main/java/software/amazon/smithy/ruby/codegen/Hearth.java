@@ -127,6 +127,11 @@ public final class Hearth {
             .name("AuthSchemes")
             .build();
 
+    public static final Symbol IDENTITIES = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("Identities")
+            .build();
+
     public static final Symbol IDENTITY_RESOLVER = Symbol.builder()
             .namespace("Hearth", "::")
             .name("IdentityResolver")

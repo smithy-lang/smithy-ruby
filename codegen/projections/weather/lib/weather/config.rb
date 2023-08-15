@@ -131,7 +131,7 @@ module Weather
     def self.defaults
       @defaults ||= {
         auth_resolver: [proc { Auth::Resolver.new }],
-        auth_schemes: Auth::SCHEMES,
+        auth_schemes: [proc { Auth::SCHEMES }],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],

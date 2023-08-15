@@ -103,7 +103,7 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
         } else if (trait instanceof HttpDigestAuthTrait) {
             writer.write("$L::HTTPDigest.new,", Hearth.AUTH_SCHEMES);
         } else {
-            LOGGER.warning("Unknown auth scheme: " + trait);
+            // Custom auth schemes not supported right now
         }
     }
 
@@ -172,17 +172,17 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
 
     private void renderHttpApiKeyAuthTrait(RubyCodeWriter writer, ShapeId shapeId,
                                            HttpApiKeyAuthTrait httpApiKeyAuthTrait) {
-        String signingProperties;
+        String signerProperties;
         String name = httpApiKeyAuthTrait.getName();
         String in = httpApiKeyAuthTrait.getIn().toString();
         if (httpApiKeyAuthTrait.getScheme().isPresent()) {
             String scheme = httpApiKeyAuthTrait.getScheme().get();
-            signingProperties = String.format("{ name: '%s', in: '%s', scheme: '%s' }", name, in, scheme);
+            signerProperties = String.format("{ name: '%s', in: '%s', scheme: '%s' }", name, in, scheme);
         } else {
-            signingProperties = String.format("{ name: '%s', in: '%s' }", name, in);
+            signerProperties = String.format("{ name: '%s', in: '%s' }", name, in);
         }
 
-        renderAuthOption(writer, shapeId.toString(), Optional.empty(), Optional.of(signingProperties));
+        renderAuthOption(writer, shapeId.toString(), Optional.empty(), Optional.of(signerProperties));
     }
 
     private void renderOptionalAuthTrait(RubyCodeWriter writer) {
@@ -190,13 +190,13 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthOption(RubyCodeWriter writer, String schemeId, Optional<String> identityProperties,
-                                  Optional<String> signingProperties) {
+                                  Optional<String> signerProperties) {
         String args = "scheme_id: '" + schemeId + "'";
         if (identityProperties.isPresent()) {
             args += ", identity_properties: " + identityProperties.get();
         }
-        if (signingProperties.isPresent()) {
-            args += ", signing_properties: " + signingProperties.get();
+        if (signerProperties.isPresent()) {
+            args += ", signer_properties: " + signerProperties.get();
         }
         writer.write("options << $L.new($L)", Hearth.AUTH_OPTION, args);
     }

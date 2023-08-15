@@ -2,7 +2,11 @@
 
 require_relative 'hearth/api_error'
 require_relative 'hearth/auth_option'
+
+# must be required before auth_schemes
+require_relative 'hearth/identities'
 require_relative 'hearth/auth_schemes'
+
 require_relative 'hearth/block_io'
 require_relative 'hearth/checksums'
 require_relative 'hearth/configuration'
@@ -18,7 +22,6 @@ require_relative 'hearth/request'
 require_relative 'hearth/response'
 
 require_relative 'hearth/http'
-require_relative 'hearth/identities'
 require_relative 'hearth/identity_resolver'
 require_relative 'hearth/interceptor'
 require_relative 'hearth/interceptor_context'

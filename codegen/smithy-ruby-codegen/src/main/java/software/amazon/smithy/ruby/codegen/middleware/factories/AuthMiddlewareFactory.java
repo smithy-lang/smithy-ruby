@@ -15,11 +15,18 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
+import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
+import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
+import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -33,6 +40,7 @@ public final class AuthMiddlewareFactory {
     }
 
     public static Middleware build(GenerationContext context) {
+        SymbolProvider symbolProvider = context.symbolProvider();
         Map<ShapeId, Trait> serviceAuthSchemes =
                 ServiceIndex.of(context.model()).getEffectiveAuthSchemes(context.service());
 
@@ -43,9 +51,10 @@ public final class AuthMiddlewareFactory {
         serviceAuthSchemes.forEach((shapeId, trait) -> {
             String name = RubyFormatter.toSnakeCase(shapeId.getName().toString());
             clientConfigSet.add(ClientConfig.builder()
-                    .name(name + "_identity_resolver")
+                    .name(identityResolverConfigNameForAuthTrait(trait))
                     .type(Hearth.IDENTITY_RESOLVER.toString())
                     .documentation(identityResolverDocumentation.formatted(Hearth.IDENTITY_RESOLVER, shapeId))
+                    .defaultDynamicValue(defaultIdentityResolverForAuthTrait(trait))
                     .allowOperationOverride()
                     .build());
         });
@@ -72,7 +81,7 @@ public final class AuthMiddlewareFactory {
                 .name("auth_schemes")
                 .type("Array")
                 .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
-                .defaultLiteral("Auth::SCHEMES")
+                .defaultValue("Auth::SCHEMES")
                 .allowOperationOverride()
                 .documentation(authSchemesDocumentation)
                 .build();
@@ -81,9 +90,46 @@ public final class AuthMiddlewareFactory {
                 .klass(Hearth.AUTH_MIDDLEWARE)
                 .step(MiddlewareStackStep.FINALIZE)
                 .addConfig(authResolver)
-                .addConfig(authSchemes);
+                .addConfig(authSchemes)
+                .operationParams((ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    Symbol symbol = symbolProvider.toSymbol(operation);
+                    String operationName = RubyFormatter.toSnakeCase(symbol.getName());
+                    // TODO: support more auth params in the future
+                    String authParams = "Auth::Params.new(operation_name: :%s)".formatted(operationName);
+                    params.put("auth_params", authParams);
+                    return params;
+                });
         clientConfigSet.forEach(authBuilder::addConfig);
 
         return authBuilder.build();
+    }
+
+    private static String identityResolverConfigNameForAuthTrait(Trait trait) {
+        if (trait instanceof HttpApiKeyAuthTrait) {
+            return "http_api_key_identity_resolver";
+        } else if (trait instanceof HttpBearerAuthTrait) {
+            return "http_bearer_identity_resolver";
+        } else if (trait instanceof HttpBasicAuthTrait) {
+            return "http_basic_identity_resolver";
+        } else if (trait instanceof HttpDigestAuthTrait) {
+            return "http_digest_identity_resolver";
+        } else {
+            throw new IllegalStateException("Unknown auth trait: " + trait);
+        }
+    }
+
+    private static String defaultIdentityResolverForAuthTrait(Trait trait) {
+        String identity = Hearth.IDENTITIES + "::";
+        if (trait instanceof HttpApiKeyAuthTrait) {
+            identity += "HTTPApiKey.new(key: 'stubbed api key')";
+        } else if (trait instanceof HttpBearerAuthTrait) {
+            identity += "HTTPBearer.new(token: 'stubbed bearer')";
+        } else if (trait instanceof HttpBasicAuthTrait || trait instanceof HttpDigestAuthTrait) {
+            identity += "HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
+        } else {
+            throw new IllegalStateException("Unknown auth trait: " + trait);
+        }
+        return "%s.new(proc { |cfg| cfg[:stub_responses] ? %s : nil })".formatted(Hearth.IDENTITY_RESOLVER, identity);
     }
 }

@@ -21,24 +21,6 @@ module WhiteLabel
       end
     end
 
-    module CustomAuthInput
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::CustomAuthInput, context: context)
-        type = Types::CustomAuthInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type
-      end
-    end
-
-    module CustomAuthOutput
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::CustomAuthOutput, context: context)
-        type = Types::CustomAuthOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type
-      end
-    end
-
     module DefaultsTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)

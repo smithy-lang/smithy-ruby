@@ -3,6 +3,7 @@
 module Hearth
   # Stores request and response objects, and other useful things used by
   # multiple Middleware.
+  # @api private
   class Context
     def initialize(options = {})
       @operation_name = options[:operation_name]
@@ -10,7 +11,6 @@ module Hearth
       @response = options[:response]
       @logger = options[:logger]
       @params = options[:params]
-      @signer_params = options[:signer_params] || {}
       @metadata = options[:metadata] || {}
       @interceptors = options[:interceptors] || InterceptorList.new
       @interceptor_attributes = {}
@@ -31,14 +31,14 @@ module Hearth
     # @return [Hash] The hash of the original request parameters.
     attr_reader :params
 
-    # @return [Hash] A hash of parameters for the signer.
-    attr_reader :signer_params
-
     # @return [Hash]
     attr_reader :metadata
 
     # @return [Array] An ordered list of interceptors
     attr_reader :interceptors
+
+    # @return [SelectedAuthScheme, nil] The auth scheme selected for the request.
+    attr_accessor :auth_scheme
 
     # @api private
     def interceptor_context(input, output)

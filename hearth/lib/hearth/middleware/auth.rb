@@ -27,7 +27,7 @@ module Hearth
       # @return [Output]
       def call(input, context)
         auth_options = @auth_resolver.resolve(@auth_params)
-        context[:auth_scheme] = select_auth_scheme(auth_options)
+        context.auth_scheme = select_auth_scheme(auth_options)
         @app.call(input, context)
       end
 
@@ -36,15 +36,13 @@ module Hearth
       SelectedAuthScheme = Struct.new(:identity, :signer, :auth_option)
 
       def identity_type_for(config_key)
-        case key
+        case config_key
         when :http_api_key_identity_resolver
           Identities::HTTPApiKey
-        when :http_basic_identity_resolver
-          Identities::HTTPBasic
+        when :http_basic_identity_resolver, :http_digest_identity_resolver
+          Identities::HTTPLogin
         when :http_bearer_identity_resolver
           Identities::HTTPBearer
-        when :http_digest_identity_resolver
-          Identities::HTTPDigest
         else
           raise "Unknown identity type for #{config_key}"
         end

@@ -21,20 +21,6 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    CustomAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    CustomAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!attribute string
     #
     #   @return [String]
