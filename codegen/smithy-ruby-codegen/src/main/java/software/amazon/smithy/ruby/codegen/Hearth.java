@@ -127,6 +127,11 @@ public final class Hearth {
             .name("AuthSchemes")
             .build();
 
+    public static final Symbol IDENTITY_RESOLVER = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("IdentityResolver")
+            .build();
+
     // Middleware
     public static final Symbol MIDDLEWARE_STACK = Symbol.builder()
             .namespace("Hearth", "::")
@@ -150,6 +155,11 @@ public final class Hearth {
     public static final Symbol RETRY_MIDDLEWARE = Symbol.builder()
             .namespace("Hearth::Middleware", "::")
             .name("Retry")
+            .build();
+
+    public static final Symbol AUTH_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Auth")
             .build();
 
     public static final Symbol PARSE_MIDDLEWARE = Symbol.builder()

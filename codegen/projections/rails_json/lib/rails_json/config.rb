@@ -9,6 +9,16 @@
 
 module RailsJson
   # @!method initialize(*options)
+  #   @option args [Auth::Resolver] :auth_resolver
+  #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
+  #     the {Auth::Params} struct. For a given operation_name, the method must return an
+  #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
+  #
+  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes
+  #     An ordered list of {Hearth::AuthSchemes::Base} objects that will considered when attempting to authenticate
+  #     the request. The first scheme that returns an Identity from its Hearth::IdentityResolver will be used to
+  #     authenticate the request.
+  #
   #   @option args [Boolean] :disable_host_prefix (false)
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #
@@ -48,6 +58,12 @@ module RailsJson
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   #
+  # @!attribute auth_resolver
+  #   @return [Auth::Resolver]
+  #
+  # @!attribute auth_schemes
+  #   @return [Array<Hearth::AuthSchemes::Base>]
+  #
   # @!attribute disable_host_prefix
   #   @return [Boolean]
   #
@@ -79,6 +95,8 @@ module RailsJson
   #   @return [Boolean]
   #
   Config = ::Struct.new(
+    :auth_resolver,
+    :auth_schemes,
     :disable_host_prefix,
     :endpoint,
     :http_client,
@@ -96,6 +114,8 @@ module RailsJson
     private
 
     def validate!
+      Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
+      Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -110,6 +130,8 @@ module RailsJson
 
     def self.defaults
       @defaults ||= {
+        auth_resolver: [proc { Auth::Resolver.new }],
+        auth_schemes: Auth::SCHEMES,
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
