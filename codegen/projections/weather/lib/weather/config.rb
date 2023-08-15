@@ -10,7 +10,7 @@
 module Weather
   # @!method initialize(*options)
   #   @option args [Boolean] :disable_host_prefix (false)
-  #     When `true`, does not perform host prefix injection using @endpoint's hostPrefix property.
+  #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #
   #   @option args [String] :endpoint
   #     Endpoint of the service
@@ -31,11 +31,16 @@ module Weather
   #     A list of Plugins to apply to the client. Plugins are callables that take one argument: Config.  Plugins may modify the provided config.
   #
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
-  #     Specifies which retry strategy class to use. Strategy classes
-  #      may have additional options, such as max_retries and backoff strategies.
-  #      Available options are:
-  #      * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. This includes support for retry quotas, which limit the number of unsuccessful retries a client can make.
-  #      * `Retry::Adaptive` - An experimental retry mode that includes all the functionality of `standard` mode along with automatic client side throttling.  This is a provisional mode that may change behavior in the future.
+  #     Specifies which retry strategy class to use. Strategy classes may have additional
+  #     options, such as `max_retries` and backoff strategies.
+  #
+  #     Available options are:
+  #     * `Retry::Standard` - A standardized set of retry rules across the AWS SDKs. This
+  #       includes support for retry quotas, which limit the number of unsuccessful retries
+  #       a client can make.
+  #     * `Retry::Adaptive` - An experimental retry mode that includes all the functionality
+  #       of `standard` mode along with automatic client side throttling. This is a provisional
+  #       mode that may change behavior in the future.
   #
   #   @option args [Boolean] :stub_responses (false)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs stub_responses}.
