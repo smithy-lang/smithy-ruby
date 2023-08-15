@@ -88,8 +88,7 @@ module HighScoreService
             error_module: Errors,
             success_status: 201,
             errors: [Errors::UnprocessableEntityError]
-        )
-        ,
+        ),
         data_parser: Parsers::CreateHighScore
       )
       stack.use(Middleware::RequestId)
@@ -158,8 +157,7 @@ module HighScoreService
             error_module: Errors,
             success_status: 200,
             errors: []
-        )
-        ,
+        ),
         data_parser: Parsers::DeleteHighScore
       )
       stack.use(Middleware::RequestId)
@@ -234,8 +232,7 @@ module HighScoreService
             error_module: Errors,
             success_status: 200,
             errors: []
-        )
-        ,
+        ),
         data_parser: Parsers::GetHighScore
       )
       stack.use(Middleware::RequestId)
@@ -306,8 +303,7 @@ module HighScoreService
             error_module: Errors,
             success_status: 200,
             errors: []
-        )
-        ,
+        ),
         data_parser: Parsers::ListHighScores
       )
       stack.use(Middleware::RequestId)
@@ -389,8 +385,7 @@ module HighScoreService
             error_module: Errors,
             success_status: 200,
             errors: [Errors::UnprocessableEntityError]
-        )
-        ,
+        ),
         data_parser: Parsers::UpdateHighScore
       )
       stack.use(Middleware::RequestId)

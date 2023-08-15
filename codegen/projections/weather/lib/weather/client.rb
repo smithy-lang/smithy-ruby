@@ -80,8 +80,7 @@ module Weather
             error_module: Errors,
             success_status: 200,
             errors: [Errors::NoSuchResource]
-        )
-        ,
+        ),
         data_parser: Parsers::GetCity
       )
       stack.use(Hearth::Middleware::Send,
@@ -154,8 +153,7 @@ module Weather
             error_module: Errors,
             success_status: 200,
             errors: [Errors::NoSuchResource]
-        )
-        ,
+        ),
         data_parser: Parsers::GetCityImage
       )
       stack.use(Hearth::Middleware::Send,
@@ -217,8 +215,7 @@ module Weather
             error_module: Errors,
             success_status: 200,
             errors: []
-        )
-        ,
+        ),
         data_parser: Parsers::GetCurrentTime
       )
       stack.use(Hearth::Middleware::Send,
@@ -297,8 +294,7 @@ module Weather
             error_module: Errors,
             success_status: 200,
             errors: []
-        )
-        ,
+        ),
         data_parser: Parsers::GetForecast
       )
       stack.use(Hearth::Middleware::Send,
@@ -382,8 +378,7 @@ module Weather
             error_module: Errors,
             success_status: 200,
             errors: []
-        )
-        ,
+        ),
         data_parser: Parsers::ListCities
       )
       stack.use(Hearth::Middleware::Send,
@@ -452,8 +447,7 @@ module Weather
             error_module: Errors,
             success_status: 200,
             errors: [Errors::NoSuchResource]
-        )
-        ,
+        ),
         data_parser: Parsers::Operation____789BadName
       )
       stack.use(Hearth::Middleware::Send,

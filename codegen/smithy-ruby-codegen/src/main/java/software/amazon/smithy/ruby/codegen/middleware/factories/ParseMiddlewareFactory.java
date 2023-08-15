@@ -55,8 +55,7 @@ public final class ParseMiddlewareFactory implements MiddlewareFactory {
                                 error_module: Errors,
                                 success_status: %s,
                                 errors: [%s]
-                            )
-                            """.formatted(successCode, errors);
+                            )""".formatted(successCode, errors);
                     params.put("error_parser", errorParser);
                     return params;
                 })
