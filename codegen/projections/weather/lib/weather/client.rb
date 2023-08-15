@@ -77,9 +77,9 @@ module Weather
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: [Errors::NoSuchResource]
+          error_module: Errors,
+          success_status: 200,
+          errors: [Errors::NoSuchResource]
         ),
         data_parser: Parsers::GetCity
       )
@@ -150,9 +150,9 @@ module Weather
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: [Errors::NoSuchResource]
+          error_module: Errors,
+          success_status: 200,
+          errors: [Errors::NoSuchResource]
         ),
         data_parser: Parsers::GetCityImage
       )
@@ -212,9 +212,9 @@ module Weather
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::GetCurrentTime
       )
@@ -291,9 +291,9 @@ module Weather
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::GetForecast
       )
@@ -375,9 +375,9 @@ module Weather
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::ListCities
       )
@@ -444,9 +444,9 @@ module Weather
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: [Errors::NoSuchResource]
+          error_module: Errors,
+          success_status: 200,
+          errors: [Errors::NoSuchResource]
         ),
         data_parser: Parsers::Operation____789BadName
       )

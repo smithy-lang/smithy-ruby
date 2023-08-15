@@ -52,9 +52,9 @@ public final class ParseMiddlewareFactory implements MiddlewareFactory {
                             .collect(Collectors.joining(", "));
                     String errorParser = """
                             Hearth::HTTP::ErrorParser.new(
-                                error_module: Errors,
-                                success_status: %s,
-                                errors: [%s]
+                              error_module: Errors,
+                              success_status: %s,
+                              errors: [%s]
                             )""".formatted(successCode, errors);
                     params.put("error_parser", errorParser);
                     return params;

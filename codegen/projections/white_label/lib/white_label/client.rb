@@ -147,9 +147,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::DefaultsTest
       )
@@ -215,9 +215,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::EndpointOperation
       )
@@ -285,9 +285,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::EndpointWithHostLabelOperation
       )
@@ -516,9 +516,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: [Errors::ClientError, Errors::ServerError]
+          error_module: Errors,
+          success_status: 200,
+          errors: [Errors::ClientError, Errors::ServerError]
         ),
         data_parser: Parsers::KitchenSink
       )
@@ -584,9 +584,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::MixinTest
       )
@@ -653,9 +653,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::PaginatorsTest
       )
@@ -722,9 +722,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::PaginatorsTestWithItems
       )
@@ -794,9 +794,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::RequestCompressionOperation
       )
@@ -865,9 +865,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::RequestCompressionStreamingOperation
       )
@@ -931,9 +931,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::StreamingOperation
       )
@@ -997,9 +997,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::StreamingWithLength
       )
@@ -1064,9 +1064,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::WaitersTest
       )
@@ -1134,9 +1134,9 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::Operation____PaginatorsTestWithBadNames
       )

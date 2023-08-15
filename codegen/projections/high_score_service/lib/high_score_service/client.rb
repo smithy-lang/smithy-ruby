@@ -85,9 +85,9 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 201,
-            errors: [Errors::UnprocessableEntityError]
+          error_module: Errors,
+          success_status: 201,
+          errors: [Errors::UnprocessableEntityError]
         ),
         data_parser: Parsers::CreateHighScore
       )
@@ -154,9 +154,9 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::DeleteHighScore
       )
@@ -229,9 +229,9 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::GetHighScore
       )
@@ -300,9 +300,9 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
+          error_module: Errors,
+          success_status: 200,
+          errors: []
         ),
         data_parser: Parsers::ListHighScores
       )
@@ -382,9 +382,9 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: [Errors::UnprocessableEntityError]
+          error_module: Errors,
+          success_status: 200,
+          errors: [Errors::UnprocessableEntityError]
         ),
         data_parser: Parsers::UpdateHighScore
       )
