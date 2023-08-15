@@ -16,26 +16,17 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
-import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.RequestCompressionTrait;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.config.RangeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
-import software.amazon.smithy.ruby.codegen.util.Streaming;
+import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.ContentLengthMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.ContentMD5MiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.ParseMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.RequestCompressionMiddlewareFactory;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 
@@ -83,7 +74,7 @@ public final class ApplicationTransport {
      * @return Returns the created application Transport.
      */
     public static ApplicationTransport createDefaultHttpApplicationTransport() {
-
+        // TODO: remove this when endpoint middleware is created
         ClientConfig endpoint = ClientConfig.builder()
                 .name("endpoint")
                 .type("String")
@@ -91,7 +82,6 @@ public final class ApplicationTransport {
                 .allowOperationOverride()
                 .defaultDynamicValue("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }")
                 .build();
-
         ClientFragment request = ClientFragment.builder()
                 .addConfig(endpoint)
                 // TODO: Replace URI with Endpoint middleware - should be a blank request
@@ -119,11 +109,11 @@ public final class ApplicationTransport {
         MiddlewareList defaultMiddleware = (transport, context) -> {
             List<Middleware> middleware = new ArrayList<>();
 
-            middleware.add(buildMiddleware());
-            middleware.add(contentLengthMiddleware());
-            middleware.add(contentMD5Middleware());
-            middleware.add(requestCompressionMiddleware(context));
-            middleware.add(parseMiddleware());
+            middleware.add(BuildMiddlewareFactory.build(context));
+            middleware.add(ContentLengthMiddlewareFactory.build(context));
+            middleware.add(ContentMD5MiddlewareFactory.build(context));
+            middleware.add(RequestCompressionMiddlewareFactory.build(context));
+            middleware.add(ParseMiddlewareFactory.build(context));
 
             return middleware;
         };
@@ -134,131 +124,6 @@ public final class ApplicationTransport {
                 response,
                 client,
                 defaultMiddleware);
-    }
-
-    private static Middleware buildMiddleware() {
-        return Middleware.builder()
-                .klass(Hearth.BUILD_MIDDLEWARE)
-                .step(MiddlewareStackStep.BUILD)
-                .operationParams((ctx, operation) -> {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("builder",
-                            "Builders::" + ctx.symbolProvider().toSymbol(operation).getName());
-                    return params;
-                })
-                .build();
-    }
-
-    private static Middleware contentLengthMiddleware() {
-        return Middleware.builder()
-                .klass("Hearth::HTTP::Middleware::ContentLength")
-                .operationPredicate(
-                        (model, service, operation) ->
-                                !Streaming.isNonFiniteStreaming(
-                                        model, model.expectShape(operation.getInputShape(), StructureShape.class))
-                )
-                .step(MiddlewareStackStep.AFTER_BUILD)
-                .build();
-    }
-
-    private static Middleware contentMD5Middleware() {
-        return Middleware.builder()
-                .klass("Hearth::HTTP::Middleware::ContentMD5")
-                .step(MiddlewareStackStep.AFTER_BUILD)
-                .operationPredicate(
-                        (model, service, operation) -> operation.hasTrait(HttpChecksumRequiredTrait.class))
-                .build();
-    }
-
-    private static Middleware requestCompressionMiddleware(GenerationContext context) {
-        String disableRequestCompressionDocumentation = """
-                When set to 'true' the request body will not be compressed for supported operations.
-                """;
-        ClientConfig disableRequestCompression = ClientConfig.builder()
-                .name("disable_request_compression")
-                .type("Boolean")
-                .defaultPrimitiveValue("false")
-                .documentation(disableRequestCompressionDocumentation)
-                .allowOperationOverride()
-                .build();
-
-        String minCompressionDocumentation = """
-                The minimum size bytes that triggers compression for request bodies.
-                The value must be non-negative integer value between 0 and 10485780 bytes inclusive.
-                """;
-        ClientConfig requestMinCompressionSizeBytes = ClientConfig.builder()
-                .name("request_min_compression_size_bytes")
-                .type("Integer")
-                .documentation(minCompressionDocumentation)
-                .allowOperationOverride()
-                .defaultPrimitiveValue("10240")
-                .constraint(new RangeConstraint(0, 10485760))
-                .build();
-
-        Middleware.Builder compressionBuilder = Middleware.builder()
-                .operationPredicate(
-                        ((model, service, operation) -> operation.hasTrait(RequestCompressionTrait.class)))
-                .operationParams((ctx, operation) -> {
-                    Map<String, String> params = new HashMap<>();
-                    RequestCompressionTrait requestCompression =
-                            operation.expectTrait(RequestCompressionTrait.class);
-                    Shape inputShape = ctx.model().expectShape(operation.getInputShape());
-
-                    params.put("encodings", "[" + requestCompression
-                            .getEncodings()
-                            .stream()
-                            .map((s) -> "'" + s + "'")
-                            .collect(Collectors.joining(", ")) + "]");
-
-                    params.put("streaming",
-                            Streaming.isStreaming(ctx.model(), inputShape) ? "true" : "false");
-
-                    return params;
-                })
-                .klass("Hearth::HTTP::Middleware::RequestCompression")
-                .step(MiddlewareStackStep.AFTER_BUILD);
-        // commented out since Middleware Relative needs an update to handle this case
-        //.relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE,
-        //   "Hearth::HTTP::Middleware::ContentMD5"))
-
-        TopDownIndex topDownIndex = TopDownIndex.of(context.model());
-        Set<OperationShape> containedOperations = topDownIndex.getContainedOperations(context.service());
-        boolean hasCompressionTrait =
-                containedOperations.stream().anyMatch((o) -> o.hasTrait(RequestCompressionTrait.class));
-        if (hasCompressionTrait) {
-            compressionBuilder.addConfig(disableRequestCompression);
-            compressionBuilder.addConfig(requestMinCompressionSizeBytes);
-        }
-
-        return compressionBuilder.build();
-    }
-
-    private static Middleware parseMiddleware() {
-        return Middleware.builder()
-                .klass(Hearth.PARSE_MIDDLEWARE)
-                .step(MiddlewareStackStep.PARSE)
-                .operationParams((ctx, operation) -> {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("data_parser",
-                            "Parsers::" + ctx.symbolProvider().toSymbol(operation).getName());
-                    String successCode = "200";
-                    Optional<HttpTrait> httpTrait = operation.getTrait(HttpTrait.class);
-                    if (httpTrait.isPresent()) {
-                        successCode = "" + httpTrait.get().getCode();
-                    }
-                    String errors = operation.getErrors()
-                            .stream()
-                            .map((error) -> "Errors::"
-                                    + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
-                            .collect(Collectors.joining(", "));
-                    params.put("error_parser",
-                            "Hearth::HTTP::ErrorParser.new("
-                                    + "error_module: Errors, success_status: " + successCode
-                                    + ", errors: [" + errors + "]" + ")"
-                    );
-                    return params;
-                })
-                .build();
     }
 
     /**
