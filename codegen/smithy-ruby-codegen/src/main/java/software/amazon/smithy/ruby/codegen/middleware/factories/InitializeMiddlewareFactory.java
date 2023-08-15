@@ -18,10 +18,9 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
-public final class InitializeMiddlewareFactory implements MiddlewareFactory {
+public final class InitializeMiddlewareFactory {
     private InitializeMiddlewareFactory() {
     }
 

@@ -27,11 +27,10 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.RangeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
-public final class RequestCompressionMiddlewareFactory implements MiddlewareFactory {
+public final class RequestCompressionMiddlewareFactory {
     private RequestCompressionMiddlewareFactory() {
     }
 

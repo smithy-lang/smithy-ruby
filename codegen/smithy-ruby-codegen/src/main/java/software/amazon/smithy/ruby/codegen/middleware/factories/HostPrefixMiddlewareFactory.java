@@ -24,10 +24,9 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
-public final class HostPrefixMiddlewareFactory implements MiddlewareFactory {
+public final class HostPrefixMiddlewareFactory {
     private HostPrefixMiddlewareFactory() {
     }
 

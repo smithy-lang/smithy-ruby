@@ -24,10 +24,9 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
-public final class ParseMiddlewareFactory implements MiddlewareFactory {
+public final class ParseMiddlewareFactory {
     private ParseMiddlewareFactory() {
     }
 

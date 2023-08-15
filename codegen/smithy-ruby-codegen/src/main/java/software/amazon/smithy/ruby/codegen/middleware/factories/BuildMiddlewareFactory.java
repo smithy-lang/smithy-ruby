@@ -21,10 +21,9 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
-public final class BuildMiddlewareFactory implements MiddlewareFactory {
+public final class BuildMiddlewareFactory {
     private BuildMiddlewareFactory() {
     }
 

@@ -18,11 +18,10 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
-public final class ContentLengthMiddlewareFactory implements MiddlewareFactory {
+public final class ContentLengthMiddlewareFactory {
     private ContentLengthMiddlewareFactory() {
     }
 

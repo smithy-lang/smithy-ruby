@@ -24,10 +24,9 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
-public final class ValidateMiddlewareFactory implements MiddlewareFactory {
+public final class ValidateMiddlewareFactory {
     private ValidateMiddlewareFactory() {
     }
 
