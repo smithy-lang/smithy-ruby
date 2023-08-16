@@ -49,30 +49,34 @@ module Hearth
       end
 
       def select_auth_scheme(auth_options)
+        failures = []
+
         auth_options.each do |auth_option|
           if auth_option.scheme_id == 'smithy.api#noAuth'
             return SelectedAuthScheme.new(nil, nil, auth_option)
           end
 
           auth_scheme = @auth_schemes[auth_option.scheme_id]
-          selected_auth_scheme = try_load_auth_scheme(auth_option, auth_scheme)
+          selected_auth_scheme = try_load_auth_scheme(auth_option, auth_scheme, failures)
 
           return selected_auth_scheme if selected_auth_scheme
         end
 
-        raise "No auth scheme found for #{auth_options}"
+        raise failures.join("\n")
       end
 
-      def try_load_auth_scheme(auth_option, auth_scheme)
+      def try_load_auth_scheme(auth_option, auth_scheme, failures)
         scheme_id = auth_option.scheme_id
         unless auth_scheme
-          raise "Auth scheme #{scheme_id} was not enabled for this request"
+          failures << "Auth scheme #{scheme_id} was not enabled for this request"
+          return
         end
 
         identity_resolver = auth_scheme.identity_resolver(@identity_resolvers)
         unless identity_resolver
-          raise "Auth scheme #{scheme_id} did not have an " \
-                'identity resolver configured'
+          failures << "Auth scheme #{scheme_id} did not have an " \
+                      'identity resolver configured'
+          return
         end
 
         identity_properties = auth_option.identity_properties

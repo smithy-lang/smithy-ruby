@@ -49,7 +49,6 @@ public final class AuthMiddlewareFactory {
                 A %s for the %s auth scheme.
                 """;
         serviceAuthSchemes.forEach((shapeId, trait) -> {
-            String name = RubyFormatter.toSnakeCase(shapeId.getName().toString());
             clientConfigSet.add(ClientConfig.builder()
                     .name(identityResolverConfigNameForAuthTrait(trait))
                     .type(Hearth.IDENTITY_RESOLVER.toString())
@@ -130,6 +129,7 @@ public final class AuthMiddlewareFactory {
         } else {
             throw new IllegalStateException("Unknown auth trait: " + trait);
         }
-        return "%s.new(proc { |cfg| cfg[:stub_responses] ? %s : nil })".formatted(Hearth.IDENTITY_RESOLVER, identity);
+        return "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
+                .formatted(Hearth.IDENTITY_RESOLVER, identity);
     }
 }
