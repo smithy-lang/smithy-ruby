@@ -37,7 +37,7 @@ module Hearth
     # @return [Array] An ordered list of interceptors
     attr_reader :interceptors
 
-    # @return [SelectedAuthScheme, nil] The auth scheme selected for the request.
+    # @return [SelectedAuthScheme, nil] The auth scheme for the request.
     attr_accessor :auth_scheme
 
     # @api private

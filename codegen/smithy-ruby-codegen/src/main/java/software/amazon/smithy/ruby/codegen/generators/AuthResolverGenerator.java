@@ -77,16 +77,28 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
         // TODO: this should have more params when hooked up with endpoint/auth rules?
-        writer.write("Params = Struct.new(:operation_name)");
+        writer.write("Params = Struct.new(:operation_name, keyword_init: true)");
     }
 
     private void renderAuthSchemesConstant(RubyCodeWriter writer) {
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    serviceAuthSchemes.forEach((shapeId, trait) -> {
-                        renderAuthScheme(writer, trait);
-                    });
+                    if (serviceAuthSchemes.isEmpty()) {
+                        renderAuthScheme(writer, new OptionalAuthTrait());
+                    } else {
+                        serviceAuthSchemes.forEach((shapeId, trait) -> {
+                            renderAuthScheme(writer, trait);
+                        });
+                        // if any operation is optional, also add anonymous auth scheme
+                        operations.stream().forEach(operation -> {
+                            boolean isOptional = operation.hasTrait(OptionalAuthTrait.class);
+                            if (isOptional) {
+                                OptionalAuthTrait trait = operation.getTrait(OptionalAuthTrait.class).get();
+                                renderAuthScheme(writer, trait);
+                            }
+                        });
+                    }
                 })
                 .unwrite(",\n")
                 .write("")
@@ -102,6 +114,8 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
             writer.write("$L::HTTPBearer.new,", Hearth.AUTH_SCHEMES);
         } else if (trait instanceof HttpDigestAuthTrait) {
             writer.write("$L::HTTPDigest.new,", Hearth.AUTH_SCHEMES);
+        } else if (trait instanceof OptionalAuthTrait) {
+            writer.write("$L::Anonymous.new,", Hearth.AUTH_SCHEMES);
         } else {
             // Custom auth schemes not supported right now
         }

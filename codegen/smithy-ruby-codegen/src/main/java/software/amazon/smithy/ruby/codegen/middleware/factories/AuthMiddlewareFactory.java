@@ -109,10 +109,8 @@ public final class AuthMiddlewareFactory {
             return "http_api_key_identity_resolver";
         } else if (trait instanceof HttpBearerAuthTrait) {
             return "http_bearer_identity_resolver";
-        } else if (trait instanceof HttpBasicAuthTrait) {
-            return "http_basic_identity_resolver";
-        } else if (trait instanceof HttpDigestAuthTrait) {
-            return "http_digest_identity_resolver";
+        } else if (trait instanceof HttpBasicAuthTrait || trait instanceof HttpDigestAuthTrait) {
+            return "http_login_identity_resolver";
         } else {
             throw new IllegalStateException("Unknown auth trait: " + trait);
         }

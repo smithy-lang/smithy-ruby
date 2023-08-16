@@ -6,22 +6,14 @@ module Hearth
     SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
     ASYNC_EXPIRATION_LENGTH = 600 # 10 minutes
 
-    def initialize(options = {})
+    def initialize
       @mutex = Mutex.new
-      @before_refresh = options.delete(:before_refresh)
-
-      _refresh
     end
 
     # @return [Identity]
     def identity(properties = {})
       refresh_if_near_expiration!(properties)
       @identity
-    end
-
-    # Refresh identity.
-    def refresh!
-      @mutex.synchronize { _refresh }
     end
 
     private
@@ -34,11 +26,6 @@ module Hearth
       self.class::ASYNC_EXPIRATION_LENGTH
     end
 
-    def _refresh(properties)
-      @before_refresh&.call(self)
-      refresh(properties)
-    end
-
     # Refreshes identity asynchronously and synchronously.
     # If we are near to expiration, block while refreshing the identity.
     # Otherwise, if we're approaching expiration, use the existing identity
@@ -49,15 +36,13 @@ module Hearth
       # then we check within the mutex to avoid a race condition.
       if near_expiration?(sync_expiration_length)
         @mutex.synchronize do
-          _refresh(properties) if near_expiration?(sync_expiration_length)
+          refresh(properties) if near_expiration?(sync_expiration_length)
         end
       elsif @async_refresh && near_expiration?(async_expiration_length)
         unless @mutex.locked?
           Thread.new do
             @mutex.synchronize do
-              if near_expiration?(async_expiration_length)
-                _refresh(properties)
-              end
+              refresh(properties) if near_expiration?(async_expiration_length)
             end
           end
         end

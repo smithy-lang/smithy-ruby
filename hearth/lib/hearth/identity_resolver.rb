@@ -10,7 +10,7 @@ module Hearth
     end
 
     # @param [Hash] properties
-    def identity(properties)
+    def identity(properties = {})
       @proc.call(properties)
     end
   end

@@ -146,13 +146,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :defaults_test),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -223,13 +222,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :endpoint_operation),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -302,13 +300,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -375,13 +372,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :http_api_key_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -448,13 +444,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :http_basic_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -521,13 +516,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :http_bearer_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -594,13 +588,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :http_digest_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -834,13 +827,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :kitchen_sink),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -911,13 +903,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :mixin_test),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -984,13 +975,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :no_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1057,13 +1047,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :optional_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1130,13 +1119,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :ordered_auth),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1208,13 +1196,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :paginators_test),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1286,13 +1273,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :paginators_test_with_items),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1367,13 +1353,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :request_compression_operation),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1447,13 +1432,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :request_compression_streaming_operation),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1522,13 +1506,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :streaming_operation),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1597,13 +1580,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :streaming_with_length),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1673,13 +1655,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :waiters_test),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1752,13 +1733,12 @@ module WhiteLabel
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        http_digest_identity_resolver: options.fetch(:http_digest_identity_resolver, config.http_digest_identity_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         auth_params: Auth::Params.new(operation_name: :operation____paginators_test_with_bad_names),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_basic_identity_resolver: options.fetch(:http_basic_identity_resolver, config.http_basic_identity_resolver)
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(

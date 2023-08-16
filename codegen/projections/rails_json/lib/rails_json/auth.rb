@@ -9,10 +9,10 @@
 
 module RailsJson
   module Auth
-    Params = Struct.new(:operation_name)
+    Params = Struct.new(:operation_name, keyword_init: true)
 
     SCHEMES = [
-
+      Hearth::AuthSchemes::Anonymous.new
     ].freeze
 
     class Resolver

@@ -7,7 +7,7 @@ module Hearth
     include RefreshingIdentity
 
     # @param [Hash] properties
-    def refresh(properties)
+    def refresh(properties = {})
       @identity = @proc.call(properties)
     end
   end

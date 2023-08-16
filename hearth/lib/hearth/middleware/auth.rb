@@ -13,11 +13,12 @@ module Hearth
         @auth_params = auth_params
         @auth_schemes = auth_schemes.to_h { |s| [s.scheme_id, s] }
 
-        @identity_resolvers = {}
+        @identity_resolvers = {
+          Identities::Anonymous => anonymous_identity_resolver
+        }
         kwargs.each do |key, value|
           next unless key.end_with?('_identity_resolver')
 
-          instance_variable_set("@#{key}", value)
           @identity_resolvers[identity_type_for(key)] = value
         end
       end
@@ -35,11 +36,15 @@ module Hearth
 
       SelectedAuthScheme = Struct.new(:identity, :signer, :auth_option)
 
+      def anonymous_identity_resolver
+        Hearth::IdentityResolver.new(proc { Identities::Anonymous.new })
+      end
+
       def identity_type_for(config_key)
         case config_key
         when :http_api_key_identity_resolver
           Identities::HTTPApiKey
-        when :http_basic_identity_resolver, :http_digest_identity_resolver
+        when :http_login_identity_resolver
           Identities::HTTPLogin
         when :http_bearer_identity_resolver
           Identities::HTTPBearer
@@ -52,12 +57,12 @@ module Hearth
         failures = []
 
         auth_options.each do |auth_option|
-          if auth_option.scheme_id == 'smithy.api#noAuth'
-            return SelectedAuthScheme.new(nil, nil, auth_option)
-          end
-
           auth_scheme = @auth_schemes[auth_option.scheme_id]
-          selected_auth_scheme = try_load_auth_scheme(auth_option, auth_scheme, failures)
+          selected_auth_scheme = try_load_auth_scheme(
+            auth_option,
+            auth_scheme,
+            failures
+          )
 
           return selected_auth_scheme if selected_auth_scheme
         end
@@ -68,7 +73,8 @@ module Hearth
       def try_load_auth_scheme(auth_option, auth_scheme, failures)
         scheme_id = auth_option.scheme_id
         unless auth_scheme
-          failures << "Auth scheme #{scheme_id} was not enabled for this request"
+          failures << "Auth scheme #{scheme_id} was not enabled " \
+                      'for this request'
           return
         end
 

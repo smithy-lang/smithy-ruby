@@ -7,7 +7,6 @@ module Hearth
     let(:response) { double('response') }
     let(:logger) { Logger.new($stdout) }
     let(:params) { { key: 'value' } }
-    let(:signer_params) { { region: 'region' } }
     let(:metadata) { { foo: 'bar' } }
 
     subject do
@@ -17,7 +16,6 @@ module Hearth
         response: response,
         logger: logger,
         params: params,
-        signer_params: signer_params,
         metadata: metadata
       )
     end
@@ -30,15 +28,7 @@ module Hearth
         expect(context.response).to be_nil
         expect(context.logger).to be_nil
         expect(context.params).to be_nil
-        expect(context.signer_params).to eq({})
         expect(context.metadata).to eq({})
-      end
-    end
-
-    describe '#signer_params' do
-      it 'allows for signer params to be set' do
-        subject.signer_params[:service] = 'service'
-        expect(subject.signer_params).to include(service: 'service')
       end
     end
 
@@ -59,6 +49,14 @@ module Hearth
         expect(ictx.request).to eq(request)
         expect(ictx.response).to eq(response)
         expect(ictx.output).to eq(output)
+      end
+    end
+
+    describe '#auth_scheme' do
+      it 'allows for auth_scheme to be set' do
+        auth_scheme = Hearth::Middleware::Auth::SelectedAuthScheme.new
+        subject.auth_scheme = auth_scheme
+        expect(subject.auth_scheme).to eq(auth_scheme)
       end
     end
   end
