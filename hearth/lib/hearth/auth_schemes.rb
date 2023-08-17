@@ -4,8 +4,10 @@ module Hearth
   module AuthSchemes
     # Base class for all AuthScheme classes.
     class Base
-      def initialize(scheme_id:)
+      def initialize(scheme_id:, signer:, identity_type:)
         @scheme_id = scheme_id
+        @signer = signer
+        @identity_type = identity_type
       end
 
       # @return [String]

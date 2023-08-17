@@ -14,6 +14,7 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
+        # TODO: do signing
         @app.call(input, context)
       end
     end

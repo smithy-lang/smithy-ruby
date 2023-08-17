@@ -5,9 +5,11 @@ module Hearth
     # HTTP Digest authentication scheme.
     class HTTPDigest < AuthSchemes::Base
       def initialize
-        super(scheme_id: 'smithy.api#httpDigestAuth')
-        @identity_type = Identities::HTTPLogin
-        @signer = Signers::HTTPDigest.new
+        super(
+          scheme_id: 'smithy.api#httpDigestAuth',
+          signer: Signers::HTTPDigest.new,
+          identity_type: Identities::HTTPLogin
+        )
       end
     end
   end

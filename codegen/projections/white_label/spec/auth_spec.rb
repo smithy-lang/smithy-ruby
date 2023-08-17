@@ -135,24 +135,24 @@ module WhiteLabel
 
   describe Config do
     it 'adds identity resolvers to config' do
-      expect(subject.respond_to?(:http_api_key_identity_resolver)).to be(true)
-      expect(subject.respond_to?(:http_bearer_identity_resolver)).to be(true)
-      expect(subject.respond_to?(:http_login_identity_resolver)).to be(true)
+      expect(subject).to respond_to(:http_api_key_identity_resolver)
+      expect(subject).to respond_to(:http_bearer_identity_resolver)
+      expect(subject).to respond_to(:http_login_identity_resolver)
     end
 
     it 'validates identity resolvers' do
       msg = /to be in \[Hearth::IdentityResolver\], got String/
-      expect {
+      expect do
         Config.new(http_api_key_identity_resolver: 'foo')
-      }.to raise_error(ArgumentError, msg)
+      end.to raise_error(ArgumentError, msg)
 
-      expect {
+      expect do
         Config.new(http_bearer_identity_resolver: 'foo')
-      }.to raise_error(ArgumentError, msg)
+      end.to raise_error(ArgumentError, msg)
 
-      expect {
+      expect do
         Config.new(http_login_identity_resolver: 'foo')
-      }.to raise_error(ArgumentError, msg)
+      end.to raise_error(ArgumentError, msg)
     end
 
     it 'does not set defaults' do

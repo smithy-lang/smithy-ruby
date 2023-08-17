@@ -135,9 +135,9 @@ module WhiteLabel
 
   describe Config do
     it 'adds identity resolvers to config' do
-      expect(subject.respond_to?(:http_api_key_identity_resolver)).to be(true)
-      expect(subject.respond_to?(:http_bearer_identity_resolver)).to be(true)
-      expect(subject.respond_to?(:http_login_identity_resolver)).to be(true)
+      expect(subject).to respond_to(:http_api_key_identity_resolver)
+      expect(subject).to respond_to(:http_bearer_identity_resolver)
+      expect(subject).to respond_to(:http_login_identity_resolver)
     end
 
     it 'validates identity resolvers' do

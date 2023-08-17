@@ -48,8 +48,8 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
 
     public AuthResolverGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.operations = directive.operations();
-        this.service = directive.service();
+        operations = directive.operations();
+        service = directive.service();
         serviceAuthSchemes = ServiceIndex.of(model).getEffectiveAuthSchemes(service);
     }
 

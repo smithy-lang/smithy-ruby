@@ -5,9 +5,11 @@ module Hearth
     # HTTP Basic authentication scheme.
     class HTTPBasic < AuthSchemes::Base
       def initialize
-        super(scheme_id: 'smithy.api#httpBasicAuth')
-        @identity_type = Identities::HTTPLogin
-        @signer = Signers::HTTPBasic.new
+        super(
+          scheme_id: 'smithy.api#httpBasicAuth',
+          signer: Signers::HTTPBasic.new,
+          identity_type: Identities::HTTPLogin
+        )
       end
     end
   end
