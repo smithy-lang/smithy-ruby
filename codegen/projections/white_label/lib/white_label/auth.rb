@@ -110,11 +110,6 @@ module WhiteLabel
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
-        else
-          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { name: 'X-API-Key', in: 'header', scheme: 'Authorization' })
-          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
-          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')
-          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
         end
       end
 

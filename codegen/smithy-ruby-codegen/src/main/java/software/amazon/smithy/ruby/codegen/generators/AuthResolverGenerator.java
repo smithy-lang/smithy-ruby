@@ -141,10 +141,6 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
                         renderOperationAuthOptions(writer, operation);
                     }
                 })
-                .write("else")
-                .indent()
-                .call(() -> renderServiceDefaultAuthOptions(writer))
-                .dedent()
                 .write("end");
     }
 
@@ -164,10 +160,6 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
         }
 
         writer.dedent();
-    }
-
-    private void renderServiceDefaultAuthOptions(RubyCodeWriter writer) {
-        renderAuthOptions(writer, serviceAuthSchemes);
     }
 
     private void renderAuthOptions(RubyCodeWriter writer, Map<ShapeId, Trait> authSchemes) {

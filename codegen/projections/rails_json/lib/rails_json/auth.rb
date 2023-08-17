@@ -92,8 +92,6 @@ module RailsJson
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :timestamp_format_headers
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
-        else
-          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         end
       end
 
