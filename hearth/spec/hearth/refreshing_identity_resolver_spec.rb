@@ -20,20 +20,22 @@ module Hearth
     let(:refreshed_expiration_identity) do
       Identities::Base.new(expiration: refreshed_expiration)
     end
-    let(:identity) { refreshed_expiration_identity }
 
     let(:properties) { { foo: 'bar' } }
-    let(:proc) { ->(_properties) { identity } }
+    let(:proc) { ->(_properties) {} }
 
     subject { TestIdentityResolver.new(proc) }
 
     describe '#identity' do
-
-
       it 'initializes the identity' do
-        expect(subject.instance_variable_get(:@identity)).to be_nil
+        expect(proc).to receive(:call)
+          .with(properties).and_return(refreshed_expiration_identity)
         expect(subject).to receive(:refresh).with(properties).and_call_original
-        expect(subject.identity(properties)).to eq(identity)
+
+        expect(subject.instance_variable_get(:@identity)).to be_nil
+        identity = subject.identity(properties)
+        expect(identity).to eq(refreshed_expiration_identity)
+        expect(subject.instance_variable_get(:@identity)).to eq(identity)
       end
 
       context 'near sync expiration' do
@@ -43,11 +45,15 @@ module Hearth
         end
 
         it 'refreshes synchronously' do
-          expect(proc).to receive(:call).with(properties)
-            .and_return(near_sync_expiration_identity)
-            .and_return(refreshed_expiration_identity)
-          subject.identity(properties) # intitialize
-          subject.identity(properties) # refreshing
+          expect(proc).to receive(:call)
+            .with(properties).and_return(near_sync_expiration_identity)
+          expect(proc).to receive(:call)
+            .with(properties).and_return(refreshed_expiration_identity)
+
+          identity = subject.identity(properties) # initialize
+          expect(identity).to eq(near_sync_expiration_identity)
+          identity = subject.identity(properties) # refreshing
+          expect(identity).to eq(refreshed_expiration_identity)
         end
       end
 
@@ -58,11 +64,16 @@ module Hearth
         end
 
         it 'refreshes asynchronously' do
-          expect(proc).to receive(:call).with(properties)
-            .and_return(near_async_expiration_identity)
-            .and_return(refreshed_expiration_identity)
-          subject.identity(properties) # intitialize
-          subject.identity(properties) # refreshing
+          expect(Thread).to receive(:new).and_yield
+          expect(proc).to receive(:call)
+            .with(properties).and_return(near_async_expiration_identity)
+          expect(proc).to receive(:call)
+            .with(properties).and_return(refreshed_expiration_identity)
+
+          identity = subject.identity(properties) # initialize
+          expect(identity).to eq(near_async_expiration_identity)
+          identity = subject.identity(properties) # refreshing
+          expect(identity).to eq(refreshed_expiration_identity)
         end
       end
     end

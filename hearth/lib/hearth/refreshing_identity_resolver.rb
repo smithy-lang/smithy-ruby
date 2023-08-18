@@ -54,11 +54,7 @@ module Hearth
     end
 
     def near_expiration?(expiration_length)
-      if (expiration = @identity.expiration)
-        (Time.now.to_i + expiration_length) > expiration.to_i
-      else
-        true
-      end
+      (Time.now.to_i + expiration_length) > @identity.expiration.to_i
     end
   end
 end
