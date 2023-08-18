@@ -146,6 +146,54 @@ module WhiteLabel
       end
     end
 
+    class HttpApiKeyAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpApiKeyAuthInput, context: context)
+      end
+    end
+
+    class HttpApiKeyAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpApiKeyAuthOutput, context: context)
+      end
+    end
+
+    class HttpBasicAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpBasicAuthInput, context: context)
+      end
+    end
+
+    class HttpBasicAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpBasicAuthOutput, context: context)
+      end
+    end
+
+    class HttpBearerAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpBearerAuthInput, context: context)
+      end
+    end
+
+    class HttpBearerAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpBearerAuthOutput, context: context)
+      end
+    end
+
+    class HttpDigestAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpDigestAuthInput, context: context)
+      end
+    end
+
+    class HttpDigestAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpDigestAuthOutput, context: context)
+      end
+    end
+
     class Items
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Array, context: context)
@@ -237,6 +285,42 @@ module WhiteLabel
         Hearth::Validator.validate_types!(input, Types::MixinTestOutput, context: context)
         Hearth::Validator.validate_types!(input[:username], ::String, context: "#{context}[:username]")
         Hearth::Validator.validate_types!(input[:user_id], ::String, context: "#{context}[:user_id]")
+      end
+    end
+
+    class NoAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NoAuthInput, context: context)
+      end
+    end
+
+    class NoAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NoAuthOutput, context: context)
+      end
+    end
+
+    class OptionalAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OptionalAuthInput, context: context)
+      end
+    end
+
+    class OptionalAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OptionalAuthOutput, context: context)
+      end
+    end
+
+    class OrderedAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OrderedAuthInput, context: context)
+      end
+    end
+
+    class OrderedAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OrderedAuthOutput, context: context)
       end
     end
 

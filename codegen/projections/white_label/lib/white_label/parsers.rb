@@ -43,6 +43,38 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for HttpApiKeyAuth
+    class HttpApiKeyAuth
+      def self.parse(http_resp)
+        data = Types::HttpApiKeyAuthOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for HttpBasicAuth
+    class HttpBasicAuth
+      def self.parse(http_resp)
+        data = Types::HttpBasicAuthOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for HttpBearerAuth
+    class HttpBearerAuth
+      def self.parse(http_resp)
+        data = Types::HttpBearerAuthOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for HttpDigestAuth
+    class HttpDigestAuth
+      def self.parse(http_resp)
+        data = Types::HttpDigestAuthOutput.new
+        data
+      end
+    end
+
     class Items
     end
 
@@ -70,6 +102,30 @@ module WhiteLabel
     class MixinTest
       def self.parse(http_resp)
         data = Types::MixinTestOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for NoAuth
+    class NoAuth
+      def self.parse(http_resp)
+        data = Types::NoAuthOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for OptionalAuth
+    class OptionalAuth
+      def self.parse(http_resp)
+        data = Types::OptionalAuthOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for OrderedAuth
+    class OrderedAuth
+      def self.parse(http_resp)
+        data = Types::OrderedAuthOutput.new
         data
       end
     end

@@ -17,7 +17,6 @@ module Hearth
       end
 
       describe '#call' do
-        let(:request) { Hearth::HTTP::Request.new }
         let(:context) { {} }
 
         context 'validate_input is true' do

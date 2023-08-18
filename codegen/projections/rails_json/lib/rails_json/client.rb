@@ -105,6 +105,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :all_query_string_types)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -174,6 +179,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :constant_and_variable_query_string)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -242,6 +252,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :constant_query_string)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -319,6 +334,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :document_type)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -393,6 +413,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :document_type_as_payload)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -454,6 +479,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :empty_operation)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -520,6 +550,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :endpoint_operation)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -588,6 +623,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -661,6 +701,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :greeting_with_errors)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -733,6 +778,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_payload_traits)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -802,6 +852,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_payload_traits_with_media_type)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -878,6 +933,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_payload_with_structure)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -952,6 +1012,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_prefix_headers)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1018,6 +1083,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_prefix_headers_in_response)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1083,6 +1153,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_request_with_float_labels)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1147,6 +1222,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_request_with_greedy_label_in_path)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1228,6 +1308,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_request_with_labels)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1301,6 +1386,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_request_with_labels_and_timestamp_format)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1363,6 +1453,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :http_response_code)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1430,6 +1525,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :ignore_query_params_in_response)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1547,6 +1647,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :input_and_output_with_headers)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1632,6 +1737,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :json_enums)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1746,6 +1856,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :json_maps)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1849,6 +1964,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :json_unions)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2020,6 +2140,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :kitchen_sink_operation)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2087,6 +2212,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :media_type_header)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2153,6 +2283,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :nested_attributes_operation)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2230,6 +2365,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :null_and_empty_headers_client)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2305,6 +2445,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :null_operation)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2372,6 +2517,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :omits_null_serializes_empty_string)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2436,6 +2586,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :operation_with_optional_input_output)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2504,6 +2659,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :query_idempotency_token_auto_fill)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2574,6 +2734,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :query_params_as_string_list_map)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2637,6 +2802,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :streaming_operation)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2717,6 +2887,11 @@ module RailsJson
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :timestamp_format_headers)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -2785,6 +2960,11 @@ module RailsJson
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :operation____789_bad_name)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(

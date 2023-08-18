@@ -9,6 +9,16 @@
 
 module WhiteLabel
   # @!method initialize(*options)
+  #   @option args [Auth::Resolver] :auth_resolver
+  #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
+  #     the {Auth::Params} struct. For a given operation_name, the method must return an
+  #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
+  #
+  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes
+  #     An ordered list of {Hearth::AuthSchemes::Base} objects that will considered when attempting to authenticate
+  #     the request. The first scheme that returns an Identity from its Hearth::IdentityResolver will be used to
+  #     authenticate the request.
+  #
   #   @option args [Boolean] :disable_host_prefix (false)
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #
@@ -18,8 +28,17 @@ module WhiteLabel
   #   @option args [String] :endpoint
   #     Endpoint of the service
   #
+  #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
+  #     A Hearth::IdentityResolver for the smithy.api httpApiKeyAuth auth scheme.
+  #
+  #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
+  #     A Hearth::IdentityResolver for the smithy.api httpBearerAuth auth scheme.
+  #
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
+  #
+  #   @option args [Hearth::IdentityResolver] :http_login_identity_resolver
+  #     A Hearth::IdentityResolver for the smithy.api httpBasicAuth auth scheme.
   #
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
   #     A list of Interceptors to apply to the client.  Interceptors are a generic extension point that allows injecting logic at specific stages of execution within the SDK. Logic injection is done with hooks that the interceptor implements.  Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read the input, transport request, transport response or output messages. Read/write hooks allow an interceptor to modify one of these messages.
@@ -58,6 +77,12 @@ module WhiteLabel
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   #
+  # @!attribute auth_resolver
+  #   @return [Auth::Resolver]
+  #
+  # @!attribute auth_schemes
+  #   @return [Array<Hearth::AuthSchemes::Base>]
+  #
   # @!attribute disable_host_prefix
   #   @return [Boolean]
   #
@@ -67,8 +92,17 @@ module WhiteLabel
   # @!attribute endpoint
   #   @return [String]
   #
+  # @!attribute http_api_key_identity_resolver
+  #   @return [Hearth::IdentityResolver]
+  #
+  # @!attribute http_bearer_identity_resolver
+  #   @return [Hearth::IdentityResolver]
+  #
   # @!attribute http_client
   #   @return [Hearth::HTTP::Client]
+  #
+  # @!attribute http_login_identity_resolver
+  #   @return [Hearth::IdentityResolver]
   #
   # @!attribute interceptors
   #   @return [Hearth::InterceptorList]
@@ -98,10 +132,15 @@ module WhiteLabel
   #   @return [Boolean]
   #
   Config = ::Struct.new(
+    :auth_resolver,
+    :auth_schemes,
     :disable_host_prefix,
     :disable_request_compression,
     :endpoint,
+    :http_api_key_identity_resolver,
+    :http_bearer_identity_resolver,
     :http_client,
+    :http_login_identity_resolver,
     :interceptors,
     :log_level,
     :logger,
@@ -118,10 +157,15 @@ module WhiteLabel
     private
 
     def validate!
+      Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
+      Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
+      Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
+      Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
+      Hearth::Validator.validate_types!(http_login_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_login_identity_resolver]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(log_level, Symbol, context: 'config[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
@@ -136,10 +180,15 @@ module WhiteLabel
 
     def self.defaults
       @defaults ||= {
+        auth_resolver: [proc { Auth::Resolver.new }],
+        auth_schemes: [proc { Auth::SCHEMES }],
         disable_host_prefix: [false],
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
+        http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
+        http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
+        http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
         interceptors: [proc { Hearth::InterceptorList.new }],
         log_level: [:info],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],

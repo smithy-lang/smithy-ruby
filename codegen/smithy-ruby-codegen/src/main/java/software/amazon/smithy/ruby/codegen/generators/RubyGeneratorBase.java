@@ -15,12 +15,14 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
 abstract class RubyGeneratorBase {
@@ -58,10 +60,12 @@ abstract class RubyGeneratorBase {
     }
 
     public String rbFile() {
-        return settings.getGemName() + "/lib/" + settings.getGemName() + "/" + getModule().toLowerCase() + ".rb";
+        return Paths.get(settings.getGemName(), "lib", settings.getGemName(),
+                RubyFormatter.toSnakeCase(getModule()) + ".rb").toString();
     }
 
     public String rbsFile() {
-        return settings.getGemName() + "/sig/" + settings.getGemName() + "/" + getModule().toLowerCase()  + ".rbs";
+        return Paths.get(settings.getGemName(), "sig", settings.getGemName(),
+                RubyFormatter.toSnakeCase(getModule()) + ".rbs").toString();
     }
 }

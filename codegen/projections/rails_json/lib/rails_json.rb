@@ -9,6 +9,7 @@
 
 require 'hearth'
 
+require_relative 'rails_json/auth'
 require_relative 'rails_json/builders'
 require_relative 'rails_json/client'
 require_relative 'rails_json/config'

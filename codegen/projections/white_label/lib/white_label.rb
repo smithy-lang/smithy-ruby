@@ -9,6 +9,7 @@
 
 require 'hearth'
 
+require_relative 'white_label/auth'
 require_relative 'white_label/builders'
 require_relative 'white_label/client'
 require_relative 'white_label/config'

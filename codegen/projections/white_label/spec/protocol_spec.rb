@@ -61,11 +61,39 @@ module WhiteLabel
 
     end
 
+    describe '#http_api_key_auth' do
+
+    end
+
+    describe '#http_basic_auth' do
+
+    end
+
+    describe '#http_bearer_auth' do
+
+    end
+
+    describe '#http_digest_auth' do
+
+    end
+
     describe '#kitchen_sink' do
 
     end
 
     describe '#mixin_test' do
+
+    end
+
+    describe '#no_auth' do
+
+    end
+
+    describe '#optional_auth' do
+
+    end
+
+    describe '#ordered_auth' do
 
     end
 

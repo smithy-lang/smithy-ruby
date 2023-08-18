@@ -9,6 +9,7 @@
 
 require 'hearth'
 
+require_relative 'weather/auth'
 require_relative 'weather/builders'
 require_relative 'weather/client'
 require_relative 'weather/config'

@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 require_relative 'hearth/api_error'
+require_relative 'hearth/auth_option'
+
+# must be required before auth_schemes
+require_relative 'hearth/identities'
+require_relative 'hearth/auth_schemes'
+
 require_relative 'hearth/block_io'
 require_relative 'hearth/checksums'
 require_relative 'hearth/configuration'
@@ -16,6 +22,7 @@ require_relative 'hearth/request'
 require_relative 'hearth/response'
 
 require_relative 'hearth/http'
+require_relative 'hearth/identity_resolver'
 require_relative 'hearth/interceptor'
 require_relative 'hearth/interceptor_context'
 require_relative 'hearth/interceptor_list'
@@ -27,7 +34,9 @@ require_relative 'hearth/number_helper'
 require_relative 'hearth/output'
 require_relative 'hearth/query/param'
 require_relative 'hearth/query/param_list'
+require_relative 'hearth/refreshing_identity_resolver'
 require_relative 'hearth/retry'
+require_relative 'hearth/signers'
 require_relative 'hearth/structure'
 require_relative 'hearth/stubbing/client_stubs'
 require_relative 'hearth/stubbing/stubs'

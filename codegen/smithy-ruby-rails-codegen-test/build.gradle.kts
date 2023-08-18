@@ -65,3 +65,7 @@ tasks["build"].finalizedBy(
     tasks["copyRailsJsonGem"],
     tasks["copyHighScoreServiceGem"]
 )
+
+java.sourceSets["main"].java {
+    srcDirs("model", "src/main/smithy")
+}

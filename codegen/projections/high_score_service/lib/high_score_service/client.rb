@@ -83,6 +83,11 @@ module HighScoreService
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :create_high_score)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -151,6 +156,11 @@ module HighScoreService
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :delete_high_score)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -227,6 +237,11 @@ module HighScoreService
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :get_high_score)
+      )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -297,6 +312,11 @@ module HighScoreService
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :list_high_scores)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
@@ -379,6 +399,11 @@ module HighScoreService
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :update_high_score)
       )
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
