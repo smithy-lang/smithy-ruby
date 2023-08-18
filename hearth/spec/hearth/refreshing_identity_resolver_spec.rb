@@ -45,6 +45,7 @@ module Hearth
         end
 
         it 'refreshes synchronously' do
+          expect(Thread).not_to receive(:new)
           expect(proc).to receive(:call)
             .with(properties).and_return(near_sync_expiration_identity)
           expect(proc).to receive(:call)
