@@ -1,0 +1,8 @@
+module Hearth
+  module Signers
+    # A signer that signs requests using the HTTP API Key scheme.
+    class HTTPApiKey < Signers::Base
+      def sign: (request: untyped, identity: untyped, ?properties: ::Hash[untyped, untyped]) -> nil
+    end
+  end
+end

@@ -3,15 +3,14 @@ module Hearth
   # that take one argument (config) and are called during client initialization
   # or operation invocation to modify config.
   class PluginList
-
     # Initialize a PluginList.
     #
-    # @param [Array] ([]) plugins A list of plugins to initialize with
+    # @param [Array] plugins ([]) A list of plugins to initialize with
     def initialize: (?untyped plugins) -> void
 
     # Add a plugin
     #
-    # @param [Callable] plugin The options for this HTTP Client
+    # @param [Callable] plugin
     def add: (untyped plugin) -> untyped
 
     alias << add

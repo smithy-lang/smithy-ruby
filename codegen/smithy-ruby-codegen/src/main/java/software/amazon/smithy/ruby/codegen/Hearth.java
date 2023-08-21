@@ -48,7 +48,7 @@ public final class Hearth {
             .build();
 
     public static final Symbol STUBS = Symbol.builder()
-            .namespace("Hearth::Stubbing", "::")
+            .namespace("Hearth", "::")
             .name("Stubs")
             .build();
 

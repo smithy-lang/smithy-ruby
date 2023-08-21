@@ -29,7 +29,7 @@ module HighScoreService
     #
     def initialize(config = HighScoreService::Config.new, options = {})
       @config = initialize_config(config)
-      @stubs = Hearth::Stubbing::Stubs.new
+      @stubs = Hearth::Stubs.new
     end
 
     # @return [Config] config

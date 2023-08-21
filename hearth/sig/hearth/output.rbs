@@ -4,7 +4,7 @@ module Hearth
     # @param [StandardError] error The error class to be raised.
     # @param [Struct] data The data returned by a client.
     # @param [Hash] metadata Response metadata set by client middleware.
-    def initialize: (?error: untyped? error, ?data: untyped? data, ?metadata: ::Hash[untyped, untyped] metadata) -> void
+    def initialize: (?error: untyped?, ?data: untyped?, ?metadata: ::Hash[untyped, untyped]) -> void
 
     # @return [StandardError, nil]
     attr_accessor error: untyped

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Hearth
+  # @api private
   module Config
     # Parses and validates values provided in ENV
-    # @api private
     class EnvProvider
       def initialize(env_key, type: 'String')
         @env_key = env_key

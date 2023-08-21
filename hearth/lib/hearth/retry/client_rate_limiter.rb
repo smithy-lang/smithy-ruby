@@ -2,9 +2,6 @@
 
 module Hearth
   module Retry
-    # Raised when ClientRateLimiter doesn't have capacity.
-    class CapacityNotAvailableError < RuntimeError; end
-
     # @api private
     # Used only in 'adaptive' retry mode
     class ClientRateLimiter

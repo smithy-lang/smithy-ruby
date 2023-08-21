@@ -27,7 +27,7 @@ module Weather
     #
     def initialize(config = Weather::Config.new, options = {})
       @config = initialize_config(config)
-      @stubs = Hearth::Stubbing::Stubs.new
+      @stubs = Hearth::Stubs.new
     end
 
     # @return [Config] config

@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 module Hearth
-  # Resolves an identity from identity properties.
+  # A module that can be included in a class to provide a #identity method.
+  # The class must implement #refresh(properties) that sets @identity. The
+  # refresh method will be called when #identity is called and the identity
+  # is nil or near expiration.
   module RefreshingIdentityResolver
     SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
     ASYNC_EXPIRATION_LENGTH = 600 # 10 minutes
