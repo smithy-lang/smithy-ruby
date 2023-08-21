@@ -37,7 +37,7 @@ module Hearth
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
       let(:stub_responses) { false }
-      let(:stubs) { Hearth::Stubbing::Stubs.new }
+      let(:stubs) { Hearth::Stubs.new }
       let(:logger) { double('Logger') }
 
       subject do

@@ -2,7 +2,6 @@
 
 module Hearth
   module Retry
-    # @api private
     # Computes an exponential backoff delay for a retry attempt.
     class ExponentialBackoff
       # Max backoff (in seconds)

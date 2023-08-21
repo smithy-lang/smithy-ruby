@@ -7,7 +7,7 @@ module Hearth
 
     # Initialize an InterceptorList.
     #
-    # @param [Array] ([]) interceptors A list of interceptors.
+    # @param [Array] interceptors ([]) A list of interceptors.
     def initialize(interceptors = [])
       unless interceptors.respond_to?(:each)
         raise ArgumentError, 'Interceptors must be an enumerable'

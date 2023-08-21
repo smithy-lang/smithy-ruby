@@ -2,10 +2,13 @@ module Hearth
   # Base class for errors returned from an API. This excludes networking
   # errors and errors generated on the client-side.
   class ApiError < StandardError
-    def initialize: (error_code: String, ?message: String) -> ApiError
+    def initialize: (error_code: untyped, ?metadata: ::Hash[untyped, untyped], ?message: untyped?) -> void
 
     # @return [String]
-    attr_reader error_code: String
+    attr_reader error_code: untyped
+
+    # @return [Hash]
+    attr_reader metadata: untyped
 
     # @return [Boolean]
     def retryable?: () -> false

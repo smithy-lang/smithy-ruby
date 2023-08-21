@@ -1,0 +1,17 @@
+module Hearth
+  module AuthSchemes
+    # Base class for all AuthScheme classes.
+    class Base
+      def initialize: (scheme_id: untyped, signer: untyped, identity_type: untyped) -> void
+
+      # @return [String]
+      attr_reader scheme_id: untyped
+
+      # @return [IdentityResolver, nil]
+      def identity_resolver: (?::Hash[untyped, untyped] identity_resolvers) -> untyped
+
+      # @return [Signers::Base]
+      attr_reader signer: untyped
+    end
+  end
+end

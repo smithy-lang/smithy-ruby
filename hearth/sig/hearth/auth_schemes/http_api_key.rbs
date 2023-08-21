@@ -1,0 +1,8 @@
+module Hearth
+  module AuthSchemes
+    # HTTP API Key authentication scheme.
+    class HTTPApiKey < AuthSchemes::Base
+      def initialize: () -> void
+    end
+  end
+end

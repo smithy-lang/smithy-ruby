@@ -42,7 +42,7 @@ module Hearth
 
     # @api private
     def interceptor_context(input, output)
-      Hearth::InterceptorContext.new(
+      Hearth::Interceptor::Context.new(
         input: input,
         request: request,
         response: response,

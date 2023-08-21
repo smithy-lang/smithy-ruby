@@ -14,6 +14,7 @@ require_relative 'dns/host_resolver'
 # Ruby DNS resolution, which may be Resolv or the system resolver.
 
 # Patch IPSocket
+# @api private
 class << IPSocket
   alias original_hearth_getaddress getaddress
 
@@ -30,6 +31,7 @@ class << IPSocket
 end
 
 # Patch TCPSocket
+# @api private
 class TCPSocket < IPSocket
   alias original_hearth_initialize initialize
 
