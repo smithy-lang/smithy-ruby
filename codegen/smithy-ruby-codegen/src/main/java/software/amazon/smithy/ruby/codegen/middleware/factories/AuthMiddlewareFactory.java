@@ -46,13 +46,17 @@ public final class AuthMiddlewareFactory {
 
         Set<ClientConfig> clientConfigSet = new HashSet<>();
         String identityResolverDocumentation = """
-                A %s for the %s auth scheme.
+                A %s that returns a %s for operations modeled with the %s auth scheme.
                 """;
         serviceAuthSchemes.forEach((shapeId, trait) -> {
             clientConfigSet.add(ClientConfig.builder()
                     .name(identityResolverConfigNameForAuthTrait(trait))
                     .type(Hearth.IDENTITY_RESOLVER.toString())
-                    .documentation(identityResolverDocumentation.formatted(Hearth.IDENTITY_RESOLVER, shapeId))
+                    .documentation(
+                            identityResolverDocumentation.formatted(
+                                    Hearth.IDENTITY_RESOLVER,
+                                    hearthIdentityForAuthTrait(trait),
+                                    shapeId.getName()))
                     .defaultDynamicValue(defaultIdentityResolverForAuthTrait(trait))
                     .allowOperationOverride()
                     .build());
@@ -129,5 +133,17 @@ public final class AuthMiddlewareFactory {
         }
         return "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, identity);
+    }
+
+    private static String hearthIdentityForAuthTrait(Trait trait) {
+        if (trait instanceof HttpApiKeyAuthTrait) {
+            return Hearth.IDENTITIES + "::HTTPApiKey";
+        } else if (trait instanceof HttpBearerAuthTrait) {
+            return Hearth.IDENTITIES + "::HTTPBearer";
+        } else if (trait instanceof HttpBasicAuthTrait || trait instanceof HttpDigestAuthTrait) {
+            return Hearth.IDENTITIES + "::HTTPLogin";
+        } else {
+            throw new IllegalStateException("Unknown auth trait: " + trait);
+        }
     }
 }

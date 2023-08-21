@@ -14,20 +14,10 @@ module Hearth
     # @return [IO]
     attr_accessor :body
 
-    # Replace attributes from other response
-    # @param [Response] other
-    # @return [Response]
-    def replace(other)
-      @body.truncate(0)
-      IO.copy_stream(other.body, @body)
-      @body.rewind
-      self
-    end
-
     # Resets the response.
     # @return [Response]
     def reset
-      @body.truncate(0)
+      @body.truncate(0) if @body.respond_to?(:truncate)
       self
     end
   end

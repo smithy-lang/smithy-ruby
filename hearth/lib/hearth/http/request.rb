@@ -132,6 +132,14 @@ module Hearth
       def prefix_host(prefix)
         uri.host = prefix + uri.host
       end
+
+      # @api private
+      def initialize_copy(other)
+        @http_method = other.http_method.dup
+        @fields = other.fields.dup
+        @headers = Fields::Proxy.new(@fields, :header)
+        @trailers = Fields::Proxy.new(@fields, :trailer)
+      end
     end
   end
 end

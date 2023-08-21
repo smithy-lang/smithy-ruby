@@ -101,7 +101,7 @@ module Hearth
         when Hearth::Structure
           apply_stub_hearth_structure(stub, context)
         when Hearth::Response
-          context.response.replace(stub)
+          context.response = stub
         else
           raise ArgumentError, 'Unsupported stub type'
         end

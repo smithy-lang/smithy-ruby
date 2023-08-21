@@ -49,8 +49,16 @@ module Hearth
         @kind == :trailer
       end
 
+      # @return [Hash]
       def to_h
         { @name => value }
+      end
+
+      # @api private
+      def initialize_copy(other)
+        @name = other.name.dup
+        @value = other.value.dup
+        @kind = other.kind.dup
       end
 
       private

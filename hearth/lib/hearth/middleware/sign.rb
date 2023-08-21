@@ -14,8 +14,53 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        # TODO: do signing
-        @app.call(input, context)
+        interceptor_error = context.interceptors.apply(
+          hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: false
+        )
+        return Hearth::Output.new(error: interceptor_error) if interceptor_error
+
+        interceptor_error = context.interceptors.apply(
+          hook: Interceptor::Hooks::READ_BEFORE_SIGNING,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: true
+        )
+        return Hearth::Output.new(error: interceptor_error) if interceptor_error
+
+        sign_request(context)
+        output = @app.call(input, context)
+
+        interceptor_error = context.interceptors.apply(
+          hook: Interceptor::Hooks::READ_AFTER_SIGNING,
+          input: input,
+          context: context,
+          output: output,
+          aggregate_errors: true
+        )
+        output.error = interceptor_error if interceptor_error
+
+        output
+      end
+
+      private
+
+      def sign_request(context)
+        auth_scheme = context.auth_scheme
+
+        signer = auth_scheme.signer
+        identity = auth_scheme.identity
+        signer_properties = auth_scheme.auth_option.signer_properties
+
+        signer.sign(
+          request: context.request,
+          identity: identity,
+          signer_properties: signer_properties
+        )
       end
     end
   end

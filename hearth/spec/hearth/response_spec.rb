@@ -9,15 +9,6 @@ module Hearth
       end
     end
 
-    describe '#replace' do
-      it 'replaces the response' do
-        response = Response.new(body: StringIO.new('foo'))
-        other = Response.new(body: StringIO.new('bar'))
-        response.replace(other)
-        expect(response.body.read).to eq('bar')
-      end
-    end
-
     describe '#reset' do
       it 'resets the body' do
         response = Response.new

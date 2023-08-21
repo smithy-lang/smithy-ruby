@@ -20,10 +20,10 @@ module Hearth
     attr_reader :operation_name
 
     # @return [Hearth::HTTP::Request]
-    attr_reader :request
+    attr_accessor :request
 
     # @return [Hearth::HTTP::Response]
-    attr_reader :response
+    attr_accessor :response
 
     # @return [Logger] An instance of the logger configured for the Client.
     attr_reader :logger
