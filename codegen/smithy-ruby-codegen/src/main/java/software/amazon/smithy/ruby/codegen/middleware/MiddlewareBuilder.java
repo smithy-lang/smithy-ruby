@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -146,17 +145,19 @@ public class MiddlewareBuilder {
         if (!resolved.contains(middleware)) {
             visiting.add(middleware);
             if (middleware.getRelative().isPresent()) {
-                Middleware relativeTo = Objects.requireNonNull(
-                        klassToMiddlewareMap.get(middleware.getRelative().get().getTo()),
-                        middleware.getKlass() + " relative references a middleware class ("
-                                + middleware.getRelative().get().getTo() + ") that is not available in the stack.");
-                //recursively resolve the relative middleware
-                resolve(relativeTo, resolved, visiting, order, klassToMiddlewareMap);
-                // the order of relativeTo should now be set
-                if (middleware.getRelative().get().getType().equals(Middleware.Relative.Type.BEFORE)) {
-                    order.put(middleware, order.get(relativeTo) - 1);
+                Middleware.Relative relative = middleware.getRelative().get();
+                Middleware relativeTo = klassToMiddlewareMap.get(relative.getTo());
+                if (relativeTo != null) {
+                    // recursively resolve the relative middleware
+                    resolve(relativeTo, resolved, visiting, order, klassToMiddlewareMap);
+                    // the order of relativeTo should now be set
+                    if (relative.getType().equals(Middleware.Relative.Type.BEFORE)) {
+                        order.put(middleware, order.get(relativeTo) - 1);
+                    } else {
+                        order.put(middleware, order.get(relativeTo) + 1);
+                    }
                 } else {
-                    order.put(middleware, order.get(relativeTo) + 1);
+                    resolveNullRelativeTo(relative, middleware, order);
                 }
             } else {
                 // Base case - middleware is not relative to anything else, use its default order.
@@ -164,6 +165,17 @@ public class MiddlewareBuilder {
             }
             visiting.remove(middleware);
             resolved.add(middleware);
+        }
+    }
+
+    private void resolveNullRelativeTo(Middleware.Relative relative, Middleware middleware,
+                                        Map<Middleware, Integer> order) {
+        if (relative.getRelativeRequired()) {
+            throw new IllegalArgumentException(middleware.getKlass()
+                    + " relative references a required middleware class ("
+                    + relative.getTo() + ") that is not available in stack.");
+        } else {
+            order.put(middleware, (int) middleware.getOrder());
         }
     }
 
