@@ -11,6 +11,24 @@ module HighScoreService
   # @api private
   module Params
 
+    module ApiKeyAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ApiKeyAuthInput, context: context)
+        type = Types::ApiKeyAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module ApiKeyAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ApiKeyAuthOutput, context: context)
+        type = Types::ApiKeyAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
     module AttributeErrors
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
@@ -19,6 +37,42 @@ module HighScoreService
           data[key] = ErrorMessages.build(value, context: "#{context}[:#{key}]") unless value.nil?
         end
         data
+      end
+    end
+
+    module BasicAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::BasicAuthInput, context: context)
+        type = Types::BasicAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module BasicAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::BasicAuthOutput, context: context)
+        type = Types::BasicAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module BearerAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::BearerAuthInput, context: context)
+        type = Types::BearerAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module BearerAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::BearerAuthOutput, context: context)
+        type = Types::BearerAuthOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
       end
     end
 
@@ -57,6 +111,24 @@ module HighScoreService
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreOutput, context: context)
         type = Types::DeleteHighScoreOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module DigestAuthInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DigestAuthInput, context: context)
+        type = Types::DigestAuthInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module DigestAuthOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DigestAuthOutput, context: context)
+        type = Types::DigestAuthOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end

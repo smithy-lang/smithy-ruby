@@ -11,12 +11,39 @@ module HighScoreService
   # @api private
   module Parsers
 
+    # Operation Parser for ApiKeyAuth
+    class ApiKeyAuth
+      def self.parse(http_resp)
+        data = Types::ApiKeyAuthOutput.new
+        map = Hearth::JSON.load(http_resp.body)
+        data
+      end
+    end
+
     class AttributeErrors
       def self.parse(map)
         data = {}
         map.map do |key, value|
           data[key] = Parsers::ErrorMessages.parse(value) unless value.nil?
         end
+        data
+      end
+    end
+
+    # Operation Parser for BasicAuth
+    class BasicAuth
+      def self.parse(http_resp)
+        data = Types::BasicAuthOutput.new
+        map = Hearth::JSON.load(http_resp.body)
+        data
+      end
+    end
+
+    # Operation Parser for BearerAuth
+    class BearerAuth
+      def self.parse(http_resp)
+        data = Types::BearerAuthOutput.new
+        map = Hearth::JSON.load(http_resp.body)
         data
       end
     end
@@ -36,6 +63,15 @@ module HighScoreService
     class DeleteHighScore
       def self.parse(http_resp)
         data = Types::DeleteHighScoreOutput.new
+        map = Hearth::JSON.load(http_resp.body)
+        data
+      end
+    end
+
+    # Operation Parser for DigestAuth
+    class DigestAuth
+      def self.parse(http_resp)
+        data = Types::DigestAuthOutput.new
         map = Hearth::JSON.load(http_resp.body)
         data
       end

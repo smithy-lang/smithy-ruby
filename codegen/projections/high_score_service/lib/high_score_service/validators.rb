@@ -13,6 +13,18 @@ module HighScoreService
   # @api private
   module Validators
 
+    class ApiKeyAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ApiKeyAuthInput, context: context)
+      end
+    end
+
+    class ApiKeyAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ApiKeyAuthOutput, context: context)
+      end
+    end
+
     class AttributeErrors
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
@@ -20,6 +32,30 @@ module HighScoreService
           Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
           ErrorMessages.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
         end
+      end
+    end
+
+    class BasicAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::BasicAuthInput, context: context)
+      end
+    end
+
+    class BasicAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::BasicAuthOutput, context: context)
+      end
+    end
+
+    class BearerAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::BearerAuthInput, context: context)
+      end
+    end
+
+    class BearerAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::BearerAuthOutput, context: context)
       end
     end
 
@@ -50,6 +86,18 @@ module HighScoreService
     class DeleteHighScoreOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::DeleteHighScoreOutput, context: context)
+      end
+    end
+
+    class DigestAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DigestAuthInput, context: context)
+      end
+    end
+
+    class DigestAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DigestAuthOutput, context: context)
       end
     end
 

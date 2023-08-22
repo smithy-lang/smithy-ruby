@@ -45,11 +45,27 @@ module HighScoreService
       end
     end
 
+    describe '#api_key_auth' do
+
+    end
+
+    describe '#basic_auth' do
+
+    end
+
+    describe '#bearer_auth' do
+
+    end
+
     describe '#create_high_score' do
 
     end
 
     describe '#delete_high_score' do
+
+    end
+
+    describe '#digest_auth' do
 
     end
 

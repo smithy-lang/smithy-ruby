@@ -12,7 +12,11 @@ module HighScoreService
     Params = Struct.new(:operation_name, keyword_init: true)
 
     SCHEMES = [
-      Hearth::AuthSchemes::Anonymous.new
+      Hearth::AuthSchemes::Anonymous.new,
+      Hearth::AuthSchemes::HTTPBearer.new,
+      Hearth::AuthSchemes::HTTPDigest.new,
+      Hearth::AuthSchemes::HTTPApiKey.new,
+      Hearth::AuthSchemes::HTTPBasic.new
     ].freeze
 
     class Resolver
@@ -20,10 +24,18 @@ module HighScoreService
       def resolve(auth_params)
         options = []
         case auth_params.operation_name
+        when :api_key_auth
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { name: 'Authorization', in: 'header' })
+        when :basic_auth
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
+        when :bearer_auth
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')
         when :create_high_score
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :delete_high_score
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
+        when :digest_auth
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
         when :get_high_score
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :list_high_scores

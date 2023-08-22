@@ -10,6 +10,48 @@
 module HighScoreService
   module Types
 
+    ApiKeyAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    ApiKeyAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    BasicAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    BasicAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    BearerAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    BearerAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # Input structure for CreateHighScore
     #
     # @!attribute high_score
@@ -61,6 +103,20 @@ module HighScoreService
     # Output structure for DeleteHighScore
     #
     DeleteHighScoreOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    DigestAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    DigestAuthOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do

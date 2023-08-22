@@ -42,7 +42,7 @@ public final class AuthMiddlewareFactory {
     public static Middleware build(GenerationContext context) {
         SymbolProvider symbolProvider = context.symbolProvider();
         Map<ShapeId, Trait> serviceAuthSchemes =
-                ServiceIndex.of(context.model()).getEffectiveAuthSchemes(context.service());
+                ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
         Set<ClientConfig> clientConfigSet = new HashSet<>();
         String identityResolverDocumentation = """
