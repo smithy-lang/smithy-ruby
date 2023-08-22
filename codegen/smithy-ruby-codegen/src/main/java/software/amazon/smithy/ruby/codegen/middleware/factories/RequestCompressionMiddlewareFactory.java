@@ -38,6 +38,7 @@ public final class RequestCompressionMiddlewareFactory {
         String disableRequestCompressionDocumentation = """
                 When set to 'true' the request body will not be compressed for supported operations.
                 """;
+
         ClientConfig disableRequestCompression = ClientConfig.builder()
                 .name("disable_request_compression")
                 .type("Boolean")
@@ -50,6 +51,7 @@ public final class RequestCompressionMiddlewareFactory {
                 The minimum size bytes that triggers compression for request bodies.
                 The value must be non-negative integer value between 0 and 10485780 bytes inclusive.
                 """;
+
         ClientConfig requestMinCompressionSizeBytes = ClientConfig.builder()
                 .name("request_min_compression_size_bytes")
                 .type("Integer")
@@ -59,7 +61,16 @@ public final class RequestCompressionMiddlewareFactory {
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();
 
+        Middleware.Relative compressionRelative = Middleware.Relative.builder()
+                .type(Middleware.Relative.Type.BEFORE)
+                .to("Hearth::HTTP::Middleware::ContentMD5")
+                .disableRelativeRequired()
+                .build();
+
         Middleware.Builder compressionBuilder = Middleware.builder()
+                .klass("Hearth::HTTP::Middleware::RequestCompression")
+                .step(MiddlewareStackStep.AFTER_BUILD)
+                .relative(compressionRelative)
                 .operationPredicate(
                         ((model, service, operation) -> operation.hasTrait(RequestCompressionTrait.class)))
                 .operationParams((ctx, operation) -> {
@@ -67,23 +78,15 @@ public final class RequestCompressionMiddlewareFactory {
                     RequestCompressionTrait requestCompression =
                             operation.expectTrait(RequestCompressionTrait.class);
                     Shape inputShape = ctx.model().expectShape(operation.getInputShape());
-
                     params.put("encodings", "[" + requestCompression
                             .getEncodings()
                             .stream()
                             .map((s) -> "'" + s + "'")
                             .collect(Collectors.joining(", ")) + "]");
-
                     params.put("streaming",
                             Streaming.isStreaming(ctx.model(), inputShape) ? "true" : "false");
-
                     return params;
-                })
-                .klass("Hearth::HTTP::Middleware::RequestCompression")
-                .step(MiddlewareStackStep.AFTER_BUILD);
-        // commented out since Middleware Relative needs an update to handle this case
-        //.relative(new Middleware.Relative(Middleware.Relative.Type.BEFORE,
-        // "Hearth::HTTP::Middleware::ContentMD5"))
+                });
 
         TopDownIndex topDownIndex = TopDownIndex.of(context.model());
         Set<OperationShape> containedOperations = topDownIndex.getContainedOperations(context.service());
