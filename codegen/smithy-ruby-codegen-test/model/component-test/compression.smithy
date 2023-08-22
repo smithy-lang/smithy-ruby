@@ -9,6 +9,7 @@ operation RequestCompressionOperation {
     input: RequestCompressionInput
 }
 
+@httpChecksumRequired
 @requestCompression(
     encodings: ["gzip"]
 )
