@@ -509,17 +509,23 @@ public final class Middleware {
         }
     }
 
+    /**
+     * Describes a relative middleware ordering.
+     * TODO: need to expand on this
+     */
     public static class Relative {
         private final Type type;
         private final String to;
+        private final boolean relativeRequired;
 
-        public Relative(Type type, String to) {
-            this.type = type;
-            this.to = to;
+        public Relative(Builder builder) {
+            this.type = builder.type;
+            this.to = builder.to;
+            this.relativeRequired = builder.relativeRequired;
         }
 
-        public Relative(Type type, Symbol to) {
-            this(type, to.toString());
+        public static Builder builder() {
+            return new Builder();
         }
 
         public Type getType() {
@@ -528,6 +534,40 @@ public final class Middleware {
 
         public String getTo() {
             return to;
+        }
+
+        public boolean getRelativeRequired() {
+            return relativeRequired;
+        }
+
+        public static class Builder implements SmithyBuilder<Relative> {
+            private Type type;
+            private String to;
+            private boolean relativeRequired = true;
+
+            public Builder type(Type type) {
+                this.type = type;
+                return this;
+            }
+
+            public Builder to(String string) {
+                this.to = string;
+                return this;
+            }
+
+            public Builder to(Symbol to) {
+                this.to = to.toString();
+                return this;
+            }
+
+            public Builder disableRelativeRequired() {
+                this.relativeRequired = false;
+                return this;
+            }
+
+            public Relative build() {
+                return new Relative(this);
+            }
         }
 
         public String toString() {
