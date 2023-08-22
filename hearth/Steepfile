@@ -2,7 +2,7 @@
 
 D = Steep::Diagnostic
 
-target :lib do
+target :app do
   signature 'sig'
 
   configure_code_diagnostics(D::Ruby.strict)
