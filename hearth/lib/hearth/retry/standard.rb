@@ -30,7 +30,7 @@ module Hearth
         @capacity_amount = @retry_quota.checkout_capacity(error_info)
         return unless @capacity_amount.positive?
 
-        delay = error_info.hints[:retry_after_hint]
+        delay = error_info.hints[:retry_after]
         delay ||= @backoff.call(retry_token.retry_count)
         retry_token.retry_count += 1
         retry_token.retry_delay = delay
