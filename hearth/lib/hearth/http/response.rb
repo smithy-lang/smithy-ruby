@@ -3,7 +3,6 @@
 module Hearth
   module HTTP
     # Represents an HTTP Response.
-    # @api private
     class Response < Hearth::Response
       # @param [Integer] status
       # @param [String, nil] reason

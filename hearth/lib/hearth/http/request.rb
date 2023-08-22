@@ -3,7 +3,6 @@
 module Hearth
   module HTTP
     # Represents an HTTP request.
-    # @api private
     class Request < Hearth::Request
       # @param [String] http_method
       # @param [Fields] fields

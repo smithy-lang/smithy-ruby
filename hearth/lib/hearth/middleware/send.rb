@@ -91,7 +91,7 @@ module Hearth
         case stub
         when Proc
           stub = stub.call(input)
-          apply_stub(stub, input, context, output) if stub
+          apply_stub(stub, input, context, output)
         when Exception, ApiError
           output.error = stub
         when Hash

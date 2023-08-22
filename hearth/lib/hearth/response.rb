@@ -4,7 +4,6 @@ require 'stringio'
 
 module Hearth
   # Represents a base response.
-  # @api private
   class Response
     # @param [IO] body (StringIO.new)
     def initialize(body: StringIO.new)

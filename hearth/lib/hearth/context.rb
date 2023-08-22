@@ -13,7 +13,6 @@ module Hearth
       @params = options[:params]
       @metadata = options[:metadata] || {}
       @interceptors = options[:interceptors] || InterceptorList.new
-      @interceptor_attributes = {}
     end
 
     # @return [Symbol] Name of the API operation called.
@@ -46,8 +45,7 @@ module Hearth
         input: input,
         request: request,
         response: response,
-        output: output,
-        attributes: @interceptor_attributes
+        output: output
       )
     end
   end
