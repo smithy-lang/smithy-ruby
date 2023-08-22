@@ -59,7 +59,7 @@ module Hearth
         signer.sign(
           request: context.request,
           identity: identity,
-          signer_properties: signer_properties
+          properties: signer_properties
         )
       end
     end

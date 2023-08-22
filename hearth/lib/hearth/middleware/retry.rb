@@ -6,7 +6,7 @@ module Hearth
     # @api private
     class Retry
       # @param [Class] app The next middleware in the stack.
-      # @param [Standard|Adaptive] retry_strategy (Standard) The retry strategy
+      # @param [Strategy] retry_strategy (Standard) The retry strategy
       #   to use. Hearth has two built in classes, Standard and Adaptive.
       #   * `Retry::Standard` - A standardized set of retry rules across
       #     the AWS SDKs. This includes support for retry quotas, which limit
@@ -17,11 +17,9 @@ module Hearth
       #     behavior in the future.
       def initialize(app, retry_strategy:, error_inspector_class:)
         @app = app
-
         @retry_strategy = retry_strategy
-        # undocumented - protocol specific
         @error_inspector_class = error_inspector_class
-        # instance state
+
         @retries = 0
       end
 
