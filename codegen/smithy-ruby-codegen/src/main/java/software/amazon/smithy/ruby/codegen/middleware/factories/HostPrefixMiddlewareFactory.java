@@ -41,12 +41,15 @@ public final class HostPrefixMiddlewareFactory {
                 .documentation(hostPrefixDocumentation)
                 .build();
 
+        Middleware.Relative buildRelative = Middleware.Relative.builder()
+                .type(Middleware.Relative.Type.BEFORE)
+                .to(Hearth.BUILD_MIDDLEWARE)
+                .build();
+
         return Middleware.builder()
                 .klass("Hearth::Middleware::HostPrefix")
                 .step(MiddlewareStackStep.BUILD)
-                .relative(new Middleware.Relative(
-                        Middleware.Relative.Type.BEFORE, Hearth.BUILD_MIDDLEWARE)
-                )
+                .relative(buildRelative)
                 .addConfig(disableHostPrefix)
                 .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
                 .operationParams((ctx, operation) -> {
