@@ -20,12 +20,11 @@ module Hearth
       end
 
       describe '#identity_resolver' do
-        let(:identity_resolver) { double('identity_resolver') }
-
-        it 'returns an identity resolver using identity_type' do
-          identity_resolvers = { Identities::Anonymous => identity_resolver }
-          resolver = subject.identity_resolver(identity_resolvers)
-          expect(resolver).to eq(identity_resolver)
+        it 'returns a static identity resolver' do
+          resolver = subject.identity_resolver({})
+          expect(resolver).to be_a(Hearth::IdentityResolver)
+          identity = resolver.identity
+          expect(identity).to be_a(Identities::Anonymous)
         end
       end
     end

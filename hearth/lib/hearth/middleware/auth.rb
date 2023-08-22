@@ -13,9 +13,7 @@ module Hearth
         @auth_params = auth_params
         @auth_schemes = auth_schemes.to_h { |s| [s.scheme_id, s] }
 
-        @identity_resolvers = {
-          Identities::Anonymous => anonymous_identity_resolver
-        }
+        @identity_resolvers = {}
         kwargs.each do |key, value|
           next unless key.end_with?('_identity_resolver')
 
@@ -35,10 +33,6 @@ module Hearth
       private
 
       SelectedAuthScheme = Struct.new(:identity, :signer, :auth_option)
-
-      def anonymous_identity_resolver
-        Hearth::IdentityResolver.new(proc { Identities::Anonymous.new })
-      end
 
       def identity_type_for(config_key)
         case config_key
