@@ -132,6 +132,21 @@ module Hearth
           expect(subject.uri.to_s).to eq('http://data.example.com')
         end
       end
+
+      describe '#dup' do
+        before { subject.headers['name'] = 'value' }
+
+        it 'duplicates the request' do
+          request = subject.dup
+          # Symbols are not duped
+          expect(request.http_method).to eq(http_method)
+          expect(request.uri).to eq(uri)
+          expect(request.uri).not_to equal(uri)
+          expect(request.fields['name'].value).to eq('value')
+          expect(request.fields).not_to equal(fields)
+          expect(request.body).to eq(body)
+        end
+      end
     end
   end
 end

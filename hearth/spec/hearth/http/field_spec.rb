@@ -86,6 +86,18 @@ module Hearth
           expect(header.to_h).to eq('X-Header' => 'foo')
         end
       end
+
+      describe '#dup' do
+        it 'returns a copy of the field' do
+          copy = header.dup
+          expect(copy.name).to eq(header.name)
+          expect(copy.name).not_to equal(header.name)
+          expect(copy.value).to eq(header.value)
+          expect(copy.value).not_to equal(header.value)
+          # Symbols are not duped
+          expect(copy.kind).to eq(header.kind)
+        end
+      end
     end
   end
 end

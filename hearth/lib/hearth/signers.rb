@@ -5,7 +5,7 @@ module Hearth
     # Base class for all Signer classes.
     class Base
       def sign(request:, identity:, properties: {})
-        raise NotImplementedError
+        # Do nothing by default
       end
     end
   end

@@ -134,10 +134,11 @@ module Hearth
 
       # @api private
       def initialize_copy(other)
-        @http_method = other.http_method.dup
+        @http_method = other.http_method
         @fields = other.fields.dup
         @headers = Fields::Proxy.new(@fields, :header)
         @trailers = Fields::Proxy.new(@fields, :trailer)
+        super
       end
     end
   end
