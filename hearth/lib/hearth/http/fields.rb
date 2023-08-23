@@ -62,16 +62,6 @@ module Hearth
         @entries = {}
       end
 
-      # @api private
-      def initialize_copy(other)
-        @entries = {}
-        other.each do |field|
-          field = field.dup
-          self[field.name] = field
-        end
-        @encoding = other.encoding.dup
-      end
-
       # Proxy class that wraps Fields to create Headers and Trailers
       class Proxy
         include Enumerable

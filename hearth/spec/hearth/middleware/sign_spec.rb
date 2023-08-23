@@ -23,17 +23,24 @@ module Hearth
 
         let(:signer) { double('signer', sign: nil) }
         let(:identity) { double('identity') }
-        let(:auth_option) { double('auth_option', signer_properties: {}) }
-        let(:auth_scheme) do
+        let(:auth_option) do
           double(
-            'auth_scheme',
+            'auth_option',
+            signer_properties: {},
+            identity_properties: {}
+          )
+        end
+        let(:resolved_auth) do
+          double(
+            'resolved_auth',
             signer: signer,
+            signer_properties: auth_option.signer_properties,
             identity: identity,
-            auth_option: auth_option
+            identity_properties: auth_option.identity_properties
           )
         end
 
-        before { context.auth_scheme = auth_scheme }
+        before { context.auth = resolved_auth }
 
         it 'signs then calls the next middleware' do
           expect(signer).to receive(:sign)

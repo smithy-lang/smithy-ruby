@@ -18,11 +18,5 @@ module Hearth
 
     # @return [IO]
     attr_accessor :body
-
-    # @api private
-    def initialize_copy(other)
-      @uri = other.uri.dup
-      # body should not be copied
-    end
   end
 end

@@ -19,10 +19,10 @@ module Hearth
     attr_reader :operation_name
 
     # @return [Hearth::HTTP::Request]
-    attr_accessor :request
+    attr_reader :request
 
     # @return [Hearth::HTTP::Response]
-    attr_accessor :response
+    attr_reader :response
 
     # @return [Logger] An instance of the logger configured for the Client.
     attr_reader :logger
@@ -36,8 +36,22 @@ module Hearth
     # @return [Array] An ordered list of interceptors
     attr_reader :interceptors
 
-    # @return [SelectedAuthScheme, nil] The auth scheme for the request.
-    attr_accessor :auth_scheme
+    # @return [ResolvedAuth, nil] The resolved auth for the request.
+    attr_accessor :auth
+
+    # Returns the metadata for the given `key`.
+    # @param [Symbol] key
+    # @return [Object]
+    def [](key)
+      @metadata[key]
+    end
+
+    # Sets metadata for the given `key`.
+    # @param [Symbol] key
+    # @param [Object] value
+    def []=(key, value)
+      @metadata[key] = value
+    end
 
     # @api private
     def interceptor_context(input, output)

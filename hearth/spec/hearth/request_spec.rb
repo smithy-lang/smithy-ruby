@@ -14,15 +14,5 @@ module Hearth
         expect(request.uri).to be_a(URI)
       end
     end
-
-    describe '#dup' do
-      it 'duplicates the request' do
-        request = subject.dup
-        expect(request.uri).to eq(uri)
-        expect(request.uri).not_to equal(uri)
-        # Body is not copied
-        expect(request.body).to eq(body)
-      end
-    end
   end
 end

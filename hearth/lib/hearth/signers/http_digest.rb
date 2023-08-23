@@ -8,6 +8,11 @@ module Hearth
         # TODO: requires a nonce from the server - this cannot
         # be implemented unless we rescue from a 401 and retry
         # with the nonce
+        raise NotImplementedError
+      end
+
+      def reset(request:, properties:)
+        raise NotImplementedError
       end
     end
   end

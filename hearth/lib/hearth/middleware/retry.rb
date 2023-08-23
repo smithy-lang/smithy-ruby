@@ -29,7 +29,6 @@ module Hearth
         )
 
         output = nil
-        request_copy = context.request.dup
         loop do
           interceptor_error = context.interceptors.apply(
             hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT,
@@ -72,7 +71,8 @@ module Hearth
 
           break unless token && output.error
 
-          reset_request(request_copy, context, output)
+          reset_request(context)
+          reset_response(context, output)
           @retries += 1
         end
         output
@@ -80,9 +80,18 @@ module Hearth
 
       private
 
-      def reset_request(request_copy, context, output)
-        request_copy.body.rewind if request_copy.body.respond_to?(:rewind)
-        context.request = request_copy
+      def reset_request(context)
+        request = context.request
+        request.body.rewind if request.body.respond_to?(:rewind)
+
+        auth = context.auth
+        auth.signer.reset(
+          request: request,
+          properties: auth.signer_properties
+        )
+      end
+
+      def reset_response(context, output)
         context.response.reset
         output.error = nil
       end

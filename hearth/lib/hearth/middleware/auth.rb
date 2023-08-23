@@ -26,13 +26,18 @@ module Hearth
       # @return [Output]
       def call(input, context)
         auth_options = @auth_resolver.resolve(@auth_params)
-        context.auth_scheme = select_auth_scheme(auth_options)
+        context.auth = resolve_auth(auth_options)
         @app.call(input, context)
       end
 
       private
 
-      SelectedAuthScheme = Struct.new(:identity, :signer, :auth_option)
+      ResolvedAuth = Struct.new(
+        :signer,
+        :signer_properties,
+        :identity,
+        :identity_properties
+      )
 
       def identity_type_for(config_key)
         case config_key
@@ -47,18 +52,18 @@ module Hearth
         end
       end
 
-      def select_auth_scheme(auth_options)
+      def resolve_auth(auth_options)
         failures = []
 
         auth_options.each do |auth_option|
           auth_scheme = @auth_schemes[auth_option.scheme_id]
-          selected_auth_scheme = try_load_auth_scheme(
+          resolved_auth = try_load_auth_scheme(
             auth_option,
             auth_scheme,
             failures
           )
 
-          return selected_auth_scheme if selected_auth_scheme
+          return resolved_auth if resolved_auth
         end
 
         raise failures.join("\n")
@@ -82,7 +87,12 @@ module Hearth
         identity_properties = auth_option.identity_properties
         identity = identity_resolver.identity(identity_properties)
 
-        SelectedAuthScheme.new(identity, auth_scheme.signer, auth_option)
+        ResolvedAuth.new(
+          identity: identity,
+          identity_properties: auth_option.identity_properties,
+          signer: auth_scheme.signer,
+          signer_properties: auth_option.signer_properties
+        )
       end
     end
   end

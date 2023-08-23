@@ -118,6 +118,33 @@ module Hearth
         uri.query = uri.query ? "#{uri.query}&#{param_list}" : param_list.to_s
       end
 
+      # Remove querystring parameter from the HTTP request URI.
+      #
+      #    http_req.uri = "https://example.com"
+      #    http_req.append_query_param('query')
+      #    http_req.append_query_param('empty', '')
+      #    http_req.append_query_param('deleteme', 'true')
+      #    http_req.append_query_param('key', 'value')
+      #    #=> "https://example.com?query&empty=&deleteme=true&key=value"
+      #
+      #    http_req.remove_query_param('deleteme')
+      #    #=> "query&empty=&key=value"
+      #
+      #    http_req.uri.to_s
+      #    #=> "https://example.com?query&empty=&key=value"
+      #
+      # @param [String] name The name of the querystring parameter to remove.
+      def remove_query_param(name)
+        parsed = CGI.parse(uri.query)
+        parsed.delete(name)
+        # encode_www_form ignores query params without values
+        # (CGI parses these as empty lists)
+        parsed.each do |key, values|
+          parsed[key] = values.empty? ? nil : values
+        end
+        uri.query = URI.encode_www_form(parsed)
+      end
+
       # Append a host prefix to the HTTP request URI.
       #
       #     http_req.uri = "https://example.com"
@@ -130,15 +157,6 @@ module Hearth
       #
       def prefix_host(prefix)
         uri.host = prefix + uri.host
-      end
-
-      # @api private
-      def initialize_copy(other)
-        @http_method = other.http_method
-        @fields = other.fields.dup
-        @headers = Fields::Proxy.new(@fields, :header)
-        @trailers = Fields::Proxy.new(@fields, :trailer)
-        super
       end
     end
   end

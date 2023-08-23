@@ -89,17 +89,6 @@ module Hearth
         end
       end
 
-      describe '#dup' do
-        it 'duplicates the fields' do
-          copy = fields.dup
-          expect(copy['x-header'].value).to eq(fields['x-header'].value)
-          expect(copy['x-trailer'].value).to eq(fields['x-trailer'].value)
-          expect(copy['x-header']).not_to equal(fields['x-header'])
-          expect(copy['x-trailer']).not_to equal(fields['x-trailer'])
-          expect(copy).not_to equal(fields)
-        end
-      end
-
       describe Fields::Proxy do
         let(:proxy) { Fields::Proxy.new(fields, :header) }
 

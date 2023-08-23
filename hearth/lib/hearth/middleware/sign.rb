@@ -50,16 +50,12 @@ module Hearth
       private
 
       def sign_request(context)
-        auth_scheme = context.auth_scheme
+        auth = context.auth
 
-        signer = auth_scheme.signer
-        identity = auth_scheme.identity
-        signer_properties = auth_scheme.auth_option.signer_properties
-
-        signer.sign(
+        auth.signer.sign(
           request: context.request,
-          identity: identity,
-          properties: signer_properties
+          identity: auth.identity,
+          properties: auth.signer_properties
         )
       end
     end

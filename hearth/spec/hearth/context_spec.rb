@@ -39,6 +39,14 @@ module Hearth
       end
     end
 
+    describe '#auth' do
+      it 'allows for auth to be set' do
+        resolved_auth = Hearth::Middleware::Auth::ResolvedAuth.new
+        subject.auth = resolved_auth
+        expect(subject.auth).to eq(resolved_auth)
+      end
+    end
+
     describe '#interceptor_context' do
       let(:input) { double('input') }
       let(:output) { double('output') }
@@ -52,11 +60,16 @@ module Hearth
       end
     end
 
-    describe '#auth_scheme' do
-      it 'allows for auth_scheme to be set' do
-        auth_scheme = Hearth::Middleware::Auth::SelectedAuthScheme.new
-        subject.auth_scheme = auth_scheme
-        expect(subject.auth_scheme).to eq(auth_scheme)
+    describe '#[]' do
+      it 'returns the metadata for the given key' do
+        expect(subject[:foo]).to eq('bar')
+      end
+    end
+
+    describe '#[]=' do
+      it 'sets the metadata for the given key' do
+        subject[:foo] = 'baz'
+        expect(subject[:foo]).to eq('baz')
       end
     end
   end
