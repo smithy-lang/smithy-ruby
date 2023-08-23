@@ -36,7 +36,8 @@ module Hearth
         :signer,
         :signer_properties,
         :identity,
-        :identity_properties
+        :identity_properties,
+        keyword_init: true
       )
 
       def identity_type_for(config_key)

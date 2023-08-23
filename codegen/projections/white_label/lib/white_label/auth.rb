@@ -13,10 +13,10 @@ module WhiteLabel
 
     SCHEMES = [
       Hearth::AuthSchemes::HTTPBasic.new,
-      Hearth::AuthSchemes::HTTPDigest.new,
-      Hearth::AuthSchemes::Anonymous.new,
       Hearth::AuthSchemes::HTTPBearer.new,
-      Hearth::AuthSchemes::HTTPApiKey.new
+      Hearth::AuthSchemes::HTTPDigest.new,
+      Hearth::AuthSchemes::HTTPApiKey.new,
+      Hearth::AuthSchemes::Anonymous.new
     ].freeze
 
     class Resolver

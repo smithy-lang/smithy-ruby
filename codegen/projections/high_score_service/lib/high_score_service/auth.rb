@@ -12,11 +12,11 @@ module HighScoreService
     Params = Struct.new(:operation_name, keyword_init: true)
 
     SCHEMES = [
-      Hearth::AuthSchemes::Anonymous.new,
-      Hearth::AuthSchemes::HTTPBearer.new,
-      Hearth::AuthSchemes::HTTPDigest.new,
       Hearth::AuthSchemes::HTTPApiKey.new,
-      Hearth::AuthSchemes::HTTPBasic.new
+      Hearth::AuthSchemes::HTTPBasic.new,
+      Hearth::AuthSchemes::HTTPDigest.new,
+      Hearth::AuthSchemes::HTTPBearer.new,
+      Hearth::AuthSchemes::Anonymous.new
     ].freeze
 
     class Resolver
