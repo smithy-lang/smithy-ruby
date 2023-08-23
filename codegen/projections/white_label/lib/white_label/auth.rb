@@ -12,10 +12,10 @@ module WhiteLabel
     Params = Struct.new(:operation_name, keyword_init: true)
 
     SCHEMES = [
+      Hearth::AuthSchemes::HTTPApiKey.new,
       Hearth::AuthSchemes::HTTPBasic.new,
       Hearth::AuthSchemes::HTTPBearer.new,
       Hearth::AuthSchemes::HTTPDigest.new,
-      Hearth::AuthSchemes::HTTPApiKey.new,
       Hearth::AuthSchemes::Anonymous.new
     ].freeze
 

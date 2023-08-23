@@ -14,8 +14,8 @@ module HighScoreService
     SCHEMES = [
       Hearth::AuthSchemes::HTTPApiKey.new,
       Hearth::AuthSchemes::HTTPBasic.new,
-      Hearth::AuthSchemes::HTTPDigest.new,
       Hearth::AuthSchemes::HTTPBearer.new,
+      Hearth::AuthSchemes::HTTPDigest.new,
       Hearth::AuthSchemes::Anonymous.new
     ].freeze
 

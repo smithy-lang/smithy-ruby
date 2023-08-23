@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -103,9 +104,9 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    authTraitsSet.stream().forEach(trait -> {
-                        renderAuthScheme(writer, trait);
-                    });
+                    authTraitsSet.stream()
+                            .sorted(Comparator.comparing(Trait::toShapeId))
+                            .forEach(trait -> renderAuthScheme(writer, trait));
                 })
                 .unwrite(",\n")
                 .write("")

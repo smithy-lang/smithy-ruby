@@ -270,6 +270,8 @@ module WhiteLabel
           expect(resolved).to eq(identity)
           resolved
         end
+        # temporarily disabled because not implemented
+        expect_any_instance_of(Hearth::Signers::HTTPDigest).to receive(:sign)
         client.http_digest_auth({})
       end
     end
