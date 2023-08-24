@@ -13,7 +13,6 @@ module Hearth
       @params = options[:params]
       @metadata = options[:metadata] || {}
       @interceptors = options[:interceptors] || InterceptorList.new
-      @interceptor_attributes = {}
     end
 
     # @return [Symbol] Name of the API operation called.
@@ -37,8 +36,22 @@ module Hearth
     # @return [Array] An ordered list of interceptors
     attr_reader :interceptors
 
-    # @return [SelectedAuthScheme, nil] The auth scheme for the request.
-    attr_accessor :auth_scheme
+    # @return [ResolvedAuth, nil] The resolved auth for the request.
+    attr_accessor :auth
+
+    # Returns the metadata for the given `key`.
+    # @param [Symbol] key
+    # @return [Object]
+    def [](key)
+      @metadata[key]
+    end
+
+    # Sets metadata for the given `key`.
+    # @param [Symbol] key
+    # @param [Object] value
+    def []=(key, value)
+      @metadata[key] = value
+    end
 
     # @api private
     def interceptor_context(input, output)
@@ -46,8 +59,7 @@ module Hearth
         input: input,
         request: request,
         response: response,
-        output: output,
-        attributes: @interceptor_attributes
+        output: output
       )
     end
   end

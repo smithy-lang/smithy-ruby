@@ -90,8 +90,8 @@ module Hearth
       def apply_stub(stub, input, context, output)
         case stub
         when Proc
-          stub = stub.call(input, context)
-          apply_stub(stub, input, context, output) if stub
+          stub = stub.call(input)
+          apply_stub(stub, input, context, output)
         when Exception, ApiError
           output.error = stub
         when Hash

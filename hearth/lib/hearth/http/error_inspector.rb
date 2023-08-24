@@ -37,7 +37,7 @@ module Hearth
       def hints
         hints = {}
         if (retry_after = retry_after_hint)
-          hints[:retry_after_hint] = retry_after
+          hints[:retry_after] = retry_after
         end
         hints
       end

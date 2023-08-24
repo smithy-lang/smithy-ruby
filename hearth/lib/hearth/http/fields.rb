@@ -10,8 +10,8 @@ module Hearth
       # @param [Array<Field>] fields
       # @param [String] encoding
       def initialize(fields = [], encoding: 'utf-8')
-        unless fields.is_a?(Array)
-          raise ArgumentError, 'fields must be an Array'
+        unless fields.is_a?(Enumerable)
+          raise ArgumentError, 'fields must be an Enumerable of Field'
         end
 
         @entries = {}
@@ -49,9 +49,8 @@ module Hearth
 
       # @return [Enumerable<String,Field>]
       def each(&block)
-        @entries.each(&block)
+        @entries.values.each(&block)
       end
-      alias each_pair each
 
       # @return [Integer] Returns the number of Field entries.
       def size
@@ -98,8 +97,8 @@ module Hearth
 
         # @return [Enumerable<String,String>]
         def each(&block)
-          @fields.filter { |_k, v| v.kind == @kind }
-                 .to_h { |_k, v| [v.name, v.value(@fields.encoding)] }
+          @fields.filter { |f| f.kind == @kind }
+                 .to_h { |f| [f.name, f.value(@fields.encoding)] }
                  .each(&block)
         end
         alias each_pair each

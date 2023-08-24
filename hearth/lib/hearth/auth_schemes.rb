@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
+  # Namespace for all AuthScheme classes.
   module AuthSchemes
     # Base class for all AuthScheme classes.
     class Base

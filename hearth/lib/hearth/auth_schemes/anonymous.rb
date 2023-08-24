@@ -11,6 +11,11 @@ module Hearth
           identity_type: Identities::Anonymous
         )
       end
+
+      # @return [IdentityResolver, nil]
+      def identity_resolver(_identity_resolvers = {})
+        Hearth::IdentityResolver.new(proc { Identities::Anonymous.new })
+      end
     end
   end
 end

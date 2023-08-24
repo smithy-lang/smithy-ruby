@@ -153,6 +153,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -229,6 +230,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -307,6 +309,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -379,6 +382,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -451,6 +455,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -523,6 +528,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -595,6 +601,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -834,6 +841,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -910,6 +918,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -982,6 +991,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1054,6 +1064,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1126,6 +1137,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1203,6 +1215,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1280,6 +1293,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1360,6 +1374,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1439,6 +1454,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1513,6 +1529,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1587,6 +1604,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1662,6 +1680,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,
@@ -1740,6 +1759,7 @@ module WhiteLabel
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
         http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
       )
+      stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
         error_parser: Hearth::HTTP::ErrorParser.new(
           error_module: Errors,

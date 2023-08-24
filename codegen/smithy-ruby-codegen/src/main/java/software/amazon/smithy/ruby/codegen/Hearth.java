@@ -167,6 +167,11 @@ public final class Hearth {
             .name("Auth")
             .build();
 
+    public static final Symbol SIGN_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Sign")
+            .build();
+
     public static final Symbol PARSE_MIDDLEWARE = Symbol.builder()
             .namespace("Hearth::Middleware", "::")
             .name("Parse")

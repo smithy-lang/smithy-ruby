@@ -115,6 +115,93 @@ module Hearth
 
       before { allow(error).to receive(:retryable?).and_return(true) }
 
+      let(:token) { double('token', retry_delay: 0) }
+      let(:retry_strategy) do
+        double(
+          'retry',
+          acquire_initial_retry_token: token,
+          record_success: nil,
+          refresh_retry_token: nil
+        )
+      end
+      let(:app) { double('app') }
+      let(:output) { double('output', error: error) }
+      let(:subject) do
+        Hearth::Middleware::Retry.new(
+          app,
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: retry_strategy
+        )
+      end
+
+      let(:signer) { double('signer', reset: nil) }
+      let(:identity) { double('identity') }
+      let(:auth_option) do
+        double(
+          'auth_option',
+          signer_properties: {},
+          identity_properties: {}
+        )
+      end
+      let(:resolved_auth) do
+        double(
+          'resolved_auth',
+          signer: signer,
+          signer_properties: auth_option.signer_properties,
+          identity: identity,
+          identity_properties: auth_option.identity_properties
+        )
+      end
+
+      before { context.auth = resolved_auth }
+
+      it 'calls all of the interceptor hooks and the app' do
+        expect(interceptors).to receive(:apply)
+          .with(hash_including(
+                  hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
+                )).ordered
+        expect(app).to receive(:call).and_return(output).ordered
+        expect(interceptors).to receive(:apply)
+          .with(hash_including(
+                  hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
+                )).ordered
+        expect(interceptors).to receive(:apply)
+          .with(hash_including(
+                  hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
+                )).ordered
+
+        subject.call(input, context)
+      end
+
+      context 'read_before_attempt error' do
+        it 'returns output with the error and does not call app' do
+          expect(interceptors).to receive(:apply)
+            .with(hash_including(
+                    hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
+                  )).and_return(error)
+          expect(app).not_to receive(:call)
+
+          resp = subject.call(input, context)
+
+          expect(resp.error).to eq(error)
+        end
+      end
+
+      it 'resets request, response, and output error' do
+        expect(app).to receive(:call).and_return(output).twice
+        expect(retry_strategy).to receive(:refresh_retry_token)
+          .and_return(token, nil)
+
+        expect(request.body).to receive(:rewind)
+        expect(response).to receive(:reset)
+        expect(output).to receive(:error=).with(nil)
+        expect(signer).to receive(:reset).with(
+          request: request,
+          properties: auth_option.signer_properties
+        )
+        subject.call(input, context)
+      end
+
       context 'standard mode' do
         let(:retry_strategy) { Hearth::Retry::Standard.new }
         let(:retry_quota) do
@@ -362,57 +449,6 @@ module Hearth
           handle_with_retry success(3.0, 4.33, 4.28), middleware_args
           handle_with_retry throttle(3.2, 4.33, 2.99) +
                             success(3.4, 4.32, 3.45), middleware_args
-        end
-      end
-
-      context 'interceptors' do
-        let(:token) { double('token') }
-        let(:retry_strategy) do
-          double('retry',
-                 acquire_initial_retry_token: token,
-                 record_success: nil,
-                 refresh_retry_token: nil)
-        end
-        let(:app) { double('app') }
-        let(:output) { double('output', error: nil) }
-        let(:subject) do
-          Hearth::Middleware::Retry.new(
-            app,
-            error_inspector_class: Hearth::HTTP::ErrorInspector,
-            retry_strategy: retry_strategy
-          )
-        end
-
-        it 'calls all of the interceptor hooks and the app' do
-          expect(interceptors).to receive(:apply)
-            .with(hash_including(
-                    hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
-                  )).ordered
-          expect(app).to receive(:call).and_return(output).ordered
-          expect(interceptors).to receive(:apply)
-            .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
-                  )).ordered
-          expect(interceptors).to receive(:apply)
-            .with(hash_including(
-                    hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
-                  )).ordered
-
-          subject.call(input, context)
-        end
-
-        context 'read_before_attempt error' do
-          it 'returns output with the error and does not call app' do
-            expect(interceptors).to receive(:apply)
-              .with(hash_including(
-                      hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
-                    )).and_return(error)
-            expect(app).not_to receive(:call)
-
-            resp = subject.call(input, context)
-
-            expect(resp.error).to eq(error)
-          end
         end
       end
     end

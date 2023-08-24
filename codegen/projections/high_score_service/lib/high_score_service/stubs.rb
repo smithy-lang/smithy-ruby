@@ -11,6 +11,26 @@ module HighScoreService
   # @api private
   module Stubs
 
+    class ApiKeyAuth
+      def self.build(params, context:)
+        Params::ApiKeyAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ApiKeyAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class AttributeErrors
       def self.default(visited = [])
         return nil if visited.include?('AttributeErrors')
@@ -27,6 +47,46 @@ module HighScoreService
           data[key] = Stubs::ErrorMessages.stub(value) unless value.nil?
         end
         data
+      end
+    end
+
+    class BasicAuth
+      def self.build(params, context:)
+        Params::BasicAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::BasicAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class BearerAuth
+      def self.build(params, context:)
+        Params::BearerAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::BearerAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
       end
     end
 
@@ -63,6 +123,26 @@ module HighScoreService
 
       def self.validate!(output, context:)
         Validators::DeleteHighScoreOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class DigestAuth
+      def self.build(params, context:)
+        Params::DigestAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DigestAuthOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])

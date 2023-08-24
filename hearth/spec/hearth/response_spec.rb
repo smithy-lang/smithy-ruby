@@ -25,6 +25,16 @@ module Hearth
         response.reset
         expect(response.body.string).to eq('')
       end
+
+      it 'does not truncate IO' do
+        read, write = IO.pipe
+        write.write('foo')
+        response = Response.new(body: read)
+        response.reset
+        write.close
+        expect(read.read).to eq('foo')
+        read.close
+      end
     end
   end
 end

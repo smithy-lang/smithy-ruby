@@ -4,7 +4,6 @@ require 'stringio'
 
 module Hearth
   # Represents a base response.
-  # @api private
   class Response
     # @param [IO] body (StringIO.new)
     def initialize(body: StringIO.new)
@@ -27,7 +26,7 @@ module Hearth
     # Resets the response.
     # @return [Response]
     def reset
-      @body.truncate(0)
+      @body.truncate(0) if @body.respond_to?(:truncate)
       self
     end
   end

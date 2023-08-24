@@ -50,10 +50,6 @@ module Hearth
         double('http_bearer_identity_resolver')
       end
 
-      let(:anonymous_identity_resolver) do
-        double('anonymous_identity_resolver')
-      end
-
       subject do
         Auth.new(
           app,
@@ -62,11 +58,6 @@ module Hearth
           auth_schemes: auth_schemes,
           **identity_resolvers
         )
-      end
-
-      before do
-        expect(IdentityResolver).to receive(:new)
-          .and_return(anonymous_identity_resolver)
       end
 
       describe '#initialize' do
@@ -81,13 +72,11 @@ module Hearth
           resolvers = subject.instance_variable_get(:@identity_resolvers)
           expect(resolvers).to be_a(Hash)
           expect(resolvers.keys).to eq [
-            Identities::Anonymous,
             Identities::HTTPApiKey,
             Identities::HTTPBearer,
             Identities::HTTPLogin
           ]
           expect(resolvers.values).to eq [
-            anonymous_identity_resolver,
             identity_resolvers[:http_api_key_identity_resolver],
             identity_resolvers[:http_bearer_identity_resolver],
             identity_resolvers[:http_login_identity_resolver]
@@ -104,8 +93,7 @@ module Hearth
           )
           resolvers = auth.instance_variable_get(:@identity_resolvers)
           expect(resolvers).to be_a(Hash)
-          expect(resolvers.keys).to eq([Identities::Anonymous])
-          expect(resolvers.values).to eq([anonymous_identity_resolver])
+          expect(resolvers).to be_empty
         end
 
         it 'raises an error for unknown identity types' do

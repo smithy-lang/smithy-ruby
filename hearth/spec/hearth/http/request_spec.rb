@@ -29,33 +29,29 @@ module Hearth
 
       describe '#headers' do
         it 'allows setting of headers' do
-          request = Request.new
-          request.headers['name'] = 'value'
-          expect(request.fields['name'].value).to eq('value')
-          expect(request.fields['name'].kind).to eq(:header)
+          subject.headers['name'] = 'value'
+          expect(subject.fields['name'].value).to eq('value')
+          expect(subject.fields['name'].kind).to eq(:header)
         end
 
         it 'lets you get a hash of only the headers' do
-          request = Request.new
-          request.headers['name'] = 'value'
-          request.trailers['trailer'] = 'trailer-value'
-          expect(request.headers.to_h).to eq('name' => 'value')
+          subject.headers['name'] = 'value'
+          subject.trailers['trailer'] = 'trailer-value'
+          expect(subject.headers.to_h).to eq('name' => 'value')
         end
       end
 
       describe '#trailers' do
         it 'allows setting of trailers' do
-          request = Request.new
-          request.trailers['name'] = 'value'
-          expect(request.fields['name'].value).to eq('value')
-          expect(request.fields['name'].kind).to eq(:trailer)
+          subject.trailers['name'] = 'value'
+          expect(subject.fields['name'].value).to eq('value')
+          expect(subject.fields['name'].kind).to eq(:trailer)
         end
 
         it 'lets you get a hash of only the trailers' do
-          request = Request.new
-          request.trailers['name'] = 'value'
-          request.headers['header'] = 'header-value'
-          expect(request.trailers.to_h).to eq('name' => 'value')
+          subject.trailers['name'] = 'value'
+          subject.headers['header'] = 'header-value'
+          expect(subject.trailers.to_h).to eq('name' => 'value')
         end
       end
 
@@ -115,14 +111,27 @@ module Hearth
           params['key 3'] = 'value'
           params['key 4'] = %w[value value2]
           subject.append_query_param_list(params)
-          expect(subject.uri.to_s)
-            .to eq('http://example.com?original&key%201&key%202=&key%203=value&key%204=value&key%204=value2')
+          expected = 'http://example.com?original&key%201&key%202=&' \
+                     'key%203=value&key%204=value&key%204=value2'
+          expect(subject.uri.to_s).to eq(expected)
         end
 
         it 'does not append empty param lists' do
           params = Hearth::Query::ParamList.new
           subject.append_query_param_list(params)
           expect(subject.uri.to_s).to eq('http://example.com')
+        end
+      end
+
+      describe '#remove_query_param' do
+        it 'removes a single value' do
+          subject.append_query_param('query')
+          subject.append_query_param('empty', '')
+          subject.append_query_param('deleteme', 'true')
+          subject.append_query_param('key', 'value')
+          subject.remove_query_param('deleteme')
+          expected = 'http://example.com?query&empty=&key=value'
+          expect(subject.uri.to_s).to eq(expected)
         end
       end
 
