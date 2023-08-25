@@ -71,8 +71,17 @@ module Hearth
       let(:logger) { double('logger') }
       let(:input) { double('input') }
       let(:output) { double('output', error: nil) }
-      let(:context) { double('context', logger: logger) }
-      let(:ictx) { double('interceptor_context') }
+      let(:request) { double('request') }
+      let(:response) { double('response') }
+      let(:context) do
+        double(
+          'context',
+          request: request,
+          response: response,
+          logger: logger
+        )
+      end
+      let(:i_ctx) { double('interceptor_context') }
       let(:error) { StandardError.new }
 
       let(:interceptors) do
@@ -81,14 +90,19 @@ module Hearth
       let(:hook) { :read_before_execution }
 
       before(:each) do
-        allow(context).to receive(:interceptor_context).and_return(ictx)
+        allow(context).to receive(:interceptor_context).and_return(i_ctx)
       end
 
       it 'calls each interceptor hook with context' do
-        expect(context).to receive(:interceptor_context)
-          .with(input, output).and_return(ictx)
-        expect(interceptor1).to receive(hook).with(ictx)
-        expect(interceptor2).to receive(hook).with(ictx)
+        expect(Interceptor::Context).to receive(:new).with(
+          input: input,
+          request: request,
+          response: response,
+          output: output
+        ).and_return(i_ctx)
+
+        expect(interceptor1).to receive(hook).with(i_ctx)
+        expect(interceptor2).to receive(hook).with(i_ctx)
 
         out = interceptors.apply(
           hook: hook,
