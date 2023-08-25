@@ -52,15 +52,5 @@ module Hearth
     def []=(key, value)
       @metadata[key] = value
     end
-
-    # @api private
-    def interceptor_context(input, output)
-      Hearth::Interceptor::Context.new(
-        input: input,
-        request: request,
-        response: response,
-        output: output
-      )
-    end
   end
 end
