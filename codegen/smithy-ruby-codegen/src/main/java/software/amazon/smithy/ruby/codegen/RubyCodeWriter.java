@@ -189,14 +189,14 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     /**
      * Writes a yard param.
      *
-     * @param returnType    the Ruby Type
+     * @param paramType     the Ruby Type
      * @param param         name of the parameter
      * @param documentation documentation to write
      * @return Returns the CodeWriter
      */
-    public RubyCodeWriter writeYardParam(String returnType, String param, String documentation) {
+    public RubyCodeWriter writeYardParam(String paramType, String param, String documentation) {
         writeDocs((w) -> {
-            w.write("@param [$L] $L", returnType, param);
+            w.write("@param [$L] $L", paramType, param);
             w.writeIndentedParts(documentation);
             w.write("");
         });
@@ -319,6 +319,25 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardSince(String since) {
         writeDocs((w) -> {
             w.write("@since $L", since);
+            w.write("");
+        });
+        return this;
+    }
+
+    /**
+     * Writes a yard reference with an optional tag.
+     *
+     * @param tag       the tag to write
+     * @param reference the reference object
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter writeYardReference(String tag, String reference) {
+        writeDocs((w) -> {
+            if (tag.isEmpty()) {
+                w.write("(see $L)", reference);
+            } else {
+                w.write("@$L (see $L)", tag, reference);
+            }
             w.write("");
         });
         return this;

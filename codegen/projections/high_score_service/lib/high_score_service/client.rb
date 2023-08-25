@@ -36,7 +36,11 @@ module HighScoreService
     attr_reader :config
 
     # @param [Hash] params
-    #   See {Types::ApiKeyAuthInput}.
+    #   Request parameters for this operation. See {Types::ApiKeyAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::ApiKeyAuthOutput]
     #
@@ -107,7 +111,11 @@ module HighScoreService
     end
 
     # @param [Hash] params
-    #   See {Types::BasicAuthInput}.
+    #   Request parameters for this operation. See {Types::BasicAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::BasicAuthOutput]
     #
@@ -178,7 +186,11 @@ module HighScoreService
     end
 
     # @param [Hash] params
-    #   See {Types::BearerAuthInput}.
+    #   Request parameters for this operation. See {Types::BearerAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::BearerAuthOutput]
     #
@@ -251,7 +263,11 @@ module HighScoreService
     # Create a new high score
     #
     # @param [Hash] params
-    #   See {Types::CreateHighScoreInput}.
+    #   Request parameters for this operation. See {Types::CreateHighScoreInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [HighScoreParams] :high_score
     #   The high score params
@@ -339,7 +355,11 @@ module HighScoreService
     # Delete a high score
     #
     # @param [Hash] params
-    #   See {Types::DeleteHighScoreInput}.
+    #   Request parameters for this operation. See {Types::DeleteHighScoreInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [String] :id
     #   The high score id
@@ -415,7 +435,11 @@ module HighScoreService
     end
 
     # @param [Hash] params
-    #   See {Types::DigestAuthInput}.
+    #   Request parameters for this operation. See {Types::DigestAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::DigestAuthOutput]
     #
@@ -488,7 +512,11 @@ module HighScoreService
     # Get a high score
     #
     # @param [Hash] params
-    #   See {Types::GetHighScoreInput}.
+    #   Request parameters for this operation. See {Types::GetHighScoreInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [String] :id
     #   The high score id
@@ -572,7 +600,11 @@ module HighScoreService
     # List all high scores
     #
     # @param [Hash] params
-    #   See {Types::ListHighScoresInput}.
+    #   Request parameters for this operation. See {Types::ListHighScoresInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::ListHighScoresOutput]
     #
@@ -652,7 +684,11 @@ module HighScoreService
     # Update a high score
     #
     # @param [Hash] params
-    #   See {Types::UpdateHighScoreInput}.
+    #   Request parameters for this operation. See {Types::UpdateHighScoreInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [String] :id
     #   The high score id

@@ -37,7 +37,11 @@ module RailsJson
     # This example uses all query string types.
     #
     # @param [Hash] params
-    #   See {Types::AllQueryStringTypesInput}.
+    #   Request parameters for this operation. See {Types::AllQueryStringTypesInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::AllQueryStringTypesOutput]
     #
@@ -147,7 +151,11 @@ module RailsJson
     # serialized (implementations may need to merge them together).
     #
     # @param [Hash] params
-    #   See {Types::ConstantAndVariableQueryStringInput}.
+    #   Request parameters for this operation. See {Types::ConstantAndVariableQueryStringInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::ConstantAndVariableQueryStringOutput]
     #
@@ -223,7 +231,11 @@ module RailsJson
     # in no way conflict with the label, `{hello}`.
     #
     # @param [Hash] params
-    #   See {Types::ConstantQueryStringInput}.
+    #   Request parameters for this operation. See {Types::ConstantQueryStringInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::ConstantQueryStringOutput]
     #
@@ -295,7 +307,11 @@ module RailsJson
     # This example serializes a document as part of the payload.
     #
     # @param [Hash] params
-    #   See {Types::DocumentTypeInput}.
+    #   Request parameters for this operation. See {Types::DocumentTypeInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::DocumentTypeOutput]
     #
@@ -377,7 +393,11 @@ module RailsJson
     # This example serializes a document as the entire HTTP payload.
     #
     # @param [Hash] params
-    #   See {Types::DocumentTypeAsPayloadInput}.
+    #   Request parameters for this operation. See {Types::DocumentTypeAsPayloadInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::DocumentTypeAsPayloadOutput]
     #
@@ -455,7 +475,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::EmptyOperationInput}.
+    #   Request parameters for this operation. See {Types::EmptyOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::EmptyOperationOutput]
     #
@@ -523,7 +547,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointOperationInput}.
+    #   Request parameters for this operation. See {Types::EndpointOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::EndpointOperationOutput]
     #
@@ -595,7 +623,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointWithHostLabelOperationInput}.
+    #   Request parameters for this operation. See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::EndpointWithHostLabelOperationOutput]
     #
@@ -678,7 +710,11 @@ module RailsJson
     # properly deserialize successful and error responses.
     #
     # @param [Hash] params
-    #   See {Types::GreetingWithErrorsInput}.
+    #   Request parameters for this operation. See {Types::GreetingWithErrorsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::GreetingWithErrorsOutput]
     #
@@ -752,7 +788,11 @@ module RailsJson
     # not a structure or a union type.
     #
     # @param [Hash] params
-    #   See {Types::HttpPayloadTraitsInput}.
+    #   Request parameters for this operation. See {Types::HttpPayloadTraitsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpPayloadTraitsOutput]
     #
@@ -828,7 +868,11 @@ module RailsJson
     # content-type to be serialized.
     #
     # @param [Hash] params
-    #   See {Types::HttpPayloadTraitsWithMediaTypeInput}.
+    #   Request parameters for this operation. See {Types::HttpPayloadTraitsWithMediaTypeInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpPayloadTraitsWithMediaTypeOutput]
     #
@@ -906,7 +950,11 @@ module RailsJson
     # to match the targeted structure.
     #
     # @param [Hash] params
-    #   See {Types::HttpPayloadWithStructureInput}.
+    #   Request parameters for this operation. See {Types::HttpPayloadWithStructureInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpPayloadWithStructureOutput]
     #
@@ -986,7 +1034,11 @@ module RailsJson
     # @see https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait httpPrefixHeaders Trait
     #
     # @param [Hash] params
-    #   See {Types::HttpPrefixHeadersInput}.
+    #   Request parameters for this operation. See {Types::HttpPrefixHeadersInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpPrefixHeadersOutput]
     #
@@ -1064,7 +1116,11 @@ module RailsJson
     # Clients that perform this test extract all headers from the response.
     #
     # @param [Hash] params
-    #   See {Types::HttpPrefixHeadersInResponseInput}.
+    #   Request parameters for this operation. See {Types::HttpPrefixHeadersInResponseInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpPrefixHeadersInResponseOutput]
     #
@@ -1134,7 +1190,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::HttpRequestWithFloatLabelsInput}.
+    #   Request parameters for this operation. See {Types::HttpRequestWithFloatLabelsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpRequestWithFloatLabelsOutput]
     #
@@ -1205,7 +1265,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::HttpRequestWithGreedyLabelInPathInput}.
+    #   Request parameters for this operation. See {Types::HttpRequestWithGreedyLabelInPathInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpRequestWithGreedyLabelInPathOutput]
     #
@@ -1279,7 +1343,11 @@ module RailsJson
     # payload but there are HTTP labels.
     #
     # @param [Hash] params
-    #   See {Types::HttpRequestWithLabelsInput}.
+    #   Request parameters for this operation. See {Types::HttpRequestWithLabelsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [Boolean] :boolean
     #   Serialized in the path as true or false.
@@ -1365,7 +1433,11 @@ module RailsJson
     # URI path.
     #
     # @param [Hash] params
-    #   See {Types::HttpRequestWithLabelsAndTimestampFormatInput}.
+    #   Request parameters for this operation. See {Types::HttpRequestWithLabelsAndTimestampFormatInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpRequestWithLabelsAndTimestampFormatOutput]
     #
@@ -1441,7 +1513,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::HttpResponseCodeInput}.
+    #   Request parameters for this operation. See {Types::HttpResponseCodeInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpResponseCodeOutput]
     #
@@ -1514,7 +1590,11 @@ module RailsJson
     # the request and response.
     #
     # @param [Hash] params
-    #   See {Types::IgnoreQueryParamsInResponseInput}.
+    #   Request parameters for this operation. See {Types::IgnoreQueryParamsInResponseInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::IgnoreQueryParamsInResponseOutput]
     #
@@ -1586,7 +1666,11 @@ module RailsJson
     # no input or output payload but there are HTTP header bindings.
     #
     # @param [Hash] params
-    #   See {Types::InputAndOutputWithHeadersInput}.
+    #   Request parameters for this operation. See {Types::InputAndOutputWithHeadersInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::InputAndOutputWithHeadersOutput]
     #
@@ -1707,7 +1791,11 @@ module RailsJson
     # This example serializes enums as top level properties, in lists, sets, and maps.
     #
     # @param [Hash] params
-    #   See {Types::JsonEnumsInput}.
+    #   Request parameters for this operation. See {Types::JsonEnumsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::JsonEnumsOutput]
     #
@@ -1799,7 +1887,11 @@ module RailsJson
     # The example tests basic map serialization.
     #
     # @param [Hash] params
-    #   See {Types::JsonMapsInput}.
+    #   Request parameters for this operation. See {Types::JsonMapsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::JsonMapsOutput]
     #
@@ -1918,7 +2010,11 @@ module RailsJson
     # This operation uses unions for inputs and outputs.
     #
     # @param [Hash] params
-    #   See {Types::JsonUnionsInput}.
+    #   Request parameters for this operation. See {Types::JsonUnionsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [MyUnion] :contents
     #   A union with a representative set of types for members.
@@ -2026,7 +2122,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::KitchenSinkOperationInput}.
+    #   Request parameters for this operation. See {Types::KitchenSinkOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::KitchenSinkOperationOutput]
     #
@@ -2204,7 +2304,11 @@ module RailsJson
     # This example ensures that mediaType strings are base64 encoded in headers.
     #
     # @param [Hash] params
-    #   See {Types::MediaTypeHeaderInput}.
+    #   Request parameters for this operation. See {Types::MediaTypeHeaderInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::MediaTypeHeaderOutput]
     #
@@ -2275,7 +2379,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::NestedAttributesOperationInput}.
+    #   Request parameters for this operation. See {Types::NestedAttributesOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::NestedAttributesOperationOutput]
     #
@@ -2352,7 +2460,11 @@ module RailsJson
     # Tags: ["client-only"]
     #
     # @param [Hash] params
-    #   See {Types::NullAndEmptyHeadersClientInput}.
+    #   Request parameters for this operation. See {Types::NullAndEmptyHeadersClientInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::NullAndEmptyHeadersClientOutput]
     #
@@ -2430,7 +2542,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::NullOperationInput}.
+    #   Request parameters for this operation. See {Types::NullOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::NullOperationOutput]
     #
@@ -2513,7 +2629,11 @@ module RailsJson
     # Omits null, but serializes empty string value.
     #
     # @param [Hash] params
-    #   See {Types::OmitsNullSerializesEmptyStringInput}.
+    #   Request parameters for this operation. See {Types::OmitsNullSerializesEmptyStringInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::OmitsNullSerializesEmptyStringOutput]
     #
@@ -2584,7 +2704,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::OperationWithOptionalInputOutputInput}.
+    #   Request parameters for this operation. See {Types::OperationWithOptionalInputOutputInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::OperationWithOptionalInputOutputOutput]
     #
@@ -2659,7 +2783,11 @@ module RailsJson
     # Tags: ["client-only"]
     #
     # @param [Hash] params
-    #   See {Types::QueryIdempotencyTokenAutoFillInput}.
+    #   Request parameters for this operation. See {Types::QueryIdempotencyTokenAutoFillInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::QueryIdempotencyTokenAutoFillOutput]
     #
@@ -2729,7 +2857,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::QueryParamsAsStringListMapInput}.
+    #   Request parameters for this operation. See {Types::QueryParamsAsStringListMapInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::QueryParamsAsStringListMapOutput]
     #
@@ -2804,7 +2936,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::StreamingOperationInput}.
+    #   Request parameters for this operation. See {Types::StreamingOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::StreamingOperationOutput]
     #
@@ -2876,7 +3012,11 @@ module RailsJson
     # This example tests how timestamp request and response headers are serialized.
     #
     # @param [Hash] params
-    #   See {Types::TimestampFormatHeadersInput}.
+    #   Request parameters for this operation. See {Types::TimestampFormatHeadersInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::TimestampFormatHeadersOutput]
     #
@@ -2959,7 +3099,11 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::Struct____789BadNameInput}.
+    #   Request parameters for this operation. See {Types::Struct____789BadNameInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::Struct____789BadNameOutput]
     #

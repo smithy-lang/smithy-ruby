@@ -19,6 +19,7 @@ module WhiteLabel
       # @param [Client] client
       #
       # @param [Hash] options
+      #   Waiter options
       #
       # @option options [required, Integer] :max_wait_time
       #   The maximum time in seconds to wait before the waiter gives up.
@@ -76,16 +77,13 @@ module WhiteLabel
         @tags = ["waiter", "test"]
       end
 
+      # @return [Array<String>]
+      #
       attr_reader :tags
 
-      # @param [Hash] params
-      #   (see Client#waiters_test)
+      # @param (see Client#waiters_test)
       #
-      # @param [Hash] options
-      #   (see Client#waiters_test)
-      #
-      # @return [Types::WaitersTest]
-      #   (see Client#waiters_test)
+      # @return [true, Hearth::Waiters::WaiterFailed]
       #
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)

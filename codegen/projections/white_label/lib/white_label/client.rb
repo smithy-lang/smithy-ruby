@@ -57,7 +57,11 @@ module WhiteLabel
     attr_reader :config
 
     # @param [Hash] params
-    #   See {Types::DefaultsTestInput}.
+    #   Request parameters for this operation. See {Types::DefaultsTestInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [Struct] :struct
     #   This docstring should be different than KitchenSink struct member.
@@ -185,7 +189,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointOperationInput}.
+    #   Request parameters for this operation. See {Types::EndpointOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::EndpointOperationOutput]
     #
@@ -262,7 +270,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointWithHostLabelOperationInput}.
+    #   Request parameters for this operation. See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::EndpointWithHostLabelOperationOutput]
     #
@@ -341,7 +353,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpApiKeyAuthInput}.
+    #   Request parameters for this operation. See {Types::HttpApiKeyAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpApiKeyAuthOutput]
     #
@@ -414,7 +430,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpBasicAuthInput}.
+    #   Request parameters for this operation. See {Types::HttpBasicAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpBasicAuthOutput]
     #
@@ -487,7 +507,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpBearerAuthInput}.
+    #   Request parameters for this operation. See {Types::HttpBearerAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpBearerAuthOutput]
     #
@@ -560,7 +584,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpDigestAuthInput}.
+    #   Request parameters for this operation. See {Types::HttpDigestAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::HttpDigestAuthOutput]
     #
@@ -653,7 +681,11 @@ module WhiteLabel
     # @since today
     #
     # @param [Hash] params
-    #   See {Types::KitchenSinkInput}.
+    #   Request parameters for this operation. See {Types::KitchenSinkInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @option params [String] :string
     #   This is some member
@@ -873,7 +905,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::MixinTestInput}.
+    #   Request parameters for this operation. See {Types::MixinTestInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::MixinTestOutput]
     #
@@ -950,7 +986,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::NoAuthInput}.
+    #   Request parameters for this operation. See {Types::NoAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::NoAuthOutput]
     #
@@ -1023,7 +1063,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::OptionalAuthInput}.
+    #   Request parameters for this operation. See {Types::OptionalAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::OptionalAuthOutput]
     #
@@ -1096,7 +1140,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::OrderedAuthInput}.
+    #   Request parameters for this operation. See {Types::OrderedAuthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::OrderedAuthOutput]
     #
@@ -1169,7 +1217,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestOperationInput}.
+    #   Request parameters for this operation. See {Types::PaginatorsTestOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::PaginatorsTestOperationOutput]
     #
@@ -1183,8 +1235,8 @@ module WhiteLabel
     #
     #   resp.data #=> Types::PaginatorsTestOperationOutput
     #   resp.data.next_token #=> String
-    #   resp.data.items #=> Array<String>
-    #   resp.data.items[0] #=> String
+    #   resp.data.items #=> Hash<String, String>
+    #   resp.data.items['key'] #=> String
     #
     def paginators_test(params = {}, options = {}, &block)
       config = operation_config(options)
@@ -1247,7 +1299,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestWithItemsInput}.
+    #   Request parameters for this operation. See {Types::PaginatorsTestWithItemsInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::PaginatorsTestWithItemsOutput]
     #
@@ -1261,8 +1317,8 @@ module WhiteLabel
     #
     #   resp.data #=> Types::PaginatorsTestWithItemsOutput
     #   resp.data.next_token #=> String
-    #   resp.data.items #=> Array<String>
-    #   resp.data.items[0] #=> String
+    #   resp.data.items #=> Hash<String, String>
+    #   resp.data.items['key'] #=> String
     #
     def paginators_test_with_items(params = {}, options = {}, &block)
       config = operation_config(options)
@@ -1325,7 +1381,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::RequestCompressionOperationInput}.
+    #   Request parameters for this operation. See {Types::RequestCompressionOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::RequestCompressionOperationOutput]
     #
@@ -1406,7 +1466,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::RequestCompressionStreamingOperationInput}.
+    #   Request parameters for this operation. See {Types::RequestCompressionStreamingOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::RequestCompressionStreamingOperationOutput]
     #
@@ -1486,7 +1550,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::StreamingOperationInput}.
+    #   Request parameters for this operation. See {Types::StreamingOperationInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::StreamingOperationOutput]
     #
@@ -1561,7 +1629,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::StreamingWithLengthInput}.
+    #   Request parameters for this operation. See {Types::StreamingWithLengthInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::StreamingWithLengthOutput]
     #
@@ -1636,7 +1708,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::WaitersTestInput}.
+    #   Request parameters for this operation. See {Types::WaitersTestInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::WaitersTestOutput]
     #
@@ -1712,7 +1788,11 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::Struct____PaginatorsTestWithBadNamesInput}.
+    #   Request parameters for this operation. See {Types::Struct____PaginatorsTestWithBadNamesInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::Struct____PaginatorsTestWithBadNamesOutput]
     #
@@ -1727,8 +1807,8 @@ module WhiteLabel
     #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
     #   resp.data.member___wrapper #=> Types::ResultWrapper
     #   resp.data.member___wrapper.member___123next_token #=> String
-    #   resp.data.member___items #=> Array<String>
-    #   resp.data.member___items[0] #=> String
+    #   resp.data.member___items #=> Hash<String, String>
+    #   resp.data.member___items['key'] #=> String
     #
     def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
       config = operation_config(options)

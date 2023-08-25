@@ -11,11 +11,11 @@ module WhiteLabel
   module Waiters
 
     class ResourceExists
-      def initialize: (untyped client, ?::Hash[untyped, untyped] options) -> void
+      def initialize: (Client, ?::Hash[::Symbol, untyped] options) -> void
 
-      attr_reader tags: untyped
+      attr_reader tags: Array[::String]
 
-      def wait: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> untyped
+      def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> true | Hearth::Waiters::WaiterFailed
     end
 
   end

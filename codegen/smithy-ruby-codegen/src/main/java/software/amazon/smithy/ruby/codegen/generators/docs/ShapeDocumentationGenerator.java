@@ -255,9 +255,18 @@ public class ShapeDocumentationGenerator {
 
             Shape inputShape = model.expectShape(shape.getInputShape());
             String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
-            String inputShapeDocumentation = "See {Types::" + inputShapeName + "}.";
 
-            writer.writeYardParam("Hash", "params", inputShapeDocumentation);
+            String paramsDocString = """
+                    Request parameters for this operation. See {Types::%s#initialize} for available parameters.
+                    """.formatted(inputShapeName);
+            String optionsDocString = """
+                    Request option override of configuration. See {Config#initialize} for available options.
+                    Some configurations cannot be overridden.
+                    """;
+
+            writer
+                    .writeYardParam("Hash", "params", paramsDocString)
+                    .writeYardParam("Hash", "options", optionsDocString);
 
             ShapeId inputShapeId = shape.getInputShape();
             StructureShape input =

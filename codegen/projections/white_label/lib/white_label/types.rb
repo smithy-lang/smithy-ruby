@@ -779,7 +779,7 @@ module WhiteLabel
     #
     # @!attribute items
     #
-    #   @return [Array<String>]
+    #   @return [Hash<String, String>]
     #
     PaginatorsTestOperationOutput = ::Struct.new(
       :next_token,
@@ -806,7 +806,7 @@ module WhiteLabel
     #
     # @!attribute items
     #
-    #   @return [Array<String>]
+    #   @return [Hash<String, String>]
     #
     PaginatorsTestWithItemsOutput = ::Struct.new(
       :next_token,
@@ -1103,7 +1103,7 @@ module WhiteLabel
     #
     # @!attribute member___items
     #
-    #   @return [Array<String>]
+    #   @return [Hash<String, String>]
     #
     Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
       :member___wrapper,

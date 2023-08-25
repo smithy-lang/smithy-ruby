@@ -34,7 +34,11 @@ module Weather
     attr_reader :config
 
     # @param [Hash] params
-    #   See {Types::GetCityInput}.
+    #   Request parameters for this operation. See {Types::GetCityInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::GetCityOutput]
     #
@@ -112,7 +116,11 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::GetCityImageInput}.
+    #   Request parameters for this operation. See {Types::GetCityImageInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::GetCityImageOutput]
     #
@@ -191,7 +199,11 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::GetCurrentTimeInput}.
+    #   Request parameters for this operation. See {Types::GetCurrentTimeInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::GetCurrentTimeOutput]
     #
@@ -259,7 +271,11 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::GetForecastInput}.
+    #   Request parameters for this operation. See {Types::GetForecastInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::GetForecastOutput]
     #
@@ -344,7 +360,11 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::ListCitiesInput}.
+    #   Request parameters for this operation. See {Types::ListCitiesInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::ListCitiesOutput]
     #
@@ -434,7 +454,11 @@ module Weather
     end
 
     # @param [Hash] params
-    #   See {Types::Struct____789BadNameInput}.
+    #   Request parameters for this operation. See {Types::Struct____789BadNameInput#initialize} for available parameters.
+    #
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     #
     # @return [Types::Struct____789BadNameOutput]
     #
