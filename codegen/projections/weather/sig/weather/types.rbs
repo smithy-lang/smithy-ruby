@@ -13,14 +13,17 @@ module Weather
     class Announcements < Hearth::Union
       class Police < Announcements
         def to_h: () -> { police: Hash[Symbol,Announcements] }
+        def to_s: () -> String
       end
 
       class Fire < Announcements
         def to_h: () -> { fire: Hash[Symbol,Announcements] }
+        def to_s: () -> String
       end
 
       class Health < Announcements
         def to_h: () -> { health: Hash[Symbol,Announcements] }
+        def to_s: () -> String
       end
 
       class Unknown < Announcements
@@ -28,41 +31,43 @@ module Weather
       end
     end
 
-    Baz: untyped
+    Baz: Struct[Hearth::Structure]
 
-    CityCoordinates: untyped
+    CityCoordinates: Struct[Hearth::Structure]
 
-    CitySummary: untyped
+    CitySummary: Struct[Hearth::Structure]
 
-    Foo: untyped
+    Foo: Struct[Hearth::Structure]
 
-    GetCityAnnouncementsInput: untyped
+    GetCityAnnouncementsInput: Struct[Hearth::Structure]
 
-    GetCityAnnouncementsOutput: untyped
+    GetCityAnnouncementsOutput: Struct[Hearth::Structure]
 
-    GetCityImageInput: untyped
+    GetCityImageInput: Struct[Hearth::Structure]
 
-    GetCityImageOutput: untyped
+    GetCityImageOutput: Struct[Hearth::Structure]
 
-    GetCityInput: untyped
+    GetCityInput: Struct[Hearth::Structure]
 
-    GetCityOutput: untyped
+    GetCityOutput: Struct[Hearth::Structure]
 
-    GetCurrentTimeInput: untyped
+    GetCurrentTimeInput: Struct[Hearth::Structure]
 
-    GetCurrentTimeOutput: untyped
+    GetCurrentTimeOutput: Struct[Hearth::Structure]
 
-    GetForecastInput: untyped
+    GetForecastInput: Struct[Hearth::Structure]
 
-    GetForecastOutput: untyped
+    GetForecastOutput: Struct[Hearth::Structure]
 
     class ImageType < Hearth::Union
       class Raw < ImageType
         def to_h: () -> { raw: Hash[Symbol,ImageType] }
+        def to_s: () -> String
       end
 
       class Png < ImageType
         def to_h: () -> { png: Hash[Symbol,ImageType] }
+        def to_s: () -> String
       end
 
       class Unknown < ImageType
@@ -70,53 +75,62 @@ module Weather
       end
     end
 
-    ListCitiesInput: untyped
+    ListCitiesInput: Struct[Hearth::Structure]
 
-    ListCitiesOutput: untyped
+    ListCitiesOutput: Struct[Hearth::Structure]
 
-    Message: untyped
+    Message: Struct[Hearth::Structure]
 
-    NoSuchResource: untyped
+    NoSuchResource: Struct[Hearth::Structure]
 
-    OtherStructure: untyped
+    OtherStructure: Struct[Hearth::Structure]
 
-    PNGImage: untyped
+    PNGImage: Struct[Hearth::Structure]
 
     class Precipitation < Hearth::Union
       class Rain < Precipitation
         def to_h: () -> { rain: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Sleet < Precipitation
         def to_h: () -> { sleet: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Hail < Precipitation
         def to_h: () -> { hail: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Snow < Precipitation
         def to_h: () -> { snow: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Mixed < Precipitation
         def to_h: () -> { mixed: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Other < Precipitation
         def to_h: () -> { other: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Blob < Precipitation
         def to_h: () -> { blob: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Foo < Precipitation
         def to_h: () -> { foo: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Baz < Precipitation
         def to_h: () -> { baz: Hash[Symbol,Precipitation] }
+        def to_s: () -> String
       end
 
       class Unknown < Precipitation
@@ -130,11 +144,11 @@ module Weather
       NO: ::String
     end
 
-    Struct____456efg: untyped
+    Struct____456efg: Struct[Hearth::Structure]
 
-    Struct____789BadNameInput: untyped
+    Struct____789BadNameInput: Struct[Hearth::Structure]
 
-    Struct____789BadNameOutput: untyped
+    Struct____789BadNameOutput: Struct[Hearth::Structure]
 
   end
 end

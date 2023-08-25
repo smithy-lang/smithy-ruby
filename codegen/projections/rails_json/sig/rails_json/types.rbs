@@ -10,47 +10,47 @@
 module RailsJson
   module Types
 
-    AllQueryStringTypesInput: untyped
+    AllQueryStringTypesInput: Struct[Hearth::Structure]
 
-    AllQueryStringTypesOutput: untyped
+    AllQueryStringTypesOutput: Struct[Hearth::Structure]
 
-    ComplexError: untyped
+    ComplexError: Struct[Hearth::Structure]
 
-    ComplexNestedErrorData: untyped
+    ComplexNestedErrorData: Struct[Hearth::Structure]
 
-    ConstantAndVariableQueryStringInput: untyped
+    ConstantAndVariableQueryStringInput: Struct[Hearth::Structure]
 
-    ConstantAndVariableQueryStringOutput: untyped
+    ConstantAndVariableQueryStringOutput: Struct[Hearth::Structure]
 
-    ConstantQueryStringInput: untyped
+    ConstantQueryStringInput: Struct[Hearth::Structure]
 
-    ConstantQueryStringOutput: untyped
+    ConstantQueryStringOutput: Struct[Hearth::Structure]
 
-    DocumentTypeAsPayloadInput: untyped
+    DocumentTypeAsPayloadInput: Struct[Hearth::Structure]
 
-    DocumentTypeAsPayloadOutput: untyped
+    DocumentTypeAsPayloadOutput: Struct[Hearth::Structure]
 
-    DocumentTypeInput: untyped
+    DocumentTypeInput: Struct[Hearth::Structure]
 
-    DocumentTypeOutput: untyped
+    DocumentTypeOutput: Struct[Hearth::Structure]
 
-    EmptyOperationInput: untyped
+    EmptyOperationInput: Struct[Hearth::Structure]
 
-    EmptyOperationOutput: untyped
+    EmptyOperationOutput: Struct[Hearth::Structure]
 
-    EmptyStruct: untyped
+    EmptyStruct: Struct[Hearth::Structure]
 
-    EndpointOperationInput: untyped
+    EndpointOperationInput: Struct[Hearth::Structure]
 
-    EndpointOperationOutput: untyped
+    EndpointOperationOutput: Struct[Hearth::Structure]
 
-    EndpointWithHostLabelOperationInput: untyped
+    EndpointWithHostLabelOperationInput: Struct[Hearth::Structure]
 
-    EndpointWithHostLabelOperationOutput: untyped
+    EndpointWithHostLabelOperationOutput: Struct[Hearth::Structure]
 
-    ErrorWithMembers: untyped
+    ErrorWithMembers: Struct[Hearth::Structure]
 
-    ErrorWithoutMembers: untyped
+    ErrorWithoutMembers: Struct[Hearth::Structure]
 
     module FooEnum
       FOO: ::String
@@ -64,123 +64,133 @@ module RailsJson
       ZERO: ::String
     end
 
-    GreetingStruct: untyped
+    GreetingStruct: Struct[Hearth::Structure]
 
-    GreetingWithErrorsInput: untyped
+    GreetingWithErrorsInput: Struct[Hearth::Structure]
 
-    GreetingWithErrorsOutput: untyped
+    GreetingWithErrorsOutput: Struct[Hearth::Structure]
 
-    HttpPayloadTraitsInput: untyped
+    HttpPayloadTraitsInput: Struct[Hearth::Structure]
 
-    HttpPayloadTraitsOutput: untyped
+    HttpPayloadTraitsOutput: Struct[Hearth::Structure]
 
-    HttpPayloadTraitsWithMediaTypeInput: untyped
+    HttpPayloadTraitsWithMediaTypeInput: Struct[Hearth::Structure]
 
-    HttpPayloadTraitsWithMediaTypeOutput: untyped
+    HttpPayloadTraitsWithMediaTypeOutput: Struct[Hearth::Structure]
 
-    HttpPayloadWithStructureInput: untyped
+    HttpPayloadWithStructureInput: Struct[Hearth::Structure]
 
-    HttpPayloadWithStructureOutput: untyped
+    HttpPayloadWithStructureOutput: Struct[Hearth::Structure]
 
-    HttpPrefixHeadersInResponseInput: untyped
+    HttpPrefixHeadersInResponseInput: Struct[Hearth::Structure]
 
-    HttpPrefixHeadersInResponseOutput: untyped
+    HttpPrefixHeadersInResponseOutput: Struct[Hearth::Structure]
 
-    HttpPrefixHeadersInput: untyped
+    HttpPrefixHeadersInput: Struct[Hearth::Structure]
 
-    HttpPrefixHeadersOutput: untyped
+    HttpPrefixHeadersOutput: Struct[Hearth::Structure]
 
-    HttpRequestWithFloatLabelsInput: untyped
+    HttpRequestWithFloatLabelsInput: Struct[Hearth::Structure]
 
-    HttpRequestWithFloatLabelsOutput: untyped
+    HttpRequestWithFloatLabelsOutput: Struct[Hearth::Structure]
 
-    HttpRequestWithGreedyLabelInPathInput: untyped
+    HttpRequestWithGreedyLabelInPathInput: Struct[Hearth::Structure]
 
-    HttpRequestWithGreedyLabelInPathOutput: untyped
+    HttpRequestWithGreedyLabelInPathOutput: Struct[Hearth::Structure]
 
-    HttpRequestWithLabelsAndTimestampFormatInput: untyped
+    HttpRequestWithLabelsAndTimestampFormatInput: Struct[Hearth::Structure]
 
-    HttpRequestWithLabelsAndTimestampFormatOutput: untyped
+    HttpRequestWithLabelsAndTimestampFormatOutput: Struct[Hearth::Structure]
 
-    HttpRequestWithLabelsInput: untyped
+    HttpRequestWithLabelsInput: Struct[Hearth::Structure]
 
-    HttpRequestWithLabelsOutput: untyped
+    HttpRequestWithLabelsOutput: Struct[Hearth::Structure]
 
-    HttpResponseCodeInput: untyped
+    HttpResponseCodeInput: Struct[Hearth::Structure]
 
-    HttpResponseCodeOutput: untyped
+    HttpResponseCodeOutput: Struct[Hearth::Structure]
 
-    IgnoreQueryParamsInResponseInput: untyped
+    IgnoreQueryParamsInResponseInput: Struct[Hearth::Structure]
 
-    IgnoreQueryParamsInResponseOutput: untyped
+    IgnoreQueryParamsInResponseOutput: Struct[Hearth::Structure]
 
-    InputAndOutputWithHeadersInput: untyped
+    InputAndOutputWithHeadersInput: Struct[Hearth::Structure]
 
-    InputAndOutputWithHeadersOutput: untyped
+    InputAndOutputWithHeadersOutput: Struct[Hearth::Structure]
 
-    InvalidGreeting: untyped
+    InvalidGreeting: Struct[Hearth::Structure]
 
-    JsonEnumsInput: untyped
+    JsonEnumsInput: Struct[Hearth::Structure]
 
-    JsonEnumsOutput: untyped
+    JsonEnumsOutput: Struct[Hearth::Structure]
 
-    JsonMapsInput: untyped
+    JsonMapsInput: Struct[Hearth::Structure]
 
-    JsonMapsOutput: untyped
+    JsonMapsOutput: Struct[Hearth::Structure]
 
-    JsonUnionsInput: untyped
+    JsonUnionsInput: Struct[Hearth::Structure]
 
-    JsonUnionsOutput: untyped
+    JsonUnionsOutput: Struct[Hearth::Structure]
 
-    KitchenSink: untyped
+    KitchenSink: Struct[Hearth::Structure]
 
-    KitchenSinkOperationInput: untyped
+    KitchenSinkOperationInput: Struct[Hearth::Structure]
 
-    KitchenSinkOperationOutput: untyped
+    KitchenSinkOperationOutput: Struct[Hearth::Structure]
 
-    MediaTypeHeaderInput: untyped
+    MediaTypeHeaderInput: Struct[Hearth::Structure]
 
-    MediaTypeHeaderOutput: untyped
+    MediaTypeHeaderOutput: Struct[Hearth::Structure]
 
     class MyUnion < Hearth::Union
       class StringValue < MyUnion
         def to_h: () -> { string_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class BooleanValue < MyUnion
         def to_h: () -> { boolean_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class NumberValue < MyUnion
         def to_h: () -> { number_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class BlobValue < MyUnion
         def to_h: () -> { blob_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class TimestampValue < MyUnion
         def to_h: () -> { timestamp_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class EnumValue < MyUnion
         def to_h: () -> { enum_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class ListValue < MyUnion
         def to_h: () -> { list_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class MapValue < MyUnion
         def to_h: () -> { map_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class StructureValue < MyUnion
         def to_h: () -> { structure_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class RenamedStructureValue < MyUnion
         def to_h: () -> { renamed_structure_value: Hash[Symbol,MyUnion] }
+        def to_s: () -> String
       end
 
       class Unknown < MyUnion
@@ -188,55 +198,55 @@ module RailsJson
       end
     end
 
-    NestedAttributesOperationInput: untyped
+    NestedAttributesOperationInput: Struct[Hearth::Structure]
 
-    NestedAttributesOperationOutput: untyped
+    NestedAttributesOperationOutput: Struct[Hearth::Structure]
 
-    NestedPayload: untyped
+    NestedPayload: Struct[Hearth::Structure]
 
-    NullAndEmptyHeadersClientInput: untyped
+    NullAndEmptyHeadersClientInput: Struct[Hearth::Structure]
 
-    NullAndEmptyHeadersClientOutput: untyped
+    NullAndEmptyHeadersClientOutput: Struct[Hearth::Structure]
 
-    NullOperationInput: untyped
+    NullOperationInput: Struct[Hearth::Structure]
 
-    NullOperationOutput: untyped
+    NullOperationOutput: Struct[Hearth::Structure]
 
-    OmitsNullSerializesEmptyStringInput: untyped
+    OmitsNullSerializesEmptyStringInput: Struct[Hearth::Structure]
 
-    OmitsNullSerializesEmptyStringOutput: untyped
+    OmitsNullSerializesEmptyStringOutput: Struct[Hearth::Structure]
 
-    OperationWithOptionalInputOutputInput: untyped
+    OperationWithOptionalInputOutputInput: Struct[Hearth::Structure]
 
-    OperationWithOptionalInputOutputOutput: untyped
+    OperationWithOptionalInputOutputOutput: Struct[Hearth::Structure]
 
-    QueryIdempotencyTokenAutoFillInput: untyped
+    QueryIdempotencyTokenAutoFillInput: Struct[Hearth::Structure]
 
-    QueryIdempotencyTokenAutoFillOutput: untyped
+    QueryIdempotencyTokenAutoFillOutput: Struct[Hearth::Structure]
 
-    QueryParamsAsStringListMapInput: untyped
+    QueryParamsAsStringListMapInput: Struct[Hearth::Structure]
 
-    QueryParamsAsStringListMapOutput: untyped
+    QueryParamsAsStringListMapOutput: Struct[Hearth::Structure]
 
-    RenamedGreeting: untyped
+    RenamedGreeting: Struct[Hearth::Structure]
 
-    SimpleStruct: untyped
+    SimpleStruct: Struct[Hearth::Structure]
 
-    StreamingOperationInput: untyped
+    StreamingOperationInput: Struct[Hearth::Structure]
 
-    StreamingOperationOutput: untyped
+    StreamingOperationOutput: Struct[Hearth::Structure]
 
-    StructWithLocationName: untyped
+    StructWithLocationName: Struct[Hearth::Structure]
 
-    TimestampFormatHeadersInput: untyped
+    TimestampFormatHeadersInput: Struct[Hearth::Structure]
 
-    TimestampFormatHeadersOutput: untyped
+    TimestampFormatHeadersOutput: Struct[Hearth::Structure]
 
-    Struct____456efg: untyped
+    Struct____456efg: Struct[Hearth::Structure]
 
-    Struct____789BadNameInput: untyped
+    Struct____789BadNameInput: Struct[Hearth::Structure]
 
-    Struct____789BadNameOutput: untyped
+    Struct____789BadNameOutput: Struct[Hearth::Structure]
 
   end
 end

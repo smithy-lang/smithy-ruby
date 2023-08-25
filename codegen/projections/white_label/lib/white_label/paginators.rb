@@ -12,9 +12,7 @@ module WhiteLabel
 
     class Operation____PaginatorsTestWithBadNames
       # @param [Client] client
-      #
       # @param (see Client#operation____paginators_test_with_bad_names)
-      #
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
@@ -22,9 +20,7 @@ module WhiteLabel
       end
 
       # Iterate all response pages of the operation____paginators_test_with_bad_names operation.
-      #
       # @return [Enumerator]
-      #
       def pages
         params = @params
         Enumerator.new do |e|
@@ -43,9 +39,7 @@ module WhiteLabel
       end
 
       # Iterate all items from pages in the operation____paginators_test_with_bad_names operation.
-      #
       # @return [Enumerator]
-      #
       def items
         Enumerator.new do |e|
           pages.each do |page|
@@ -59,9 +53,7 @@ module WhiteLabel
 
     class PaginatorsTest
       # @param [Client] client
-      #
       # @param (see Client#paginators_test)
-      #
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
@@ -69,9 +61,7 @@ module WhiteLabel
       end
 
       # Iterate all response pages of the paginators_test operation.
-      #
       # @return [Enumerator]
-      #
       def pages
         params = @params
         Enumerator.new do |e|
@@ -92,9 +82,7 @@ module WhiteLabel
 
     class PaginatorsTestWithItems
       # @param [Client] client
-      #
       # @param (see Client#paginators_test_with_items)
-      #
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
@@ -102,9 +90,7 @@ module WhiteLabel
       end
 
       # Iterate all response pages of the paginators_test_with_items operation.
-      #
       # @return [Enumerator]
-      #
       def pages
         params = @params
         Enumerator.new do |e|
@@ -123,9 +109,7 @@ module WhiteLabel
       end
 
       # Iterate all items from pages in the paginators_test_with_items operation.
-      #
       # @return [Enumerator]
-      #
       def items
         Enumerator.new do |e|
           pages.each do |page|

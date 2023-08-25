@@ -17,7 +17,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -63,7 +62,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
                         .write("{ $L: super(__getobj__) }",
                                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                         .closeBlock("end")
-                        .call(() -> renderUnionToSMethod(writer, model, memberShape))
+                        .call(() -> renderUnionToSMethod(writer, memberShape))
                         .closeBlock("end\n");
             }
 
@@ -86,11 +85,10 @@ public final class UnionGenerator extends RubyGeneratorBase {
 
             for (MemberShape memberShape : shape.members()) {
                 writer
-                    .openBlock("class $L < $T",
-                            symbolProvider.toMemberName(memberShape), symbol)
+                    .openBlock("class $L < $T", symbolProvider.toMemberName(memberShape), symbol)
                     .write("def to_h: () -> { $L: Hash[Symbol,$T] }",
-                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)),
-                            symbol)
+                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)), symbol)
+                    .write("def to_s: () -> String")
                     .closeBlock("end\n");
             }
 
@@ -103,10 +101,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
         });
     }
 
-    private void renderUnionToSMethod(
-        RubyCodeWriter writer,
-        Model model,
-        MemberShape memberShape) {
+    private void renderUnionToSMethod(RubyCodeWriter writer, MemberShape memberShape) {
         String fullQualifiedShapeName = settings.getModule() + "::Types::"
                 + symbolProvider.toMemberName(memberShape);
 

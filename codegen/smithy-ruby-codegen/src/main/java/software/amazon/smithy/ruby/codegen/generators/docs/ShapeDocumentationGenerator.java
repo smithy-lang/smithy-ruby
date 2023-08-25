@@ -25,7 +25,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -257,7 +256,8 @@ public class ShapeDocumentationGenerator {
             String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
 
             String paramsDocString = """
-                    Request parameters for this operation. See {Types::%s#initialize} for available parameters.
+                    Request parameters for this operation.
+                    See {Types::%s#initialize} for available parameters.
                     """.formatted(inputShapeName);
             String optionsDocString = """
                     Request option override of configuration. See {Config#initialize} for available options.
@@ -267,23 +267,6 @@ public class ShapeDocumentationGenerator {
             writer
                     .writeYardParam("Hash", "params", paramsDocString)
                     .writeYardParam("Hash", "options", optionsDocString);
-
-            ShapeId inputShapeId = shape.getInputShape();
-            StructureShape input =
-                    model.expectShape(inputShapeId).asStructureShape().get();
-
-            for (MemberShape memberShape : input.members()) {
-                Optional<DocumentationTrait> optionalMemberDocumentation =
-                        memberShape.getMemberTrait(model, DocumentationTrait.class);
-
-                if (optionalMemberDocumentation.isPresent()) {
-                    String documentation = optionalMemberDocumentation.get().getValue();
-                    Shape target = model.expectShape(memberShape.getTarget());
-                    String param = ":" + symbolProvider.toMemberName(memberShape);
-                    String type = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
-                    writer.writeYardOption("params", type, param, "", documentation);
-                }
-            }
 
             Shape outputShape = model.expectShape(shape.getOutputShape());
             String outputShapeName = symbolProvider.toSymbol(outputShape).getName();

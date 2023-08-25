@@ -10,85 +10,85 @@
 module WhiteLabel
   module Types
 
-    ClientError: untyped
+    ClientError: Struct[Hearth::Structure]
 
-    DefaultsTestInput: untyped
+    DefaultsTestInput: Struct[Hearth::Structure]
 
-    DefaultsTestOutput: untyped
+    DefaultsTestOutput: Struct[Hearth::Structure]
 
-    EndpointOperationInput: untyped
+    EndpointOperationInput: Struct[Hearth::Structure]
 
-    EndpointOperationOutput: untyped
+    EndpointOperationOutput: Struct[Hearth::Structure]
 
-    EndpointWithHostLabelOperationInput: untyped
+    EndpointWithHostLabelOperationInput: Struct[Hearth::Structure]
 
-    EndpointWithHostLabelOperationOutput: untyped
+    EndpointWithHostLabelOperationOutput: Struct[Hearth::Structure]
 
-    HttpApiKeyAuthInput: untyped
+    HttpApiKeyAuthInput: Struct[Hearth::Structure]
 
-    HttpApiKeyAuthOutput: untyped
+    HttpApiKeyAuthOutput: Struct[Hearth::Structure]
 
-    HttpBasicAuthInput: untyped
+    HttpBasicAuthInput: Struct[Hearth::Structure]
 
-    HttpBasicAuthOutput: untyped
+    HttpBasicAuthOutput: Struct[Hearth::Structure]
 
-    HttpBearerAuthInput: untyped
+    HttpBearerAuthInput: Struct[Hearth::Structure]
 
-    HttpBearerAuthOutput: untyped
+    HttpBearerAuthOutput: Struct[Hearth::Structure]
 
-    HttpDigestAuthInput: untyped
+    HttpDigestAuthInput: Struct[Hearth::Structure]
 
-    HttpDigestAuthOutput: untyped
+    HttpDigestAuthOutput: Struct[Hearth::Structure]
 
-    KitchenSinkInput: untyped
+    KitchenSinkInput: Struct[Hearth::Structure]
 
-    KitchenSinkOutput: untyped
+    KitchenSinkOutput: Struct[Hearth::Structure]
 
-    MixinTestInput: untyped
+    MixinTestInput: Struct[Hearth::Structure]
 
-    MixinTestOutput: untyped
+    MixinTestOutput: Struct[Hearth::Structure]
 
-    NoAuthInput: untyped
+    NoAuthInput: Struct[Hearth::Structure]
 
-    NoAuthOutput: untyped
+    NoAuthOutput: Struct[Hearth::Structure]
 
-    OptionalAuthInput: untyped
+    OptionalAuthInput: Struct[Hearth::Structure]
 
-    OptionalAuthOutput: untyped
+    OptionalAuthOutput: Struct[Hearth::Structure]
 
-    OrderedAuthInput: untyped
+    OrderedAuthInput: Struct[Hearth::Structure]
 
-    OrderedAuthOutput: untyped
+    OrderedAuthOutput: Struct[Hearth::Structure]
 
-    PaginatorsTestOperationInput: untyped
+    PaginatorsTestOperationInput: Struct[Hearth::Structure]
 
-    PaginatorsTestOperationOutput: untyped
+    PaginatorsTestOperationOutput: Struct[Hearth::Structure]
 
-    PaginatorsTestWithItemsInput: untyped
+    PaginatorsTestWithItemsInput: Struct[Hearth::Structure]
 
-    PaginatorsTestWithItemsOutput: untyped
+    PaginatorsTestWithItemsOutput: Struct[Hearth::Structure]
 
-    RequestCompressionOperationInput: untyped
+    RequestCompressionOperationInput: Struct[Hearth::Structure]
 
-    RequestCompressionOperationOutput: untyped
+    RequestCompressionOperationOutput: Struct[Hearth::Structure]
 
-    RequestCompressionStreamingOperationInput: untyped
+    RequestCompressionStreamingOperationInput: Struct[Hearth::Structure]
 
-    RequestCompressionStreamingOperationOutput: untyped
+    RequestCompressionStreamingOperationOutput: Struct[Hearth::Structure]
 
-    ResultWrapper: untyped
+    ResultWrapper: Struct[Hearth::Structure]
 
-    ServerError: untyped
+    ServerError: Struct[Hearth::Structure]
 
-    StreamingOperationInput: untyped
+    StreamingOperationInput: Struct[Hearth::Structure]
 
-    StreamingOperationOutput: untyped
+    StreamingOperationOutput: Struct[Hearth::Structure]
 
-    StreamingWithLengthInput: untyped
+    StreamingWithLengthInput: Struct[Hearth::Structure]
 
-    StreamingWithLengthOutput: untyped
+    StreamingWithLengthOutput: Struct[Hearth::Structure]
 
-    Struct: untyped
+    Struct: Struct[Hearth::Structure]
 
     module TypedEnum
       YES: ::String
@@ -101,10 +101,12 @@ module WhiteLabel
     class Union < Hearth::Union
       class String < Union
         def to_h: () -> { string: Hash[Symbol,Union] }
+        def to_s: () -> String
       end
 
       class Struct < Union
         def to_h: () -> { struct: Hash[Symbol,Union] }
+        def to_s: () -> String
       end
 
       class Unknown < Union
@@ -112,13 +114,13 @@ module WhiteLabel
       end
     end
 
-    WaitersTestInput: untyped
+    WaitersTestInput: Struct[Hearth::Structure]
 
-    WaitersTestOutput: untyped
+    WaitersTestOutput: Struct[Hearth::Structure]
 
-    Struct____PaginatorsTestWithBadNamesInput: untyped
+    Struct____PaginatorsTestWithBadNamesInput: Struct[Hearth::Structure]
 
-    Struct____PaginatorsTestWithBadNamesOutput: untyped
+    Struct____PaginatorsTestWithBadNamesOutput: Struct[Hearth::Structure]
 
   end
 end

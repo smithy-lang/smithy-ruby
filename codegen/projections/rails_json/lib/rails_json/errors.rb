@@ -45,7 +45,6 @@ module RailsJson
       end
 
       # @return [Types::ComplexError]
-      #
       attr_reader :data
     end
 
@@ -58,7 +57,6 @@ module RailsJson
       end
 
       # @return [Types::ErrorWithMembers]
-      #
       attr_reader :data
     end
 
@@ -71,7 +69,6 @@ module RailsJson
       end
 
       # @return [Types::ErrorWithoutMembers]
-      #
       attr_reader :data
     end
 
@@ -84,7 +81,6 @@ module RailsJson
       end
 
       # @return [Types::InvalidGreeting]
-      #
       attr_reader :data
     end
 

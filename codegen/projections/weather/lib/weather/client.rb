@@ -13,7 +13,6 @@ module Weather
   # An API client for Weather
   # See {#initialize} for a full list of supported configuration options
   # Provides weather forecasts.
-  #
   class Client
     include Hearth::ClientStubs
     @plugins = Hearth::PluginList.new
@@ -24,7 +23,6 @@ module Weather
 
     # @param [Config] config
     #   An instance of {Config}
-    #
     def initialize(config = Weather::Config.new, options = {})
       @config = initialize_config(config)
       @stubs = Hearth::Stubs.new
@@ -34,22 +32,17 @@ module Weather
     attr_reader :config
 
     # @param [Hash] params
-    #   Request parameters for this operation. See {Types::GetCityInput#initialize} for available parameters.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::GetCityInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    #
     # @return [Types::GetCityOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.get_city(
     #     city_id: 'cityId' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::GetCityOutput
     #   resp.data.name #=> String
     #   resp.data.coordinates #=> Types::CityCoordinates
@@ -60,7 +53,6 @@ module Weather
     #   resp.data.city.name #=> String
     #   resp.data.city.number #=> String
     #   resp.data.city.case #=> String
-    #
     def get_city(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -116,16 +108,13 @@ module Weather
     end
 
     # @param [Hash] params
-    #   Request parameters for this operation. See {Types::GetCityImageInput#initialize} for available parameters.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::GetCityImageInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    #
     # @return [Types::GetCityImageOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.get_city_image(
     #     city_id: 'cityId', # required
     #     image_type: {
@@ -138,12 +127,9 @@ module Weather
     #     }, # required
     #     resolution: 1 # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::GetCityImageOutput
     #   resp.data.image #=> String
-    #
     def get_city_image(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -199,23 +185,17 @@ module Weather
     end
 
     # @param [Hash] params
-    #   Request parameters for this operation. See {Types::GetCurrentTimeInput#initialize} for available parameters.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::GetCurrentTimeInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    #
     # @return [Types::GetCurrentTimeOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.get_current_time()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::GetCurrentTimeOutput
     #   resp.data.time #=> Time
-    #
     def get_current_time(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -271,22 +251,17 @@ module Weather
     end
 
     # @param [Hash] params
-    #   Request parameters for this operation. See {Types::GetForecastInput#initialize} for available parameters.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::GetForecastInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    #
     # @return [Types::GetForecastOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.get_forecast(
     #     city_id: 'cityId' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::GetForecastOutput
     #   resp.data.chance_of_rain #=> Float
     #   resp.data.precipitation #=> Types::Precipitation, one of [Rain, Sleet, Hail, Snow, Mixed, Other, Blob, Foo, Baz]
@@ -304,7 +279,6 @@ module Weather
     #   resp.data.precipitation.baz #=> Types::Baz
     #   resp.data.precipitation.baz.baz #=> String
     #   resp.data.precipitation.baz.bar #=> String
-    #
     def get_forecast(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -360,16 +334,13 @@ module Weather
     end
 
     # @param [Hash] params
-    #   Request parameters for this operation. See {Types::ListCitiesInput#initialize} for available parameters.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::ListCitiesInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    #
     # @return [Types::ListCitiesOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.list_cities(
     #     next_token: 'nextToken',
     #     a_string: 'aString',
@@ -380,9 +351,7 @@ module Weather
     #     some_enum: 'YES', # accepts ["YES", "NO"]
     #     page_size: 1
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::ListCitiesOutput
     #   resp.data.next_token #=> String
     #   resp.data.some_enum #=> String, one of ["YES", "NO"]
@@ -398,7 +367,6 @@ module Weather
     #   resp.data.items[0].number #=> String
     #   resp.data.items[0].case #=> String
     #   resp.data.sparse_items #=> Array<CitySummary>
-    #
     def list_cities(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -454,30 +422,24 @@ module Weather
     end
 
     # @param [Hash] params
-    #   Request parameters for this operation. See {Types::Struct____789BadNameInput#initialize} for available parameters.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::Struct____789BadNameInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    #
     # @return [Types::Struct____789BadNameOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.operation____789_bad_name(
     #     member___123abc: '__123abc', # required
     #     member: {
     #       member___123foo: '__123foo'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::Struct____789BadNameOutput
     #   resp.data.member___123abc #=> String
     #   resp.data.member #=> Types::Struct____456efg
     #   resp.data.member.member___123foo #=> String
-    #
     def operation____789_bad_name(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new

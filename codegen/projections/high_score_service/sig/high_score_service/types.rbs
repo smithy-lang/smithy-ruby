@@ -10,47 +10,47 @@
 module HighScoreService
   module Types
 
-    ApiKeyAuthInput: untyped
+    ApiKeyAuthInput: Struct[Hearth::Structure]
 
-    ApiKeyAuthOutput: untyped
+    ApiKeyAuthOutput: Struct[Hearth::Structure]
 
-    BasicAuthInput: untyped
+    BasicAuthInput: Struct[Hearth::Structure]
 
-    BasicAuthOutput: untyped
+    BasicAuthOutput: Struct[Hearth::Structure]
 
-    BearerAuthInput: untyped
+    BearerAuthInput: Struct[Hearth::Structure]
 
-    BearerAuthOutput: untyped
+    BearerAuthOutput: Struct[Hearth::Structure]
 
-    CreateHighScoreInput: untyped
+    CreateHighScoreInput: Struct[Hearth::Structure]
 
-    CreateHighScoreOutput: untyped
+    CreateHighScoreOutput: Struct[Hearth::Structure]
 
-    DeleteHighScoreInput: untyped
+    DeleteHighScoreInput: Struct[Hearth::Structure]
 
-    DeleteHighScoreOutput: untyped
+    DeleteHighScoreOutput: Struct[Hearth::Structure]
 
-    DigestAuthInput: untyped
+    DigestAuthInput: Struct[Hearth::Structure]
 
-    DigestAuthOutput: untyped
+    DigestAuthOutput: Struct[Hearth::Structure]
 
-    GetHighScoreInput: untyped
+    GetHighScoreInput: Struct[Hearth::Structure]
 
-    GetHighScoreOutput: untyped
+    GetHighScoreOutput: Struct[Hearth::Structure]
 
-    HighScoreAttributes: untyped
+    HighScoreAttributes: Struct[Hearth::Structure]
 
-    HighScoreParams: untyped
+    HighScoreParams: Struct[Hearth::Structure]
 
-    ListHighScoresInput: untyped
+    ListHighScoresInput: Struct[Hearth::Structure]
 
-    ListHighScoresOutput: untyped
+    ListHighScoresOutput: Struct[Hearth::Structure]
 
-    UnprocessableEntityError: untyped
+    UnprocessableEntityError: Struct[Hearth::Structure]
 
-    UpdateHighScoreInput: untyped
+    UpdateHighScoreInput: Struct[Hearth::Structure]
 
-    UpdateHighScoreOutput: untyped
+    UpdateHighScoreOutput: Struct[Hearth::Structure]
 
   end
 end

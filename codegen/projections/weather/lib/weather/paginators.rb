@@ -12,9 +12,7 @@ module Weather
 
     class ListCities
       # @param [Client] client
-      #
       # @param (see Client#list_cities)
-      #
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
@@ -22,9 +20,7 @@ module Weather
       end
 
       # Iterate all response pages of the list_cities operation.
-      #
       # @return [Enumerator]
-      #
       def pages
         params = @params
         Enumerator.new do |e|
@@ -43,9 +39,7 @@ module Weather
       end
 
       # Iterate all items from pages in the list_cities operation.
-      #
       # @return [Enumerator]
-      #
       def items
         Enumerator.new do |e|
           pages.each do |page|

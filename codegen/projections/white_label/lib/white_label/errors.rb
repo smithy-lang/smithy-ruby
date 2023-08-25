@@ -45,7 +45,6 @@ module WhiteLabel
       end
 
       # @return [Types::ClientError]
-      #
       attr_reader :data
 
       def retryable?
@@ -62,7 +61,6 @@ module WhiteLabel
       end
 
       # @return [Types::ServerError]
-      #
       attr_reader :data
 
       def retryable?

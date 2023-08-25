@@ -181,7 +181,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeDocstring(String docstring) {
         writeDocs((w) -> {
             w.write("$L", docstring);
-            w.write("");
         });
         return this;
     }
@@ -198,7 +197,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         writeDocs((w) -> {
             w.write("@param [$L] $L", paramType, param);
             w.writeIndentedParts(documentation);
-            w.write("");
         });
         return this;
     }
@@ -223,7 +221,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
                 w.write("");
             }
             w.writeIndentedParts(documentation);
-            w.write("");
         });
         return this;
     }
@@ -239,7 +236,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         writeDocs((w) -> {
             w.write("@return [$L]", returnType);
             w.writeIndentedParts(documentation);
-            w.write("");
         });
         return this;
     }
@@ -254,9 +250,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardExample(String title, String block) {
         writeDocs((w) -> {
             w.write("@example $L", title);
-            w.write("");
             w.writeIndentedParts(block);
-            w.write("");
         });
         return this;
     }
@@ -275,7 +269,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
             if (!since.isEmpty()) {
                 w.write("  Since: $L", since);
             }
-            w.write("");
         });
         return this;
     }
@@ -290,7 +283,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardSee(String url, String description) {
         writeDocs((w) -> {
             w.write("@see $L $L", url, description);
-            w.write("");
         });
         return this;
     }
@@ -305,7 +297,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         writeDocs((w) -> {
             w.write("@note");
             w.writeIndentedParts(note);
-            w.write("");
         });
         return this;
     }
@@ -319,7 +310,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardSince(String since) {
         writeDocs((w) -> {
             w.write("@since $L", since);
-            w.write("");
         });
         return this;
     }
@@ -338,7 +328,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
             } else {
                 w.write("@$L (see $L)", tag, reference);
             }
-            w.write("");
         });
         return this;
     }
