@@ -12,22 +12,23 @@ module Weather
 
     class Announcements < Hearth::Union
       class Police < Announcements
-        def to_h: () -> { police: Hash[Symbol,Announcements] }
+        def to_h: () -> { police: Hash[Symbol, Announcements] }
         def to_s: () -> String
       end
 
       class Fire < Announcements
-        def to_h: () -> { fire: Hash[Symbol,Announcements] }
+        def to_h: () -> { fire: Hash[Symbol, Announcements] }
         def to_s: () -> String
       end
 
       class Health < Announcements
-        def to_h: () -> { health: Hash[Symbol,Announcements] }
+        def to_h: () -> { health: Hash[Symbol, Announcements] }
         def to_s: () -> String
       end
 
       class Unknown < Announcements
-        def to_h: () -> { unknown: Hash[Symbol,Announcements] }
+        def to_h: () -> { unknown: Hash[Symbol, Announcements] }
+        def to_s: () -> String
       end
     end
 
@@ -61,17 +62,18 @@ module Weather
 
     class ImageType < Hearth::Union
       class Raw < ImageType
-        def to_h: () -> { raw: Hash[Symbol,ImageType] }
+        def to_h: () -> { raw: Hash[Symbol, ImageType] }
         def to_s: () -> String
       end
 
       class Png < ImageType
-        def to_h: () -> { png: Hash[Symbol,ImageType] }
+        def to_h: () -> { png: Hash[Symbol, ImageType] }
         def to_s: () -> String
       end
 
       class Unknown < ImageType
-        def to_h: () -> { unknown: Hash[Symbol,ImageType] }
+        def to_h: () -> { unknown: Hash[Symbol, ImageType] }
+        def to_s: () -> String
       end
     end
 
@@ -89,52 +91,53 @@ module Weather
 
     class Precipitation < Hearth::Union
       class Rain < Precipitation
-        def to_h: () -> { rain: Hash[Symbol,Precipitation] }
+        def to_h: () -> { rain: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Sleet < Precipitation
-        def to_h: () -> { sleet: Hash[Symbol,Precipitation] }
+        def to_h: () -> { sleet: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Hail < Precipitation
-        def to_h: () -> { hail: Hash[Symbol,Precipitation] }
+        def to_h: () -> { hail: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Snow < Precipitation
-        def to_h: () -> { snow: Hash[Symbol,Precipitation] }
+        def to_h: () -> { snow: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Mixed < Precipitation
-        def to_h: () -> { mixed: Hash[Symbol,Precipitation] }
+        def to_h: () -> { mixed: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Other < Precipitation
-        def to_h: () -> { other: Hash[Symbol,Precipitation] }
+        def to_h: () -> { other: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Blob < Precipitation
-        def to_h: () -> { blob: Hash[Symbol,Precipitation] }
+        def to_h: () -> { blob: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Foo < Precipitation
-        def to_h: () -> { foo: Hash[Symbol,Precipitation] }
+        def to_h: () -> { foo: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Baz < Precipitation
-        def to_h: () -> { baz: Hash[Symbol,Precipitation] }
+        def to_h: () -> { baz: Hash[Symbol, Precipitation] }
         def to_s: () -> String
       end
 
       class Unknown < Precipitation
-        def to_h: () -> { unknown: Hash[Symbol,Precipitation] }
+        def to_h: () -> { unknown: Hash[Symbol, Precipitation] }
+        def to_s: () -> String
       end
     end
 

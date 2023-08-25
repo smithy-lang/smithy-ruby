@@ -15,7 +15,7 @@ module WhiteLabel
 
       attr_reader tags: Array[::String]
 
-      def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> true | Hearth::Waiters::WaiterFailed
+      def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> (true | Hearth::Waiters::WaiterFailed)
     end
 
   end

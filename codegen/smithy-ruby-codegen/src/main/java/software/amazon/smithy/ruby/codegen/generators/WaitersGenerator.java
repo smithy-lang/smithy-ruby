@@ -169,7 +169,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
                 .write("def initialize: (Client, ?::Hash[::Symbol, untyped] options) -> void\n")
                 .write("attr_reader tags: Array[::String]\n")
                 .write("def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> "
-                        + "true | Hearth::Waiters::WaiterFailed")
+                        + "(true | Hearth::Waiters::WaiterFailed)")
                 .closeBlock("end");
     }
 

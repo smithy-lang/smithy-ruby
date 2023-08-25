@@ -86,7 +86,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
             for (MemberShape memberShape : shape.members()) {
                 writer
                     .openBlock("class $L < $T", symbolProvider.toMemberName(memberShape), symbol)
-                    .write("def to_h: () -> { $L: Hash[Symbol,$T] }",
+                    .write("def to_h: () -> { $L: Hash[Symbol, $T] }",
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)), symbol)
                     .write("def to_s: () -> String")
                     .closeBlock("end\n");
@@ -94,8 +94,8 @@ public final class UnionGenerator extends RubyGeneratorBase {
 
             writer
                 .openBlock("class Unknown < $T", symbol)
-                .write("def to_h: () -> { unknown: Hash[Symbol,$T] }",
-                        symbol)
+                .write("def to_h: () -> { unknown: Hash[Symbol, $T] }", symbol)
+                .write("def to_s: () -> String")
                 .closeBlock("end")
                 .closeBlock("end\n");
         });

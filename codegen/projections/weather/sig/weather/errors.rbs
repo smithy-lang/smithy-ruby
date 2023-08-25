@@ -10,12 +10,9 @@
 module Weather
   module Errors
 
-    def self.error_code: (untyped resp) -> untyped
+    def self.error_code: (Hearth::HTTP::Response) -> String
 
     class ApiError < Hearth::HTTP::ApiError
-    def initialize: (request_id: untyped request_id, **untyped kwargs) -> void
-
-    attr_reader request_id: untyped
     end
 
     class ApiClientError < ApiError
@@ -25,15 +22,15 @@ module Weather
     end
 
     class ApiRedirectError < ApiError
-      def initialize: (location: untyped location, **untyped kwargs) -> void
+      def initialize: (location: String, **kwargs) -> void
 
-      attr_reader location: untyped
+      attr_reader location: String
     end
 
     class NoSuchResource < ApiClientError
-      def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
 
-      attr_reader data: untyped
+      attr_reader data: Types::NoSuchResource
     end
 
   end
