@@ -10,47 +10,89 @@
 module HighScoreService
   module Types
 
-    ApiKeyAuthInput: Struct[Hearth::Structure]
+    class ApiKeyAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ApiKeyAuthOutput: Struct[Hearth::Structure]
+    class ApiKeyAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BasicAuthInput: Struct[Hearth::Structure]
+    class BasicAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BasicAuthOutput: Struct[Hearth::Structure]
+    class BasicAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BearerAuthInput: Struct[Hearth::Structure]
+    class BearerAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BearerAuthOutput: Struct[Hearth::Structure]
+    class BearerAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CreateHighScoreInput: Struct[Hearth::Structure]
+    class CreateHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CreateHighScoreOutput: Struct[Hearth::Structure]
+    class CreateHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DeleteHighScoreInput: Struct[Hearth::Structure]
+    class DeleteHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DeleteHighScoreOutput: Struct[Hearth::Structure]
+    class DeleteHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DigestAuthInput: Struct[Hearth::Structure]
+    class DigestAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DigestAuthOutput: Struct[Hearth::Structure]
+    class DigestAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetHighScoreInput: Struct[Hearth::Structure]
+    class GetHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetHighScoreOutput: Struct[Hearth::Structure]
+    class GetHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HighScoreAttributes: Struct[Hearth::Structure]
+    class HighScoreAttributes < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HighScoreParams: Struct[Hearth::Structure]
+    class HighScoreParams < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ListHighScoresInput: Struct[Hearth::Structure]
+    class ListHighScoresInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ListHighScoresOutput: Struct[Hearth::Structure]
+    class ListHighScoresOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    UnprocessableEntityError: Struct[Hearth::Structure]
+    class UnprocessableEntityError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    UpdateHighScoreInput: Struct[Hearth::Structure]
+    class UpdateHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    UpdateHighScoreOutput: Struct[Hearth::Structure]
+    class UpdateHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

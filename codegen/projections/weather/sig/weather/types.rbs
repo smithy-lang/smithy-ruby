@@ -32,33 +32,61 @@ module Weather
       end
     end
 
-    Baz: Struct[Hearth::Structure]
+    class Baz < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CityCoordinates: Struct[Hearth::Structure]
+    class CityCoordinates < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CitySummary: Struct[Hearth::Structure]
+    class CitySummary < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Foo: Struct[Hearth::Structure]
+    class Foo < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityAnnouncementsInput: Struct[Hearth::Structure]
+    class GetCityAnnouncementsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityAnnouncementsOutput: Struct[Hearth::Structure]
+    class GetCityAnnouncementsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityImageInput: Struct[Hearth::Structure]
+    class GetCityImageInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityImageOutput: Struct[Hearth::Structure]
+    class GetCityImageOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityInput: Struct[Hearth::Structure]
+    class GetCityInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityOutput: Struct[Hearth::Structure]
+    class GetCityOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCurrentTimeInput: Struct[Hearth::Structure]
+    class GetCurrentTimeInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCurrentTimeOutput: Struct[Hearth::Structure]
+    class GetCurrentTimeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetForecastInput: Struct[Hearth::Structure]
+    class GetForecastInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetForecastOutput: Struct[Hearth::Structure]
+    class GetForecastOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     class ImageType < Hearth::Union
       class Raw < ImageType
@@ -77,17 +105,29 @@ module Weather
       end
     end
 
-    ListCitiesInput: Struct[Hearth::Structure]
+    class ListCitiesInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ListCitiesOutput: Struct[Hearth::Structure]
+    class ListCitiesOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Message: Struct[Hearth::Structure]
+    class Message < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NoSuchResource: Struct[Hearth::Structure]
+    class NoSuchResource < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OtherStructure: Struct[Hearth::Structure]
+    class OtherStructure < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PNGImage: Struct[Hearth::Structure]
+    class PNGImage < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     class Precipitation < Hearth::Union
       class Rain < Precipitation
@@ -147,11 +187,17 @@ module Weather
       NO: ::String
     end
 
-    Struct____456efg: Struct[Hearth::Structure]
+    class Struct____456efg < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____789BadNameInput: Struct[Hearth::Structure]
+    class Struct____789BadNameInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____789BadNameOutput: Struct[Hearth::Structure]
+    class Struct____789BadNameOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

@@ -10,85 +10,165 @@
 module WhiteLabel
   module Types
 
-    ClientError: Struct[Hearth::Structure]
+    class ClientError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DefaultsTestInput: Struct[Hearth::Structure]
+    class DefaultsTestInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DefaultsTestOutput: Struct[Hearth::Structure]
+    class DefaultsTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointOperationInput: Struct[Hearth::Structure]
+    class EndpointOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointOperationOutput: Struct[Hearth::Structure]
+    class EndpointOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointWithHostLabelOperationInput: Struct[Hearth::Structure]
+    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointWithHostLabelOperationOutput: Struct[Hearth::Structure]
+    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpApiKeyAuthInput: Struct[Hearth::Structure]
+    class HttpApiKeyAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpApiKeyAuthOutput: Struct[Hearth::Structure]
+    class HttpApiKeyAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBasicAuthInput: Struct[Hearth::Structure]
+    class HttpBasicAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBasicAuthOutput: Struct[Hearth::Structure]
+    class HttpBasicAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBearerAuthInput: Struct[Hearth::Structure]
+    class HttpBearerAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBearerAuthOutput: Struct[Hearth::Structure]
+    class HttpBearerAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpDigestAuthInput: Struct[Hearth::Structure]
+    class HttpDigestAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpDigestAuthOutput: Struct[Hearth::Structure]
+    class HttpDigestAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSinkInput: Struct[Hearth::Structure]
+    class KitchenSinkInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSinkOutput: Struct[Hearth::Structure]
+    class KitchenSinkOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    MixinTestInput: Struct[Hearth::Structure]
+    class MixinTestInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    MixinTestOutput: Struct[Hearth::Structure]
+    class MixinTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NoAuthInput: Struct[Hearth::Structure]
+    class NoAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NoAuthOutput: Struct[Hearth::Structure]
+    class NoAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OptionalAuthInput: Struct[Hearth::Structure]
+    class OptionalAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OptionalAuthOutput: Struct[Hearth::Structure]
+    class OptionalAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OrderedAuthInput: Struct[Hearth::Structure]
+    class OrderedAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OrderedAuthOutput: Struct[Hearth::Structure]
+    class OrderedAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestOperationInput: Struct[Hearth::Structure]
+    class PaginatorsTestOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestOperationOutput: Struct[Hearth::Structure]
+    class PaginatorsTestOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestWithItemsInput: Struct[Hearth::Structure]
+    class PaginatorsTestWithItemsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestWithItemsOutput: Struct[Hearth::Structure]
+    class PaginatorsTestWithItemsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionOperationInput: Struct[Hearth::Structure]
+    class RequestCompressionOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionOperationOutput: Struct[Hearth::Structure]
+    class RequestCompressionOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionStreamingOperationInput: Struct[Hearth::Structure]
+    class RequestCompressionStreamingOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionStreamingOperationOutput: Struct[Hearth::Structure]
+    class RequestCompressionStreamingOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ResultWrapper: Struct[Hearth::Structure]
+    class ResultWrapper < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ServerError: Struct[Hearth::Structure]
+    class ServerError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingOperationInput: Struct[Hearth::Structure]
+    class StreamingOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingOperationOutput: Struct[Hearth::Structure]
+    class StreamingOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingWithLengthInput: Struct[Hearth::Structure]
+    class StreamingWithLengthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingWithLengthOutput: Struct[Hearth::Structure]
+    class StreamingWithLengthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct: Struct[Hearth::Structure]
+    class Struct < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     module TypedEnum
       YES: ::String
@@ -115,13 +195,21 @@ module WhiteLabel
       end
     end
 
-    WaitersTestInput: Struct[Hearth::Structure]
+    class WaitersTestInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    WaitersTestOutput: Struct[Hearth::Structure]
+    class WaitersTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____PaginatorsTestWithBadNamesInput: Struct[Hearth::Structure]
+    class Struct____PaginatorsTestWithBadNamesInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____PaginatorsTestWithBadNamesOutput: Struct[Hearth::Structure]
+    class Struct____PaginatorsTestWithBadNamesOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

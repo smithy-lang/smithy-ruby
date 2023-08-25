@@ -22,20 +22,20 @@ module WhiteLabel
     end
 
     class ApiRedirectError < ApiError
-      def initialize: (location: String, **kwargs) -> void
+      def initialize: (location: String, **untyped kwargs) -> void
 
       attr_reader location: String
     end
 
     class ClientError < ApiClientError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::ClientError
       def retryable?: () -> true
     end
 
     class ServerError < ApiServerError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::ServerError
       def retryable?: () -> true

@@ -22,31 +22,31 @@ module RailsJson
     end
 
     class ApiRedirectError < ApiError
-      def initialize: (location: String, **kwargs) -> void
+      def initialize: (location: String, **untyped kwargs) -> void
 
       attr_reader location: String
     end
 
     class ComplexError < ApiClientError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::ComplexError
     end
 
     class ErrorWithMembers < ApiClientError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::ErrorWithMembers
     end
 
     class ErrorWithoutMembers < ApiServerError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::ErrorWithoutMembers
     end
 
     class InvalidGreeting < ApiClientError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::InvalidGreeting
     end

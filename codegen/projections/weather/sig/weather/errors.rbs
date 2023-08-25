@@ -22,13 +22,13 @@ module Weather
     end
 
     class ApiRedirectError < ApiError
-      def initialize: (location: String, **kwargs) -> void
+      def initialize: (location: String, **untyped kwargs) -> void
 
       attr_reader location: String
     end
 
     class NoSuchResource < ApiClientError
-      def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::NoSuchResource
     end

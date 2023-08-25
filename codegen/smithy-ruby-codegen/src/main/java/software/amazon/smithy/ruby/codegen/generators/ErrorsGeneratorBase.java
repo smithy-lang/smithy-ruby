@@ -187,7 +187,7 @@ public abstract class ErrorsGeneratorBase {
                 .write("\nclass ApiServerError < ApiError")
                 .write("end")
                 .openBlock("\nclass ApiRedirectError < ApiError")
-                .write("def initialize: (location: String, **kwargs) -> void\n")
+                .write("def initialize: (location: String, **untyped kwargs) -> void\n")
                 .write("attr_reader location: String")
                 .closeBlock("end");
     }
@@ -294,7 +294,7 @@ public abstract class ErrorsGeneratorBase {
             rbsWriter
                     .write("")
                     .openBlock("class $L < $L", shapeName, apiErrorType)
-                    .write("def initialize: (http_resp: Hearth::HTTP::Response, **kwargs) -> void\n")
+                    .write("def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void\n")
                     .write("attr_reader data: Types::$L", shapeName)
                     .call(() -> {
                         if (retryable) {
