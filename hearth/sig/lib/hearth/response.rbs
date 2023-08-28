@@ -1,0 +1,11 @@
+module Hearth
+  class Response
+    def initialize: (?body: IO) -> void
+
+    attr_accessor body: IO
+
+    def replace: (Response other) -> self
+
+    def reset: () -> self
+  end
+end

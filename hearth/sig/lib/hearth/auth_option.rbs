@@ -1,0 +1,11 @@
+module Hearth
+  class AuthOption
+    def initialize: (scheme_id: String, ?identity_properties: ::Hash[Symbol, untyped], ?signer_properties: ::Hash[Symbol, untyped]) -> void
+
+    attr_reader scheme_id: String
+
+    attr_reader identity_properties: Hash[Symbol, untyped]
+
+    attr_reader signer_properties: Hash[Symbol, untyped]
+  end
+end

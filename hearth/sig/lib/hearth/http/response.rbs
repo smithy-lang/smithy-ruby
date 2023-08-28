@@ -1,0 +1,21 @@
+module Hearth
+  module HTTP
+    class Response < Hearth::Response
+      def initialize: (?status: ::Integer, ?reason: String?, ?fields: Fields, **untyped kwargs) -> void
+
+      attr_accessor status: Integer
+
+      attr_accessor reason: (String | nil)
+
+      attr_reader fields: Fields
+
+      attr_reader headers: Fields::Proxy
+
+      attr_reader trailers: Fields::Proxy
+
+      def replace: (Response other) -> self
+
+      def reset: () -> void
+    end
+  end
+end

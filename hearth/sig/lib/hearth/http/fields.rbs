@@ -1,7 +1,7 @@
 module Hearth
   module HTTP
     class Fields
-      include Enumerable[Array[Field]]
+      include Enumerable[Field]
 
       def initialize: (?Array[Field] fields, ?encoding: String) -> void
 
