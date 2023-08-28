@@ -1,0 +1,7 @@
+module Hearth
+  module AuthSchemes
+    class HTTPDigest < AuthSchemes::Base
+      def initialize: () -> void
+    end
+  end
+end

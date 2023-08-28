@@ -1,0 +1,13 @@
+module Hearth
+  module AuthSchemes
+    class Base
+      def initialize: (scheme_id: String, signer: Signers::Base, identity_type: Class) -> void
+
+      attr_reader scheme_id: String
+
+      def identity_resolver: (?::Hash[Symbol, IdentityResolver] identity_resolvers) -> IdentityResolver
+
+      attr_reader signer: Signers::Base
+    end
+  end
+end
