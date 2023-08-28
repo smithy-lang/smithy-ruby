@@ -43,7 +43,7 @@ module Weather
   #       of `standard` mode along with automatic client side throttling. This is a provisional
   #       mode that may change behavior in the future.
   #   @option args [Boolean] :stub_responses (false)
-  #     Enable response stubbing for testing. See {Hearth::ClientStubs stub_responses}.
+  #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   # @!attribute auth_resolver

@@ -54,7 +54,7 @@ module WhiteLabel
   #       of `standard` mode along with automatic client side throttling. This is a provisional
   #       mode that may change behavior in the future.
   #   @option args [Boolean] :stub_responses (false)
-  #     Enable response stubbing for testing. See {Hearth::ClientStubs stub_responses}.
+  #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [String] :test_config ('default')
   #     A Test Config
   #   @option args [Boolean] :validate_input (true)

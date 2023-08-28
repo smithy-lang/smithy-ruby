@@ -147,7 +147,9 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
      */
     public RubyCodeWriter writeDocs(Consumer<RubyCodeWriter> consumer) {
         pushState();
-        setNewlinePrefix("# ");
+        if (getNewlinePrefix().isEmpty()) {
+            setNewlinePrefix("# ");
+        }
         consumer.accept(this);
         popState();
         return this;
@@ -163,7 +165,8 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardMethod(String methodSignature, Runnable task) {
         writeDocs((w) -> {
             w.write("@!method $L", methodSignature);
-            w.pushFilteredState(s -> s.replace("#", " "));
+            w.pushState();
+            w.setNewlinePrefix(w.getNewlinePrefix() + w.getIndentText());
             task.run();
             w.popState();
         });
@@ -184,7 +187,8 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardAttribute(String attribute, Runnable task) {
         writeDocs((w) -> {
             w.write("@!attribute $L", attribute);
-            w.pushFilteredState(s -> s.replace("#", " "));
+            w.pushState();
+            w.setNewlinePrefix(w.getNewlinePrefix() + w.getIndentText());
             task.run();
             w.popState();
         });
