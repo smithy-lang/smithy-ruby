@@ -49,6 +49,7 @@ module Hearth
         @kind == :trailer
       end
 
+      # @return [Hash]
       def to_h
         { @name => value }
       end

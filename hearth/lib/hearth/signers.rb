@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
 module Hearth
+  # Namespace for all Signer classes.
   module Signers
     # Base class for all Signer classes.
     class Base
-      def sign(request:, identity:, properties: {})
-        # do nothing
+      def sign(request:, identity:, properties:)
+        raise NotImplementedError
+      end
+
+      def reset(request:, properties:)
+        raise NotImplementedError
       end
     end
   end

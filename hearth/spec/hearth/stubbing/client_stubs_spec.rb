@@ -9,7 +9,7 @@ module Hearth
 
       def initialize(config = Config.new)
         @config = config
-        @stubs = Hearth::Stubbing::Stubs.new
+        @stubs = Hearth::Stubs.new
       end
 
       # for testing

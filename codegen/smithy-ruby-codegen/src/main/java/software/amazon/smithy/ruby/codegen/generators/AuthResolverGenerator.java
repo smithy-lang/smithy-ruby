@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -81,24 +83,30 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthSchemesConstant(RubyCodeWriter writer) {
+        Set<Trait> authTraitsSet = new HashSet<>();
+        if (serviceAuthSchemes.isEmpty()) {
+            authTraitsSet.add(new OptionalAuthTrait());
+        } else {
+            serviceAuthSchemes.forEach((shapeId, trait) -> {
+                authTraitsSet.add(trait);
+            });
+        }
+        operations.stream().forEach(operation -> {
+            ServiceIndex.of(model).getEffectiveAuthSchemes(service, operation).forEach((shapeId, trait) -> {
+                authTraitsSet.add(trait);
+            });
+            if (operation.hasTrait(OptionalAuthTrait.class)) {
+                OptionalAuthTrait trait = operation.getTrait(OptionalAuthTrait.class).get();
+                authTraitsSet.add(trait);
+            }
+        });
+
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    if (serviceAuthSchemes.isEmpty()) {
-                        renderAuthScheme(writer, new OptionalAuthTrait());
-                    } else {
-                        serviceAuthSchemes.forEach((shapeId, trait) -> {
-                            renderAuthScheme(writer, trait);
-                        });
-                        // if any operation is optional, also add anonymous auth scheme
-                        operations.stream().forEach(operation -> {
-                            boolean isOptional = operation.hasTrait(OptionalAuthTrait.class);
-                            if (isOptional) {
-                                OptionalAuthTrait trait = operation.getTrait(OptionalAuthTrait.class).get();
-                                renderAuthScheme(writer, trait);
-                            }
-                        });
-                    }
+                    authTraitsSet.stream()
+                            .sorted(Comparator.comparing(Trait::toShapeId))
+                            .forEach(trait -> renderAuthScheme(writer, trait));
                 })
                 .unwrite(",\n")
                 .write("")

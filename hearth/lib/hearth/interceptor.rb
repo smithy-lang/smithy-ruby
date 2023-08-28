@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'interceptor/context'
 require_relative 'interceptor/hooks'
 
 module Hearth

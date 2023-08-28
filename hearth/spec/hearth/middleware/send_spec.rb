@@ -37,7 +37,7 @@ module Hearth
       let(:app) { double('app', call: output) }
       let(:client) { double('client') }
       let(:stub_responses) { false }
-      let(:stubs) { Hearth::Stubbing::Stubs.new }
+      let(:stubs) { Hearth::Stubs.new }
       let(:logger) { double('Logger') }
 
       subject do
@@ -131,46 +131,6 @@ module Hearth
             subject.call(input, context)
           end
 
-          context 'stub is a proc' do
-            before { stubs.add_stubs(operation, [stub_proc]) }
-
-            context 'proc returns a stub' do
-              let(:exception) { Exception.new }
-              let(:stub_proc) { proc { exception } }
-
-              it 'calls the stub and applies it' do
-                expect(stub_proc).to receive(:call)
-                  .with(input, context).and_call_original
-                output = subject.call(input, context)
-                expect(output.error).to be(exception)
-              end
-            end
-
-            context 'proc returns nil' do
-              let(:url) { 'https://example.com' }
-              let(:status) { 418 }
-              let(:more_context) { 'more_context' }
-              let(:response) { Hearth::HTTP::Response.new }
-
-              let(:stub_proc) do
-                lambda do |_input, context|
-                  context.response.status = status
-                  context.metadata[:more_context] = more_context
-                  nil
-                end
-              end
-
-              it 'allows stubbing of request, response, and context' do
-                expect(stub_proc).to receive(:call)
-                  .with(input, context).and_call_original
-                expect(Stubs::StubData).to_not receive(:stub)
-                subject.call(input, context)
-                expect(response.status).to eq status
-                expect(context.metadata[:more_context]).to eq(more_context)
-              end
-            end
-          end
-
           context 'stub is an Exception' do
             let(:error) { Exception.new }
 
@@ -179,6 +139,17 @@ module Hearth
             it 'sets the output error as the exception' do
               output = subject.call(input, context)
               expect(output.error).to be(error)
+            end
+
+            context 'as a proc' do
+              let(:stub_proc) { proc { error } }
+
+              before { stubs.add_stubs(operation, [stub_proc]) }
+
+              it 'sets the output error as the exception' do
+                output = subject.call(input, context)
+                expect(output.error).to be(error)
+              end
             end
           end
 
@@ -190,6 +161,17 @@ module Hearth
             it 'sets the output error as the error' do
               output = subject.call(input, context)
               expect(output.error).to be(error)
+            end
+
+            context 'as a proc' do
+              let(:stub_proc) { proc { error } }
+
+              before { stubs.add_stubs(operation, [stub_proc]) }
+
+              it 'sets the output error as the error' do
+                output = subject.call(input, context)
+                expect(output.error).to be(error)
+              end
             end
           end
 
@@ -209,6 +191,23 @@ module Hearth
                 expect(Stubs::StubData).to receive(:stub)
                   .with(response, stub: stub_data)
                 subject.call(input, context)
+              end
+
+              context 'as a proc' do
+                let(:stub_proc) { proc { { data: stub_hash } } }
+
+                before { stubs.add_stubs(operation, [stub_proc]) }
+
+                it 'uses the data hash to stub the response' do
+                  expect(Stubs::StubData).to receive(:build)
+                    .with(stub_hash, context: 'stub')
+                    .and_return(stub_data)
+                  expect(Stubs::StubData).to receive(:validate!)
+                    .with(stub_data, context: 'stub')
+                  expect(Stubs::StubData).to receive(:stub)
+                    .with(response, stub: stub_data)
+                  subject.call(input, context)
+                end
               end
             end
 
@@ -230,6 +229,23 @@ module Hearth
                 expect(Stubs::StubError).to receive(:stub)
                   .with(response, stub: stub_error)
                 subject.call(input, context)
+              end
+
+              context 'as a proc' do
+                let(:stub_proc) { proc { { error: stub_hash } } }
+
+                before { stubs.add_stubs(operation, [stub_proc]) }
+
+                it 'uses the error hash to stub the response' do
+                  expect(Stubs::StubError).to receive(:build)
+                    .with(stub_error_data, context: 'stub')
+                    .and_return(stub_error)
+                  expect(Stubs::StubError).to receive(:validate!)
+                    .with(stub_error, context: 'stub')
+                  expect(Stubs::StubError).to receive(:stub)
+                    .with(response, stub: stub_error)
+                  subject.call(input, context)
+                end
               end
 
               it 'raises when missing an error class' do
@@ -299,6 +315,24 @@ module Hearth
                 .with(response, stub: stub_data)
               subject.call(input, context)
             end
+
+            context 'as a proc' do
+              let(:stub_proc) { proc {} }
+
+              before { stubs.add_stubs(operation, [stub_proc]) }
+
+              it 'uses the stub class default' do
+                expect(Stubs::StubData).to receive(:default)
+                  .and_return(stub_hash)
+                expect(Stubs::StubData).to receive(:build)
+                  .with(stub_hash, context: 'stub')
+                  .and_return(stub_data)
+                expect(Stubs::StubData).to receive(:validate!)
+                expect(Stubs::StubData).to receive(:stub)
+                  .with(response, stub: stub_data)
+                subject.call(input, context)
+              end
+            end
           end
 
           context 'stub is a Hearth::Structure' do
@@ -313,6 +347,20 @@ module Hearth
                 .with(response, stub: stub_data)
               subject.call(input, context)
             end
+
+            context 'as a proc' do
+              let(:stub_proc) { proc { stub_data } }
+
+              before { stubs.add_stubs(operation, [stub_proc]) }
+
+              it 'uses the stub class to stub the response' do
+                expect(Stubs::StubData).to receive(:validate!)
+                  .with(stub_data, context: 'stub')
+                expect(Stubs::StubData).to receive(:stub)
+                  .with(response, stub: stub_data)
+                subject.call(input, context)
+              end
+            end
           end
 
           context 'stub is a Hearth::Response' do
@@ -321,10 +369,21 @@ module Hearth
             before { stubs.add_stubs(operation, [stub_response]) }
 
             it 'sets the response to the stub' do
-              expect(context.response).to receive(:replace)
-                .with(stub_response)
-
+              expect(context.response)
+                .to receive(:replace).with(stub_response)
               subject.call(input, context)
+            end
+
+            context 'as a proc' do
+              let(:stub_proc) { proc { stub_response } }
+
+              before { stubs.add_stubs(operation, [stub_proc]) }
+
+              it 'sets the response to the stub' do
+                expect(context.response)
+                  .to receive(:replace).with(stub_response)
+                subject.call(input, context)
+              end
             end
           end
 
@@ -335,6 +394,18 @@ module Hearth
               expect do
                 subject.call(input, context)
               end.to raise_error(ArgumentError)
+            end
+
+            context 'as a proc' do
+              let(:stub_proc) { proc { 'some string' } }
+
+              before { stubs.add_stubs(operation, [stub_proc]) }
+
+              it 'raises a ArgumentError' do
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(ArgumentError)
+              end
             end
           end
         end

@@ -65,10 +65,10 @@ module Hearth
     # ## Dynamic Stubbing
     #
     # In addition to creating static stubs, it's also possible to generate
-    # stubs dynamically based on the parameters with which operations were
+    # stubs dynamically based on the input with which operations were
     # called, by passing a `Proc` object:
     #
-    #     client.stub_responses(:operation, -> (input, context) {
+    #     client.stub_responses(:operation, -> (input) {
     #       if input[:param] == 'foo'
     #         # return a data stub
     #         { data: { param1: [{ name: 'value1'}]} }

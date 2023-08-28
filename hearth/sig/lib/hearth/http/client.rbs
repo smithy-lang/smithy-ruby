@@ -2,26 +2,33 @@ module Hearth
   module HTTP
     # An HTTP client that uses Net::HTTP to send requests.
     class Client
+      # @api private
+      OPTIONS: { logger: untyped, debug_output: nil, proxy: nil, open_timeout: 15, read_timeout: nil, keep_alive_timeout: 5, continue_timeout: 1, write_timeout: nil, ssl_timeout: nil, verify_peer: true, ca_file: nil, ca_path: nil, cert_store: nil, host_resolver: nil }
+
       # Initialize an instance of this HTTP client.
       #
       # @param [Hash] options The options for this HTTP Client
       #
+      # @option options [Logger] (Logger.new($stdout)) :logger A logger
+      #   used to log Net::HTTP requests and responses when `:debug_output`
+      #   is enabled.
+      #
       # @option options [Boolean] :debug_output (false) When `true`,
       #   sets an output stream to the configured Logger for debugging.
       #
-      # @option options [String] :proxy A proxy to send
+      # @option options [String, URI] :proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
       #
-      # @option options [Float] :open_timeout Number of seconds to
+      # @option options [Float] :open_timeout (15) Number of seconds to
       #   wait for the connection to open.
       #
       # @option options [Float] :read_timeout Number of seconds to wait
       #   for one block to be read (via one read(2) call).
       #
-      # @option options [Float] :keep_alive_timeout Seconds to reuse the
+      # @option options [Float] :keep_alive_timeout (5) Seconds to reuse the
       #   connection of the previous request.
       #
-      # @option options [Float] :continue_timeout Seconds to wait for
+      # @option options [Float] :continue_timeout (1) Seconds to wait for
       #   100 Continue response.
       #
       # @option options [Float] :write_timeout Number of seconds to wait
@@ -48,29 +55,39 @@ module Hearth
       # @option options [OpenSSL::X509::Store] :cert_store An OpenSSL X509
       #   certificate store that contains the SSL certificate authority.
       #
-      # @option options [#resolve_address] (nil) :host_resolver
+      # @option options [#resolve_address] :host_resolver
       #   An object, such as {Hearth::DNS::HostResolver} that responds to
       #   `#resolve_address`, returning an array of up to two IP addresses for
       #   the given hostname, one IPv6 and one IPv4, in that order.
       #   `#resolve_address` should take a nodename keyword argument and
-      #   optionally other keyword args similar to {Addrinfo#getaddrinfo}'s
+      #   optionally other keyword args similar to Addrinfo.getaddrinfo's
       #   positional parameters.
       def initialize: (?::Hash[untyped, untyped] options) -> void
 
       # @param [Request] request
       # @param [Response] response
+      # @param [Logger] logger (nil)
       # @return [Response]
-      def transmit: (request: untyped, response: untyped, **untyped options) -> untyped
+      def transmit: (request: untyped, response: untyped, ?logger: untyped?) -> untyped
 
       private
 
-      def _transmit: (untyped http, untyped request, untyped response) -> untyped
+      def with_connection_pool: (untyped endpoint, untyped logger) { (untyped) -> untyped } -> untyped
+
+      # Starts and returns a new HTTP connection.
+      # @param [URI] endpoint
+      # @return [Net::HTTP]
+      def new_connection: (untyped endpoint, untyped logger) -> untyped
+
+      def _transmit: (untyped http, untyped net_request, untyped response) -> untyped
 
       def unpack_response: (untyped net_resp, untyped response) -> untyped
 
-      # Creates an HTTP connection to the endpoint
-      # Applies proxy if set
+      # Creates an HTTP connection to the endpoint.
+      # Applies proxy if set.
       def create_http: (untyped endpoint) -> untyped
+
+      def configure_timeouts: (untyped http) -> untyped
 
       # applies ssl settings to the HTTP object
       def configure_ssl: (untyped http) -> untyped
@@ -95,6 +112,31 @@ module Hearth
       # Extract the parts of the proxy URI
       # @return [Array]
       def proxy_parts: () -> ::Array[untyped]
+
+      # Config options for the HTTP client used for connection pooling
+      # @return [Hash]
+      def pool_config: () -> untyped
+
+      # Helper methods extended onto Net::HTTP objects.
+      # @api private
+      class HTTP < SimpleDelegator
+        def initialize: (untyped http) -> void
+
+        # @return [Integer, nil]
+        attr_reader last_used: untyped
+
+        # Sends the request and tracks that this connection has been used.
+        def request: (*untyped) ?{ () -> untyped } -> untyped
+
+        def stale?: () -> untyped
+
+        # Attempts to close/finish the connection without raising an error.
+        def finish: () -> untyped
+
+        private
+
+        def monotonic_milliseconds: () -> untyped
+      end
     end
   end
 end

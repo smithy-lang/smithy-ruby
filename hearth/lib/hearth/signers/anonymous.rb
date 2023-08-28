@@ -3,6 +3,14 @@
 module Hearth
   module Signers
     # A signer that does not sign requests.
-    class Anonymous < Signers::Base; end
+    class Anonymous < Signers::Base
+      def sign(request:, identity:, properties:)
+        # Do nothing.
+      end
+
+      def reset(request:, properties:)
+        # Do nothing.
+      end
+    end
   end
 end

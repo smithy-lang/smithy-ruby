@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module Hearth
+  # @api private
   module Config
-    # @api private
+    # Resolves configuration options.
     class Resolver
       private_class_method :new
 

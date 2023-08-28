@@ -129,7 +129,7 @@ module Hearth
           context 'header is an integer' do
             it 'hint returns an integer delay' do
               http_resp.headers['retry-after'] = '123'
-              expect(subject.hints[:retry_after_hint]).to eq(123)
+              expect(subject.hints[:retry_after]).to eq(123)
             end
           end
 
@@ -140,21 +140,21 @@ module Hearth
             it 'hint returns an integer delay' do
               http_resp.headers['retry-after'] = retry_after_time
               allow(Time).to receive(:now).and_return(time)
-              expect(subject.hints[:retry_after_hint]).to eq(123)
+              expect(subject.hints[:retry_after]).to eq(123)
             end
           end
 
           context 'header is nil' do
             it 'no hint' do
               http_resp.headers['retry-after'] = nil
-              expect(subject.hints.key?(:retry_after_hint)).to eq(false)
+              expect(subject.hints.key?(:retry_after)).to eq(false)
             end
           end
 
           context 'header is an empty string' do
             it 'no hint' do
               http_resp.headers['retry-after'] = ''
-              expect(subject.hints.key?(:retry_after_hint)).to eq(false)
+              expect(subject.hints.key?(:retry_after)).to eq(false)
             end
           end
         end

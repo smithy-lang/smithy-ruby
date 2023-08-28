@@ -8,9 +8,20 @@ use smithy.ruby.protocols#UnprocessableEntityError
 /// Rails High Score example from their generator docs
 @railsJson
 @title("High Score Sample Rails Service")
+@httpBasicAuth
+@httpDigestAuth
+@httpBearerAuth
+@httpApiKeyAuth(name: "Authorization", in: "header")
+@auth([])
 service HighScoreService {
     version: "2021-02-15",
-    resources: [HighScore]
+    resources: [HighScore],
+    operations: [
+        BasicAuth,
+        DigestAuth,
+        BearerAuth,
+        ApiKeyAuth
+    ]
 }
 
 /// Rails default scaffold operations
@@ -158,3 +169,19 @@ structure ListHighScoresOutput {
 list HighScores {
     member: HighScoreAttributes
 }
+
+@auth([httpBasicAuth])
+@http(method: "GET", uri: "/basic_auth")
+operation BasicAuth {}
+
+@auth([httpDigestAuth])
+@http(method: "GET", uri: "/digest_auth")
+operation DigestAuth {}
+
+@auth([httpBearerAuth])
+@http(method: "GET", uri: "/bearer_auth")
+operation BearerAuth {}
+
+@auth([httpApiKeyAuth])
+@http(method: "GET", uri: "/api_key_auth")
+operation ApiKeyAuth {}

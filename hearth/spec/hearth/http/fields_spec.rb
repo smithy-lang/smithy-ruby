@@ -72,7 +72,7 @@ module Hearth
         end
 
         it 'enumerates over its contents' do
-          fields.each { |k, v| expect(fields[k]).to eq(v) }
+          fields.each { |field| expect(fields[field.name]).to eq(field) }
         end
       end
 

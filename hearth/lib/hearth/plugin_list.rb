@@ -9,7 +9,7 @@ module Hearth
 
     # Initialize a PluginList.
     #
-    # @param [Array] ([]) plugins A list of plugins to initialize with
+    # @param [Array] plugins ([]) A list of plugins to initialize with
     def initialize(plugins = [])
       unless plugins.respond_to?(:each)
         raise ArgumentError, 'Plugins must be an enumerable'

@@ -11,6 +11,33 @@ module HighScoreService
   # @api private
   module Builders
 
+    class ApiKeyAuth
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path('/api_key_auth')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_param_list(params)
+      end
+    end
+
+    class BasicAuth
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path('/basic_auth')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_param_list(params)
+      end
+    end
+
+    class BearerAuth
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path('/bearer_auth')
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_param_list(params)
+      end
+    end
+
     class CreateHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -36,6 +63,15 @@ module HighScoreService
             id: Hearth::HTTP.uri_escape(input[:id].to_s)
           )
         )
+        params = Hearth::Query::ParamList.new
+        http_req.append_query_param_list(params)
+      end
+    end
+
+    class DigestAuth
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path('/digest_auth')
         params = Hearth::Query::ParamList.new
         http_req.append_query_param_list(params)
       end

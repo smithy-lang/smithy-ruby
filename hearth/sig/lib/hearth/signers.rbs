@@ -1,0 +1,8 @@
+module Hearth
+  module Signers
+    # Base class for all Signer classes.
+    class Base
+      def sign: (request: untyped, identity: untyped, ?properties: ::Hash[untyped, untyped]) -> nil
+    end
+  end
+end

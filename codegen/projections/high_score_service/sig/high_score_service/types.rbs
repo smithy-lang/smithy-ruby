@@ -10,6 +10,18 @@
 module HighScoreService
   module Types
 
+    ApiKeyAuthInput: untyped
+
+    ApiKeyAuthOutput: untyped
+
+    BasicAuthInput: untyped
+
+    BasicAuthOutput: untyped
+
+    BearerAuthInput: untyped
+
+    BearerAuthOutput: untyped
+
     CreateHighScoreInput: untyped
 
     CreateHighScoreOutput: untyped
@@ -17,6 +29,10 @@ module HighScoreService
     DeleteHighScoreInput: untyped
 
     DeleteHighScoreOutput: untyped
+
+    DigestAuthInput: untyped
+
+    DigestAuthOutput: untyped
 
     GetHighScoreInput: untyped
 

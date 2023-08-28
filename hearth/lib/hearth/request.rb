@@ -5,7 +5,6 @@ require 'uri'
 
 module Hearth
   # Represents a base request.
-  # @api private
   class Request
     # @param [URI] uri (URI(''))
     # @param [IO] body (StringIO.new)

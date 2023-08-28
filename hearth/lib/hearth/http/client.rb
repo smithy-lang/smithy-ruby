@@ -31,7 +31,7 @@ module Hearth
       #
       # @param [Hash] options The options for this HTTP Client
       #
-      # @param options [Logger] (Logger.new($stdout)) :logger A logger
+      # @option options [Logger] (Logger.new($stdout)) :logger A logger
       #   used to log Net::HTTP requests and responses when `:debug_output`
       #   is enabled.
       #
@@ -100,7 +100,7 @@ module Hearth
 
       # @param [Request] request
       # @param [Response] response
-      # @param [Logger] (nil) logger
+      # @param [Logger] logger (nil)
       # @return [Response]
       def transmit(request:, response:, logger: nil)
         net_request = build_net_request(request)
@@ -263,7 +263,7 @@ module Hearth
 
       # Helper methods extended onto Net::HTTP objects.
       # @api private
-      class HTTP < Delegator
+      class HTTP < SimpleDelegator
         def initialize(http)
           super(http)
           @http = http
@@ -271,14 +271,6 @@ module Hearth
 
         # @return [Integer, nil]
         attr_reader :last_used
-
-        def __getobj__
-          @http
-        end
-
-        def __setobj__(obj)
-          @http = obj
-        end
 
         # Sends the request and tracks that this connection has been used.
         def request(...)

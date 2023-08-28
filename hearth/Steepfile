@@ -5,8 +5,5 @@ D = Steep::Diagnostic
 target :app do
   signature 'sig'
 
-  check 'lib/hearth/structure'
-  check 'lib/hearth/union'
-
   configure_code_diagnostics(D::Ruby.strict)
 end

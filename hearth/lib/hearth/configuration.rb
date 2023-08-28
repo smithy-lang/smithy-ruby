@@ -2,6 +2,7 @@
 
 module Hearth
   # A module mixed into Config structs that resolves default value providers.
+  # @api private
   module Configuration
     def initialize(**options)
       Hearth::Validator.validate_unknown!(self, options, context: 'config')

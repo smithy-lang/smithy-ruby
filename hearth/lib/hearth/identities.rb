@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
+  # Namespace for all Identity classes.
   module Identities
     # Base class for all Identity classes.
     class Base

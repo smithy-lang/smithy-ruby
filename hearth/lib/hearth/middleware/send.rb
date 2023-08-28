@@ -15,7 +15,7 @@ module Hearth
       #   that are responsible for creating a stubbed error response. They
       #   must respond to #stub and take the response and stub data as
       #   arguments.
-      # @param [Stubs] stubs A {Hearth::Stubbing:Stubs} object containing
+      # @param [Stubs] stubs A {Hearth::Stubs} object containing
       #   stubbed data for any given operation.
       def initialize(_app, client:, stub_responses:,
                      stub_data_class:, stub_error_classes:, stubs:)
@@ -90,8 +90,8 @@ module Hearth
       def apply_stub(stub, input, context, output)
         case stub
         when Proc
-          stub = stub.call(input, context)
-          apply_stub(stub, input, context, output) if stub
+          stub = stub.call(input)
+          apply_stub(stub, input, context, output)
         when Exception, ApiError
           output.error = stub
         when Hash
