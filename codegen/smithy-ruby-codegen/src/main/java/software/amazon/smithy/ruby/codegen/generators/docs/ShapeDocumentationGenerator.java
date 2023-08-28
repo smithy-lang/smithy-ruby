@@ -54,22 +54,22 @@ public class ShapeDocumentationGenerator {
 
     /**
      * @param model model to generate from
+     * @param writer writer to write documentation to
      * @param symbolProvider symbol provider
      * @param shape shape to generate documentation for
      */
-    public ShapeDocumentationGenerator(Model model, SymbolProvider symbolProvider, Shape shape) {
-        this.writer = new RubyCodeWriter("");
+    public ShapeDocumentationGenerator(Model model, RubyCodeWriter writer, SymbolProvider symbolProvider, Shape shape) {
+        this.writer = writer;
         this.model = model;
         this.symbolProvider = symbolProvider;
         this.shape = shape;
     }
 
     /**
-     * @return the rendered documentation
+     * Generate documentation for a shape.
      */
-    public String render() {
+    public void render() {
         shape.accept(new ShapeDocumentationVisitor());
-        return writer.toString();
     }
 
     private void writeDocumentationTrait(Optional<DocumentationTrait> optionalDocumentationTrait) {

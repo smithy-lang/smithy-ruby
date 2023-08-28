@@ -97,10 +97,9 @@ public class ClientGenerator extends RubyGeneratorBase {
                             settings.getService().getName())
                     .write("# See {#initialize} for a full list of supported configuration options");
 
-            String documentation = new ShapeDocumentationGenerator(model, symbolProvider, context.service()).render();
-
             writer
-                    .writeInline("$L", documentation)
+                    .call(() -> new ShapeDocumentationGenerator(
+                            model, writer, symbolProvider, context.service()).render())
                     .openBlock("class Client")
                     .write("include $T", Hearth.CLIENT_STUBS)
                     .call(() -> renderClassRuntimePlugins(writer))
@@ -203,11 +202,9 @@ public class ClientGenerator extends RubyGeneratorBase {
         String operationName =
                 RubyFormatter.toSnakeCase(symbol.getName());
 
-        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, operation).render();
-
         writer
                 .write("")
-                .writeInline("$L", documentation)
+                .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, operation).render())
                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                 .write("config = operation_config(options)")
                 .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)

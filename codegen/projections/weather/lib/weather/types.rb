@@ -11,7 +11,6 @@ module Weather
   module Types
 
     class Announcements < Hearth::Union
-
       class Police < Announcements
         def to_h
           { police: super(__getobj__) }
@@ -274,7 +273,6 @@ module Weather
     end
 
     class ImageType < Hearth::Union
-
       class Raw < ImageType
         def to_h
           { raw: super(__getobj__) }
@@ -453,7 +451,6 @@ module Weather
     end
 
     class Precipitation < Hearth::Union
-
       class Rain < Precipitation
         def to_h
           { rain: super(__getobj__) }

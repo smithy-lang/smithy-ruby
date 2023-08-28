@@ -1442,7 +1442,6 @@ module RailsJson
 
     # A union with a representative set of types for members.
     class MyUnion < Hearth::Union
-
       class StringValue < MyUnion
         def to_h
           { string_value: super(__getobj__) }

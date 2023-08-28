@@ -44,18 +44,15 @@ public final class UnionGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
-        String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
-
         write(writer -> {
-            writer.writeInline("$L", documentation);
-            writer.openBlock("class $T < $T", symbolProvider.toSymbol(shape), Hearth.UNION);
+            writer
+                    .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
+                    .openBlock("class $T < $T", symbolProvider.toSymbol(shape), Hearth.UNION);
 
             for (MemberShape memberShape : shape.members()) {
-                String memberDocumentation =
-                        new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
-
                 writer
-                        .writeInline("$L", memberDocumentation)
+                        .call(() -> new ShapeDocumentationGenerator(
+                                model, writer, symbolProvider, memberShape).render())
                         .openBlock("class $L < $T",
                                 symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(shape))
                         .openBlock("def to_h")

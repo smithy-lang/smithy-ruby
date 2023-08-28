@@ -14,7 +14,6 @@ require_relative 'middleware/request_id'
 module RailsJson
   # An API client for RailsJson
   # See {#initialize} for a full list of supported configuration options
-
   class Client
     include Hearth::ClientStubs
     @plugins = Hearth::PluginList.new
