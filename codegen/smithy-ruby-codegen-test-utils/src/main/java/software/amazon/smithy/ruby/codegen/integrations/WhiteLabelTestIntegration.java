@@ -33,7 +33,6 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
         return service.toShapeId().getName().equals("WhiteLabel");
     }
 
-
     @Override
     public List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
         return List.of(RubyRuntimePlugin.builder()
@@ -44,7 +43,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
 
     @Override
     public void modifyClientMiddleware(MiddlewareBuilder middlewareBuilder, GenerationContext context) {
-        middlewareBuilder.register(Middleware.builder()
+        Middleware testMiddleware = Middleware.builder()
                 .klass("Middleware::TestMiddleware")
                 .addConfig(ClientConfig.builder()
                         .name("test_config")
@@ -54,7 +53,45 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .build())
                 .step(MiddlewareStackStep.INITIALIZE)
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
-                .build());
+                .build();
+        Middleware beforeMiddleware = Middleware.builder()
+                .klass("Middleware::BeforeMiddleware")
+                .step(MiddlewareStackStep.BUILD)
+                .relative(Middleware.Relative.builder()
+                        .before("Middleware::MidMiddleware")
+                        .build())
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .build();
+        Middleware midMiddleware = Middleware.builder()
+                .addConfig(ClientConfig.builder()
+                        .name("verify_before_middleware")
+                        .type("Proc")
+                        .build())
+                .klass("Middleware::MidMiddleware")
+                .step(MiddlewareStackStep.BUILD)
+                .relative(Middleware.Relative.builder()
+                        .before("Middleware:OptionalMiddleware")
+                        .optional()
+                        .build())
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .build();
+        Middleware afterMiddleware = Middleware.builder()
+                .addConfig(ClientConfig.builder()
+                        .name("verify_mid_middleware")
+                        .type("Proc")
+                        .build())
+                .klass("Middleware::AfterMiddleware")
+                .step(MiddlewareStackStep.BUILD)
+                .relative(Middleware.Relative.builder()
+                        .after("Middleware::MidMiddleware")
+                        .build())
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .build();
+
+        middlewareBuilder.register(testMiddleware);
+        middlewareBuilder.register(beforeMiddleware);
+        middlewareBuilder.register(midMiddleware);
+        middlewareBuilder.register(afterMiddleware);
     }
 
 }
