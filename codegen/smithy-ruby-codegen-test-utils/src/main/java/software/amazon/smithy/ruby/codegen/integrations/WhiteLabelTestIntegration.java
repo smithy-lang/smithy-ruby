@@ -89,9 +89,9 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .build();
 
         middlewareBuilder.register(testMiddleware);
+        middlewareBuilder.register(afterMiddleware);
         middlewareBuilder.register(beforeMiddleware);
         middlewareBuilder.register(midMiddleware);
-        middlewareBuilder.register(afterMiddleware);
     }
 
 }
