@@ -39,7 +39,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.generators.AuthResolverGenerator;
+import software.amazon.smithy.ruby.codegen.generators.AuthGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EnumGenerator;
@@ -149,12 +149,10 @@ public class DirectedRubyCodegen
         ConfigGenerator configGenerator = new ConfigGenerator(directive, clientConfigList);
         configGenerator.render();
         configGenerator.renderRbs();
-        LOGGER.info("generated config");
 
         ClientGenerator clientGenerator = new ClientGenerator(directive, middlewareBuilder);
         clientGenerator.render();
         clientGenerator.renderRbs();
-        LOGGER.info("generated client");
     }
 
     @Override
@@ -204,17 +202,17 @@ public class DirectedRubyCodegen
             generator.generateStubs(directive.context());
         }
 
-        new AuthResolverGenerator(directive).render();
+        AuthGenerator authGenerator = new AuthGenerator(directive);
+        authGenerator.render();
+        authGenerator.renderRbs();
 
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(directive);
         paginatorsGenerator.render();
         paginatorsGenerator.renderRbs();
-        LOGGER.info("generated paginators");
 
         WaitersGenerator waitersGenerator = new WaitersGenerator(directive);
         waitersGenerator.render();
         waitersGenerator.renderRbs();
-        LOGGER.info("generated waiters");
 
         new VersionGenerator(directive).render();
         new ModuleGenerator(directive).render();
