@@ -82,7 +82,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::AllQueryStringTypesOutput
-    def all_query_string_types(params = {}, options = {}, &block)
+    def all_query_string_types(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::AllQueryStringTypesInput.build(params, context: 'params')
@@ -154,7 +154,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::ConstantAndVariableQueryStringOutput
-    def constant_and_variable_query_string(params = {}, options = {}, &block)
+    def constant_and_variable_query_string(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantAndVariableQueryStringInput.build(params, context: 'params')
@@ -226,7 +226,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::ConstantQueryStringOutput
-    def constant_query_string(params = {}, options = {}, &block)
+    def constant_query_string(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantQueryStringInput.build(params, context: 'params')
@@ -305,7 +305,7 @@ module RailsJson
     #   resp.data #=> Types::DocumentTypeOutput
     #   resp.data.string_value #=> String
     #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
-    def document_type(params = {}, options = {}, &block)
+    def document_type(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeInput.build(params, context: 'params')
@@ -382,7 +382,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::DocumentTypeAsPayloadOutput
     #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
-    def document_type_as_payload(params = {}, options = {}, &block)
+    def document_type_as_payload(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeAsPayloadInput.build(params, context: 'params')
@@ -448,7 +448,7 @@ module RailsJson
     #   resp = client.empty_operation()
     # @example Response structure
     #   resp.data #=> Types::EmptyOperationOutput
-    def empty_operation(params = {}, options = {}, &block)
+    def empty_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EmptyOperationInput.build(params, context: 'params')
@@ -514,7 +514,7 @@ module RailsJson
     #   resp = client.endpoint_operation()
     # @example Response structure
     #   resp.data #=> Types::EndpointOperationOutput
-    def endpoint_operation(params = {}, options = {}, &block)
+    def endpoint_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
@@ -586,7 +586,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
-    def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+    def endpoint_with_host_label_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
@@ -665,7 +665,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::GreetingWithErrorsOutput
     #   resp.data.greeting #=> String
-    def greeting_with_errors(params = {}, options = {}, &block)
+    def greeting_with_errors(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
@@ -740,7 +740,7 @@ module RailsJson
     #   resp.data #=> Types::HttpPayloadTraitsOutput
     #   resp.data.foo #=> String
     #   resp.data.blob #=> String
-    def http_payload_traits(params = {}, options = {}, &block)
+    def http_payload_traits(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsInput.build(params, context: 'params')
@@ -813,7 +813,7 @@ module RailsJson
     #   resp.data #=> Types::HttpPayloadTraitsWithMediaTypeOutput
     #   resp.data.foo #=> String
     #   resp.data.blob #=> String
-    def http_payload_traits_with_media_type(params = {}, options = {}, &block)
+    def http_payload_traits_with_media_type(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params, context: 'params')
@@ -891,7 +891,7 @@ module RailsJson
     #   resp.data.nested #=> Types::NestedPayload
     #   resp.data.nested.greeting #=> String
     #   resp.data.nested.name #=> String
-    def http_payload_with_structure(params = {}, options = {}, &block)
+    def http_payload_with_structure(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadWithStructureInput.build(params, context: 'params')
@@ -967,7 +967,7 @@ module RailsJson
     #   resp.data.foo #=> String
     #   resp.data.foo_map #=> Hash<String, String>
     #   resp.data.foo_map['key'] #=> String
-    def http_prefix_headers(params = {}, options = {}, &block)
+    def http_prefix_headers(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInput.build(params, context: 'params')
@@ -1036,7 +1036,7 @@ module RailsJson
     #   resp.data #=> Types::HttpPrefixHeadersInResponseOutput
     #   resp.data.prefix_headers #=> Hash<String, String>
     #   resp.data.prefix_headers['key'] #=> String
-    def http_prefix_headers_in_response(params = {}, options = {}, &block)
+    def http_prefix_headers_in_response(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInResponseInput.build(params, context: 'params')
@@ -1105,7 +1105,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::HttpRequestWithFloatLabelsOutput
-    def http_request_with_float_labels(params = {}, options = {}, &block)
+    def http_request_with_float_labels(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithFloatLabelsInput.build(params, context: 'params')
@@ -1174,7 +1174,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::HttpRequestWithGreedyLabelInPathOutput
-    def http_request_with_greedy_label_in_path(params = {}, options = {}, &block)
+    def http_request_with_greedy_label_in_path(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params, context: 'params')
@@ -1251,7 +1251,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::HttpRequestWithLabelsOutput
-    def http_request_with_labels(params = {}, options = {}, &block)
+    def http_request_with_labels(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsInput.build(params, context: 'params')
@@ -1327,7 +1327,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::HttpRequestWithLabelsAndTimestampFormatOutput
-    def http_request_with_labels_and_timestamp_format(params = {}, options = {}, &block)
+    def http_request_with_labels_and_timestamp_format(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params, context: 'params')
@@ -1394,7 +1394,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::HttpResponseCodeOutput
     #   resp.data.status #=> Integer
-    def http_response_code(params = {}, options = {}, &block)
+    def http_response_code(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpResponseCodeInput.build(params, context: 'params')
@@ -1464,7 +1464,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::IgnoreQueryParamsInResponseOutput
     #   resp.data.baz #=> String
-    def ignore_query_params_in_response(params = {}, options = {}, &block)
+    def ignore_query_params_in_response(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::IgnoreQueryParamsInResponseInput.build(params, context: 'params')
@@ -1583,7 +1583,7 @@ module RailsJson
     #   resp.data.header_enum #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.header_enum_list #=> Array<String>
     #   resp.data.header_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
-    def input_and_output_with_headers(params = {}, options = {}, &block)
+    def input_and_output_with_headers(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::InputAndOutputWithHeadersInput.build(params, context: 'params')
@@ -1672,7 +1672,7 @@ module RailsJson
     #   resp.data.foo_enum_set[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_map #=> Hash<String, String>
     #   resp.data.foo_enum_map['key'] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
-    def json_enums(params = {}, options = {}, &block)
+    def json_enums(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonEnumsInput.build(params, context: 'params')
@@ -1788,7 +1788,7 @@ module RailsJson
     #   resp.data.dense_set_map['key'] #=> Array<String>
     #   resp.data.dense_set_map['key'][0] #=> String
     #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
-    def json_maps(params = {}, options = {}, &block)
+    def json_maps(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonMapsInput.build(params, context: 'params')
@@ -1892,7 +1892,7 @@ module RailsJson
     #   resp.data.contents.structure_value.hi #=> String
     #   resp.data.contents.renamed_structure_value #=> Types::RenamedGreeting
     #   resp.data.contents.renamed_structure_value.salutation #=> String
-    def json_unions(params = {}, options = {}, &block)
+    def json_unions(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonUnionsInput.build(params, context: 'params')
@@ -2066,7 +2066,7 @@ module RailsJson
     #   resp.data.struct_with_location_name #=> Types::StructWithLocationName
     #   resp.data.timestamp #=> Time
     #   resp.data.unix_timestamp #=> Time
-    def kitchen_sink_operation(params = {}, options = {}, &block)
+    def kitchen_sink_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkOperationInput.build(params, context: 'params')
@@ -2136,7 +2136,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::MediaTypeHeaderOutput
     #   resp.data.json #=> String
-    def media_type_header(params = {}, options = {}, &block)
+    def media_type_header(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MediaTypeHeaderInput.build(params, context: 'params')
@@ -2207,7 +2207,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::NestedAttributesOperationOutput
     #   resp.data.value #=> String
-    def nested_attributes_operation(params = {}, options = {}, &block)
+    def nested_attributes_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NestedAttributesOperationInput.build(params, context: 'params')
@@ -2285,7 +2285,7 @@ module RailsJson
     #   resp.data.b #=> String
     #   resp.data.c #=> Array<String>
     #   resp.data.c[0] #=> String
-    def null_and_empty_headers_client(params = {}, options = {}, &block)
+    def null_and_empty_headers_client(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NullAndEmptyHeadersClientInput.build(params, context: 'params')
@@ -2364,7 +2364,7 @@ module RailsJson
     #   resp.data.sparse_string_list[0] #=> String
     #   resp.data.sparse_string_map #=> Hash<String, String>
     #   resp.data.sparse_string_map['key'] #=> String
-    def null_operation(params = {}, options = {}, &block)
+    def null_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NullOperationInput.build(params, context: 'params')
@@ -2434,7 +2434,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::OmitsNullSerializesEmptyStringOutput
-    def omits_null_serializes_empty_string(params = {}, options = {}, &block)
+    def omits_null_serializes_empty_string(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OmitsNullSerializesEmptyStringInput.build(params, context: 'params')
@@ -2503,7 +2503,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::OperationWithOptionalInputOutputOutput
     #   resp.data.value #=> String
-    def operation_with_optional_input_output(params = {}, options = {}, &block)
+    def operation_with_optional_input_output(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OperationWithOptionalInputOutputInput.build(params, context: 'params')
@@ -2573,7 +2573,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::QueryIdempotencyTokenAutoFillOutput
-    def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
+    def query_idempotency_token_auto_fill(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params, context: 'params')
@@ -2646,7 +2646,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::QueryParamsAsStringListMapOutput
-    def query_params_as_string_list_map(params = {}, options = {}, &block)
+    def query_params_as_string_list_map(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryParamsAsStringListMapInput.build(params, context: 'params')
@@ -2796,7 +2796,7 @@ module RailsJson
     #   resp.data.target_epoch_seconds #=> Time
     #   resp.data.target_http_date #=> Time
     #   resp.data.target_date_time #=> Time
-    def timestamp_format_headers(params = {}, options = {}, &block)
+    def timestamp_format_headers(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::TimestampFormatHeadersInput.build(params, context: 'params')
@@ -2869,7 +2869,7 @@ module RailsJson
     #   resp.data #=> Types::Struct____789BadNameOutput
     #   resp.data.member #=> Types::Struct____456efg
     #   resp.data.member.member___123foo #=> String
-    def operation____789_bad_name(params = {}, options = {}, &block)
+    def operation____789_bad_name(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params, context: 'params')

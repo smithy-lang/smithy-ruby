@@ -53,7 +53,7 @@ module Weather
     #   resp.data.city.name #=> String
     #   resp.data.city.number #=> String
     #   resp.data.city.case #=> String
-    def get_city(params = {}, options = {}, &block)
+    def get_city(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params, context: 'params')
@@ -196,7 +196,7 @@ module Weather
     # @example Response structure
     #   resp.data #=> Types::GetCurrentTimeOutput
     #   resp.data.time #=> Time
-    def get_current_time(params = {}, options = {}, &block)
+    def get_current_time(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params, context: 'params')
@@ -279,7 +279,7 @@ module Weather
     #   resp.data.precipitation.baz #=> Types::Baz
     #   resp.data.precipitation.baz.baz #=> String
     #   resp.data.precipitation.baz.bar #=> String
-    def get_forecast(params = {}, options = {}, &block)
+    def get_forecast(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params, context: 'params')
@@ -367,7 +367,7 @@ module Weather
     #   resp.data.items[0].number #=> String
     #   resp.data.items[0].case #=> String
     #   resp.data.sparse_items #=> Array<CitySummary>
-    def list_cities(params = {}, options = {}, &block)
+    def list_cities(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params, context: 'params')
@@ -440,7 +440,7 @@ module Weather
     #   resp.data.member___123abc #=> String
     #   resp.data.member #=> Types::Struct____456efg
     #   resp.data.member.member___123foo #=> String
-    def operation____789_bad_name(params = {}, options = {}, &block)
+    def operation____789_bad_name(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params, context: 'params')

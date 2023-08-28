@@ -111,7 +111,7 @@ module WhiteLabel
     #   resp.data.map_of_strings['key'] #=> String
     #   resp.data.iso8601_timestamp #=> Time
     #   resp.data.epoch_timestamp #=> Time
-    def defaults_test(params = {}, options = {}, &block)
+    def defaults_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params, context: 'params')
@@ -182,7 +182,7 @@ module WhiteLabel
     #   resp = client.endpoint_operation()
     # @example Response structure
     #   resp.data #=> Types::EndpointOperationOutput
-    def endpoint_operation(params = {}, options = {}, &block)
+    def endpoint_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
@@ -259,7 +259,7 @@ module WhiteLabel
     #   )
     # @example Response structure
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
-    def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+    def endpoint_with_host_label_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
@@ -334,7 +334,7 @@ module WhiteLabel
     #   resp = client.http_api_key_auth()
     # @example Response structure
     #   resp.data #=> Types::HttpApiKeyAuthOutput
-    def http_api_key_auth(params = {}, options = {}, &block)
+    def http_api_key_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
@@ -405,7 +405,7 @@ module WhiteLabel
     #   resp = client.http_basic_auth()
     # @example Response structure
     #   resp.data #=> Types::HttpBasicAuthOutput
-    def http_basic_auth(params = {}, options = {}, &block)
+    def http_basic_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
@@ -476,7 +476,7 @@ module WhiteLabel
     #   resp = client.http_bearer_auth()
     # @example Response structure
     #   resp.data #=> Types::HttpBearerAuthOutput
-    def http_bearer_auth(params = {}, options = {}, &block)
+    def http_bearer_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
@@ -547,7 +547,7 @@ module WhiteLabel
     #   resp = client.http_digest_auth()
     # @example Response structure
     #   resp.data #=> Types::HttpDigestAuthOutput
-    def http_digest_auth(params = {}, options = {}, &block)
+    def http_digest_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
@@ -760,7 +760,7 @@ module WhiteLabel
     #   {
     #     message: "Client error"
     #   }
-    def kitchen_sink(params = {}, options = {}, &block)
+    def kitchen_sink(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params, context: 'params')
@@ -835,7 +835,7 @@ module WhiteLabel
     #   resp.data #=> Types::MixinTestOutput
     #   resp.data.username #=> String
     #   resp.data.user_id #=> String
-    def mixin_test(params = {}, options = {}, &block)
+    def mixin_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params, context: 'params')
@@ -906,7 +906,7 @@ module WhiteLabel
     #   resp = client.no_auth()
     # @example Response structure
     #   resp.data #=> Types::NoAuthOutput
-    def no_auth(params = {}, options = {}, &block)
+    def no_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NoAuthInput.build(params, context: 'params')
@@ -977,7 +977,7 @@ module WhiteLabel
     #   resp = client.optional_auth()
     # @example Response structure
     #   resp.data #=> Types::OptionalAuthOutput
-    def optional_auth(params = {}, options = {}, &block)
+    def optional_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OptionalAuthInput.build(params, context: 'params')
@@ -1048,7 +1048,7 @@ module WhiteLabel
     #   resp = client.ordered_auth()
     # @example Response structure
     #   resp.data #=> Types::OrderedAuthOutput
-    def ordered_auth(params = {}, options = {}, &block)
+    def ordered_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OrderedAuthInput.build(params, context: 'params')
@@ -1124,7 +1124,7 @@ module WhiteLabel
     #   resp.data.next_token #=> String
     #   resp.data.items #=> Hash<String, String>
     #   resp.data.items['key'] #=> String
-    def paginators_test(params = {}, options = {}, &block)
+    def paginators_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
@@ -1200,7 +1200,7 @@ module WhiteLabel
     #   resp.data.next_token #=> String
     #   resp.data.items #=> Hash<String, String>
     #   resp.data.items['key'] #=> String
-    def paginators_test_with_items(params = {}, options = {}, &block)
+    def paginators_test_with_items(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
@@ -1273,7 +1273,7 @@ module WhiteLabel
     #   )
     # @example Response structure
     #   resp.data #=> Types::RequestCompressionOperationOutput
-    def request_compression_operation(params = {}, options = {}, &block)
+    def request_compression_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionOperationInput.build(params, context: 'params')
@@ -1352,7 +1352,7 @@ module WhiteLabel
     #   )
     # @example Response structure
     #   resp.data #=> Types::RequestCompressionStreamingOperationOutput
-    def request_compression_streaming_operation(params = {}, options = {}, &block)
+    def request_compression_streaming_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
@@ -1503,7 +1503,7 @@ module WhiteLabel
     #   )
     # @example Response structure
     #   resp.data #=> Types::StreamingWithLengthOutput
-    def streaming_with_length(params = {}, options = {}, &block)
+    def streaming_with_length(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
@@ -1577,7 +1577,7 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::WaitersTestOutput
     #   resp.data.status #=> String
-    def waiters_test(params = {}, options = {}, &block)
+    def waiters_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params, context: 'params')
@@ -1654,7 +1654,7 @@ module WhiteLabel
     #   resp.data.member___wrapper.member___123next_token #=> String
     #   resp.data.member___items #=> Hash<String, String>
     #   resp.data.member___items['key'] #=> String
-    def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
+    def operation____paginators_test_with_bad_names(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
