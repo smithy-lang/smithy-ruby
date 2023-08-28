@@ -15,10 +15,13 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public final class ContentMD5MiddlewareFactory {
     private ContentMD5MiddlewareFactory() {
@@ -28,8 +31,16 @@ public final class ContentMD5MiddlewareFactory {
         return Middleware.builder()
                 .klass("Hearth::HTTP::Middleware::ContentMD5")
                 .step(MiddlewareStackStep.AFTER_BUILD)
-                .operationPredicate(
-                        (model, service, operation) -> operation.hasTrait(HttpChecksumRequiredTrait.class))
+                .operationPredicate((model, service, operation) -> {
+                    boolean hasHttpChecksumRequiredTrait = operation.hasTrait(HttpChecksumRequiredTrait.class);
+                    Shape inputShape = model.expectShape(operation.getInputShape());
+                    if (Streaming.isStreaming(model, inputShape) && hasHttpChecksumRequiredTrait) {
+                        throw new CodegenException(
+                                "We currently do not support HttpChecksumRequiredTrait on a streaming body"
+                        );
+                    }
+                    return hasHttpChecksumRequiredTrait;
+                })
                 .build();
     }
 }
