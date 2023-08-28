@@ -552,6 +552,9 @@ public final class Middleware {
             return relativeRequired;
         }
 
+        /**
+         * Builder for Relative.
+         */
         public static class Builder implements SmithyBuilder<Relative> {
             private Type type;
             private String to;
