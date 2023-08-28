@@ -1,0 +1,15 @@
+module Hearth
+  class PluginList
+    def initialize: (?::Array[_Plugin] plugins) -> void
+
+    def add: (_Plugin plugin) -> void
+
+    alias << add
+
+    def apply: (Hearth::Configuration) -> void
+
+    def dup: () -> PluginList
+
+    def each: () ?{ (_Plugin) -> void } -> void
+  end
+end
