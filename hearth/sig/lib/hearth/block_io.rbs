@@ -1,0 +1,9 @@
+module Hearth
+  class BlockIO
+    def initialize: (Proc block) -> void
+
+    attr_reader bytes_yielded: Integer
+
+    def write: (String data) -> Integer
+  end
+end

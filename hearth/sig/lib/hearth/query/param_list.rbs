@@ -13,7 +13,7 @@ module Hearth
 
       def delete: (Param param_name) -> (Param | nil)
 
-      def each: () { () -> String } -> void
+      def each: () { (String) -> void } -> void
 
       def empty?: () -> bool
 

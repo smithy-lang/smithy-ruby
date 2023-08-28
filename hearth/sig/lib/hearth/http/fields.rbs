@@ -15,7 +15,7 @@ module Hearth
 
       def delete: (String key) -> (Field | nil)
 
-      def each: () { () -> Field } -> void
+      def each: () { (Field) -> void } -> void
 
       def size: () -> Integer
 
@@ -34,7 +34,7 @@ module Hearth
 
         def delete: (String key) -> (String | nil)
 
-        def each: () { () -> Hash[String, String] } -> void
+        def each: () { (Hash[String, String]) -> void } -> void
 
         alias each_pair each
 

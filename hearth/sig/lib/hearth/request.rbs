@@ -1,8 +1,8 @@
 module Hearth
   class Request
-    def initialize: (?uri: URI, ?body: IO) -> void
+    def initialize: (?uri: untyped, ?body: IO) -> void
 
-    attr_accessor uri: URI
+    attr_accessor uri: untyped
 
     attr_accessor body: IO
   end
