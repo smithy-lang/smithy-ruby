@@ -102,13 +102,11 @@ module WhiteLabel
           uncompressed = Zlib::GzipReader.new(body)
           expect(uncompressed.read).to eq(raw_body)
         end
-        # instead of write, pass in the rd
         client.request_compression_streaming_operation(
-        { body: rd }, interceptors: [interceptor]
+          { body: rd }, interceptors: [interceptor]
         )
         rd.close
       end
     end
-
   end
 end
