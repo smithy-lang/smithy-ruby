@@ -65,6 +65,12 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         putFormatter('T', new RubySymbolFormatter());
     }
 
+    /**
+     * Opens a new Ruby module definition.
+     *
+     * @param name the name of the module
+     * @return Returns the RubyCodeWriter
+     */
     public RubyCodeWriter addModule(String name) {
         if (modulesSet.contains(name)) {
             return this;
@@ -75,6 +81,11 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
+    /**
+     * Closes the last open module definition.
+     *
+     * @return Returns the RubyCodeWriter
+     */
     public RubyCodeWriter closeModule() {
         if (modules.isEmpty()) {
             throw new RuntimeException("No modules were opened");
@@ -86,12 +97,20 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
+    /**
+     * Close all open module definitions.
+     */
     public void closeAllModules() {
         while (!modules.isEmpty()) {
             closeModule();
         }
     }
 
+    /**
+     * Writes the api private Yard comment.
+     *
+     * @return Returns the RubyCodeWriter
+     */
     public RubyCodeWriter apiPrivate() {
         this.write("# @api private");
         return this;
@@ -103,7 +122,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
      *
      * @return Returns the CodeWriter
      */
-    public RubyCodeWriter includePreamble() {
+    public RubyCodeWriter preamble() {
         this.includePreamble = true;
         return this;
     }
@@ -385,7 +404,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     }
 
     /**
-     * Adds TypeScript symbols for the "$T" formatter.
+     * Adds Ruby symbols for the "$T" formatter.
      */
     private final class RubySymbolFormatter implements BiFunction<Object, String, String> {
         @Override

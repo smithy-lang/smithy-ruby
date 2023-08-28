@@ -63,7 +63,7 @@ public class AuthResolverGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                    .includePreamble()
+                    .preamble()
                     .includeRequires()
                     .addModule(settings.getModule())
                     .addModule("Auth")

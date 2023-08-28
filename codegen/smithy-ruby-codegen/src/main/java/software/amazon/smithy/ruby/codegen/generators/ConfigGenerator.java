@@ -62,7 +62,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
             membersBlock += ",";
 
             writer
-                    .includePreamble()
+                    .preamble()
                     .includeRequires()
                     .openBlock("module $L", settings.getModule())
                     .call(() -> renderConfigDocumentation(writer))

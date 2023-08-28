@@ -79,7 +79,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
@@ -94,7 +94,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters(writer, true))

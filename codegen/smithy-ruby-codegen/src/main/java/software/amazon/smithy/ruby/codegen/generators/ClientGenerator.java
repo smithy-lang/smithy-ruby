@@ -80,7 +80,7 @@ public class ClientGenerator extends RubyGeneratorBase {
 
         write(writer -> {
 
-            writer.includePreamble().includeRequires();
+            writer.preamble().includeRequires();
 
             for (String require : additionalFiles) {
                 writer.write("require_relative '$L'", removeRbExtension(require));
@@ -129,7 +129,7 @@ public class ClientGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                    .includePreamble()
+                    .preamble()
                     .openBlock("module $L", settings.getModule())
                     .openBlock("class Client")
                     .write("include $T\n", Hearth.CLIENT_STUBS)

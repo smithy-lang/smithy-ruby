@@ -50,7 +50,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
@@ -66,7 +66,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderRbsPaginators(writer))
