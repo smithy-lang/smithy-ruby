@@ -79,7 +79,6 @@ public class ConfigGenerator extends RubyGeneratorBase {
                     .closeBlock("end")
                     .closeBlock("end\n");
         });
-
         LOGGER.fine("Wrote config to " + rbFile());
     }
 
@@ -90,7 +89,9 @@ public class ConfigGenerator extends RubyGeneratorBase {
         writeRbs(writer -> {
             writer
                     .openBlock("module $L", settings.getModule())
-                    .write("Config: untyped")
+                    .openBlock("class Config < ::Struct[untyped]")
+                    .write("include $T", Hearth.CONFIGURATION)
+                    .closeBlock("end")
                     .closeBlock("end");
         });
         LOGGER.fine("Wrote config rbs to " + rbsFile());

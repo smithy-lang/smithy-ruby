@@ -88,6 +88,7 @@ public class AuthGenerator extends RubyGeneratorBase {
                     .call(() -> renderRbsAuthResolver(writer))
                     .closeAllModules();
         });
+        LOGGER.fine("Wrote auth rbs module to " + rbsFile());
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
