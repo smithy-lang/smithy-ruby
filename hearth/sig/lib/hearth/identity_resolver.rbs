@@ -1,0 +1,7 @@
+module Hearth
+  class IdentityResolver
+    def initialize: (Proc) -> void
+
+    def identity: (?::Hash[untyped, untyped] properties) -> Identities::Base
+  end
+end

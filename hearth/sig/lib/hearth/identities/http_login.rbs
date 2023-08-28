@@ -1,0 +1,11 @@
+module Hearth
+  module Identities
+    class HTTPLogin < Identities::Base
+      def initialize: (username: String, password: String, **untyped kwargs) -> void
+
+      attr_reader username: String
+
+      attr_reader password: String
+    end
+  end
+end
