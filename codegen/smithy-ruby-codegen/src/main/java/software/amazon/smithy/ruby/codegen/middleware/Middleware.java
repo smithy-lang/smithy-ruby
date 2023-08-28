@@ -66,7 +66,6 @@ public final class Middleware {
     private final RenderAdd renderAdd;
     private final WriteAdditionalFiles writeAdditionalFiles;
 
-
     // params could include any Ruby code
     private Middleware(Builder builder) {
         this.klass = builder.klass;
@@ -510,8 +509,11 @@ public final class Middleware {
     }
 
     /**
-     * Describes a relative middleware ordering.
-     * TODO: need to expand on this
+     * Class representing a relative middleware.
+     * A Middleware may specify a relative middleware
+     * to happen either BEFORE or AFTER the middleware.
+     * Middleware may only specify ONE relative
+     * ordering constraint.
      */
     public static class Relative {
         private final Type type;
@@ -528,14 +530,24 @@ public final class Middleware {
             return new Builder();
         }
 
+        /**
+         * @return the Type, can be either BEFORE or AFTER.
+         */
         public Type getType() {
             return type;
         }
 
+        /**
+         * @return the To, the referenced relative middleware.
+         */
         public String getTo() {
             return to;
         }
 
+        /**
+         * @return true if the relative middleware is required.
+         * Set true as default.
+         */
         public boolean getRelativeRequired() {
             return relativeRequired;
         }
@@ -545,22 +557,66 @@ public final class Middleware {
             private String to;
             private boolean relativeRequired = true;
 
-            public Builder type(Type type) {
-                this.type = type;
+            /**
+             * Relative middleware to be set BEFORE the
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder before(String to) {
+                this.to = to;
+                this.type = Type.BEFORE;
                 return this;
             }
 
-            public Builder to(String string) {
-                this.to = string;
-                return this;
-            }
-
-            public Builder to(Symbol to) {
+            /**
+             * Relative middleware to be set BEFORE the
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder before(Symbol to) {
                 this.to = to.toString();
+                this.type = Type.BEFORE;
                 return this;
             }
 
-            public Builder disableRelativeRequired() {
+            /**
+             * Relative middleware to be set AFTER the
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder after(String to) {
+                this.to = to;
+                this.type = Type.AFTER;
+                return this;
+            }
+
+            /**
+             * Relative middleware to be set AFTER the
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder after(Symbol to) {
+                this.to = to.toString();
+                this.type = Type.AFTER;
+                return this;
+            }
+
+            /**
+             * Sets the relative middleware to be optional.
+             * Should the relative middleware not be found in the
+             * stack, the ordering will proceed as normal.
+             *
+             * @return this builder
+             */
+            public Builder optional() {
                 this.relativeRequired = false;
                 return this;
             }
@@ -570,10 +626,17 @@ public final class Middleware {
             }
         }
 
+        /**
+         * Converts symbol into a string.
+         */
         public String toString() {
             return type + " " + to;
         }
 
+        /**
+         * Represents the corresponding order between the
+         * middleware and its relative middleware.
+         */
         public enum Type {
             BEFORE,
             AFTER
