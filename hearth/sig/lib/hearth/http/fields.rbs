@@ -1,0 +1,45 @@
+module Hearth
+  module HTTP
+    class Fields
+      include Enumerable[Array[Field]]
+
+      def initialize: (?Array[Field] fields, ?encoding: String) -> void
+
+      attr_reader encoding: String
+
+      def []: (String key) -> Field
+
+      def []=: (String key, Field value) -> Field
+
+      def key?: (String key) -> bool
+
+      def delete: (String key) -> (Field | nil)
+
+      def each: () { () -> Field } -> void
+
+      def size: () -> Integer
+
+      def clear: () -> void
+
+      class Proxy
+        include Enumerable[Hash[String, String]]
+
+        def initialize: (Array[Field] fields, Symbol kind) -> void
+
+        def []: (String key) -> (String | nil)
+
+        def []=: (String, String) -> String
+
+        def key?: (String) -> bool
+
+        def delete: (String key) -> (String | nil)
+
+        def each: () { () -> Hash[String, String] } -> void
+
+        alias each_pair each
+
+        def inspect: () -> String
+      end
+    end
+  end
+end

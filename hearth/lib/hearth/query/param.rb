@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
 module Hearth
-  # @api private
   module Query
     # A class used to represent a query parameter before serialization.
-    # @api private
     class Param
       # @param [String] name
-      # @param [String, Array, nil] value (nil)
+      # @param [String, Array<String>] value (nil)
       def initialize(name, value = nil)
         @name = name
         @value = value
@@ -16,7 +14,7 @@ module Hearth
       # @return [String]
       attr_reader :name
 
-      # @return [String, nil]
+      # @return [String, Array<String>, nil]
       attr_reader :value
 
       # @return [String]

@@ -3,7 +3,6 @@
 module Hearth
   module HTTP
     # Represents an HTTP field.
-    # @api private
     class Field
       # @param [String] name The name of the field.
       # @param [Array|#to_s] value (nil) The values for the field. It can be any

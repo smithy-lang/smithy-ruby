@@ -1,0 +1,9 @@
+module Hearth
+  module Signers
+    class Base
+      def sign: (request: Request, identity: Identities::Base, ?properties: ::Hash[Symbol, untyped]) -> void
+
+      def reset: (request: Request, ?properties: ::Hash[Symbol, untyped]) -> void
+    end
+  end
+end

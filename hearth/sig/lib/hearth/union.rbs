@@ -1,0 +1,5 @@
+module Hearth
+  class Union < ::SimpleDelegator
+    include Hearth::Structure
+  end
+end
