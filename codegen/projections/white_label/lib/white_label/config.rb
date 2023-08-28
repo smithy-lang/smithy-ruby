@@ -77,6 +77,10 @@ module WhiteLabel
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   #
+  #   @option args [Proc] :verify_before_middleware
+  #
+  #   @option args [Proc] :verify_mid_middleware
+  #
   # @!attribute auth_resolver
   #   @return [Auth::Resolver]
   #
@@ -131,6 +135,12 @@ module WhiteLabel
   # @!attribute validate_input
   #   @return [Boolean]
   #
+  # @!attribute verify_before_middleware
+  #   @return [Proc]
+  #
+  # @!attribute verify_mid_middleware
+  #   @return [Proc]
+  #
   Config = ::Struct.new(
     :auth_resolver,
     :auth_schemes,
@@ -150,6 +160,8 @@ module WhiteLabel
     :stub_responses,
     :test_config,
     :validate_input,
+    :verify_before_middleware,
+    :verify_mid_middleware,
     keyword_init: true
   ) do
     include Hearth::Configuration
@@ -176,6 +188,8 @@ module WhiteLabel
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(test_config, String, context: 'config[:test_config]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
+      Hearth::Validator.validate_types!(verify_before_middleware, Proc, context: 'config[:verify_before_middleware]')
+      Hearth::Validator.validate_types!(verify_mid_middleware, Proc, context: 'config[:verify_mid_middleware]')
     end
 
     def self.defaults
@@ -197,7 +211,9 @@ module WhiteLabel
         retry_strategy: [proc { Hearth::Retry::Standard.new }],
         stub_responses: [false],
         test_config: ['default'],
-        validate_input: [true]
+        validate_input: [true],
+        verify_before_middleware: [],
+        verify_mid_middleware: []
       }.freeze
     end
   end

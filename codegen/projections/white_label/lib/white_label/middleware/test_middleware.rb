@@ -16,6 +16,48 @@ module WhiteLabel
         output
       end
     end
+
+    # Middleware used to test relative middleware ordering -
+    # this is for 'before' type testing
+    class BeforeMiddleware
+      def initialize(app)
+        @app = app
+      end
+
+      def call(input, context)
+        context.metadata[:before_middleware] = true
+        @app.call(input, context)
+      end
+    end
+
+    # Middleware used to test relative middleware ordering -
+    # checks the 'before' middleware and an optional case
+    class MidMiddleware
+      def initialize(app, verify_before_middleware:)
+        @app = app
+        @verify_before_middleware = verify_before_middleware
+      end
+
+      def call(input, context)
+        @verify_before_middleware&.call(context.metadata)
+        context.metadata[:mid_middleware] = true
+        @app.call(input, context)
+      end
+    end
+
+    # Middleware used to test relative middleware ordering -
+    # this isq for 'after' type testing
+    class AfterMiddleware
+      def initialize(app, verify_mid_middleware:)
+        @app = app
+        @verify_mid_middleware = verify_mid_middleware
+      end
+
+      def call(input, context)
+        @verify_mid_middleware&.call(context.metadata)
+        @app.call(input, context)
+      end
+    end
   end
 
 end
