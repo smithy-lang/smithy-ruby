@@ -30,7 +30,7 @@ module Middleware
   end
 
   # Middleware used to test relative middleware ordering -
-  # checks the 'before' middleware and aq optional case
+  # checks the 'before' middleware and an optional case
   class MidMiddleware
     def initialize(app, verify_before_middleware:)
       @app = app
