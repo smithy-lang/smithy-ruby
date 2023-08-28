@@ -42,8 +42,7 @@ public final class HostPrefixMiddlewareFactory {
                 .build();
 
         Middleware.Relative buildRelative = Middleware.Relative.builder()
-                .type(Middleware.Relative.Type.BEFORE)
-                .to(Hearth.BUILD_MIDDLEWARE)
+                .before(Hearth.BUILD_MIDDLEWARE)
                 .build();
 
         return Middleware.builder()
