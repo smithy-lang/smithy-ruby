@@ -31,7 +31,7 @@ module Middleware
 
   # Middleware used to test relative middleware ordering -
   # checks the 'BEFORE' middleware and an optional case
-  # when relative middleware is not required
+  # when a relative middleware is not required
   class MidMiddleware
     def initialize(app, verify_before_middleware:)
       @app = app
@@ -47,7 +47,7 @@ module Middleware
 
   # Middleware used to test relative middleware ordering -
   # this is for 'AFTER' type testing and verifies
-  # the existence of MidMiddleware
+  # the existence of the mid middleware
   class AfterMiddleware
     def initialize(app, verify_mid_middleware:)
       @app = app

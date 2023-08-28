@@ -561,7 +561,7 @@ public final class Middleware {
             private boolean relativeRequired = true;
 
             /**
-             * Relative middleware to be set BEFORE the
+             * Middleware to be set BEFORE the relative
              * middleware in the middleware stack order.
              *
              * @param to the Ruby class of the middleware
@@ -574,7 +574,7 @@ public final class Middleware {
             }
 
             /**
-             * Relative middleware to be set BEFORE the
+             * Middleware to be set BEFORE the relative
              * middleware in the middleware stack order.
              *
              * @param to the Ruby class of the middleware
@@ -587,7 +587,7 @@ public final class Middleware {
             }
 
             /**
-             * Relative middleware to be set AFTER the
+             * Middleware to be set AFTER the relative
              * middleware in the middleware stack order.
              *
              * @param to the Ruby class of the middleware
@@ -600,7 +600,7 @@ public final class Middleware {
             }
 
             /**
-             * Relative middleware to be set AFTER the
+             * Middleware to be set AFTER the relative
              * middleware in the middleware stack order.
              *
              * @param to the Ruby class of the middleware
