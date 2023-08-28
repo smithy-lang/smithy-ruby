@@ -1,5 +1,0 @@
-module Hearth
-  module Retry
-    Token: untyped
-  end
-end
