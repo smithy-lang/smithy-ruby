@@ -62,9 +62,8 @@ public final class RequestCompressionMiddlewareFactory {
                 .build();
 
         Middleware.Relative compressionRelative = Middleware.Relative.builder()
-                .type(Middleware.Relative.Type.BEFORE)
-                .to("Hearth::HTTP::Middleware::ContentMD5")
-                .disableRelativeRequired()
+                .before("Hearth::HTTP::Middleware::ContentMD5")
+                .optional()
                 .build();
 
         Middleware.Builder compressionBuilder = Middleware.builder()
