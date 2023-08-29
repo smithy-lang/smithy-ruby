@@ -3,11 +3,11 @@ namespace smithy.ruby.tests
 
 @httpChecksumRequired
 @requestCompression(
-encodings: ["gzip"]
+    encodings: ["gzip"]
 )
 @http(method: "POST", uri: "/request_compress_operation")
 operation RequestCompressionOperation {
-input: RequestCompressionInput
+    input: RequestCompressionInput
 }
 
 @requestCompression(
