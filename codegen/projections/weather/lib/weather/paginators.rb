@@ -12,13 +12,13 @@ module Weather
 
     class ListCities
       # @param [Client] client
-      # @param [Hash] params (see Client#list_cities)
-      # @param [Hash] options (see Client#list_cities)
+      # @param (see Client#list_cities)
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
         @client = client
       end
+
       # Iterate all response pages of the list_cities operation.
       # @return [Enumerator]
       def pages

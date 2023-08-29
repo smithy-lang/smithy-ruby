@@ -1,6 +1,5 @@
 module Hearth
   module AuthSchemes
-    # HTTP Bearer authentication scheme.
     class HTTPBearer < AuthSchemes::Base
       def initialize: () -> void
     end

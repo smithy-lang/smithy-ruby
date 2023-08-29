@@ -3,7 +3,6 @@
 module Hearth
   module HTTP
     # Provides Hash like access for Headers and Trailers with key normalization
-    # @api private
     class Fields
       include Enumerable
 
@@ -47,7 +46,7 @@ module Hearth
         @entries.delete(key.downcase)
       end
 
-      # @return [Enumerable<String,Field>]
+      # @return [Enumerable<Field>]
       def each(&block)
         @entries.values.each(&block)
       end

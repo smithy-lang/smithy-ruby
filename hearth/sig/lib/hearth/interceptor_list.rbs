@@ -1,37 +1,18 @@
 module Hearth
-  # A list of Interceptors.
   class InterceptorList
-    # Initialize an InterceptorList.
-    #
-    # @param [Array] interceptors ([]) A list of interceptors.
-    def initialize: (?untyped interceptors) -> void
+    include Enumerable[_Interceptor]
 
-    # Add an interceptor.
-    #
-    # @param [Object] interceptor
-    def add: (untyped interceptor) -> untyped
+    def initialize: (?Array[_Interceptor] interceptors) -> void
+
+    def add: (_Interceptor interceptor) -> void
 
     alias << add
 
-    # Apply all interceptors that implement the given hook
-    # @param [Symbol] hook the specific hook to apply for
-    # @param input operation input
-    # @param [Hearth::Context] context
-    # @param [Hearth::Output] output may be nil if unavailable
-    # @param [Boolean] aggregate_errors if true all interceptors are run and
-    #   only the last error is returned.  If false, returns immediately if an
-    #   error is encountered.
-    # @return nil if successful, an exception otherwise
+    # TODO: remove this from public api
     def apply: (hook: untyped, input: untyped, context: untyped, output: untyped, ?aggregate_errors: bool) -> untyped
 
-    def dup: () -> untyped
+    def dup: () -> InterceptorList
 
-    def each: () ?{ () -> untyped } -> untyped
-
-    private
-
-    def set_output_error: (untyped last_error, untyped context, untyped output) -> (nil | untyped)
-
-    def valid_interceptor?: (untyped interceptor) -> untyped
+    def each: () ?{ (_Interceptor) -> untyped } -> untyped
   end
 end

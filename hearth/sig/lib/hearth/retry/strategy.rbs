@@ -1,12 +1,11 @@
 module Hearth
   module Retry
-    # Interface for retry strategies.
     class Strategy
-      def acquire_initial_retry_token: (?untyped? _token_scope) -> untyped
+      def acquire_initial_retry_token: (?String? _token_scope) -> Token
 
-      def refresh_retry_token: (untyped _retry_token, untyped _error_info) -> untyped
+      def refresh_retry_token: (Token _retry_token, _ErrorInspector _error_info) -> (nil | Token)
 
-      def record_success: (untyped _retry_token) -> untyped
+      def record_success: (Token _retry_token) -> Token
     end
   end
 end

@@ -54,7 +54,7 @@ public class ModuleGenerator {
             settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
 
         context.writerDelegator().useFileWriter(fileName, settings.getModule(), writer -> {
-            writer.includePreamble().includeRequires();
+            writer.preamble().includeRequires();
             // determine set of indirect dependencies - covered by requiring another
             Set<RubyDependency> indirectDependencies = new HashSet<>();
             context.getRubyDependencies().forEach(rubyDependency -> {

@@ -1,11 +1,7 @@
 module Hearth
   module Retry
-    # Computes an exponential backoff delay for a retry attempt.
     class ExponentialBackoff
-      # Max backoff (in seconds)
-      MAX_BACKOFF: 20
-
-      def call: (untyped attempts) -> untyped
+      def call: (Integer attempts) -> Float
     end
   end
 end

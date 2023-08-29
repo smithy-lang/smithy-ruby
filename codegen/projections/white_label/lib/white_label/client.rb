@@ -17,24 +17,17 @@ module WhiteLabel
   # See {#initialize} for a full list of supported configuration options
   # The test SDK.
   # This service should pass the tests.
-  #
   # @deprecated
   #   This test SDK is not suitable
   #   for production use.
   #   Since: today
-  #
   # @note
   #   This shape is unstable and may change in the future.
-  #
   # @see https://www.ruby-lang.org/en/ Homepage
-  #
   # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-  #
   # @note
   #   This shape is meant for internal use only.
-  #
   # @since today
-  #
   class Client
     include Hearth::ClientStubs
     @plugins = Hearth::PluginList.new([
@@ -47,7 +40,6 @@ module WhiteLabel
 
     # @param [Config] config
     #   An instance of {Config}
-    #
     def initialize(config = WhiteLabel::Config.new, options = {})
       @config = initialize_config(config)
       @stubs = Hearth::Stubs.new
@@ -57,15 +49,13 @@ module WhiteLabel
     attr_reader :config
 
     # @param [Hash] params
-    #   See {Types::DefaultsTestInput}.
-    #
-    # @option params [Struct] :struct
-    #   This docstring should be different than KitchenSink struct member.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::DefaultsTestInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::DefaultsTestOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.defaults_test(
     #     string: 'String',
     #     struct: {
@@ -96,9 +86,7 @@ module WhiteLabel
     #     iso8601_timestamp: Time.now, # required
     #     epoch_timestamp: Time.now # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::DefaultsTestOutput
     #   resp.data.string #=> String
     #   resp.data.struct #=> Types::Struct
@@ -123,8 +111,7 @@ module WhiteLabel
     #   resp.data.map_of_strings['key'] #=> String
     #   resp.data.iso8601_timestamp #=> Time
     #   resp.data.epoch_timestamp #=> Time
-    #
-    def defaults_test(params = {}, options = {}, &block)
+    def defaults_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params, context: 'params')
@@ -185,19 +172,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::EndpointOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::EndpointOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.endpoint_operation()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::EndpointOperationOutput
-    #
-    def endpoint_operation(params = {}, options = {}, &block)
+    def endpoint_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
@@ -262,21 +247,19 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointWithHostLabelOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::EndpointWithHostLabelOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
-    #
-    def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+    def endpoint_with_host_label_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
@@ -341,19 +324,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpApiKeyAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpApiKeyAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpApiKeyAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_api_key_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpApiKeyAuthOutput
-    #
-    def http_api_key_auth(params = {}, options = {}, &block)
+    def http_api_key_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
@@ -414,19 +395,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpBasicAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpBasicAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpBasicAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_basic_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpBasicAuthOutput
-    #
-    def http_basic_auth(params = {}, options = {}, &block)
+    def http_basic_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
@@ -487,19 +466,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpBearerAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpBearerAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpBearerAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_bearer_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpBearerAuthOutput
-    #
-    def http_bearer_auth(params = {}, options = {}, &block)
+    def http_bearer_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
@@ -560,19 +537,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::HttpDigestAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpDigestAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpDigestAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_digest_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpDigestAuthOutput
-    #
-    def http_digest_auth(params = {}, options = {}, &block)
+    def http_digest_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
@@ -634,43 +609,25 @@ module WhiteLabel
 
     # The kitchen sink operation.
     # It is kinda useless.
-    #
     # @deprecated
     #   This operation is not suitable
     #   for production use.
     #   Since: today
-    #
     # @note
     #   This shape is unstable and may change in the future.
-    #
     # @see https://www.ruby-lang.org/en/ Homepage
-    #
     # @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
-    #
     # @note
     #   This shape is meant for internal use only.
-    #
     # @since today
-    #
     # @param [Hash] params
-    #   See {Types::KitchenSinkInput}.
-    #
-    # @option params [String] :string
-    #   This is some member
-    #   documentation of String.
-    #
-    # @option params [Struct] :struct
-    #   This is some member documentation of Struct.
-    #   It should override Struct's documentation.
-    #
-    # @option params [Union] :union
-    #   This is some union documentation.
-    #   It has some union members
-    #
+    #   Request parameters for this operation.
+    #   See {Types::KitchenSinkInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::KitchenSinkOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.kitchen_sink(
     #     string: 'String',
     #     simple_enum: 'YES', # accepts ["YES", "NO", "MAYBE"]
@@ -697,9 +654,7 @@ module WhiteLabel
     #       string: 'String',
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::KitchenSinkOutput
     #   resp.data.string #=> String
     #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
@@ -716,11 +671,8 @@ module WhiteLabel
     #   resp.data.union #=> Types::Union, one of [String, Struct]
     #   resp.data.union.string #=> String
     #   resp.data.union.struct #=> Types::Struct
-    #
     # @example Test input and output
-    #
     #   # Demonstrates setting a range of input values and getting different types of outputs.
-    #   #
     #   resp = client.kitchen_sink({
     #     string: "Test",
     #     struct: {
@@ -793,12 +745,9 @@ module WhiteLabel
     #       }
     #     }
     #   }
-    #
     # @example Test errors
-    #
     #   begin
     #     # Demonstrates an error example.
-    #     #
     #     resp = client.kitchen_sink({
     #       string: "error"
     #     })
@@ -811,8 +760,7 @@ module WhiteLabel
     #   {
     #     message: "Client error"
     #   }
-    #
-    def kitchen_sink(params = {}, options = {}, &block)
+    def kitchen_sink(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params, context: 'params')
@@ -873,23 +821,21 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::MixinTestInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::MixinTestInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::MixinTestOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.mixin_test(
     #     user_id: 'userId'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::MixinTestOutput
     #   resp.data.username #=> String
     #   resp.data.user_id #=> String
-    #
-    def mixin_test(params = {}, options = {}, &block)
+    def mixin_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params, context: 'params')
@@ -950,19 +896,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::NoAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::NoAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::NoAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.no_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::NoAuthOutput
-    #
-    def no_auth(params = {}, options = {}, &block)
+    def no_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NoAuthInput.build(params, context: 'params')
@@ -1023,19 +967,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::OptionalAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::OptionalAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::OptionalAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.optional_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::OptionalAuthOutput
-    #
-    def optional_auth(params = {}, options = {}, &block)
+    def optional_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OptionalAuthInput.build(params, context: 'params')
@@ -1096,19 +1038,17 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::OrderedAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::OrderedAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::OrderedAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.ordered_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::OrderedAuthOutput
-    #
-    def ordered_auth(params = {}, options = {}, &block)
+    def ordered_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OrderedAuthInput.build(params, context: 'params')
@@ -1169,24 +1109,22 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::PaginatorsTestOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::PaginatorsTestOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.paginators_test(
     #     next_token: 'nextToken'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::PaginatorsTestOperationOutput
     #   resp.data.next_token #=> String
     #   resp.data.items #=> Array<String>
     #   resp.data.items[0] #=> String
-    #
-    def paginators_test(params = {}, options = {}, &block)
+    def paginators_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
@@ -1247,24 +1185,22 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::PaginatorsTestWithItemsInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::PaginatorsTestWithItemsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::PaginatorsTestWithItemsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.paginators_test_with_items(
     #     next_token: 'nextToken'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::PaginatorsTestWithItemsOutput
     #   resp.data.next_token #=> String
     #   resp.data.items #=> Array<String>
     #   resp.data.items[0] #=> String
-    #
-    def paginators_test_with_items(params = {}, options = {}, &block)
+    def paginators_test_with_items(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
@@ -1325,21 +1261,19 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::RequestCompressionOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::RequestCompressionOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::RequestCompressionOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.request_compression_operation(
     #     body: 'body'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::RequestCompressionOperationOutput
-    #
-    def request_compression_operation(params = {}, options = {}, &block)
+    def request_compression_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionOperationInput.build(params, context: 'params')
@@ -1406,21 +1340,19 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::RequestCompressionStreamingOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::RequestCompressionStreamingOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::RequestCompressionStreamingOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.request_compression_streaming_operation(
     #     body: 'body'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::RequestCompressionStreamingOperationOutput
-    #
-    def request_compression_streaming_operation(params = {}, options = {}, &block)
+    def request_compression_streaming_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
@@ -1486,21 +1418,19 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::StreamingOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::StreamingOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::StreamingOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.streaming_operation(
     #     stream: 'stream'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::StreamingOperationOutput
     #   resp.data.stream #=> String
-    #
     def streaming_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -1561,21 +1491,19 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::StreamingWithLengthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::StreamingWithLengthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::StreamingWithLengthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.streaming_with_length(
     #     stream: 'stream'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::StreamingWithLengthOutput
-    #
-    def streaming_with_length(params = {}, options = {}, &block)
+    def streaming_with_length(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
@@ -1636,22 +1564,20 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::WaitersTestInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::WaitersTestInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::WaitersTestOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.waiters_test(
     #     status: 'Status'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::WaitersTestOutput
     #   resp.data.status #=> String
-    #
-    def waiters_test(params = {}, options = {}, &block)
+    def waiters_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params, context: 'params')
@@ -1712,25 +1638,23 @@ module WhiteLabel
     end
 
     # @param [Hash] params
-    #   See {Types::Struct____PaginatorsTestWithBadNamesInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::Struct____PaginatorsTestWithBadNamesInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::Struct____PaginatorsTestWithBadNamesOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.operation____paginators_test_with_bad_names(
     #     member___next_token: '__nextToken'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
     #   resp.data.member___wrapper #=> Types::ResultWrapper
     #   resp.data.member___wrapper.member___123next_token #=> String
     #   resp.data.member___items #=> Array<String>
     #   resp.data.member___items[0] #=> String
-    #
-    def operation____paginators_test_with_bad_names(params = {}, options = {}, &block)
+    def operation____paginators_test_with_bad_names(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')

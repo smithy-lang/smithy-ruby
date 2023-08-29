@@ -1,8 +1,9 @@
 module Hearth
   module Signers
-    # A signer that signs requests using the HTTP Basic Auth scheme.
     class HTTPBasic < Signers::Base
-      def sign: (request: untyped, identity: untyped, ?properties: ::Hash[untyped, untyped]) -> nil
+      def sign: (request: HTTP::Request, identity: Identities::HTTPLogin, ?properties: ::Hash[Symbol, untyped]) -> void
+
+      def reset: (request: HTTP::Request, ?properties: ::Hash[Symbol, untyped]) -> void
     end
   end
 end

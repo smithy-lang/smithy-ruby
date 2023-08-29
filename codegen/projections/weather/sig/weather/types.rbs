@@ -12,115 +12,172 @@ module Weather
 
     class Announcements < Hearth::Union
       class Police < Announcements
-        def to_h: () -> { police: Hash[Symbol,Announcements] }
+        def to_h: () -> { police: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Fire < Announcements
-        def to_h: () -> { fire: Hash[Symbol,Announcements] }
+        def to_h: () -> { fire: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Health < Announcements
-        def to_h: () -> { health: Hash[Symbol,Announcements] }
+        def to_h: () -> { health: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Unknown < Announcements
-        def to_h: () -> { unknown: Hash[Symbol,Announcements] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_s: () -> String
       end
     end
 
-    Baz: untyped
+    class Baz < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CityCoordinates: untyped
+    class CityCoordinates < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CitySummary: untyped
+    class CitySummary < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Foo: untyped
+    class Foo < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityAnnouncementsInput: untyped
+    class GetCityAnnouncementsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityAnnouncementsOutput: untyped
+    class GetCityAnnouncementsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityImageInput: untyped
+    class GetCityImageInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityImageOutput: untyped
+    class GetCityImageOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityInput: untyped
+    class GetCityInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCityOutput: untyped
+    class GetCityOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCurrentTimeInput: untyped
+    class GetCurrentTimeInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetCurrentTimeOutput: untyped
+    class GetCurrentTimeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetForecastInput: untyped
+    class GetForecastInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetForecastOutput: untyped
+    class GetForecastOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     class ImageType < Hearth::Union
       class Raw < ImageType
-        def to_h: () -> { raw: Hash[Symbol,ImageType] }
+        def to_h: () -> { raw: bool }
+        def to_s: () -> String
       end
 
       class Png < ImageType
-        def to_h: () -> { png: Hash[Symbol,ImageType] }
+        def to_h: () -> { png: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Unknown < ImageType
-        def to_h: () -> { unknown: Hash[Symbol,ImageType] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_s: () -> String
       end
     end
 
-    ListCitiesInput: untyped
+    class ListCitiesInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ListCitiesOutput: untyped
+    class ListCitiesOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Message: untyped
+    class Message < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NoSuchResource: untyped
+    class NoSuchResource < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OtherStructure: untyped
+    class OtherStructure < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PNGImage: untyped
+    class PNGImage < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     class Precipitation < Hearth::Union
       class Rain < Precipitation
-        def to_h: () -> { rain: Hash[Symbol,Precipitation] }
+        def to_h: () -> { rain: bool }
+        def to_s: () -> String
       end
 
       class Sleet < Precipitation
-        def to_h: () -> { sleet: Hash[Symbol,Precipitation] }
+        def to_h: () -> { sleet: bool }
+        def to_s: () -> String
       end
 
       class Hail < Precipitation
-        def to_h: () -> { hail: Hash[Symbol,Precipitation] }
+        def to_h: () -> { hail: ::Hash[::Symbol, ::String] }
+        def to_s: () -> String
       end
 
       class Snow < Precipitation
-        def to_h: () -> { snow: Hash[Symbol,Precipitation] }
+        def to_h: () -> { snow: ::String }
+        def to_s: () -> String
       end
 
       class Mixed < Precipitation
-        def to_h: () -> { mixed: Hash[Symbol,Precipitation] }
+        def to_h: () -> { mixed: ::String }
+        def to_s: () -> String
       end
 
       class Other < Precipitation
-        def to_h: () -> { other: Hash[Symbol,Precipitation] }
+        def to_h: () -> { other: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Blob < Precipitation
-        def to_h: () -> { blob: Hash[Symbol,Precipitation] }
+        def to_h: () -> { blob: ::String }
+        def to_s: () -> String
       end
 
       class Foo < Precipitation
-        def to_h: () -> { foo: Hash[Symbol,Precipitation] }
+        def to_h: () -> { foo: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Baz < Precipitation
-        def to_h: () -> { baz: Hash[Symbol,Precipitation] }
+        def to_h: () -> { baz: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Unknown < Precipitation
-        def to_h: () -> { unknown: Hash[Symbol,Precipitation] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_s: () -> String
       end
     end
 
@@ -130,11 +187,17 @@ module Weather
       NO: ::String
     end
 
-    Struct____456efg: untyped
+    class Struct____456efg < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____789BadNameInput: untyped
+    class Struct____789BadNameInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____789BadNameOutput: untyped
+    class Struct____789BadNameOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

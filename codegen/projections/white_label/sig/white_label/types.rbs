@@ -10,85 +10,165 @@
 module WhiteLabel
   module Types
 
-    ClientError: untyped
+    class ClientError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DefaultsTestInput: untyped
+    class DefaultsTestInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DefaultsTestOutput: untyped
+    class DefaultsTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointOperationInput: untyped
+    class EndpointOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointOperationOutput: untyped
+    class EndpointOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointWithHostLabelOperationInput: untyped
+    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointWithHostLabelOperationOutput: untyped
+    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpApiKeyAuthInput: untyped
+    class HttpApiKeyAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpApiKeyAuthOutput: untyped
+    class HttpApiKeyAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBasicAuthInput: untyped
+    class HttpBasicAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBasicAuthOutput: untyped
+    class HttpBasicAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBearerAuthInput: untyped
+    class HttpBearerAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpBearerAuthOutput: untyped
+    class HttpBearerAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpDigestAuthInput: untyped
+    class HttpDigestAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpDigestAuthOutput: untyped
+    class HttpDigestAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSinkInput: untyped
+    class KitchenSinkInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSinkOutput: untyped
+    class KitchenSinkOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    MixinTestInput: untyped
+    class MixinTestInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    MixinTestOutput: untyped
+    class MixinTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NoAuthInput: untyped
+    class NoAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NoAuthOutput: untyped
+    class NoAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OptionalAuthInput: untyped
+    class OptionalAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OptionalAuthOutput: untyped
+    class OptionalAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OrderedAuthInput: untyped
+    class OrderedAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OrderedAuthOutput: untyped
+    class OrderedAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestOperationInput: untyped
+    class PaginatorsTestOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestOperationOutput: untyped
+    class PaginatorsTestOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestWithItemsInput: untyped
+    class PaginatorsTestWithItemsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    PaginatorsTestWithItemsOutput: untyped
+    class PaginatorsTestWithItemsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionOperationInput: untyped
+    class RequestCompressionOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionOperationOutput: untyped
+    class RequestCompressionOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionStreamingOperationInput: untyped
+    class RequestCompressionStreamingOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RequestCompressionStreamingOperationOutput: untyped
+    class RequestCompressionStreamingOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ResultWrapper: untyped
+    class ResultWrapper < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ServerError: untyped
+    class ServerError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingOperationInput: untyped
+    class StreamingOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingOperationOutput: untyped
+    class StreamingOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingWithLengthInput: untyped
+    class StreamingWithLengthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingWithLengthOutput: untyped
+    class StreamingWithLengthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct: untyped
+    class Struct < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     module TypedEnum
       YES: ::String
@@ -100,25 +180,36 @@ module WhiteLabel
 
     class Union < Hearth::Union
       class String < Union
-        def to_h: () -> { string: Hash[Symbol,Union] }
+        def to_h: () -> { string: ::String }
+        def to_s: () -> String
       end
 
       class Struct < Union
-        def to_h: () -> { struct: Hash[Symbol,Union] }
+        def to_h: () -> { struct: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Unknown < Union
-        def to_h: () -> { unknown: Hash[Symbol,Union] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_s: () -> String
       end
     end
 
-    WaitersTestInput: untyped
+    class WaitersTestInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    WaitersTestOutput: untyped
+    class WaitersTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____PaginatorsTestWithBadNamesInput: untyped
+    class Struct____PaginatorsTestWithBadNamesInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____PaginatorsTestWithBadNamesOutput: untyped
+    class Struct____PaginatorsTestWithBadNamesOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

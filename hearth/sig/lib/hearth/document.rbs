@@ -1,2 +1,0 @@
-# Declare an alias for Document shapes
-type document = Hash[Symbol,document] | Array[document] | String | bool | Numeric

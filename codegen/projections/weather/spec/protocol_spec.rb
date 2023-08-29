@@ -52,7 +52,6 @@ module Weather
       describe 'NoSuchResource error' do
 
         # Does something
-        #
         it 'WriteNoSuchResourceAssertions' do
           response = Hearth::HTTP::Response.new
           response.status = 404
@@ -74,7 +73,6 @@ module Weather
         end
 
         # Does something
-        #
         it 'stubs WriteNoSuchResourceAssertions' do
           client.stub_responses(:__789_bad_name, error: { class: Errors::NoSuchResource, data: {
             resource_type: "City",
@@ -100,7 +98,6 @@ module Weather
       describe 'requests' do
 
         # Does something
-        #
         it 'WriteGetCityAssertions' do
           interceptor = before_send.new do |context|
             request = context.request
@@ -119,7 +116,6 @@ module Weather
       describe 'responses' do
 
         # Does something
-        #
         it 'WriteGetCityResponseAssertions' do
           response = Hearth::HTTP::Response.new
           response.status = 200
@@ -160,7 +156,6 @@ module Weather
       describe 'stubs' do
 
         # Does something
-        #
         it 'stubs WriteGetCityResponseAssertions' do
           interceptor = after_send.new do |context|
             expect(context.response.status).to eq(200)
@@ -200,7 +195,6 @@ module Weather
       describe 'NoSuchResource error' do
 
         # Does something
-        #
         it 'WriteNoSuchResourceAssertions' do
           response = Hearth::HTTP::Response.new
           response.status = 404
@@ -222,7 +216,6 @@ module Weather
         end
 
         # Does something
-        #
         it 'stubs WriteNoSuchResourceAssertions' do
           client.stub_responses(:get_city, error: { class: Errors::NoSuchResource, data: {
             resource_type: "City",
@@ -248,7 +241,6 @@ module Weather
       describe 'NoSuchResource error' do
 
         # Does something
-        #
         it 'WriteNoSuchResourceAssertions' do
           response = Hearth::HTTP::Response.new
           response.status = 404
@@ -270,7 +262,6 @@ module Weather
         end
 
         # Does something
-        #
         it 'stubs WriteNoSuchResourceAssertions' do
           client.stub_responses(:get_city_announcements, error: { class: Errors::NoSuchResource, data: {
             resource_type: "City",
@@ -296,7 +287,6 @@ module Weather
       describe 'NoSuchResource error' do
 
         # Does something
-        #
         it 'WriteNoSuchResourceAssertions' do
           response = Hearth::HTTP::Response.new
           response.status = 404
@@ -318,7 +308,6 @@ module Weather
         end
 
         # Does something
-        #
         it 'stubs WriteNoSuchResourceAssertions' do
           client.stub_responses(:get_city_image, error: { class: Errors::NoSuchResource, data: {
             resource_type: "City",
@@ -352,7 +341,6 @@ module Weather
       describe 'requests' do
 
         # Does something
-        #
         it 'WriteListCitiesAssertions' do
           interceptor = before_send.new do |context|
             request = context.request

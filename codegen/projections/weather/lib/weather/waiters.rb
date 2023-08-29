@@ -11,21 +11,16 @@ module Weather
   module Waiters
 
     # Waits until a city has been created
-    #
     class CityExists
       # @param [Client] client
-      #
       # @param [Hash] options
-      #
+      #   Waiter options
       # @option options [required, Integer] :max_wait_time
       #   The maximum time in seconds to wait before the waiter gives up.
-      #
       # @option options [Integer] :min_delay (2)
       #   The minimum time in seconds to delay polling attempts.
-      #
       # @option options [Integer] :max_delay (120)
       #   The maximum time in seconds to delay polling attempts.
-      #
       def initialize(client, options = {})
         @client = client
         @waiter = Hearth::Waiters::Waiter.new({
@@ -79,38 +74,27 @@ module Weather
         @tags = []
       end
 
+      # @return [Array<String>]
       attr_reader :tags
 
-      # @param [Hash] params
-      #   (see Client#get_city)
-      #
-      # @param [Hash] options
-      #   (see Client#get_city)
-      #
-      # @return [Types::GetCity]
-      #   (see Client#get_city)
-      #
+      # @param (see Client#get_city)
+      # @return [true, Hearth::Waiters::WaiterFailed]
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end
     end
 
     # Wait until ListCities operation response matches a given state
-    #
     class ListContainsCity
       # @param [Client] client
-      #
       # @param [Hash] options
-      #
+      #   Waiter options
       # @option options [required, Integer] :max_wait_time
       #   The maximum time in seconds to wait before the waiter gives up.
-      #
       # @option options [Integer] :min_delay (2)
       #   The minimum time in seconds to delay polling attempts.
-      #
       # @option options [Integer] :max_delay (120)
       #   The maximum time in seconds to delay polling attempts.
-      #
       def initialize(client, options = {})
         @client = client
         @waiter = Hearth::Waiters::Waiter.new({
@@ -146,17 +130,11 @@ module Weather
         @tags = []
       end
 
+      # @return [Array<String>]
       attr_reader :tags
 
-      # @param [Hash] params
-      #   (see Client#list_cities)
-      #
-      # @param [Hash] options
-      #   (see Client#list_cities)
-      #
-      # @return [Types::ListCities]
-      #   (see Client#list_cities)
-      #
+      # @param (see Client#list_cities)
+      # @return [true, Hearth::Waiters::WaiterFailed]
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

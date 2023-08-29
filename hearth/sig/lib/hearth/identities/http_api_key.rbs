@@ -1,11 +1,9 @@
 module Hearth
   module Identities
-    # Identity class for API Key authentication.
     class HTTPApiKey < Identities::Base
-      def initialize: (key: untyped, **untyped kwargs) -> void
+      def initialize: (key: String, **untyped kwargs) -> void
 
-      # @return [String]
-      attr_reader key: untyped
+      attr_reader key: String
     end
   end
 end

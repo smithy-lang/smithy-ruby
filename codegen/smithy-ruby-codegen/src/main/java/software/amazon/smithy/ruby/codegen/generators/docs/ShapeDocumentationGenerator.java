@@ -25,7 +25,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -55,22 +54,22 @@ public class ShapeDocumentationGenerator {
 
     /**
      * @param model model to generate from
+     * @param writer writer to write documentation to
      * @param symbolProvider symbol provider
      * @param shape shape to generate documentation for
      */
-    public ShapeDocumentationGenerator(Model model, SymbolProvider symbolProvider, Shape shape) {
-        this.writer = new RubyCodeWriter("");
+    public ShapeDocumentationGenerator(Model model, RubyCodeWriter writer, SymbolProvider symbolProvider, Shape shape) {
+        this.writer = writer;
         this.model = model;
         this.symbolProvider = symbolProvider;
         this.shape = shape;
     }
 
     /**
-     * @return the rendered documentation
+     * Generate documentation for a shape.
      */
-    public String render() {
+    public void render() {
         shape.accept(new ShapeDocumentationVisitor());
-        return writer.toString();
     }
 
     private void writeDocumentationTrait(Optional<DocumentationTrait> optionalDocumentationTrait) {
@@ -255,26 +254,19 @@ public class ShapeDocumentationGenerator {
 
             Shape inputShape = model.expectShape(shape.getInputShape());
             String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
-            String inputShapeDocumentation = "See {Types::" + inputShapeName + "}.";
 
-            writer.writeYardParam("Hash", "params", inputShapeDocumentation);
+            String paramsDocString = """
+                    Request parameters for this operation.
+                    See {Types::%s#initialize} for available parameters.
+                    """.formatted(inputShapeName);
+            String optionsDocString = """
+                    Request option override of configuration. See {Config#initialize} for available options.
+                    Some configurations cannot be overridden.
+                    """;
 
-            ShapeId inputShapeId = shape.getInputShape();
-            StructureShape input =
-                    model.expectShape(inputShapeId).asStructureShape().get();
-
-            for (MemberShape memberShape : input.members()) {
-                Optional<DocumentationTrait> optionalMemberDocumentation =
-                        memberShape.getMemberTrait(model, DocumentationTrait.class);
-
-                if (optionalMemberDocumentation.isPresent()) {
-                    String documentation = optionalMemberDocumentation.get().getValue();
-                    Shape target = model.expectShape(memberShape.getTarget());
-                    String param = ":" + symbolProvider.toMemberName(memberShape);
-                    String type = (String) symbolProvider.toSymbol(target).getProperty("yardType").get();
-                    writer.writeYardOption("params", type, param, "", documentation);
-                }
-            }
+            writer
+                    .writeYardParam("Hash", "params", paramsDocString)
+                    .writeYardParam("Hash", "options", optionsDocString);
 
             Shape outputShape = model.expectShape(shape.getOutputShape());
             String outputShapeName = symbolProvider.toSymbol(outputShape).getName();

@@ -1,11 +1,7 @@
 module Hearth
-  # Basic Identity resolver that uses a proc to resolve an Identity.
   class IdentityResolver
-    # @param [Proc] proc A proc that takes identity properties (Hash)
-    #   and returns a {Hearth::Identities::Base}.
-    def initialize: (untyped proc) -> void
+    def initialize: (Proc) -> void
 
-    # @param [Hash] properties
-    def identity: (?::Hash[untyped, untyped] properties) -> untyped
+    def identity: (?::Hash[Symbol, untyped] properties) -> Identities::Base
   end
 end

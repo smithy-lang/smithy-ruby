@@ -65,6 +65,12 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         putFormatter('T', new RubySymbolFormatter());
     }
 
+    /**
+     * Opens a new Ruby module definition.
+     *
+     * @param name the name of the module
+     * @return Returns the RubyCodeWriter
+     */
     public RubyCodeWriter addModule(String name) {
         if (modulesSet.contains(name)) {
             return this;
@@ -75,6 +81,11 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
+    /**
+     * Closes the last open module definition.
+     *
+     * @return Returns the RubyCodeWriter
+     */
     public RubyCodeWriter closeModule() {
         if (modules.isEmpty()) {
             throw new RuntimeException("No modules were opened");
@@ -86,12 +97,20 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         return this;
     }
 
+    /**
+     * Close all open module definitions.
+     */
     public void closeAllModules() {
         while (!modules.isEmpty()) {
             closeModule();
         }
     }
 
+    /**
+     * Writes the api private Yard comment.
+     *
+     * @return Returns the RubyCodeWriter
+     */
     public RubyCodeWriter apiPrivate() {
         this.write("# @api private");
         return this;
@@ -103,7 +122,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
      *
      * @return Returns the CodeWriter
      */
-    public RubyCodeWriter includePreamble() {
+    public RubyCodeWriter preamble() {
         this.includePreamble = true;
         return this;
     }
@@ -128,7 +147,9 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
      */
     public RubyCodeWriter writeDocs(Consumer<RubyCodeWriter> consumer) {
         pushState();
-        setNewlinePrefix("# ");
+        if (getNewlinePrefix().isEmpty()) {
+            setNewlinePrefix("# ");
+        }
         consumer.accept(this);
         popState();
         return this;
@@ -144,7 +165,8 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardMethod(String methodSignature, Runnable task) {
         writeDocs((w) -> {
             w.write("@!method $L", methodSignature);
-            w.pushFilteredState(s -> s.replace("#", " "));
+            w.pushState();
+            w.setNewlinePrefix(w.getNewlinePrefix() + w.getIndentText());
             task.run();
             w.popState();
         });
@@ -165,7 +187,8 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardAttribute(String attribute, Runnable task) {
         writeDocs((w) -> {
             w.write("@!attribute $L", attribute);
-            w.pushFilteredState(s -> s.replace("#", " "));
+            w.pushState();
+            w.setNewlinePrefix(w.getNewlinePrefix() + w.getIndentText());
             task.run();
             w.popState();
         });
@@ -181,7 +204,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeDocstring(String docstring) {
         writeDocs((w) -> {
             w.write("$L", docstring);
-            w.write("");
         });
         return this;
     }
@@ -189,16 +211,15 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     /**
      * Writes a yard param.
      *
-     * @param returnType    the Ruby Type
+     * @param paramType     the Ruby Type
      * @param param         name of the parameter
      * @param documentation documentation to write
      * @return Returns the CodeWriter
      */
-    public RubyCodeWriter writeYardParam(String returnType, String param, String documentation) {
+    public RubyCodeWriter writeYardParam(String paramType, String param, String documentation) {
         writeDocs((w) -> {
-            w.write("@param [$L] $L", returnType, param);
+            w.write("@param [$L] $L", paramType, param);
             w.writeIndentedParts(documentation);
-            w.write("");
         });
         return this;
     }
@@ -223,7 +244,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
                 w.write("");
             }
             w.writeIndentedParts(documentation);
-            w.write("");
         });
         return this;
     }
@@ -239,7 +259,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         writeDocs((w) -> {
             w.write("@return [$L]", returnType);
             w.writeIndentedParts(documentation);
-            w.write("");
         });
         return this;
     }
@@ -254,9 +273,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardExample(String title, String block) {
         writeDocs((w) -> {
             w.write("@example $L", title);
-            w.write("");
             w.writeIndentedParts(block);
-            w.write("");
         });
         return this;
     }
@@ -275,7 +292,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
             if (!since.isEmpty()) {
                 w.write("  Since: $L", since);
             }
-            w.write("");
         });
         return this;
     }
@@ -290,7 +306,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardSee(String url, String description) {
         writeDocs((w) -> {
             w.write("@see $L $L", url, description);
-            w.write("");
         });
         return this;
     }
@@ -305,7 +320,6 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
         writeDocs((w) -> {
             w.write("@note");
             w.writeIndentedParts(note);
-            w.write("");
         });
         return this;
     }
@@ -319,7 +333,24 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter writeYardSince(String since) {
         writeDocs((w) -> {
             w.write("@since $L", since);
-            w.write("");
+        });
+        return this;
+    }
+
+    /**
+     * Writes a yard reference with an optional tag.
+     *
+     * @param tag       the tag to write
+     * @param reference the reference object
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter writeYardReference(String tag, String reference) {
+        writeDocs((w) -> {
+            if (tag.isEmpty()) {
+                w.write("(see $L)", reference);
+            } else {
+                w.write("@$L (see $L)", tag, reference);
+            }
         });
         return this;
     }
@@ -377,7 +408,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     }
 
     /**
-     * Adds TypeScript symbols for the "$T" formatter.
+     * Adds Ruby symbols for the "$T" formatter.
      */
     private final class RubySymbolFormatter implements BiFunction<Object, String, String> {
         @Override

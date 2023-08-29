@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -22,6 +23,9 @@ import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.knowledge.PaginatedIndex;
 import software.amazon.smithy.model.knowledge.PaginationInfo;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -46,7 +50,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
@@ -62,7 +66,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Paginators")
                 .call(() -> renderRbsPaginators(writer))
@@ -70,7 +74,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
                 .closeBlock("end")
                 .closeBlock("end");
         });
-        LOGGER.fine("Wrote paginators types to " + rbsFile());
+        LOGGER.fine("Wrote paginators rbs to " + rbsFile());
     }
 
     private void renderPaginators(RubyCodeWriter writer) {
@@ -113,6 +117,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
                 .write("@options = options")
                 .write("@client = client")
                 .closeBlock("end")
+                .write("")
                 .call(() -> renderPaginatorPages(writer, operationName, paginationInfo))
                 .call(() -> {
                     if (!paginationInfo.getItemsMemberPath().isEmpty()) {
@@ -127,12 +132,25 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L", operationName)
-                .write("def initialize: (untyped client, ?::Hash[untyped, untyped] params, "
-                        + "?::Hash[untyped, untyped] options) -> void\n")
-                .write("def pages: () -> untyped")
+                .write("def initialize: (Client, ?::Hash[::Symbol, untyped] params, "
+                        + "?::Hash[::Symbol, untyped] options) -> void\n")
+                .write("def pages: () -> ::Enumerator[Hearth::Output, void]")
                 .call(() -> {
-                    if (!paginationInfo.getItemsMemberPath().isEmpty()) {
-                        writer.write("def items: () -> untyped");
+                    List<MemberShape> itemMembers = paginationInfo.getItemsMemberPath();
+                    if (!itemMembers.isEmpty()) {
+                        MemberShape last = itemMembers.get(itemMembers.size() - 1);
+                        Shape shape = model.expectShape(last.getTarget());
+                        String type = "untyped";
+                        if (shape.isMapShape()) {
+                            String subType = symbolProvider.toSymbol(
+                                    model.expectShape(((MapShape) shape).getValue().getTarget())).toString();
+                            type = "Hash[::Symbol, " + subType + "]";
+                        } else if (shape.isListShape()) {
+                            MemberShape member = shape.members().stream().findFirst().get();
+                            String subType = symbolProvider.toSymbol(model.expectShape(member.getTarget())).toString();
+                            type = "Array[" + subType + "]";
+                        }
+                        writer.write("def items: () -> Enumerator[$L, void]", type);
                     }
                 })
                 .closeBlock("end");
@@ -141,10 +159,9 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     private void renderPaginatorInitializeDocumentation(RubyCodeWriter writer, String operationName) {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
 
-        writer.writeDocs((w) -> w
-                .write("@param [Client] client")
-                .write("@param [Hash] params (see Client#$L)", snakeOperationName)
-                .write("@param [Hash] options (see Client#$L)", snakeOperationName));
+        writer
+                .writeYardParam("Client", "client", "")
+                .writeYardReference("param", "Client#" + snakeOperationName);
     }
 
     private void renderPaginatorPages(RubyCodeWriter writer, String operationName, PaginationInfo paginationInfo) {
@@ -175,9 +192,9 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     }
 
     private void renderPaginatorPagesDocumentation(RubyCodeWriter writer, String snakeOperationName) {
-        writer.writeDocs((w) -> w
-                .write("Iterate all response pages of the $L operation.", snakeOperationName)
-                .write("@return [Enumerator]"));
+        writer
+                .writeDocstring("Iterate all response pages of the " + snakeOperationName + " operation.")
+                .writeYardReturn("Enumerator", "");
     }
 
     private void renderPaginatorItems(RubyCodeWriter writer, PaginationInfo paginationInfo, String operationName) {
@@ -201,8 +218,8 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
 
     private void renderPaginatorItemsDocumentation(RubyCodeWriter writer, String operationName) {
         String snakeOperationName = RubyFormatter.toSnakeCase(operationName);
-        writer.writeDocs((w) -> w
-                .write("Iterate all items from pages in the $L operation.", snakeOperationName)
-                .write("@return [Enumerator]"));
+        writer
+                .writeDocstring("Iterate all items from pages in the " + snakeOperationName + " operation.")
+                .writeYardReturn("Enumerator", "");
     }
 }

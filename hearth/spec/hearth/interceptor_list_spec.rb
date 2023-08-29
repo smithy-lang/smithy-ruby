@@ -89,10 +89,6 @@ module Hearth
       end
       let(:hook) { :read_before_execution }
 
-      before(:each) do
-        allow(context).to receive(:interceptor_context).and_return(i_ctx)
-      end
-
       it 'calls each interceptor hook with context' do
         expect(Interceptor::Context).to receive(:new).with(
           input: input,

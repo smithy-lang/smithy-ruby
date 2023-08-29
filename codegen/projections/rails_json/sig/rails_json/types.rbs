@@ -10,47 +10,89 @@
 module RailsJson
   module Types
 
-    AllQueryStringTypesInput: untyped
+    class AllQueryStringTypesInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    AllQueryStringTypesOutput: untyped
+    class AllQueryStringTypesOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ComplexError: untyped
+    class ComplexError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ComplexNestedErrorData: untyped
+    class ComplexNestedErrorData < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ConstantAndVariableQueryStringInput: untyped
+    class ConstantAndVariableQueryStringInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ConstantAndVariableQueryStringOutput: untyped
+    class ConstantAndVariableQueryStringOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ConstantQueryStringInput: untyped
+    class ConstantQueryStringInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ConstantQueryStringOutput: untyped
+    class ConstantQueryStringOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DocumentTypeAsPayloadInput: untyped
+    class DocumentTypeAsPayloadInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DocumentTypeAsPayloadOutput: untyped
+    class DocumentTypeAsPayloadOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DocumentTypeInput: untyped
+    class DocumentTypeInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DocumentTypeOutput: untyped
+    class DocumentTypeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EmptyOperationInput: untyped
+    class EmptyOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EmptyOperationOutput: untyped
+    class EmptyOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EmptyStruct: untyped
+    class EmptyStruct < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointOperationInput: untyped
+    class EndpointOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointOperationOutput: untyped
+    class EndpointOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointWithHostLabelOperationInput: untyped
+    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    EndpointWithHostLabelOperationOutput: untyped
+    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ErrorWithMembers: untyped
+    class ErrorWithMembers < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ErrorWithoutMembers: untyped
+    class ErrorWithoutMembers < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     module FooEnum
       FOO: ::String
@@ -64,179 +106,318 @@ module RailsJson
       ZERO: ::String
     end
 
-    GreetingStruct: untyped
+    class GreetingStruct < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GreetingWithErrorsInput: untyped
+    class GreetingWithErrorsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GreetingWithErrorsOutput: untyped
+    class GreetingWithErrorsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPayloadTraitsInput: untyped
+    class HttpPayloadTraitsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPayloadTraitsOutput: untyped
+    class HttpPayloadTraitsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPayloadTraitsWithMediaTypeInput: untyped
+    class HttpPayloadTraitsWithMediaTypeInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPayloadTraitsWithMediaTypeOutput: untyped
+    class HttpPayloadTraitsWithMediaTypeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPayloadWithStructureInput: untyped
+    class HttpPayloadWithStructureInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPayloadWithStructureOutput: untyped
+    class HttpPayloadWithStructureOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPrefixHeadersInResponseInput: untyped
+    class HttpPrefixHeadersInResponseInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPrefixHeadersInResponseOutput: untyped
+    class HttpPrefixHeadersInResponseOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPrefixHeadersInput: untyped
+    class HttpPrefixHeadersInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpPrefixHeadersOutput: untyped
+    class HttpPrefixHeadersOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithFloatLabelsInput: untyped
+    class HttpRequestWithFloatLabelsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithFloatLabelsOutput: untyped
+    class HttpRequestWithFloatLabelsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithGreedyLabelInPathInput: untyped
+    class HttpRequestWithGreedyLabelInPathInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithGreedyLabelInPathOutput: untyped
+    class HttpRequestWithGreedyLabelInPathOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithLabelsAndTimestampFormatInput: untyped
+    class HttpRequestWithLabelsAndTimestampFormatInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithLabelsAndTimestampFormatOutput: untyped
+    class HttpRequestWithLabelsAndTimestampFormatOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithLabelsInput: untyped
+    class HttpRequestWithLabelsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpRequestWithLabelsOutput: untyped
+    class HttpRequestWithLabelsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpResponseCodeInput: untyped
+    class HttpResponseCodeInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HttpResponseCodeOutput: untyped
+    class HttpResponseCodeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    IgnoreQueryParamsInResponseInput: untyped
+    class IgnoreQueryParamsInResponseInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    IgnoreQueryParamsInResponseOutput: untyped
+    class IgnoreQueryParamsInResponseOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    InputAndOutputWithHeadersInput: untyped
+    class InputAndOutputWithHeadersInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    InputAndOutputWithHeadersOutput: untyped
+    class InputAndOutputWithHeadersOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    InvalidGreeting: untyped
+    class InvalidGreeting < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    JsonEnumsInput: untyped
+    class JsonEnumsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    JsonEnumsOutput: untyped
+    class JsonEnumsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    JsonMapsInput: untyped
+    class JsonMapsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    JsonMapsOutput: untyped
+    class JsonMapsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    JsonUnionsInput: untyped
+    class JsonUnionsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    JsonUnionsOutput: untyped
+    class JsonUnionsOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSink: untyped
+    class KitchenSink < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSinkOperationInput: untyped
+    class KitchenSinkOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    KitchenSinkOperationOutput: untyped
+    class KitchenSinkOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    MediaTypeHeaderInput: untyped
+    class MediaTypeHeaderInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    MediaTypeHeaderOutput: untyped
+    class MediaTypeHeaderOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
     class MyUnion < Hearth::Union
       class StringValue < MyUnion
-        def to_h: () -> { string_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { string_value: ::String }
+        def to_s: () -> String
       end
 
       class BooleanValue < MyUnion
-        def to_h: () -> { boolean_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { boolean_value: bool }
+        def to_s: () -> String
       end
 
       class NumberValue < MyUnion
-        def to_h: () -> { number_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { number_value: ::Integer }
+        def to_s: () -> String
       end
 
       class BlobValue < MyUnion
-        def to_h: () -> { blob_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { blob_value: ::String }
+        def to_s: () -> String
       end
 
       class TimestampValue < MyUnion
-        def to_h: () -> { timestamp_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { timestamp_value: ::Time }
+        def to_s: () -> String
       end
 
       class EnumValue < MyUnion
-        def to_h: () -> { enum_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { enum_value: ::String }
+        def to_s: () -> String
       end
 
       class ListValue < MyUnion
-        def to_h: () -> { list_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { list_value: ::Array[::String] }
+        def to_s: () -> String
       end
 
       class MapValue < MyUnion
-        def to_h: () -> { map_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { map_value: ::Hash[::Symbol, ::String] }
+        def to_s: () -> String
       end
 
       class StructureValue < MyUnion
-        def to_h: () -> { structure_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { structure_value: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class RenamedStructureValue < MyUnion
-        def to_h: () -> { renamed_structure_value: Hash[Symbol,MyUnion] }
+        def to_h: () -> { renamed_structure_value: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
       end
 
       class Unknown < MyUnion
-        def to_h: () -> { unknown: Hash[Symbol,MyUnion] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_s: () -> String
       end
     end
 
-    NestedAttributesOperationInput: untyped
+    class NestedAttributesOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NestedAttributesOperationOutput: untyped
+    class NestedAttributesOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NestedPayload: untyped
+    class NestedPayload < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NullAndEmptyHeadersClientInput: untyped
+    class NullAndEmptyHeadersClientInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NullAndEmptyHeadersClientOutput: untyped
+    class NullAndEmptyHeadersClientOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NullOperationInput: untyped
+    class NullOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    NullOperationOutput: untyped
+    class NullOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OmitsNullSerializesEmptyStringInput: untyped
+    class OmitsNullSerializesEmptyStringInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OmitsNullSerializesEmptyStringOutput: untyped
+    class OmitsNullSerializesEmptyStringOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OperationWithOptionalInputOutputInput: untyped
+    class OperationWithOptionalInputOutputInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    OperationWithOptionalInputOutputOutput: untyped
+    class OperationWithOptionalInputOutputOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    QueryIdempotencyTokenAutoFillInput: untyped
+    class QueryIdempotencyTokenAutoFillInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    QueryIdempotencyTokenAutoFillOutput: untyped
+    class QueryIdempotencyTokenAutoFillOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    QueryParamsAsStringListMapInput: untyped
+    class QueryParamsAsStringListMapInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    QueryParamsAsStringListMapOutput: untyped
+    class QueryParamsAsStringListMapOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    RenamedGreeting: untyped
+    class RenamedGreeting < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    SimpleStruct: untyped
+    class SimpleStruct < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingOperationInput: untyped
+    class StreamingOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StreamingOperationOutput: untyped
+    class StreamingOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    StructWithLocationName: untyped
+    class StructWithLocationName < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    TimestampFormatHeadersInput: untyped
+    class TimestampFormatHeadersInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    TimestampFormatHeadersOutput: untyped
+    class TimestampFormatHeadersOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____456efg: untyped
+    class Struct____456efg < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____789BadNameInput: untyped
+    class Struct____789BadNameInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    Struct____789BadNameOutput: untyped
+    class Struct____789BadNameOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

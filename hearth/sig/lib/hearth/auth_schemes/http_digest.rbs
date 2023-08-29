@@ -1,6 +1,5 @@
 module Hearth
   module AuthSchemes
-    # HTTP Digest authentication scheme.
     class HTTPDigest < AuthSchemes::Base
       def initialize: () -> void
     end

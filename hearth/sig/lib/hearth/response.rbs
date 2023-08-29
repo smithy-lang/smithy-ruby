@@ -1,11 +1,11 @@
 module Hearth
-  # Represents a base response.
-  # @api private
   class Response
-    # @param [IO] body (StringIO.new)
-    def initialize: (?body: untyped) -> void
+    def initialize: (?body: IO) -> void
 
-    # @return [IO]
-    attr_accessor body: untyped
+    attr_accessor body: IO
+
+    def replace: (Response other) -> self
+
+    def reset: () -> self
   end
 end

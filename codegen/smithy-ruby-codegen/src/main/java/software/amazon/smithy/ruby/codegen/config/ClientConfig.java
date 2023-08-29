@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import software.amazon.smithy.ruby.codegen.ClientFragment;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -33,6 +32,7 @@ public class ClientConfig {
     private final String name;
     private final String documentation;
     private final String documentationType;
+    private final String rbsType;
     private final ConfigDefaults defaults;
     private final boolean allowOperationOverride;
     private final List<ConfigConstraint> constraints;
@@ -44,6 +44,7 @@ public class ClientConfig {
         this.name = builder.name;
         this.documentation = builder.documentation;
         this.documentationType = builder.documentationType != null ? builder.documentationType : builder.type;
+        this.rbsType = builder.rbsType != null ? builder.rbsType : builder.type;
         if (builder.defaults != null) {
             this.defaults = builder.defaults;
         } else {
@@ -90,6 +91,13 @@ public class ClientConfig {
      */
     public String getDocumentationType() {
         return documentationType;
+    }
+
+    /**
+     * @return The Rbs type
+     */
+    public String getRbsType() {
+        return rbsType;
     }
 
     /**
@@ -163,6 +171,7 @@ public class ClientConfig {
         private String documentation;
         private String documentationDefaultValue;
         private String documentationType;
+        private String rbsType;
         private ConfigDefaults defaults;
         private boolean allowOperationOverride = false;
         private final List<ConfigConstraint> constraints;
@@ -219,6 +228,15 @@ public class ClientConfig {
         }
 
         /**
+         * @param type an optional type to use in RBS (defaults to the type).
+         * @return this builder
+         */
+        public Builder rbsType(String type) {
+            this.rbsType = type;
+            return this;
+        }
+
+        /**
          * allows config value to be overridden by values passed on an operation call.
          *
          * @return this builder
@@ -245,12 +263,6 @@ public class ClientConfig {
             return this;
         }
 
-        public Builder defaultDynamicValue(ClientFragment rubyDefaultBlock) {
-            validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
-            return this;
-        }
-
         /**
          * @param value a single non-shared default. Initialized on each creation of Config.
          * @return this builder
@@ -260,26 +272,6 @@ public class ClientConfig {
             this.defaults = ConfigProviderChain.builder()
                     .dynamicProvider("proc { " + value + " }")
                     .build();
-            return this;
-        }
-
-        /**
-         * @param defaults chain of default providers to use.
-         * @return this builder.
-         */
-        public Builder defaults(ConfigDefaults defaults) {
-            validateDefaultNotSet();
-            this.defaults = defaults;
-            return this;
-        }
-
-        /**
-         * @param defaultLiteral a literal to render for defaults.  Must result in an array of providers in Ruby.
-         * @return this builder
-         */
-        public Builder defaultLiteral(String defaultLiteral) {
-            validateDefaultNotSet();
-            this.defaults = new DefaultLiteral(defaultLiteral);
             return this;
         }
 

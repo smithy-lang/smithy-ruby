@@ -41,6 +41,7 @@ public final class RequestCompressionMiddlewareFactory {
         ClientConfig disableRequestCompression = ClientConfig.builder()
                 .name("disable_request_compression")
                 .type("Boolean")
+                .rbsType("bool")
                 .defaultPrimitiveValue("false")
                 .documentation(disableRequestCompressionDocumentation)
                 .allowOperationOverride()

@@ -1,33 +1,15 @@
 module Hearth
-  # A list of plugins that can be applied to config. Plugins are callables
-  # that take one argument (config) and are called during client initialization
-  # or operation invocation to modify config.
   class PluginList
-    # Initialize a PluginList.
-    #
-    # @param [Array] plugins ([]) A list of plugins to initialize with
-    def initialize: (?untyped plugins) -> void
+    def initialize: (?::Array[_Plugin] plugins) -> void
 
-    # Add a plugin
-    #
-    # @param [Callable] plugin
-    def add: (untyped plugin) -> untyped
+    def add: (_Plugin plugin) -> void
 
     alias << add
 
-    # Applies all of the plugins in order to the config allowing them to make
-    # modifications.
-    #
-    # @param [Config] config Service config to be provided to each plugin
-    def apply: (untyped config) -> untyped
+    def apply: (Hearth::Configuration) -> void
 
-    def dup: () -> untyped
+    def dup: () -> PluginList
 
-    def each: () ?{ () -> untyped } -> untyped
-
-    private
-
-    # plugins must be callable and take exactly 1 argument (config)
-    def valid_plugin?: (untyped plugin) -> untyped
+    def each: () ?{ (_Plugin) -> void } -> void
   end
 end

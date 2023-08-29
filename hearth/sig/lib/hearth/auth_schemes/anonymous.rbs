@@ -1,6 +1,5 @@
 module Hearth
   module AuthSchemes
-    # Anonymous authentication scheme.
     class Anonymous < AuthSchemes::Base
       def initialize: () -> void
     end

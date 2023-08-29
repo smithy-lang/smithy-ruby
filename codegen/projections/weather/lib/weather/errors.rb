@@ -45,7 +45,6 @@ module Weather
       end
 
       # @return [Types::NoSuchResource]
-      #
       attr_reader :data
     end
 

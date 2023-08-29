@@ -1,6 +1,5 @@
 module Hearth
   module Identities
-    # Anonymous identity.
     class Anonymous < Identities::Base
     end
   end
