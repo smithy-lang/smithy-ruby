@@ -186,6 +186,7 @@ public class MiddlewareBuilder {
         ClientConfig logger = ClientConfig.builder()
                 .name("logger")
                 .type("Logger")
+                .rbsType("untyped") // TODO: find out why Logger does not resolve
                 .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
                 .defaultDynamicValue("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }")
                 .documentation("The Logger instance to use for logging.")
