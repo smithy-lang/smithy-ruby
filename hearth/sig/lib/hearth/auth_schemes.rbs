@@ -5,7 +5,7 @@ module Hearth
 
       attr_reader scheme_id: String
 
-      def identity_resolver: (?::Hash[Symbol, IdentityResolver] identity_resolvers) -> IdentityResolver
+      def identity_resolver: (?Hash[Symbol, IdentityResolver] identity_resolvers) -> IdentityResolver
 
       attr_reader signer: Signers::Base
     end

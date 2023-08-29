@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.ShapeDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -56,7 +57,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
         write(writer -> {
             // a total hack so that any structures named Struct do not fail documentation parsing
             if (shape.getId().getName().equals("Struct")) {
-                writer.write("class ::Struct; end\n");
+                writer.apiPrivate().write("class ::Struct; end\n");
             }
 
             new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render();
@@ -90,6 +91,13 @@ public final class StructureGenerator extends RubyGeneratorBase {
             writer
                     .openBlock("class $L < ::Struct[untyped]", shapeName)
                     .write("include $L", Hearth.STRUCTURE)
+                    .call(() -> {
+                        shape.members().forEach(memberShape -> {
+                            String name = symbolProvider.toMemberName(memberShape);
+                            Symbol target = symbolProvider.toSymbol(model.expectShape(memberShape.getTarget()));
+                            writer.write("attr_accessor $L (): $L", name, target.getProperty("rbsType").get());
+                        });
+                    })
                     .closeBlock("end");
         });
     }
@@ -125,7 +133,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                 String param = RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape));
                 Shape target = model.expectShape(memberShape.getTarget());
                 String paramType = (String) symbolProvider.toSymbol(target)
-                        .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
+                        .getProperty("docType").orElseThrow(IllegalArgumentException::new);
 
                 String defaultValue = "";
                 if (!nullableIndex.isNullable(memberShape)) {
@@ -142,7 +150,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
             String attribute = symbolProvider.toMemberName(memberShape);
             Shape target = model.expectShape(memberShape.getTarget());
             String returnType = (String) symbolProvider.toSymbol(target)
-                    .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
+                    .getProperty("docType").orElseThrow(IllegalArgumentException::new);
 
             writer.writeYardAttribute(attribute, () -> {
                 new ShapeDocumentationGenerator(model, writer, symbolProvider, memberShape).render();

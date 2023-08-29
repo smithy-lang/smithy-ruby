@@ -2,6 +2,14 @@
 class SimpleDelegator
 end
 
+# Hack - https://github.com/ruby/rbs/issues/1481
+class URI
+end
+
+# Hack - https://github.com/ruby/rbs/issues/1482
+class Logger
+end
+
 interface _Plugin
   def call: (Hearth::Configuration) -> void
 end

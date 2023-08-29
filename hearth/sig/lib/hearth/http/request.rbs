@@ -1,7 +1,7 @@
 module Hearth
   module HTTP
     class Request < Hearth::Request
-      def initialize: (?http_method: Symbol?, ?fields: Fields, **untyped kwargs) -> void
+      def initialize: (?http_method: Symbol?, ?fields: Fields, ?uri: URI, ?body: IO) -> void
 
       attr_accessor http_method: Symbol
 

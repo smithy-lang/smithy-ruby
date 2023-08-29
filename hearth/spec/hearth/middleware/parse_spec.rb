@@ -17,7 +17,7 @@ module Hearth
         let(:output) { Output.new(metadata: metadata) }
         let(:request) { double('request') }
         let(:response) { double('response') }
-        let(:interceptors) { double('interceptors', apply: nil) }
+        let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Context.new(
             request: request,
@@ -40,11 +40,11 @@ module Hearth
 
         it 'calls all of the interceptor hooks after the next middleware' do
           expect(app).to receive(:call).ordered
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
                     hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
                   )).ordered
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
                     hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION
                   )).ordered
@@ -52,7 +52,7 @@ module Hearth
           expect(error_parser).to receive(:parse).ordered
           expect(data_parser).to receive(:parse).ordered
 
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
                     hook: Interceptor::Hooks::READ_AFTER_DESERIALIZATION
                   )).ordered
@@ -106,59 +106,71 @@ module Hearth
         end
 
         context 'modify_before_deserialization error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error set' do
             expect(app).to receive(:call)
               .and_return(output)
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
                       hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
-                    )).and_return(error)
+                    )).and_return(interceptor_error)
 
             expect(error_parser).not_to receive(:parse)
             expect(data_parser).not_to receive(:parse)
 
             resp = subject.call(input, context)
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
 
         context 'read_before_deserialization error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error set' do
             expect(app).to receive(:call)
               .and_return(output)
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
+                    ))
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
                       hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION
-                    )).and_return(error)
+                    )).and_return(interceptor_error)
 
             expect(error_parser).not_to receive(:parse)
             expect(data_parser).not_to receive(:parse)
 
             resp = subject.call(input, context)
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
 
         context 'read_after_deserialization error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error set' do
             expect(app).to receive(:call)
               .and_return(output)
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
+                    ))
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION
+                    ))
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
                       hook: Interceptor::Hooks::READ_AFTER_DESERIALIZATION
-                    )).and_return(error)
+                    )).and_return(interceptor_error)
 
             expect(error_parser).to receive(:parse)
             expect(data_parser).to receive(:parse)
 
             resp = subject.call(input, context)
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
       end

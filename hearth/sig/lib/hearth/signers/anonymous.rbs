@@ -1,9 +1,9 @@
 module Hearth
   module Signers
     class Anonymous < Signers::Base
-      def sign: (request: Request, identity: Identities::Anonymous, ?properties: ::Hash[Symbol, untyped]) -> void
+      def sign: (request: Request, identity: Identities::Anonymous, ?properties: Hash[Symbol, untyped]) -> void
 
-      def reset: (request: Request, ?properties: ::Hash[Symbol, untyped]) -> void
+      def reset: (request: Request, ?properties: Hash[Symbol, untyped]) -> void
     end
   end
 end

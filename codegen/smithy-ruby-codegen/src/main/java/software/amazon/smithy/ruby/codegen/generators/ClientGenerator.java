@@ -140,7 +140,6 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .write("attr_reader config: Config")
                     .write("")
                     .call(() -> renderRbsOperations(writer))
-                    .write("")
                     .closeBlock("end")
                     .closeBlock("end");
         });

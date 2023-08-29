@@ -1,6 +1,6 @@
 module Hearth
   class PluginList
-    def initialize: (?::Array[_Plugin] plugins) -> void
+    def initialize: (?Array[_Plugin] plugins) -> void
 
     def add: (_Plugin plugin) -> void
 
