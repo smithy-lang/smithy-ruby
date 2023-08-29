@@ -190,10 +190,10 @@ module WhiteLabel
 
     module Items
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, context: context)
-        data = {}
-        params.each do |key, value|
-          data[key] = value
+        Hearth::Validator.validate_types!(params, ::Array, context: context)
+        data = []
+        params.each do |element|
+          data << element
         end
         data
       end

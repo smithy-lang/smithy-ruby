@@ -14,7 +14,7 @@ module WhiteLabel
       def initialize: (Client, ?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> void
 
       def pages: () -> ::Enumerator[Hearth::Output, void]
-      def items: () -> Enumerator[Hash[::Symbol, String], void]
+      def items: () -> Enumerator[Array[String], void]
     end
 
     class PaginatorsTest
@@ -27,7 +27,7 @@ module WhiteLabel
       def initialize: (Client, ?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> void
 
       def pages: () -> ::Enumerator[Hearth::Output, void]
-      def items: () -> Enumerator[Hash[::Symbol, String], void]
+      def items: () -> Enumerator[Array[String], void]
     end
 
   end

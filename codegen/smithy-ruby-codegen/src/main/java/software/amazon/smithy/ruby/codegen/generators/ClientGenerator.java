@@ -47,15 +47,20 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private final MiddlewareBuilder middlewareBuilder;
 
-    private boolean hasStreamingOperation;
+    private boolean hasOutputStreamingOperation = false;
 
     public ClientGenerator(
             GenerateServiceDirective<GenerationContext, RubySettings> directive,
             MiddlewareBuilder middlewareBuilder
     ) {
         super(directive);
-        this.hasStreamingOperation = false;
         this.operations = directive.operations();
+        operations.forEach(operation -> {
+            Shape outputShape = model.expectShape(operation.getOutputShape());
+            if (Streaming.isStreaming(model, outputShape)) {
+                hasOutputStreamingOperation = true;
+            }
+        });
         this.middlewareBuilder = middlewareBuilder;
     }
 
@@ -109,7 +114,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .call(() -> renderInitializeConfigMethod(writer))
                     .call(() -> renderOperationConfigMethod(writer))
                     .call(() -> {
-                        if (hasStreamingOperation) {
+                        if (hasOutputStreamingOperation) {
                             renderOutputStreamMethod(writer);
                         }
                     })
@@ -195,12 +200,7 @@ public class ClientGenerator extends RubyGeneratorBase {
         Shape inputShape = model.expectShape(operation.getInputShape());
         Shape outputShape = model.expectShape(operation.getOutputShape());
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
-        boolean isStreaming = outputShape.members().stream()
-                .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent());
-        // optimization for client generation
-        if (isStreaming) {
-            hasStreamingOperation = true;
-        }
+        boolean isStreaming = Streaming.isStreaming(model, outputShape);
 
         writer
                 .write("")

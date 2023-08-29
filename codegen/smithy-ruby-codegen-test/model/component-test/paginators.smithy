@@ -44,11 +44,6 @@ structure ResultWrapper {
     __123nextToken: String
 }
 
-//list Items {
-//    member: String
-//}
-
-map Items {
-    key: String,
-    value: String
+list Items {
+    member: String
 }

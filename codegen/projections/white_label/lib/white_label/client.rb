@@ -1122,8 +1122,8 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::PaginatorsTestOperationOutput
     #   resp.data.next_token #=> String
-    #   resp.data.items #=> Hash<String, String>
-    #   resp.data.items['key'] #=> String
+    #   resp.data.items #=> Array<String>
+    #   resp.data.items[0] #=> String
     def paginators_test(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -1198,8 +1198,8 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::PaginatorsTestWithItemsOutput
     #   resp.data.next_token #=> String
-    #   resp.data.items #=> Hash<String, String>
-    #   resp.data.items['key'] #=> String
+    #   resp.data.items #=> Array<String>
+    #   resp.data.items[0] #=> String
     def paginators_test_with_items(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -1652,8 +1652,8 @@ module WhiteLabel
     #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
     #   resp.data.member___wrapper #=> Types::ResultWrapper
     #   resp.data.member___wrapper.member___123next_token #=> String
-    #   resp.data.member___items #=> Hash<String, String>
-    #   resp.data.member___items['key'] #=> String
+    #   resp.data.member___items #=> Array<String>
+    #   resp.data.member___items[0] #=> String
     def operation____paginators_test_with_bad_names(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new

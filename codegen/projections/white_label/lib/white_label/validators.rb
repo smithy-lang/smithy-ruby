@@ -196,10 +196,9 @@ module WhiteLabel
 
     class Items
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Hash, context: context)
-        input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate_types!(element, ::String, context: "#{context}[#{index}]")
         end
       end
     end

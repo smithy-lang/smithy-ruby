@@ -203,9 +203,9 @@ module WhiteLabel
       def self.default(visited = [])
         return nil if visited.include?('Items')
         visited = visited + ['Items']
-        {
-          key: 'value'
-        }
+        [
+          'member'
+        ]
       end
 
     end

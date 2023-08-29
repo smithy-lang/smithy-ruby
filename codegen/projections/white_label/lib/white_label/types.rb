@@ -713,11 +713,11 @@ module WhiteLabel
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :next_token
-    #   @option params [Hash<String, String>] :items
+    #   @option params [Array<String>] :items
     # @!attribute next_token
     #   @return [String]
     # @!attribute items
-    #   @return [Hash<String, String>]
+    #   @return [Array<String>]
     PaginatorsTestOperationOutput = ::Struct.new(
       :next_token,
       :items,
@@ -741,11 +741,11 @@ module WhiteLabel
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :next_token
-    #   @option params [Hash<String, String>] :items
+    #   @option params [Array<String>] :items
     # @!attribute next_token
     #   @return [String]
     # @!attribute items
-    #   @return [Hash<String, String>]
+    #   @return [Array<String>]
     PaginatorsTestWithItemsOutput = ::Struct.new(
       :next_token,
       :items,
@@ -1020,11 +1020,11 @@ module WhiteLabel
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [ResultWrapper] :member___wrapper
-    #   @option params [Hash<String, String>] :member___items
+    #   @option params [Array<String>] :member___items
     # @!attribute member___wrapper
     #   @return [ResultWrapper]
     # @!attribute member___items
-    #   @return [Hash<String, String>]
+    #   @return [Array<String>]
     Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
       :member___wrapper,
       :member___items,
