@@ -8,7 +8,7 @@ module WhiteLabel
       it 'allows a middleware to be set before their relative' do
         config = Config.new(
           stub_responses: true,
-          verify_before_middleware: proc { |metadata|
+          verify_in_mid: proc { |metadata|
             expect(metadata[:before_middleware]).to be(true)
           }
         )
@@ -20,7 +20,7 @@ module WhiteLabel
          'a second middleware to be set when their relative is optional' do
         config = Config.new(
           stub_responses: true,
-          verify_mid_middleware: proc { |metadata|
+          verify_in_after: proc { |metadata|
             expect(metadata[:mid_middleware]).to be(true)
           }
         )

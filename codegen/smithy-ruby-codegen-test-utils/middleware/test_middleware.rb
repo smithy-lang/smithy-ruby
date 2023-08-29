@@ -33,13 +33,13 @@ module Middleware
   # checks the 'BEFORE' middleware and an optional case
   # when a relative middleware is not required
   class MidMiddleware
-    def initialize(app, verify_before_middleware:)
+    def initialize(app, verify_in_mid:)
       @app = app
-      @verify_before_middleware = verify_before_middleware
+      @verify_in_mid = verify_in_mid
     end
 
     def call(input, context)
-      @verify_before_middleware&.call(context.metadata)
+      @verify_in_mid&.call(context.metadata)
       context.metadata[:mid_middleware] = true
       @app.call(input, context)
     end
@@ -49,13 +49,13 @@ module Middleware
   # this is for 'AFTER' type testing and verifies
   # the existence of the mid middleware
   class AfterMiddleware
-    def initialize(app, verify_mid_middleware:)
+    def initialize(app, verify_in_after:)
       @app = app
-      @verify_mid_middleware = verify_mid_middleware
+      @verify_in_after = verify_in_after
     end
 
     def call(input, context)
-      @verify_mid_middleware&.call(context.metadata)
+      @verify_in_after&.call(context.metadata)
       @app.call(input, context)
     end
   end

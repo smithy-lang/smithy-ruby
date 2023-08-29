@@ -64,7 +64,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .build();
         Middleware midMiddleware = Middleware.builder()
                 .addConfig(ClientConfig.builder()
-                        .name("verify_before_middleware")
+                        .name("verify_in_mid")
                         .type("Proc")
                         .build())
                 .klass("Middleware::MidMiddleware")
@@ -77,7 +77,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .build();
         Middleware afterMiddleware = Middleware.builder()
                 .addConfig(ClientConfig.builder()
-                        .name("verify_mid_middleware")
+                        .name("verify_in_after")
                         .type("Proc")
                         .build())
                 .klass("Middleware::AfterMiddleware")
