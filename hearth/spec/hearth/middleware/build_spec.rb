@@ -40,12 +40,10 @@ module Hearth
         it 'calls before_serialization interceptors before build' do
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
                   )).ordered
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION
                   )).ordered
           expect(builder).to receive(:build).ordered
@@ -55,47 +53,44 @@ module Hearth
         end
 
         context 'modify_before_serialization error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error and skips build' do
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
                     ))
-              .and_return(error)
+              .and_return(interceptor_error)
 
             expect(builder).not_to receive(:build)
             expect(app).not_to receive(:call)
 
             resp = subject.call(input, context)
 
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
 
         context 'read_before_serialization error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error and skips build' do
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
                     ))
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION
                     ))
-              .and_return(error)
+              .and_return(interceptor_error)
 
             expect(builder).not_to receive(:build)
             expect(app).not_to receive(:call)
 
             resp = subject.call(input, context)
 
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
       end

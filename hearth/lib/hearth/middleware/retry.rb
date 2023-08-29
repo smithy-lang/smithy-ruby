@@ -31,7 +31,6 @@ module Hearth
         output = nil
         loop do
           interceptor_error = Interceptor.apply(
-            interceptors: context.interceptors,
             hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT,
             input: input,
             context: context,
@@ -55,7 +54,6 @@ module Hearth
           end
 
           Interceptor.apply(
-            interceptors: context.interceptors,
             hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION,
             input: input,
             context: context,
@@ -64,7 +62,6 @@ module Hearth
           )
 
           Interceptor.apply(
-            interceptors: context.interceptors,
             hook: Interceptor::Hooks::READ_AFTER_ATTEMPT,
             input: input,
             context: context,

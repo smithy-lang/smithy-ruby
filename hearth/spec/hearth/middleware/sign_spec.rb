@@ -55,12 +55,10 @@ module Hearth
         it 'calls before_signing interceptors before sign' do
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING
                   )).ordered
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_SIGNING
                   )).ordered
           expect(signer).to receive(:sign).ordered
@@ -68,7 +66,6 @@ module Hearth
 
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_AFTER_SIGNING
                   )).ordered
 
@@ -76,47 +73,44 @@ module Hearth
         end
 
         context 'modify_before_signing error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error and skips signing' do
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING
                     ))
-              .and_return(error)
+              .and_return(interceptor_error)
 
             expect(signer).not_to receive(:sign)
             expect(app).not_to receive(:call)
 
             resp = subject.call(input, context)
 
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
 
         context 'read_before_signing error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
 
           it 'returns output with the error and skips signing' do
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING
                     ))
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_BEFORE_SIGNING
                     ))
-              .and_return(error)
+              .and_return(interceptor_error)
 
             expect(signer).not_to receive(:sign)
             expect(app).not_to receive(:call)
 
             resp = subject.call(input, context)
 
-            expect(resp.error).to eq(error)
+            expect(resp.error).to eq(interceptor_error)
           end
         end
       end

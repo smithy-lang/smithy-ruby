@@ -96,12 +96,10 @@ module Hearth
         it 'calls all of the interceptor hooks' do
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT
                   )).ordered
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_TRANSMIT
                   )).ordered
 
@@ -110,11 +108,46 @@ module Hearth
 
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_AFTER_TRANSMIT
                   )).ordered
 
           subject.call(input, context)
+        end
+
+        context 'modify_before_transmit error' do
+          let(:interceptor_error) { StandardError.new }
+
+          it 'returns output with the error and does not call app' do
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT
+                    )).and_return(interceptor_error)
+            expect(app).not_to receive(:call)
+
+            resp = subject.call(input, context)
+
+            expect(resp.error).to eq(interceptor_error)
+          end
+        end
+
+        context 'read_before_transmit error' do
+          let(:interceptor_error) { StandardError.new }
+
+          it 'returns output with the error and does not call app' do
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT
+                    ))
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_BEFORE_TRANSMIT
+                    )).and_return(interceptor_error)
+            expect(app).not_to receive(:call)
+
+            resp = subject.call(input, context)
+
+            expect(resp.error).to eq(interceptor_error)
+          end
         end
 
         context 'stub_responses is true' do

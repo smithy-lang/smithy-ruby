@@ -15,7 +15,6 @@ module Hearth
   module Interceptor
     # @api private
     # Apply all interceptors that implement the given hook
-    # @param [InterceptorList] interceptors the interceptors to apply
     # @param [Symbol] hook the specific hook to apply for
     # @param input operation input
     # @param [Hearth::Context] context
@@ -24,11 +23,10 @@ module Hearth
     #   only the last error is returned.  If false, returns immediately if an
     #   error is encountered.
     # @return nil if successful, an exception otherwise
-    def self.apply(interceptors:, hook:, input:, context:, output:,
-                   aggregate_errors: false)
+    def self.apply(hook:, input:, context:, output:, aggregate_errors: false)
       i_ctx = interceptor_context(input, context, output)
       last_error = nil
-      interceptors.each do |i|
+      context.interceptors.each do |i|
         next unless i.respond_to?(hook)
 
         begin

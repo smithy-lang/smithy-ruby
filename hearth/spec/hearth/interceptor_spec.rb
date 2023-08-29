@@ -11,25 +11,28 @@ module Hearth
 
       let(:interceptor1) { interceptor_class.new }
       let(:interceptor2) { interceptor_class.new }
+
       let(:logger) { double('logger') }
-      let(:input) { double('input') }
-      let(:output) { double('output', error: nil) }
       let(:request) { double('request') }
       let(:response) { double('response') }
-      let(:context) do
-        double(
-          'context',
-          request: request,
-          response: response,
-          logger: logger
-        )
-      end
-      let(:i_ctx) { double('interceptor_context') }
-      let(:error) { StandardError.new }
-
       let(:interceptors) do
         InterceptorList.new([interceptor1, interceptor2])
       end
+      let(:context) do
+        Context.new(
+          request: request,
+          response: response,
+          interceptors: interceptors,
+          logger: logger
+        )
+      end
+
+      let(:input) { double('input') }
+      let(:output) { double('output', error: nil) }
+
+      let(:i_ctx) { double('interceptor_context') }
+      let(:error) { StandardError.new }
+
       let(:hook) { :read_before_execution }
 
       it 'calls each interceptor hook with context' do
@@ -44,7 +47,6 @@ module Hearth
         expect(interceptor2).to receive(hook).with(i_ctx)
 
         out = Interceptor.apply(
-          interceptors: interceptors,
           hook: hook,
           input: input,
           context: context,
@@ -59,7 +61,6 @@ module Hearth
         expect(output).to receive(:error=).with(error)
 
         Interceptor.apply(
-          interceptors: interceptors,
           hook: hook,
           input: input,
           context: context,
@@ -77,7 +78,6 @@ module Hearth
           expect(output).to receive(:error=).with(error)
 
           Interceptor.apply(
-            interceptors: interceptors,
             hook: hook,
             input: input,
             context: context,
@@ -94,7 +94,6 @@ module Hearth
           expect(interceptor2).not_to receive(hook)
 
           out = Interceptor.apply(
-            interceptors: interceptors,
             hook: hook,
             input: input,
             context: context,
@@ -116,7 +115,6 @@ module Hearth
           expect(logger).to receive(:error).with(error1)
 
           out = Interceptor.apply(
-            interceptors: interceptors,
             hook: hook,
             input: input,
             context: context,

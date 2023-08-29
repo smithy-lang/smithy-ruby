@@ -24,7 +24,6 @@ module Hearth
           it 'calls all of the interceptor hooks and the app' do
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_BEFORE_EXECUTION
                     )).ordered
 
@@ -32,12 +31,10 @@ module Hearth
 
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_COMPLETION
                     )).ordered
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_AFTER_EXECUTION
                     )).ordered
 
@@ -46,29 +43,27 @@ module Hearth
         end
 
         context 'read_before_execution error' do
-          let(:error) { StandardError.new }
+          let(:interceptor_error) { StandardError.new }
+
           it 'calls all interceptor hooks but does not call the app' do
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_BEFORE_EXECUTION
                     ))
-              .and_return(error)
+              .and_return(interceptor_error)
 
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_COMPLETION
                     ))
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
-                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_AFTER_EXECUTION
                     ))
             expect(app).not_to receive(:call)
 
             output = subject.call(input, context)
-            expect(output.error).to eq(error)
+            expect(output.error).to eq(interceptor_error)
           end
         end
       end

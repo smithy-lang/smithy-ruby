@@ -158,18 +158,15 @@ module Hearth
       it 'calls all of the interceptor hooks and the app' do
         expect(Interceptor).to receive(:apply)
           .with(hash_including(
-                  interceptors: interceptors,
                   hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
                 )).ordered
         expect(app).to receive(:call).and_return(output).ordered
         expect(Interceptor).to receive(:apply)
           .with(hash_including(
-                  interceptors: interceptors,
                   hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
                 )).ordered
         expect(Interceptor).to receive(:apply)
           .with(hash_including(
-                  interceptors: interceptors,
                   hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
                 )).ordered
 
@@ -177,27 +174,26 @@ module Hearth
       end
 
       context 'read_before_attempt error' do
+        let(:interceptor_error) { StandardError.new }
+
         it 'returns output with the error and does not call app' do
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
-                  )).and_return(error)
+                  )).and_return(interceptor_error)
           expect(app).not_to receive(:call)
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
                   ))
           expect(Interceptor).to receive(:apply)
             .with(hash_including(
-                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
                   ))
 
           resp = subject.call(input, context)
 
-          expect(resp.error).to eq(error)
+          expect(resp.error).to eq(interceptor_error)
         end
       end
 
