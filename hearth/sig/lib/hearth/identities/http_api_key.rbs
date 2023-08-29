@@ -1,7 +1,7 @@
 module Hearth
   module Identities
     class HTTPApiKey < Identities::Base
-      def initialize: (key: String, **untyped kwargs) -> void
+      def initialize: (key: String, ?expiration: Time?) -> void
 
       attr_reader key: String
     end

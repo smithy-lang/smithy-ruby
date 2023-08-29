@@ -1,7 +1,7 @@
 module Hearth
   module HTTP
     class Response < Hearth::Response
-      def initialize: (?status: Integer, ?reason: String?, ?fields: Fields, **untyped kwargs) -> void
+      def initialize: (?status: Integer, ?reason: String?, ?fields: Fields, ?body: IO) -> void
 
       attr_accessor status: Integer
 
