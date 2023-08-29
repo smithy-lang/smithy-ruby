@@ -125,7 +125,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                 String param = RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape));
                 Shape target = model.expectShape(memberShape.getTarget());
                 String paramType = (String) symbolProvider.toSymbol(target)
-                        .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
+                        .getProperty("docType").orElseThrow(IllegalArgumentException::new);
 
                 String defaultValue = "";
                 if (!nullableIndex.isNullable(memberShape)) {
@@ -142,7 +142,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
             String attribute = symbolProvider.toMemberName(memberShape);
             Shape target = model.expectShape(memberShape.getTarget());
             String returnType = (String) symbolProvider.toSymbol(target)
-                    .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
+                    .getProperty("docType").orElseThrow(IllegalArgumentException::new);
 
             writer.writeYardAttribute(attribute, () -> {
                 new ShapeDocumentationGenerator(model, writer, symbolProvider, memberShape).render();

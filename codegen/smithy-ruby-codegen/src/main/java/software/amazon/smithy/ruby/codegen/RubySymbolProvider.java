@@ -185,11 +185,11 @@ public class RubySymbolProvider implements SymbolProvider,
     /**
      * Creates a symbol builder for the shape with the given type name in the root namespace.
      */
-    private Symbol.Builder createSymbolBuilder(Shape shape, String type, String rbsType, String yardType) {
+    private Symbol.Builder createSymbolBuilder(Shape shape, String type, String rbsType, String docType) {
         return Symbol.builder()
                 .putProperty("shape", shape)
                 .putProperty("rbsType", rbsType)
-                .putProperty("yardType", yardType)
+                .putProperty("docType", docType)
                 .name(type);
     }
 
@@ -199,8 +199,8 @@ public class RubySymbolProvider implements SymbolProvider,
      * the namespace (and ultimately the package name) to `foo.bar` for the symbol.
      */
     private Symbol.Builder createSymbolBuilder(Shape shape, String type, String rbsType,
-                                               String yardType, String namespace) {
-        return createSymbolBuilder(shape, type, rbsType, yardType).namespace(namespace, "::");
+                                               String docType, String namespace) {
+        return createSymbolBuilder(shape, type, rbsType, docType).namespace(namespace, "::");
     }
 
     @Override
@@ -280,8 +280,8 @@ public class RubySymbolProvider implements SymbolProvider,
     public Symbol listShape(ListShape shape) {
         Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
         String rbsType = "Array[" + member.getProperty("rbsType").get() + "]";
-        String yardType = "Array<" + member.getProperty("yardType").get() + ">";
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), rbsType, yardType, moduleName)
+        String docType = "Array<" + member.getProperty("docType").get() + ">";
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();
     }
@@ -292,9 +292,9 @@ public class RubySymbolProvider implements SymbolProvider,
         Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
         String rbsType
                 = "Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
-        String yardType
-                = "Hash<" + key.getProperty("yardType").get() + ", " + value.getProperty("yardType").get() + ">";
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, yardType, moduleName)
+        String docType
+                = "Hash<" + key.getProperty("docType").get() + ", " + value.getProperty("docType").get() + ">";
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();
     }
@@ -302,8 +302,8 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol documentShape(DocumentShape shape) {
         String rbsType = "document"; // alias defined in Hearth
-        String yardType = "Hash,Array,String,Boolean,Numeric";
-        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), rbsType, yardType, moduleName)
+        String docType = "Hash,Array,String,Boolean,Numeric";
+        return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();
     }
