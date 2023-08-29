@@ -41,6 +41,7 @@ Metrics/ClassLength:
 
 Metrics/ParameterLists:
   Exclude:
+    - 'lib/hearth/interceptor.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Style/Documentation:

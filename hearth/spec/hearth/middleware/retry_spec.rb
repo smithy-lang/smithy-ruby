@@ -104,7 +104,7 @@ module Hearth
 
       let(:request) { Hearth::HTTP::Request.new }
       let(:response) { Hearth::HTTP::Response.new }
-      let(:interceptors) { double('interceptors', apply: nil) }
+      let(:interceptors) { double('interceptors', each: []) }
       let(:context) do
         Hearth::Context.new(
           request: request,
@@ -156,17 +156,20 @@ module Hearth
       before { context.auth = resolved_auth }
 
       it 'calls all of the interceptor hooks and the app' do
-        expect(interceptors).to receive(:apply)
+        expect(Interceptor).to receive(:apply)
           .with(hash_including(
+                  interceptors: interceptors,
                   hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
                 )).ordered
         expect(app).to receive(:call).and_return(output).ordered
-        expect(interceptors).to receive(:apply)
+        expect(Interceptor).to receive(:apply)
           .with(hash_including(
+                  interceptors: interceptors,
                   hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
                 )).ordered
-        expect(interceptors).to receive(:apply)
+        expect(Interceptor).to receive(:apply)
           .with(hash_including(
+                  interceptors: interceptors,
                   hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
                 )).ordered
 
@@ -175,11 +178,22 @@ module Hearth
 
       context 'read_before_attempt error' do
         it 'returns output with the error and does not call app' do
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
                   )).and_return(error)
           expect(app).not_to receive(:call)
+          expect(Interceptor).to receive(:apply)
+            .with(hash_including(
+                    interceptors: interceptors,
+                    hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
+                  ))
+          expect(Interceptor).to receive(:apply)
+            .with(hash_including(
+                    interceptors: interceptors,
+                    hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
+                  ))
 
           resp = subject.call(input, context)
 

@@ -12,7 +12,7 @@ module Hearth
         let(:output) { double('output') }
         let(:request) { double('request') }
         let(:response) { double('response') }
-        let(:interceptors) { double('interceptors', apply: nil) }
+        let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Context.new(
             request: request,
@@ -53,16 +53,24 @@ module Hearth
         end
 
         it 'calls before_signing interceptors before sign' do
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING
                   )).ordered
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_SIGNING
                   )).ordered
           expect(signer).to receive(:sign).ordered
           expect(app).to receive(:call).ordered
+
+          expect(Interceptor).to receive(:apply)
+            .with(hash_including(
+                    interceptors: interceptors,
+                    hook: Interceptor::Hooks::READ_AFTER_SIGNING
+                  )).ordered
 
           subject.call(input, context)
         end
@@ -71,8 +79,9 @@ module Hearth
           let(:error) { StandardError.new }
 
           it 'returns output with the error and skips signing' do
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
+                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING
                     ))
               .and_return(error)
@@ -90,8 +99,14 @@ module Hearth
           let(:error) { StandardError.new }
 
           it 'returns output with the error and skips signing' do
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
+                      interceptors: interceptors,
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_SIGNING
+                    ))
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_BEFORE_SIGNING
                     ))
               .and_return(error)

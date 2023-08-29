@@ -32,39 +32,7 @@ module Hearth
         @interceptors << interceptor
       end
     end
-
     alias << add
-
-    # TODO: remove this from public api
-    #
-    # Apply all interceptors that implement the given hook
-    # @param [Symbol] hook the specific hook to apply for
-    # @param input operation input
-    # @param [Hearth::Context] context
-    # @param [Hearth::Output] output may be nil if unavailable
-    # @param [Boolean] aggregate_errors if true all interceptors are run and
-    #   only the last error is returned.  If false, returns immediately if an
-    #   error is encountered.
-    # @return nil if successful, an exception otherwise
-    def apply(hook:, input:, context:, output:, aggregate_errors: false)
-      i_ctx = interceptor_context(input, context, output)
-      last_error = nil
-      @interceptors.each do |i|
-        next unless i.respond_to?(hook)
-
-        begin
-          i.send(hook, i_ctx)
-        rescue StandardError => e
-          context.logger.error(last_error) if last_error
-          last_error = e
-          break unless aggregate_errors
-        end
-      end
-
-      set_output_error(last_error, context, output)
-
-      last_error
-    end
 
     def dup
       InterceptorList.new(self)
@@ -75,22 +43,6 @@ module Hearth
     end
 
     private
-
-    def interceptor_context(input, context, output)
-      Hearth::Interceptor::Context.new(
-        input: input,
-        request: context.request,
-        response: context.response,
-        output: output
-      )
-    end
-
-    def set_output_error(last_error, context, output)
-      return unless last_error && output
-
-      context.logger.error(output.error) if output.error
-      output.error = last_error
-    end
 
     def valid_interceptor?(interceptor)
       Interceptor::Hooks.implements_interceptor?(interceptor)

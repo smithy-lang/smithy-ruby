@@ -30,7 +30,8 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        interceptor_error = context.interceptors.apply(
+        interceptor_error = Interceptor.apply(
+          interceptors: context.interceptors,
           hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT,
           input: input,
           context: context,
@@ -39,7 +40,8 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        interceptor_error = context.interceptors.apply(
+        interceptor_error = Interceptor.apply(
+          interceptors: context.interceptors,
           hook: Interceptor::Hooks::READ_BEFORE_TRANSMIT,
           input: input,
           context: context,
@@ -55,7 +57,8 @@ module Hearth
           send_request(context, output)
         end
 
-        interceptor_error = context.interceptors.apply(
+        interceptor_error = Interceptor.apply(
+          interceptors: context.interceptors,
           hook: Interceptor::Hooks::READ_AFTER_TRANSMIT,
           input: input,
           context: context,

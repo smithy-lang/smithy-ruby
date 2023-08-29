@@ -30,7 +30,8 @@ module Hearth
 
         output = nil
         loop do
-          interceptor_error = context.interceptors.apply(
+          interceptor_error = Interceptor.apply(
+            interceptors: context.interceptors,
             hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT,
             input: input,
             context: context,
@@ -53,7 +54,8 @@ module Hearth
             @retry_strategy.record_success(token)
           end
 
-          context.interceptors.apply(
+          Interceptor.apply(
+            interceptors: context.interceptors,
             hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION,
             input: input,
             context: context,
@@ -61,7 +63,8 @@ module Hearth
             aggregate_errors: false
           )
 
-          context.interceptors.apply(
+          Interceptor.apply(
+            interceptors: context.interceptors,
             hook: Interceptor::Hooks::READ_AFTER_ATTEMPT,
             input: input,
             context: context,

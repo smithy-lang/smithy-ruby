@@ -58,7 +58,7 @@ module Hearth
         let(:request) { double('request') }
         let(:body) { StringIO.new }
         let(:response) { double('response', body: body) }
-        let(:interceptors) { double('interceptors', apply: nil) }
+        let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Hearth::Context.new(
             request: request,
@@ -94,20 +94,23 @@ module Hearth
         end
 
         it 'calls all of the interceptor hooks' do
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_TRANSMIT
                   )).ordered
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_TRANSMIT
                   )).ordered
 
           expect(client).to receive(:transmit)
             .and_return(response).ordered
 
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_AFTER_TRANSMIT
                   )).ordered
 

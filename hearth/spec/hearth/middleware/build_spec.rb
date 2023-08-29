@@ -18,7 +18,7 @@ module Hearth
         let(:output) { double('output') }
         let(:request) { double('request') }
         let(:response) { double('response') }
-        let(:interceptors) { double('interceptors', apply: nil) }
+        let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Context.new(
             request: request,
@@ -38,12 +38,14 @@ module Hearth
         end
 
         it 'calls before_serialization interceptors before build' do
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
                   )).ordered
-          expect(interceptors).to receive(:apply)
+          expect(Interceptor).to receive(:apply)
             .with(hash_including(
+                    interceptors: interceptors,
                     hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION
                   )).ordered
           expect(builder).to receive(:build).ordered
@@ -56,8 +58,9 @@ module Hearth
           let(:error) { StandardError.new }
 
           it 'returns output with the error and skips build' do
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
+                      interceptors: interceptors,
                       hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
                     ))
               .and_return(error)
@@ -75,8 +78,14 @@ module Hearth
           let(:error) { StandardError.new }
 
           it 'returns output with the error and skips build' do
-            expect(interceptors).to receive(:apply)
+            expect(Interceptor).to receive(:apply)
               .with(hash_including(
+                      interceptors: interceptors,
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION
+                    ))
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      interceptors: interceptors,
                       hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION
                     ))
               .and_return(error)
