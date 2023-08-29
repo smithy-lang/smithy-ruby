@@ -43,7 +43,7 @@ interface _Interceptor
 end
 
 interface _ErrorInspector
-  def initialize(Hearth::ApiError, Hearth::Response) -> void
+  def initialize: (Hearth::ApiError, Hearth::Response) -> void
 
   def retryable?: () -> bool
 
