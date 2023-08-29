@@ -10,7 +10,7 @@ module Hearth
     class FailureStateError < WaiterFailed; end
 
     # Raised when the waiter has reached the maximum waiting time.
-    class MaxWaitTimeExceeded < WaiterFailed; end
+    class MaxWaitTimeExceededError < WaiterFailed; end
 
     # Raised when the waiter received an unexpected error.
     class UnexpectedError < WaiterFailed; end
@@ -59,7 +59,7 @@ module Hearth
           when :error   then raise UnexpectedError, resp_or_error
           end
 
-          raise MaxWaitTimeExceeded if @one_more_retry
+          raise MaxWaitTimeExceededError if @one_more_retry
 
           delay = delay(n)
           @remaining_time -= delay

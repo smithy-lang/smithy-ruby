@@ -20,9 +20,9 @@ module Hearth
       end
     end
 
-    describe MaxWaitTimeExceeded do
+    describe MaxWaitTimeExceededError do
       it 'subclasses WaiterFailed' do
-        expect(MaxWaitTimeExceeded.new).to be_a WaiterFailed
+        expect(MaxWaitTimeExceededError.new).to be_a WaiterFailed
       end
     end
 
@@ -72,7 +72,7 @@ module Hearth
               .exactly(13 + 1).times
 
             expect { subject.wait(client) }
-              .to raise_error(MaxWaitTimeExceeded)
+              .to raise_error(MaxWaitTimeExceededError)
           end
         end
 
