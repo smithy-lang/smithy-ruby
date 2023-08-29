@@ -34,42 +34,63 @@ module Weather
 
     class Baz < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor baz (): ::String
+      attr_accessor bar (): ::String
     end
 
     class CityCoordinates < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor latitude (): ::Float
+      attr_accessor longitude (): ::Float
     end
 
     class CitySummary < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor city_id (): ::String
+      attr_accessor name (): ::String
+      attr_accessor number (): ::String
+      attr_accessor case (): ::String
     end
 
     class Foo < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor baz (): ::String
+      attr_accessor bar (): ::String
     end
 
     class GetCityAnnouncementsInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor city_id (): ::String
     end
 
     class GetCityAnnouncementsOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor last_updated (): ::Time
+      attr_accessor announcements (): Announcements
     end
 
     class GetCityImageInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor city_id (): ::String
+      attr_accessor image_type (): ImageType
+      attr_accessor resolution (): ::Integer
     end
 
     class GetCityImageOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor image (): ::String
     end
 
     class GetCityInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor city_id (): ::String
     end
 
     class GetCityOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor name (): ::String
+      attr_accessor coordinates (): CityCoordinates
+      attr_accessor city (): CitySummary
     end
 
     class GetCurrentTimeInput < ::Struct[untyped]
@@ -78,14 +99,18 @@ module Weather
 
     class GetCurrentTimeOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor time (): ::Time
     end
 
     class GetForecastInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor city_id (): ::String
     end
 
     class GetForecastOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor chance_of_rain (): ::Float
+      attr_accessor precipitation (): Precipitation
     end
 
     class ImageType < Hearth::Union
@@ -107,18 +132,39 @@ module Weather
 
     class ListCitiesInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor next_token (): ::String
+      attr_accessor a_string (): ::String
+      attr_accessor default_bool (): bool
+      attr_accessor boxed_bool (): bool
+      attr_accessor default_number (): ::Integer
+      attr_accessor boxed_number (): ::Integer
+      attr_accessor some_enum (): ::String
+      attr_accessor page_size (): ::Integer
     end
 
     class ListCitiesOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor next_token (): ::String
+      attr_accessor some_enum (): ::String
+      attr_accessor a_string (): ::String
+      attr_accessor default_bool (): bool
+      attr_accessor boxed_bool (): bool
+      attr_accessor default_number (): ::Integer
+      attr_accessor boxed_number (): ::Integer
+      attr_accessor items (): ::Array[CitySummary]
+      attr_accessor sparse_items (): ::Array[CitySummary]
     end
 
     class Message < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor message (): ::String
+      attr_accessor author (): ::String
     end
 
     class NoSuchResource < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor resource_type (): ::String
+      attr_accessor message (): ::String
     end
 
     class OtherStructure < ::Struct[untyped]
@@ -127,6 +173,8 @@ module Weather
 
     class PNGImage < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor height (): ::Integer
+      attr_accessor width (): ::Integer
     end
 
     class Precipitation < Hearth::Union
@@ -189,14 +237,19 @@ module Weather
 
     class Struct____456efg < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor member___123foo (): ::String
     end
 
     class Struct____789BadNameInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor member___123abc (): ::String
+      attr_accessor member (): Struct____456efg
     end
 
     class Struct____789BadNameOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor member___123abc (): ::String
+      attr_accessor member (): Struct____456efg
     end
 
   end

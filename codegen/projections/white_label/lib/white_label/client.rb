@@ -99,12 +99,12 @@ module WhiteLabel
     #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
     #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
     #   resp.data.int_enum #=> Integer
-    #   resp.data.null_document #=> Hash,Array,String,Boolean,Numeric
-    #   resp.data.string_document #=> Hash,Array,String,Boolean,Numeric
-    #   resp.data.boolean_document #=> Hash,Array,String,Boolean,Numeric
-    #   resp.data.numbers_document #=> Hash,Array,String,Boolean,Numeric
-    #   resp.data.list_document #=> Hash,Array,String,Boolean,Numeric
-    #   resp.data.map_document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.null_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.string_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.boolean_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.numbers_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.list_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.map_document #=> Hash, Array, String, Boolean, Numeric
     #   resp.data.list_of_strings #=> Array<String>
     #   resp.data.list_of_strings[0] #=> String
     #   resp.data.map_of_strings #=> Hash<String, String>
@@ -661,7 +661,7 @@ module WhiteLabel
     #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
     #   resp.data.struct #=> Types::Struct
     #   resp.data.struct.value #=> String
-    #   resp.data.document #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.document #=> Hash, Array, String, Boolean, Numeric
     #   resp.data.list_of_strings #=> Array<String>
     #   resp.data.list_of_strings[0] #=> String
     #   resp.data.list_of_structs #=> Array<Struct>

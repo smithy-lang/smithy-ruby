@@ -279,7 +279,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol listShape(ListShape shape) {
         Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
-        String rbsType = "Array[" + member.getProperty("rbsType").get() + "]";
+        String rbsType = "::Array[" + member.getProperty("rbsType").get() + "]";
         String docType = "Array<" + member.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
@@ -291,7 +291,7 @@ public class RubySymbolProvider implements SymbolProvider,
         Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
         Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
         String rbsType
-                = "Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
+                = "::Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
         String docType
                 = "Hash<" + key.getProperty("docType").get() + ", " + value.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, docType, moduleName)
@@ -302,7 +302,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol documentShape(DocumentShape shape) {
         String rbsType = "document"; // alias defined in Hearth
-        String docType = "Hash,Array,String,Boolean,Numeric";
+        String docType = "Hash, Array, String, Boolean, Numeric";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();

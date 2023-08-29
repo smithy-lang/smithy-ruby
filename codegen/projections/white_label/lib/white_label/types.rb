@@ -34,12 +34,12 @@ module WhiteLabel
     #   @option params [String] :simple_enum
     #   @option params [String] :typed_enum
     #   @option params [Integer] :int_enum
-    #   @option params [Hash,Array,String,Boolean,Numeric] :null_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :string_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :boolean_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :numbers_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :list_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :map_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :null_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :string_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :boolean_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :numbers_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Hash<String, String>] :map_of_strings
     #   @option params [Time] :iso8601_timestamp
@@ -79,17 +79,17 @@ module WhiteLabel
     # @!attribute int_enum
     #   @return [Integer]
     # @!attribute null_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute string_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute boolean_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute numbers_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute list_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute map_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute map_of_strings
@@ -168,12 +168,12 @@ module WhiteLabel
     #   @option params [String] :simple_enum
     #   @option params [String] :typed_enum
     #   @option params [Integer] :int_enum
-    #   @option params [Hash,Array,String,Boolean,Numeric] :null_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :string_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :boolean_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :numbers_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :list_document
-    #   @option params [Hash,Array,String,Boolean,Numeric] :map_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :null_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :string_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :boolean_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :numbers_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Hash<String, String>] :map_of_strings
     #   @option params [Time] :iso8601_timestamp
@@ -213,17 +213,17 @@ module WhiteLabel
     # @!attribute int_enum
     #   @return [Integer]
     # @!attribute null_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute string_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute boolean_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute numbers_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute list_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute map_document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute map_of_strings
@@ -416,7 +416,7 @@ module WhiteLabel
     #   @option params [String] :simple_enum
     #   @option params [String] :typed_enum
     #   @option params [Struct] :struct
-    #   @option params [Hash,Array,String,Boolean,Numeric] :document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Array<Struct>] :list_of_structs
     #   @option params [Hash<String, String>] :map_of_strings
@@ -459,7 +459,7 @@ module WhiteLabel
     #   @since today
     #   @return [Struct]
     # @!attribute document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute list_of_structs
@@ -519,7 +519,7 @@ module WhiteLabel
     #   @option params [String] :simple_enum
     #   @option params [String] :typed_enum
     #   @option params [Struct] :struct
-    #   @option params [Hash,Array,String,Boolean,Numeric] :document
+    #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Array<Struct>] :list_of_structs
     #   @option params [Hash<String, String>] :map_of_strings
@@ -562,7 +562,7 @@ module WhiteLabel
     #   @since today
     #   @return [Struct]
     # @!attribute document
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute list_of_structs

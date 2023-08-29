@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.ShapeDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -90,6 +91,13 @@ public final class StructureGenerator extends RubyGeneratorBase {
             writer
                     .openBlock("class $L < ::Struct[untyped]", shapeName)
                     .write("include $L", Hearth.STRUCTURE)
+                    .call(() -> {
+                        shape.members().forEach(memberShape -> {
+                            String name = symbolProvider.toMemberName(memberShape);
+                            Symbol target = symbolProvider.toSymbol(model.expectShape(memberShape.getTarget()));
+                            writer.write("attr_accessor $L (): $L", name, target.getProperty("rbsType").get());
+                        });
+                    })
                     .closeBlock("end");
         });
     }
