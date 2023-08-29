@@ -57,7 +57,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
         write(writer -> {
             // a total hack so that any structures named Struct do not fail documentation parsing
             if (shape.getId().getName().equals("Struct")) {
-                writer.write("class ::Struct; end\n");
+                writer.apiPrivate().write("class ::Struct; end\n");
             }
 
             new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render();

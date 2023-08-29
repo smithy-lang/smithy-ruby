@@ -862,6 +862,7 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # @api private
     class ::Struct; end
 
     # This docstring should be different than KitchenSink struct member.
