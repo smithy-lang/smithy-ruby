@@ -140,7 +140,7 @@ public final class Middleware {
      * @param model     model
      * @param service   service to test for
      * @param operation operation in the service to test for
-     * @return true if this midldeware should be included for this operation/service
+     * @return true if this middleware should be included for this operation/service
      */
     public boolean includeFor(Model model, ServiceShape service,
                               OperationShape operation) {
