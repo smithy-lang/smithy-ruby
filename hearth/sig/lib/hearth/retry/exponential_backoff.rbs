@@ -1,0 +1,7 @@
+module Hearth
+  module Retry
+    class ExponentialBackoff
+      def call: (Integer attempts) -> Float
+    end
+  end
+end

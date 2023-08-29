@@ -1,0 +1,9 @@
+module Hearth
+  module Retry
+    class Token < Struct[untyped]
+      attr_accessor retry_count (): Integer
+
+      attr_accessor retry_delay (): Float
+    end
+  end
+end

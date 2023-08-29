@@ -41,3 +41,13 @@ interface _Interceptor
 
   def read_after_execution: (Hearth::Interceptor::Context) -> void
 end
+
+interface _ErrorInspector
+  def initialize(Hearth::ApiError, Hearth::Response) -> void
+
+  def retryable?: () -> bool
+
+  def error_type: () -> String
+
+  def hints: () -> Hash[Symbol, untyped]
+end

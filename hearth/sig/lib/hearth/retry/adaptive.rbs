@@ -1,0 +1,13 @@
+module Hearth
+  module Retry
+    class Adaptive < Strategy
+      def initialize: (?backoff: ExponentialBackoff, ?max_attempts: Integer, ?wait_to_fill: bool) -> void
+
+      def acquire_initial_retry_token: (?String? _token_scope) -> Token
+
+      def refresh_retry_token: (Token retry_token, _ErrorInspector error_info) -> (nil | Token)
+
+      def record_success: (Token retry_token) -> Token
+    end
+  end
+end
