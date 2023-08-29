@@ -55,7 +55,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
                 .build();
         Middleware beforeMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("KitchenSink")
+                .appliesOnlyToOperations("RelativeOperation")
                 .klass("Middleware::BeforeMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
@@ -64,7 +64,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
                 .build();
         Middleware midMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("KitchenSink")
+                .appliesOnlyToOperations("RelativeOperation")
                 .addConfig(ClientConfig.builder()
                         .name("verify_in_mid")
                         .type("Proc")
@@ -78,7 +78,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
                 .build();
         Middleware afterMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("KitchenSink")
+                .appliesOnlyToOperations("RelativeOperation")
                 .addConfig(ClientConfig.builder()
                         .name("verify_in_after")
                         .type("Proc")
