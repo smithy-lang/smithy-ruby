@@ -13,7 +13,7 @@ module WhiteLabel
           }
         )
         client = Client.new(config)
-        client.request_compression_operation({ body: 'foo' })
+        client.relative_operation
       end
 
       it 'allows a middleware to be set after their relative and ' \
@@ -25,7 +25,7 @@ module WhiteLabel
           }
         )
         client = Client.new(config)
-        client.request_compression_operation({ body: 'foo' })
+        client.relative_operation
       end
     end
   end
