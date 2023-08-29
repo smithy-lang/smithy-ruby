@@ -21,6 +21,7 @@ service WhiteLabel {
         MixinTest,
         RequestCompressionOperation,
         RequestCompressionStreamingOperation,
+        RelativeOperation,
         HttpBasicAuth,
         HttpDigestAuth,
         HttpBearerAuth,
