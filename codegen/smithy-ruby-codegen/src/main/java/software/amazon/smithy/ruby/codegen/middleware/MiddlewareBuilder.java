@@ -95,6 +95,7 @@ public class MiddlewareBuilder {
                 .flatMap(Collection::stream)
                 .map((m) -> m.writeAdditionalFiles(context))
                 .flatMap(Collection::stream)
+                .distinct()
                 .collect(Collectors.toList());
     }
 
