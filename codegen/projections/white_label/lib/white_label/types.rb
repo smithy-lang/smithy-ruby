@@ -970,7 +970,6 @@ module WhiteLabel
         end
       end
 
-      # Handles unknown future members
       class Unknown < Union
         def to_h
           { unknown: super(__getobj__) }

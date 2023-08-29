@@ -41,7 +41,6 @@ module Weather
         end
       end
 
-      # Handles unknown future members
       class Unknown < Announcements
         def to_h
           { unknown: super(__getobj__) }
@@ -293,7 +292,6 @@ module Weather
         end
       end
 
-      # Handles unknown future members
       class Unknown < ImageType
         def to_h
           { unknown: super(__getobj__) }
@@ -543,7 +541,6 @@ module Weather
         end
       end
 
-      # Handles unknown future members
       class Unknown < Precipitation
         def to_h
           { unknown: super(__getobj__) }

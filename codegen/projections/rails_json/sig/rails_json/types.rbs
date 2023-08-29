@@ -264,57 +264,57 @@ module RailsJson
 
     class MyUnion < Hearth::Union
       class StringValue < MyUnion
-        def to_h: () -> { string_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { string_value: ::String }
         def to_s: () -> String
       end
 
       class BooleanValue < MyUnion
-        def to_h: () -> { boolean_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { boolean_value: bool }
         def to_s: () -> String
       end
 
       class NumberValue < MyUnion
-        def to_h: () -> { number_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { number_value: ::Integer }
         def to_s: () -> String
       end
 
       class BlobValue < MyUnion
-        def to_h: () -> { blob_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { blob_value: ::String }
         def to_s: () -> String
       end
 
       class TimestampValue < MyUnion
-        def to_h: () -> { timestamp_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { timestamp_value: ::Time }
         def to_s: () -> String
       end
 
       class EnumValue < MyUnion
-        def to_h: () -> { enum_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { enum_value: ::String }
         def to_s: () -> String
       end
 
       class ListValue < MyUnion
-        def to_h: () -> { list_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { list_value: ::Array[::String] }
         def to_s: () -> String
       end
 
       class MapValue < MyUnion
-        def to_h: () -> { map_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { map_value: ::Hash[::Symbol, ::String] }
         def to_s: () -> String
       end
 
       class StructureValue < MyUnion
-        def to_h: () -> { structure_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { structure_value: ::Hash[::Symbol, untyped] }
         def to_s: () -> String
       end
 
       class RenamedStructureValue < MyUnion
-        def to_h: () -> { renamed_structure_value: Hash[Symbol, MyUnion] }
+        def to_h: () -> { renamed_structure_value: ::Hash[::Symbol, untyped] }
         def to_s: () -> String
       end
 
       class Unknown < MyUnion
-        def to_h: () -> { unknown: Hash[Symbol, MyUnion] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
         def to_s: () -> String
       end
     end

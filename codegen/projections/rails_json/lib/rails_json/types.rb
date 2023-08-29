@@ -1543,7 +1543,6 @@ module RailsJson
         end
       end
 
-      # Handles unknown future members
       class Unknown < MyUnion
         def to_h
           { unknown: super(__getobj__) }

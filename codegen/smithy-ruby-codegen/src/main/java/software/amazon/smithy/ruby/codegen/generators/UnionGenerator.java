@@ -17,7 +17,12 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -64,7 +69,6 @@ public final class UnionGenerator extends RubyGeneratorBase {
             }
 
             writer
-                    .writeDocstring("Handles unknown future members")
                     .openBlock("class Unknown < $T", symbolProvider.toSymbol(shape))
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
@@ -81,20 +85,23 @@ public final class UnionGenerator extends RubyGeneratorBase {
             writer.openBlock("class $T < $T", symbol, Hearth.UNION);
 
             for (MemberShape memberShape : shape.members()) {
+                String memberName = symbolProvider.toMemberName(memberShape);
+                Shape target = model.expectShape(memberShape.getTarget());
+
                 writer
-                    .openBlock("class $L < $T", symbolProvider.toMemberName(memberShape), symbol)
-                    .write("def to_h: () -> { $L: Hash[Symbol, $T] }",
-                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)), symbol)
-                    .write("def to_s: () -> String")
-                    .closeBlock("end\n");
+                        .openBlock("class $L < $T", memberName, symbol)
+                        .write("def to_h: () -> { $L: $L }", RubyFormatter.toSnakeCase(memberName),
+                                target.accept(new UnionToHValueRbsVisitor()))
+                        .write("def to_s: () -> String")
+                        .closeBlock("end\n");
             }
 
             writer
-                .openBlock("class Unknown < $T", symbol)
-                .write("def to_h: () -> { unknown: Hash[Symbol, $T] }", symbol)
-                .write("def to_s: () -> String")
-                .closeBlock("end")
-                .closeBlock("end\n");
+                    .openBlock("class Unknown < $T", symbol)
+                    .write("def to_h: () -> { unknown: { name: String, value: untyped } }")
+                    .write("def to_s: () -> String")
+                    .closeBlock("end")
+                    .closeBlock("end\n");
         });
     }
 
@@ -112,5 +119,35 @@ public final class UnionGenerator extends RubyGeneratorBase {
         }
 
         writer.closeBlock("end");
+    }
+
+    private class UnionToHValueRbsVisitor extends ShapeVisitor.Default<String> {
+        @Override
+        protected String getDefault(Shape shape) {
+            Symbol symbol = symbolProvider.toSymbol(shape);
+            return symbol.getProperty("rbsType") .orElse("untyped").toString();
+        }
+
+        @Override
+        public String listShape(ListShape shape) {
+            Shape target = model.expectShape(shape.getMember().getTarget());
+            return "::Array[" + target.accept(this) + "]";
+        }
+
+        @Override
+        public String mapShape(MapShape shape) {
+            Shape target = model.expectShape(shape.getValue().getTarget());
+            return "::Hash[::Symbol, " + target.accept(this) + "]";
+        }
+
+        @Override
+        public String structureShape(StructureShape shape) {
+            return "::Hash[::Symbol, untyped]";
+        }
+
+        @Override
+        public String unionShape(UnionShape shape) {
+            return "::Hash[::Symbol, untyped]";
+        }
     }
 }

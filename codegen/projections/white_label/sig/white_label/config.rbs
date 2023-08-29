@@ -1,5 +1,5 @@
 module WhiteLabel
-  class Config < Struct[untyped]
+  class Config < ::Struct[untyped]
     include Hearth::Configuration
   end
 end

@@ -180,17 +180,17 @@ module WhiteLabel
 
     class Union < Hearth::Union
       class String < Union
-        def to_h: () -> { string: Hash[Symbol, Union] }
+        def to_h: () -> { string: ::String }
         def to_s: () -> String
       end
 
       class Struct < Union
-        def to_h: () -> { struct: Hash[Symbol, Union] }
+        def to_h: () -> { struct: ::Hash[::Symbol, untyped] }
         def to_s: () -> String
       end
 
       class Unknown < Union
-        def to_h: () -> { unknown: Hash[Symbol, Union] }
+        def to_h: () -> { unknown: { name: String, value: untyped } }
         def to_s: () -> String
       end
     end

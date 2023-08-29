@@ -1,7 +1,7 @@
 module Hearth
   module Interceptor
     class Context
-      def initialize: (input: Hearth::Structure, request: Request, response: Response, output: Hearth::Structure, ?attributes: Hash[untyped, untyped]) -> void
+      def initialize: (input: Hearth::Structure, request: Request, response: Response, output: Hearth::Structure, ?attributes: Hash[Symbol, untyped]) -> void
 
       attr_reader input: Hearth::Structure
 
@@ -11,7 +11,7 @@ module Hearth
 
       attr_reader output: Hearth::Structure
 
-      attr_reader attributes: Hash[untyped, untyped]
+      attr_reader attributes: Hash[Symbol, untyped]
     end
   end
 end
