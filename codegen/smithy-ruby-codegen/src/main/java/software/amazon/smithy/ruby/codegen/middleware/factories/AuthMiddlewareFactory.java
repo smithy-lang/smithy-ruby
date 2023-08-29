@@ -84,6 +84,7 @@ public final class AuthMiddlewareFactory {
                 .name("auth_schemes")
                 .type("Array")
                 .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
+                .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .defaultValue("Auth::SCHEMES")
                 .allowOperationOverride()
                 .documentation(authSchemesDocumentation)

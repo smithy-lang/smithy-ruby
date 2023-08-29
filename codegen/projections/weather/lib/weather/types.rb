@@ -11,7 +11,6 @@ module Weather
   module Types
 
     class Announcements < Hearth::Union
-
       class Police < Announcements
         def to_h
           { police: super(__getobj__) }
@@ -42,8 +41,6 @@ module Weather
         end
       end
 
-      # Handles unknown future members
-      #
       class Unknown < Announcements
         def to_h
           { unknown: super(__getobj__) }
@@ -55,14 +52,14 @@ module Weather
       end
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :baz
+    #   @option params [String] :bar
     # @!attribute baz
-    #
     #   @return [String]
-    #
     # @!attribute bar
-    #
     #   @return [String]
-    #
     Baz = ::Struct.new(
       :baz,
       :bar,
@@ -71,14 +68,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Float] :latitude (0)
+    #   @option params [Float] :longitude
     # @!attribute latitude
-    #
     #   @return [Float]
-    #
     # @!attribute longitude
-    #
     #   @return [Float]
-    #
     CityCoordinates = ::Struct.new(
       :latitude,
       :longitude,
@@ -92,22 +89,20 @@ module Weather
       end
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :city_id
+    #   @option params [String] :name
+    #   @option params [String] :number
+    #   @option params [String] :case
     # @!attribute city_id
-    #
     #   @return [String]
-    #
     # @!attribute name
-    #
     #   @return [String]
-    #
     # @!attribute number
-    #
     #   @return [String]
-    #
     # @!attribute case
-    #
     #   @return [String]
-    #
     CitySummary = ::Struct.new(
       :city_id,
       :name,
@@ -118,14 +113,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :baz
+    #   @option params [String] :bar
     # @!attribute baz
-    #
     #   @return [String]
-    #
     # @!attribute bar
-    #
     #   @return [String]
-    #
     Foo = ::Struct.new(
       :baz,
       :bar,
@@ -134,10 +129,11 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :city_id
     # @!attribute city_id
-    #
     #   @return [String]
-    #
     GetCityAnnouncementsInput = ::Struct.new(
       :city_id,
       keyword_init: true
@@ -145,14 +141,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Time] :last_updated
+    #   @option params [Announcements] :announcements
     # @!attribute last_updated
-    #
     #   @return [Time]
-    #
     # @!attribute announcements
-    #
     #   @return [Announcements]
-    #
     GetCityAnnouncementsOutput = ::Struct.new(
       :last_updated,
       :announcements,
@@ -161,18 +157,17 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :city_id
+    #   @option params [ImageType] :image_type
+    #   @option params [Integer] :resolution
     # @!attribute city_id
-    #
     #   @return [String]
-    #
     # @!attribute image_type
-    #
     #   @return [ImageType]
-    #
     # @!attribute resolution
-    #
     #   @return [Integer]
-    #
     GetCityImageInput = ::Struct.new(
       :city_id,
       :image_type,
@@ -182,10 +177,11 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :image
     # @!attribute image
-    #
     #   @return [String]
-    #
     GetCityImageOutput = ::Struct.new(
       :image,
       keyword_init: true
@@ -194,11 +190,11 @@ module Weather
     end
 
     # The input used to get a city.
-    #
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :city_id
     # @!attribute city_id
-    #
     #   @return [String]
-    #
     GetCityInput = ::Struct.new(
       :city_id,
       keyword_init: true
@@ -206,18 +202,17 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :name
+    #   @option params [CityCoordinates] :coordinates
+    #   @option params [CitySummary] :city
     # @!attribute name
-    #
     #   @return [String]
-    #
     # @!attribute coordinates
-    #
     #   @return [CityCoordinates]
-    #
     # @!attribute city
-    #
     #   @return [CitySummary]
-    #
     GetCityOutput = ::Struct.new(
       :name,
       :coordinates,
@@ -227,6 +222,8 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     GetCurrentTimeInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -234,10 +231,11 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Time] :time
     # @!attribute time
-    #
     #   @return [Time]
-    #
     GetCurrentTimeOutput = ::Struct.new(
       :time,
       keyword_init: true
@@ -245,10 +243,11 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :city_id
     # @!attribute city_id
-    #
     #   @return [String]
-    #
     GetForecastInput = ::Struct.new(
       :city_id,
       keyword_init: true
@@ -256,14 +255,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Float] :chance_of_rain
+    #   @option params [Precipitation] :precipitation
     # @!attribute chance_of_rain
-    #
     #   @return [Float]
-    #
     # @!attribute precipitation
-    #
     #   @return [Precipitation]
-    #
     GetForecastOutput = ::Struct.new(
       :chance_of_rain,
       :precipitation,
@@ -273,7 +272,6 @@ module Weather
     end
 
     class ImageType < Hearth::Union
-
       class Raw < ImageType
         def to_h
           { raw: super(__getobj__) }
@@ -294,8 +292,6 @@ module Weather
         end
       end
 
-      # Handles unknown future members
-      #
       class Unknown < ImageType
         def to_h
           { unknown: super(__getobj__) }
@@ -307,39 +303,33 @@ module Weather
       end
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :next_token
+    #   @option params [String] :a_string
+    #   @option params [Boolean] :default_bool
+    #   @option params [Boolean] :boxed_bool
+    #   @option params [Integer] :default_number
+    #   @option params [Integer] :boxed_number
+    #   @option params [String] :some_enum
+    #   @option params [Integer] :page_size
     # @!attribute next_token
-    #
     #   @return [String]
-    #
     # @!attribute a_string
-    #
     #   @return [String]
-    #
     # @!attribute default_bool
-    #
     #   @return [Boolean]
-    #
     # @!attribute boxed_bool
-    #
     #   @return [Boolean]
-    #
     # @!attribute default_number
-    #
     #   @return [Integer]
-    #
     # @!attribute boxed_number
-    #
     #   @return [Integer]
-    #
     # @!attribute some_enum
     #   Enum, one of: ["YES", "NO"]
-    #
     #   @return [String]
-    #
     # @!attribute page_size
-    #
     #   @return [Integer]
-    #
     ListCitiesInput = ::Struct.new(
       :next_token,
       :a_string,
@@ -354,43 +344,36 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :next_token
+    #   @option params [String] :some_enum
+    #   @option params [String] :a_string
+    #   @option params [Boolean] :default_bool
+    #   @option params [Boolean] :boxed_bool
+    #   @option params [Integer] :default_number
+    #   @option params [Integer] :boxed_number
+    #   @option params [Array<CitySummary>] :items
+    #   @option params [Array<CitySummary>] :sparse_items
     # @!attribute next_token
-    #
     #   @return [String]
-    #
     # @!attribute some_enum
     #   Enum, one of: ["YES", "NO"]
-    #
     #   @return [String]
-    #
     # @!attribute a_string
-    #
     #   @return [String]
-    #
     # @!attribute default_bool
-    #
     #   @return [Boolean]
-    #
     # @!attribute boxed_bool
-    #
     #   @return [Boolean]
-    #
     # @!attribute default_number
-    #
     #   @return [Integer]
-    #
     # @!attribute boxed_number
-    #
     #   @return [Integer]
-    #
     # @!attribute items
-    #
     #   @return [Array<CitySummary>]
-    #
     # @!attribute sparse_items
-    #
     #   @return [Array<CitySummary>]
-    #
     ListCitiesOutput = ::Struct.new(
       :next_token,
       :some_enum,
@@ -406,14 +389,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :message
+    #   @option params [String] :author
     # @!attribute message
-    #
     #   @return [String]
-    #
     # @!attribute author
-    #
     #   @return [String]
-    #
     Message = ::Struct.new(
       :message,
       :author,
@@ -423,16 +406,15 @@ module Weather
     end
 
     # Error encountered when no resource could be found.
-    #
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :resource_type
+    #   @option params [String] :message
     # @!attribute resource_type
     #   The type of resource that was not found.
-    #
     #   @return [String]
-    #
     # @!attribute message
-    #
     #   @return [String]
-    #
     NoSuchResource = ::Struct.new(
       :resource_type,
       :message,
@@ -441,6 +423,8 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     OtherStructure = ::Struct.new(
       nil,
       keyword_init: true
@@ -448,14 +432,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Integer] :height
+    #   @option params [Integer] :width
     # @!attribute height
-    #
     #   @return [Integer]
-    #
     # @!attribute width
-    #
     #   @return [Integer]
-    #
     PNGImage = ::Struct.new(
       :height,
       :width,
@@ -465,7 +449,6 @@ module Weather
     end
 
     class Precipitation < Hearth::Union
-
       class Rain < Precipitation
         def to_h
           { rain: super(__getobj__) }
@@ -497,7 +480,6 @@ module Weather
       end
 
       # Enum, one of: ["YES", "NO"]
-      #
       class Snow < Precipitation
         def to_h
           { snow: super(__getobj__) }
@@ -509,7 +491,6 @@ module Weather
       end
 
       # Enum, one of: ["YES", "NO"]
-      #
       class Mixed < Precipitation
         def to_h
           { mixed: super(__getobj__) }
@@ -560,8 +541,6 @@ module Weather
         end
       end
 
-      # Handles unknown future members
-      #
       class Unknown < Precipitation
         def to_h
           { unknown: super(__getobj__) }
@@ -574,7 +553,6 @@ module Weather
     end
 
     # Includes enum constants for Resolution
-    #
     module Resolution
       LOW = 0
 
@@ -586,21 +564,19 @@ module Weather
     end
 
     # Includes enum constants for TypedYesNo
-    #
     module TypedYesNo
       # No documentation available.
-      #
       YES = "YES"
 
       # No documentation available.
-      #
       NO = "NO"
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :member___123foo
     # @!attribute member___123foo
-    #
     #   @return [String]
-    #
     Struct____456efg = ::Struct.new(
       :member___123foo,
       keyword_init: true
@@ -608,14 +584,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :member___123abc
+    #   @option params [Struct____456efg] :member
     # @!attribute member___123abc
-    #
     #   @return [String]
-    #
     # @!attribute member
-    #
     #   @return [Struct____456efg]
-    #
     Struct____789BadNameInput = ::Struct.new(
       :member___123abc,
       :member,
@@ -624,14 +600,14 @@ module Weather
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :member___123abc
+    #   @option params [Struct____456efg] :member
     # @!attribute member___123abc
-    #
     #   @return [String]
-    #
     # @!attribute member
-    #
     #   @return [Struct____456efg]
-    #
     Struct____789BadNameOutput = ::Struct.new(
       :member___123abc,
       :member,

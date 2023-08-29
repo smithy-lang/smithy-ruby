@@ -15,7 +15,6 @@ module HighScoreService
   # An API client for HighScoreService
   # See {#initialize} for a full list of supported configuration options
   # Rails High Score example from their generator docs
-  #
   class Client
     include Hearth::ClientStubs
     @plugins = Hearth::PluginList.new
@@ -26,7 +25,6 @@ module HighScoreService
 
     # @param [Config] config
     #   An instance of {Config}
-    #
     def initialize(config = HighScoreService::Config.new, options = {})
       @config = initialize_config(config)
       @stubs = Hearth::Stubs.new
@@ -36,19 +34,17 @@ module HighScoreService
     attr_reader :config
 
     # @param [Hash] params
-    #   See {Types::ApiKeyAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::ApiKeyAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::ApiKeyAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.api_key_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::ApiKeyAuthOutput
-    #
-    def api_key_auth(params = {}, options = {}, &block)
+    def api_key_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ApiKeyAuthInput.build(params, context: 'params')
@@ -107,19 +103,17 @@ module HighScoreService
     end
 
     # @param [Hash] params
-    #   See {Types::BasicAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::BasicAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::BasicAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.basic_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::BasicAuthOutput
-    #
-    def basic_auth(params = {}, options = {}, &block)
+    def basic_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::BasicAuthInput.build(params, context: 'params')
@@ -178,19 +172,17 @@ module HighScoreService
     end
 
     # @param [Hash] params
-    #   See {Types::BearerAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::BearerAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::BearerAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.bearer_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::BearerAuthOutput
-    #
-    def bearer_auth(params = {}, options = {}, &block)
+    def bearer_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::BearerAuthInput.build(params, context: 'params')
@@ -249,26 +241,21 @@ module HighScoreService
     end
 
     # Create a new high score
-    #
     # @param [Hash] params
-    #   See {Types::CreateHighScoreInput}.
-    #
-    # @option params [HighScoreParams] :high_score
-    #   The high score params
-    #
+    #   Request parameters for this operation.
+    #   See {Types::CreateHighScoreInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::CreateHighScoreOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.create_high_score(
     #     high_score: {
     #       game: 'game',
     #       score: 1
     #     } # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::CreateHighScoreOutput
     #   resp.data.high_score #=> Types::HighScoreAttributes
     #   resp.data.high_score.id #=> String
@@ -277,8 +264,7 @@ module HighScoreService
     #   resp.data.high_score.created_at #=> Time
     #   resp.data.high_score.updated_at #=> Time
     #   resp.data.location #=> String
-    #
-    def create_high_score(params = {}, options = {}, &block)
+    def create_high_score(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params, context: 'params')
@@ -337,26 +323,20 @@ module HighScoreService
     end
 
     # Delete a high score
-    #
     # @param [Hash] params
-    #   See {Types::DeleteHighScoreInput}.
-    #
-    # @option params [String] :id
-    #   The high score id
-    #
+    #   Request parameters for this operation.
+    #   See {Types::DeleteHighScoreInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::DeleteHighScoreOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.delete_high_score(
     #     id: 'id' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::DeleteHighScoreOutput
-    #
-    def delete_high_score(params = {}, options = {}, &block)
+    def delete_high_score(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params, context: 'params')
@@ -415,19 +395,17 @@ module HighScoreService
     end
 
     # @param [Hash] params
-    #   See {Types::DigestAuthInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::DigestAuthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::DigestAuthOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.digest_auth()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::DigestAuthOutput
-    #
-    def digest_auth(params = {}, options = {}, &block)
+    def digest_auth(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DigestAuthInput.build(params, context: 'params')
@@ -486,23 +464,18 @@ module HighScoreService
     end
 
     # Get a high score
-    #
     # @param [Hash] params
-    #   See {Types::GetHighScoreInput}.
-    #
-    # @option params [String] :id
-    #   The high score id
-    #
+    #   Request parameters for this operation.
+    #   See {Types::GetHighScoreInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::GetHighScoreOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.get_high_score(
     #     id: 'id' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::GetHighScoreOutput
     #   resp.data.high_score #=> Types::HighScoreAttributes
     #   resp.data.high_score.id #=> String
@@ -510,8 +483,7 @@ module HighScoreService
     #   resp.data.high_score.score #=> Integer
     #   resp.data.high_score.created_at #=> Time
     #   resp.data.high_score.updated_at #=> Time
-    #
-    def get_high_score(params = {}, options = {}, &block)
+    def get_high_score(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params, context: 'params')
@@ -570,18 +542,16 @@ module HighScoreService
     end
 
     # List all high scores
-    #
     # @param [Hash] params
-    #   See {Types::ListHighScoresInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::ListHighScoresInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::ListHighScoresOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.list_high_scores()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::ListHighScoresOutput
     #   resp.data.high_scores #=> Array<HighScoreAttributes>
     #   resp.data.high_scores[0] #=> Types::HighScoreAttributes
@@ -590,8 +560,7 @@ module HighScoreService
     #   resp.data.high_scores[0].score #=> Integer
     #   resp.data.high_scores[0].created_at #=> Time
     #   resp.data.high_scores[0].updated_at #=> Time
-    #
-    def list_high_scores(params = {}, options = {}, &block)
+    def list_high_scores(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params, context: 'params')
@@ -650,20 +619,14 @@ module HighScoreService
     end
 
     # Update a high score
-    #
     # @param [Hash] params
-    #   See {Types::UpdateHighScoreInput}.
-    #
-    # @option params [String] :id
-    #   The high score id
-    #
-    # @option params [HighScoreParams] :high_score
-    #   The high score params
-    #
+    #   Request parameters for this operation.
+    #   See {Types::UpdateHighScoreInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::UpdateHighScoreOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.update_high_score(
     #     id: 'id', # required
     #     high_score: {
@@ -671,9 +634,7 @@ module HighScoreService
     #       score: 1
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::UpdateHighScoreOutput
     #   resp.data.high_score #=> Types::HighScoreAttributes
     #   resp.data.high_score.id #=> String
@@ -681,8 +642,7 @@ module HighScoreService
     #   resp.data.high_score.score #=> Integer
     #   resp.data.high_score.created_at #=> Time
     #   resp.data.high_score.updated_at #=> Time
-    #
-    def update_high_score(params = {}, options = {}, &block)
+    def update_high_score(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params, context: 'params')

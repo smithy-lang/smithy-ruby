@@ -70,7 +70,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .apiPrivate()

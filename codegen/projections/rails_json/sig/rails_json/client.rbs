@@ -11,49 +11,48 @@ module RailsJson
   class Client
     include Hearth::ClientStubs
 
-    def self.middleware: () -> untyped
+    def self.plugins: () -> Hearth::PluginList
 
-    def self.plugins: () -> untyped
+    def initialize: (?Config, ?::Hash[::Symbol, untyped] options) -> void
 
-    def initialize: (?untyped config, ?::Hash[untyped, untyped] options) -> void
-    attr_reader config: untyped
+    attr_reader config: Config
 
-    def all_query_string_types: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def constant_and_variable_query_string: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def constant_query_string: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def document_type: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def document_type_as_payload: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def empty_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def endpoint_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def endpoint_with_host_label_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def greeting_with_errors: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_payload_traits: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_payload_traits_with_media_type: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_payload_with_structure: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_prefix_headers: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_prefix_headers_in_response: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_request_with_float_labels: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_request_with_greedy_label_in_path: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_request_with_labels: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_request_with_labels_and_timestamp_format: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def http_response_code: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def ignore_query_params_in_response: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def input_and_output_with_headers: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def json_enums: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def json_maps: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def json_unions: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def kitchen_sink_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def media_type_header: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def nested_attributes_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def null_and_empty_headers_client: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def null_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def omits_null_serializes_empty_string: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def operation_with_optional_input_output: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def query_idempotency_token_auto_fill: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def query_params_as_string_list_map: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def streaming_operation: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def timestamp_format_headers: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
-    def operation____789_bad_name: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options){ () -> untyped } -> untyped
+    def all_query_string_types: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def constant_and_variable_query_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def constant_query_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def document_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def document_type_as_payload: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def empty_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def greeting_with_errors: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_payload_traits: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_payload_traits_with_media_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_payload_with_structure: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_prefix_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_prefix_headers_in_response: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_request_with_float_labels: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_request_with_greedy_label_in_path: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_request_with_labels: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_request_with_labels_and_timestamp_format: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def http_response_code: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def ignore_query_params_in_response: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def input_and_output_with_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def json_enums: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def json_maps: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def json_unions: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def kitchen_sink_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def media_type_header: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def nested_attributes_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def null_and_empty_headers_client: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def null_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def omits_null_serializes_empty_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def operation_with_optional_input_output: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def query_idempotency_token_auto_fill: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def query_params_as_string_list_map: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)?{ (::String) -> Hearth::BlockIO }-> Hearth::Output
+    def timestamp_format_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
 
   end
 end

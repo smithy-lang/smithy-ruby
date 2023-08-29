@@ -12,13 +12,13 @@ module WhiteLabel
 
     class Operation____PaginatorsTestWithBadNames
       # @param [Client] client
-      # @param [Hash] params (see Client#operation____paginators_test_with_bad_names)
-      # @param [Hash] options (see Client#operation____paginators_test_with_bad_names)
+      # @param (see Client#operation____paginators_test_with_bad_names)
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
         @client = client
       end
+
       # Iterate all response pages of the operation____paginators_test_with_bad_names operation.
       # @return [Enumerator]
       def pages
@@ -53,13 +53,13 @@ module WhiteLabel
 
     class PaginatorsTest
       # @param [Client] client
-      # @param [Hash] params (see Client#paginators_test)
-      # @param [Hash] options (see Client#paginators_test)
+      # @param (see Client#paginators_test)
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
         @client = client
       end
+
       # Iterate all response pages of the paginators_test operation.
       # @return [Enumerator]
       def pages
@@ -82,13 +82,13 @@ module WhiteLabel
 
     class PaginatorsTestWithItems
       # @param [Client] client
-      # @param [Hash] params (see Client#paginators_test_with_items)
-      # @param [Hash] options (see Client#paginators_test_with_items)
+      # @param (see Client#paginators_test_with_items)
       def initialize(client, params = {}, options = {})
         @params = params
         @options = options
         @client = client
       end
+
       # Iterate all response pages of the paginators_test_with_items operation.
       # @return [Enumerator]
       def pages

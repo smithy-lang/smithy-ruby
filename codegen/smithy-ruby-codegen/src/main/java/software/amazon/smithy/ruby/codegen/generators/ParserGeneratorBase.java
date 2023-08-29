@@ -217,7 +217,7 @@ public abstract class ParserGeneratorBase {
 
     public void render(FileManifest fileManifest) {
         writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .apiPrivate()

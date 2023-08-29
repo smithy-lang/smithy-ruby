@@ -82,7 +82,7 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .write("require '$L'\n", settings.getGemName())
                 .write("")

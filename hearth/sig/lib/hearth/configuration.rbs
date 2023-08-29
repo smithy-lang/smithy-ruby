@@ -1,0 +1,7 @@
+module Hearth
+  module Configuration
+    def initialize: (**Hash[Symbol, untyped] options) -> void
+
+    def dup: () -> Hearth::Configuration
+  end
+end

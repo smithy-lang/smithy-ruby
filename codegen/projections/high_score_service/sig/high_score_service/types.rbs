@@ -10,47 +10,89 @@
 module HighScoreService
   module Types
 
-    ApiKeyAuthInput: untyped
+    class ApiKeyAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ApiKeyAuthOutput: untyped
+    class ApiKeyAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BasicAuthInput: untyped
+    class BasicAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BasicAuthOutput: untyped
+    class BasicAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BearerAuthInput: untyped
+    class BearerAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    BearerAuthOutput: untyped
+    class BearerAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CreateHighScoreInput: untyped
+    class CreateHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    CreateHighScoreOutput: untyped
+    class CreateHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DeleteHighScoreInput: untyped
+    class DeleteHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DeleteHighScoreOutput: untyped
+    class DeleteHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DigestAuthInput: untyped
+    class DigestAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    DigestAuthOutput: untyped
+    class DigestAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetHighScoreInput: untyped
+    class GetHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    GetHighScoreOutput: untyped
+    class GetHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HighScoreAttributes: untyped
+    class HighScoreAttributes < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    HighScoreParams: untyped
+    class HighScoreParams < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ListHighScoresInput: untyped
+    class ListHighScoresInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    ListHighScoresOutput: untyped
+    class ListHighScoresOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    UnprocessableEntityError: untyped
+    class UnprocessableEntityError < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    UpdateHighScoreInput: untyped
+    class UpdateHighScoreInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
-    UpdateHighScoreOutput: untyped
+    class UpdateHighScoreOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
 
   end
 end

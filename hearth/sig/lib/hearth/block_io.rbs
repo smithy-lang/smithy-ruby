@@ -1,15 +1,9 @@
 module Hearth
-  # Given a block, BlockIO will call it with data to write and return the
-  # bytesize written. BlockIO keeps track of all bytes yielded.
   class BlockIO
-    # @param [Proc] block
-    def initialize: (untyped block) -> void
+    def initialize: (Proc block) -> void
 
-    # @return [Integer]
-    attr_reader bytes_yielded: untyped
+    attr_reader bytes_yielded: Integer
 
-    # @param [String] data
-    # @return [Integer] Returns the number of bytes written.
-    def write: (untyped data) -> untyped
+    def write: (String data) -> Integer
   end
 end

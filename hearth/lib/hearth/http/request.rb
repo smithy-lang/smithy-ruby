@@ -58,6 +58,7 @@ module Hearth
       #     #=> "https://example.com/part%201/part%202"
       #
       # @param [String] path A URI escaped path.
+      #
       def append_path(path)
         base_path = uri.path.sub(%r{/$}, '') # remove trailing slash
         path = path.sub(%r{^/}, '')          # remove prefix slash
@@ -86,14 +87,8 @@ module Hearth
       #     The value of the querystring parameter to add. This value
       #     will be URI escaped.
       #
-      def append_query_param(*args)
-        param =
-          case args.size
-          when 1 then Hearth::Query::Param.new(args[0])
-          when 2 then Hearth::Query::Param.new(args[0], args[1])
-          else raise ArgumentError, 'wrong number of arguments ' \
-                                    "(given #{args.size}, expected 1 or 2)"
-          end
+      def append_query_param(name, value = nil)
+        param = Hearth::Query::Param.new(name, value)
         uri.query = uri.query ? "#{uri.query}&#{param}" : param.to_s
       end
 
@@ -134,6 +129,7 @@ module Hearth
       #    #=> "https://example.com?query&empty=&key=value"
       #
       # @param [String] name The name of the querystring parameter to remove.
+      #
       def remove_query_param(name)
         parsed = CGI.parse(uri.query)
         parsed.delete(name)

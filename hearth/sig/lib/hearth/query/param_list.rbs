@@ -1,0 +1,25 @@
+module Hearth
+  module Query
+    class ParamList
+      include Enumerable[String]
+
+      def initialize: () -> void
+
+      def set: (String param_name, ?String? param_value) -> Param
+
+      alias []= set
+
+      def []: (Param param_name) -> (Param | nil)
+
+      def delete: (Param param_name) -> (Param | nil)
+
+      def each: () { (String) -> void } -> void
+
+      def empty?: () -> bool
+
+      def to_a: () -> Array[Param]
+
+      def to_s: () -> String
+    end
+  end
+end

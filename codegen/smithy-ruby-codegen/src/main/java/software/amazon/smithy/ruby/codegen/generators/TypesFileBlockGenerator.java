@@ -35,12 +35,12 @@ public class TypesFileBlockGenerator extends RubyGeneratorBase {
 
     public void openBlocks() {
         context.writerDelegator().useFileWriter(rbFile(), nameSpace(), writer -> {
-            writer.includePreamble().includeRequires();
+            writer.preamble().includeRequires();
             writer.addModule(settings.getModule());
             writer.addModule("Types");
         });
         context.writerDelegator().useFileWriter(rbsFile(), nameSpace(), writer -> {
-            writer.includePreamble();
+            writer.preamble();
             writer.addModule(settings.getModule());
             writer.addModule("Types");
         });

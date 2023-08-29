@@ -14,7 +14,6 @@ require_relative 'middleware/request_id'
 module RailsJson
   # An API client for RailsJson
   # See {#initialize} for a full list of supported configuration options
-
   class Client
     include Hearth::ClientStubs
     @plugins = Hearth::PluginList.new
@@ -25,7 +24,6 @@ module RailsJson
 
     # @param [Config] config
     #   An instance of {Config}
-    #
     def initialize(config = RailsJson::Config.new, options = {})
       @config = initialize_config(config)
       @stubs = Hearth::Stubs.new
@@ -35,14 +33,14 @@ module RailsJson
     attr_reader :config
 
     # This example uses all query string types.
-    #
     # @param [Hash] params
-    #   See {Types::AllQueryStringTypesInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::AllQueryStringTypesInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::AllQueryStringTypesOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.all_query_string_types(
     #     query_string: 'queryString',
     #     query_string_list: [
@@ -82,12 +80,9 @@ module RailsJson
     #       'key' => 'value'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::AllQueryStringTypesOutput
-    #
-    def all_query_string_types(params = {}, options = {}, &block)
+    def all_query_string_types(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::AllQueryStringTypesInput.build(params, context: 'params')
@@ -145,24 +140,21 @@ module RailsJson
     # This example uses fixed query string params and variable query string params.
     # The fixed query string parameters and variable parameters must both be
     # serialized (implementations may need to merge them together).
-    #
     # @param [Hash] params
-    #   See {Types::ConstantAndVariableQueryStringInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::ConstantAndVariableQueryStringInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::ConstantAndVariableQueryStringOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.constant_and_variable_query_string(
     #     baz: 'baz',
     #     maybe_set: 'maybeSet'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::ConstantAndVariableQueryStringOutput
-    #
-    def constant_and_variable_query_string(params = {}, options = {}, &block)
+    def constant_and_variable_query_string(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantAndVariableQueryStringInput.build(params, context: 'params')
@@ -221,23 +213,20 @@ module RailsJson
     # This simply tests that labels and query string parameters are
     # compatible. The fixed query string parameter named "hello" should
     # in no way conflict with the label, `{hello}`.
-    #
     # @param [Hash] params
-    #   See {Types::ConstantQueryStringInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::ConstantQueryStringInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::ConstantQueryStringOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.constant_query_string(
     #     hello: 'hello' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::ConstantQueryStringOutput
-    #
-    def constant_query_string(params = {}, options = {}, &block)
+    def constant_query_string(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ConstantQueryStringInput.build(params, context: 'params')
@@ -293,14 +282,14 @@ module RailsJson
     end
 
     # This example serializes a document as part of the payload.
-    #
     # @param [Hash] params
-    #   See {Types::DocumentTypeInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::DocumentTypeInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::DocumentTypeOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.document_type(
     #     string_value: 'stringValue',
     #     document_value: {
@@ -312,14 +301,11 @@ module RailsJson
     #       'map' => {}
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::DocumentTypeOutput
     #   resp.data.string_value #=> String
     #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
-    #
-    def document_type(params = {}, options = {}, &block)
+    def document_type(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeInput.build(params, context: 'params')
@@ -375,14 +361,14 @@ module RailsJson
     end
 
     # This example serializes a document as the entire HTTP payload.
-    #
     # @param [Hash] params
-    #   See {Types::DocumentTypeAsPayloadInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::DocumentTypeAsPayloadInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::DocumentTypeAsPayloadOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.document_type_as_payload(
     #     document_value: {
     #       'nil' => nil,
@@ -393,13 +379,10 @@ module RailsJson
     #       'map' => {}
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::DocumentTypeAsPayloadOutput
     #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
-    #
-    def document_type_as_payload(params = {}, options = {}, &block)
+    def document_type_as_payload(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeAsPayloadInput.build(params, context: 'params')
@@ -455,19 +438,17 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::EmptyOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::EmptyOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::EmptyOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.empty_operation()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::EmptyOperationOutput
-    #
-    def empty_operation(params = {}, options = {}, &block)
+    def empty_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EmptyOperationInput.build(params, context: 'params')
@@ -523,19 +504,17 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::EndpointOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::EndpointOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.endpoint_operation()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::EndpointOperationOutput
-    #
-    def endpoint_operation(params = {}, options = {}, &block)
+    def endpoint_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
@@ -595,21 +574,19 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::EndpointWithHostLabelOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::EndpointWithHostLabelOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
-    #
-    def endpoint_with_host_label_operation(params = {}, options = {}, &block)
+    def endpoint_with_host_label_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
@@ -676,22 +653,19 @@ module RailsJson
     #
     # Implementations must be able to successfully take a response and
     # properly deserialize successful and error responses.
-    #
     # @param [Hash] params
-    #   See {Types::GreetingWithErrorsInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::GreetingWithErrorsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::GreetingWithErrorsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.greeting_with_errors()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::GreetingWithErrorsOutput
     #   resp.data.greeting #=> String
-    #
-    def greeting_with_errors(params = {}, options = {}, &block)
+    def greeting_with_errors(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
@@ -750,26 +724,23 @@ module RailsJson
     #
     # In this example, no JSON document is synthesized because the payload is
     # not a structure or a union type.
-    #
     # @param [Hash] params
-    #   See {Types::HttpPayloadTraitsInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpPayloadTraitsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpPayloadTraitsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_payload_traits(
     #     foo: 'foo',
     #     blob: 'blob'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpPayloadTraitsOutput
     #   resp.data.foo #=> String
     #   resp.data.blob #=> String
-    #
-    def http_payload_traits(params = {}, options = {}, &block)
+    def http_payload_traits(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsInput.build(params, context: 'params')
@@ -826,26 +797,23 @@ module RailsJson
 
     # This examples uses a `@mediaType` trait on the payload to force a custom
     # content-type to be serialized.
-    #
     # @param [Hash] params
-    #   See {Types::HttpPayloadTraitsWithMediaTypeInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpPayloadTraitsWithMediaTypeInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpPayloadTraitsWithMediaTypeOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_payload_traits_with_media_type(
     #     foo: 'foo',
     #     blob: 'blob'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpPayloadTraitsWithMediaTypeOutput
     #   resp.data.foo #=> String
     #   resp.data.blob #=> String
-    #
-    def http_payload_traits_with_media_type(params = {}, options = {}, &block)
+    def http_payload_traits_with_media_type(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params, context: 'params')
@@ -904,29 +872,26 @@ module RailsJson
     #
     # Note that serializing a structure changes the wrapper element name
     # to match the targeted structure.
-    #
     # @param [Hash] params
-    #   See {Types::HttpPayloadWithStructureInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpPayloadWithStructureInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpPayloadWithStructureOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_payload_with_structure(
     #     nested: {
     #       greeting: 'greeting',
     #       name: 'name'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpPayloadWithStructureOutput
     #   resp.data.nested #=> Types::NestedPayload
     #   resp.data.nested.greeting #=> String
     #   resp.data.nested.name #=> String
-    #
-    def http_payload_with_structure(params = {}, options = {}, &block)
+    def http_payload_with_structure(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadWithStructureInput.build(params, context: 'params')
@@ -982,31 +947,27 @@ module RailsJson
     end
 
     # This examples adds headers to the input of a request and response by prefix.
-    #
     # @see https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait httpPrefixHeaders Trait
-    #
     # @param [Hash] params
-    #   See {Types::HttpPrefixHeadersInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpPrefixHeadersInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpPrefixHeadersOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_prefix_headers(
     #     foo: 'foo',
     #     foo_map: {
     #       'key' => 'value'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpPrefixHeadersOutput
     #   resp.data.foo #=> String
     #   resp.data.foo_map #=> Hash<String, String>
     #   resp.data.foo_map['key'] #=> String
-    #
-    def http_prefix_headers(params = {}, options = {}, &block)
+    def http_prefix_headers(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInput.build(params, context: 'params')
@@ -1062,23 +1023,20 @@ module RailsJson
     end
 
     # Clients that perform this test extract all headers from the response.
-    #
     # @param [Hash] params
-    #   See {Types::HttpPrefixHeadersInResponseInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpPrefixHeadersInResponseInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpPrefixHeadersInResponseOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_prefix_headers_in_response()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpPrefixHeadersInResponseOutput
     #   resp.data.prefix_headers #=> Hash<String, String>
     #   resp.data.prefix_headers['key'] #=> String
-    #
-    def http_prefix_headers_in_response(params = {}, options = {}, &block)
+    def http_prefix_headers_in_response(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInResponseInput.build(params, context: 'params')
@@ -1134,22 +1092,20 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::HttpRequestWithFloatLabelsInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpRequestWithFloatLabelsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpRequestWithFloatLabelsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_request_with_float_labels(
     #     float: 1.0, # required
     #     double: 1.0 # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpRequestWithFloatLabelsOutput
-    #
-    def http_request_with_float_labels(params = {}, options = {}, &block)
+    def http_request_with_float_labels(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithFloatLabelsInput.build(params, context: 'params')
@@ -1205,22 +1161,20 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::HttpRequestWithGreedyLabelInPathInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpRequestWithGreedyLabelInPathInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpRequestWithGreedyLabelInPathOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_request_with_greedy_label_in_path(
     #     foo: 'foo', # required
     #     baz: 'baz' # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpRequestWithGreedyLabelInPathOutput
-    #
-    def http_request_with_greedy_label_in_path(params = {}, options = {}, &block)
+    def http_request_with_greedy_label_in_path(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params, context: 'params')
@@ -1277,20 +1231,14 @@ module RailsJson
 
     # The example tests how requests are serialized when there's no input
     # payload but there are HTTP labels.
-    #
     # @param [Hash] params
-    #   See {Types::HttpRequestWithLabelsInput}.
-    #
-    # @option params [Boolean] :boolean
-    #   Serialized in the path as true or false.
-    #
-    # @option params [Time] :timestamp
-    #   Note that this member has no format, so it's serialized as an RFC 3399 date-time.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpRequestWithLabelsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpRequestWithLabelsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_request_with_labels(
     #     string: 'string', # required
     #     short: 1, # required
@@ -1301,12 +1249,9 @@ module RailsJson
     #     boolean: false, # required
     #     timestamp: Time.now # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpRequestWithLabelsOutput
-    #
-    def http_request_with_labels(params = {}, options = {}, &block)
+    def http_request_with_labels(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsInput.build(params, context: 'params')
@@ -1363,14 +1308,14 @@ module RailsJson
 
     # The example tests how requests serialize different timestamp formats in the
     # URI path.
-    #
     # @param [Hash] params
-    #   See {Types::HttpRequestWithLabelsAndTimestampFormatInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpRequestWithLabelsAndTimestampFormatInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpRequestWithLabelsAndTimestampFormatOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_request_with_labels_and_timestamp_format(
     #     member_epoch_seconds: Time.now, # required
     #     member_http_date: Time.now, # required
@@ -1380,12 +1325,9 @@ module RailsJson
     #     target_http_date: Time.now, # required
     #     target_date_time: Time.now # required
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpRequestWithLabelsAndTimestampFormatOutput
-    #
-    def http_request_with_labels_and_timestamp_format(params = {}, options = {}, &block)
+    def http_request_with_labels_and_timestamp_format(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params, context: 'params')
@@ -1441,20 +1383,18 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::HttpResponseCodeInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::HttpResponseCodeInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::HttpResponseCodeOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.http_response_code()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::HttpResponseCodeOutput
     #   resp.data.status #=> Integer
-    #
-    def http_response_code(params = {}, options = {}, &block)
+    def http_response_code(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpResponseCodeInput.build(params, context: 'params')
@@ -1512,22 +1452,19 @@ module RailsJson
     # This example ensures that query string bound request parameters are
     # serialized in the body of responses if the structure is used in both
     # the request and response.
-    #
     # @param [Hash] params
-    #   See {Types::IgnoreQueryParamsInResponseInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::IgnoreQueryParamsInResponseInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::IgnoreQueryParamsInResponseOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.ignore_query_params_in_response()
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::IgnoreQueryParamsInResponseOutput
     #   resp.data.baz #=> String
-    #
-    def ignore_query_params_in_response(params = {}, options = {}, &block)
+    def ignore_query_params_in_response(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::IgnoreQueryParamsInResponseInput.build(params, context: 'params')
@@ -1584,14 +1521,14 @@ module RailsJson
 
     # The example tests how requests and responses are serialized when there is
     # no input or output payload but there are HTTP header bindings.
-    #
     # @param [Hash] params
-    #   See {Types::InputAndOutputWithHeadersInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::InputAndOutputWithHeadersInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::InputAndOutputWithHeadersOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.input_and_output_with_headers(
     #     header_string: 'headerString',
     #     header_byte: 1,
@@ -1622,9 +1559,7 @@ module RailsJson
     #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     ]
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::InputAndOutputWithHeadersOutput
     #   resp.data.header_string #=> String
     #   resp.data.header_byte #=> Integer
@@ -1648,8 +1583,7 @@ module RailsJson
     #   resp.data.header_enum #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.header_enum_list #=> Array<String>
     #   resp.data.header_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
-    #
-    def input_and_output_with_headers(params = {}, options = {}, &block)
+    def input_and_output_with_headers(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::InputAndOutputWithHeadersInput.build(params, context: 'params')
@@ -1705,14 +1639,14 @@ module RailsJson
     end
 
     # This example serializes enums as top level properties, in lists, sets, and maps.
-    #
     # @param [Hash] params
-    #   See {Types::JsonEnumsInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::JsonEnumsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::JsonEnumsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.json_enums(
     #     foo_enum1: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     foo_enum2: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
@@ -1727,9 +1661,7 @@ module RailsJson
     #       'key' => 'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::JsonEnumsOutput
     #   resp.data.foo_enum1 #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum2 #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
@@ -1740,8 +1672,7 @@ module RailsJson
     #   resp.data.foo_enum_set[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_map #=> Hash<String, String>
     #   resp.data.foo_enum_map['key'] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
-    #
-    def json_enums(params = {}, options = {}, &block)
+    def json_enums(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonEnumsInput.build(params, context: 'params')
@@ -1797,14 +1728,14 @@ module RailsJson
     end
 
     # The example tests basic map serialization.
-    #
     # @param [Hash] params
-    #   See {Types::JsonMapsInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::JsonMapsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::JsonMapsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.json_maps(
     #     dense_struct_map: {
     #       'key' => {
@@ -1835,9 +1766,7 @@ module RailsJson
     #       ]
     #     },
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::JsonMapsOutput
     #   resp.data.dense_struct_map #=> Hash<String, GreetingStruct>
     #   resp.data.dense_struct_map['key'] #=> Types::GreetingStruct
@@ -1859,8 +1788,7 @@ module RailsJson
     #   resp.data.dense_set_map['key'] #=> Array<String>
     #   resp.data.dense_set_map['key'][0] #=> String
     #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
-    #
-    def json_maps(params = {}, options = {}, &block)
+    def json_maps(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonMapsInput.build(params, context: 'params')
@@ -1916,17 +1844,14 @@ module RailsJson
     end
 
     # This operation uses unions for inputs and outputs.
-    #
     # @param [Hash] params
-    #   See {Types::JsonUnionsInput}.
-    #
-    # @option params [MyUnion] :contents
-    #   A union with a representative set of types for members.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::JsonUnionsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::JsonUnionsOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.json_unions(
     #     contents: {
     #       # One of:
@@ -1950,9 +1875,7 @@ module RailsJson
     #       }
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::JsonUnionsOutput
     #   resp.data.contents #=> Types::MyUnion, one of [StringValue, BooleanValue, NumberValue, BlobValue, TimestampValue, EnumValue, ListValue, MapValue, StructureValue, RenamedStructureValue]
     #   resp.data.contents.string_value #=> String
@@ -1969,8 +1892,7 @@ module RailsJson
     #   resp.data.contents.structure_value.hi #=> String
     #   resp.data.contents.renamed_structure_value #=> Types::RenamedGreeting
     #   resp.data.contents.renamed_structure_value.salutation #=> String
-    #
-    def json_unions(params = {}, options = {}, &block)
+    def json_unions(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::JsonUnionsInput.build(params, context: 'params')
@@ -2026,12 +1948,13 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::KitchenSinkOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::KitchenSinkOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::KitchenSinkOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.kitchen_sink_operation(
     #     blob: 'Blob',
     #     boolean: false,
@@ -2081,9 +2004,7 @@ module RailsJson
     #     timestamp: Time.now,
     #     unix_timestamp: Time.now
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::KitchenSinkOperationOutput
     #   resp.data.blob #=> String
     #   resp.data.boolean #=> Boolean
@@ -2145,8 +2066,7 @@ module RailsJson
     #   resp.data.struct_with_location_name #=> Types::StructWithLocationName
     #   resp.data.timestamp #=> Time
     #   resp.data.unix_timestamp #=> Time
-    #
-    def kitchen_sink_operation(params = {}, options = {}, &block)
+    def kitchen_sink_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkOperationInput.build(params, context: 'params')
@@ -2202,24 +2122,21 @@ module RailsJson
     end
 
     # This example ensures that mediaType strings are base64 encoded in headers.
-    #
     # @param [Hash] params
-    #   See {Types::MediaTypeHeaderInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::MediaTypeHeaderInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::MediaTypeHeaderOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.media_type_header(
     #     json: 'json'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::MediaTypeHeaderOutput
     #   resp.data.json #=> String
-    #
-    def media_type_header(params = {}, options = {}, &block)
+    def media_type_header(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MediaTypeHeaderInput.build(params, context: 'params')
@@ -2275,24 +2192,22 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::NestedAttributesOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::NestedAttributesOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::NestedAttributesOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.nested_attributes_operation(
     #     simple_struct: {
     #       value: 'Value'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::NestedAttributesOperationOutput
     #   resp.data.value #=> String
-    #
-    def nested_attributes_operation(params = {}, options = {}, &block)
+    def nested_attributes_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NestedAttributesOperationInput.build(params, context: 'params')
@@ -2348,16 +2263,15 @@ module RailsJson
     end
 
     # Null and empty headers are not sent over the wire.
-    #
     # Tags: ["client-only"]
-    #
     # @param [Hash] params
-    #   See {Types::NullAndEmptyHeadersClientInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::NullAndEmptyHeadersClientInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::NullAndEmptyHeadersClientOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.null_and_empty_headers_client(
     #     a: 'a',
     #     b: 'b',
@@ -2365,16 +2279,13 @@ module RailsJson
     #       'member'
     #     ]
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::NullAndEmptyHeadersClientOutput
     #   resp.data.a #=> String
     #   resp.data.b #=> String
     #   resp.data.c #=> Array<String>
     #   resp.data.c[0] #=> String
-    #
-    def null_and_empty_headers_client(params = {}, options = {}, &block)
+    def null_and_empty_headers_client(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NullAndEmptyHeadersClientInput.build(params, context: 'params')
@@ -2430,12 +2341,13 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::NullOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::NullOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::NullOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.null_operation(
     #     string: 'string',
     #     sparse_string_list: [
@@ -2445,17 +2357,14 @@ module RailsJson
     #       'key' => 'value'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::NullOperationOutput
     #   resp.data.string #=> String
     #   resp.data.sparse_string_list #=> Array<String>
     #   resp.data.sparse_string_list[0] #=> String
     #   resp.data.sparse_string_map #=> Hash<String, String>
     #   resp.data.sparse_string_map['key'] #=> String
-    #
-    def null_operation(params = {}, options = {}, &block)
+    def null_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NullOperationInput.build(params, context: 'params')
@@ -2511,24 +2420,21 @@ module RailsJson
     end
 
     # Omits null, but serializes empty string value.
-    #
     # @param [Hash] params
-    #   See {Types::OmitsNullSerializesEmptyStringInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::OmitsNullSerializesEmptyStringInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::OmitsNullSerializesEmptyStringOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.omits_null_serializes_empty_string(
     #     null_value: 'nullValue',
     #     empty_string: 'emptyString'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::OmitsNullSerializesEmptyStringOutput
-    #
-    def omits_null_serializes_empty_string(params = {}, options = {}, &block)
+    def omits_null_serializes_empty_string(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OmitsNullSerializesEmptyStringInput.build(params, context: 'params')
@@ -2584,22 +2490,20 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::OperationWithOptionalInputOutputInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::OperationWithOptionalInputOutputInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::OperationWithOptionalInputOutputOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.operation_with_optional_input_output(
     #     value: 'Value'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::OperationWithOptionalInputOutputOutput
     #   resp.data.value #=> String
-    #
-    def operation_with_optional_input_output(params = {}, options = {}, &block)
+    def operation_with_optional_input_output(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OperationWithOptionalInputOutputInput.build(params, context: 'params')
@@ -2655,25 +2559,21 @@ module RailsJson
     end
 
     # Automatically adds idempotency tokens.
-    #
     # Tags: ["client-only"]
-    #
     # @param [Hash] params
-    #   See {Types::QueryIdempotencyTokenAutoFillInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::QueryIdempotencyTokenAutoFillInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::QueryIdempotencyTokenAutoFillOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.query_idempotency_token_auto_fill(
     #     token: 'token'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::QueryIdempotencyTokenAutoFillOutput
-    #
-    def query_idempotency_token_auto_fill(params = {}, options = {}, &block)
+    def query_idempotency_token_auto_fill(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params, context: 'params')
@@ -2729,12 +2629,13 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::QueryParamsAsStringListMapInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::QueryParamsAsStringListMapInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::QueryParamsAsStringListMapOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.query_params_as_string_list_map(
     #     qux: 'qux',
     #     foo: {
@@ -2743,12 +2644,9 @@ module RailsJson
     #       ]
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::QueryParamsAsStringListMapOutput
-    #
-    def query_params_as_string_list_map(params = {}, options = {}, &block)
+    def query_params_as_string_list_map(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::QueryParamsAsStringListMapInput.build(params, context: 'params')
@@ -2804,21 +2702,19 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::StreamingOperationInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::StreamingOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::StreamingOperationOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.streaming_operation(
     #     output: 'output'
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::StreamingOperationOutput
     #   resp.data.output #=> String
-    #
     def streaming_operation(params = {}, options = {}, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -2874,14 +2770,14 @@ module RailsJson
     end
 
     # This example tests how timestamp request and response headers are serialized.
-    #
     # @param [Hash] params
-    #   See {Types::TimestampFormatHeadersInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::TimestampFormatHeadersInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::TimestampFormatHeadersOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.timestamp_format_headers(
     #     member_epoch_seconds: Time.now,
     #     member_http_date: Time.now,
@@ -2891,9 +2787,7 @@ module RailsJson
     #     target_http_date: Time.now,
     #     target_date_time: Time.now
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::TimestampFormatHeadersOutput
     #   resp.data.member_epoch_seconds #=> Time
     #   resp.data.member_http_date #=> Time
@@ -2902,8 +2796,7 @@ module RailsJson
     #   resp.data.target_epoch_seconds #=> Time
     #   resp.data.target_http_date #=> Time
     #   resp.data.target_date_time #=> Time
-    #
-    def timestamp_format_headers(params = {}, options = {}, &block)
+    def timestamp_format_headers(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::TimestampFormatHeadersInput.build(params, context: 'params')
@@ -2959,26 +2852,24 @@ module RailsJson
     end
 
     # @param [Hash] params
-    #   See {Types::Struct____789BadNameInput}.
-    #
+    #   Request parameters for this operation.
+    #   See {Types::Struct____789BadNameInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
     # @return [Types::Struct____789BadNameOutput]
-    #
     # @example Request syntax with placeholder values
-    #
     #   resp = client.operation____789_bad_name(
     #     member___123abc: '__123abc', # required
     #     member: {
     #       member___123foo: '__123foo'
     #     }
     #   )
-    #
     # @example Response structure
-    #
     #   resp.data #=> Types::Struct____789BadNameOutput
     #   resp.data.member #=> Types::Struct____456efg
     #   resp.data.member.member___123foo #=> String
-    #
-    def operation____789_bad_name(params = {}, options = {}, &block)
+    def operation____789_bad_name(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params, context: 'params')

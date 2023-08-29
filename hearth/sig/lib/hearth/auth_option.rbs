@@ -1,15 +1,11 @@
 module Hearth
-  # Object that represents an auth option, returned by Auth Resolvers.
   class AuthOption
-    def initialize: (scheme_id: untyped, ?identity_properties: ::Hash[untyped, untyped], ?signer_properties: ::Hash[untyped, untyped]) -> void
+    def initialize: (scheme_id: String, ?identity_properties: ::Hash[Symbol, untyped], ?signer_properties: ::Hash[Symbol, untyped]) -> void
 
-    # @return [String]
-    attr_reader scheme_id: untyped
+    attr_reader scheme_id: String
 
-    # @return [Hash]
-    attr_reader identity_properties: untyped
+    attr_reader identity_properties: Hash[Symbol, untyped]
 
-    # @return [Hash]
-    attr_reader signer_properties: untyped
+    attr_reader signer_properties: Hash[Symbol, untyped]
   end
 end

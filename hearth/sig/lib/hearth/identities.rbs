@@ -1,11 +1,9 @@
 module Hearth
   module Identities
-    # Base class for all Identity classes.
     class Base
-      def initialize: (?expiration: untyped?) -> void
+      def initialize: (?expiration: Time?) -> void
 
-      # @return [Time, nil]
-      attr_reader expiration: untyped
+      attr_reader expiration: Time
     end
   end
 end

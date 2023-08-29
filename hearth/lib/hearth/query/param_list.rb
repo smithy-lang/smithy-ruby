@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 module Hearth
-  # @api private
   module Query
     # A class used to collect query params before serialization.
-    # @api private
     class ParamList
       include Enumerable
 
-      # @api private
       def initialize
         @params = {}
       end
@@ -19,7 +16,6 @@ module Hearth
       def set(param_name, param_value = nil)
         param = Param.new(param_name, param_value)
         @params[param.name] = param
-        param
       end
       alias []= set
 

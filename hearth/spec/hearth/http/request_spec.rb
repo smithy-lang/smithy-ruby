@@ -84,11 +84,6 @@ module Hearth
           expect(subject.uri.to_s).to eq('http://example.com?test=value')
         end
 
-        it 'raises an ArgumentError for invalid number of arguments' do
-          expect { subject.append_query_param('test', 'value', 'invalid') }
-            .to raise_error(ArgumentError)
-        end
-
         it 'appends to existing query params' do
           subject.append_query_param('test', 'value')
           subject.append_query_param('test2')

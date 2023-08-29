@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.ShapeDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -40,10 +39,12 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class StructureGenerator extends RubyGeneratorBase {
 
     private final StructureShape shape;
+    private final NullableIndex nullableIndex;
 
     public StructureGenerator(ShapeDirective<StructureShape, GenerationContext, RubySettings> directive) {
         super(directive);
         this.shape = directive.shape();
+        this.nullableIndex = NullableIndex.of(model);
     }
 
     @Override
@@ -53,35 +54,24 @@ public final class StructureGenerator extends RubyGeneratorBase {
 
     public void render() {
         write(writer -> {
+            // a total hack so that any structures named Struct do not fail documentation parsing
+            if (shape.getId().getName().equals("Struct")) {
+                writer.write("class ::Struct; end\n");
+            }
+
+            new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render();
+            renderStructureInitializeMethodDocumentation(writer);
+            renderStructureAttributesDocumentation(writer);
+
             String membersBlock = "nil";
             if (!shape.members().isEmpty()) {
                 membersBlock = shape
-                    .members()
-                    .stream()
-                    .map(memberShape -> RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape)))
-                    .collect(Collectors.joining(",\n"));
+                        .members()
+                        .stream()
+                        .map(memberShape -> RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape)))
+                        .collect(Collectors.joining(",\n"));
             }
             membersBlock += ",";
-
-            String documentation = new ShapeDocumentationGenerator(model, symbolProvider, shape).render();
-
-            writer.writeInline("$L", documentation);
-
-            shape.members().forEach(memberShape -> {
-                String attribute = symbolProvider.toMemberName(memberShape);
-                Shape target = model.expectShape(memberShape.getTarget());
-                String returnType = (String) symbolProvider.toSymbol(target)
-                        .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
-
-                String memberDocumentation =
-                        new ShapeDocumentationGenerator(model, symbolProvider, memberShape).render();
-
-                writer.writeYardAttribute(attribute, () -> {
-                    // delegate to member shape in this visitor
-                    writer.writeInline("$L", memberDocumentation);
-                    writer.writeYardReturn(returnType, "");
-                });
-            });
 
             writer
                 .openBlock("$T = ::Struct.new(", symbolProvider.toSymbol(shape))
@@ -90,24 +80,22 @@ public final class StructureGenerator extends RubyGeneratorBase {
                 .closeBlock(") do")
                 .indent()
                 .write("include $T", Hearth.STRUCTURE)
-                .call(() -> renderStructureInitializeMethod(writer, model, shape))
+                .call(() -> renderStructureInitializeMethod(writer, shape))
                 .call(() -> renderStructureToSMethod(writer, model, shape))
                 .closeBlock("end\n");
         });
 
         writeRbs(writer -> {
-            Symbol symbol = symbolProvider.toSymbol(shape);
-            String shapeName = symbol.getName();
-            writer.write(shapeName + ": untyped\n");
+            String shapeName = symbolProvider.toSymbol(shape).getName();
+            writer
+                    .openBlock("class $L < ::Struct[untyped]", shapeName)
+                    .write("include $L", Hearth.STRUCTURE)
+                    .closeBlock("end");
         });
     }
 
-    private void renderStructureInitializeMethod(
-        RubyCodeWriter writer,
-        Model model,
-        StructureShape structureShape
+    private void renderStructureInitializeMethod(RubyCodeWriter writer, StructureShape structureShape
     ) {
-        NullableIndex nullableIndex = new NullableIndex(model);
         List<MemberShape> defaultMembers = structureShape.members().stream()
             .filter((m) -> !nullableIndex.isNullable(m))
             .toList();
@@ -130,11 +118,40 @@ public final class StructureGenerator extends RubyGeneratorBase {
         }
     }
 
-    private void renderStructureToSMethod(
-        RubyCodeWriter writer,
-        Model model,
-        StructureShape structureShape
-    ) {
+    private void renderStructureInitializeMethodDocumentation(RubyCodeWriter writer) {
+        writer.writeYardMethod("initialize(params = {})", () -> {
+            writer.writeYardParam("Hash", "params", "");
+            shape.members().forEach(memberShape -> {
+                String param = RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape));
+                Shape target = model.expectShape(memberShape.getTarget());
+                String paramType = (String) symbolProvider.toSymbol(target)
+                        .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
+
+                String defaultValue = "";
+                if (!nullableIndex.isNullable(memberShape)) {
+                    defaultValue = target.accept(new MemberDefaultVisitor());
+                }
+
+                writer.writeYardOption("params", paramType, param, defaultValue, "");
+            });
+        });
+    }
+
+    private void renderStructureAttributesDocumentation(RubyCodeWriter writer) {
+        shape.members().forEach(memberShape -> {
+            String attribute = symbolProvider.toMemberName(memberShape);
+            Shape target = model.expectShape(memberShape.getTarget());
+            String returnType = (String) symbolProvider.toSymbol(target)
+                    .getProperty("yardType").orElseThrow(IllegalArgumentException::new);
+
+            writer.writeYardAttribute(attribute, () -> {
+                new ShapeDocumentationGenerator(model, writer, symbolProvider, memberShape).render();
+                writer.writeYardReturn(returnType, "");
+            });
+        });
+    }
+
+    private void renderStructureToSMethod(RubyCodeWriter writer, Model model, StructureShape structureShape) {
         String fullQualifiedShapeName = settings.getModule() + "::Types::"
                 + symbolProvider.toSymbol(structureShape).getName();
 

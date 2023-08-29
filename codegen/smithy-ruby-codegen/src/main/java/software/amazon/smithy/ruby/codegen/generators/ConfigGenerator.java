@@ -62,7 +62,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
             membersBlock += ",";
 
             writer
-                    .includePreamble()
+                    .preamble()
                     .includeRequires()
                     .openBlock("module $L", settings.getModule())
                     .call(() -> renderConfigDocumentation(writer))
@@ -79,7 +79,6 @@ public class ConfigGenerator extends RubyGeneratorBase {
                     .closeBlock("end")
                     .closeBlock("end\n");
         });
-
         LOGGER.fine("Wrote config to " + rbFile());
     }
 
@@ -90,7 +89,19 @@ public class ConfigGenerator extends RubyGeneratorBase {
         writeRbs(writer -> {
             writer
                     .openBlock("module $L", settings.getModule())
-                    .write("Config: untyped")
+                    .openBlock("class Config < ::Struct[untyped]")
+                    .write("include $T", Hearth.CONFIGURATION)
+                    .write("")
+                    .call(() -> {
+                        clientConfigList.forEach((clientConfig) -> {
+                            String member = RubySymbolProvider.toMemberName(clientConfig.getName());
+                            String rbsType = clientConfig.getRbsType();
+                            writer
+                                    .write("attr_accessor $L (): $L", member, rbsType)
+                                    .write("");
+                        });
+                    })
+                    .closeBlock("end")
                     .closeBlock("end");
         });
         LOGGER.fine("Wrote config rbs to " + rbsFile());

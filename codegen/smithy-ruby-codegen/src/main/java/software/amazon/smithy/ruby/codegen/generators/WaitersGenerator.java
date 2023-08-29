@@ -79,7 +79,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
@@ -94,7 +94,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
     public void renderRbs() {
         writeRbs(writer -> {
             writer
-                .includePreamble()
+                .preamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Waiters")
                 .call(() -> renderWaiters(writer, true))
@@ -150,9 +150,10 @@ public class WaitersGenerator extends RubyGeneratorBase {
                 .call(() -> renderWaiterTags(writer, waiter))
                 .closeBlock("end")
                 .write("")
+                .writeYardReturn("Array<String>", "")
                 .write("attr_reader :tags")
                 .write("")
-                .call(() -> renderWaiterWaitDocumentation(writer, operation, operationName))
+                .call(() -> renderWaiterWaitDocumentation(writer, operationName))
                 .openBlock("def wait(params = {}, options = {})")
                 .write("@waiter.wait(@client, params, options)")
                 .closeBlock("end")
@@ -165,9 +166,10 @@ public class WaitersGenerator extends RubyGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L", waiterName)
-                .write("def initialize: (untyped client, ?::Hash[untyped, untyped] options) -> void\n")
-                .write("attr_reader tags: untyped\n")
-                .write("def wait: (?::Hash[untyped, untyped] params, ?::Hash[untyped, untyped] options) -> untyped")
+                .write("def initialize: (Client, ?::Hash[::Symbol, untyped] options) -> void\n")
+                .write("attr_reader tags: Array[::String]\n")
+                .write("def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> "
+                        + "(true | Hearth::Waiters::WaiterFailed)")
                 .closeBlock("end");
     }
 
@@ -225,20 +227,16 @@ public class WaitersGenerator extends RubyGeneratorBase {
         return transformedPath;
     }
 
-    private void renderWaiterWaitDocumentation(RubyCodeWriter writer, OperationShape operation, String operationName) {
-        String operationReturnType = "Types::" + symbolProvider.toSymbol(operation).getName();
-
-        String operationReference = "(see Client#" + operationName + ")";
+    private void renderWaiterWaitDocumentation(RubyCodeWriter writer, String operationName) {
         writer
-                .writeYardParam("Hash", "params", operationReference)
-                .writeYardParam("Hash", "options", operationReference)
-                .writeYardReturn(operationReturnType, operationReference);
+                .writeYardReference("param", "Client#" + operationName)
+                .writeYardReturn("true, Hearth::Waiters::WaiterFailed", "");
     }
 
     private void renderWaiterInitializeDocumentation(RubyCodeWriter writer, Waiter waiter) {
         writer
                 .writeYardParam("Client", "client", "")
-                .writeYardParam("Hash", "options", "")
+                .writeYardParam("Hash", "options", "Waiter options")
                 .writeYardOption(
                         "options",
                         "required, Integer",

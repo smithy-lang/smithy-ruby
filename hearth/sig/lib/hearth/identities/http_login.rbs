@@ -1,14 +1,11 @@
 module Hearth
   module Identities
-    # Identity class for login authentication.
     class HTTPLogin < Identities::Base
-      def initialize: (username: untyped, password: untyped, **untyped kwargs) -> void
+      def initialize: (username: String, password: String, **untyped kwargs) -> void
 
-      # @return [String]
-      attr_reader username: untyped
+      attr_reader username: String
 
-      # @return [String]
-      attr_reader password: untyped
+      attr_reader password: String
     end
   end
 end

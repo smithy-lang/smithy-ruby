@@ -92,7 +92,6 @@ module HighScoreService
       end
 
       # @return [Types::UnprocessableEntityError]
-      #
       attr_reader :data
     end
 

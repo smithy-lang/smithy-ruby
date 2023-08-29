@@ -35,6 +35,8 @@ module Hearth
 
     alias << add
 
+    # TODO: remove this from public api
+    #
     # Apply all interceptors that implement the given hook
     # @param [Symbol] hook the specific hook to apply for
     # @param input operation input

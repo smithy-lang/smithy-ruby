@@ -114,7 +114,7 @@ public abstract class ErrorsGeneratorBase {
      */
     public void render(FileManifest fileManifest) {
         writer
-                .includePreamble()
+                .preamble()
                 .includeRequires()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
@@ -137,7 +137,7 @@ public abstract class ErrorsGeneratorBase {
      */
     public void renderRbs(FileManifest fileManifest) {
         rbsWriter
-                .includePreamble()
+                .preamble()
                 .openBlock("module $L", settings.getModule())
                 .openBlock("module Errors")
                 .write("")
@@ -181,16 +181,14 @@ public abstract class ErrorsGeneratorBase {
     private void renderRbsBaseErrors() {
         rbsWriter
                 .write("\nclass ApiError < $T", Hearth.HTTP_API_ERROR)
-                .write("def initialize: (request_id: untyped request_id, **untyped kwargs) -> void\n")
-                .write("attr_reader request_id: untyped")
                 .write("end")
                 .write("\nclass ApiClientError < ApiError")
                 .write("end")
                 .write("\nclass ApiServerError < ApiError")
                 .write("end")
                 .openBlock("\nclass ApiRedirectError < ApiError")
-                .write("def initialize: (location: untyped location, **untyped kwargs) -> void\n")
-                .write("attr_reader location: untyped")
+                .write("def initialize: (location: String, **untyped kwargs) -> void\n")
+                .write("attr_reader location: String")
                 .closeBlock("end");
     }
 
@@ -211,7 +209,7 @@ public abstract class ErrorsGeneratorBase {
      * Render RBS signature for error code.
      */
     public void renderRbsErrorCode() {
-        rbsWriter.write("def self.error_code: (untyped resp) -> untyped");
+        rbsWriter.write("def self.error_code: (Hearth::HTTP::Response) -> String");
     }
 
     private void renderServiceModelErrors(ShapeVisitor<Void> visitor) {
@@ -289,14 +287,15 @@ public abstract class ErrorsGeneratorBase {
         @Override
         public Void structureShape(StructureShape shape) {
             String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
+            String shapeName = symbolProvider.toSymbol(shape).getName();
             boolean retryable = shape.hasTrait(RetryableTrait.class);
             boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
 
             rbsWriter
                     .write("")
-                    .openBlock("class $L < $L", symbolProvider.toSymbol(shape).getName(), apiErrorType)
-                    .write("def initialize: (http_resp: untyped http_resp, **untyped kwargs) -> void\n")
-                    .write("attr_reader data: untyped")
+                    .openBlock("class $L < $L", shapeName, apiErrorType)
+                    .write("def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void\n")
+                    .write("attr_reader data: Types::$L", shapeName)
                     .call(() -> {
                         if (retryable) {
                             rbsWriter.write("def retryable?: () -> true");

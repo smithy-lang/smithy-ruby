@@ -1,28 +1,17 @@
 module Hearth
   module Interceptor
-    # Context provided to interceptor hook methods.
     class Context
-      # @param [Struct] input
-      # @param [Hearth::Request] request
-      # @param [Hearth::Response] response
-      # @param [Hearth::Output] output
-      # @param [Hash] attributes ({}) additional interceptor data
-      def initialize: (input: untyped, request: untyped, response: untyped, output: untyped, ?attributes: ::Hash[untyped, untyped]) -> void
+      def initialize: (input: Hearth::Structure, request: Request, response: Response, output: Hearth::Structure, ?attributes: Hash[Symbol, untyped]) -> void
 
-      # @return [Struct] Modeled input, i.e. Types::<Operation>Input
-      attr_reader input: untyped
+      attr_reader input: Hearth::Structure
 
-      # @return [Hearth::Request]
-      attr_reader request: untyped
+      attr_reader request: Request
 
-      # @return [Hearth::Response]
-      attr_reader response: untyped
+      attr_reader response: Response
 
-      # @return [Hearth::Output] only available to hooks after transmit
-      attr_reader output: untyped
+      attr_reader output: Hearth::Structure
 
-      # @return [Hash] attributes additional interceptor data
-      attr_reader attributes: untyped
+      attr_reader attributes: Hash[Symbol, untyped]
     end
   end
 end

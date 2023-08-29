@@ -1,6 +1,5 @@
 module Hearth
   module AuthSchemes
-    # HTTP Basic authentication scheme.
     class HTTPBasic < AuthSchemes::Base
       def initialize: () -> void
     end
