@@ -36,14 +36,18 @@ module HighScoreService
 
     class CreateHighScoreInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor high_score (): HighScoreParams
     end
 
     class CreateHighScoreOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor high_score (): HighScoreAttributes
+      attr_accessor location (): ::String
     end
 
     class DeleteHighScoreInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor id (): ::String
     end
 
     class DeleteHighScoreOutput < ::Struct[untyped]
@@ -60,18 +64,27 @@ module HighScoreService
 
     class GetHighScoreInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor id (): ::String
     end
 
     class GetHighScoreOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor high_score (): HighScoreAttributes
     end
 
     class HighScoreAttributes < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor id (): ::String
+      attr_accessor game (): ::String
+      attr_accessor score (): ::Integer
+      attr_accessor created_at (): ::Time
+      attr_accessor updated_at (): ::Time
     end
 
     class HighScoreParams < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor game (): ::String
+      attr_accessor score (): ::Integer
     end
 
     class ListHighScoresInput < ::Struct[untyped]
@@ -80,18 +93,23 @@ module HighScoreService
 
     class ListHighScoresOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor high_scores (): ::Array[HighScoreAttributes]
     end
 
     class UnprocessableEntityError < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor errors (): ::Hash[::String, ::Array[::String]]
     end
 
     class UpdateHighScoreInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor id (): ::String
+      attr_accessor high_score (): HighScoreParams
     end
 
     class UpdateHighScoreOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor high_score (): HighScoreAttributes
     end
 
   end

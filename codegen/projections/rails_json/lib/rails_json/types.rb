@@ -181,9 +181,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash,Array,String,Boolean,Numeric] :document_value
+    #   @option params [Hash, Array, String, Boolean, Numeric] :document_value
     # @!attribute document_value
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     DocumentTypeAsPayloadInput = ::Struct.new(
       :document_value,
       keyword_init: true
@@ -193,9 +193,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash,Array,String,Boolean,Numeric] :document_value
+    #   @option params [Hash, Array, String, Boolean, Numeric] :document_value
     # @!attribute document_value
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     DocumentTypeAsPayloadOutput = ::Struct.new(
       :document_value,
       keyword_init: true
@@ -206,11 +206,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :string_value
-    #   @option params [Hash,Array,String,Boolean,Numeric] :document_value
+    #   @option params [Hash, Array, String, Boolean, Numeric] :document_value
     # @!attribute string_value
     #   @return [String]
     # @!attribute document_value
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     DocumentTypeInput = ::Struct.new(
       :string_value,
       :document_value,
@@ -222,11 +222,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :string_value
-    #   @option params [Hash,Array,String,Boolean,Numeric] :document_value
+    #   @option params [Hash, Array, String, Boolean, Numeric] :document_value
     # @!attribute string_value
     #   @return [String]
     # @!attribute document_value
-    #   @return [Hash,Array,String,Boolean,Numeric]
+    #   @return [Hash, Array, String, Boolean, Numeric]
     DocumentTypeOutput = ::Struct.new(
       :string_value,
       :document_value,

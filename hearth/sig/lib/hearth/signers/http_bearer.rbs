@@ -1,9 +1,9 @@
 module Hearth
   module Signers
     class HTTPBearer < Signers::Base
-      def sign: (request: HTTP::Request, identity: Identities::HTTPBearer, ?properties: ::Hash[Symbol, untyped]) -> void
+      def sign: (request: HTTP::Request, identity: Identities::HTTPBearer, ?properties: Hash[Symbol, untyped]) -> void
 
-      def reset: (request: HTTP::Request, ?properties: ::Hash[Symbol, untyped]) -> void
+      def reset: (request: HTTP::Request, ?properties: Hash[Symbol, untyped]) -> void
     end
   end
 end

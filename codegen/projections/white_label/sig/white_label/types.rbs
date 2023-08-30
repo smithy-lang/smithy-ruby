@@ -12,14 +12,55 @@ module WhiteLabel
 
     class ClientError < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor message (): ::String
     end
 
     class DefaultsTestInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor string (): ::String
+      attr_accessor struct (): Struct
+      attr_accessor un_required_number (): ::Integer
+      attr_accessor un_required_bool (): bool
+      attr_accessor number (): ::Integer
+      attr_accessor bool (): bool
+      attr_accessor hello (): ::String
+      attr_accessor simple_enum (): ::String
+      attr_accessor typed_enum (): ::String
+      attr_accessor int_enum (): ::Integer
+      attr_accessor null_document (): document
+      attr_accessor string_document (): document
+      attr_accessor boolean_document (): document
+      attr_accessor numbers_document (): document
+      attr_accessor list_document (): document
+      attr_accessor map_document (): document
+      attr_accessor list_of_strings (): ::Array[::String]
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]
+      attr_accessor iso8601_timestamp (): ::Time
+      attr_accessor epoch_timestamp (): ::Time
     end
 
     class DefaultsTestOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor string (): ::String
+      attr_accessor struct (): Struct
+      attr_accessor un_required_number (): ::Integer
+      attr_accessor un_required_bool (): bool
+      attr_accessor number (): ::Integer
+      attr_accessor bool (): bool
+      attr_accessor hello (): ::String
+      attr_accessor simple_enum (): ::String
+      attr_accessor typed_enum (): ::String
+      attr_accessor int_enum (): ::Integer
+      attr_accessor null_document (): document
+      attr_accessor string_document (): document
+      attr_accessor boolean_document (): document
+      attr_accessor numbers_document (): document
+      attr_accessor list_document (): document
+      attr_accessor map_document (): document
+      attr_accessor list_of_strings (): ::Array[::String]
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]
+      attr_accessor iso8601_timestamp (): ::Time
+      attr_accessor epoch_timestamp (): ::Time
     end
 
     class EndpointOperationInput < ::Struct[untyped]
@@ -32,6 +73,7 @@ module WhiteLabel
 
     class EndpointWithHostLabelOperationInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor label_member (): ::String
     end
 
     class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
@@ -72,18 +114,41 @@ module WhiteLabel
 
     class KitchenSinkInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor string (): ::String
+      attr_accessor simple_enum (): ::String
+      attr_accessor typed_enum (): ::String
+      attr_accessor struct (): Struct
+      attr_accessor document (): document
+      attr_accessor list_of_strings (): ::Array[::String]
+      attr_accessor list_of_structs (): ::Array[Struct]
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]
+      attr_accessor map_of_structs (): ::Hash[::String, Struct]
+      attr_accessor union (): Union
     end
 
     class KitchenSinkOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor string (): ::String
+      attr_accessor simple_enum (): ::String
+      attr_accessor typed_enum (): ::String
+      attr_accessor struct (): Struct
+      attr_accessor document (): document
+      attr_accessor list_of_strings (): ::Array[::String]
+      attr_accessor list_of_structs (): ::Array[Struct]
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]
+      attr_accessor map_of_structs (): ::Hash[::String, Struct]
+      attr_accessor union (): Union
     end
 
     class MixinTestInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor user_id (): ::String
     end
 
     class MixinTestOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor username (): ::String
+      attr_accessor user_id (): ::String
     end
 
     class NoAuthInput < ::Struct[untyped]
@@ -112,18 +177,24 @@ module WhiteLabel
 
     class PaginatorsTestOperationInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor next_token (): ::String
     end
 
     class PaginatorsTestOperationOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor next_token (): ::String
+      attr_accessor items (): ::Array[::String]
     end
 
     class PaginatorsTestWithItemsInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor next_token (): ::String
     end
 
     class PaginatorsTestWithItemsOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor next_token (): ::String
+      attr_accessor items (): ::Array[::String]
     end
 
     class RelativeOperationInput < ::Struct[untyped]
@@ -136,6 +207,7 @@ module WhiteLabel
 
     class RequestCompressionOperationInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor body (): ::String
     end
 
     class RequestCompressionOperationOutput < ::Struct[untyped]
@@ -144,6 +216,7 @@ module WhiteLabel
 
     class RequestCompressionStreamingOperationInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor body (): ::String
     end
 
     class RequestCompressionStreamingOperationOutput < ::Struct[untyped]
@@ -152,6 +225,7 @@ module WhiteLabel
 
     class ResultWrapper < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor member___123next_token (): ::String
     end
 
     class ServerError < ::Struct[untyped]
@@ -160,14 +234,17 @@ module WhiteLabel
 
     class StreamingOperationInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor stream (): ::String
     end
 
     class StreamingOperationOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor stream (): ::String
     end
 
     class StreamingWithLengthInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor stream (): ::String
     end
 
     class StreamingWithLengthOutput < ::Struct[untyped]
@@ -176,6 +253,7 @@ module WhiteLabel
 
     class Struct < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor value (): ::String
     end
 
     module TypedEnum
@@ -205,18 +283,23 @@ module WhiteLabel
 
     class WaitersTestInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor status (): ::String
     end
 
     class WaitersTestOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor status (): ::String
     end
 
     class Struct____PaginatorsTestWithBadNamesInput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor member___next_token (): ::String
     end
 
     class Struct____PaginatorsTestWithBadNamesOutput < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor member___wrapper (): ResultWrapper
+      attr_accessor member___items (): ::Array[::String]
     end
 
   end

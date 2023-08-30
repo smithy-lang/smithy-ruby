@@ -71,7 +71,7 @@ public class ResponseExampleGenerator {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
+            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("docType").orElse(""));
             return null;
         }
 
@@ -93,7 +93,7 @@ public class ResponseExampleGenerator {
         @Override
         public Void structureShape(StructureShape shape) {
             writer.write("$L #=> Types::$L", dataGetter,
-                    symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
+                    symbolProvider.toSymbol(shape).getProperty("docType").orElse(""));
 
             if (!visited.add(shape.getId())) {
                 return null;
@@ -109,7 +109,7 @@ public class ResponseExampleGenerator {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
+            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("docType").orElse(""));
 
             if (!visited.add(shape.getId())) {
                 return null;
@@ -125,7 +125,7 @@ public class ResponseExampleGenerator {
 
         @Override
         public Void mapShape(MapShape shape) {
-            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("yardType").orElse(""));
+            writer.write("$L #=> $L", dataGetter, symbolProvider.toSymbol(shape).getProperty("docType").orElse(""));
 
             if (!visited.add(shape.getId())) {
                 return null;
@@ -145,7 +145,7 @@ public class ResponseExampleGenerator {
                     .map(symbolProvider::toMemberName)
                     .collect(Collectors.joining(", "));
             writer.write("$L #=> Types::$L, one of [$L]", dataGetter,
-                    symbolProvider.toSymbol(shape).getProperty("yardType").orElse("").toString(), values);
+                    symbolProvider.toSymbol(shape).getProperty("docType").orElse("").toString(), values);
 
             if (!visited.add(shape.getId())) {
                 return null;

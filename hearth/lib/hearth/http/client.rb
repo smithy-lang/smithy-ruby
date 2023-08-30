@@ -31,7 +31,7 @@ module Hearth
       #
       # @param [Hash] options The options for this HTTP Client
       #
-      # @option options [Logger] (Logger.new($stdout)) :logger A logger
+      # @option options [Logger] :logger (Logger.new($stdout)) A logger
       #   used to log Net::HTTP requests and responses when `:debug_output`
       #   is enabled.
       #

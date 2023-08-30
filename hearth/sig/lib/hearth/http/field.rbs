@@ -13,7 +13,7 @@ module Hearth
 
       def trailer?: () -> bool
 
-      def to_h: () -> ::Hash[String, String]
+      def to_h: () -> Hash[String, String]
     end
   end
 end

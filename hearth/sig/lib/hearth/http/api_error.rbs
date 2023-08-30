@@ -1,7 +1,7 @@
 module Hearth
   module HTTP
     class ApiError < Hearth::ApiError
-      def initialize: (http_resp: Response, **untyped kwargs) -> void
+      def initialize: (http_resp: Response, error_code: String, ?metadata: Hash[Symbol, untyped], ?message: String?) -> void
 
       attr_reader http_status: Integer
 

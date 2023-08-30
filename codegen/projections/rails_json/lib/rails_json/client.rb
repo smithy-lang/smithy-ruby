@@ -304,7 +304,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::DocumentTypeOutput
     #   resp.data.string_value #=> String
-    #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.document_value #=> Hash, Array, String, Boolean, Numeric
     def document_type(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
@@ -381,7 +381,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::DocumentTypeAsPayloadOutput
-    #   resp.data.document_value #=> Hash,Array,String,Boolean,Numeric
+    #   resp.data.document_value #=> Hash, Array, String, Boolean, Numeric
     def document_type_as_payload(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new

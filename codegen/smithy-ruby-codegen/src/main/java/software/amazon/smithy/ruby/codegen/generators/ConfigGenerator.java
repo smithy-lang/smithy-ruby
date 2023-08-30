@@ -91,14 +91,11 @@ public class ConfigGenerator extends RubyGeneratorBase {
                     .openBlock("module $L", settings.getModule())
                     .openBlock("class Config < ::Struct[untyped]")
                     .write("include $T", Hearth.CONFIGURATION)
-                    .write("")
                     .call(() -> {
                         clientConfigList.forEach((clientConfig) -> {
                             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
                             String rbsType = clientConfig.getRbsType();
-                            writer
-                                    .write("attr_accessor $L (): $L", member, rbsType)
-                                    .write("");
+                            writer.write("attr_accessor $L (): $L", member, rbsType);
                         });
                     })
                     .closeBlock("end")

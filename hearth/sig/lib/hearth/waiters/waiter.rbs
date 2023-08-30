@@ -8,7 +8,7 @@ module Hearth
     class FailureStateError < WaiterFailed
     end
 
-    class MaxWaitTimeExceeded < WaiterFailed
+    class MaxWaitTimeExceededError < WaiterFailed
     end
 
     class UnexpectedError < WaiterFailed
