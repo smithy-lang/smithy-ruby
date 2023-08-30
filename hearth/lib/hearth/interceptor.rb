@@ -38,8 +38,7 @@ module Hearth
         end
       end
 
-      set_output_error(last_error, context, output)
-
+      log_last_error(last_error, context, output)
       last_error
     end
 
@@ -55,11 +54,10 @@ module Hearth
         )
       end
 
-      def set_output_error(last_error, context, output)
+      def log_last_error(last_error, context, output)
         return unless last_error && output
 
         context.logger.error(output.error) if output.error
-        output.error = last_error
       end
     end
   end

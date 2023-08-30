@@ -56,26 +56,13 @@ module Hearth
         expect(out).to be_nil
       end
 
-      it 'sets the error on output' do
-        expect(interceptor1).to receive(hook).and_raise(error)
-        expect(output).to receive(:error=).with(error)
-
-        Interceptor.apply(
-          hook: hook,
-          input: input,
-          context: context,
-          output: output
-        )
-      end
-
       context 'previous error on output' do
         let(:previous_error) { StandardError.new('previous') }
         let(:output) { double('output', error: previous_error) }
 
-        it 'sets the new error on output and logs the previous' do
+        it 'logs the previous error' do
           expect(interceptor1).to receive(hook).and_raise(error)
           expect(logger).to receive(:error).with(previous_error)
-          expect(output).to receive(:error=).with(error)
 
           Interceptor.apply(
             hook: hook,
