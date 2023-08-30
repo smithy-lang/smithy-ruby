@@ -2,6 +2,7 @@
 
 require_relative 'spec_helper'
 
+# Tests the order of middlewares within the WhiteLabelTestIntegration
 module WhiteLabel
   describe Client do
     context 'relative middleware ordering' do
