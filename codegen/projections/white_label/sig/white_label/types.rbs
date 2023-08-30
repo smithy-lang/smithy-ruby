@@ -197,11 +197,11 @@ module WhiteLabel
       attr_accessor items (): ::Array[::String]
     end
 
-    class RelativeOperationInput < ::Struct[untyped]
+    class RelativeMiddlewareOperationInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class RelativeOperationOutput < ::Struct[untyped]
+    class RelativeMiddlewareOperationOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 

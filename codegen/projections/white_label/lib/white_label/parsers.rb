@@ -146,10 +146,10 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for RelativeOperation
-    class RelativeOperation
+    # Operation Parser for RelativeMiddlewareOperation
+    class RelativeMiddlewareOperation
       def self.parse(http_resp)
-        data = Types::RelativeOperationOutput.new
+        data = Types::RelativeMiddlewareOperationOutput.new
         data
       end
     end

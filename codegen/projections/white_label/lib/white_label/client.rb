@@ -1262,31 +1262,31 @@ module WhiteLabel
 
     # @param [Hash] params
     #   Request parameters for this operation.
-    #   See {Types::RelativeOperationInput#initialize} for available parameters.
+    #   See {Types::RelativeMiddlewareOperationInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RelativeOperationOutput]
+    # @return [Types::RelativeMiddlewareOperationOutput]
     # @example Request syntax with placeholder values
-    #   resp = client.relative_operation()
+    #   resp = client.relative_middleware_operation()
     # @example Response structure
-    #   resp.data #=> Types::RelativeOperationOutput
-    def relative_operation(params = {}, options = {})
+    #   resp.data #=> Types::RelativeMiddlewareOperationOutput
+    def relative_middleware_operation(params = {}, options = {})
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::RelativeOperationInput.build(params, context: 'params')
+      input = Params::RelativeMiddlewareOperationInput.build(params, context: 'params')
       response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Validate,
-        validator: Validators::RelativeOperationInput,
+        validator: Validators::RelativeMiddlewareOperationInput,
         validate_input: config.validate_input
       )
       stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::RelativeOperation
+        builder: Builders::RelativeMiddlewareOperation
       )
       stack.use(Middleware::MidMiddleware)
       stack.use(Middleware::AfterMiddleware)
@@ -1297,7 +1297,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :relative_operation),
+        auth_params: Auth::Params.new(operation_name: :relative_middleware_operation),
         http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
@@ -1310,13 +1310,13 @@ module WhiteLabel
           success_status: 200,
           errors: []
         ),
-        data_parser: Parsers::RelativeOperation
+        data_parser: Parsers::RelativeMiddlewareOperation
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: options.fetch(:http_client, config.http_client),
         stub_error_classes: [],
-        stub_data_class: Stubs::RelativeOperation,
+        stub_data_class: Stubs::RelativeMiddlewareOperation,
         stubs: @stubs
       )
       resp = stack.run(
@@ -1326,7 +1326,7 @@ module WhiteLabel
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
-          operation_name: :relative_operation,
+          operation_name: :relative_middleware_operation,
           interceptors: config.interceptors
         )
       )

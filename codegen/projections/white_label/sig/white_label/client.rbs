@@ -31,7 +31,7 @@ module WhiteLabel
     def ordered_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
     def paginators_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
     def paginators_test_with_items: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def relative_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def relative_middleware_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
     def request_compression_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
     def request_compression_streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
     def streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)?{ (::String) -> Hearth::BlockIO }-> Hearth::Output

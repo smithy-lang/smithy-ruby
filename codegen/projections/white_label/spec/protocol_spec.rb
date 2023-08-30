@@ -105,7 +105,7 @@ module WhiteLabel
 
     end
 
-    describe '#relative_operation' do
+    describe '#relative_middleware_operation' do
 
     end
 

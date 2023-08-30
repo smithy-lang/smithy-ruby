@@ -407,13 +407,13 @@ module WhiteLabel
       end
     end
 
-    class RelativeOperation
+    class RelativeMiddlewareOperation
       def self.build(params, context:)
-        Params::RelativeOperationOutput.build(params, context: context)
+        Params::RelativeMiddlewareOperationOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::RelativeOperationOutput.validate!(output, context: context)
+        Validators::RelativeMiddlewareOperationOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])

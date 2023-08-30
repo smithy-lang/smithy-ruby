@@ -354,15 +354,15 @@ module WhiteLabel
       end
     end
 
-    class RelativeOperationInput
+    class RelativeMiddlewareOperationInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RelativeOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOperationInput, context: context)
       end
     end
 
-    class RelativeOperationOutput
+    class RelativeMiddlewareOperationOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RelativeOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOperationOutput, context: context)
       end
     end
 

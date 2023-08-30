@@ -93,7 +93,7 @@ module WhiteLabel
       end
     end
 
-    class RelativeOperation
+    class RelativeMiddlewareOperation
       def self.build(http_req, input:)
       end
     end

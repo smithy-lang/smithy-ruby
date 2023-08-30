@@ -756,7 +756,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RelativeOperationInput = ::Struct.new(
+    RelativeMiddlewareOperationInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -765,7 +765,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RelativeOperationOutput = ::Struct.new(
+    RelativeMiddlewareOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do

@@ -10,7 +10,7 @@ module WhiteLabel
          'a middleware to be set when their relative is optional' do
         config = Config.new(stub_responses: true)
         client = Client.new(config)
-        output = client.relative_operation
+        output = client.relative_middleware_operation
         expect(output.metadata[:middleware_order])
           .to eq(
             [

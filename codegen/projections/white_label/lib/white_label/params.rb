@@ -398,19 +398,19 @@ module WhiteLabel
       end
     end
 
-    module RelativeOperationInput
+    module RelativeMiddlewareOperationInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeOperationInput, context: context)
-        type = Types::RelativeOperationInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationInput, context: context)
+        type = Types::RelativeMiddlewareOperationInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    module RelativeOperationOutput
+    module RelativeMiddlewareOperationOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeOperationOutput, context: context)
-        type = Types::RelativeOperationOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationOutput, context: context)
+        type = Types::RelativeMiddlewareOperationOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
