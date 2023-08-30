@@ -159,7 +159,7 @@ public class MiddlewareBuilder {
                         order.put(middleware, order.get(relativeTo) + 1);
                     }
                 } else {
-                    resolveNullRelativeTo(relative, middleware, order);
+                    resolveMissingRelativeTo(relative, middleware, order);
                 }
             } else {
                 // Base case - middleware is not relative to anything else, use its default order.
@@ -170,7 +170,7 @@ public class MiddlewareBuilder {
         }
     }
 
-    private void resolveNullRelativeTo(Middleware.Relative relative, Middleware middleware,
+    private void resolveMissingRelativeTo(Middleware.Relative relative, Middleware middleware,
                                         Map<Middleware, Integer> order) {
         if (relative.getRelativeRequired()) {
             throw new IllegalArgumentException(middleware.getKlass()
