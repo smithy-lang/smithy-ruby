@@ -126,6 +126,14 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    class RelativeOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class RelativeOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
     class RequestCompressionOperationInput < ::Struct[untyped]
       include Hearth::Structure
     end

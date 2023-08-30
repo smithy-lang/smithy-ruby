@@ -105,6 +105,10 @@ module WhiteLabel
 
     end
 
+    describe '#relative_operation' do
+
+    end
+
     describe '#request_compression_operation' do
 
     end

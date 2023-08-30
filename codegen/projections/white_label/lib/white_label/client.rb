@@ -10,9 +10,6 @@
 require 'stringio'
 
 require_relative 'middleware/test_middleware'
-require_relative 'middleware/test_middleware'
-require_relative 'middleware/test_middleware'
-require_relative 'middleware/test_middleware'
 require_relative 'plugins/test_plugin'
 
 module WhiteLabel
@@ -127,15 +124,8 @@ module WhiteLabel
         validator: Validators::DefaultsTestInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DefaultsTest
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -209,15 +199,8 @@ module WhiteLabel
         host_prefix: "foo.",
         disable_host_prefix: config.disable_host_prefix
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -293,15 +276,8 @@ module WhiteLabel
         host_prefix: "foo.{label_member}.",
         disable_host_prefix: config.disable_host_prefix
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -371,15 +347,8 @@ module WhiteLabel
         validator: Validators::HttpApiKeyAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpApiKeyAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -449,15 +418,8 @@ module WhiteLabel
         validator: Validators::HttpBasicAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpBasicAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -527,15 +489,8 @@ module WhiteLabel
         validator: Validators::HttpBearerAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpBearerAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -605,15 +560,8 @@ module WhiteLabel
         validator: Validators::HttpDigestAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpDigestAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -825,15 +773,8 @@ module WhiteLabel
         validator: Validators::KitchenSinkInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSink
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -907,15 +848,8 @@ module WhiteLabel
         validator: Validators::MixinTestInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MixinTest
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -985,15 +919,8 @@ module WhiteLabel
         validator: Validators::NoAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NoAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1063,15 +990,8 @@ module WhiteLabel
         validator: Validators::OptionalAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OptionalAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1141,15 +1061,8 @@ module WhiteLabel
         validator: Validators::OrderedAuthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OrderedAuth
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1224,15 +1137,8 @@ module WhiteLabel
         validator: Validators::PaginatorsTestOperationInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTest
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1307,15 +1213,8 @@ module WhiteLabel
         validator: Validators::PaginatorsTestWithItemsInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTestWithItems
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1363,6 +1262,80 @@ module WhiteLabel
 
     # @param [Hash] params
     #   Request parameters for this operation.
+    #   See {Types::RelativeOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Types::RelativeOperationOutput]
+    # @example Request syntax with placeholder values
+    #   resp = client.relative_operation()
+    # @example Response structure
+    #   resp.data #=> Types::RelativeOperationOutput
+    def relative_operation(params = {}, options = {})
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::RelativeOperationInput.build(params, context: 'params')
+      response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::RelativeOperationInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::BeforeMiddleware)
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::RelativeOperation
+      )
+      stack.use(Middleware::MidMiddleware)
+      stack.use(Middleware::AfterMiddleware)
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :relative_operation),
+        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+      )
+      stack.use(Hearth::Middleware::Sign)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status: 200,
+          errors: []
+        ),
+        data_parser: Parsers::RelativeOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
+        stub_error_classes: [],
+        stub_data_class: Stubs::RelativeOperation,
+        stubs: @stubs
+      )
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: config.logger,
+          operation_name: :relative_operation,
+          interceptors: config.interceptors
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
+    #   Request parameters for this operation.
     #   See {Types::RequestCompressionOperationInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
@@ -1387,15 +1360,8 @@ module WhiteLabel
         validator: Validators::RequestCompressionOperationInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::RequestCompressionOperation
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::RequestCompression,
         streaming: false,
@@ -1474,15 +1440,8 @@ module WhiteLabel
         validator: Validators::RequestCompressionStreamingOperationInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::RequestCompressionStreamingOperation
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::RequestCompression,
         streaming: true,
@@ -1560,15 +1519,8 @@ module WhiteLabel
         validator: Validators::StreamingOperationInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1639,15 +1591,8 @@ module WhiteLabel
         validator: Validators::StreamingWithLengthInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingWithLength
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1720,15 +1665,8 @@ module WhiteLabel
         validator: Validators::WaitersTestInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::WaitersTest
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,
@@ -1804,15 +1742,8 @@ module WhiteLabel
         validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
         validate_input: config.validate_input
       )
-      stack.use(Middleware::BeforeMiddleware)
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____PaginatorsTestWithBadNames
-      )
-      stack.use(Middleware::MidMiddleware,
-        verify_before_middleware: config.verify_before_middleware
-      )
-      stack.use(Middleware::AfterMiddleware,
-        verify_mid_middleware: config.verify_mid_middleware
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Retry,

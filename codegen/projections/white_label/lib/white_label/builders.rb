@@ -93,6 +93,11 @@ module WhiteLabel
       end
     end
 
+    class RelativeOperation
+      def self.build(http_req, input:)
+      end
+    end
+
     class RequestCompressionOperation
       def self.build(http_req, input:)
         http_req.body = StringIO.new(input[:body] || '')
