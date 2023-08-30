@@ -10,7 +10,9 @@ module Hearth
 
         MODIFY_BEFORE_SERIALIZATION = :modify_before_serialization,
         READ_BEFORE_SERIALIZATION = :read_before_serialization,
+        READ_AFTER_SERIALIZATION = :read_after_serialization,
 
+        MODIFY_BEFORE_RETRY_LOOP = :modify_before_retry_loop,
         READ_BEFORE_ATTEMPT = :read_before_attempt,
         MODIFY_BEFORE_ATTEMPT_COMPLETION = :modify_before_attempt_completion,
         READ_AFTER_ATTEMPT = :read_after_attempt,

@@ -30,21 +30,23 @@ module Hearth
             @app.call(input, context)
           end
 
-        Interceptor.apply(
+        interceptor_error = Interceptor.apply(
           hook: Interceptor::Hooks::MODIFY_BEFORE_COMPLETION,
           input: input,
           context: context,
           output: output,
           aggregate_errors: false
         )
+        output.error = interceptor_error if interceptor_error
 
-        Interceptor.apply(
+        interceptor_error = Interceptor.apply(
           hook: Interceptor::Hooks::READ_AFTER_EXECUTION,
           input: input,
           context: context,
           output: output,
           aggregate_errors: true
         )
+        output.error = interceptor_error if interceptor_error
 
         output
       end

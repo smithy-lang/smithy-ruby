@@ -3,9 +3,9 @@
 module Hearth
   module Middleware
     describe Initialize do
-      let(:app) { double('app') }
+      let(:app) { double('app', call: output) }
       let(:input) { double('Type::OperationInput') }
-
+      let(:output) { Hearth::Output.new }
       let(:request) { double('request') }
       let(:response) { double('response') }
       let(:interceptors) { double('interceptors', each: []) }
@@ -49,8 +49,9 @@ module Hearth
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
                       hook: Interceptor::Hooks::READ_BEFORE_EXECUTION
-                    ))
-              .and_return(interceptor_error)
+                    )).and_return(interceptor_error)
+
+            expect(app).not_to receive(:call)
 
             expect(Interceptor).to receive(:apply)
               .with(hash_including(
@@ -60,10 +61,59 @@ module Hearth
               .with(hash_including(
                       hook: Interceptor::Hooks::READ_AFTER_EXECUTION
                     ))
-            expect(app).not_to receive(:call)
 
-            output = subject.call(input, context)
-            expect(output.error).to eq(interceptor_error)
+            out = subject.call(input, context)
+            expect(out.error).to eq(interceptor_error)
+          end
+        end
+
+        context 'modify_before_completion error' do
+          let(:interceptor_error) { StandardError.new }
+
+          it 'calls all interceptor hooks and app without replacing output' do
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_BEFORE_EXECUTION
+                    ))
+
+            expect(app).to receive(:call)
+
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_COMPLETION
+                    )).and_return(interceptor_error)
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_AFTER_EXECUTION
+                    ))
+
+            out = subject.call(input, context)
+            expect(out).to be output
+          end
+        end
+
+        context 'read_after_execution error' do
+          let(:interceptor_error) { StandardError.new }
+
+          it 'calls all interceptor hooks and app without replacing output' do
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_BEFORE_EXECUTION
+                    ))
+
+            expect(app).to receive(:call)
+
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::MODIFY_BEFORE_COMPLETION
+                    ))
+            expect(Interceptor).to receive(:apply)
+              .with(hash_including(
+                      hook: Interceptor::Hooks::READ_AFTER_EXECUTION
+                    )).and_return(interceptor_error)
+
+            out = subject.call(input, context)
+            expect(out).to be output
           end
         end
       end

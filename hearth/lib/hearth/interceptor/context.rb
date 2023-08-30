@@ -8,7 +8,7 @@ module Hearth
       # @param [Hearth::Request] request
       # @param [Hearth::Response] response
       # @param [Hearth::Output] output
-      # @param [Hash] attributes ({}) additional interceptor data
+      # @param [Hash] attributes ({}) Additional interceptor data
       def initialize(input:, request:, response:, output:, attributes: {})
         @input = input
         @request = request
@@ -26,10 +26,10 @@ module Hearth
       # @return [Hearth::Response]
       attr_reader :response
 
-      # @return [Hearth::Output] only available to hooks after transmit
+      # @return [Hearth::Output] Operation output
       attr_reader :output
 
-      # @return [Hash] attributes additional interceptor data
+      # @return [Hash] attributes Additional interceptor data
       attr_reader :attributes
     end
   end

@@ -41,7 +41,7 @@ module Hearth
           input: input,
           context: context,
           output: output,
-          aggregate_errors: true
+          aggregate_errors: false
         )
         if interceptor_error
           output.error = interceptor_error
@@ -56,7 +56,7 @@ module Hearth
           input: input,
           context: context,
           output: output,
-          aggregate_errors: true
+          aggregate_errors: false
         )
         output.error = interceptor_error if interceptor_error
 

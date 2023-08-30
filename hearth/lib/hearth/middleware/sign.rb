@@ -28,7 +28,7 @@ module Hearth
           input: input,
           context: context,
           output: nil,
-          aggregate_errors: true
+          aggregate_errors: false
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
@@ -40,7 +40,7 @@ module Hearth
           input: input,
           context: context,
           output: output,
-          aggregate_errors: true
+          aggregate_errors: false
         )
         output.error = interceptor_error if interceptor_error
 

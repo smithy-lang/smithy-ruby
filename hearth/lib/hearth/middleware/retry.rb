@@ -24,6 +24,15 @@ module Hearth
       end
 
       def call(input, context)
+        interceptor_error = Interceptor.apply(
+          hook: Interceptor::Hooks::MODIFY_BEFORE_RETRY_LOOP,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: false
+        )
+        return Hearth::Output.new(error: interceptor_error) if interceptor_error
+
         token = @retry_strategy.acquire_initial_retry_token(
           context.metadata[:retry_token_scope]
         )
@@ -35,8 +44,9 @@ module Hearth
             input: input,
             context: context,
             output: nil,
-            aggregate_errors: false
+            aggregate_errors: true
           )
+
           output =
             if interceptor_error
               Hearth::Output.new(error: interceptor_error)
@@ -44,32 +54,34 @@ module Hearth
               @app.call(input, context)
             end
 
-          if (error = output.error)
-            error_info = @error_inspector_class.new(error, context.response)
-            token = @retry_strategy.refresh_retry_token(token, error_info)
-
-            Kernel.sleep(token.retry_delay) if token
-          else
-            @retry_strategy.record_success(token)
-          end
-
-          Interceptor.apply(
+          interceptor_error = Interceptor.apply(
             hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION,
             input: input,
             context: context,
             output: output,
             aggregate_errors: false
           )
+          output.error = interceptor_error if interceptor_error
 
-          Interceptor.apply(
+          interceptor_error = Interceptor.apply(
             hook: Interceptor::Hooks::READ_AFTER_ATTEMPT,
             input: input,
             context: context,
             output: output,
             aggregate_errors: true
           )
+          output.error = interceptor_error if interceptor_error
 
-          break unless token && output.error
+          if (error = output.error)
+            error_info = @error_inspector_class.new(error, context.response)
+            token = @retry_strategy.refresh_retry_token(token, error_info)
+            break unless token
+
+            Kernel.sleep(token.retry_delay)
+          else
+            @retry_strategy.record_success(token)
+            break
+          end
 
           reset_request(context)
           reset_response(context, output)

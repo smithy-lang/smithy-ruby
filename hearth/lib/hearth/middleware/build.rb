@@ -32,11 +32,21 @@ module Hearth
           input: input,
           context: context,
           output: nil,
-          aggregate_errors: true
+          aggregate_errors: false
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
         @builder.build(context.request, input: input)
+
+        interceptor_error = Interceptor.apply(
+          hook: Interceptor::Hooks::READ_AFTER_SERIALIZATION,
+          input: input,
+          context: context,
+          output: nil,
+          aggregate_errors: false
+        )
+        return Hearth::Output.new(error: interceptor_error) if interceptor_error
+
         @app.call(input, context)
       end
     end
