@@ -398,6 +398,24 @@ module WhiteLabel
       end
     end
 
+    module RelativeMiddlewareOperationInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationInput, context: context)
+        type = Types::RelativeMiddlewareOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module RelativeMiddlewareOperationOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationOutput, context: context)
+        type = Types::RelativeMiddlewareOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
     module RequestCompressionOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationInput, context: context)

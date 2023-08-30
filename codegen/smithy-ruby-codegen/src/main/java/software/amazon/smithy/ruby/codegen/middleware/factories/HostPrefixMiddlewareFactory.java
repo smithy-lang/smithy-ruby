@@ -45,10 +45,10 @@ public final class HostPrefixMiddlewareFactory {
         return Middleware.builder()
                 .klass("Hearth::Middleware::HostPrefix")
                 .step(MiddlewareStackStep.BUILD)
-                .relative(new Middleware.Relative(
-                        Middleware.Relative.Type.BEFORE, Hearth.BUILD_MIDDLEWARE)
-                )
                 .addConfig(disableHostPrefix)
+                .relative(Middleware.Relative.builder()
+                        .before(Hearth.BUILD_MIDDLEWARE)
+                        .build())
                 .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();

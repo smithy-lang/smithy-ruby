@@ -66,7 +66,6 @@ public final class Middleware {
     private final RenderAdd renderAdd;
     private final WriteAdditionalFiles writeAdditionalFiles;
 
-
     // params could include any Ruby code
     private Middleware(Builder builder) {
         this.klass = builder.klass;
@@ -141,7 +140,7 @@ public final class Middleware {
      * @param model     model
      * @param service   service to test for
      * @param operation operation in the service to test for
-     * @return true if this midldeware should be included for this operation/service
+     * @return true if this middleware should be included for this operation/service
      */
     public boolean includeFor(Model model, ServiceShape service,
                               OperationShape operation) {
@@ -509,31 +508,138 @@ public final class Middleware {
         }
     }
 
+    /**
+     * Class representing a relative middleware.
+     * A Middleware may specify a relative middleware
+     * to happen either BEFORE or AFTER the middleware.
+     * Middleware may only specify ONE relative
+     * ordering constraint.
+     */
     public static class Relative {
         private final Type type;
         private final String to;
+        private final boolean relativeRequired;
 
-        public Relative(Type type, String to) {
-            this.type = type;
-            this.to = to;
+        public Relative(Builder builder) {
+            this.type = builder.type;
+            this.to = builder.to;
+            this.relativeRequired = builder.relativeRequired;
         }
 
-        public Relative(Type type, Symbol to) {
-            this(type, to.toString());
+        public static Builder builder() {
+            return new Builder();
         }
 
+        /**
+         * @return the Type, can be either BEFORE or AFTER.
+         */
         public Type getType() {
             return type;
         }
 
+        /**
+         * @return the To, the referenced relative middleware.
+         */
         public String getTo() {
             return to;
         }
 
+        /**
+         * @return true if the relative middleware is required.
+         * Set true as default.
+         */
+        public boolean getRelativeRequired() {
+            return relativeRequired;
+        }
+
+        /**
+         * Builder for Relative.
+         */
+        public static class Builder implements SmithyBuilder<Relative> {
+            private Type type;
+            private String to;
+            private boolean relativeRequired = true;
+
+            /**
+             * Middleware to be set BEFORE the relative
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder before(String to) {
+                this.to = to;
+                this.type = Type.BEFORE;
+                return this;
+            }
+
+            /**
+             * Middleware to be set BEFORE the relative
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder before(Symbol to) {
+                this.to = to.toString();
+                this.type = Type.BEFORE;
+                return this;
+            }
+
+            /**
+             * Middleware to be set AFTER the relative
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder after(String to) {
+                this.to = to;
+                this.type = Type.AFTER;
+                return this;
+            }
+
+            /**
+             * Middleware to be set AFTER the relative
+             * middleware in the middleware stack order.
+             *
+             * @param to the Ruby class of the middleware
+             * @return this builder
+             */
+            public Builder after(Symbol to) {
+                this.to = to.toString();
+                this.type = Type.AFTER;
+                return this;
+            }
+
+            /**
+             * Sets the relative middleware to be optional.
+             * Should the relative middleware not be found in the
+             * stack, the ordering will proceed as normal.
+             *
+             * @return this builder
+             */
+            public Builder optional() {
+                this.relativeRequired = false;
+                return this;
+            }
+
+            public Relative build() {
+                return new Relative(this);
+            }
+        }
+
+        /**
+         * Converts symbol into a string.
+         */
         public String toString() {
             return type + " " + to;
         }
 
+        /**
+         * Represents the corresponding order between the
+         * middleware and its relative middleware.
+         */
         public enum Type {
             BEFORE,
             AFTER

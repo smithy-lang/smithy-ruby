@@ -407,6 +407,26 @@ module WhiteLabel
       end
     end
 
+    class RelativeMiddlewareOperation
+      def self.build(params, context:)
+        Params::RelativeMiddlewareOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::RelativeMiddlewareOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class RequestCompressionOperation
       def self.build(params, context:)
         Params::RequestCompressionOperationOutput.build(params, context: context)

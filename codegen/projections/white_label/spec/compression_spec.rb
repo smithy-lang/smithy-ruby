@@ -85,6 +85,28 @@ module WhiteLabel
           { body: streaming_input }, interceptors: [interceptor]
         )
       end
+
+      it 'compresses the streaming pipe body' do
+        raw_body = 'a' * 10_241
+        rd, wr = IO.pipe
+        wr.write(raw_body)
+        wr.close
+        interceptor = before_send.new do |context|
+          expect(context.request.headers['Content-Encoding']).to eq('gzip')
+          # capture the body by reading it into a new IO object
+          body = StringIO.new
+          # IO.copy_stream is the same method used by Net::Http
+          # to write our body to the socket
+          IO.copy_stream(context.request.body, body)
+          body.rewind
+          uncompressed = Zlib::GzipReader.new(body)
+          expect(uncompressed.read).to eq(raw_body)
+        end
+        client.request_compression_streaming_operation(
+          { body: rd }, interceptors: [interceptor]
+        )
+        rd.close
+      end
     end
   end
 end
