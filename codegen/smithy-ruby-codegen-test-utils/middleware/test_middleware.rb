@@ -24,39 +24,43 @@ module Middleware
     end
 
     def call(input, context)
-      context.metadata[:before_middleware] = true
-      @app.call(input, context)
+      context.metadata[:middleware_order] ||= []
+      context.metadata[:middleware_order] << 1
+      output = @app.call(input, context)
+      output.metadata[:middleware_order] = context.metadata[:middleware_order]
+      output
     end
   end
 
   # Middleware used to test relative middleware ordering -
-  # checks the 'BEFORE' middleware and an optional case
-  # when a relative middleware is not required
+  # tests a case when a relative middleware is not required
   class MidMiddleware
-    def initialize(app, verify_in_mid:)
+    def initialize(app)
       @app = app
-      @verify_in_mid = verify_in_mid
     end
 
     def call(input, context)
-      @verify_in_mid&.call(context.metadata)
-      context.metadata[:mid_middleware] = true
-      @app.call(input, context)
+      context.metadata[:middleware_order] ||= []
+      context.metadata[:middleware_order] << 2
+      output = @app.call(input, context)
+      output.metadata[:middleware_order] = context.metadata[:middleware_order]
+      output
     end
   end
 
   # Middleware used to test relative middleware ordering -
-  # this is for 'AFTER' type testing and verifies
-  # the existence of the mid middleware
+  # this is for 'AFTER' type testing
   class AfterMiddleware
-    def initialize(app, verify_in_after:)
+    def initialize(app)
       @app = app
-      @verify_in_after = verify_in_after
     end
 
     def call(input, context)
-      @verify_in_after&.call(context.metadata)
-      @app.call(input, context)
+      context.metadata[:middleware_order] ||= []
+      context.metadata[:middleware_order] << 3
+      output = @app.call(input, context)
+      output.metadata[:middleware_order] = context.metadata[:middleware_order]
+      output
     end
   end
 end
