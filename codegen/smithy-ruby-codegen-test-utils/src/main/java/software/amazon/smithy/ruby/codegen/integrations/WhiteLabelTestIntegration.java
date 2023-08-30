@@ -55,7 +55,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
                 .build();
         Middleware beforeMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("RelativeOperation")
+                .appliesOnlyToOperations("RelativeMiddlewareOperation")
                 .klass("Middleware::BeforeMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
@@ -64,7 +64,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
                 .build();
         Middleware midMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("RelativeOperation")
+                .appliesOnlyToOperations("RelativeMiddlewareOperation")
                 .klass("Middleware::MidMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
@@ -74,7 +74,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
                 .build();
         Middleware afterMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("RelativeOperation")
+                .appliesOnlyToOperations("RelativeMiddlewareOperation")
                 .klass("Middleware::AfterMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
