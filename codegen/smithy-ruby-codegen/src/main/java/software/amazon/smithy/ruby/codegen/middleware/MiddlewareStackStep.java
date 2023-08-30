@@ -30,7 +30,7 @@ public enum MiddlewareStackStep {
     BUILD,
     AFTER_BUILD,
     RETRY,
-    FINALIZE,
+    SIGN,
     PARSE,
     SEND;
 
@@ -49,8 +49,8 @@ public enum MiddlewareStackStep {
                 return "AfterBuild";
             case PARSE:
                 return "Parse";
-            case FINALIZE:
-                return "Finalize";
+            case SIGN:
+                return "Sign";
             case SEND:
                 return "Send";
             default:

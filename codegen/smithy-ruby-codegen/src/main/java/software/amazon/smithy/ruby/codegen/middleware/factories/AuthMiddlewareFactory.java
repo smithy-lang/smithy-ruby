@@ -92,7 +92,7 @@ public final class AuthMiddlewareFactory {
 
         Middleware.Builder authBuilder = Middleware.builder()
                 .klass(Hearth.AUTH_MIDDLEWARE)
-                .step(MiddlewareStackStep.FINALIZE)
+                .step(MiddlewareStackStep.SIGN)
                 .addConfig(authResolver)
                 .addConfig(authSchemes)
                 .operationParams((ctx, operation) -> {

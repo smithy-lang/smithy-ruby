@@ -27,7 +27,7 @@ public final class SignMiddlewareFactory {
     public static Middleware build(GenerationContext context) {
         return Middleware.builder()
                 .klass(Hearth.SIGN_MIDDLEWARE)
-                .step(MiddlewareStackStep.FINALIZE)
+                .step(MiddlewareStackStep.SIGN)
                 .build();
     }
 }
