@@ -24,10 +24,8 @@ module Middleware
     end
 
     def call(input, context)
-      context.metadata[:middleware_order] ||= []
-      context.metadata[:middleware_order] << 1
       output = @app.call(input, context)
-      output.metadata[:middleware_order] = context.metadata[:middleware_order]
+      output.metadata[:middleware_order].unshift(self.class)
       output
     end
   end
@@ -40,10 +38,8 @@ module Middleware
     end
 
     def call(input, context)
-      context.metadata[:middleware_order] ||= []
-      context.metadata[:middleware_order] << 2
       output = @app.call(input, context)
-      output.metadata[:middleware_order] = context.metadata[:middleware_order]
+      output.metadata[:middleware_order].unshift(self.class)
       output
     end
   end
@@ -56,10 +52,8 @@ module Middleware
     end
 
     def call(input, context)
-      context.metadata[:middleware_order] ||= []
-      context.metadata[:middleware_order] << 3
       output = @app.call(input, context)
-      output.metadata[:middleware_order] = context.metadata[:middleware_order]
+      output.metadata[:middleware_order] = [self.class]
       output
     end
   end

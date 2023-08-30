@@ -11,7 +11,14 @@ module WhiteLabel
         config = Config.new(stub_responses: true)
         client = Client.new(config)
         output = client.relative_operation
-        expect(output.metadata[:middleware_order]).to eq([1, 2, 3])
+        expect(output.metadata[:middleware_order])
+          .to eq(
+            [
+              WhiteLabel::Middleware::BeforeMiddleware,
+              WhiteLabel::Middleware::MidMiddleware,
+              WhiteLabel::Middleware::AfterMiddleware
+            ]
+          )
       end
     end
   end
