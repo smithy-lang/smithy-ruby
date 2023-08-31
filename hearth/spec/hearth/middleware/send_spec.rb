@@ -96,11 +96,11 @@ module Hearth
         it 'calls all of the interceptor hooks' do
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::MODIFY_BEFORE_TRANSMIT
+                    hook: Interceptor::MODIFY_BEFORE_TRANSMIT
                   )).ordered
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::READ_BEFORE_TRANSMIT
+                    hook: Interceptor::READ_BEFORE_TRANSMIT
                   )).ordered
 
           expect(client).to receive(:transmit)
@@ -108,7 +108,7 @@ module Hearth
 
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::READ_AFTER_TRANSMIT
+                    hook: Interceptor::READ_AFTER_TRANSMIT
                   )).ordered
 
           subject.call(input, context)
@@ -120,7 +120,7 @@ module Hearth
           it 'returns output with the error and does not call app' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_TRANSMIT
+                      hook: Interceptor::MODIFY_BEFORE_TRANSMIT
                     )).and_return(interceptor_error)
             expect(app).not_to receive(:call)
 
@@ -135,11 +135,11 @@ module Hearth
           it 'returns output with the error and does not call app' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_TRANSMIT
+                      hook: Interceptor::MODIFY_BEFORE_TRANSMIT
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_TRANSMIT
+                      hook: Interceptor::READ_BEFORE_TRANSMIT
                     )).and_return(interceptor_error)
 
             expect(client).not_to receive(:transmit)
@@ -155,11 +155,11 @@ module Hearth
           it 'returns output with the error and calls app' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_TRANSMIT
+                      hook: Interceptor::MODIFY_BEFORE_TRANSMIT
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_TRANSMIT
+                      hook: Interceptor::READ_BEFORE_TRANSMIT
                     ))
 
             expect(Output).to receive(:new).and_return(output)
@@ -167,7 +167,7 @@ module Hearth
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_TRANSMIT
+                      hook: Interceptor::READ_AFTER_TRANSMIT
                     )).and_return(interceptor_error)
 
             out = subject.call(input, context)

@@ -15,7 +15,7 @@ module Hearth
       # @return [Output]
       def call(input, context)
         interceptor_error = Interceptors.invoke(
-          hook: Interceptors::MODIFY_BEFORE_SIGNING,
+          hook: Interceptor::MODIFY_BEFORE_SIGNING,
           input: input,
           context: context,
           output: nil,
@@ -24,7 +24,7 @@ module Hearth
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
         interceptor_error = Interceptors.invoke(
-          hook: Interceptors::READ_BEFORE_SIGNING,
+          hook: Interceptor::READ_BEFORE_SIGNING,
           input: input,
           context: context,
           output: nil,
@@ -36,7 +36,7 @@ module Hearth
         output = @app.call(input, context)
 
         interceptor_error = Interceptors.invoke(
-          hook: Interceptors::READ_AFTER_SIGNING,
+          hook: Interceptor::READ_AFTER_SIGNING,
           input: input,
           context: context,
           output: output,

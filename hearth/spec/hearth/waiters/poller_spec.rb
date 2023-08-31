@@ -44,14 +44,11 @@ module Hearth
       end
 
       before do
-        expect(Hearth::Waiters::Poller::InputOutputInterceptor)
-          .to receive(:new).and_wrap_original do |method, *args, &block|
+        expect(Hearth::Interceptor).to receive(:new)
+          .and_wrap_original do |method, *args, &block|
           # satisfy test coverage
           instance = method.call(*args, &block)
           instance.read_before_transmit(interceptor_context)
-
-          # captures input for inputOutput matcher
-          block.call(interceptor_context)
 
           # return a mocked interceptor
           input_output_interceptor

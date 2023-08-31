@@ -2,13 +2,9 @@
 
 module Hearth
   describe InterceptorList do
-    let(:interceptor_class) do
-      Class.new(Interceptor) do
-        def read_before_execution(_ctx); end
-      end
+    let(:interceptor) do
+      Interceptor.new(read_before_execution: proc { |_context| })
     end
-
-    let(:interceptor) { interceptor_class.new }
 
     it 'is enumerable' do
       expect(InterceptorList).to include(Enumerable)
@@ -35,18 +31,10 @@ module Hearth
         expect(subject.to_a).to eq([interceptor])
       end
 
-      context 'not an Interceptor' do
-        let(:invalid_interceptor_class) do
-          Class.new do
-            def read_before_execution(_ctx); end
-          end
-        end
-
-        it 'raises an argument error' do
-          expect do
-            subject.append(invalid_interceptor_class.new)
-          end.to raise_error(ArgumentError)
-        end
+      it 'raises when interceptor does not implement hook methods' do
+        expect do
+          subject.append(Interceptor.new(foo: proc { |_context| }))
+        end.to raise_error(ArgumentError, /Invalid interceptor/)
       end
     end
 

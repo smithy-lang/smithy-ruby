@@ -25,7 +25,7 @@ module Hearth
 
       def call(input, context)
         interceptor_error = Interceptors.invoke(
-          hook: Interceptors::MODIFY_BEFORE_RETRY_LOOP,
+          hook: Interceptor::MODIFY_BEFORE_RETRY_LOOP,
           input: input,
           context: context,
           output: nil,
@@ -40,7 +40,7 @@ module Hearth
         output = nil
         loop do
           interceptor_error = Interceptors.invoke(
-            hook: Interceptors::READ_BEFORE_ATTEMPT,
+            hook: Interceptor::READ_BEFORE_ATTEMPT,
             input: input,
             context: context,
             output: nil,
@@ -55,7 +55,7 @@ module Hearth
             end
 
           interceptor_error = Interceptors.invoke(
-            hook: Interceptors::MODIFY_BEFORE_ATTEMPT_COMPLETION,
+            hook: Interceptor::MODIFY_BEFORE_ATTEMPT_COMPLETION,
             input: input,
             context: context,
             output: output,
@@ -64,7 +64,7 @@ module Hearth
           output.error = interceptor_error if interceptor_error
 
           interceptor_error = Interceptors.invoke(
-            hook: Interceptors::READ_AFTER_ATTEMPT,
+            hook: Interceptor::READ_AFTER_ATTEMPT,
             input: input,
             context: context,
             output: output,

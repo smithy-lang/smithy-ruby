@@ -21,29 +21,6 @@ module WhiteLabel
     end
 
     let(:client) { Client.new(config) }
-    let(:before_send) do
-      Class.new(Hearth::Interceptor) do
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_before_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
-
-    let(:after_send) do
-      Class.new(Hearth::Interceptor) do
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_after_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
 
     describe '#operation____paginators_test_with_bad_names' do
 

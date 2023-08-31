@@ -40,16 +40,16 @@ module Hearth
         it 'calls all of the interceptor hooks and the app' do
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::MODIFY_BEFORE_SERIALIZATION
+                    hook: Interceptor::MODIFY_BEFORE_SERIALIZATION
                   )).ordered
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::READ_BEFORE_SERIALIZATION
+                    hook: Interceptor::READ_BEFORE_SERIALIZATION
                   )).ordered
           expect(builder).to receive(:build).ordered
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::READ_AFTER_SERIALIZATION
+                    hook: Interceptor::READ_AFTER_SERIALIZATION
                   )).ordered
           expect(app).to receive(:call).ordered
           subject.call(input, context)
@@ -61,7 +61,7 @@ module Hearth
           it 'returns output with the error and skips build' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_SERIALIZATION
+                      hook: Interceptor::MODIFY_BEFORE_SERIALIZATION
                     ))
               .and_return(interceptor_error)
 
@@ -79,11 +79,11 @@ module Hearth
           it 'returns output with the error and skips build' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_SERIALIZATION
+                      hook: Interceptor::MODIFY_BEFORE_SERIALIZATION
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_SERIALIZATION
+                      hook: Interceptor::READ_BEFORE_SERIALIZATION
                     ))
               .and_return(interceptor_error)
             expect(builder).not_to receive(:build)
@@ -100,16 +100,16 @@ module Hearth
           it 'returns output with the error and skips the app' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_SERIALIZATION
+                      hook: Interceptor::MODIFY_BEFORE_SERIALIZATION
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_SERIALIZATION
+                      hook: Interceptor::READ_BEFORE_SERIALIZATION
                     ))
             expect(builder).to receive(:build)
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_SERIALIZATION
+                      hook: Interceptor::READ_AFTER_SERIALIZATION
                     ))
               .and_return(interceptor_error)
             expect(app).not_to receive(:call)

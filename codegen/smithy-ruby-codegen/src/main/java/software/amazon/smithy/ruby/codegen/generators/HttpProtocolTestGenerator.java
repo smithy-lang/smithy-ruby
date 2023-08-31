@@ -99,8 +99,6 @@ public class HttpProtocolTestGenerator {
                 .closeBlock("end")
                 .write("")
                 .write("let(:client) { Client.new(config) }")
-                .call(() -> renderInterceptorClasses())
-                .write("")
                 .call(() -> renderTests())
                 .closeBlock("end")
                 .closeBlock("end");
@@ -181,6 +179,7 @@ public class HttpProtocolTestGenerator {
                     .openBlock("it 'stubs $L'$L do", testCase.getId(),
                             skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubInterceptor(testCase))
+                    .write("interceptor = $T.new(read_after_transmit: proc)", Hearth.INTERCEPTOR)
                     .call(() -> renderSkipBuild(operation))
                     .write("client.stub_responses(:$L, data: $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
@@ -222,6 +221,7 @@ public class HttpProtocolTestGenerator {
                         }
                     })
                     .call(() -> renderRequestInterceptor(testCase))
+                    .write("interceptor = $T.new(read_before_transmit: proc)", Hearth.INTERCEPTOR)
                     .write("opts = {interceptors: [interceptor]}")
                     .call(() -> {
                         if (testCase.getHost().isPresent()) {
@@ -386,7 +386,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderRequestInterceptor(HttpRequestTestCase testCase) {
         writer
-                .openBlock("interceptor = before_send.new do |context|")
+                .openBlock("proc = proc do |context|")
                 .write("request = context.request")
                 .write("expect(request.http_method).to eq('$L')", testCase.getMethod())
                 .call(() -> renderRequestInterceptorHost(testCase.getResolvedHost()))
@@ -501,7 +501,7 @@ public class HttpProtocolTestGenerator {
 
     private void renderResponseStubInterceptor(HttpResponseTestCase testCase) {
         writer
-                .openBlock("interceptor = after_send.new do |context|")
+                .openBlock("proc = proc do |context|")
                 .write("expect(context.response.status).to eq($L)", testCase.getCode())
                 .closeBlock("end");
     }
@@ -519,33 +519,5 @@ public class HttpProtocolTestGenerator {
                 .write("output.data.$L.rewind", memberName)
                 .write("output.data.$1L = output.data.$1L.read", memberName)
                 .write("output.data.$1L = nil if output.data.$1L.empty?", memberName);
-    }
-
-    private void renderInterceptorClasses() {
-        writer
-                .openBlock("let(:before_send) do")
-                .openBlock("Class.new(Hearth::Interceptor) do")
-                .openBlock("def initialize(&block)")
-                .write("@block = block")
-                .closeBlock("end")
-                .write("")
-                .openBlock("def read_before_transmit(context)")
-                .write("@block.call(context)")
-                .closeBlock("end")
-                .closeBlock("end")
-                .closeBlock("end\n");
-
-        writer
-                .openBlock("let(:after_send) do")
-                .openBlock("Class.new(Hearth::Interceptor) do")
-                .openBlock("def initialize(&block)")
-                .write("@block = block")
-                .closeBlock("end")
-                .write("")
-                .openBlock("def read_after_transmit(context)")
-                .write("@block.call(context)")
-                .closeBlock("end")
-                .closeBlock("end")
-                .closeBlock("end");
     }
 }

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module Hearth
-  # A list of {Interceptor}s.
+  # A list of {Interceptor}s or classes that respond to Interceptor
+  # hook methods.
   class InterceptorList
     include Enumerable
 
@@ -13,15 +14,17 @@ module Hearth
 
     # @param [Interceptor] interceptor
     def append(interceptor)
-      unless interceptor.is_a?(Interceptor)
-        raise ArgumentError, "Expected #{interceptor} to be an Interceptor"
+      unless valid_interceptor?(interceptor)
+        raise ArgumentError,
+              'Invalid interceptor - must respond to any of: ' \
+              "#{Interceptor.hooks.join(', ')}"
       end
 
       @interceptors << interceptor
     end
     alias << append
 
-    # @param [Enumerable] other
+    # @param [InterceptorList] other
     # @return [InterceptorList] self
     def concat(other)
       other.each { |i| append(i) }
@@ -34,6 +37,12 @@ module Hearth
 
     def each(&block)
       @interceptors.each(&block)
+    end
+
+    private
+
+    def valid_interceptor?(interceptor)
+      !(interceptor.methods & Interceptor.hooks).empty?
     end
   end
 end

@@ -717,7 +717,7 @@ module HighScoreService
 
       config = @config.dup
       Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
-      config.interceptors.concat(options[:interceptors]) if options[:interceptors]
+      config.interceptors.concat(Hearth::InterceptorList.new(options[:interceptors])) if options[:interceptors]
       config.freeze
     end
   end

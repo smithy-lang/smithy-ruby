@@ -7,32 +7,6 @@ module WhiteLabel
     let(:config) { Config.new(stub_responses: true) }
     let(:client) { Client.new(config) }
 
-    let(:before_send) do
-      Class.new(Hearth::Interceptor) do
-        def initialize(&block)
-          @block = block
-          super
-        end
-
-        def read_before_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
-
-    let(:after_send) do
-      Class.new(Hearth::Interceptor) do
-        def initialize(&block)
-          @block = block
-          super
-        end
-
-        def read_after_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
-
     describe '#streaming_operation' do
       let(:output) { 'test' }
 
@@ -92,10 +66,12 @@ module WhiteLabel
         let(:output_stream) { double('OutputStream') }
 
         it 'copies the stub to the output stream' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.body).to be(output_stream)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           expect(output_stream).to receive(:write).with(output).and_return(0)
+
           client.streaming_operation(
             {},
             output_stream: output_stream,
@@ -116,10 +92,12 @@ module WhiteLabel
       context 'builders' do
         it 'sets the body to the streaming member' do
           streaming_input = StringIO.new('test')
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             expect(context.request.body).to be(streaming_input)
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           expect(streaming_input).not_to receive(:read)
+
           client.streaming_operation(
             { stream: streaming_input },
             interceptors: [interceptor]
@@ -128,13 +106,15 @@ module WhiteLabel
 
         it 'sets Transfer-Encoding and does not set content length' do
           streaming_input = StringIO.new('test')
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             expect(context.request.headers['Transfer-Encoding'])
               .to eq('chunked')
             expect(context.request.fields.key?('Content-Length'))
               .to eq(false)
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           expect(streaming_input).not_to receive(:size)
+
           client.streaming_operation(
             { stream: streaming_input },
             interceptors: [interceptor]
@@ -147,12 +127,14 @@ module WhiteLabel
       let(:data) { 'test' }
 
       it 'sets content-length and does not set Transfer-Encoding' do
-        interceptor = before_send.new do |context|
+        proc = proc do |context|
           expect(context.request.headers['Content-Length'])
             .to eq(data.length.to_s)
           expect(context.request.fields.key?('Transfer-Encoding'))
             .to eq(false)
         end
+        interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+
         client.streaming_with_length(
           { stream: data },
           interceptors: [interceptor]

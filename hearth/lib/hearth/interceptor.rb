@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
+  # # Interceptors
   # Interceptors are a generic extension point that allows injecting
   # logic at specific stages of execution within the SDK. Logic injection
   # is done with hooks that the interceptor implements.
@@ -10,6 +11,7 @@ module Hearth
   # transport request, transport response or output messages.
   # Read/write hooks allow an interceptor to modify one of these messages.
   #
+  # # Creating an Interceptor
   # To create an Interceptor, you must create a class that inherits
   # from this class and implement the hooks you want to use. Then,
   # pass an instance of your interceptor to the {InterceptorList}
@@ -33,6 +35,65 @@ module Hearth
   #    #=> "After execution"
   #
   class Interceptor
+    # @api private
+    @hooks = [
+      READ_BEFORE_EXECUTION = :read_before_execution,
+      MODIFY_BEFORE_SERIALIZATION = :modify_before_serialization,
+      READ_BEFORE_SERIALIZATION = :read_before_serialization,
+      READ_AFTER_SERIALIZATION = :read_after_serialization,
+      MODIFY_BEFORE_RETRY_LOOP = :modify_before_retry_loop,
+      READ_BEFORE_ATTEMPT = :read_before_attempt,
+      MODIFY_BEFORE_ATTEMPT_COMPLETION = :modify_before_attempt_completion,
+      READ_AFTER_ATTEMPT = :read_after_attempt,
+      MODIFY_BEFORE_SIGNING = :modify_before_signing,
+      READ_BEFORE_SIGNING = :read_before_signing,
+      READ_AFTER_SIGNING = :read_after_signing,
+      MODIFY_BEFORE_TRANSMIT = :modify_before_transmit,
+      READ_BEFORE_TRANSMIT = :read_before_transmit,
+      READ_AFTER_TRANSMIT = :read_after_transmit,
+      MODIFY_BEFORE_DESERIALIZATION = :modify_before_deserialization,
+      READ_BEFORE_DESERIALIZATION = :read_before_deserialization,
+      READ_AFTER_DESERIALIZATION = :read_after_deserialization,
+      MODIFY_BEFORE_COMPLETION = :modify_before_completion,
+      READ_AFTER_EXECUTION = :read_after_execution
+    ]
+
+    # @param [Hash<Symbol, Proc>] callbacks
+    #   A hash of hook names to callbacks. The callbacks will be invoked
+    #   when the hook is called. The callback will be passed the
+    #   {InterceptorContext} for the current execution.
+    def initialize(callbacks = {})
+      @callbacks = {}
+
+      Interceptor.hooks.each do |hook|
+        next unless callbacks[hook]
+
+        unless valid_callback?(callbacks[hook])
+          raise ArgumentError,
+                "#{hook} must be a callable with arity 1 (context)"
+        end
+
+        @callbacks[hook] = callbacks[hook]
+        define_singleton_method(hook) do |context|
+          @callbacks[hook].call(context)
+        end
+      end
+    end
+
+    # @return [Hash<Symbol, Proc>]
+    attr_reader :callbacks
+
+    class << self
+      # @return [Array<Symbol>] Returns a list of all available hooks.
+      attr_reader :hooks
+    end
+
+    private
+
+    def valid_callback?(callback)
+      callback.respond_to?(:call) && callback.arity == 1
+    end
+
     # A hook called at the start of an execution, before the SDK
     # does anything else.
     #
@@ -51,10 +112,6 @@ module Hearth
     # {#read_before_execution} methods raise errors, the latest
     # will be used and earlier ones will be logged and dropped.
     #
-    # @param [InterceptorContext] context
-    def read_before_execution(context)
-      # Implement me
-    end
 
     # A hook called before the input message is marshalled into a
     # transport message. This method has the ability to modify the
@@ -72,10 +129,6 @@ module Hearth
     # jump to {#modify_before_completion} with the raised error as the
     # {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_serialization(context)
-      # Implement me
-    end
 
     # A hook called after the input message is marshalled into a transport
     # message.
@@ -92,10 +145,6 @@ module Hearth
     # jump to {#modify_before_completion} with the raised error as the
     # {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_before_serialization(context)
-      # Implement me
-    end
 
     # A hook called after the input message is marshalled into a transport
     # message.
@@ -113,10 +162,6 @@ module Hearth
     # jump to {#modify_before_completion} with the raised error as the
     # {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_after_serialization(context)
-      # Implement me
-    end
 
     # A hook called before the retry loop is entered. This method
     # has the ability to modify the transport request message.
@@ -132,10 +177,6 @@ module Hearth
     # jump to {#modify_before_completion} with the raised error as the
     # {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_retry_loop(context)
-      # Implement me
-    end
 
     # A hook called before each attempt at sending the transmission
     # request message to the service.
@@ -158,10 +199,6 @@ module Hearth
     # {#read_before_attempt} methods raise errors, the latest will be used
     # and earlier ones will be logged and dropped.
     #
-    # @param [InterceptorContext] context
-    def read_before_attempt(context)
-      # Implement me
-    end
 
     # A hook called before the transport request message is signed. This
     # method has the ability to modify the transport request message.
@@ -182,10 +219,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_signing(context)
-      # Implement me
-    end
 
     # A hook called after the transport request message is signed.
     #
@@ -205,10 +238,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_before_signing(context)
-      # Implement me
-    end
 
     # A hook called after the transport request message is signed.
     #
@@ -228,10 +257,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_after_signing(context)
-      # Implement me
-    end
 
     # A hook called before the transport request message is sent to the
     # service. This method has the ability to modify the transport request
@@ -252,10 +277,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_transmit(context)
-      # Implement me
-    end
 
     # A hook called before the transport request message is sent to the
     # service.
@@ -278,10 +299,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_before_transmit(context)
-      # Implement me
-    end
 
     # A hook called after the transport response message is sent to the
     # service and a transport response message is received.
@@ -304,10 +321,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_after_transmit(context)
-      # Implement me
-    end
 
     # A hook called before the transport response message is unmarshalled.
     # This method has the ability to modify the transport response message.
@@ -328,10 +341,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_deserialization(context)
-      # Implement me
-    end
 
     # A hook called after the transport response message is unmarshalled.
     #
@@ -353,10 +362,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_before_deserialization(context)
-      # Implement me
-    end
 
     # A hook called after the transport response message is unmarshalled.
     #
@@ -377,10 +382,6 @@ module Hearth
     # jump to {#modify_before_attempt_completion} with the raised error as
     # the {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def read_after_deserialization(context)
-      # Implement me
-    end
 
     # A hook called when an attempt is completed. This method has the
     # ability to modify the output message or error matching
@@ -400,10 +401,6 @@ module Hearth
     # jump to {#read_after_attempt} with the raised error as the
     # {Output#error} in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_attempt_completion(context)
-      # Implement me
-    end
 
     # A hook called when an attempt is completed.
     #
@@ -426,10 +423,6 @@ module Hearth
     # will then jump to {#read_before_attempt}. Otherwise, execution will jump
     # to {#modify_before_completion}.
     #
-    # @param [InterceptorContext] context
-    def read_after_attempt(context)
-      # Implement me
-    end
 
     # A hook called when an execution is completed. This method has the
     # ability to modify the output message or error matching
@@ -447,10 +440,6 @@ module Hearth
     # jump to {#read_after_execution} with the raised error as the
     # {Output#error) in {InterceptorContext#output}.
     #
-    # @param [InterceptorContext] context
-    def modify_before_completion(context)
-      # Implement me
-    end
 
     # A hook called when an execution is completed.
     #
@@ -471,9 +460,5 @@ module Hearth
     # errors, the latest will be used and earlier ones will be logged and
     # dropped.
     #
-    # @param [InterceptorContext] context
-    def read_after_execution(context)
-      # Implement me
-    end
   end
 end

@@ -23,29 +23,6 @@ module Weather
     end
 
     let(:client) { Client.new(config) }
-    let(:before_send) do
-      Class.new(Hearth::Interceptor) do
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_before_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
-
-    let(:after_send) do
-      Class.new(Hearth::Interceptor) do
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_after_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
 
     describe '#operation____789_bad_name' do
 
@@ -99,12 +76,13 @@ module Weather
 
         # Does something
         it 'WriteGetCityAssertions' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/cities/123')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.get_city({
             city_id: "123"
@@ -157,9 +135,10 @@ module Weather
 
         # Does something
         it 'stubs WriteGetCityResponseAssertions' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::GetCity).to receive(:build)
           client.stub_responses(:get_city, data: {
             name: "Seattle",
@@ -342,7 +321,7 @@ module Weather
 
         # Does something
         it 'WriteListCitiesAssertions' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/cities')
@@ -358,6 +337,7 @@ module Weather
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.list_cities({
             page_size: 50

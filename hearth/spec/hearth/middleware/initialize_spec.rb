@@ -24,18 +24,18 @@ module Hearth
           it 'calls all of the interceptor hooks and the app' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_EXECUTION
+                      hook: Interceptor::READ_BEFORE_EXECUTION
                     )).ordered
 
             expect(app).to receive(:call).ordered
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_COMPLETION
+                      hook: Interceptor::MODIFY_BEFORE_COMPLETION
                     )).ordered
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_EXECUTION
+                      hook: Interceptor::READ_AFTER_EXECUTION
                     )).ordered
 
             subject.call(input, context)
@@ -48,18 +48,18 @@ module Hearth
           it 'calls all interceptor hooks but does not call the app' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_EXECUTION
+                      hook: Interceptor::READ_BEFORE_EXECUTION
                     )).and_return(interceptor_error)
 
             expect(app).not_to receive(:call)
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_COMPLETION
+                      hook: Interceptor::MODIFY_BEFORE_COMPLETION
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_EXECUTION
+                      hook: Interceptor::READ_AFTER_EXECUTION
                     ))
 
             out = subject.call(input, context)
@@ -73,18 +73,18 @@ module Hearth
           it 'calls all interceptor hooks and app without replacing output' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_EXECUTION
+                      hook: Interceptor::READ_BEFORE_EXECUTION
                     ))
 
             expect(app).to receive(:call)
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_COMPLETION
+                      hook: Interceptor::MODIFY_BEFORE_COMPLETION
                     )).and_return(interceptor_error)
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_EXECUTION
+                      hook: Interceptor::READ_AFTER_EXECUTION
                     ))
 
             out = subject.call(input, context)
@@ -98,18 +98,18 @@ module Hearth
           it 'calls all interceptor hooks and app without replacing output' do
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_EXECUTION
+                      hook: Interceptor::READ_BEFORE_EXECUTION
                     ))
 
             expect(app).to receive(:call)
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_COMPLETION
+                      hook: Interceptor::MODIFY_BEFORE_COMPLETION
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_EXECUTION
+                      hook: Interceptor::READ_AFTER_EXECUTION
                     )).and_return(interceptor_error)
 
             out = subject.call(input, context)

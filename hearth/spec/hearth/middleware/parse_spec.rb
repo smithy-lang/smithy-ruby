@@ -42,11 +42,11 @@ module Hearth
           expect(app).to receive(:call).ordered
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
+                    hook: Interceptor::MODIFY_BEFORE_DESERIALIZATION
                   )).ordered
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::READ_BEFORE_DESERIALIZATION
+                    hook: Interceptor::READ_BEFORE_DESERIALIZATION
                   )).ordered
 
           expect(error_parser).to receive(:parse).ordered
@@ -54,7 +54,7 @@ module Hearth
 
           expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptors::READ_AFTER_DESERIALIZATION
+                    hook: Interceptor::READ_AFTER_DESERIALIZATION
                   )).ordered
 
           subject.call(input, context)
@@ -68,7 +68,7 @@ module Hearth
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
+                      hook: Interceptor::MODIFY_BEFORE_DESERIALIZATION
                     )).and_return(interceptor_error)
 
             expect(error_parser).not_to receive(:parse)
@@ -87,11 +87,11 @@ module Hearth
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
+                      hook: Interceptor::MODIFY_BEFORE_DESERIALIZATION
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_DESERIALIZATION
+                      hook: Interceptor::READ_BEFORE_DESERIALIZATION
                     )).and_return(interceptor_error)
 
             expect(error_parser).not_to receive(:parse)
@@ -110,11 +110,11 @@ module Hearth
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
+                      hook: Interceptor::MODIFY_BEFORE_DESERIALIZATION
                     ))
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_BEFORE_DESERIALIZATION
+                      hook: Interceptor::READ_BEFORE_DESERIALIZATION
                     ))
 
             expect(error_parser).to receive(:parse)
@@ -122,7 +122,7 @@ module Hearth
 
             expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptors::READ_AFTER_DESERIALIZATION
+                      hook: Interceptor::READ_AFTER_DESERIALIZATION
                     )).and_return(interceptor_error)
 
             out = subject.call(input, context)
