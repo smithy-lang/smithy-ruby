@@ -32,9 +32,10 @@ module WhiteLabel
     let(:client) { Client.new(config) }
 
     let(:before_send) do
-      Class.new do
+      Class.new(Hearth::Interceptor) do
         def initialize(&block)
           @block = block
+          super
         end
 
         def read_before_transmit(context)

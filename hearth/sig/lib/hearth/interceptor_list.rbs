@@ -7,7 +7,7 @@ module Hearth
     def append: (Interceptor interceptor) -> void
     alias << append
 
-    def concat: (InterceptorList other) -> self
+    def concat: (Enumerable[Interceptor] other) -> self
 
     def dup: () -> InterceptorList
 

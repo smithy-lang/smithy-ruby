@@ -524,7 +524,7 @@ public class HttpProtocolTestGenerator {
     private void renderInterceptorClasses() {
         writer
                 .openBlock("let(:before_send) do")
-                .openBlock("Class.new do")
+                .openBlock("Class.new(Hearth::Interceptor) do")
                 .openBlock("def initialize(&block)")
                 .write("@block = block")
                 .closeBlock("end")
@@ -537,7 +537,7 @@ public class HttpProtocolTestGenerator {
 
         writer
                 .openBlock("let(:after_send) do")
-                .openBlock("Class.new do")
+                .openBlock("Class.new(Hearth::Interceptor) do")
                 .openBlock("def initialize(&block)")
                 .write("@block = block")
                 .closeBlock("end")

@@ -267,7 +267,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("config.interceptors = $T.new", Hearth.INTERCEPTOR_LIST)
                 .write("Client.plugins.apply(config)")
                 .write("$T.new(config.plugins).apply(config)", Hearth.PLUGIN_LIST)
-                .write("config.interceptors << client_interceptors")
+                .write("config.interceptors.concat(client_interceptors)")
                 .write("config.freeze")
                 .closeBlock("end");
     }
@@ -279,7 +279,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("")
                 .write("config = @config.dup")
                 .write("$T.new(options[:plugins]).apply(config) if options[:plugins]", Hearth.PLUGIN_LIST)
-                .write("config.interceptors << options[:interceptors] if options[:interceptors]")
+                .write("config.interceptors.concat(options[:interceptors]) if options[:interceptors]")
                 .write("config.freeze")
                 .closeBlock("end");
     }

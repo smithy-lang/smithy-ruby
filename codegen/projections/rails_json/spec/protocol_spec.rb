@@ -24,7 +24,7 @@ module RailsJson
 
     let(:client) { Client.new(config) }
     let(:before_send) do
-      Class.new do
+      Class.new(Hearth::Interceptor) do
         def initialize(&block)
           @block = block
         end
@@ -36,7 +36,7 @@ module RailsJson
     end
 
     let(:after_send) do
-      Class.new do
+      Class.new(Hearth::Interceptor) do
         def initialize(&block)
           @block = block
         end

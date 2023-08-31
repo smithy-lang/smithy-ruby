@@ -21,7 +21,7 @@ module Hearth
     end
     alias << append
 
-    # @param [InterceptorList] other
+    # @param [Enumerable] other
     # @return [InterceptorList] self
     def concat(other)
       other.each { |i| append(i) }

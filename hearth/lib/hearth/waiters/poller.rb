@@ -59,9 +59,10 @@ module Hearth
       private
 
       # allows capture of input before send
-      class InputOutputInterceptor
+      class InputOutputInterceptor < Hearth::Interceptor
         def initialize(&block)
           @block = block
+          super
         end
 
         def read_before_transmit(context)

@@ -192,7 +192,6 @@ module Hearth
         end
       end
 
-
       context 'read_before_attempt error' do
         let(:interceptor_error) { StandardError.new }
 
