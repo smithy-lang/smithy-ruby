@@ -8,7 +8,7 @@ module WhiteLabel
       Class.new(Hearth::Interceptor) do
         def initialize(name = 'NA')
           @name = name
-          super
+          super()
         end
 
         def read_before_execution(context); end
