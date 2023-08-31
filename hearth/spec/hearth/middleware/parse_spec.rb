@@ -40,21 +40,21 @@ module Hearth
 
         it 'calls all of the interceptor hooks after the next middleware' do
           expect(app).to receive(:call).ordered
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
+                    hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
                   )).ordered
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION
+                    hook: Interceptors::READ_BEFORE_DESERIALIZATION
                   )).ordered
 
           expect(error_parser).to receive(:parse).ordered
           expect(data_parser).to receive(:parse).ordered
 
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_AFTER_DESERIALIZATION
+                    hook: Interceptors::READ_AFTER_DESERIALIZATION
                   )).ordered
 
           subject.call(input, context)
@@ -66,9 +66,9 @@ module Hearth
           it 'returns output with the error set' do
             expect(app).to receive(:call).and_return(output)
 
-            expect(Interceptor).to receive(:apply)
+            expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
+                      hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
                     )).and_return(interceptor_error)
 
             expect(error_parser).not_to receive(:parse)
@@ -85,13 +85,13 @@ module Hearth
           it 'returns output with the error set' do
             expect(app).to receive(:call).and_return(output)
 
-            expect(Interceptor).to receive(:apply)
+            expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
+                      hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
                     ))
-            expect(Interceptor).to receive(:apply)
+            expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION
+                      hook: Interceptors::READ_BEFORE_DESERIALIZATION
                     )).and_return(interceptor_error)
 
             expect(error_parser).not_to receive(:parse)
@@ -108,21 +108,21 @@ module Hearth
           it 'returns output with the error set' do
             expect(app).to receive(:call).and_return(output)
 
-            expect(Interceptor).to receive(:apply)
+            expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptor::Hooks::MODIFY_BEFORE_DESERIALIZATION
+                      hook: Interceptors::MODIFY_BEFORE_DESERIALIZATION
                     ))
-            expect(Interceptor).to receive(:apply)
+            expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptor::Hooks::READ_BEFORE_DESERIALIZATION
+                      hook: Interceptors::READ_BEFORE_DESERIALIZATION
                     ))
 
             expect(error_parser).to receive(:parse)
             expect(data_parser).to receive(:parse)
 
-            expect(Interceptor).to receive(:apply)
+            expect(Interceptors).to receive(:invoke)
               .with(hash_including(
-                      hook: Interceptor::Hooks::READ_AFTER_DESERIALIZATION
+                      hook: Interceptors::READ_AFTER_DESERIALIZATION
                     )).and_return(interceptor_error)
 
             out = subject.call(input, context)

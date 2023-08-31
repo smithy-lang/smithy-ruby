@@ -1,38 +1,32 @@
 # frozen_string_literal: true
 
 module Hearth
-  # A list of Interceptors.
+  # A list of {Interceptor}s.
   class InterceptorList
     include Enumerable
 
-    # Initialize an InterceptorList.
-    #
-    # @param [Array] interceptors ([]) A list of interceptors.
+    # @param [Array<Interceptor>] interceptors ([])
     def initialize(interceptors = [])
-      unless interceptors.respond_to?(:each)
-        raise ArgumentError, 'Interceptors must be an enumerable'
-      end
-
       @interceptors = []
-      interceptors.each { |i| add(i) }
+      interceptors.each { |i| append(i) }
     end
 
-    # Add an interceptor.
-    #
-    # @param [Object] interceptor
-    def add(interceptor)
-      if interceptor.respond_to?(:each)
-        interceptor.each { |i| add(i) }
-      else
-        unless valid_interceptor?(interceptor)
-          raise ArgumentError,
-                'Invalid Interceptor - must implement at least one hook method.'
-        end
-
-        @interceptors << interceptor
+    # @param [Interceptor] interceptor
+    def append(interceptor)
+      unless interceptor.is_a?(Interceptor)
+        raise ArgumentError, "Expected #{interceptor} to be an Interceptor"
       end
+
+      @interceptors << interceptor
     end
-    alias << add
+    alias << append
+
+    # @param [InterceptorList] other
+    # @return [InterceptorList] self
+    def concat(other)
+      other.each { |i| append(i) }
+      self
+    end
 
     def dup
       InterceptorList.new(self)
@@ -40,12 +34,6 @@ module Hearth
 
     def each(&block)
       @interceptors.each(&block)
-    end
-
-    private
-
-    def valid_interceptor?(interceptor)
-      Interceptor::Hooks.implements_interceptor?(interceptor)
     end
   end
 end

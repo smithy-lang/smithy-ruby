@@ -18,8 +18,8 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        interceptor_error = Interceptor.apply(
-          hook: Interceptor::Hooks::MODIFY_BEFORE_SERIALIZATION,
+        interceptor_error = Interceptors.invoke(
+          hook: Interceptors::MODIFY_BEFORE_SERIALIZATION,
           input: input,
           context: context,
           output: nil,
@@ -27,8 +27,8 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        interceptor_error = Interceptor.apply(
-          hook: Interceptor::Hooks::READ_BEFORE_SERIALIZATION,
+        interceptor_error = Interceptors.invoke(
+          hook: Interceptors::READ_BEFORE_SERIALIZATION,
           input: input,
           context: context,
           output: nil,
@@ -38,8 +38,8 @@ module Hearth
 
         @builder.build(context.request, input: input)
 
-        interceptor_error = Interceptor.apply(
-          hook: Interceptor::Hooks::READ_AFTER_SERIALIZATION,
+        interceptor_error = Interceptors.invoke(
+          hook: Interceptors::READ_AFTER_SERIALIZATION,
           input: input,
           context: context,
           output: nil,

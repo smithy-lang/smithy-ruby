@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
 module Hearth
-  describe Interceptor do
-    describe '#apply' do
+  describe Interceptors do
+    describe '#invoke' do
       let(:interceptor_class) do
-        Class.new do
+        Class.new(Interceptor) do
           def read_before_execution(_ctx); end
         end
       end
 
       let(:interceptor1) { interceptor_class.new }
       let(:interceptor2) { interceptor_class.new }
-
-      let(:logger) { double('logger') }
-      let(:request) { double('request') }
-      let(:response) { double('response') }
       let(:interceptors) do
         InterceptorList.new([interceptor1, interceptor2])
       end
+
+      let(:request) { double('request') }
+      let(:response) { double('response') }
+      let(:logger) { Logger.new(IO::NULL) }
       let(:context) do
         Context.new(
           request: request,
@@ -29,14 +29,13 @@ module Hearth
 
       let(:input) { double('input') }
       let(:output) { double('output', error: nil) }
-
       let(:i_ctx) { double('interceptor_context') }
-      let(:error) { StandardError.new }
 
+      let(:error) { StandardError.new }
       let(:hook) { :read_before_execution }
 
       it 'calls each interceptor hook with context' do
-        expect(Interceptor::Context).to receive(:new).with(
+        expect(InterceptorContext).to receive(:new).with(
           input: input,
           request: request,
           response: response,
@@ -46,7 +45,7 @@ module Hearth
         expect(interceptor1).to receive(hook).with(i_ctx)
         expect(interceptor2).to receive(hook).with(i_ctx)
 
-        out = Interceptor.apply(
+        out = Interceptors.invoke(
           hook: hook,
           input: input,
           context: context,
@@ -64,7 +63,7 @@ module Hearth
           expect(interceptor1).to receive(hook).and_raise(error)
           expect(logger).to receive(:error).with(previous_error)
 
-          Interceptor.apply(
+          Interceptors.invoke(
             hook: hook,
             input: input,
             context: context,
@@ -80,7 +79,7 @@ module Hearth
           expect(interceptor1).to receive(hook).and_raise(error)
           expect(interceptor2).not_to receive(hook)
 
-          out = Interceptor.apply(
+          out = Interceptors.invoke(
             hook: hook,
             input: input,
             context: context,
@@ -101,7 +100,7 @@ module Hearth
           expect(interceptor2).to receive(hook).and_raise(error2)
           expect(logger).to receive(:error).with(error1)
 
-          out = Interceptor.apply(
+          out = Interceptors.invoke(
             hook: hook,
             input: input,
             context: context,

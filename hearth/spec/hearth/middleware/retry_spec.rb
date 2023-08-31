@@ -156,22 +156,22 @@ module Hearth
       before { context.auth = resolved_auth }
 
       it 'calls all of the interceptor hooks and the app' do
-        expect(Interceptor).to receive(:apply)
+        expect(Interceptors).to receive(:invoke)
           .with(hash_including(
-                  hook: Interceptor::Hooks::MODIFY_BEFORE_RETRY_LOOP
+                  hook: Interceptors::MODIFY_BEFORE_RETRY_LOOP
                 )).ordered
-        expect(Interceptor).to receive(:apply)
+        expect(Interceptors).to receive(:invoke)
           .with(hash_including(
-                  hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
+                  hook: Interceptors::READ_BEFORE_ATTEMPT
                 )).ordered
         expect(app).to receive(:call).and_return(output).ordered
-        expect(Interceptor).to receive(:apply)
+        expect(Interceptors).to receive(:invoke)
           .with(hash_including(
-                  hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
+                  hook: Interceptors::MODIFY_BEFORE_ATTEMPT_COMPLETION
                 )).ordered
-        expect(Interceptor).to receive(:apply)
+        expect(Interceptors).to receive(:invoke)
           .with(hash_including(
-                  hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
+                  hook: Interceptors::READ_AFTER_ATTEMPT
                 )).ordered
 
         subject.call(input, context)
@@ -181,9 +181,9 @@ module Hearth
         let(:interceptor_error) { StandardError.new }
 
         it 'returns output with the error and does not call app' do
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_RETRY_LOOP
+                    hook: Interceptors::MODIFY_BEFORE_RETRY_LOOP
                   )).and_return(interceptor_error)
           expect(app).not_to receive(:call)
 
@@ -197,22 +197,22 @@ module Hearth
         let(:interceptor_error) { StandardError.new }
 
         it 'returns output with the error and does not call app' do
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_RETRY_LOOP
+                    hook: Interceptors::MODIFY_BEFORE_RETRY_LOOP
                   ))
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
+                    hook: Interceptors::READ_BEFORE_ATTEMPT
                   )).and_return(interceptor_error)
           expect(app).not_to receive(:call)
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
+                    hook: Interceptors::MODIFY_BEFORE_ATTEMPT_COMPLETION
                   ))
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
+                    hook: Interceptors::READ_AFTER_ATTEMPT
                   ))
 
           out = subject.call(input, context)
@@ -224,22 +224,22 @@ module Hearth
         let(:interceptor_error) { StandardError.new }
 
         it 'returns output with the error and calls app' do
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_RETRY_LOOP
+                    hook: Interceptors::MODIFY_BEFORE_RETRY_LOOP
                   ))
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
+                    hook: Interceptors::READ_BEFORE_ATTEMPT
                   ))
           expect(app).to receive(:call)
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
+                    hook: Interceptors::MODIFY_BEFORE_ATTEMPT_COMPLETION
                   )).and_return(interceptor_error)
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
+                    hook: Interceptors::READ_AFTER_ATTEMPT
                   ))
 
           out = subject.call(input, context)
@@ -251,22 +251,22 @@ module Hearth
         let(:interceptor_error) { StandardError.new }
 
         it 'returns output with the error and calls app' do
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_RETRY_LOOP
+                    hook: Interceptors::MODIFY_BEFORE_RETRY_LOOP
                   ))
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_BEFORE_ATTEMPT
+                    hook: Interceptors::READ_BEFORE_ATTEMPT
                   ))
           expect(app).to receive(:call)
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::MODIFY_BEFORE_ATTEMPT_COMPLETION
+                    hook: Interceptors::MODIFY_BEFORE_ATTEMPT_COMPLETION
                   ))
-          expect(Interceptor).to receive(:apply)
+          expect(Interceptors).to receive(:invoke)
             .with(hash_including(
-                    hook: Interceptor::Hooks::READ_AFTER_ATTEMPT
+                    hook: Interceptors::READ_AFTER_ATTEMPT
                   )).and_return(interceptor_error)
 
           out = subject.call(input, context)

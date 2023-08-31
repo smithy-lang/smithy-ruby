@@ -26,7 +26,7 @@ module WhiteLabel
         client = Client.new(config)
 
         expect(interceptor).to receive(hook)
-          .with(instance_of(Hearth::Interceptor::Context))
+          .with(instance_of(Hearth::InterceptorContext))
 
         client.kitchen_sink
       end
@@ -38,7 +38,7 @@ module WhiteLabel
         client = Client.new(config)
 
         expect(interceptor).to receive(hook)
-          .with(instance_of(Hearth::Interceptor::Context))
+          .with(instance_of(Hearth::InterceptorContext))
 
         client.kitchen_sink({}, interceptors: [interceptor])
       end
