@@ -78,6 +78,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 context.getRuntimePlugins().stream()
                         .map(plugin -> plugin.writeAdditionalFiles(context))
                         .flatMap(List::stream)
+                        .distinct()
                         .collect(Collectors.toList())
         );
 

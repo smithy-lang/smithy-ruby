@@ -146,6 +146,14 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for RelativeMiddlewareOperation
+    class RelativeMiddlewareOperation
+      def self.parse(http_resp)
+        data = Types::RelativeMiddlewareOperationOutput.new
+        data
+      end
+    end
+
     # Operation Parser for RequestCompressionOperation
     class RequestCompressionOperation
       def self.parse(http_resp)

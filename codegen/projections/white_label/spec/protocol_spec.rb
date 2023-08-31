@@ -82,6 +82,10 @@ module WhiteLabel
 
     end
 
+    describe '#relative_middleware_operation' do
+
+    end
+
     describe '#request_compression_operation' do
 
     end

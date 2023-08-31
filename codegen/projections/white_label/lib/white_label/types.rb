@@ -756,6 +756,24 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    RelativeMiddlewareOperationInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    RelativeMiddlewareOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :body
     # @!attribute body
     #   @return [String]

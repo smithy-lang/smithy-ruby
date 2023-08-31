@@ -1262,6 +1262,80 @@ module WhiteLabel
 
     # @param [Hash] params
     #   Request parameters for this operation.
+    #   See {Types::RelativeMiddlewareOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Types::RelativeMiddlewareOperationOutput]
+    # @example Request syntax with placeholder values
+    #   resp = client.relative_middleware_operation()
+    # @example Response structure
+    #   resp.data #=> Types::RelativeMiddlewareOperationOutput
+    def relative_middleware_operation(params = {}, options = {})
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::RelativeMiddlewareOperationInput.build(params, context: 'params')
+      response_body = ::StringIO.new
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::RelativeMiddlewareOperationInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Middleware::BeforeMiddleware)
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::RelativeMiddlewareOperation
+      )
+      stack.use(Middleware::MidMiddleware)
+      stack.use(Middleware::AfterMiddleware)
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
+        auth_params: Auth::Params.new(operation_name: :relative_middleware_operation),
+        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+      )
+      stack.use(Hearth::Middleware::Sign)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status: 200,
+          errors: []
+        ),
+        data_parser: Parsers::RelativeMiddlewareOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: options.fetch(:http_client, config.http_client),
+        stub_error_classes: [],
+        stub_data_class: Stubs::RelativeMiddlewareOperation,
+        stubs: @stubs
+      )
+      resp = stack.run(
+        input: input,
+        context: Hearth::Context.new(
+          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          response: Hearth::HTTP::Response.new(body: response_body),
+          params: params,
+          logger: config.logger,
+          operation_name: :relative_middleware_operation,
+          interceptors: config.interceptors
+        )
+      )
+      raise resp.error if resp.error
+      resp
+    end
+
+    # @param [Hash] params
+    #   Request parameters for this operation.
     #   See {Types::RequestCompressionOperationInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
@@ -1289,13 +1363,14 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::RequestCompressionOperation
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::HTTP::Middleware::RequestCompression,
         streaming: false,
         encodings: ['gzip'],
         request_min_compression_size_bytes: options.fetch(:request_min_compression_size_bytes, config.request_min_compression_size_bytes),
         disable_request_compression: options.fetch(:disable_request_compression, config.disable_request_compression)
       )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::HTTP::Middleware::ContentMD5)
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
         error_inspector_class: Hearth::HTTP::ErrorInspector

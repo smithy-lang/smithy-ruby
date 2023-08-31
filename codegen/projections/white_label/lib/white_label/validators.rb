@@ -354,6 +354,18 @@ module WhiteLabel
       end
     end
 
+    class RelativeMiddlewareOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOperationInput, context: context)
+      end
+    end
+
+    class RelativeMiddlewareOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOperationOutput, context: context)
+      end
+    end
+
     class RequestCompressionOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::RequestCompressionOperationInput, context: context)

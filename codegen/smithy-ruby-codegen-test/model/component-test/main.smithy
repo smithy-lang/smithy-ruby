@@ -19,6 +19,7 @@ service WhiteLabel {
         EndpointOperation,
         EndpointWithHostLabelOperation,
         MixinTest,
+        RelativeMiddlewareOperation,
         RequestCompressionOperation,
         RequestCompressionStreamingOperation,
         HttpBasicAuth,
