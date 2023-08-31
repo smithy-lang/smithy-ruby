@@ -90,7 +90,7 @@ module WhiteLabel
         rd, wr = IO.pipe
         wr.write(raw_body)
         wr.close
-        interceptor = before_send.new do |context|
+        proc = proc do |context|
           expect(context.request.headers['Content-Encoding']).to eq('gzip')
           # capture the body by reading it into a new IO object
           body = StringIO.new
@@ -101,8 +101,11 @@ module WhiteLabel
           uncompressed = Zlib::GzipReader.new(body)
           expect(uncompressed.read).to eq(raw_body)
         end
+        interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+
         client.request_compression_streaming_operation(
-          { body: rd }, interceptors: [interceptor]
+          { body: rd },
+          interceptors: [interceptor]
         )
         rd.close
       end
