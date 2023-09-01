@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  # A list of {Interceptor}s or classes that respond to Interceptor
+  # A list of {Hearth::Interceptor}s or classes that respond to Interceptor
   # hook methods.
   class InterceptorList
     include Enumerable

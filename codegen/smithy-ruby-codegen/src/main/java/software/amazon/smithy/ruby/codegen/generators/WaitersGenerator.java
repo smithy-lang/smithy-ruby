@@ -168,8 +168,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
                 .openBlock("class $L", waiterName)
                 .write("def initialize: (Client, ?::Hash[::Symbol, untyped] options) -> void\n")
                 .write("attr_reader tags: Array[::String]\n")
-                .write("def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> "
-                        + "(true | Hearth::Waiters::WaiterFailed)")
+                .write("def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> true")
                 .closeBlock("end");
     }
 
@@ -230,7 +229,7 @@ public class WaitersGenerator extends RubyGeneratorBase {
     private void renderWaiterWaitDocumentation(RubyCodeWriter writer, String operationName) {
         writer
                 .writeYardReference("param", "Client#" + operationName)
-                .writeYardReturn("true, Hearth::Waiters::WaiterFailed", "");
+                .writeYardReturn("true", "");
     }
 
     private void renderWaiterInitializeDocumentation(RubyCodeWriter writer, Waiter waiter) {

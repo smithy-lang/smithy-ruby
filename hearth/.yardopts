@@ -1,3 +1,4 @@
 --title Hearth, the Smithy Ruby SDK base
 --hide-api private
+--markup markdown
 lib/

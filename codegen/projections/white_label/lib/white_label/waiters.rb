@@ -74,7 +74,7 @@ module WhiteLabel
       attr_reader :tags
 
       # @param (see Client#waiters_test)
-      # @return [true, Hearth::Waiters::WaiterFailed]
+      # @return [true]
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

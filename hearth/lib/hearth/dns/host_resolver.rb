@@ -2,9 +2,10 @@
 
 module Hearth
   module DNS
-    # Resolves a host name and service to an IP address. Can be used with
-    # {Hearth::HTTP::Client} host_resolver option. This implementation uses
+    # Resolves a host name and service to an IP address. Can be used with the
+    # {HTTP::Client} host_resolver option. This implementation uses
     # Addrinfo.getaddrinfo to resolve the host name.
+    #
     # @see https://ruby-doc.org/stdlib-3.0.2/libdoc/socket/rdoc/Addrinfo.html
     class HostResolver
       # @param [Integer] service (443)
