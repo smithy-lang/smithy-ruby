@@ -30,13 +30,20 @@ module HighScoreService
   #   @option args [Hearth::IdentityResolver] :http_login_identity_resolver
   #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled with the httpBasicAuth auth scheme.
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
-  #     A list of Interceptors to apply to the client.  Interceptors are a generic extension point that allows injecting logic at specific stages of execution within the SDK. Logic injection is done with hooks that the interceptor implements.  Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read the input, transport request, transport response or output messages. Read/write hooks allow an interceptor to modify one of these messages.
-  #   @option args [Symbol] :log_level (:info)
+  #     A list of Interceptors to apply to the client.  Interceptors are a generic
+  #     extension point that allows injecting logic at specific stages of execution
+  #     within the SDK. Logic injection is done with hooks that the interceptor
+  #     implements.  Hooks are either read-only or read/write. Read-only hooks allow
+  #     an interceptor to read the input, transport request, transport response or
+  #     output messages. Read/write hooks allow an interceptor to modify one of these
+  #     messages.
+  #   @option args [Symbol] :log_level (:warn)
   #     The default log level to use with the Logger.
   #   @option args [Logger] :logger (Logger.new($stdout, level: cfg.log_level))
   #     The Logger instance to use for logging.
   #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
-  #     A list of Plugins to apply to the client. Plugins are callables that take one argument: Config.  Plugins may modify the provided config.
+  #     A list of Plugins to apply to the client. Plugins are callables that
+  #     take {Config} as an argument. Plugins may modify the provided config.
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes may have additional
   #     options, such as `max_retries` and backoff strategies.
@@ -133,7 +140,7 @@ module HighScoreService
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
         interceptors: [proc { Hearth::InterceptorList.new }],
-        log_level: [:info],
+        log_level: [:warn],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
         plugins: [proc { Hearth::PluginList.new }],
         retry_strategy: [proc { Hearth::Retry::Standard.new }],

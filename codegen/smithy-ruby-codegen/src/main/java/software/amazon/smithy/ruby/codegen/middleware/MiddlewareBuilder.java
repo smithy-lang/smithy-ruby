@@ -57,10 +57,6 @@ public class MiddlewareBuilder {
                         .put(step, new ArrayList<>()));
     }
 
-    public boolean remove(MiddlewareStackStep step, String klass) {
-        return middlewares.get(step).removeIf((m) -> m.getKlass().equals(klass));
-    }
-
     public void register(Middleware middleware) {
         middlewares.get(middleware.getStep()).add(middleware);
     }
@@ -199,7 +195,6 @@ public class MiddlewareBuilder {
         ClientConfig logger = ClientConfig.builder()
                 .name("logger")
                 .type("Logger")
-                .rbsType("untyped") // TODO: find out why Logger does not resolve
                 .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
                 .defaultDynamicValue("proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }")
                 .documentation("The Logger instance to use for logging.")
@@ -208,31 +203,37 @@ public class MiddlewareBuilder {
         ClientConfig logLevel = ClientConfig.builder()
                 .name("log_level")
                 .type("Symbol")
-                .defaultPrimitiveValue(":info")
+                .defaultPrimitiveValue(":warn")
                 .documentation("The default log level to use with the Logger.")
                 .build();
 
+        String pluginDocumentation = """
+                A list of Plugins to apply to the client. Plugins are callables that
+                take {Config} as an argument. Plugins may modify the provided config.
+                """;
         ClientConfig plugins = ClientConfig.builder()
                 .name("plugins")
                 .type("Hearth::PluginList")
                 .defaultValue("Hearth::PluginList.new")
                 .documentationDefaultValue("Hearth::PluginList.new")
-                .documentation("A list of Plugins to apply to the client. "
-                        + "Plugins are callables that take one argument: Config.  "
-                        + "Plugins may modify the provided config.")
+                .documentation(pluginDocumentation)
                 .build();
 
+        String interceptorDocumentation = """
+                A list of Interceptors to apply to the client.  Interceptors are a generic
+                extension point that allows injecting logic at specific stages of execution
+                within the SDK. Logic injection is done with hooks that the interceptor
+                implements.  Hooks are either read-only or read/write. Read-only hooks allow
+                an interceptor to read the input, transport request, transport response or
+                output messages. Read/write hooks allow an interceptor to modify one of these
+                messages.
+                """;
         ClientConfig interceptors = ClientConfig.builder()
                 .name("interceptors")
                 .type("Hearth::InterceptorList")
                 .defaultValue("Hearth::InterceptorList.new")
                 .documentationDefaultValue("Hearth::InterceptorList.new")
-                .documentation("A list of Interceptors to apply to the client.  Interceptors are a generic extension "
-                        + "point that allows injecting logic at specific stages of execution within the SDK. "
-                        + "Logic injection is done with hooks that the interceptor implements.  "
-                        + "Hooks are either read-only or read/write. Read-only hooks allow an interceptor to read "
-                        + "the input, transport request, transport response or output messages. "
-                        + "Read/write hooks allow an interceptor to modify one of these messages.")
+                .documentation(interceptorDocumentation)
                 .build();
 
         return Arrays.asList(logger, logLevel, plugins, interceptors);

@@ -11,7 +11,7 @@ module HighScoreService
     attr_accessor http_login_identity_resolver (): Hearth::IdentityResolver
     attr_accessor interceptors (): Hearth::InterceptorList
     attr_accessor log_level (): Symbol
-    attr_accessor logger (): untyped
+    attr_accessor logger (): Logger
     attr_accessor plugins (): Hearth::PluginList
     attr_accessor retry_strategy (): Hearth::Retry::Strategy
     attr_accessor stub_responses (): bool
