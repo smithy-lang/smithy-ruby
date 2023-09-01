@@ -6,7 +6,7 @@ module WhiteLabel
     # modifies config to add a read_before_execution interceptor
     # and overrides the test_config
     class TestPlugin
-      TEST_CLASS_INTERCEPTOR = Class.new do
+      TEST_CLASS_INTERCEPTOR = Class.new(Hearth::Interceptor) do
         def read_before_execution(_context); end
       end.new
 

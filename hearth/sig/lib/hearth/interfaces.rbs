@@ -15,39 +15,43 @@ interface _Plugin
 end
 
 interface _Interceptor
-  def read_before_execution: (Hearth::Interceptor::Context) -> void
+  def read_before_execution: (Hearth::InterceptorContext) -> void
 
-  def modify_before_serialization: (Hearth::Interceptor::Context) -> void
+  def modify_before_serialization: (Hearth::InterceptorContext) -> void
 
-  def read_before_serialization: (Hearth::Interceptor::Context) -> void
+  def read_before_serialization: (Hearth::InterceptorContext) -> void
 
-  def read_before_attempt: (Hearth::Interceptor::Context) -> void
+  def read_after_serialization: (Hearth::InterceptorContext) -> void
 
-  def modify_before_attempt_completion: (Hearth::Interceptor::Context) -> void
+  def modify_before_retry_loop: (Hearth::InterceptorContext) -> void
 
-  def read_after_attempt: (Hearth::Interceptor::Context) -> void
+  def read_before_attempt: (Hearth::InterceptorContext) -> void
 
-  def modify_before_signing: (Hearth::Interceptor::Context) -> void
+  def modify_before_signing: (Hearth::InterceptorContext) -> void
 
-  def read_before_signing: (Hearth::Interceptor::Context) -> void
+  def read_before_signing: (Hearth::InterceptorContext) -> void
 
-  def read_after_signing: (Hearth::Interceptor::Context) -> void
+  def read_after_signing: (Hearth::InterceptorContext) -> void
 
-  def modify_before_transmit: (Hearth::Interceptor::Context) -> void
+  def modify_before_transmit: (Hearth::InterceptorContext) -> void
 
-  def read_before_transmit: (Hearth::Interceptor::Context) -> void
+  def read_before_transmit: (Hearth::InterceptorContext) -> void
 
-  def read_after_transmit: (Hearth::Interceptor::Context) -> void
+  def read_after_transmit: (Hearth::InterceptorContext) -> void
 
-  def modify_before_deserialization: (Hearth::Interceptor::Context) -> void
+  def modify_before_deserialization: (Hearth::InterceptorContext) -> void
 
-  def read_before_deserialization: (Hearth::Interceptor::Context) -> void
+  def read_before_deserialization: (Hearth::InterceptorContext) -> void
 
-  def read_after_deserialization: (Hearth::Interceptor::Context) -> void
+  def read_after_deserialization: (Hearth::InterceptorContext) -> void
 
-  def modify_before_completion: (Hearth::Interceptor::Context) -> void
+  def modify_before_attempt_completion: (Hearth::InterceptorContext) -> void
 
-  def read_after_execution: (Hearth::Interceptor::Context) -> void
+  def read_after_attempt: (Hearth::InterceptorContext) -> void
+
+  def modify_before_completion: (Hearth::InterceptorContext) -> void
+
+  def read_after_execution: (Hearth::InterceptorContext) -> void
 end
 
 interface _ErrorInspector

@@ -5,9 +5,10 @@ require_relative 'spec_helper'
 module WhiteLabel
   describe Client do
     let(:interceptor_class) do
-      Class.new do
+      Class.new(Hearth::Interceptor) do
         def initialize(name = 'NA')
           @name = name
+          super()
         end
 
         def read_before_execution(context); end
@@ -26,7 +27,7 @@ module WhiteLabel
         client = Client.new(config)
 
         expect(interceptor).to receive(hook)
-          .with(instance_of(Hearth::Interceptor::Context))
+          .with(instance_of(Hearth::InterceptorContext))
 
         client.kitchen_sink
       end
@@ -38,7 +39,7 @@ module WhiteLabel
         client = Client.new(config)
 
         expect(interceptor).to receive(hook)
-          .with(instance_of(Hearth::Interceptor::Context))
+          .with(instance_of(Hearth::InterceptorContext))
 
         client.kitchen_sink({}, interceptors: [interceptor])
       end

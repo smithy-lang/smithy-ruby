@@ -264,6 +264,21 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     }
 
     /**
+     * Writes a Yard raise.
+     *
+     * @param errorType     the Ruby type
+     * @param documentation documentation to write
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter writeYardRaise(String errorType, String documentation) {
+        writeDocs((w) -> {
+            w.write("@raise [$L]", errorType);
+            w.writeIndentedParts(documentation);
+        });
+        return this;
+    }
+
+    /**
      * Writes a Yard example.
      *
      * @param title title for the example

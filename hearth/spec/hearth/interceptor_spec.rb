@@ -2,128 +2,74 @@
 
 module Hearth
   describe Interceptor do
-    describe '#apply' do
-      let(:interceptor_class) do
-        Class.new do
-          def read_before_execution(_ctx); end
+    let(:context) { double('context') }
+    let(:callable) { proc { |context| context } }
+
+    subject do
+      callbacks = Interceptor.hooks.to_h { |hook| [hook, callable] }
+      Interceptor.new(**callbacks)
+    end
+
+    describe '#initialize' do
+      it 'validates callback' do
+        expect { Interceptor.new(read_before_execution: 'invalid') }
+          .to raise_error(ArgumentError, /callable with arity 1/)
+
+        expect { Interceptor.new(read_before_execution: proc {}) }
+          .to raise_error(ArgumentError, /callable with arity 1/)
+
+        expect { Interceptor.new(read_before_execution: -> {}) }
+          .to raise_error(ArgumentError, /callable with arity 1/)
+
+        expect { Interceptor.new(read_before_execution: proc { |context| }) }
+          .not_to raise_error
+
+        expect { Interceptor.new(read_before_execution: ->(context) {}) }
+          .not_to raise_error
+      end
+
+      it 'ignores unknown hooks' do
+        interceptor = Interceptor.new(unknown: callable)
+        expect(interceptor).not_to respond_to(:unknown)
+      end
+    end
+
+    describe 'singleton methods' do
+      Interceptor.hooks.each do |hook|
+        it "defines a singleton method for #{hook}" do
+          expect(subject).to respond_to(hook)
+        end
+
+        it "calls the callback for #{hook}" do
+          expect(callable).to receive(:call).with(context)
+          subject.send(hook, context)
         end
       end
+    end
 
-      let(:interceptor1) { interceptor_class.new }
-      let(:interceptor2) { interceptor_class.new }
-
-      let(:logger) { double('logger') }
-      let(:request) { double('request') }
-      let(:response) { double('response') }
-      let(:interceptors) do
-        InterceptorList.new([interceptor1, interceptor2])
-      end
-      let(:context) do
-        Context.new(
-          request: request,
-          response: response,
-          interceptors: interceptors,
-          logger: logger
-        )
-      end
-
-      let(:input) { double('input') }
-      let(:output) { double('output', error: nil) }
-
-      let(:i_ctx) { double('interceptor_context') }
-      let(:error) { StandardError.new }
-
-      let(:hook) { :read_before_execution }
-
-      it 'calls each interceptor hook with context' do
-        expect(Interceptor::Context).to receive(:new).with(
-          input: input,
-          request: request,
-          response: response,
-          output: output
-        ).and_return(i_ctx)
-
-        expect(interceptor1).to receive(hook).with(i_ctx)
-        expect(interceptor2).to receive(hook).with(i_ctx)
-
-        out = Interceptor.apply(
-          hook: hook,
-          input: input,
-          context: context,
-          output: output
-        )
-
-        expect(out).to be_nil
-      end
-
-      it 'sets the error on output' do
-        expect(interceptor1).to receive(hook).and_raise(error)
-        expect(output).to receive(:error=).with(error)
-
-        Interceptor.apply(
-          hook: hook,
-          input: input,
-          context: context,
-          output: output
-        )
-      end
-
-      context 'previous error on output' do
-        let(:previous_error) { StandardError.new('previous') }
-        let(:output) { double('output', error: previous_error) }
-
-        it 'sets the new error on output and logs the previous' do
-          expect(interceptor1).to receive(hook).and_raise(error)
-          expect(logger).to receive(:error).with(previous_error)
-          expect(output).to receive(:error=).with(error)
-
-          Interceptor.apply(
-            hook: hook,
-            input: input,
-            context: context,
-            output: output
-          )
-        end
-      end
-
-      context 'aggregate_errors: false' do
-        let(:aggregate_errors) { false }
-
-        it 'returns the first error immediately' do
-          expect(interceptor1).to receive(hook).and_raise(error)
-          expect(interceptor2).not_to receive(hook)
-
-          out = Interceptor.apply(
-            hook: hook,
-            input: input,
-            context: context,
-            output: nil,
-            aggregate_errors: aggregate_errors
-          )
-          expect(out).to eq(error)
-        end
-      end
-
-      context 'aggregate_errors: true' do
-        let(:aggregate_errors) { true }
-        let(:error1) { StandardError.new('error 1') }
-        let(:error2) { StandardError.new('error 2') }
-
-        it 'calls all interceptors and returns the last error' do
-          expect(interceptor1).to receive(hook).and_raise(error1)
-          expect(interceptor2).to receive(hook).and_raise(error2)
-          expect(logger).to receive(:error).with(error1)
-
-          out = Interceptor.apply(
-            hook: hook,
-            input: input,
-            context: context,
-            output: nil,
-            aggregate_errors: aggregate_errors
-          )
-
-          expect(out).to eq(error2)
-        end
+    describe '.hooks' do
+      it 'returns a complete list of hooks' do
+        expect(Interceptor.hooks).to eq %i[
+          read_before_execution
+          modify_before_serialization
+          read_before_serialization
+          read_after_serialization
+          modify_before_retry_loop
+          read_before_attempt
+          modify_before_signing
+          read_before_signing
+          read_after_signing
+          modify_before_transmit
+          read_before_transmit
+          read_after_transmit
+          modify_before_deserialization
+          read_before_deserialization
+          read_after_deserialization
+          modify_before_attempt_completion
+          read_after_attempt
+          modify_before_completion
+          read_after_execution
+        ]
       end
     end
   end

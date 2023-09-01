@@ -1797,7 +1797,7 @@ module WhiteLabel
       config.interceptors = Hearth::InterceptorList.new
       Client.plugins.apply(config)
       Hearth::PluginList.new(config.plugins).apply(config)
-      config.interceptors << client_interceptors
+      config.interceptors.concat(client_interceptors)
       config.freeze
     end
 
@@ -1806,7 +1806,7 @@ module WhiteLabel
 
       config = @config.dup
       Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
-      config.interceptors << options[:interceptors] if options[:interceptors]
+      config.interceptors.concat(Hearth::InterceptorList.new(options[:interceptors])) if options[:interceptors]
       config.freeze
     end
 

@@ -2,6 +2,12 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.0
 
+Gemspec/RequireMFA:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 80
+
 Metrics:
   Exclude:
     - 'spec/**/*.rb'
@@ -9,24 +15,17 @@ Metrics:
 Metrics/AbcSize:
   Exclude:
     - 'spec/**/*.rb'
-    - 'lib/hearth/http/client.rb'
     - 'lib/hearth/middleware/retry.rb'
-    - 'lib/hearth/middleware/send.rb'
-
-Metrics/CyclomaticComplexity:
-  Exclude:
-    - 'lib/hearth/middleware/send.rb'
 
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/hearth/middleware/retry.rb'
 
-Gemspec/RequireMFA:
-  Enabled: false
-
-Layout/LineLength:
-  Max: 80
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/hearth/http/client.rb'
+    - 'lib/hearth/middleware/send.rb'
 
 Metrics/MethodLength:
   Max: 20
@@ -34,14 +33,13 @@ Metrics/MethodLength:
     - 'spec/**/*.rb'
     - 'lib/hearth/middleware/*.rb'
 
-Metrics/ClassLength:
-  Exclude:
-    - 'lib/hearth/http/client.rb'
-    - 'lib/hearth/middleware/send.rb'
-
 Metrics/ParameterLists:
   Exclude:
     - 'lib/hearth/middleware/send.rb'
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'lib/hearth/middleware/retry.rb'
 
 Style/Documentation:
   Exclude:

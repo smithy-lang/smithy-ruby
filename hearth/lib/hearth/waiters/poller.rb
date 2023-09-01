@@ -58,23 +58,10 @@ module Hearth
 
       private
 
-      # allows capture of input before send
-      class InputOutputInterceptor
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_before_transmit(context)
-          @block.call(context)
-        end
-      end
-
       def input_output_interceptor
-        interceptor = proc do |context|
-          @input = context.input # get internal details
-        end
-
-        { interceptors: [InputOutputInterceptor.new(&interceptor)] }
+        # get internal details - capture input before send
+        interceptor = proc { |context| @input = context.input }
+        { interceptors: [Interceptor.new(read_before_transmit: interceptor)] }
       end
 
       def acceptor_matches?(matcher, response, error)

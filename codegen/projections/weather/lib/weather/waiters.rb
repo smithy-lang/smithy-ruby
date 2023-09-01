@@ -78,7 +78,10 @@ module Weather
       attr_reader :tags
 
       # @param (see Client#get_city)
-      # @return [true, Hearth::Waiters::WaiterFailed]
+      # @return [true]
+      # @raise [Hearth::Waiters::FailureStateError]
+      # @raise [Hearth::Waiters::MaxWaitTimeExceededError]
+      # @raise [Hearth::Waiters::UnexpectedError]
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end
@@ -134,7 +137,10 @@ module Weather
       attr_reader :tags
 
       # @param (see Client#list_cities)
-      # @return [true, Hearth::Waiters::WaiterFailed]
+      # @return [true]
+      # @raise [Hearth::Waiters::FailureStateError]
+      # @raise [Hearth::Waiters::MaxWaitTimeExceededError]
+      # @raise [Hearth::Waiters::UnexpectedError]
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

@@ -23,29 +23,6 @@ module RailsJson
     end
 
     let(:client) { Client.new(config) }
-    let(:before_send) do
-      Class.new do
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_before_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
-
-    let(:after_send) do
-      Class.new do
-        def initialize(&block)
-          @block = block
-        end
-
-        def read_after_transmit(context)
-          @block.call(context)
-        end
-      end
-    end
 
     describe '#operation____789_bad_name' do
 
@@ -53,7 +30,7 @@ module RailsJson
 
         # Serializes requests for operations/members with bad names
         it 'RailsJsonSerializesBadNames' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/BadName/abc_value')
@@ -61,6 +38,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation____789_bad_name({
             member___123abc: "abc_value",
@@ -97,9 +75,10 @@ module RailsJson
 
         # Parses responses for operations/members with bad names
         it 'stubs RailsJsonParsesBadNames' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::Operation____789BadName).to receive(:build)
           client.stub_responses(:operation____789_bad_name, data: {
             member: {
@@ -124,7 +103,7 @@ module RailsJson
 
         # Serializes query string parameters with all supported types
         it 'RailsJsonAllQueryStringTypes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/AllQueryStringTypesInput')
@@ -135,6 +114,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.all_query_string_types({
             query_string: "Hello there",
@@ -204,7 +184,7 @@ module RailsJson
 
         # Mixes constant and variable query string parameters
         it 'RailsJsonConstantAndVariableQueryStringMissingOneValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/ConstantAndVariableQueryString')
@@ -220,6 +200,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.constant_and_variable_query_string({
             baz: "bam"
@@ -228,7 +209,7 @@ module RailsJson
 
         # Mixes constant and variable query string parameters
         it 'RailsJsonConstantAndVariableQueryStringAllValues' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/ConstantAndVariableQueryString')
@@ -239,6 +220,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.constant_and_variable_query_string({
             baz: "bam",
@@ -256,7 +238,7 @@ module RailsJson
 
         # Includes constant query string parameters
         it 'RailsJsonConstantQueryString' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/ConstantQueryString/hi')
@@ -267,6 +249,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.constant_query_string({
             hello: "hi"
@@ -283,7 +266,7 @@ module RailsJson
 
         # Serializes document types as part of the JSON request payload with no escaping.
         it 'RailsJsonDocumentTypeInputWithObject' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -295,6 +278,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
@@ -304,7 +288,7 @@ module RailsJson
 
         # Serializes document types using a string.
         it 'RailsJsonDocumentInputWithString' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -314,6 +298,7 @@ module RailsJson
                 "document_value": "hello"
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
@@ -323,7 +308,7 @@ module RailsJson
 
         # Serializes document types using a number.
         it 'RailsJsonDocumentInputWithNumber' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -333,6 +318,7 @@ module RailsJson
                 "document_value": 10
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
@@ -342,7 +328,7 @@ module RailsJson
 
         # Serializes document types using a boolean.
         it 'RailsJsonDocumentInputWithBoolean' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -352,6 +338,7 @@ module RailsJson
                 "document_value": true
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
@@ -361,7 +348,7 @@ module RailsJson
 
         # Serializes document types using a list.
         it 'RailsJsonDocumentInputWithList' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentType')
@@ -386,6 +373,7 @@ module RailsJson
                 ]
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type({
             string_value: "string",
@@ -503,9 +491,10 @@ module RailsJson
 
         # Serializes documents as part of the JSON response payload with no escaping.
         it 'stubs RailsJsonDocumentOutput' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, data: {
             string_value: "string",
@@ -520,9 +509,10 @@ module RailsJson
 
         # Document types can be JSON scalars too.
         it 'stubs RailsJsonDocumentOutputString' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, data: {
             string_value: "string",
@@ -537,9 +527,10 @@ module RailsJson
 
         # Document types can be JSON scalars too.
         it 'stubs RailsJsonDocumentOutputNumber' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, data: {
             string_value: "string",
@@ -554,9 +545,10 @@ module RailsJson
 
         # Document types can be JSON scalars too.
         it 'stubs RailsJsonDocumentOutputBoolean' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, data: {
             string_value: "string",
@@ -571,9 +563,10 @@ module RailsJson
 
         # Document types can be JSON arrays.
         it 'stubs RailsJsonDocumentOutputArray' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentType).to receive(:build)
           client.stub_responses(:document_type, data: {
             string_value: "string",
@@ -596,7 +589,7 @@ module RailsJson
 
         # Serializes a document as the target of the httpPayload trait.
         it 'RailsJsonDocumentTypeAsPayloadInput' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentTypeAsPayload')
@@ -605,6 +598,7 @@ module RailsJson
                 "foo": "bar"
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type_as_payload({
             document_value: {'foo' => 'bar'}
@@ -613,13 +607,14 @@ module RailsJson
 
         # Serializes a document as the target of the httpPayload trait using a string.
         it 'RailsJsonDocumentTypeAsPayloadInputString' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/DocumentTypeAsPayload')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('"hello"'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.document_type_as_payload({
             document_value: 'hello'
@@ -668,9 +663,10 @@ module RailsJson
 
         # Serializes a document as the target of the httpPayload trait.
         it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentTypeAsPayload).to receive(:build)
           client.stub_responses(:document_type_as_payload, data: {
             document_value: {'foo' => 'bar'}
@@ -683,9 +679,10 @@ module RailsJson
 
         # Serializes a document as a payload string.
         it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::DocumentTypeAsPayload).to receive(:build)
           client.stub_responses(:document_type_as_payload, data: {
             document_value: 'hello'
@@ -770,9 +767,10 @@ module RailsJson
         # if one is returned. This ensures that if output is added later,
         # then it will not break the client.
         it 'stubs RailsJsonHandlesEmptyOutputShape' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyOperation).to receive(:build)
           client.stub_responses(:empty_operation, data: {
 
@@ -788,9 +786,10 @@ module RailsJson
         # needs to ignore JSON output that is empty or that contains
         # JSON object data.
         it 'stubs RailsJsonHandlesUnexpectedJsonOutput' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyOperation).to receive(:build)
           client.stub_responses(:empty_operation, data: {
 
@@ -807,9 +806,10 @@ module RailsJson
         # handle cases where a service returns a JSON object and where
         # a service returns no JSON at all.
         it 'stubs RailsJsonServiceRespondsWithNoPayload' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyOperation).to receive(:build)
           client.stub_responses(:empty_operation, data: {
 
@@ -831,12 +831,13 @@ module RailsJson
         # Operations can prepend to the given host if they define the
         # endpoint trait.
         it 'RailsJsonEndpointTrait' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.example.com')
             expect(request.uri.path).to eq('/endpoint')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
           client.endpoint_operation({
@@ -856,13 +857,14 @@ module RailsJson
         # endpoint trait, and can use the host label trait to define
         # further customization based on user input.
         it 'RailsJsonEndpointTraitWithHostLabel' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.bar.example.com')
             expect(request.uri.path).to eq('/endpointwithhostlabel')
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label_member": "bar"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
           client.endpoint_with_host_label_operation({
@@ -1012,7 +1014,7 @@ module RailsJson
 
         # Serializes a blob in the HTTP payload
         it 'RailsJsonHttpPayloadTraitsWithBlob' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/HttpPayloadTraits')
@@ -1020,6 +1022,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_payload_traits({
             foo: "Foo",
@@ -1029,13 +1032,14 @@ module RailsJson
 
         # Serializes an empty blob in the HTTP payload
         it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/HttpPayloadTraits')
             { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_payload_traits({
             foo: "Foo"
@@ -1083,9 +1087,10 @@ module RailsJson
 
         # Serializes a blob in the HTTP payload
         it 'stubs RailsJsonHttpPayloadTraitsWithBlob' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPayloadTraits).to receive(:build)
           client.stub_responses(:http_payload_traits, data: {
             foo: "Foo",
@@ -1100,9 +1105,10 @@ module RailsJson
 
         # Serializes an empty blob in the HTTP payload
         it 'stubs RailsJsonHttpPayloadTraitsWithNoBlobBody' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPayloadTraits).to receive(:build)
           client.stub_responses(:http_payload_traits, data: {
             foo: "Foo"
@@ -1123,7 +1129,7 @@ module RailsJson
 
         # Serializes a blob in the HTTP payload with a content-type
         it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/HttpPayloadTraitsWithMediaType')
@@ -1131,6 +1137,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(request.body.read).to eq('blobby blob blob')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_payload_traits_with_media_type({
             foo: "Foo",
@@ -1165,9 +1172,10 @@ module RailsJson
 
         # Serializes a blob in the HTTP payload with a content-type
         it 'stubs RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPayloadTraitsWithMediaType).to receive(:build)
           client.stub_responses(:http_payload_traits_with_media_type, data: {
             foo: "Foo",
@@ -1190,7 +1198,7 @@ module RailsJson
 
         # Serializes a structure in the payload
         it 'RailsJsonHttpPayloadWithStructure' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/HttpPayloadWithStructure')
@@ -1201,6 +1209,7 @@ module RailsJson
                 "name": "Phreddy"
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_payload_with_structure({
             nested: {
@@ -1241,9 +1250,10 @@ module RailsJson
 
         # Serializes a structure in the payload
         it 'stubs RailsJsonHttpPayloadWithStructure' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPayloadWithStructure).to receive(:build)
           client.stub_responses(:http_payload_with_structure, data: {
             nested: {
@@ -1270,13 +1280,14 @@ module RailsJson
 
         # Adds headers by prefix
         it 'RailsJsonHttpPrefixHeadersArePresent' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpPrefixHeaders')
             { 'X-Foo' => 'Foo', 'X-Foo-Abc' => 'Abc value', 'X-Foo-Def' => 'Def value' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_prefix_headers({
             foo: "Foo",
@@ -1289,13 +1300,14 @@ module RailsJson
 
         # No prefix headers are serialized because the value is empty
         it 'RailsJsonHttpPrefixHeadersAreNotPresent' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpPrefixHeaders')
             { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_prefix_headers({
             foo: "Foo",
@@ -1334,9 +1346,10 @@ module RailsJson
 
         # Adds headers by prefix
         it 'stubs RailsJsonHttpPrefixHeadersArePresent' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPrefixHeaders).to receive(:build)
           client.stub_responses(:http_prefix_headers, data: {
             foo: "Foo",
@@ -1386,9 +1399,10 @@ module RailsJson
 
         # (de)serializes all response headers
         it 'stubs RailsJsonHttpPrefixHeadersResponse' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPrefixHeadersInResponse).to receive(:build)
           client.stub_responses(:http_prefix_headers_in_response, data: {
             prefix_headers: {
@@ -1415,12 +1429,13 @@ module RailsJson
 
         # Supports handling NaN float label values.
         it 'RailsJsonSupportsNaNFloatLabels' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/FloatHttpLabels/NaN/NaN')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_float_labels({
             float: Float::NAN,
@@ -1430,12 +1445,13 @@ module RailsJson
 
         # Supports handling Infinity float label values.
         it 'RailsJsonSupportsInfinityFloatLabels' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/FloatHttpLabels/Infinity/Infinity')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_float_labels({
             float: Float::INFINITY,
@@ -1445,12 +1461,13 @@ module RailsJson
 
         # Supports handling -Infinity float label values.
         it 'RailsJsonSupportsNegativeInfinityFloatLabels' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/FloatHttpLabels/-Infinity/-Infinity')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_float_labels({
             float: -Float::INFINITY,
@@ -1468,12 +1485,13 @@ module RailsJson
 
         # Serializes greedy labels and normal labels
         it 'RailsJsonHttpRequestWithGreedyLabelInPath' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_greedy_label_in_path({
             foo: "hello/escape",
@@ -1491,12 +1509,13 @@ module RailsJson
 
         # Sends a GET request that uses URI label bindings
         it 'RailsJsonInputWithHeadersAndAllParams' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_labels({
             string: "string",
@@ -1512,12 +1531,13 @@ module RailsJson
 
         # Sends a GET request that uses URI label bindings
         it 'RailsJsonHttpRequestLabelEscaping' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_labels({
             string: "%:/?#[]@!$&'()*+,;=😹",
@@ -1541,12 +1561,13 @@ module RailsJson
 
         # Serializes different timestamp formats in URI labels
         it 'RailsJsonHttpRequestWithLabelsAndTimestampFormat' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/HttpRequestWithLabelsAndTimestampFormat/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z/2019-12-16T23%3A48%3A18Z/1576540098/Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_labels_and_timestamp_format({
             member_epoch_seconds: Time.at(1576540098),
@@ -1612,9 +1633,10 @@ module RailsJson
         # clients should be able to handle an empty JSON object or an
         # empty payload without failing to deserialize a response.
         it 'stubs RailsJsonHttpResponseCode' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(201)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpResponseCode).to receive(:build)
           client.stub_responses(:http_response_code, data: {
             status: 201
@@ -1629,9 +1651,10 @@ module RailsJson
         # the service responds with no payload rather than an empty JSON
         # object.
         it 'stubs RailsJsonHttpResponseCodeWithNoPayload' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(201)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpResponseCode).to receive(:build)
           client.stub_responses(:http_response_code, data: {
             status: 201
@@ -1693,9 +1716,10 @@ module RailsJson
         # are expected to respond with a JSON object regardless of
         # if the output parameters are empty.
         it 'stubs RailsJsonIgnoreQueryParamsInResponse' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
           client.stub_responses(:ignore_query_params_in_response, data: {
 
@@ -1710,9 +1734,10 @@ module RailsJson
         # but it ensures that clients gracefully handle responses from
         # the server that do not serialize an empty JSON object.
         it 'stubs RailsJsonIgnoreQueryParamsInResponseNoPayload' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
           client.stub_responses(:ignore_query_params_in_response, data: {
 
@@ -1733,13 +1758,14 @@ module RailsJson
 
         # Tests requests with string header bindings
         it 'RailsJsonInputAndOutputWithStringHeaders' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-String' => 'Hello', 'X-StringList' => 'a, b, c', 'X-StringSet' => 'a, b, c' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_string: "Hello",
@@ -1758,13 +1784,14 @@ module RailsJson
 
         # Tests requests with numeric header bindings
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Byte' => '1', 'X-Double' => '1.1', 'X-Float' => '1.1', 'X-Integer' => '123', 'X-IntegerList' => '1, 2, 3', 'X-Long' => '123', 'X-Short' => '123' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_byte: 1,
@@ -1783,13 +1810,14 @@ module RailsJson
 
         # Tests requests with boolean header bindings
         it 'RailsJsonInputAndOutputWithBooleanHeaders' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Boolean1' => 'true', 'X-Boolean2' => 'false', 'X-BooleanList' => 'true, false, true' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_true_bool: true,
@@ -1804,13 +1832,14 @@ module RailsJson
 
         # Tests requests with enum header bindings
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
             { 'X-Enum' => 'Foo', 'X-EnumList' => 'Foo, Bar, Baz' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.input_and_output_with_headers({
             header_enum: "Foo",
@@ -1953,9 +1982,10 @@ module RailsJson
 
         # Tests responses with string header bindings
         it 'stubs RailsJsonInputAndOutputWithStringHeaders' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, data: {
             header_string: "Hello",
@@ -1988,9 +2018,10 @@ module RailsJson
 
         # Tests requests with string list header bindings that require quoting
         it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, data: {
             header_string_list: [
@@ -2011,9 +2042,10 @@ module RailsJson
 
         # Tests responses with numeric header bindings
         it 'stubs RailsJsonInputAndOutputWithNumericHeaders' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, data: {
             header_byte: 1,
@@ -2046,9 +2078,10 @@ module RailsJson
 
         # Tests responses with boolean header bindings
         it 'stubs RailsJsonInputAndOutputWithBooleanHeaders' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, data: {
             header_true_bool: true,
@@ -2073,9 +2106,10 @@ module RailsJson
 
         # Tests responses with enum header bindings
         it 'stubs RailsJsonInputAndOutputWithEnumHeaders' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           client.stub_responses(:input_and_output_with_headers, data: {
             header_enum: "Foo",
@@ -2106,7 +2140,7 @@ module RailsJson
 
         # Serializes simple scalar properties
         it 'RailsJsonEnums' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonenums')
@@ -2129,6 +2163,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_enums({
             foo_enum1: "Foo",
@@ -2204,9 +2239,10 @@ module RailsJson
 
         # Serializes simple scalar properties
         it 'stubs RailsJsonEnums' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonEnums).to receive(:build)
           client.stub_responses(:json_enums, data: {
             foo_enum1: "Foo",
@@ -2255,7 +2291,7 @@ module RailsJson
 
         # Serializes JSON maps
         it 'RailsJsonJsonMaps' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2279,6 +2315,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_maps({
             dense_struct_map: {
@@ -2302,7 +2339,7 @@ module RailsJson
 
         # Serializes JSON map values in sparse maps
         it 'RailsJsonSerializesNullMapValues' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2322,6 +2359,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_maps({
             sparse_boolean_map: {
@@ -2341,7 +2379,7 @@ module RailsJson
 
         # Ensure that 0 and false are sent over the wire in all maps and lists
         it 'RailsJsonSerializesZeroValuesInMaps' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2361,6 +2399,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_maps({
             dense_number_map: {
@@ -2380,7 +2419,7 @@ module RailsJson
 
         # A request that contains a sparse map of sets
         it 'RailsJsonSerializesSparseSetMap' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2392,6 +2431,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_maps({
             sparse_set_map: {
@@ -2408,7 +2448,7 @@ module RailsJson
 
         # A request that contains a dense map of sets.
         it 'RailsJsonSerializesDenseSetMap' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2420,6 +2460,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_maps({
             dense_set_map: {
@@ -2436,7 +2477,7 @@ module RailsJson
 
         # A request that contains a sparse map of sets.
         it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
@@ -2449,6 +2490,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_maps({
             sparse_set_map: {
@@ -2715,9 +2757,10 @@ module RailsJson
 
         # Deserializes JSON maps
         it 'stubs RailsJsonJsonMaps' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             dense_struct_map: {
@@ -2760,9 +2803,10 @@ module RailsJson
 
         # Deserializes null JSON map values
         it 'stubs RailsJsonDeserializesNullMapValues' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             sparse_boolean_map: {
@@ -2797,9 +2841,10 @@ module RailsJson
 
         # Ensure that 0 and false are sent over the wire in all maps and lists
         it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             dense_number_map: {
@@ -2834,9 +2879,10 @@ module RailsJson
 
         # A response that contains a sparse map of sets
         it 'stubs RailsJsonDeserializesSparseSetMap' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             sparse_set_map: {
@@ -2865,9 +2911,10 @@ module RailsJson
 
         # A response that contains a dense map of sets.
         it 'stubs RailsJsonDeserializesDenseSetMap' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             dense_set_map: {
@@ -2896,9 +2943,10 @@ module RailsJson
 
         # A response that contains a sparse map of sets.
         it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             sparse_set_map: {
@@ -2930,9 +2978,10 @@ module RailsJson
         # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
         # drop the null key-value pair.
         it 'stubs RailsJsonDeserializesDenseSetMapAndSkipsNull' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonMaps).to receive(:build)
           client.stub_responses(:json_maps, data: {
             dense_set_map: {
@@ -2969,7 +3018,7 @@ module RailsJson
 
         # Serializes a string union value
         it 'RailsJsonSerializeStringUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -2980,6 +3029,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -2990,7 +3040,7 @@ module RailsJson
 
         # Serializes a boolean union value
         it 'RailsJsonSerializeBooleanUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3001,6 +3051,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3011,7 +3062,7 @@ module RailsJson
 
         # Serializes a number union value
         it 'RailsJsonSerializeNumberUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3022,6 +3073,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3032,7 +3084,7 @@ module RailsJson
 
         # Serializes a blob union value
         it 'RailsJsonSerializeBlobUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3043,6 +3095,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3053,7 +3106,7 @@ module RailsJson
 
         # Serializes a timestamp union value
         it 'RailsJsonSerializeTimestampUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3064,6 +3117,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3074,7 +3128,7 @@ module RailsJson
 
         # Serializes an enum union value
         it 'RailsJsonSerializeEnumUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3085,6 +3139,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3095,7 +3150,7 @@ module RailsJson
 
         # Serializes a list union value
         it 'RailsJsonSerializeListUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3106,6 +3161,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3119,7 +3175,7 @@ module RailsJson
 
         # Serializes a map union value
         it 'RailsJsonSerializeMapUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3133,6 +3189,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3146,7 +3203,7 @@ module RailsJson
 
         # Serializes a structure union value
         it 'RailsJsonSerializeStructureUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3159,6 +3216,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3171,7 +3229,7 @@ module RailsJson
 
         # Serializes a renamed structure union value
         it 'RailsJsonSerializeRenamedStructureUnionValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/jsonunions')
@@ -3184,6 +3242,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.json_unions({
             contents: {
@@ -3406,9 +3465,10 @@ module RailsJson
 
         # Deserializes a string union value
         it 'stubs RailsJsonDeserializeStringUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3425,9 +3485,10 @@ module RailsJson
 
         # Deserializes a boolean union value
         it 'stubs RailsJsonDeserializeBooleanUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3444,9 +3505,10 @@ module RailsJson
 
         # Deserializes a number union value
         it 'stubs RailsJsonDeserializeNumberUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3463,9 +3525,10 @@ module RailsJson
 
         # Deserializes a blob union value
         it 'stubs RailsJsonDeserializeBlobUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3482,9 +3545,10 @@ module RailsJson
 
         # Deserializes a timestamp union value
         it 'stubs RailsJsonDeserializeTimestampUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3501,9 +3565,10 @@ module RailsJson
 
         # Deserializes an enum union value
         it 'stubs RailsJsonDeserializeEnumUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3520,9 +3585,10 @@ module RailsJson
 
         # Deserializes a list union value
         it 'stubs RailsJsonDeserializeListUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3545,9 +3611,10 @@ module RailsJson
 
         # Deserializes a map union value
         it 'stubs RailsJsonDeserializeMapUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3570,9 +3637,10 @@ module RailsJson
 
         # Deserializes a structure union value
         it 'stubs RailsJsonDeserializeStructureUnionValue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::JsonUnions).to receive(:build)
           client.stub_responses(:json_unions, data: {
             contents: {
@@ -3601,7 +3669,7 @@ module RailsJson
 
         # Serializes string shapes
         it 'RailsJsonSerializesStringShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3609,6 +3677,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             string: "abc xyz"
@@ -3617,7 +3686,7 @@ module RailsJson
 
         # Serializes string shapes with jsonvalue trait
         it 'RailsJsonSerializesStringShapesWithJsonvalueTrait' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3625,6 +3694,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             json_value: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
@@ -3633,7 +3703,7 @@ module RailsJson
 
         # Serializes integer shapes
         it 'RailsJsonSerializesIntegerShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3641,6 +3711,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             integer: 1234
@@ -3649,7 +3720,7 @@ module RailsJson
 
         # Serializes long shapes
         it 'RailsJsonSerializesLongShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3657,6 +3728,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             long: 999999999999
@@ -3665,7 +3737,7 @@ module RailsJson
 
         # Serializes float shapes
         it 'RailsJsonSerializesFloatShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3673,6 +3745,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             float: 1234.5
@@ -3681,7 +3754,7 @@ module RailsJson
 
         # Serializes double shapes
         it 'RailsJsonSerializesDoubleShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3689,6 +3762,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             double: 1234.5
@@ -3697,7 +3771,7 @@ module RailsJson
 
         # Serializes blob shapes
         it 'RailsJsonSerializesBlobShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3705,6 +3779,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             blob: 'binary-value'
@@ -3713,7 +3788,7 @@ module RailsJson
 
         # Serializes boolean shapes (true)
         it 'RailsJsonSerializesBooleanShapesTrue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3721,6 +3796,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             boolean: true
@@ -3729,7 +3805,7 @@ module RailsJson
 
         # Serializes boolean shapes (false)
         it 'RailsJsonSerializesBooleanShapesFalse' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3737,6 +3813,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             boolean: false
@@ -3745,7 +3822,7 @@ module RailsJson
 
         # Serializes timestamp shapes
         it 'RailsJsonSerializesTimestampShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3753,6 +3830,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             timestamp: Time.at(946845296)
@@ -3761,7 +3839,7 @@ module RailsJson
 
         # Serializes fractional timestamp shapes
         it 'RailsJsonSerializesFractionalTimestampShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3769,6 +3847,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56.123Z"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             timestamp: Time.at(946845296, 123, :millisecond)
@@ -3777,7 +3856,7 @@ module RailsJson
 
         # Serializes timestamp shapes with iso8601 timestampFormat
         it 'RailsJsonSerializesTimestampShapesWithIso8601Timestampformat' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3785,6 +3864,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             iso8601_timestamp: Time.at(946845296)
@@ -3793,7 +3873,7 @@ module RailsJson
 
         # Serializes timestamp shapes with httpdate timestampFormat
         it 'RailsJsonSerializesTimestampShapesWithHttpdateTimestampformat' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3801,6 +3881,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             httpdate_timestamp: Time.at(946845296)
@@ -3809,7 +3890,7 @@ module RailsJson
 
         # Serializes timestamp shapes with unixTimestamp timestampFormat
         it 'RailsJsonSerializesTimestampShapesWithUnixtimestampTimestampformat' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3817,6 +3898,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             unix_timestamp: Time.at(946845296)
@@ -3825,7 +3907,7 @@ module RailsJson
 
         # Serializes list shapes
         it 'RailsJsonSerializesListShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3833,6 +3915,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_strings: [
@@ -3845,7 +3928,7 @@ module RailsJson
 
         # Serializes empty list shapes
         it 'RailsJsonSerializesEmptyListShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3853,6 +3936,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_strings: [
@@ -3863,7 +3947,7 @@ module RailsJson
 
         # Serializes list of map shapes
         it 'RailsJsonSerializesListOfMapShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3871,6 +3955,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_maps_of_strings: [
@@ -3889,7 +3974,7 @@ module RailsJson
 
         # Serializes list of structure shapes
         it 'RailsJsonSerializesListOfStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3897,6 +3982,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             list_of_structs: [
@@ -3915,7 +4001,7 @@ module RailsJson
 
         # Serializes list of recursive structure shapes
         it 'RailsJsonSerializesListOfRecursiveStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3923,6 +4009,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             recursive_list: [
@@ -3943,7 +4030,7 @@ module RailsJson
 
         # Serializes map shapes
         it 'RailsJsonSerializesMapShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3951,6 +4038,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_strings: {
@@ -3962,7 +4050,7 @@ module RailsJson
 
         # Serializes empty map shapes
         it 'RailsJsonSerializesEmptyMapShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3970,6 +4058,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_strings: {
@@ -3980,7 +4069,7 @@ module RailsJson
 
         # Serializes map of list shapes
         it 'RailsJsonSerializesMapOfListShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -3988,6 +4077,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_lists_of_strings: {
@@ -4005,7 +4095,7 @@ module RailsJson
 
         # Serializes map of structure shapes
         it 'RailsJsonSerializesMapOfStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4013,6 +4103,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             map_of_structs: {
@@ -4028,7 +4119,7 @@ module RailsJson
 
         # Serializes map of recursive structure shapes
         it 'RailsJsonSerializesMapOfRecursiveStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4036,6 +4127,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             recursive_map: {
@@ -4056,7 +4148,7 @@ module RailsJson
 
         # Serializes structure shapes
         it 'RailsJsonSerializesStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4064,6 +4156,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             simple_struct: {
@@ -4074,7 +4167,7 @@ module RailsJson
 
         # Serializes structure members with locationName traits
         it 'RailsJsonSerializesStructureMembersWithLocationnameTraits' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4082,6 +4175,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             struct_with_location_name: {
@@ -4092,7 +4186,7 @@ module RailsJson
 
         # Serializes empty structure shapes
         it 'RailsJsonSerializesEmptyStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4100,6 +4194,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             simple_struct: {
@@ -4110,7 +4205,7 @@ module RailsJson
 
         # Serializes structure which have no members
         it 'RailsJsonSerializesStructureWhichHaveNoMembers' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4118,6 +4213,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             empty_struct: {
@@ -4128,7 +4224,7 @@ module RailsJson
 
         # Serializes recursive structure shapes
         it 'RailsJsonSerializesRecursiveStructureShapes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/')
@@ -4136,6 +4232,7 @@ module RailsJson
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.kitchen_sink_operation({
             string: "top-value",
@@ -4627,9 +4724,10 @@ module RailsJson
 
         # Parses operations with empty JSON bodies
         it 'stubs RailsJsonParsesOperationsWithEmptyJsonBodies' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
 
@@ -4642,9 +4740,10 @@ module RailsJson
 
         # Parses string shapes
         it 'stubs RailsJsonParsesStringShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             string: "string-value"
@@ -4657,9 +4756,10 @@ module RailsJson
 
         # Parses integer shapes
         it 'stubs RailsJsonParsesIntegerShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             integer: 1234
@@ -4672,9 +4772,10 @@ module RailsJson
 
         # Parses long shapes
         it 'stubs RailsJsonParsesLongShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             long: 1234567890123456789
@@ -4687,9 +4788,10 @@ module RailsJson
 
         # Parses float shapes
         it 'stubs RailsJsonParsesFloatShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             float: 1234.5
@@ -4702,9 +4804,10 @@ module RailsJson
 
         # Parses double shapes
         it 'stubs RailsJsonParsesDoubleShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             double: 1.2345678912345679E8
@@ -4717,9 +4820,10 @@ module RailsJson
 
         # Parses boolean shapes (true)
         it 'stubs RailsJsonParsesBooleanShapesTrue' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             boolean: true
@@ -4732,9 +4836,10 @@ module RailsJson
 
         # Parses boolean (false)
         it 'stubs RailsJsonParsesBooleanFalse' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             boolean: false
@@ -4747,9 +4852,10 @@ module RailsJson
 
         # Parses blob shapes
         it 'stubs RailsJsonParsesBlobShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             blob: 'binary-value'
@@ -4762,9 +4868,10 @@ module RailsJson
 
         # Parses timestamp shapes
         it 'stubs RailsJsonParsesTimestampShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             timestamp: Time.at(946845296)
@@ -4777,9 +4884,10 @@ module RailsJson
 
         # Parses fractional timestamp shapes
         it 'stubs RailsJsonParsesFractionalTimestampShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             timestamp: Time.at(946845296, 123, :millisecond)
@@ -4792,9 +4900,10 @@ module RailsJson
 
         # Parses iso8601 timestamps
         it 'stubs RailsJsonParsesIso8601Timestamps' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             iso8601_timestamp: Time.at(946845296)
@@ -4807,9 +4916,10 @@ module RailsJson
 
         # Parses httpdate timestamps
         it 'stubs RailsJsonParsesHttpdateTimestamps' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             httpdate_timestamp: Time.at(946845296)
@@ -4822,9 +4932,10 @@ module RailsJson
 
         # Parses fractional httpdate timestamps
         it 'stubs RailsJsonParsesFractionalHttpdateTimestamps' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
@@ -4837,9 +4948,10 @@ module RailsJson
 
         # Parses list shapes
         it 'stubs RailsJsonParsesListShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             list_of_strings: [
@@ -4860,9 +4972,10 @@ module RailsJson
 
         # Parses list of map shapes
         it 'stubs RailsJsonParsesListOfMapShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             list_of_maps_of_strings: [
@@ -4889,9 +5002,10 @@ module RailsJson
 
         # Parses list of list shapes
         it 'stubs RailsJsonParsesListOfListShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             list_of_lists: [
@@ -4926,9 +5040,10 @@ module RailsJson
 
         # Parses list of structure shapes
         it 'stubs RailsJsonParsesListOfStructureShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             list_of_structs: [
@@ -4955,9 +5070,10 @@ module RailsJson
 
         # Parses list of recursive structure shapes
         it 'stubs RailsJsonParsesListOfRecursiveStructureShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             recursive_list: [
@@ -4994,9 +5110,10 @@ module RailsJson
 
         # Parses map shapes
         it 'stubs RailsJsonParsesMapShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             map_of_strings: {
@@ -5015,9 +5132,10 @@ module RailsJson
 
         # Parses map of list shapes
         it 'stubs RailsJsonParsesMapOfListShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             map_of_lists_of_strings: {
@@ -5048,9 +5166,10 @@ module RailsJson
 
         # Parses map of map shapes
         it 'stubs RailsJsonParsesMapOfMapShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             map_of_maps: {
@@ -5081,9 +5200,10 @@ module RailsJson
 
         # Parses map of structure shapes
         it 'stubs RailsJsonParsesMapOfStructureShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             map_of_structs: {
@@ -5110,9 +5230,10 @@ module RailsJson
 
         # Parses map of recursive structure shapes
         it 'stubs RailsJsonParsesMapOfRecursiveStructureShapes' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
             recursive_map: {
@@ -5149,9 +5270,10 @@ module RailsJson
 
         # Parses the request id from the response
         it 'stubs RailsJsonParsesTheRequestIdFromTheResponse' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::KitchenSinkOperation).to receive(:build)
           client.stub_responses(:kitchen_sink_operation, data: {
 
@@ -5172,13 +5294,14 @@ module RailsJson
 
         # Headers that target strings with a mediaType are base64 encoded
         it 'RailsJsonMediaTypeHeaderInputBase64' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/MediaTypeHeader')
             { 'X-Json' => 'dHJ1ZQ==' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.media_type_header({
             json: "true"
@@ -5210,9 +5333,10 @@ module RailsJson
 
         # Headers that target strings with a mediaType are base64 encoded
         it 'stubs RailsJsonMediaTypeHeaderOutputBase64' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::MediaTypeHeader).to receive(:build)
           client.stub_responses(:media_type_header, data: {
             json: "true"
@@ -5233,13 +5357,14 @@ module RailsJson
 
         # Serializes members with nestedAttributes
         it 'RailsJsonNestedAttributes' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nestedattributes')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.nested_attributes_operation({
             simple_struct: {
@@ -5258,13 +5383,14 @@ module RailsJson
 
         # Do not send null values, empty strings, or empty lists over the wire in headers
         it 'RailsJsonNullAndEmptyHeaders' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/NullAndEmptyHeadersClient')
             ['X-A', 'X-B', 'X-C'].each { |k| expect(request.headers.key?(k)).to be(false) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.null_and_empty_headers_client({
             a: nil,
@@ -5285,13 +5411,14 @@ module RailsJson
 
         # Null structure values are dropped
         it 'RailsJsonStructuresDontSerializeNullValues' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nulloperation')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.null_operation({
             string: nil
@@ -5300,7 +5427,7 @@ module RailsJson
 
         # Serializes null values in maps
         it 'RailsJsonMapsSerializeNullValues' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nulloperation')
@@ -5311,6 +5438,7 @@ module RailsJson
                 }
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.null_operation({
             sparse_string_map: {
@@ -5321,7 +5449,7 @@ module RailsJson
 
         # Serializes null values in lists
         it 'RailsJsonListsSerializeNull' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/nulloperation')
@@ -5332,6 +5460,7 @@ module RailsJson
                 ]
             }'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.null_operation({
             sparse_string_list: [
@@ -5409,9 +5538,10 @@ module RailsJson
 
         # Null structure values are dropped
         it 'stubs RailsJsonStructuresDontDeserializeNullValues' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NullOperation).to receive(:build)
           client.stub_responses(:null_operation, data: {
 
@@ -5424,9 +5554,10 @@ module RailsJson
 
         # Deserializes null values in maps
         it 'stubs RailsJsonMapsDeserializeNullValues' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NullOperation).to receive(:build)
           client.stub_responses(:null_operation, data: {
             sparse_string_map: {
@@ -5443,9 +5574,10 @@ module RailsJson
 
         # Deserializes null values in lists
         it 'stubs RailsJsonListsDeserializeNull' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NullOperation).to receive(:build)
           client.stub_responses(:null_operation, data: {
             sparse_string_list: [
@@ -5470,12 +5602,13 @@ module RailsJson
 
         # Omits null query values
         it 'RailsJsonOmitsNullQuery' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/OmitsNullSerializesEmptyString')
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.omits_null_serializes_empty_string({
             null_value: nil
@@ -5484,7 +5617,7 @@ module RailsJson
 
         # Serializes empty query strings
         it 'RailsJsonSerializesEmptyQueryValue' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/OmitsNullSerializesEmptyString')
@@ -5495,6 +5628,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.omits_null_serializes_empty_string({
             empty_string: ""
@@ -5511,13 +5645,14 @@ module RailsJson
 
         # Can call operations with no input or output
         it 'RailsJsonCanCallOperationWithNoInputOrOutput' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation_with_optional_input_output({
 
@@ -5526,13 +5661,14 @@ module RailsJson
 
         # Can invoke operations with optional input
         it 'RailsJsonCanCallOperationWithOptionalInput' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation_with_optional_input_output({
             value: "Hi"
@@ -5550,7 +5686,7 @@ module RailsJson
         # Automatically adds idempotency token when not set
         it 'RailsJsonQueryIdempotencyTokenAutoFill' do
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/QueryIdempotencyTokenAutoFill')
@@ -5561,6 +5697,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.query_idempotency_token_auto_fill({
 
@@ -5570,7 +5707,7 @@ module RailsJson
         # Uses the given idempotency token as-is
         it 'RailsJsonQueryIdempotencyTokenAutoFillIsSet' do
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/QueryIdempotencyTokenAutoFill')
@@ -5581,6 +5718,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.query_idempotency_token_auto_fill({
             token: "00000000-0000-4000-8000-000000000000"
@@ -5597,7 +5735,7 @@ module RailsJson
 
         # Serialize query params from map of list strings
         it 'RailsJsonQueryParamsStringListMap' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/StringListMap')
@@ -5608,6 +5746,7 @@ module RailsJson
             end
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.query_params_as_string_list_map({
             qux: "named",
@@ -5634,13 +5773,14 @@ module RailsJson
 
         # Tests how timestamp request headers are serialized
         it 'RailsJsonTimestampFormatHeaders' do
-          interceptor = before_send.new do |context|
+          proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/TimestampFormatHeaders')
             { 'X-defaultFormat' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-memberDateTime' => '2019-12-16T23:48:18Z', 'X-memberEpochSeconds' => '1576540098', 'X-memberHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT', 'X-targetDateTime' => '2019-12-16T23:48:18Z', 'X-targetEpochSeconds' => '1576540098', 'X-targetHttpDate' => 'Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(request.body.read).to eq('')
           end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.timestamp_format_headers({
             member_epoch_seconds: Time.at(1576540098),
@@ -5690,9 +5830,10 @@ module RailsJson
 
         # Tests how timestamp response headers are serialized
         it 'stubs RailsJsonTimestampFormatHeaders' do
-          interceptor = after_send.new do |context|
+          proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::TimestampFormatHeaders).to receive(:build)
           client.stub_responses(:timestamp_format_headers, data: {
             member_epoch_seconds: Time.at(1576540098),
