@@ -229,7 +229,10 @@ public class WaitersGenerator extends RubyGeneratorBase {
     private void renderWaiterWaitDocumentation(RubyCodeWriter writer, String operationName) {
         writer
                 .writeYardReference("param", "Client#" + operationName)
-                .writeYardReturn("true", "");
+                .writeYardReturn("true", "")
+                .writeYardRaise("Hearth::Waiters::FailureStateError", "")
+                .writeYardRaise("Hearth::Waiters::MaxWaitTimeExceededError", "")
+                .writeYardRaise("Hearth::Waiters::UnexpectedError", "");
     }
 
     private void renderWaiterInitializeDocumentation(RubyCodeWriter writer, Waiter waiter) {

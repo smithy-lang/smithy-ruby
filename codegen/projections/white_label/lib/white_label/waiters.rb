@@ -75,6 +75,9 @@ module WhiteLabel
 
       # @param (see Client#waiters_test)
       # @return [true]
+      # @raise [Hearth::Waiters::FailureStateError]
+      # @raise [Hearth::Waiters::MaxWaitTimeExceededError]
+      # @raise [Hearth::Waiters::UnexpectedError]
       def wait(params = {}, options = {})
         @waiter.wait(@client, params, options)
       end

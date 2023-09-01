@@ -41,8 +41,8 @@ module Hearth
         end
 
         it "calls the callback for #{hook}" do
-          output = subject.send(hook, context)
-          expect(output).to be context
+          expect(proc).to receive(:call).with(context)
+          subject.send(hook, context)
         end
       end
     end
