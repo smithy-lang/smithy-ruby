@@ -27,7 +27,7 @@ module WhiteLabel
       it 'uses defaults' do
         config = Config.new
         expect(config.logger).to be_a(Logger)
-        expect(config.logger.info?).to be true
+        expect(config.logger.warn?).to be true
       end
 
       it 'validates types' do
