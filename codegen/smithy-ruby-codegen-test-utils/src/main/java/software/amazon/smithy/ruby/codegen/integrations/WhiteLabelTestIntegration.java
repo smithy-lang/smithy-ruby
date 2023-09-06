@@ -15,19 +15,18 @@
 
 package software.amazon.smithy.ruby.codegen.integrations;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
-import software.amazon.smithy.ruby.codegen.protocol.FakeProtocolGenerator;
 
 public class WhiteLabelTestIntegration implements RubyIntegration {
 
@@ -64,7 +63,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .relative(Middleware.Relative.builder()
                         .before("Middleware::MidMiddleware")
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
                 .build();
         Middleware midMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -74,7 +73,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .before("Middleware:OptionalMiddleware")
                         .optional()
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
                 .build();
         Middleware afterMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -83,7 +82,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .relative(Middleware.Relative.builder()
                         .after("Middleware::MidMiddleware")
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
                 .build();
 
         middlewareBuilder.register(testMiddleware);
@@ -93,7 +92,16 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
     }
 
     @Override
-    public List<ProtocolGenerator> getProtocolGenerators() {
-        return Arrays.asList(new FakeProtocolGenerator());
+    public List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
+//        AuthScheme authScheme = AuthScheme.builder()
+//                .shapeId(HttpCustomAuthTrait.ID)
+//                .rubyAuthScheme("test")
+//                .rubyIdentityClass("TestIdentity")
+//                .rubyIdentityResolverConfigDefaultValue(null)
+//                .rubyIdentityResolverConfigName(null)
+//                .build();
+//
+//        return List.of(authScheme);
+        return Collections.emptyList();
     }
 }

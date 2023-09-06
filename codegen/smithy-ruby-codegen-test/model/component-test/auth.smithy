@@ -7,7 +7,6 @@ apply WhiteLabel @httpDigestAuth
 apply WhiteLabel @httpBearerAuth
 apply WhiteLabel @httpApiKeyAuth(name: "X-API-Key", in: "header", scheme: "Authorization")
 
-// TODO: support custom auth
 //@authDefinition
 //@trait(selector: "service")
 //structure httpCustomAuth {

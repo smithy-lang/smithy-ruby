@@ -43,7 +43,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
-import software.amazon.smithy.ruby.codegen.trait.NoSerializeTrait;
+import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
 import software.amazon.smithy.ruby.codegen.traits.RailsJsonTrait;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 

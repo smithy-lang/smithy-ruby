@@ -13,36 +13,23 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.authschemes;
+package software.amazon.smithy.ruby.codegen.auth.factories;
 
-import java.util.ArrayList;
-import java.util.List;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.synthetic.NoAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 
-public class AnonymousAuthScheme implements AuthScheme {
-    public ShapeId getShapeId() {
-        return NoAuthTrait.ID;
+public final class AnonymousAuthSchemeFactory {
+    private AnonymousAuthSchemeFactory() {
     }
 
-    public String rubyAuthScheme() {
-        return Hearth.AUTH_SCHEMES + "::Anonymous.new";
-    }
-
-    public String rubyIdentityClass() {
-        return null;
-    }
-
-    public String rubyIdentityResolverConfigName() {
-        return null;
-    }
-
-    public String rubyStubbedIdentity() {
-        return null;
-    }
-
-    public List<String> additionalAuthParams() {
-        return new ArrayList<>();
+    public static AuthScheme build() {
+        return AuthScheme.builder()
+                .shapeId(NoAuthTrait.ID)
+                .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::Anonymous.new")
+                .rubyIdentityClass(Hearth.IDENTITIES + "::Anonymous")
+                .rubyIdentityResolverConfigName(null)
+                .rubyIdentityResolverConfigDefaultValue(null)
+                .build();
     }
 }

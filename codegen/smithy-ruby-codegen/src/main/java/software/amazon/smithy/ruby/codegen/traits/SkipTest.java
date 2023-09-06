@@ -1,11 +1,9 @@
-package software.amazon.smithy.ruby.codegen.trait;
+package software.amazon.smithy.ruby.codegen.traits;
 
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.protocoltests.traits.HttpResponseTestCase;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 

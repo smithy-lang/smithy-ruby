@@ -33,7 +33,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -127,7 +127,7 @@ public class AuthGenerator extends RubyGeneratorBase {
                                 .filter(s -> s.getShapeId().equals(shapeId))
                                 .findFirst()
                                 .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
-                        writer.write("$L,", authScheme.rubyAuthScheme());
+                        writer.write("$L,", authScheme.getRubyAuthScheme());
                     });
                 })
                 .unwrite(",\n")

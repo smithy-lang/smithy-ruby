@@ -27,7 +27,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -58,14 +58,14 @@ public final class AuthMiddlewareFactory {
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
             clientConfigSet.add(ClientConfig.builder()
-                    .name(authScheme.rubyIdentityResolverConfigName())
+                    .name(authScheme.getRubyIdentityResolverConfigName())
                     .type(Hearth.IDENTITY_RESOLVER.toString())
                     .documentation(
                             identityResolverDocumentation.formatted(
                                     Hearth.IDENTITY_RESOLVER,
-                                    authScheme.rubyIdentityClass(),
+                                    authScheme.getRubyIdentityClass(),
                                     shapeId.getName()))
-                    .defaultDynamicValue(defaultIdentityResolver(authScheme))
+                    .defaultDynamicValue(authScheme.getRubyIdentityResolverConfigDefaultValue())
                     .allowOperationOverride()
                     .build());
         });
@@ -115,12 +115,5 @@ public final class AuthMiddlewareFactory {
         clientConfigSet.forEach(authBuilder::addConfig);
 
         return authBuilder.build();
-    }
-
-    private static String defaultIdentityResolver(AuthScheme authScheme) {
-        String identity = authScheme.rubyStubbedIdentity();
-
-        return "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
-                .formatted(Hearth.IDENTITY_RESOLVER, identity);
     }
 }

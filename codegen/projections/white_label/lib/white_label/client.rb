@@ -10,6 +10,7 @@
 require 'stringio'
 
 require_relative 'middleware/test_middleware'
+require_relative 'middleware/relative_middleware'
 require_relative 'plugins/test_plugin'
 
 module WhiteLabel

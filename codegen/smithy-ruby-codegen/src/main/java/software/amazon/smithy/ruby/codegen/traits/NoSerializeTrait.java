@@ -15,7 +15,7 @@
  *
  */
 
-package software.amazon.smithy.ruby.codegen.trait;
+package software.amazon.smithy.ruby.codegen.traits;
 
 import java.util.function.Predicate;
 import software.amazon.smithy.model.knowledge.HttpBinding;

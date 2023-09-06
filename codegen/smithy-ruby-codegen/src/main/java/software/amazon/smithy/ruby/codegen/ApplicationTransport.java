@@ -20,12 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import software.amazon.smithy.ruby.codegen.authschemes.AnonymousAuthScheme;
-import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
-import software.amazon.smithy.ruby.codegen.authschemes.HttpApiKeyAuthScheme;
-import software.amazon.smithy.ruby.codegen.authschemes.HttpBasicAuthScheme;
-import software.amazon.smithy.ruby.codegen.authschemes.HttpBearerAuthScheme;
-import software.amazon.smithy.ruby.codegen.authschemes.HttpDigestAuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
+import software.amazon.smithy.ruby.codegen.auth.factories.HttpApiKeyAuthSchemeFactory;
+import software.amazon.smithy.ruby.codegen.auth.factories.HttpBasicAuthSchemeFactory;
+import software.amazon.smithy.ruby.codegen.auth.factories.HttpBearerAuthSchemeFactory;
+import software.amazon.smithy.ruby.codegen.auth.factories.HttpDigestAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
@@ -128,11 +128,11 @@ public final class ApplicationTransport {
         };
 
         List<AuthScheme> defaultAuthSchemes = List.of(
-                new AnonymousAuthScheme(),
-                new HttpApiKeyAuthScheme(),
-                new HttpBasicAuthScheme(),
-                new HttpBearerAuthScheme(),
-                new HttpDigestAuthScheme()
+                AnonymousAuthSchemeFactory.build(),
+                HttpApiKeyAuthSchemeFactory.build(),
+                HttpBasicAuthSchemeFactory.build(),
+                HttpBearerAuthSchemeFactory.build(),
+                HttpDigestAuthSchemeFactory.build()
         );
 
         return new ApplicationTransport(
