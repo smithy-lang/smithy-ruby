@@ -27,16 +27,13 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
-import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
-import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
-import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.synthetic.NoAuthTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -46,11 +43,19 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final ServiceShape service;
+    private final Set<AuthScheme> authSchemesSet;
 
     public AuthGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         operations = directive.operations();
         service = directive.service();
+        authSchemesSet = new HashSet<>();
+
+        // get additional auth schemes
+        context.applicationTransport().defaultAuthSchemes().forEach((s) -> authSchemesSet.add(s));
+        context.integrations().forEach((i) -> {
+            i.getAdditionalAuthSchemes(context).forEach((s) -> authSchemesSet.add(s));
+        });
     }
 
     @Override
@@ -116,9 +121,14 @@ public class AuthGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    authTraitsSet.stream()
-                            .sorted(Comparator.comparing(Trait::toShapeId))
-                            .forEach(trait -> renderAuthScheme(writer, trait));
+                    authTraitsSet.stream().sorted(Comparator.comparing(Trait::toShapeId)).forEach(authTrait -> {
+                        ShapeId shapeId = authTrait.toShapeId();
+                        AuthScheme authScheme = authSchemesSet.stream()
+                                .filter(s -> s.getShapeId().equals(shapeId))
+                                .findFirst()
+                                .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
+                        writer.write("$L,", authScheme.rubyAuthScheme());
+                    });
                 })
                 .unwrite(",\n")
                 .write("")
@@ -127,22 +137,6 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private void renderRbsAuthSchemesConstant(RubyCodeWriter writer) {
         writer.write("SCHEMES: ::Array[Hearth::AuthSchemes::Base]");
-    }
-
-    private void renderAuthScheme(RubyCodeWriter writer, Trait trait) {
-        if (trait instanceof HttpApiKeyAuthTrait) {
-            writer.write("$L::HTTPApiKey.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof HttpBasicAuthTrait) {
-            writer.write("$L::HTTPBasic.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof HttpBearerAuthTrait) {
-            writer.write("$L::HTTPBearer.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof HttpDigestAuthTrait) {
-            writer.write("$L::HTTPDigest.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof NoAuthTrait) {
-            writer.write("$L::Anonymous.new,", Hearth.AUTH_SCHEMES);
-        } else {
-            // Custom auth schemes not supported right now
-        }
     }
 
     private void renderAuthResolver(RubyCodeWriter writer) {

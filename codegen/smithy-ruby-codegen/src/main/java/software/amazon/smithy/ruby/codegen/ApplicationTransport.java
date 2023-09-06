@@ -20,6 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import software.amazon.smithy.ruby.codegen.authschemes.AnonymousAuthScheme;
+import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
+import software.amazon.smithy.ruby.codegen.authschemes.HttpApiKeyAuthScheme;
+import software.amazon.smithy.ruby.codegen.authschemes.HttpBasicAuthScheme;
+import software.amazon.smithy.ruby.codegen.authschemes.HttpBearerAuthScheme;
+import software.amazon.smithy.ruby.codegen.authschemes.HttpDigestAuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
@@ -43,6 +49,7 @@ public final class ApplicationTransport {
     private final ClientFragment response;
     private final ClientFragment transportClient;
     private final MiddlewareList defaultMiddleware;
+    private final List<AuthScheme> defaultAuthSchemes;
 
     /**
      * Creates a resolved application transport.
@@ -58,7 +65,8 @@ public final class ApplicationTransport {
             ClientFragment request,
             ClientFragment response,
             ClientFragment transportClient,
-            MiddlewareList defaultMiddleware
+            MiddlewareList defaultMiddleware,
+            List<AuthScheme> defaultAuthSchemes
 
     ) {
         this.name = name;
@@ -66,6 +74,7 @@ public final class ApplicationTransport {
         this.response = response;
         this.transportClient = transportClient;
         this.defaultMiddleware = defaultMiddleware;
+        this.defaultAuthSchemes = defaultAuthSchemes;
     }
 
     /**
@@ -118,12 +127,21 @@ public final class ApplicationTransport {
             return middleware;
         };
 
+        List<AuthScheme> defaultAuthSchemes = List.of(
+                new AnonymousAuthScheme(),
+                new HttpApiKeyAuthScheme(),
+                new HttpBasicAuthScheme(),
+                new HttpBearerAuthScheme(),
+                new HttpDigestAuthScheme()
+        );
+
         return new ApplicationTransport(
                 "http",
                 request,
                 response,
                 client,
-                defaultMiddleware);
+                defaultMiddleware,
+                defaultAuthSchemes);
     }
 
     /**
@@ -181,6 +199,13 @@ public final class ApplicationTransport {
      */
     public List<Middleware> defaultMiddleware(GenerationContext context) {
         return this.defaultMiddleware.list(this, context);
+    }
+
+    /**
+     * @return list of auth schemes supported by this transport.
+     */
+    public List<AuthScheme> defaultAuthSchemes() {
+        return defaultAuthSchemes;
     }
 
     /**

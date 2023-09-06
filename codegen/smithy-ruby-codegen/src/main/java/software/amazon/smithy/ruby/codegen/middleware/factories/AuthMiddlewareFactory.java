@@ -23,14 +23,11 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
-import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
-import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
-import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -44,20 +41,31 @@ public final class AuthMiddlewareFactory {
         Map<ShapeId, Trait> serviceAuthSchemes =
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
+        // get additional auth schemes
+        Set<AuthScheme> authSchemesSet = new HashSet<>();
+        context.applicationTransport().defaultAuthSchemes().forEach((s) -> authSchemesSet.add(s));
+        context.integrations().forEach((i) -> {
+            i.getAdditionalAuthSchemes(context).forEach((s) -> authSchemesSet.add(s));
+        });
+
         Set<ClientConfig> clientConfigSet = new HashSet<>();
         String identityResolverDocumentation = """
                 A %s that returns a %s for operations modeled with the %s auth scheme.
                 """;
         serviceAuthSchemes.forEach((shapeId, trait) -> {
+            AuthScheme authScheme = authSchemesSet.stream()
+                    .filter(s -> s.getShapeId().equals(shapeId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
             clientConfigSet.add(ClientConfig.builder()
-                    .name(identityResolverConfigNameForAuthTrait(trait))
+                    .name(authScheme.rubyIdentityResolverConfigName())
                     .type(Hearth.IDENTITY_RESOLVER.toString())
                     .documentation(
                             identityResolverDocumentation.formatted(
                                     Hearth.IDENTITY_RESOLVER,
-                                    hearthIdentityForAuthTrait(trait),
+                                    authScheme.rubyIdentityClass(),
                                     shapeId.getName()))
-                    .defaultDynamicValue(defaultIdentityResolverForAuthTrait(trait))
+                    .defaultDynamicValue(defaultIdentityResolver(authScheme))
                     .allowOperationOverride()
                     .build());
         });
@@ -109,42 +117,10 @@ public final class AuthMiddlewareFactory {
         return authBuilder.build();
     }
 
-    private static String identityResolverConfigNameForAuthTrait(Trait trait) {
-        if (trait instanceof HttpApiKeyAuthTrait) {
-            return "http_api_key_identity_resolver";
-        } else if (trait instanceof HttpBearerAuthTrait) {
-            return "http_bearer_identity_resolver";
-        } else if (trait instanceof HttpBasicAuthTrait || trait instanceof HttpDigestAuthTrait) {
-            return "http_login_identity_resolver";
-        } else {
-            throw new IllegalStateException("Unknown auth trait: " + trait);
-        }
-    }
+    private static String defaultIdentityResolver(AuthScheme authScheme) {
+        String identity = authScheme.rubyStubbedIdentity();
 
-    private static String defaultIdentityResolverForAuthTrait(Trait trait) {
-        String identity = Hearth.IDENTITIES + "::";
-        if (trait instanceof HttpApiKeyAuthTrait) {
-            identity += "HTTPApiKey.new(key: 'stubbed api key')";
-        } else if (trait instanceof HttpBearerAuthTrait) {
-            identity += "HTTPBearer.new(token: 'stubbed bearer')";
-        } else if (trait instanceof HttpBasicAuthTrait || trait instanceof HttpDigestAuthTrait) {
-            identity += "HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
-        } else {
-            throw new IllegalStateException("Unknown auth trait: " + trait);
-        }
         return "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, identity);
-    }
-
-    private static String hearthIdentityForAuthTrait(Trait trait) {
-        if (trait instanceof HttpApiKeyAuthTrait) {
-            return Hearth.IDENTITIES + "::HTTPApiKey";
-        } else if (trait instanceof HttpBearerAuthTrait) {
-            return Hearth.IDENTITIES + "::HTTPBearer";
-        } else if (trait instanceof HttpBasicAuthTrait || trait instanceof HttpDigestAuthTrait) {
-            return Hearth.IDENTITIES + "::HTTPLogin";
-        } else {
-            throw new IllegalStateException("Unknown auth trait: " + trait);
-        }
     }
 }

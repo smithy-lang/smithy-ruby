@@ -22,6 +22,7 @@ import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.authschemes.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -92,6 +93,15 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
      * @return list of RubyRuntimePlugins
      */
     default List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a list of additional Auth Schemes to be added to the generated Auth module.
+     * @param context - Generation context to process within
+     * @return list of additional AuthScheme
+     */
+    default List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
         return Collections.emptyList();
     }
 
