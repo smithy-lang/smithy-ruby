@@ -13,18 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol;
+package software.amazon.smithy.ruby.codegen.protocol;
 
-import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
-import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.BuilderGenerator;
-import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.ErrorsGenerator;
-import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.ParserGenerator;
-import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators.StubsGenerator;
+import software.amazon.smithy.ruby.codegen.protocol.generators.BuilderGenerator;
+import software.amazon.smithy.ruby.codegen.protocol.generators.ErrorsGenerator;
+import software.amazon.smithy.ruby.codegen.protocol.generators.ParserGenerator;
+import software.amazon.smithy.ruby.codegen.protocol.generators.StubsGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 
@@ -33,8 +32,6 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public class FakeProtocolGenerator implements ProtocolGenerator {
-    private static final Logger LOGGER = Logger.getLogger(FakeProtocolGenerator.class.getName());
-
     @Override
     public ShapeId getProtocol() {
         return ShapeId.from("smithy.ruby.tests.protocols#fakeProtocol");

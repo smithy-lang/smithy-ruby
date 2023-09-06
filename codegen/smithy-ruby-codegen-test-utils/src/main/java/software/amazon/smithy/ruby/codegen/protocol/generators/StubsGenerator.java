@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
+package software.amazon.smithy.ruby.codegen.protocol.generators;
 
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -23,44 +23,50 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.RestParserGeneratorBase;
+import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
 
-public class ParserGenerator extends RestParserGeneratorBase {
+public class StubsGenerator extends RestStubsGeneratorBase {
 
-    public ParserGenerator(GenerationContext context) {
+    public StubsGenerator(GenerationContext context) {
         super(context);
     }
 
     @Override
-    protected void renderPayloadBodyParser(Shape outputShape, MemberShape payloadMember, Shape target) {
+    protected void renderUnionStubMethod(UnionShape shape) {
+
+    }
+
+    @Override
+    protected void renderListStubMethod(ListShape shape) {
+
+    }
+
+    @Override
+    protected void renderMapStubMethod(MapShape shape) {
+
+    }
+
+    @Override
+    protected void renderStructureStubMethod(StructureShape shape) {
+
+    }
+
+    @Override
+    protected void renderPayloadBodyStub(Shape outputShape, MemberShape payloadMember, Shape target) {
         if (target.hasTrait(StreamingTrait.class)) {
-            renderStreamingBodyParser(outputShape);
+            renderStreamingStub(outputShape);
         }
     }
 
     @Override
-    protected void renderBodyParser(Shape outputShape) {
+    protected void renderBodyStub(Shape outputShape) {
 
     }
 
     @Override
-    protected void renderUnionParseMethod(UnionShape s) {
-
-    }
-
-    @Override
-    protected void renderMapParseMethod(MapShape s) {
-
-    }
-
-    @Override
-    protected void renderListParseMethod(ListShape s) {
-
-    }
-
-    @Override
-    protected void renderStructureParseMethod(StructureShape s) {
+    protected void renderErrorStubMethod(Shape errorShape) {
 
     }
 }
+
 
