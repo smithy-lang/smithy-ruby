@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -49,14 +48,18 @@ public final class AuthMiddlewareFactory {
         });
 
         Set<ClientConfig> clientConfigSet = new HashSet<>();
+        Map<String, String> identityResolvers = new HashMap<>();
         serviceAuthSchemes.forEach((shapeId, trait) -> {
             AuthScheme authScheme = authSchemesSet.stream()
                     .filter(s -> s.getShapeId().equals(shapeId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
 
-            if (authScheme.getIdentityResolverConfig() != null) {
-                clientConfigSet.add(authScheme.getIdentityResolverConfig());
+            ClientConfig config = authScheme.getIdentityResolverConfig();
+            if (config != null) {
+                clientConfigSet.add(config);
+                String symbolizedName = RubyFormatter.toSnakeCase(config.getName());
+                identityResolvers.put(authScheme.getRubyIdentityType(), symbolizedName);
             }
         });
 
@@ -95,11 +98,19 @@ public final class AuthMiddlewareFactory {
                 .addConfig(authSchemes)
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
-                    Symbol symbol = symbolProvider.toSymbol(operation);
-                    String operationName = RubyFormatter.toSnakeCase(symbol.getName());
+
+                    String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
                     // TODO: support more auth params in the future
                     String authParams = "Auth::Params.new(operation_name: :%s)".formatted(operationName);
                     params.put("auth_params", authParams);
+
+                    String identityResolverMapHash = "{ %s }".formatted(
+                            identityResolvers.entrySet().stream()
+                                    .map(e -> "%s: %s".formatted(e.getValue(), e.getKey()))
+                                    .reduce((a, b) -> a + ", " + b)
+                                    .orElse(""));
+                    params.put("identity_resolver_map", identityResolverMapHash);
+
                     return params;
                 });
         clientConfigSet.forEach(authBuilder::addConfig);

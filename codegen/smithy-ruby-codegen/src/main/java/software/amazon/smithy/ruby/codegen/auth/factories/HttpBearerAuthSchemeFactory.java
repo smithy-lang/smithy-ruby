@@ -32,6 +32,7 @@ public final class HttpBearerAuthSchemeFactory {
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPBearer.new(token: 'stubbed bearer')";
         String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+        String identityType = Hearth.IDENTITIES + "::HTTPBearer";
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_bearer_identity_resolver")
@@ -39,7 +40,7 @@ public final class HttpBearerAuthSchemeFactory {
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
-                                Hearth.IDENTITIES + "::HTTPBearer",
+                                identityType,
                                 HttpBearerAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
                 .allowOperationOverride()
@@ -48,6 +49,7 @@ public final class HttpBearerAuthSchemeFactory {
         return AuthScheme.builder()
                 .shapeId(HttpBearerAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPBearer.new")
+                .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
                 .build();
     }

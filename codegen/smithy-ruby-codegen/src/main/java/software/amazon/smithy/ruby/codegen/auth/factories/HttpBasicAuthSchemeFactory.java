@@ -33,6 +33,7 @@ public final class HttpBasicAuthSchemeFactory {
                 + "::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
         String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+        String identityType = Hearth.IDENTITIES + "::HTTPLogin";
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_login_identity_resolver")
@@ -40,7 +41,7 @@ public final class HttpBasicAuthSchemeFactory {
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
-                                Hearth.IDENTITIES + "::HTTPLogin",
+                                identityType,
                                 HttpBasicAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
                 .allowOperationOverride()
@@ -49,6 +50,7 @@ public final class HttpBasicAuthSchemeFactory {
         return AuthScheme.builder()
                 .shapeId(HttpBasicAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPBasic.new")
+                .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
                 .build();
     }

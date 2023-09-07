@@ -33,6 +33,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 public final class AuthScheme {
     private final ShapeId shapeId;
     private final String rubyAuthScheme;
+    private final String rubyIdentityType;
     private final List<String> additionalAuthParams;
     private final ClientConfig identityResolverConfig;
     private final WriteAdditionalFiles writeAdditionalFiles;
@@ -40,6 +41,7 @@ public final class AuthScheme {
     private AuthScheme(Builder builder) {
         this.shapeId = builder.shapeId;
         this.rubyAuthScheme = builder.rubyAuthScheme;
+        this.rubyIdentityType = builder.rubyIdentityType;
         this.additionalAuthParams = builder.additionalAuthParams;
         this.identityResolverConfig = builder.identityResolverConfig;
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
@@ -61,6 +63,13 @@ public final class AuthScheme {
      */
     public String getRubyAuthScheme() {
         return rubyAuthScheme;
+    }
+
+    /**
+     * @return the ruby identity type (class).
+     */
+    public String getRubyIdentityType() {
+        return rubyIdentityType;
     }
 
     /**
@@ -104,6 +113,7 @@ public final class AuthScheme {
     public static class Builder implements SmithyBuilder<AuthScheme> {
         private ShapeId shapeId;
         private String rubyAuthScheme;
+        private String rubyIdentityType;
         private List<String> additionalAuthParams = Collections.emptyList();
         private ClientConfig identityResolverConfig;
         private WriteAdditionalFiles writeAdditionalFiles =
@@ -127,6 +137,15 @@ public final class AuthScheme {
          */
         public Builder rubyAuthScheme(String rubyAuthScheme) {
             this.rubyAuthScheme = Objects.requireNonNull(rubyAuthScheme);
+            return this;
+        }
+
+        /**
+         * @param rubyIdentityType the ruby identity type (class).
+         * @return Returns the Builder
+         */
+        public Builder rubyIdentityType(String rubyIdentityType) {
+            this.rubyIdentityType = Objects.requireNonNull(rubyIdentityType);
             return this;
         }
 
@@ -188,6 +207,15 @@ public final class AuthScheme {
 
         @Override
         public AuthScheme build() {
+            if (shapeId == null) {
+                throw new CodegenException("shapeId must be set");
+            }
+            if (rubyAuthScheme == null) {
+                throw new CodegenException("rubyAuthScheme must be set");
+            }
+            if (rubyIdentityType == null) {
+                throw new CodegenException("rubyIdentityType must be set");
+            }
             return new AuthScheme(this);
         }
     }

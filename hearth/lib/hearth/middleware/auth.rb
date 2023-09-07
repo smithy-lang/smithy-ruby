@@ -6,18 +6,33 @@ module Hearth
     # @api private
     class Auth
       # @param [Class] app The next middleware in the stack.
-      def initialize(app, auth_resolver:, auth_params:,
-                     auth_schemes:, **kwargs)
+      # @param [#resolve(auth_params)] auth_resolver A class that responds to a
+      #  `resolve(auth_params)` method where `auth_params` is a struct with an
+      #  operation_name. For a given operation_name, the method must return an
+      #  ordered list of {Hearth::AuthOption} objects to be considered for
+      #  authentication.
+      # @param [Struct] auth_params A struct with an operation_name and other
+      #  parameters that may be used to resolve auth options.
+      # @param [Array<Hearth::AuthScheme::Base>] auth_schemes A list of
+      #  auth schemes to consider for authentication.
+      # @param [Hash<Symbol, Class>] identity_resolver_map A map of identity
+      #  resolver config names to identity types.
+      def initialize(app, auth_resolver:, auth_params:, auth_schemes:,
+                     identity_resolver_map:, **kwargs)
         @app = app
         @auth_resolver = auth_resolver
         @auth_params = auth_params
         @auth_schemes = auth_schemes.to_h { |s| [s.scheme_id, s] }
+        @identity_resolver_map = identity_resolver_map
 
         @identity_resolvers = {}
         kwargs.each do |key, value|
           next unless key.end_with?('_identity_resolver')
 
-          @identity_resolvers[identity_type_for(key)] = value
+          type = @identity_resolver_map[key]
+          raise "Unknown identity resolver type #{key}" unless type
+
+          @identity_resolvers[type] = value
         end
       end
 
@@ -39,19 +54,6 @@ module Hearth
         :identity_properties,
         keyword_init: true
       )
-
-      def identity_type_for(config_key)
-        case config_key
-        when :http_api_key_identity_resolver
-          Identities::HTTPApiKey
-        when :http_login_identity_resolver
-          Identities::HTTPLogin
-        when :http_bearer_identity_resolver
-          Identities::HTTPBearer
-        else
-          raise "Unknown identity type for #{config_key}"
-        end
-      end
 
       def resolve_auth(auth_options)
         failures = []

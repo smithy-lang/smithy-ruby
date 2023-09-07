@@ -19,7 +19,8 @@ module WhiteLabel
           'smithy.api#httpBasicAuth',
           'smithy.api#httpBearerAuth',
           'smithy.api#httpDigestAuth',
-          'smithy.api#noAuth'
+          'smithy.api#noAuth',
+          'smithy.ruby.tests#httpCustomAuth'
         ]
         expect(actual).to match_array(expected)
       end
@@ -83,6 +84,7 @@ module WhiteLabel
             'smithy.api#httpBasicAuth',
             'smithy.api#httpBearerAuth',
             'smithy.api#httpDigestAuth',
+            'smithy.ruby.tests#httpCustomAuth',
             'smithy.api#noAuth'
           ]
         end
@@ -90,7 +92,7 @@ module WhiteLabel
         it 'resolves all auth including noAuth' do
           params = Params.new(operation_name: :optional_auth)
           options = subject.resolve(params)
-          expect(options.size).to eq(5)
+          expect(options.size).to eq(6)
           expect(options.map(&:scheme_id)).to eq(auth_option_schemes)
         end
       end
@@ -119,14 +121,15 @@ module WhiteLabel
             'smithy.api#httpApiKeyAuth',
             'smithy.api#httpBasicAuth',
             'smithy.api#httpBearerAuth',
-            'smithy.api#httpDigestAuth'
+            'smithy.api#httpDigestAuth',
+            'smithy.ruby.tests#httpCustomAuth'
           ]
         end
 
         it 'resolves all auth without noAuth' do
           params = Params.new(operation_name: :kitchen_sink)
           options = subject.resolve(params)
-          expect(options.size).to eq(4)
+          expect(options.size).to eq(5)
           expect(options.map(&:scheme_id)).to eq(auth_option_schemes)
         end
       end
@@ -282,7 +285,8 @@ module WhiteLabel
           {
             http_login_identity_resolver: nil,
             http_bearer_identity_resolver: nil,
-            http_api_key_identity_resolver: nil
+            http_api_key_identity_resolver: nil,
+            http_custom_auth_identity_resolver: nil
           }
         end
 

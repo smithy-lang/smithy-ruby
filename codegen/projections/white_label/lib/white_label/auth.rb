@@ -7,6 +7,8 @@
 #
 # WARNING ABOUT GENERATED CODE
 
+require_relative 'auth/http_custom_auth'
+
 module WhiteLabel
   module Auth
     Params = Struct.new(:operation_name, keyword_init: true)

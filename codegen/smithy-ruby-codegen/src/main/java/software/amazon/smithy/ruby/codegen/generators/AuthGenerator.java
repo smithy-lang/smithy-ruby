@@ -15,12 +15,15 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -64,10 +67,26 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+        List<String> additionalFiles = authSchemesSet.stream()
+                .map((a) -> a.writeAdditionalFiles(context))
+                .flatMap(Collection::stream)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
         write(writer -> {
             writer
                     .preamble()
                     .includeRequires()
+                    .call(() -> {
+                        for (String require : additionalFiles) {
+                            writer.write("require_relative '$L'", removeRbExtension(require));
+                            LOGGER.finer("Adding auth require: " + require);
+                        }
+                        if (additionalFiles.size() > 0) {
+                            writer.write("");
+                        }
+                    })
                     .addModule(settings.getModule())
                     .addModule("Auth")
                     .call(() -> renderAuthParamsClass(writer))
@@ -94,6 +113,13 @@ public class AuthGenerator extends RubyGeneratorBase {
                     .closeAllModules();
         });
         LOGGER.fine("Wrote auth rbs module to " + rbsFile());
+    }
+
+    private Object removeRbExtension(String s) {
+        if (s != null && s.endsWith(".rb")) {
+            return s.split(".rb")[0];
+        }
+        return s;
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {

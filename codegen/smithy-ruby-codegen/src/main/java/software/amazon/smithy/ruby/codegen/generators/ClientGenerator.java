@@ -79,29 +79,27 @@ public class ClientGenerator extends RubyGeneratorBase {
                         .map(plugin -> plugin.writeAdditionalFiles(context))
                         .flatMap(List::stream)
                         .distinct()
+                        .sorted()
                         .collect(Collectors.toList())
         );
 
         write(writer -> {
-
-            writer.preamble().includeRequires();
-
-            for (String require : additionalFiles) {
-                writer.write("require_relative '$L'", removeRbExtension(require));
-                LOGGER.finer("Adding client require: " + require);
-            }
-
-            if (additionalFiles.size() > 0) {
-                writer.write("");
-            }
-
             writer
+                    .preamble()
+                    .includeRequires()
+                    .call(() -> {
+                        for (String require : additionalFiles) {
+                            writer.write("require_relative '$L'", removeRbExtension(require));
+                            LOGGER.finer("Adding client require: " + require);
+                        }
+                        if (additionalFiles.size() > 0) {
+                            writer.write("");
+                        }
+                    })
                     .openBlock("module $L", settings.getModule())
                     .write("# An API client for $L",
                             settings.getService().getName())
-                    .write("# See {#initialize} for a full list of supported configuration options");
-
-            writer
+                    .write("# See {#initialize} for a full list of supported configuration options")
                     .call(() -> new ShapeDocumentationGenerator(
                             model, writer, symbolProvider, context.service()).render())
                     .openBlock("class Client")

@@ -32,6 +32,7 @@ public final class HttpApiKeyAuthSchemeFactory {
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPApiKey.new(key: 'stubbed api key')";
         String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+        String identityType = Hearth.IDENTITIES + "::HTTPApiKey";
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_api_key_identity_resolver")
@@ -39,7 +40,7 @@ public final class HttpApiKeyAuthSchemeFactory {
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
-                                Hearth.IDENTITIES + "::HTTPApiKey",
+                                identityType,
                                 HttpApiKeyAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
                 .allowOperationOverride()
@@ -48,6 +49,7 @@ public final class HttpApiKeyAuthSchemeFactory {
         return AuthScheme.builder()
                 .shapeId(HttpApiKeyAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPApiKey.new")
+                .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
                 .build();
     }

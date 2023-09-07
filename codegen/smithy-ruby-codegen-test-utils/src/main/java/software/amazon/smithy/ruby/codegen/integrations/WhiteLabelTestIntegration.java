@@ -102,6 +102,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
         String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
         String defaultConfigValue = "proc { %s.new(proc { %s }) }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+        String identityType = "Auth::HTTPCustomAuthIdentity";
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_custom_auth_identity_resolver")
@@ -109,16 +110,16 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
-                                Hearth.IDENTITIES + "::HTTPCustomAuthIdentity",
+                                identityType,
                                 HttpBasicAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
                 .allowOperationOverride()
                 .build();
 
-
         AuthScheme authScheme = AuthScheme.builder()
                 .shapeId(HttpCustomAuthTrait.ID)
                 .rubyAuthScheme("HTTPCustomAuthScheme.new")
+                .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
                 .rubySource("smithy-ruby-codegen-test-utils/auth/http_custom_auth.rb")
                 .build();
