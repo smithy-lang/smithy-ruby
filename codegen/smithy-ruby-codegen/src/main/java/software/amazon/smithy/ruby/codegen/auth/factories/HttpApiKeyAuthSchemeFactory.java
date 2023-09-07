@@ -18,22 +18,37 @@ package software.amazon.smithy.ruby.codegen.auth.factories;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 
 public final class HttpApiKeyAuthSchemeFactory {
     private HttpApiKeyAuthSchemeFactory() {
     }
 
     public static AuthScheme build() {
+        String identityResolverDocumentation = """
+                A %s that returns a %s for operations modeled with the %s auth scheme.
+                """;
+
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPApiKey.new(key: 'stubbed api key')";
         String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
 
+        ClientConfig identityResolverConfig = ClientConfig.builder()
+                .name("http_api_key_identity_resolver")
+                .type(Hearth.IDENTITY_RESOLVER.toString())
+                .documentation(
+                        identityResolverDocumentation.formatted(
+                                Hearth.IDENTITY_RESOLVER,
+                                Hearth.IDENTITIES + "::HTTPApiKey",
+                                HttpApiKeyAuthTrait.ID))
+                .defaultDynamicValue(defaultConfigValue)
+                .allowOperationOverride()
+                .build();
+
         return AuthScheme.builder()
                 .shapeId(HttpApiKeyAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPApiKey.new")
-                .rubyIdentityClass(Hearth.IDENTITIES + "::HTTPApiKey")
-                .rubyIdentityResolverConfigName("http_api_key_identity_resolver")
-                .rubyIdentityResolverConfigDefaultValue(defaultConfigValue)
+                .identityResolverConfig(identityResolverConfig)
                 .build();
     }
 }

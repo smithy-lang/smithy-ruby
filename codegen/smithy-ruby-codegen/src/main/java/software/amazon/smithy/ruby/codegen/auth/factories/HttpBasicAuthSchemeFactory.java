@@ -18,23 +18,38 @@ package software.amazon.smithy.ruby.codegen.auth.factories;
 import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 
 public final class HttpBasicAuthSchemeFactory {
     private HttpBasicAuthSchemeFactory() {
     }
 
     public static AuthScheme build() {
+        String identityResolverDocumentation = """
+                A %s that returns a %s for operations modeled with the %s auth scheme.
+                """;
+
         String defaultIdentity = Hearth.IDENTITIES
                 + "::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
         String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
 
+        ClientConfig identityResolverConfig = ClientConfig.builder()
+                .name("http_login_identity_resolver")
+                .type(Hearth.IDENTITY_RESOLVER.toString())
+                .documentation(
+                        identityResolverDocumentation.formatted(
+                                Hearth.IDENTITY_RESOLVER,
+                                Hearth.IDENTITIES + "::HTTPLogin",
+                                HttpBasicAuthTrait.ID))
+                .defaultDynamicValue(defaultConfigValue)
+                .allowOperationOverride()
+                .build();
+
         return AuthScheme.builder()
                 .shapeId(HttpBasicAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPBasic.new")
-                .rubyIdentityClass(Hearth.IDENTITIES + "::HTTPLogin")
-                .rubyIdentityResolverConfigName("http_login_identity_resolver")
-                .rubyIdentityResolverConfigDefaultValue(defaultConfigValue)
+                .identityResolverConfig(identityResolverConfig)
                 .build();
     }
 }

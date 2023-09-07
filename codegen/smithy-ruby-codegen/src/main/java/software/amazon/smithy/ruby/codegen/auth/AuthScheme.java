@@ -27,24 +27,21 @@ import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 public final class AuthScheme {
     private final ShapeId shapeId;
     private final String rubyAuthScheme;
-    private final String rubyIdentityClass;
-    private final String rubyIdentityResolverConfigName;
-    private final String rubyIdentityResolverConfigDefaultValue;
     private final List<String> additionalAuthParams;
+    private final ClientConfig identityResolverConfig;
     private final WriteAdditionalFiles writeAdditionalFiles;
 
     private AuthScheme(Builder builder) {
         this.shapeId = builder.shapeId;
         this.rubyAuthScheme = builder.rubyAuthScheme;
-        this.rubyIdentityClass = builder.rubyIdentityClass;
-        this.rubyIdentityResolverConfigName = builder.rubyIdentityResolverConfigName;
-        this.rubyIdentityResolverConfigDefaultValue = builder.rubyIdentityResolverConfigDefaultValue;
         this.additionalAuthParams = builder.additionalAuthParams;
+        this.identityResolverConfig = builder.identityResolverConfig;
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
     }
 
@@ -52,32 +49,36 @@ public final class AuthScheme {
         return new Builder();
     }
 
+    /**
+     * @return the shapeId of the auth scheme.
+     */
     public ShapeId getShapeId() {
         return shapeId;
     }
 
+    /**
+     * @return the initialized ruby class of the auth scheme.
+     */
     public String getRubyAuthScheme() {
         return rubyAuthScheme;
     }
 
-    public String getRubyIdentityClass() {
-        return rubyIdentityClass;
-    }
-
-    public String getRubyIdentityResolverConfigName() {
-        return rubyIdentityResolverConfigName;
-    }
-
-    public String getRubyIdentityResolverConfigDefaultValue() {
-        return rubyIdentityResolverConfigDefaultValue;
-    }
-
+    /**
+     * @return additional auth params for the auth scheme.
+     */
     public List<String> getAdditionalAuthParams() {
         return additionalAuthParams;
     }
 
     /**
-     * Write additional files required by this middleware.
+     * @return the ClientConfig for the identity resolver.
+     */
+    public ClientConfig getIdentityResolverConfig() {
+        return identityResolverConfig;
+    }
+
+    /**
+     * Write additional files required by this auth scheme.
      *
      * @param context generation context
      * @return List of additional files written out
@@ -88,14 +89,14 @@ public final class AuthScheme {
 
     @FunctionalInterface
     /**
-     * Called to write out additional files needed by this Middleware.
+     * Called to write out additional files needed by this auth scheme.
      */
     public interface WriteAdditionalFiles {
         /**
-         * Called to write out additional files needed by this Middleware.
+         * Called to write out additional files needed by this auth scheme.
          *
          * @param context GenerationContext - allows access to file manifest and symbol providers
-         * @return List of the relative paths of files written, which will be required in client.rb.
+         * @return List of the relative paths of files written, which will be required in the module.
          */
         List<String> writeAdditionalFiles(GenerationContext context);
     }
@@ -103,59 +104,64 @@ public final class AuthScheme {
     public static class Builder implements SmithyBuilder<AuthScheme> {
         private ShapeId shapeId;
         private String rubyAuthScheme;
-        private String rubyIdentityClass;
-        private String rubyIdentityResolverConfigName;
-        private String rubyIdentityResolverConfigDefaultValue;
         private List<String> additionalAuthParams = Collections.emptyList();
+        private ClientConfig identityResolverConfig;
         private WriteAdditionalFiles writeAdditionalFiles =
                 (context) -> Collections.emptyList();
 
         protected Builder() {
         }
 
+        /**
+         * @param shapeId the shapeId of the auth scheme.
+         * @return Returns the Builder
+         */
         public Builder shapeId(ShapeId shapeId) {
             this.shapeId = Objects.requireNonNull(shapeId);
             return this;
         }
 
+        /**
+         * @param rubyAuthScheme the initialized ruby class of the auth scheme.
+         * @return Returns the Builder
+         */
         public Builder rubyAuthScheme(String rubyAuthScheme) {
             this.rubyAuthScheme = Objects.requireNonNull(rubyAuthScheme);
             return this;
         }
 
-        public Builder rubyIdentityClass(String rubyIdentityClass) {
-            this.rubyIdentityClass = Objects.requireNonNull(rubyIdentityClass);
-            return this;
-        }
-
-        public Builder rubyIdentityResolverConfigName(String rubyIdentityResolverConfigName) {
-            this.rubyIdentityResolverConfigName = rubyIdentityResolverConfigName;
-            return this;
-        }
-
-        public Builder rubyIdentityResolverConfigDefaultValue(String rubyIdentityResolverConfigDefaultValue) {
-            this.rubyIdentityResolverConfigDefaultValue = rubyIdentityResolverConfigDefaultValue;
-            return this;
-        }
-
+        /**
+         * @param additionalAuthParams additional auth params for the auth scheme.
+         * @return Returns the Builder
+         */
         public Builder additionalAuthParams(List<String> additionalAuthParams) {
             this.additionalAuthParams = additionalAuthParams;
             return this;
         }
 
         /**
-         * Used to copy a middleware ruby file into the generated SDK. The copied file
-         * must be a middleware class under the Middleware namespace. This method will
-         * apply the generated service's namespace to the middleware file.
+         * @param identityResolverConfig the ClientConfig for the identity resolver.
+         * @return Returns the Builder
+         */
+        public Builder identityResolverConfig(ClientConfig identityResolverConfig) {
+            this.identityResolverConfig = identityResolverConfig;
+            return this;
+        }
+
+        /**
+         * Used to copy an auth ruby file into the generated SDK. The copied file
+         * must have three classes under the Auth namespace. The three classes should be
+         * the AuthScheme, Identity, and Signer, and then these names registered via the
+         * builder. This method will apply the generated service's namespace to the auth file.
          *
          * @param rubyFileName the file name (with path) of the ruby file to copy.
          * @return Return the Builder
          */
-        private Builder rubySource(String rubyFileName) {
+        public Builder rubySource(String rubyFileName) {
             this.writeAdditionalFiles = (context) -> {
                 try {
                     Path path = Paths.get(rubyFileName);
-                    String relativeName = "middleware/" + path.getFileName();
+                    String relativeName = "auth/" + path.getFileName();
                     String fileName =
                             context.settings().getGemName() + "/lib/"
                                     + context.settings().getGemName()

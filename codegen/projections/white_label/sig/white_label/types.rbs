@@ -15,6 +15,14 @@ module WhiteLabel
       attr_accessor message (): ::String
     end
 
+    class CustomAuthInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class CustomAuthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
     class DefaultsTestInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String

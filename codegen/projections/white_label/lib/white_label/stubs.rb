@@ -28,6 +28,26 @@ module WhiteLabel
 
     end
 
+    class CustomAuth
+      def self.build(params, context:)
+        Params::CustomAuthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::CustomAuthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class DefaultsTest
       def self.build(params, context:)
         Params::DefaultsTestOutput.build(params, context: context)

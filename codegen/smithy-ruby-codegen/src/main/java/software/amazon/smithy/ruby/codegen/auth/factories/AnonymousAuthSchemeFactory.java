@@ -27,9 +27,6 @@ public final class AnonymousAuthSchemeFactory {
         return AuthScheme.builder()
                 .shapeId(NoAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::Anonymous.new")
-                .rubyIdentityClass(Hearth.IDENTITIES + "::Anonymous")
-                .rubyIdentityResolverConfigName(null)
-                .rubyIdentityResolverConfigDefaultValue(null)
                 .build();
     }
 }

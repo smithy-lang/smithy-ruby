@@ -49,25 +49,15 @@ public final class AuthMiddlewareFactory {
         });
 
         Set<ClientConfig> clientConfigSet = new HashSet<>();
-        String identityResolverDocumentation = """
-                A %s that returns a %s for operations modeled with the %s auth scheme.
-                """;
         serviceAuthSchemes.forEach((shapeId, trait) -> {
             AuthScheme authScheme = authSchemesSet.stream()
                     .filter(s -> s.getShapeId().equals(shapeId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
-            clientConfigSet.add(ClientConfig.builder()
-                    .name(authScheme.getRubyIdentityResolverConfigName())
-                    .type(Hearth.IDENTITY_RESOLVER.toString())
-                    .documentation(
-                            identityResolverDocumentation.formatted(
-                                    Hearth.IDENTITY_RESOLVER,
-                                    authScheme.getRubyIdentityClass(),
-                                    shapeId.getName()))
-                    .defaultDynamicValue(authScheme.getRubyIdentityResolverConfigDefaultValue())
-                    .allowOperationOverride()
-                    .build());
+
+            if (authScheme.getIdentityResolverConfig() != null) {
+                clientConfigSet.add(authScheme.getIdentityResolverConfig());
+            }
         });
 
         String authResolverDocumentation = """

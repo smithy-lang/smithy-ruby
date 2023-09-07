@@ -24,6 +24,24 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    CustomAuthInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    CustomAuthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :string
     #   @option params [Struct] :struct
     #   @option params [Integer] :un_required_number (0)

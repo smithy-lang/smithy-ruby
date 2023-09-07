@@ -18,7 +18,9 @@ package software.amazon.smithy.ruby.codegen.integrations;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
@@ -93,12 +95,32 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
 
     @Override
     public List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
+        String identityResolverDocumentation = """
+                A %s that returns a %s for operations modeled with the %s auth scheme.
+                """;
+
+        String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
+        String defaultConfigValue = "proc { %s.new(proc { %s }) }"
+                .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+
+        ClientConfig identityResolverConfig = ClientConfig.builder()
+                .name("http_custom_auth_identity_resolver")
+                .type(Hearth.IDENTITY_RESOLVER.toString())
+                .documentation(
+                        identityResolverDocumentation.formatted(
+                                Hearth.IDENTITY_RESOLVER,
+                                Hearth.IDENTITIES + "::HTTPCustomAuthIdentity",
+                                HttpBasicAuthTrait.ID))
+                .defaultDynamicValue(defaultConfigValue)
+                .allowOperationOverride()
+                .build();
+
+
         AuthScheme authScheme = AuthScheme.builder()
                 .shapeId(HttpCustomAuthTrait.ID)
-                .rubyAuthScheme("test")
-                .rubyIdentityClass("TestIdentity")
-                .rubyIdentityResolverConfigDefaultValue(null)
-                .rubyIdentityResolverConfigName(null)
+                .rubyAuthScheme("HTTPCustomAuthScheme.new")
+                .identityResolverConfig(identityResolverConfig)
+                .rubySource("smithy-ruby-codegen-test-utils/auth/http_custom_auth.rb")
                 .build();
 
         return List.of(authScheme);
