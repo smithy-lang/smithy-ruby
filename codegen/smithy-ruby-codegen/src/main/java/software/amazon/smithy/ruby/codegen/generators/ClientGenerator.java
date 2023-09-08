@@ -87,15 +87,7 @@ public class ClientGenerator extends RubyGeneratorBase {
             writer
                     .preamble()
                     .includeRequires()
-                    .call(() -> {
-                        for (String require : additionalFiles) {
-                            writer.write("require_relative '$L'", removeRbExtension(require));
-                            LOGGER.finer("Adding client require: " + require);
-                        }
-                        if (additionalFiles.size() > 0) {
-                            writer.write("");
-                        }
-                    })
+                    .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .openBlock("module $L", settings.getModule())
                     .write("# An API client for $L",
                             settings.getService().getName())
@@ -144,13 +136,6 @@ public class ClientGenerator extends RubyGeneratorBase {
         });
 
         LOGGER.fine("Wrote client rbs to " + rbsFile());
-    }
-
-    private Object removeRbExtension(String s) {
-        if (s != null && s.endsWith(".rb")) {
-            return s.split(".rb")[0];
-        }
-        return s;
     }
 
     private void renderClassRuntimePlugins(RubyCodeWriter writer) {

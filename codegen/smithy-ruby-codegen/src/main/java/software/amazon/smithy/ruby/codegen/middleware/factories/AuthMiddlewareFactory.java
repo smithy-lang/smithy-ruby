@@ -99,9 +99,21 @@ public final class AuthMiddlewareFactory {
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
 
-                    String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
-                    // TODO: support more auth params in the future
-                    String authParams = "Auth::Params.new(operation_name: :%s)".formatted(operationName);
+                    HashMap<String, String> authParamsList = new HashMap<>();
+                    authParamsList.put("operation_name",
+                            RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName()));
+
+                    authSchemesSet.forEach(s -> {
+                        Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
+                        additionalAuthParams.entrySet().forEach(e -> {
+                            authParamsList.put(e.getKey(), e.getValue());
+                        });
+                    });
+                    String authParams = "Auth::Params.new(%s)".formatted(
+                            authParamsList.entrySet().stream()
+                                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
+                                    .reduce((a, b) -> a + ", " + b)
+                                    .orElse(""));
                     params.put("auth_params", authParams);
 
                     String identityResolverMapHash = "{ %s }".formatted(

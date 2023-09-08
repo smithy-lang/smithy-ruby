@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
@@ -137,6 +138,29 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     public RubyCodeWriter includeRequires() {
         this.includeRequires = true;
         return this;
+    }
+
+    /**
+     * Writes a require relative statement for an additional file.
+     *
+     * @param additionalFiles additional files to require
+     * @return Returns the CodeWriter
+     */
+    public RubyCodeWriter writeRequireRelativeAdditionalFiles(List<String> additionalFiles) {
+        for (String require : additionalFiles) {
+            write("require_relative '$L'", removeRbExtension(require));
+        }
+        if (additionalFiles.size() > 0) {
+            write("");
+        }
+        return this;
+    }
+
+    private String removeRbExtension(String s) {
+        if (s != null && s.endsWith(".rb")) {
+            return s.split(".rb")[0];
+        }
+        return s;
     }
 
     /**

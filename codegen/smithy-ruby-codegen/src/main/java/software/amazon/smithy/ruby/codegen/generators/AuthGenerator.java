@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -78,15 +79,7 @@ public class AuthGenerator extends RubyGeneratorBase {
             writer
                     .preamble()
                     .includeRequires()
-                    .call(() -> {
-                        for (String require : additionalFiles) {
-                            writer.write("require_relative '$L'", removeRbExtension(require));
-                            LOGGER.finer("Adding auth require: " + require);
-                        }
-                        if (additionalFiles.size() > 0) {
-                            writer.write("");
-                        }
-                    })
+                    .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .addModule(settings.getModule())
                     .addModule("Auth")
                     .call(() -> renderAuthParamsClass(writer))
@@ -115,23 +108,34 @@ public class AuthGenerator extends RubyGeneratorBase {
         LOGGER.fine("Wrote auth rbs module to " + rbsFile());
     }
 
-    private Object removeRbExtension(String s) {
-        if (s != null && s.endsWith(".rb")) {
-            return s.split(".rb")[0];
-        }
-        return s;
-    }
-
     private void renderAuthParamsClass(RubyCodeWriter writer) {
-        // TODO: this should have more params when hooked up with endpoint/auth rules?
-        writer.write("Params = Struct.new(:operation_name, keyword_init: true)");
+        List<String> authParamsList = new ArrayList<>();
+        authParamsList.add(":operation_name");
+        authSchemesSet.forEach((s) -> {
+            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
+            additionalAuthParams.entrySet().stream().forEach((e) -> {
+                authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
+            });
+        });
+        String authParams = authParamsList.stream().collect(Collectors.joining(", "));
+
+        writer.write("Params = Struct.new($L, keyword_init: true)", authParams);
     }
 
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
-        // TODO: this should have more params when hooked up with endpoint/auth rules?
+        List<String> authParamsList = new ArrayList<>();
+        authParamsList.add("operation_name");
+        authSchemesSet.forEach((s) -> {
+            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
+            additionalAuthParams.entrySet().stream().forEach((e) -> {
+                authParamsList.add(e.getKey());
+            });
+        });
+        String authParams = authParamsList.stream().collect(Collectors.joining(" "));
+
         writer
                 .openBlock("class Params < ::Struct[untyped]")
-                .write("attr_accessor operation_name (): ::Symbol")
+                .write("attr_accessor $L (): ::Symbol", authParams)
                 .closeBlock("end");
     }
 

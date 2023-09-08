@@ -77,25 +77,10 @@ public class RubyRuntimePlugin {
         String renderAdd(GenerationContext context);
     }
 
-    @FunctionalInterface
-    /**
-     * Called to write out additional files needed by this Plugin.
-     */
-    public interface WriteAdditionalFiles {
-        /**
-         * Called to write out additional files needed by this Plugin.
-         *
-         * @param context GenerationContext - allows access to file manifest and symbol providers
-         * @return List of the relative paths of files written, which will be required in client.rb.
-         */
-        List<String> writeAdditionalFiles(GenerationContext context);
-    }
-
     /**
      * Builder for {@link RubyRuntimePlugin}.
      */
     public static class Builder implements SmithyBuilder<RubyRuntimePlugin> {
-
         private RenderAdd renderAdd;
         private WriteAdditionalFiles writeAdditionalFiles =
                 (context) -> Collections.emptyList();
@@ -147,29 +132,6 @@ public class RubyRuntimePlugin {
          */
         public Builder pluginClass(String pluginClass) {
             this.renderAdd = (context) -> pluginClass + ".new";
-            return this;
-        }
-
-        /**
-         * Used to completely override and fully customize the rendering of
-         * adding this plugin to the list of client class plugins.
-         *
-         * @param r Called to render code to add this plugin to the list of client class plugins
-         * @return Returns the Builder.
-         */
-        public Builder renderAdd(RenderAdd r) {
-            this.renderAdd = Objects.requireNonNull(r);
-            return this;
-        }
-
-        /**
-         * Used to write additional files required by this plugin.
-         *
-         * @param w called to write additional files.
-         * @return Returns the Builder.
-         */
-        public Builder writeAdditionalFiles(WriteAdditionalFiles w) {
-            this.writeAdditionalFiles = Objects.requireNonNull(w);
             return this;
         }
 

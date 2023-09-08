@@ -21,12 +21,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.WriteAdditionalFiles;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -34,7 +37,7 @@ public final class AuthScheme {
     private final ShapeId shapeId;
     private final String rubyAuthScheme;
     private final String rubyIdentityType;
-    private final List<String> additionalAuthParams;
+    private final Map<String, String> additionalAuthParams;
     private final ClientConfig identityResolverConfig;
     private final WriteAdditionalFiles writeAdditionalFiles;
 
@@ -75,7 +78,7 @@ public final class AuthScheme {
     /**
      * @return additional auth params for the auth scheme.
      */
-    public List<String> getAdditionalAuthParams() {
+    public Map<String, String> getAdditionalAuthParams() {
         return additionalAuthParams;
     }
 
@@ -96,25 +99,11 @@ public final class AuthScheme {
         return writeAdditionalFiles.writeAdditionalFiles(context);
     }
 
-    @FunctionalInterface
-    /**
-     * Called to write out additional files needed by this auth scheme.
-     */
-    public interface WriteAdditionalFiles {
-        /**
-         * Called to write out additional files needed by this auth scheme.
-         *
-         * @param context GenerationContext - allows access to file manifest and symbol providers
-         * @return List of the relative paths of files written, which will be required in the module.
-         */
-        List<String> writeAdditionalFiles(GenerationContext context);
-    }
-
     public static class Builder implements SmithyBuilder<AuthScheme> {
         private ShapeId shapeId;
         private String rubyAuthScheme;
         private String rubyIdentityType;
-        private List<String> additionalAuthParams = Collections.emptyList();
+        private Map<String, String> additionalAuthParams = new HashMap<>();
         private ClientConfig identityResolverConfig;
         private WriteAdditionalFiles writeAdditionalFiles =
                 (context) -> Collections.emptyList();
@@ -153,7 +142,7 @@ public final class AuthScheme {
          * @param additionalAuthParams additional auth params for the auth scheme.
          * @return Returns the Builder
          */
-        public Builder additionalAuthParams(List<String> additionalAuthParams) {
+        public Builder additionalAuthParams(Map<String, String> additionalAuthParams) {
             this.additionalAuthParams = additionalAuthParams;
             return this;
         }
@@ -218,5 +207,23 @@ public final class AuthScheme {
             }
             return new AuthScheme(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof AuthScheme)) {
+            return false;
+        }
+
+        AuthScheme other = (AuthScheme) o;
+
+        return this.shapeId.equals(other.shapeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shapeId);
     }
 }

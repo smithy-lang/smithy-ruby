@@ -40,6 +40,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.OperationPredicate;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.ServicePredicate;
+import software.amazon.smithy.ruby.codegen.WriteAdditionalFiles;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -188,20 +189,6 @@ public final class Middleware {
 
     @FunctionalInterface
     /**
-     * Called to write out additional files needed by this Middleware.
-     */
-    public interface WriteAdditionalFiles {
-        /**
-         * Called to write out additional files needed by this Middleware.
-         *
-         * @param context GenerationContext - allows access to file manifest and symbol providers
-         * @return List of the relative paths of files written, which will be required in client.rb.
-         */
-        List<String> writeAdditionalFiles(GenerationContext context);
-    }
-
-    @FunctionalInterface
-    /**
      * Called to get additional, operation specific parameters.
      */
     public interface OperationParams {
@@ -210,10 +197,9 @@ public final class Middleware {
          *
          * @param context   GenerationContext - allows access to file manifest and symbol providers
          * @param operation The operation
-         * @return List of the relative paths of files written, which will be required in client.rb.
+         * @return Map of params/values for the middleware
          */
-        Map<String, String> params(GenerationContext context,
-                                   OperationShape operation);
+        Map<String, String> params(GenerationContext context, OperationShape operation);
     }
 
     /**

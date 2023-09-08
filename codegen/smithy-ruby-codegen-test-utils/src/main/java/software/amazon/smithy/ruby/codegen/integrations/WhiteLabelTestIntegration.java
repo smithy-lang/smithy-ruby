@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.ruby.codegen.integrations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
@@ -116,11 +118,15 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .allowOperationOverride()
                 .build();
 
+        Map<String, String> authParams = new HashMap<>();
+        authParams.put("custom_param", "'custom_value'");
+
         AuthScheme authScheme = AuthScheme.builder()
                 .shapeId(HttpCustomAuthTrait.ID)
                 .rubyAuthScheme("HTTPCustomAuthScheme.new")
                 .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
+                .additionalAuthParams(authParams)
                 .rubySource("smithy-ruby-codegen-test-utils/auth/http_custom_auth.rb")
                 .build();
 
