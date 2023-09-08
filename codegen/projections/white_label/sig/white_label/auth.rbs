@@ -10,7 +10,8 @@
 module WhiteLabel
   module Auth
     class Params < ::Struct[untyped]
-      attr_accessor operation_name custom_param (): ::Symbol
+      attr_accessor operation_name (): ::Symbol
+      attr_accessor custom_param (): untyped
     end
 
     SCHEMES: ::Array[Hearth::AuthSchemes::Base]

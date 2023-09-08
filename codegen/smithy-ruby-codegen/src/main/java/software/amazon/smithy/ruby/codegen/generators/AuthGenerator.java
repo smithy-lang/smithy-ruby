@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -123,19 +124,22 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
-        List<String> authParamsList = new ArrayList<>();
-        authParamsList.add("operation_name");
+        Map<String, String> authParamsMap = new HashMap<String, String>();
+        authParamsMap.put("operation_name", "::Symbol");
         authSchemesSet.forEach((s) -> {
             Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
             additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsList.add(e.getKey());
+                authParamsMap.put(RubyFormatter.toSnakeCase(e.getKey()), "untyped");
             });
         });
-        String authParams = authParamsList.stream().collect(Collectors.joining(" "));
 
         writer
                 .openBlock("class Params < ::Struct[untyped]")
-                .write("attr_accessor $L (): ::Symbol", authParams)
+                .call(() -> {
+                    authParamsMap.entrySet().stream().forEach((e) -> {
+                        writer.write("attr_accessor $L (): $L", e.getKey(), e.getValue());
+                    });
+                })
                 .closeBlock("end");
     }
 
