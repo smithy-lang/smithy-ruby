@@ -99,6 +99,12 @@ public class DirectedRubyCodegen
                 .createDefaultHttpApplicationTransport();
         }
 
+        // get default auth schemes
+        // merge with additional auth schemes from integrations
+        // get resolved auth traits from model
+        // set properties on auth schemes
+        // assign auth schemes to context?
+
         GenerationContext context = new GenerationContext(
             directive.settings(),
             directive.fileManifest(),
