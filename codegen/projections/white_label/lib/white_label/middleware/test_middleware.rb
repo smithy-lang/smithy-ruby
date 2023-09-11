@@ -8,8 +8,6 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
-  # frozen_string_literal: true
-
   module Middleware
     # Middleware used for testing plugins and interceptors -
     # applies test_config to the output metadata.

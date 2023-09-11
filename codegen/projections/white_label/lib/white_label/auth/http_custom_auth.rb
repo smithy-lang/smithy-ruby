@@ -22,12 +22,11 @@ module WhiteLabel
 
     # Custom Signer implementation
     class HTTPCustomAuthSigner < Hearth::Signers::Base
+      # rubocop:disable Lint/UnusedMethodArgument
       def sign(request:, identity:, properties:)
-        request.headers['X-Http-Custom-Auth'] =
-          "identity=#{identity.key}, property=#{properties[:property]}"
+        request.headers['X-Http-Custom-Auth'] = 'signature'
       end
 
-      # rubocop:disable Lint/UnusedMethodArgument
       def reset(request:, properties:)
         request.headers.delete('X-Http-Custom-Auth')
       end

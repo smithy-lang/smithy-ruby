@@ -8,8 +8,6 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
-  # frozen_string_literal: true
-
   module Middleware
     # Middleware used to test relative middleware ordering -
     # this is for 'BEFORE' type testing

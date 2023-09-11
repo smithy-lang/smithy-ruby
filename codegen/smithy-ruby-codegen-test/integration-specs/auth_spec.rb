@@ -237,6 +237,10 @@ module WhiteLabel
         Hearth::Identities::HTTPApiKey.new(key: 'foo')
       end
 
+      let(:properties) do
+        { name: 'X-API-Key', in: 'header', scheme: 'Authorization' }
+      end
+
       it 'resolves httpApiKeyAuth' do
         expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
           .and_wrap_original do |m, *args|
@@ -245,6 +249,7 @@ module WhiteLabel
           resolved
         end
         expect_any_instance_of(Hearth::Signers::HTTPApiKey).to receive(:sign)
+          .with(request: anything, identity: identity, properties: properties)
         client.http_api_key_auth({})
       end
     end
@@ -266,6 +271,7 @@ module WhiteLabel
           resolved
         end
         expect_any_instance_of(Hearth::Signers::HTTPBasic).to receive(:sign)
+          .with(request: anything, identity: identity, properties: {})
         client.http_basic_auth({})
       end
     end
@@ -287,6 +293,7 @@ module WhiteLabel
           resolved
         end
         expect_any_instance_of(Hearth::Signers::HTTPBearer).to receive(:sign)
+          .with(request: anything, identity: identity, properties: {})
         client.http_bearer_auth({})
       end
     end
@@ -308,6 +315,7 @@ module WhiteLabel
           resolved
         end
         expect_any_instance_of(Hearth::Signers::HTTPDigest).to receive(:sign)
+          .with(request: anything, identity: identity, properties: {})
         client.http_digest_auth({})
       end
     end
@@ -321,6 +329,10 @@ module WhiteLabel
         WhiteLabel::Auth::HTTPCustomAuthIdentity.new(key: 'foo')
       end
 
+      let(:properties) do
+        { model_value: 'signer', static_value: 'static' }
+      end
+
       it 'resolves httpCustomAuth' do
         expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
           .and_wrap_original do |m, *args|
@@ -330,6 +342,7 @@ module WhiteLabel
         end
         expect_any_instance_of(WhiteLabel::Auth::HTTPCustomAuthSigner)
           .to receive(:sign)
+          .with(request: anything, identity: identity, properties: properties)
         client.custom_auth({})
       end
     end
