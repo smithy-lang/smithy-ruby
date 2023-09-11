@@ -55,17 +55,6 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     }
 
     /**
-     * Processes the finalized model before runtime plugins are consumed and
-     * code generation starts. This plugin can be used to add RuntimeClientPlugins
-     * to the integration's list of plugin.
-     *
-     * @param context - generation context to process within. Contains the finalized model.
-     */
-    default void processFinalizedModel(GenerationContext context) {
-        // pass
-    }
-
-    /**
      * Return all of the Middleware to be registered on the Client.
      *
      * @param middlewareBuilder - Client middleware to be modified

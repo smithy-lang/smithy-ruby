@@ -10,9 +10,10 @@ apply WhiteLabel @httpApiKeyAuth(name: "X-API-Key", in: "header", scheme: "Autho
 @authDefinition
 @trait(selector: "service")
 structure httpCustomAuth {
-    property: String
+    signerProperty: String,
+    identityProperty: String
 }
-apply WhiteLabel @httpCustomAuth(property: "value")
+apply WhiteLabel @httpCustomAuth(signerProperty: "signer", identityProperty: "identity")
 
 @auth([httpBasicAuth])
 @http(method: "POST", uri: "/http_basic_auth")

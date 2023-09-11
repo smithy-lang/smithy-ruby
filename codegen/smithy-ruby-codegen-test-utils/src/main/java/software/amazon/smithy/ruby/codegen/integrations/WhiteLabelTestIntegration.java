@@ -118,16 +118,27 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .allowOperationOverride()
                 .build();
 
-        Map<String, String> authParams = new HashMap<>();
-        authParams.put("custom_param", "'custom_value'");
-
         AuthScheme authScheme = AuthScheme.builder()
                 .shapeId(HttpCustomAuthTrait.ID)
                 .rubyAuthScheme("HTTPCustomAuthScheme.new")
                 .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
-                .additionalAuthParams(authParams)
+                .additionalAuthParams(Map.of("custom_param", "'custom_value'"))
                 .rubySource("smithy-ruby-codegen-test-utils/auth/http_custom_auth.rb")
+                .extractSignerProperties((trait) -> {
+                    Map<String, String> properties = new HashMap<>();
+                    String modelValue = "'%s'".formatted(((HttpCustomAuthTrait) trait).getSignerProperty());
+                    properties.put("model_value", modelValue);
+                    return properties;
+                })
+                .putSignerProperty("static_value", "'static'")
+                .extractIdentityProperties((trait) -> {
+                    Map<String, String> properties = new HashMap<>();
+                    String modelValue = "'%s'".formatted(((HttpCustomAuthTrait) trait).getIdentityProperty());
+                    properties.put("model_value", modelValue);
+                    return properties;
+                })
+                .putIdentityProperty("static_value", "'static'")
                 .build();
 
         return List.of(authScheme);

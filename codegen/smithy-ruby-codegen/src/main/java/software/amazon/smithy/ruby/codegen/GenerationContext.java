@@ -24,8 +24,11 @@ import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -160,5 +163,26 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                 .map((i) -> i.getRuntimePlugins(this))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @return list of all AuthSchemes from all integrations and the application transport.
+     */
+    public List<AuthScheme> getAuthSchemes() {
+        List<AuthScheme> authSchemes = applicationTransport().defaultAuthSchemes();
+        authSchemes.add(AnonymousAuthSchemeFactory.build());
+        integrations().forEach((i) -> {
+            i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
+        });
+
+        ServiceIndex.of(model()).getAuthSchemes(service()).forEach((shapeId, trait) -> {
+            AuthScheme authScheme = authSchemes.stream()
+                    .filter(s -> s.getShapeId().equals(shapeId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
+            authScheme.extractSignerProperties(trait);
+            authScheme.extractIdentityProperties(trait);
+        });
+        return authSchemes;
     }
 }

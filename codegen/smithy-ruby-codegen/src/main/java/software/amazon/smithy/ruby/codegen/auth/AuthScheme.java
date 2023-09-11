@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.WriteAdditionalFiles;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
@@ -35,6 +36,10 @@ public final class AuthScheme {
     private final Map<String, String> additionalAuthParams;
     private final ClientConfig identityResolverConfig;
     private final WriteAdditionalFiles writeAdditionalFiles;
+    private final ExtractProperties extractSignerProperties;
+    private final Map<String, String> signerProperties;
+    private final ExtractProperties extractIdentityProperties;
+    private final Map<String, String> identityProperties;
 
     private AuthScheme(Builder builder) {
         this.shapeId = builder.shapeId;
@@ -43,6 +48,10 @@ public final class AuthScheme {
         this.additionalAuthParams = builder.additionalAuthParams;
         this.identityResolverConfig = builder.identityResolverConfig;
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
+        this.extractSignerProperties = builder.extractSignerProperties;
+        this.signerProperties = builder.signerProperties;
+        this.extractIdentityProperties = builder.extractIdentityProperties;
+        this.identityProperties = builder.identityProperties;
     }
 
     public static Builder builder() {
@@ -94,14 +103,59 @@ public final class AuthScheme {
         return writeAdditionalFiles.writeAdditionalFiles(context);
     }
 
+    /**
+     * @param trait the trait to extract Signer properties from.
+     */
+    public void extractSignerProperties(Trait trait) {
+         Map<String, String> signerProperties = extractSignerProperties.extractProperties(trait);
+         signerProperties.forEach((key, value) -> this.signerProperties.put(key, value));
+    }
+
+    /**
+     * @return the Signer properties for the auth scheme.
+     */
+    public Map<String, String> getSignerProperties() {
+        return signerProperties;
+    }
+
+    /**
+     * @param trait the trait to extract Identity properties from.
+     */
+    public void extractIdentityProperties(Trait trait) {
+         Map<String, String> identityProperties = extractIdentityProperties.extractProperties(trait);
+         identityProperties.forEach((key, value) -> this.identityProperties.put(key, value));
+    }
+
+    /**
+     * @return the Identity properties for the auth scheme.
+     */
+    public Map<String, String> getIdentityProperties() {
+        return identityProperties;
+    }
+
+    @FunctionalInterface
+    /**
+     * Extract properties from a trait.
+     */
+    public interface ExtractProperties {
+        /**
+         * @param trait the trait to extract properties from.
+         * @return the extracted properties.
+         */
+        Map<String, String> extractProperties(Trait trait);
+    }
+
     public static class Builder implements SmithyBuilder<AuthScheme> {
         private ShapeId shapeId;
         private String rubyAuthScheme;
         private String rubyIdentityType;
         private Map<String, String> additionalAuthParams = new HashMap<>();
         private ClientConfig identityResolverConfig;
-        private WriteAdditionalFiles writeAdditionalFiles =
-                (context) -> Collections.emptyList();
+        private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
+        private ExtractProperties extractSignerProperties = (trait) -> Collections.emptyMap();
+        private ExtractProperties extractIdentityProperties = (trait) -> Collections.emptyMap();
+        private Map<String, String> signerProperties = new HashMap<>();
+        private Map<String, String> identityProperties = new HashMap<>();
 
         protected Builder() {
         }
@@ -165,6 +219,48 @@ public final class AuthScheme {
             return this;
         }
 
+        /**
+         * Used to extract properties from a trait and add them to the Signer properties.
+         * @param extractProperties the function to extract properties from a trait.
+         * @return Returns the Builder
+         */
+        public Builder extractSignerProperties(ExtractProperties extractProperties) {
+            this.extractSignerProperties = extractProperties;
+            return this;
+        }
+
+        /**
+         * Used to add a property to the Signer properties.
+         * @param key the key of the property.
+         * @param value the value of the property.
+         * @return Returns the Builder
+         */
+        public Builder putSignerProperty(String key, String value) {
+            this.signerProperties.put(key, value);
+            return this;
+        }
+
+        /**
+         * Used to extract properties from a trait and add them to the Identity properties.
+         * @param extractProperties the function to extract properties from a trait.
+         * @return Returns the Builder
+         */
+        public Builder extractIdentityProperties(ExtractProperties extractProperties) {
+            this.extractIdentityProperties = extractProperties;
+            return this;
+        }
+
+        /**
+         * Used to add a property to the Identity properties.
+         * @param key the key of the property.
+         * @param value the value of the property.
+         * @return Returns the Builder
+         */
+        public Builder putIdentityProperty(String key, String value) {
+            this.identityProperties.put(key, value);
+            return this;
+        }
+
         @Override
         public AuthScheme build() {
             if (shapeId == null) {
@@ -178,23 +274,5 @@ public final class AuthScheme {
             }
             return new AuthScheme(this);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (!(o instanceof AuthScheme)) {
-            return false;
-        }
-
-        AuthScheme other = (AuthScheme) o;
-
-        return this.shapeId.equals(other.shapeId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(shapeId);
     }
 }

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen.traits;
 
-import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -28,29 +27,37 @@ public final class HttpCustomAuthTrait extends AbstractTrait implements ToSmithy
 
     public static final ShapeId ID = ShapeId.from("smithy.ruby.tests#httpCustomAuth");
 
-    private final String property;
+    private final String signerProperty;
+    private final String identityProperty;
 
     private HttpCustomAuthTrait(HttpCustomAuthTrait.Builder builder) {
         super(ID, builder.getSourceLocation());
-        property = builder.property;
+        signerProperty = builder.signerProperty;
+        identityProperty = builder.identityProperty;
     }
 
-    public Optional<String> getProperty() {
-        return Optional.ofNullable(property);
+    public String getSignerProperty() {
+        return signerProperty;
+    }
+
+    public String getIdentityProperty() {
+        return identityProperty;
     }
 
     @Override
     public HttpCustomAuthTrait.Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
-                .property(getProperty().orElse(null));
+                .signerProperty(signerProperty)
+                .identityProperty(identityProperty);
     }
 
     @Override
     protected Node createNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
-                .withOptionalMember("property", getProperty().map(Node::from));
+                .withMember("signerProperty", getSignerProperty())
+                .withMember("identityProperty", getIdentityProperty());
         return builder.build();
     }
 
@@ -66,7 +73,8 @@ public final class HttpCustomAuthTrait extends AbstractTrait implements ToSmithy
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             HttpCustomAuthTrait.Builder builder = builder().sourceLocation(value.getSourceLocation());
-            value.expectObjectNode().getStringMember("property", builder::property);
+            value.expectObjectNode().getStringMember("signerProperty", builder::signerProperty);
+            value.expectObjectNode().getStringMember("identityProperty", builder::identityProperty);
             HttpCustomAuthTrait result = builder.build();
             result.setNodeCache(value);
             return result;
@@ -74,7 +82,8 @@ public final class HttpCustomAuthTrait extends AbstractTrait implements ToSmithy
     }
 
     public static final class Builder extends AbstractTraitBuilder<HttpCustomAuthTrait, HttpCustomAuthTrait.Builder> {
-        private String property;
+        private String signerProperty;
+        private String identityProperty;
 
         private Builder() {
         }
@@ -84,8 +93,13 @@ public final class HttpCustomAuthTrait extends AbstractTrait implements ToSmithy
             return new HttpCustomAuthTrait(this);
         }
 
-        public HttpCustomAuthTrait.Builder property(String property) {
-            this.property = property;
+        public HttpCustomAuthTrait.Builder signerProperty(String signerProperty) {
+            this.signerProperty = signerProperty;
+            return this;
+        }
+
+        public HttpCustomAuthTrait.Builder identityProperty(String identityProperty) {
+            this.identityProperty = identityProperty;
             return this;
         }
     }

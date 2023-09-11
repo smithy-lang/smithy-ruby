@@ -49,6 +49,7 @@ public final class RubySource {
 
                 RubyCodeWriter writer = new RubyCodeWriter(gemModule);
                 writer
+                        .preamble()
                         .openBlock("module $L", gemModule)
                         .write(fileContent)
                         .closeBlock("end");

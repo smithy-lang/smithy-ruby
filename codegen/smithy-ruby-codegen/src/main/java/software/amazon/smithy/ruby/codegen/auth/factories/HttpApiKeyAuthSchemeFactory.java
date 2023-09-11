@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.auth.factories;
 
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
@@ -51,6 +53,15 @@ public final class HttpApiKeyAuthSchemeFactory {
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPApiKey.new")
                 .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
+                .extractSignerProperties((trait) -> {
+                    Map<String, String> properties = new HashMap<>();
+                    properties.put("in", "'%s'".formatted(((HttpApiKeyAuthTrait) trait).getIn().toString()));
+                    properties.put("name", "'%s'".formatted(((HttpApiKeyAuthTrait) trait).getName()));
+                    if (((HttpApiKeyAuthTrait) trait).getScheme().isPresent()) {
+                        properties.put("scheme", "'%s'".formatted(((HttpApiKeyAuthTrait) trait).getScheme().get()));
+                    }
+                    return properties;
+                })
                 .build();
     }
 }

@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -41,16 +42,12 @@ public final class AuthMiddlewareFactory {
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
         // get additional auth schemes
-        Set<AuthScheme> authSchemesSet = new HashSet<>();
-        context.applicationTransport().defaultAuthSchemes().forEach((s) -> authSchemesSet.add(s));
-        context.integrations().forEach((i) -> {
-            i.getAdditionalAuthSchemes(context).forEach((s) -> authSchemesSet.add(s));
-        });
-
+        List<AuthScheme> authSchemesList = context.getAuthSchemes();
         Set<ClientConfig> clientConfigSet = new HashSet<>();
         Map<String, String> identityResolvers = new HashMap<>();
+
         serviceAuthSchemes.forEach((shapeId, trait) -> {
-            AuthScheme authScheme = authSchemesSet.stream()
+            AuthScheme authScheme = authSchemesList.stream()
                     .filter(s -> s.getShapeId().equals(shapeId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
@@ -99,27 +96,28 @@ public final class AuthMiddlewareFactory {
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
 
-                    HashMap<String, String> authParamsList = new HashMap<>();
-                    authParamsList.put("operation_name",
+                    HashMap<String, String> authParamsMap = new HashMap<>();
+                    authParamsMap.put("operation_name",
                             RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName()));
 
-                    authSchemesSet.forEach(s -> {
+                    authSchemesList.forEach(s -> {
                         Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
                         additionalAuthParams.entrySet().forEach(e -> {
-                            authParamsList.put(e.getKey(), e.getValue());
+                            authParamsMap.put(e.getKey(), e.getValue());
                         });
                     });
                     String authParams = "Auth::Params.new(%s)".formatted(
-                            authParamsList.entrySet().stream()
+                            authParamsMap.entrySet().stream()
                                     .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
                                     .reduce((a, b) -> a + ", " + b)
                                     .orElse(""));
                     params.put("auth_params", authParams);
 
-                    String identityResolverMapHash = "{ %s }".formatted(
+                    String identityResolverMapHash = "{%s}".formatted(
                             identityResolvers.entrySet().stream()
                                     .map(e -> "%s: %s".formatted(e.getValue(), e.getKey()))
                                     .reduce((a, b) -> a + ", " + b)
+                                    .map(s -> " " + s + " ")
                                     .orElse(""));
                     params.put("identity_resolver_map", identityResolverMapHash);
 

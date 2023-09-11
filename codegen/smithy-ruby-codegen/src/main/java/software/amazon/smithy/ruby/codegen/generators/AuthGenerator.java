@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -31,7 +29,6 @@ import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -48,19 +45,13 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final ServiceShape service;
-    private final Set<AuthScheme> authSchemesSet;
+    private final List<AuthScheme> authSchemes;
 
     public AuthGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         operations = directive.operations();
         service = directive.service();
-        authSchemesSet = new HashSet<>();
-
-        // get additional auth schemes
-        context.applicationTransport().defaultAuthSchemes().forEach((s) -> authSchemesSet.add(s));
-        context.integrations().forEach((i) -> {
-            i.getAdditionalAuthSchemes(context).forEach((s) -> authSchemesSet.add(s));
-        });
+        authSchemes = directive.context().getAuthSchemes();
     }
 
     @Override
@@ -69,7 +60,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
-        List<String> additionalFiles = authSchemesSet.stream()
+        List<String> additionalFiles = authSchemes.stream()
                 .map((a) -> a.writeAdditionalFiles(context))
                 .flatMap(Collection::stream)
                 .distinct()
@@ -110,15 +101,15 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
-        List<String> authParamsList = new ArrayList<>();
-        authParamsList.add(":operation_name");
-        authSchemesSet.forEach((s) -> {
+        Set<String> authParamsSet = new HashSet<>();
+        authParamsSet.add(":operation_name");
+        authSchemes.forEach((s) -> {
             Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
             additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
+                authParamsSet.add(RubyFormatter.asSymbol(e.getKey()));
             });
         });
-        String authParams = authParamsList.stream().collect(Collectors.joining(", "));
+        String authParams = authParamsSet.stream().collect(Collectors.joining(", "));
 
         writer.write("Params = Struct.new($L, keyword_init: true)", authParams);
     }
@@ -126,7 +117,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
         Map<String, String> authParamsMap = new HashMap<String, String>();
         authParamsMap.put("operation_name", "::Symbol");
-        authSchemesSet.forEach((s) -> {
+        authSchemes.forEach((s) -> {
             Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
             additionalAuthParams.entrySet().stream().forEach((e) -> {
                 authParamsMap.put(RubyFormatter.toSnakeCase(e.getKey()), "untyped");
@@ -144,25 +135,28 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthSchemesConstant(RubyCodeWriter writer) {
-        Set<Trait> authTraitsSet = new HashSet<>();
+        Set<Trait> authTraits = new HashSet<>();
         operations.stream().forEach(operation -> {
             ServiceIndex.of(model).getEffectiveAuthSchemes(
                     service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE).forEach((shapeId, trait) -> {
-                authTraitsSet.add(trait);
+                authTraits.add(trait);
             });
         });
 
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    authTraitsSet.stream().sorted(Comparator.comparing(Trait::toShapeId)).forEach(authTrait -> {
-                        ShapeId shapeId = authTrait.toShapeId();
-                        AuthScheme authScheme = authSchemesSet.stream()
-                                .filter(s -> s.getShapeId().equals(shapeId))
-                                .findFirst()
-                                .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
-                        writer.write("$L,", authScheme.getRubyAuthScheme());
-                    });
+                    authTraits.stream()
+                            .sorted(Comparator.comparing(Trait::toShapeId))
+                            .forEach(authTrait -> {
+                                ShapeId shapeId = authTrait.toShapeId();
+                                AuthScheme authScheme = authSchemes.stream()
+                                        .filter(s -> s.getShapeId().equals(shapeId))
+                                        .findFirst()
+                                        .orElseThrow(
+                                                () -> new IllegalStateException("No auth scheme found for " + shapeId));
+                                writer.write("$L,", authScheme.getRubyAuthScheme());
+                            });
                 })
                 .unwrite(",\n")
                 .write("")
@@ -202,7 +196,7 @@ public class AuthGenerator extends RubyGeneratorBase {
         String operationName =
                 RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName());
 
-        Map<ShapeId, Trait> authSchemes =
+        Map<ShapeId, Trait> operationAuthSchemes =
                 ServiceIndex.of(model).getEffectiveAuthSchemes(
                         service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE);
 
@@ -210,41 +204,41 @@ public class AuthGenerator extends RubyGeneratorBase {
                 .write("when $L", operationName)
                 .indent()
                 .call(() -> {
-                    authSchemes.forEach((shapeId, trait) -> {
-                        if (trait instanceof HttpApiKeyAuthTrait) {
-                            renderHttpApiKeyAuthOption(writer, shapeId, (HttpApiKeyAuthTrait) trait);
-                        } else {
-                            renderAuthOption(writer, shapeId.toString(), Optional.empty(), Optional.empty());
-                        }
+                    operationAuthSchemes.forEach((shapeId, trait) -> {
+                        AuthScheme authScheme = authSchemes.stream()
+                                .filter(s -> s.getShapeId().equals(shapeId))
+                                .findFirst()
+                                .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
+
+                        renderAuthOption(writer, shapeId.toString(), authScheme);
                     });
                 })
                 .dedent();
     }
 
-    private void renderHttpApiKeyAuthOption(RubyCodeWriter writer, ShapeId shapeId,
-                                           HttpApiKeyAuthTrait httpApiKeyAuthTrait) {
-        String signerProperties;
-        String name = httpApiKeyAuthTrait.getName();
-        String in = httpApiKeyAuthTrait.getIn().toString();
-        if (httpApiKeyAuthTrait.getScheme().isPresent()) {
-            String scheme = httpApiKeyAuthTrait.getScheme().get();
-            signerProperties = String.format("{ name: '%s', in: '%s', scheme: '%s' }", name, in, scheme);
-        } else {
-            signerProperties = String.format("{ name: '%s', in: '%s' }", name, in);
+    private void renderAuthOption(RubyCodeWriter writer, String schemeId, AuthScheme authScheme) {
+        String args = "scheme_id: '%s'".formatted(schemeId);
+
+        if (!authScheme.getSignerProperties().isEmpty()) {
+            String signerProperties = authScheme.getSignerProperties()
+                    .entrySet().stream()
+                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
+                    .reduce((a, b) -> a + ", " + b)
+                    .map(s -> " " + s + " ")
+                    .orElse("");
+            args += ", signer_properties: {%s}".formatted(signerProperties);
         }
 
-        renderAuthOption(writer, shapeId.toString(), Optional.empty(), Optional.of(signerProperties));
-    }
+        if (!authScheme.getIdentityProperties().isEmpty()) {
+            String identityProperties = authScheme.getIdentityProperties()
+                    .entrySet().stream()
+                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
+                    .reduce((a, b) -> a + ", " + b)
+                    .map(s -> " " + s + " ")
+                    .orElse("");
+            args += ", identity_properties: {%s}".formatted(identityProperties);
+        }
 
-    private void renderAuthOption(RubyCodeWriter writer, String schemeId, Optional<String> identityProperties,
-                                  Optional<String> signerProperties) {
-        String args = "scheme_id: '" + schemeId + "'";
-        if (identityProperties.isPresent()) {
-            args += ", identity_properties: " + identityProperties.get();
-        }
-        if (signerProperties.isPresent()) {
-            args += ", signer_properties: " + signerProperties.get();
-        }
         writer.write("options << $L.new($L)", Hearth.AUTH_OPTION, args);
     }
 }

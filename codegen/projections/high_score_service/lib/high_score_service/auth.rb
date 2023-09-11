@@ -25,7 +25,7 @@ module HighScoreService
         options = []
         case auth_params.operation_name
         when :api_key_auth
-          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { name: 'Authorization', in: 'header' })
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { in: 'header', name: 'Authorization' })
         when :basic_auth
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
         when :bearer_auth

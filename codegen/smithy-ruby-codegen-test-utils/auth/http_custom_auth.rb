@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Auth
   # Custom Auth Scheme implementation
   class HTTPCustomAuthScheme < Hearth::AuthSchemes::Base
