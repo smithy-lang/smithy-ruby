@@ -18,6 +18,9 @@ Style/Documentation:
   Exclude:
     - '**/*_spec.rb'
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Lint/EmptyClass:
   Exclude:
     - 'smithy-ruby-codegen-test/integration-specs/params_spec.rb'

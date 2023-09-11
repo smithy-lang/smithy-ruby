@@ -79,7 +79,8 @@ module WhiteLabel
         it 'resolves httpCustomAuth' do
           params = Params.new(operation_name: :custom_auth)
           options = subject.resolve(params)
-          expect(options.first.scheme_id).to eq('smithy.ruby.tests#httpCustomAuth')
+          expect(options.first.scheme_id)
+            .to eq('smithy.ruby.tests#httpCustomAuth')
         end
 
         it 'has signing properties' do
@@ -327,7 +328,8 @@ module WhiteLabel
           expect(resolved).to eq(identity)
           resolved
         end
-        expect_any_instance_of(WhiteLabel::Auth::HTTPCustomAuthSigner).to receive(:sign)
+        expect_any_instance_of(WhiteLabel::Auth::HTTPCustomAuthSigner)
+          .to receive(:sign)
         client.custom_auth({})
       end
     end
