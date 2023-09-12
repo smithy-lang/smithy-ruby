@@ -16,10 +16,10 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
@@ -49,7 +49,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
-    private final Set<RubyDependency> rubyDependencies;
     private final SymbolProvider symbolProvider;
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
@@ -62,7 +61,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
      * @param protocol             the protocol to generate for
      * @param protocolGenerator    the resolved protocol generate to use for generation
      * @param applicationTransport resolved application transport.
-     * @param rubyDependencies     set of Ruby dependencies
      * @param symbolProvider       a symbol provider scoped to the Types module
      */
     public GenerationContext(RubySettings rubySettings,
@@ -73,7 +71,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                              ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
                              ApplicationTransport applicationTransport,
-                             Set<RubyDependency> rubyDependencies,
                              SymbolProvider symbolProvider) {
 
         this.rubySettings = rubySettings;
@@ -84,7 +81,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.protocol = protocol;
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
-        this.rubyDependencies = rubyDependencies;
         this.symbolProvider = symbolProvider;
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
@@ -152,8 +148,16 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     /**
      * @return set of RubyDependencies
      */
-    public Set<RubyDependency> getRubyDependencies() {
-        return rubyDependencies;
+    public List<RubyDependency> getRubyDependencies() {
+        List<RubyDependency> rubyDependencies = new ArrayList<>();
+        rubyDependencies.addAll(settings().getBaseDependencies());
+        rubyDependencies.addAll(
+                integrations.stream()
+                        .map((integration) -> integration.additionalGemDependencies(this))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList())
+        );
+        return Collections.unmodifiableList(rubyDependencies);
     }
 
     /**

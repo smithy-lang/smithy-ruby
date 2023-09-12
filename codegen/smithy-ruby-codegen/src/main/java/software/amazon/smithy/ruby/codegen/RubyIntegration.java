@@ -17,11 +17,9 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
@@ -87,6 +85,7 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
 
     /**
      * Returns a list of additional Auth Schemes to be added to the generated Auth module.
+     *
      * @param context - Generation context to process within
      * @return list of additional AuthScheme
      */
@@ -97,7 +96,7 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     /**
      * Writes additional files.
      *
-     * @param context - context for generation
+     * @param context - Generation context to process within
      * @return List of relative paths generated to be added to module requires.
      */
     default List<String> writeAdditionalFiles(GenerationContext context) {
@@ -107,15 +106,10 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     /**
      * Adds additional Gem Dependencies.
      *
-     * @param rubySettings       - generation settings
-     * @param finalResolvedModel - the resolved model (post any transforms)
-     * @param service            - service to generate for
-     * @param protocol           - the resolved protocol
+     * @param context - Generation context to process within
      * @return Set of ruby dependencies to be added
      */
-    default Set<RubyDependency> additionalGemDependencies(
-            RubySettings rubySettings, Model finalResolvedModel,
-            ServiceShape service, ShapeId protocol) {
-        return Collections.emptySet();
+    default List<RubyDependency> additionalGemDependencies(GenerationContext context) {
+        return Collections.emptyList();
     }
 }
