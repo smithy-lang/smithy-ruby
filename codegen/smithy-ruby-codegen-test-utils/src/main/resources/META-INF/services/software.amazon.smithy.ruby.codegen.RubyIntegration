@@ -1,2 +1,2 @@
-software.amazon.smithy.ruby.codegen.integrations.TestIntegration
+software.amazon.smithy.ruby.codegen.integrations.FakeProtocolIntegration
 software.amazon.smithy.ruby.codegen.integrations.WhiteLabelTestIntegration
