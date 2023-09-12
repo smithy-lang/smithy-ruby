@@ -6,13 +6,6 @@ module Hearth
       let(:app) { double('app', call: output) }
       let(:auth_resolver) { double('auth_resolver') }
       let(:auth_params) { double('auth_params') }
-      let(:identity_resolver_map) do
-        {
-          http_api_key_identity_resolver: Identities::HTTPApiKey,
-          http_bearer_identity_resolver: Identities::HTTPBearer,
-          http_login_identity_resolver: Identities::HTTPLogin
-        }
-      end
 
       let(:http_api_key_auth_scheme) { AuthSchemes::HTTPApiKey.new }
       let(:http_bearer_auth_scheme) { AuthSchemes::HTTPBearer.new }
@@ -45,10 +38,10 @@ module Hearth
 
       let(:identity_resolvers) do
         {
-          http_api_key_identity_resolver:
+          Hearth::Identities::HTTPApiKey =>
             double('http_api_key_identity_resolver'),
-          http_bearer_identity_resolver: http_bearer_identity_resolver,
-          http_login_identity_resolver:
+          Hearth::Identities::HTTPBearer => http_bearer_identity_resolver,
+          Hearth::Identities::HTTPLogin =>
             double('http_login_identity_resolver')
         }
       end
@@ -63,7 +56,6 @@ module Hearth
           auth_resolver: auth_resolver,
           auth_params: auth_params,
           auth_schemes: auth_schemes,
-          identity_resolver_map: identity_resolver_map,
           **identity_resolvers
         )
       end
@@ -76,46 +68,17 @@ module Hearth
           expect(schemes.values).to eq(auth_schemes)
         end
 
-        it 'converts identity resolvers to a hash for lookup' do
-          resolvers = subject.instance_variable_get(:@identity_resolvers)
-          expect(resolvers).to be_a(Hash)
-          expect(resolvers.keys).to eq [
-            Identities::HTTPApiKey,
-            Identities::HTTPBearer,
-            Identities::HTTPLogin
-          ]
-          expect(resolvers.values).to eq [
-            identity_resolvers[:http_api_key_identity_resolver],
-            identity_resolvers[:http_bearer_identity_resolver],
-            identity_resolvers[:http_login_identity_resolver]
-          ]
-        end
-
-        it 'ignores keys that do not end with _identity_resolver' do
+        it 'ignores keys that are not Hearth::Identities::Base' do
           auth = Auth.new(
             app,
             auth_resolver: auth_resolver,
             auth_params: auth_params,
             auth_schemes: auth_schemes,
-            identity_resolver_map: identity_resolver_map,
-            some_kwarg: double('some_kwarg')
+            Class => double('some_kwarg')
           )
           resolvers = auth.instance_variable_get(:@identity_resolvers)
           expect(resolvers).to be_a(Hash)
           expect(resolvers).to be_empty
-        end
-
-        it 'raises an error for unknown identity types' do
-          expect do
-            Auth.new(
-              app,
-              auth_resolver: auth_resolver,
-              auth_params: auth_params,
-              auth_schemes: auth_schemes,
-              identity_resolver_map: identity_resolver_map,
-              foo_identity_resolver: double('foo_identity_resolver')
-            )
-          end.to raise_error(/foo_identity_resolver/)
         end
       end
 
@@ -134,9 +97,9 @@ module Hearth
 
         let(:identity_resolvers) do
           {
-            http_api_key_identity_resolver:
+            Hearth::Identities::HTTPApiKey =>
               double('http_api_key_identity_resolver'),
-            http_bearer_identity_resolver: http_bearer_identity_resolver
+            Hearth::Identities::HTTPBearer => http_bearer_identity_resolver
           }
         end
 

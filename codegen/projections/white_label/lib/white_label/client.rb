@@ -9,8 +9,8 @@
 
 require 'stringio'
 
-require_relative 'middleware/relative_middleware'
 require_relative 'middleware/test_middleware'
+require_relative 'middleware/relative_middleware'
 require_relative 'plugins/test_plugin'
 
 module WhiteLabel
@@ -83,13 +83,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :custom_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -208,13 +207,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :defaults_test, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -285,13 +283,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_operation, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -364,13 +361,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -437,13 +433,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_api_key_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -510,13 +505,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_basic_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -583,13 +577,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_bearer_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -656,13 +649,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_digest_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -871,13 +863,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :kitchen_sink, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -948,13 +939,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :mixin_test, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1021,13 +1011,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :no_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1094,13 +1083,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :optional_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1167,13 +1155,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :ordered_auth, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1245,13 +1232,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :paginators_test, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1323,13 +1309,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :paginators_test_with_items, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1399,13 +1384,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :relative_middleware_operation, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1481,13 +1465,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :request_compression_operation, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1561,13 +1544,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :request_compression_streaming_operation, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1636,13 +1618,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_operation, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1711,13 +1692,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_with_length, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1787,13 +1767,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :waiters_test, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1866,13 +1845,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation____paginators_test_with_bad_names, custom_param: 'custom_value'),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_custom_auth_identity_resolver: Auth::HTTPCustomAuthIdentity, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
-        http_custom_auth_identity_resolver: options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
