@@ -141,7 +141,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     }
 
     /**
-     * Writes a require relative statement for an additional file.
+     * Writes a require relative statement for additional files.
      *
      * @param additionalFiles additional files to require
      * @return Returns the CodeWriter

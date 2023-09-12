@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -42,9 +41,9 @@ public final class AuthScheme {
     private final Map<String, String> identityProperties;
 
     private AuthScheme(Builder builder) {
-        this.shapeId = builder.shapeId;
-        this.rubyAuthScheme = builder.rubyAuthScheme;
-        this.rubyIdentityType = builder.rubyIdentityType;
+        this.shapeId = Objects.requireNonNull(builder.shapeId);
+        this.rubyAuthScheme = Objects.requireNonNull(builder.rubyAuthScheme);
+        this.rubyIdentityType = Objects.requireNonNull(builder.rubyIdentityType);
         this.additionalAuthParams = builder.additionalAuthParams;
         this.identityResolverConfig = builder.identityResolverConfig;
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
@@ -105,31 +104,21 @@ public final class AuthScheme {
 
     /**
      * @param trait the trait to extract Signer properties from.
-     */
-    public void extractSignerProperties(Trait trait) {
-         Map<String, String> signerProperties = extractSignerProperties.extractProperties(trait);
-         signerProperties.forEach((key, value) -> this.signerProperties.put(key, value));
-    }
-
-    /**
      * @return the Signer properties for the auth scheme.
      */
-    public Map<String, String> getSignerProperties() {
+    public Map<String, String> getSignerProperties(Trait trait) {
+        Map<String, String> signerProperties = extractSignerProperties.extractProperties(trait);
+        this.signerProperties.forEach((key, value) -> signerProperties.put(key, value));
         return signerProperties;
     }
 
     /**
      * @param trait the trait to extract Identity properties from.
-     */
-    public void extractIdentityProperties(Trait trait) {
-         Map<String, String> identityProperties = extractIdentityProperties.extractProperties(trait);
-         identityProperties.forEach((key, value) -> this.identityProperties.put(key, value));
-    }
-
-    /**
      * @return the Identity properties for the auth scheme.
      */
-    public Map<String, String> getIdentityProperties() {
+    public Map<String, String> getIdentityProperties(Trait trait) {
+        Map<String, String> identityProperties = extractIdentityProperties.extractProperties(trait);
+        this.identityProperties.forEach((key, value) -> identityProperties.put(key, value));
         return identityProperties;
     }
 
@@ -263,15 +252,6 @@ public final class AuthScheme {
 
         @Override
         public AuthScheme build() {
-            if (shapeId == null) {
-                throw new CodegenException("shapeId must be set");
-            }
-            if (rubyAuthScheme == null) {
-                throw new CodegenException("rubyAuthScheme must be set");
-            }
-            if (rubyIdentityType == null) {
-                throw new CodegenException("rubyIdentityType must be set");
-            }
             return new AuthScheme(this);
         }
     }

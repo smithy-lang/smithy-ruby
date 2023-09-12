@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -101,15 +102,15 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
-        Set<String> authParamsSet = new HashSet<>();
-        authParamsSet.add(":operation_name");
+        List<String> authParamsList = new ArrayList<>();
+        authParamsList.add(":operation_name");
         authSchemes.forEach((s) -> {
             Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
             additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsSet.add(RubyFormatter.asSymbol(e.getKey()));
+                authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
             });
         });
-        String authParams = authParamsSet.stream().collect(Collectors.joining(", "));
+        String authParams = authParamsList.stream().collect(Collectors.joining(", "));
 
         writer.write("Params = Struct.new($L, keyword_init: true)", authParams);
     }
@@ -210,17 +211,18 @@ public class AuthGenerator extends RubyGeneratorBase {
                                 .findFirst()
                                 .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
 
-                        renderAuthOption(writer, shapeId.toString(), authScheme);
+                        renderAuthOption(writer, shapeId.toString(), trait, authScheme);
                     });
                 })
                 .dedent();
     }
 
-    private void renderAuthOption(RubyCodeWriter writer, String schemeId, AuthScheme authScheme) {
+    private void renderAuthOption(RubyCodeWriter writer, String schemeId, Trait trait, AuthScheme authScheme) {
         String args = "scheme_id: '%s'".formatted(schemeId);
 
-        if (!authScheme.getSignerProperties().isEmpty()) {
-            String signerProperties = authScheme.getSignerProperties()
+        Map<String, String> signerPropertiesMap = authScheme.getSignerProperties(trait);
+        if (!signerPropertiesMap.isEmpty()) {
+            String signerProperties = signerPropertiesMap
                     .entrySet().stream()
                     .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
                     .reduce((a, b) -> a + ", " + b)
@@ -229,8 +231,9 @@ public class AuthGenerator extends RubyGeneratorBase {
             args += ", signer_properties: {%s}".formatted(signerProperties);
         }
 
-        if (!authScheme.getIdentityProperties().isEmpty()) {
-            String identityProperties = authScheme.getIdentityProperties()
+        Map<String, String> identityPropertiesMap = authScheme.getIdentityProperties(trait);
+        if (!identityPropertiesMap.isEmpty()) {
+            String identityProperties = identityPropertiesMap
                     .entrySet().stream()
                     .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
                     .reduce((a, b) -> a + ", " + b)

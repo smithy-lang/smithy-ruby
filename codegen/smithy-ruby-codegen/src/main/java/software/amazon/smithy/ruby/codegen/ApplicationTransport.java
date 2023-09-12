@@ -126,11 +126,12 @@ public final class ApplicationTransport {
             return middleware;
         };
 
-        List<AuthScheme> defaultAuthSchemes = new ArrayList<>();
-        defaultAuthSchemes.add(HttpApiKeyAuthSchemeFactory.build());
-        defaultAuthSchemes.add(HttpBasicAuthSchemeFactory.build());
-        defaultAuthSchemes.add(HttpBearerAuthSchemeFactory.build());
-        defaultAuthSchemes.add(HttpDigestAuthSchemeFactory.build());
+        List<AuthScheme> defaultAuthSchemes = List.of(
+                HttpApiKeyAuthSchemeFactory.build(),
+                HttpBasicAuthSchemeFactory.build(),
+                HttpBearerAuthSchemeFactory.build(),
+                HttpDigestAuthSchemeFactory.build()
+        );
 
         return new ApplicationTransport(
                 "http",

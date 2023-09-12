@@ -41,7 +41,6 @@ public final class AuthMiddlewareFactory {
         Map<ShapeId, Trait> serviceAuthSchemes =
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
-        // get additional auth schemes
         List<AuthScheme> authSchemesList = context.getAuthSchemes();
         Set<ClientConfig> clientConfigSet = new HashSet<>();
         Map<String, String> identityResolvers = new HashMap<>();

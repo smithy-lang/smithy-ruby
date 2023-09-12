@@ -76,9 +76,8 @@ public class RubyRuntimePlugin {
      * Builder for {@link RubyRuntimePlugin}.
      */
     public static class Builder implements SmithyBuilder<RubyRuntimePlugin> {
+        private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
         private RenderAdd renderAdd;
-        private WriteAdditionalFiles writeAdditionalFiles =
-                (context) -> Collections.emptyList();
 
         /**
          * Used to copy a Ruby source file that defines a plugin into the generated SDK.
