@@ -38,10 +38,12 @@ public class ModuleGenerator {
 
     private final GenerationContext context;
     private final RubySettings settings;
+    private final Set<RubyDependency> rubyDependencies;
 
     public ModuleGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         this.context = directive.context();
         this.settings = directive.settings();
+        this.rubyDependencies = context.getRubyDependencies();
     }
 
     public void render() {
@@ -57,11 +59,11 @@ public class ModuleGenerator {
             writer.preamble().includeRequires();
             // determine set of indirect dependencies - covered by requiring another
             Set<RubyDependency> indirectDependencies = new HashSet<>();
-            context.getRubyDependencies().forEach(rubyDependency -> {
+            rubyDependencies.forEach(rubyDependency -> {
                 indirectDependencies.addAll(rubyDependency.getRubyDependencies());
             });
 
-            context.getRubyDependencies().forEach((rubyDependency -> {
+            rubyDependencies.forEach((rubyDependency -> {
                 if (!indirectDependencies.contains(rubyDependency)) {
                     writer.write("require '$L'", rubyDependency.getImportPath());
                 }

@@ -29,6 +29,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
+import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
@@ -44,9 +45,8 @@ public class ClientGenerator extends RubyGeneratorBase {
             Logger.getLogger(ClientGenerator.class.getName());
 
     private final Set<OperationShape> operations;
-
     private final MiddlewareBuilder middlewareBuilder;
-
+    private final Set<RubyRuntimePlugin> runtimePlugins;
     private boolean hasOutputStreamingOperation = false;
 
     public ClientGenerator(
@@ -55,13 +55,15 @@ public class ClientGenerator extends RubyGeneratorBase {
     ) {
         super(directive);
         this.operations = directive.operations();
+        this.middlewareBuilder = middlewareBuilder;
+        this.runtimePlugins = context.getRuntimePlugins();
+
         operations.forEach(operation -> {
             Shape outputShape = model.expectShape(operation.getOutputShape());
             if (Streaming.isStreaming(model, outputShape)) {
                 hasOutputStreamingOperation = true;
             }
         });
-        this.middlewareBuilder = middlewareBuilder;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class ClientGenerator extends RubyGeneratorBase {
     public void render() {
         List<String> additionalFiles = middlewareBuilder.writeAdditionalFiles(context);
         additionalFiles.addAll(
-                context.getRuntimePlugins().stream()
+                runtimePlugins.stream()
                         .map(plugin -> plugin.writeAdditionalFiles(context))
                         .flatMap(List::stream)
                         .distinct()
@@ -139,12 +141,12 @@ public class ClientGenerator extends RubyGeneratorBase {
     }
 
     private void renderClassRuntimePlugins(RubyCodeWriter writer) {
-        if (context.getRuntimePlugins().isEmpty()) {
+        if (runtimePlugins.isEmpty()) {
             writer.write("@plugins = $T.new", Hearth.PLUGIN_LIST);
         } else {
             writer.openBlock("@plugins = $T.new([", Hearth.PLUGIN_LIST);
             writer.write(
-                    context.getRuntimePlugins().stream()
+                    runtimePlugins.stream()
                             .map(p -> p.renderAdd(context))
                             .collect(Collectors.joining(",\n"))
             );

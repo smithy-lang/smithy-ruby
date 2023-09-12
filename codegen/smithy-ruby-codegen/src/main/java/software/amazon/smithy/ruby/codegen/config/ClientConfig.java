@@ -257,6 +257,10 @@ public class ClientConfig {
             return this;
         }
 
+        /**
+         * @param rubyDefaultBlock a single, dynamic default value to use.
+         * @return this builder
+         */
         public Builder defaultDynamicValue(String rubyDefaultBlock) {
             validateDefaultNotSet();
             this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();

@@ -72,6 +72,24 @@ public class RubyRuntimePlugin {
         String renderAdd(GenerationContext context);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof RubyRuntimePlugin)) {
+            return false;
+        }
+
+        RubyRuntimePlugin other = (RubyRuntimePlugin) o;
+
+        return this.renderAdd.equals(other.renderAdd);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(renderAdd);
+    }
+
     /**
      * Builder for {@link RubyRuntimePlugin}.
      */

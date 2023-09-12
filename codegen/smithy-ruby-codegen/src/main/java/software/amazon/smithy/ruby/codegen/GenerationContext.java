@@ -15,11 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
@@ -146,39 +147,39 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     }
 
     /**
-     * @return set of RubyDependencies
+     * @return Set of RubyDependencies from the base and all integrations
      */
-    public List<RubyDependency> getRubyDependencies() {
-        List<RubyDependency> rubyDependencies = new ArrayList<>();
+    public Set<RubyDependency> getRubyDependencies() {
+        Set<RubyDependency> rubyDependencies = new HashSet<>();
         rubyDependencies.addAll(settings().getBaseDependencies());
         rubyDependencies.addAll(
                 integrations.stream()
-                        .map((integration) -> integration.additionalGemDependencies(this))
+                        .map((integration) -> integration.getAdditionalGemDependencies(this))
                         .flatMap(Collection::stream)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toSet())
         );
-        return Collections.unmodifiableList(rubyDependencies);
+        return Collections.unmodifiableSet(rubyDependencies);
     }
 
     /**
-     * @return list of all RubyRuntimePlugins from all integrations
+     * @return Set of all RubyRuntimePlugins from all integrations
      */
-    public List<RubyRuntimePlugin> getRuntimePlugins() {
+    public Set<RubyRuntimePlugin> getRuntimePlugins() {
         return integrations.stream()
                 .map((i) -> i.getRuntimePlugins(this))
                 .flatMap(List::stream)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     /**
-     * @return list of all AuthSchemes from all integrations and the application transport.
+     * @return Set of all AuthSchemes from all integrations and the application transport.
      */
-    public List<AuthScheme> getAuthSchemes() {
-        List<AuthScheme> authSchemes = new ArrayList<>(applicationTransport.defaultAuthSchemes());
+    public Set<AuthScheme> getAuthSchemes() {
+        Set<AuthScheme> authSchemes = new HashSet<>(applicationTransport.defaultAuthSchemes());
         authSchemes.add(AnonymousAuthSchemeFactory.build());
         integrations().forEach((i) -> {
             i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
         });
-        return Collections.unmodifiableList(authSchemes);
+        return Collections.unmodifiableSet(authSchemes);
     }
 }

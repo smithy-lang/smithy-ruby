@@ -45,12 +45,14 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public class GemspecGenerator {
 
     private final GenerationContext context;
+    private final Set<RubyDependency> rubyDependencies;
 
     /**
      * @param context generation context
      */
     public GemspecGenerator(GenerationContext context) {
         this.context = context;
+        this.rubyDependencies = context.getRubyDependencies();
     }
 
     /**
@@ -73,11 +75,11 @@ public class GemspecGenerator {
                 .call(() -> {
                     // determine set of indirect dependencies - covered by requiring another
                     Set<RubyDependency> indirectDependencies = new HashSet<>();
-                    context.getRubyDependencies().forEach(rubyDependency -> {
+                    rubyDependencies.forEach(rubyDependency -> {
                         indirectDependencies.addAll(rubyDependency.getRubyDependencies());
                     });
 
-                    context.getRubyDependencies().forEach((rubyDependency -> {
+                    rubyDependencies.forEach((rubyDependency -> {
                         if (rubyDependency.getType() != RubyDependency.Type.STANDARD_LIBRARY
                                 && !indirectDependencies.contains(rubyDependency)) {
                             writer.write("spec.add_runtime_dependency '$L', '$L'",
@@ -87,9 +89,7 @@ public class GemspecGenerator {
                 })
                 .closeBlock("end");
 
-        String fileName = settings.getGemName() + "/" + settings.getGemName()
-                + ".gemspec";
-
+        String fileName = settings.getGemName() + "/" + settings.getGemName() + ".gemspec";
         fileManifest.writeFile(fileName, writer.toString());
     }
 }

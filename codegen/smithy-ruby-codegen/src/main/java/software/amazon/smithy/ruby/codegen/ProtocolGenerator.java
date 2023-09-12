@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
@@ -55,7 +53,7 @@ public interface ProtocolGenerator {
      * each operation must have a class that implements the
      * `build(req, input:)` method.
      *
-     * @param context context to use for generation
+     * @param context - Generation context to process within
      */
     void generateBuilders(GenerationContext context);
 
@@ -65,7 +63,7 @@ public interface ProtocolGenerator {
      * each operation must have a class that implements the
      * `parse(resp)` method.
      *
-     * @param context context to use for generation
+     * @param context - Generation context to process within
      */
     void generateParsers(GenerationContext context);
 
@@ -76,7 +74,7 @@ public interface ProtocolGenerator {
      * as well as classes for ApiError, ApiServiceError,
      * and ApiClientError.
      *
-     * @param context context to use for generation
+     * @param context - Generation context to process within
      */
     void generateErrors(GenerationContext context);
 
@@ -86,12 +84,12 @@ public interface ProtocolGenerator {
      * should define a class for each operation
      * that implements the `default` and `stub(resp, stub:)` method.
      *
-     * @param context context to use for generation
+     * @param context - Generation context to process within
      */
     void generateStubs(GenerationContext context);
 
     /**
-     * Return all of the Middleware to be registered on the Client.
+     * Return all the Middleware to be registered on the Client.
      *
      * @param middlewareBuilder - Client middleware to be modified
      * @param context           - Generation context to process within
@@ -114,7 +112,7 @@ public interface ProtocolGenerator {
     /**
      * Writes additional files.
      *
-     * @param context - context for generation
+     * @param context - Generation context to process within
      * @return List of relative paths generated to be added to module requires.
      */
     default List<String> writeAdditionalFiles(GenerationContext context) {
@@ -124,20 +122,15 @@ public interface ProtocolGenerator {
     /**
      * Adds additional Gem Dependencies.
      *
-     * @param rubySettings       - generation settings
-     * @param finalResolvedModel - the resolved model (post any transforms)
-     * @param service            - service to generate for
-     * @param protocol           - the resolved protocol
+     * @param context - Generation context to process within
      * @return Set of ruby dependencies to be added
      */
-    default Set<RubyDependency> additionalGemDependencies(
-            RubySettings rubySettings, Model finalResolvedModel,
-            ServiceShape service, ShapeId protocol) {
+    default Set<RubyDependency> additionalGemDependencies(GenerationContext context) {
         return Collections.emptySet();
     }
 
     static Map<ShapeId, ProtocolGenerator> collectSupportedProtocolGenerators(
-        List<RubyIntegration> integrations
+            List<RubyIntegration> integrations
     ) {
         Map<ShapeId, ProtocolGenerator> generators = new HashMap<>();
         for (RubyIntegration integration : integrations) {
@@ -149,8 +142,8 @@ public interface ProtocolGenerator {
     }
 
     static Optional<ProtocolGenerator> resolve(
-        ShapeId protocol,
-        List<RubyIntegration> integrations
+            ShapeId protocol,
+            List<RubyIntegration> integrations
     ) {
         for (RubyIntegration integration : integrations) {
             Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()

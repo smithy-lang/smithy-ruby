@@ -63,33 +63,42 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     }
 
     /**
-     * Returns a list of additional (non-middleware) Config
-     * to be added to the generated Client.
+     * Returns a List of additional (non-middleware) Config to be added to the generated Client.
      *
      * @param context - Generation context to process within
-     * @return list of additional config
+     * @return List of ClientConfig to be added
      */
     default List<ClientConfig> getAdditionalClientConfig(GenerationContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * Returns a list of RubyRuntimePlugins to be added to the generated Client.
+     * Returns a List of RubyRuntimePlugins to be added to the generated Client.
      *
      * @param context - Generation context to process within
-     * @return list of RubyRuntimePlugins
+     * @return List of RubyRuntimePlugins
      */
     default List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * Returns a list of additional Auth Schemes to be added to the generated Auth module.
+     * Returns a List of additional Auth Schemes to be added to the generated Auth module and middleware.
      *
      * @param context - Generation context to process within
-     * @return list of additional AuthScheme
+     * @return List of AuthSchemes to be added
      */
     default List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a List of additional Gem Dependencies.
+     *
+     * @param context - Generation context to process within
+     * @return List of RubyDependency to be added
+     */
+    default List<RubyDependency> getAdditionalGemDependencies(GenerationContext context) {
         return Collections.emptyList();
     }
 
@@ -100,16 +109,6 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
      * @return List of relative paths generated to be added to module requires.
      */
     default List<String> writeAdditionalFiles(GenerationContext context) {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Adds additional Gem Dependencies.
-     *
-     * @param context - Generation context to process within
-     * @return Set of ruby dependencies to be added
-     */
-    default List<RubyDependency> additionalGemDependencies(GenerationContext context) {
         return Collections.emptyList();
     }
 }

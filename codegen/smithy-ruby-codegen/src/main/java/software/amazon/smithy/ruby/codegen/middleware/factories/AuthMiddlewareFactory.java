@@ -17,7 +17,6 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -41,12 +40,12 @@ public final class AuthMiddlewareFactory {
         Map<ShapeId, Trait> serviceAuthSchemes =
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
-        List<AuthScheme> authSchemesList = context.getAuthSchemes();
+        Set<AuthScheme> authSchemesSet = context.getAuthSchemes();
         Set<ClientConfig> clientConfigSet = new HashSet<>();
         Map<String, String> identityResolvers = new HashMap<>();
 
         serviceAuthSchemes.forEach((shapeId, trait) -> {
-            AuthScheme authScheme = authSchemesList.stream()
+            AuthScheme authScheme = authSchemesSet.stream()
                     .filter(s -> s.getShapeId().equals(shapeId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
@@ -99,7 +98,7 @@ public final class AuthMiddlewareFactory {
                     authParamsMap.put("operation_name",
                             RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName()));
 
-                    authSchemesList.forEach(s -> {
+                    authSchemesSet.forEach(s -> {
                         Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
                         additionalAuthParams.entrySet().forEach(e -> {
                             authParamsMap.put(e.getKey(), e.getValue());

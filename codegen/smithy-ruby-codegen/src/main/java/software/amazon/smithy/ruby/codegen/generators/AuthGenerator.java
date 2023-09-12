@@ -46,7 +46,7 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final ServiceShape service;
-    private final List<AuthScheme> authSchemes;
+    private final Set<AuthScheme> authSchemes;
 
     public AuthGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
