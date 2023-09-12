@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -162,7 +163,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         return integrations.stream()
                 .map((i) -> i.getRuntimePlugins(this))
                 .flatMap(List::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -174,6 +175,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         integrations().forEach((i) -> {
             i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
         });
-        return authSchemes;
+        return Collections.unmodifiableList(authSchemes);
     }
 }

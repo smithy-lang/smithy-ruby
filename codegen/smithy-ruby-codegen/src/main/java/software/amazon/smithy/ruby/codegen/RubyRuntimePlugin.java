@@ -105,6 +105,29 @@ public class RubyRuntimePlugin {
             return this;
         }
 
+        /**
+         * Used to completely override and fully customize the rendering of
+         * adding this plugin to the list of client class plugins.
+         *
+         * @param r Called to render code to add this plugin to the list of client class plugins
+         * @return Returns the Builder.
+         */
+        public Builder renderAdd(RenderAdd r) {
+            this.renderAdd = Objects.requireNonNull(r);
+            return this;
+        }
+
+        /**
+         * Used to write additional files required by this plugin.
+         *
+         * @param w called to write additional files.
+         * @return Returns the Builder.
+         */
+        public Builder writeAdditionalFiles(WriteAdditionalFiles w) {
+            this.writeAdditionalFiles = Objects.requireNonNull(w);
+            return this;
+        }
+
         @Override
         public RubyRuntimePlugin build() {
             return new RubyRuntimePlugin(this);
