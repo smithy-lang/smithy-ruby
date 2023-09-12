@@ -7,13 +7,13 @@ apply WhiteLabel @httpDigestAuth
 apply WhiteLabel @httpBearerAuth
 apply WhiteLabel @httpApiKeyAuth(name: "X-API-Key", in: "header", scheme: "Authorization")
 
-// TODO: support custom auth
-//@authDefinition
-//@trait(selector: "service")
-//structure httpCustomAuth {
-//    property: String
-//}
-//apply WhiteLabel @httpCustomAuth(property: "value")
+@authDefinition
+@trait(selector: "service")
+structure httpCustomAuth {
+    signerProperty: String,
+    identityProperty: String
+}
+apply WhiteLabel @httpCustomAuth(signerProperty: "signer", identityProperty: "identity")
 
 @auth([httpBasicAuth])
 @http(method: "POST", uri: "/http_basic_auth")
@@ -43,6 +43,6 @@ operation NoAuth {}
 @http(method: "POST", uri: "/ordered_auth")
 operation OrderedAuth {}
 
-//@auth([httpCustomAuth])
-//@http(method: "POST", uri: "/custom_auth")
-//operation CustomAuth {}
+@auth([httpCustomAuth])
+@http(method: "POST", uri: "/custom_auth")
+operation CustomAuth {}

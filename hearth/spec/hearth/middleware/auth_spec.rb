@@ -6,6 +6,13 @@ module Hearth
       let(:app) { double('app', call: output) }
       let(:auth_resolver) { double('auth_resolver') }
       let(:auth_params) { double('auth_params') }
+      let(:identity_resolver_map) do
+        {
+          http_api_key_identity_resolver: Identities::HTTPApiKey,
+          http_bearer_identity_resolver: Identities::HTTPBearer,
+          http_login_identity_resolver: Identities::HTTPLogin
+        }
+      end
 
       let(:http_api_key_auth_scheme) { AuthSchemes::HTTPApiKey.new }
       let(:http_bearer_auth_scheme) { AuthSchemes::HTTPBearer.new }
@@ -56,6 +63,7 @@ module Hearth
           auth_resolver: auth_resolver,
           auth_params: auth_params,
           auth_schemes: auth_schemes,
+          identity_resolver_map: identity_resolver_map,
           **identity_resolvers
         )
       end
@@ -89,6 +97,7 @@ module Hearth
             auth_resolver: auth_resolver,
             auth_params: auth_params,
             auth_schemes: auth_schemes,
+            identity_resolver_map: identity_resolver_map,
             some_kwarg: double('some_kwarg')
           )
           resolvers = auth.instance_variable_get(:@identity_resolvers)
@@ -103,6 +112,7 @@ module Hearth
               auth_resolver: auth_resolver,
               auth_params: auth_params,
               auth_schemes: auth_schemes,
+              identity_resolver_map: identity_resolver_map,
               foo_identity_resolver: double('foo_identity_resolver')
             )
           end.to raise_error(/foo_identity_resolver/)

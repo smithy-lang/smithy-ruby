@@ -13,24 +13,20 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
+package software.amazon.smithy.ruby.codegen;
 
-import software.amazon.smithy.ruby.codegen.GenerationContext;
-import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
+import java.util.List;
 
+@FunctionalInterface
 /**
- * FakeProtocol ErrorGenerator.
+ * Called to write out additional files.
  */
-public class ErrorsGenerator extends ErrorsGeneratorBase {
-
+public interface WriteAdditionalFiles {
     /**
-     * @param context generation context
+     * Called to write out additional files needed by a generator.
+     *
+     * @param context GenerationContext - allows access to file manifest and symbol providers
+     * @return List of the relative paths of files written.
      */
-    public ErrorsGenerator(GenerationContext context) {
-        super(context);
-    }
-
-    public void renderErrorCodeBody() {
-        writer.write("resp.headers['x-smithy-error']");
-    }
+    List<String> writeAdditionalFiles(GenerationContext context);
 }

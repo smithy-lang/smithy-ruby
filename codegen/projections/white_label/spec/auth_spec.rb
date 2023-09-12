@@ -5,9 +5,10 @@ require_relative 'spec_helper'
 module WhiteLabel
   module Auth
     describe Params do
-      it 'is a struct with operation_name' do
-        params = Auth::Params.new(operation_name: :operation)
-        expect(params.operation_name).to eq(:operation)
+      it 'is a struct with auth params' do
+        params = Auth::Params.new
+        expect(params).to respond_to(:operation_name)
+        expect(params).to respond_to(:custom_param)
       end
     end
 
@@ -19,7 +20,8 @@ module WhiteLabel
           'smithy.api#httpBasicAuth',
           'smithy.api#httpBearerAuth',
           'smithy.api#httpDigestAuth',
-          'smithy.api#noAuth'
+          'smithy.api#noAuth',
+          'smithy.ruby.tests#httpCustomAuth'
         ]
         expect(actual).to match_array(expected)
       end
@@ -36,11 +38,8 @@ module WhiteLabel
         it 'has signing properties' do
           params = Params.new(operation_name: :http_api_key_auth)
           options = subject.resolve(params)
-          expect(options.first.signer_properties).to eq(
-            name: 'X-API-Key',
-            in: 'header',
-            scheme: 'Authorization'
-          )
+          expect(options.first.signer_properties)
+            .to eq(name: 'X-API-Key', in: 'header', scheme: 'Authorization')
         end
       end
 
@@ -76,6 +75,29 @@ module WhiteLabel
         end
       end
 
+      context ':custom_auth' do
+        it 'resolves httpCustomAuth' do
+          params = Params.new(operation_name: :custom_auth)
+          options = subject.resolve(params)
+          expect(options.first.scheme_id)
+            .to eq('smithy.ruby.tests#httpCustomAuth')
+        end
+
+        it 'has signing properties' do
+          params = Params.new(operation_name: :custom_auth)
+          options = subject.resolve(params)
+          expect(options.first.signer_properties)
+            .to eq(static_value: 'static', model_value: 'signer')
+        end
+
+        it 'has identity properties' do
+          params = Params.new(operation_name: :custom_auth)
+          options = subject.resolve(params)
+          expect(options.first.identity_properties)
+            .to eq(static_value: 'static', model_value: 'identity')
+        end
+      end
+
       context ':optional_auth' do
         let(:auth_option_schemes) do
           [
@@ -83,6 +105,7 @@ module WhiteLabel
             'smithy.api#httpBasicAuth',
             'smithy.api#httpBearerAuth',
             'smithy.api#httpDigestAuth',
+            'smithy.ruby.tests#httpCustomAuth',
             'smithy.api#noAuth'
           ]
         end
@@ -90,7 +113,7 @@ module WhiteLabel
         it 'resolves all auth including noAuth' do
           params = Params.new(operation_name: :optional_auth)
           options = subject.resolve(params)
-          expect(options.size).to eq(5)
+          expect(options.size).to eq(6)
           expect(options.map(&:scheme_id)).to eq(auth_option_schemes)
         end
       end
@@ -119,14 +142,15 @@ module WhiteLabel
             'smithy.api#httpApiKeyAuth',
             'smithy.api#httpBasicAuth',
             'smithy.api#httpBearerAuth',
-            'smithy.api#httpDigestAuth'
+            'smithy.api#httpDigestAuth',
+            'smithy.ruby.tests#httpCustomAuth'
           ]
         end
 
         it 'resolves all auth without noAuth' do
           params = Params.new(operation_name: :kitchen_sink)
           options = subject.resolve(params)
-          expect(options.size).to eq(4)
+          expect(options.size).to eq(5)
           expect(options.map(&:scheme_id)).to eq(auth_option_schemes)
         end
       end
@@ -138,6 +162,7 @@ module WhiteLabel
       expect(subject).to respond_to(:http_api_key_identity_resolver)
       expect(subject).to respond_to(:http_bearer_identity_resolver)
       expect(subject).to respond_to(:http_login_identity_resolver)
+      expect(subject).to respond_to(:http_custom_auth_identity_resolver)
     end
 
     it 'validates identity resolvers' do
@@ -152,6 +177,10 @@ module WhiteLabel
 
       expect do
         Config.new(http_login_identity_resolver: 'foo')
+      end.to raise_error(ArgumentError, msg)
+
+      expect do
+        Config.new(http_custom_auth_identity_resolver: 'foo')
       end.to raise_error(ArgumentError, msg)
     end
 
@@ -179,6 +208,11 @@ module WhiteLabel
           .to be_a(Hearth::IdentityResolver)
         expect(subject.http_login_identity_resolver.identity)
           .to be_a(Hearth::Identities::HTTPLogin)
+
+        expect(subject.http_custom_auth_identity_resolver)
+          .to be_a(Hearth::IdentityResolver)
+        expect(subject.http_custom_auth_identity_resolver.identity)
+          .to be_a(WhiteLabel::Auth::HTTPCustomAuthIdentity)
       end
     end
   end
@@ -203,6 +237,10 @@ module WhiteLabel
         Hearth::Identities::HTTPApiKey.new(key: 'foo')
       end
 
+      let(:properties) do
+        { name: 'X-API-Key', in: 'header', scheme: 'Authorization' }
+      end
+
       it 'resolves httpApiKeyAuth' do
         expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
           .and_wrap_original do |m, *args|
@@ -210,6 +248,8 @@ module WhiteLabel
           expect(resolved).to eq(identity)
           resolved
         end
+        expect_any_instance_of(Hearth::Signers::HTTPApiKey).to receive(:sign)
+          .with(request: anything, identity: identity, properties: properties)
         client.http_api_key_auth({})
       end
     end
@@ -230,6 +270,8 @@ module WhiteLabel
           expect(resolved).to eq(identity)
           resolved
         end
+        expect_any_instance_of(Hearth::Signers::HTTPBasic).to receive(:sign)
+          .with(request: anything, identity: identity, properties: {})
         client.http_basic_auth({})
       end
     end
@@ -250,6 +292,8 @@ module WhiteLabel
           expect(resolved).to eq(identity)
           resolved
         end
+        expect_any_instance_of(Hearth::Signers::HTTPBearer).to receive(:sign)
+          .with(request: anything, identity: identity, properties: {})
         client.http_bearer_auth({})
       end
     end
@@ -270,9 +314,36 @@ module WhiteLabel
           expect(resolved).to eq(identity)
           resolved
         end
-        # temporarily disabled because not implemented
         expect_any_instance_of(Hearth::Signers::HTTPDigest).to receive(:sign)
+          .with(request: anything, identity: identity, properties: {})
         client.http_digest_auth({})
+      end
+    end
+
+    describe '#custom_auth' do
+      let(:config_hash) do
+        { http_custom_auth_identity_resolver: identity_resolver }
+      end
+
+      let(:identity) do
+        WhiteLabel::Auth::HTTPCustomAuthIdentity.new(key: 'foo')
+      end
+
+      let(:properties) do
+        { model_value: 'signer', static_value: 'static' }
+      end
+
+      it 'resolves httpCustomAuth' do
+        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+          .and_wrap_original do |m, *args|
+          resolved = m.call(*args)
+          expect(resolved).to eq(identity)
+          resolved
+        end
+        expect_any_instance_of(WhiteLabel::Auth::HTTPCustomAuthSigner)
+          .to receive(:sign)
+          .with(request: anything, identity: identity, properties: properties)
+        client.custom_auth({})
       end
     end
 
@@ -282,7 +353,8 @@ module WhiteLabel
           {
             http_login_identity_resolver: nil,
             http_bearer_identity_resolver: nil,
-            http_api_key_identity_resolver: nil
+            http_api_key_identity_resolver: nil,
+            http_custom_auth_identity_resolver: nil
           }
         end
 

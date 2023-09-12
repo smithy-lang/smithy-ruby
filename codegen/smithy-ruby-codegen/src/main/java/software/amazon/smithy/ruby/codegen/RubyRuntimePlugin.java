@@ -15,15 +15,10 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.codegen.core.CodegenException;
+import software.amazon.smithy.ruby.codegen.util.RubySource;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -77,63 +72,23 @@ public class RubyRuntimePlugin {
         String renderAdd(GenerationContext context);
     }
 
-    @FunctionalInterface
-    /**
-     * Called to write out additional files needed by this Plugin.
-     */
-    public interface WriteAdditionalFiles {
-        /**
-         * Called to write out additional files needed by this Plugin.
-         *
-         * @param context GenerationContext - allows access to file manifest and symbol providers
-         * @return List of the relative paths of files written, which will be required in client.rb.
-         */
-        List<String> writeAdditionalFiles(GenerationContext context);
-    }
-
     /**
      * Builder for {@link RubyRuntimePlugin}.
      */
     public static class Builder implements SmithyBuilder<RubyRuntimePlugin> {
-
+        private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
         private RenderAdd renderAdd;
-        private WriteAdditionalFiles writeAdditionalFiles =
-                (context) -> Collections.emptyList();
 
         /**
-         * Used to copy a plugin ruby file into the generated SDK. The copied file
-         * must be a plugin class (implements call method) under the Plugins namespace.
-         * This method will apply the generated service's namespace to the plugin file.
+         * Used to copy a Ruby source file that defines a plugin into the generated SDK.
+         * The copied file must be a plugin class (implements call method) under the Plugins namespace.
+         * This method will apply the generated service's namespace to the source file.
          *
          * @param rubyFileName the file name (with path) of the ruby file to copy.
          * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
-            this.writeAdditionalFiles = (context) -> {
-                try {
-                    Path path = Paths.get(rubyFileName);
-                    String relativeName = "plugins/" + path.getFileName();
-                    String fileName =
-                            context.settings().getGemName() + "/lib/"
-                                    + context.settings().getGemName()
-                                    + "/" + relativeName;
-                    String fileContent =
-                            new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-
-                    RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
-                    writer
-                            .openBlock("module $L", context.settings().getModule())
-                            .write(fileContent)
-                            .closeBlock("end");
-
-                    context.fileManifest().writeFile(fileName, writer.toString());
-                    return Collections.singletonList(relativeName);
-                } catch (IOException e) {
-                    throw new CodegenException(
-                            "Error reading rubySource file: " + rubyFileName,
-                            e);
-                }
-            };
+            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, "plugins/");
             return this;
         }
 

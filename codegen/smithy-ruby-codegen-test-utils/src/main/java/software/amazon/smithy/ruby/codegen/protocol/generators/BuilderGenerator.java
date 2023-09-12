@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.generators;
+package software.amazon.smithy.ruby.codegen.protocol.generators;
 
 import java.util.Optional;
 import software.amazon.smithy.model.shapes.ListShape;

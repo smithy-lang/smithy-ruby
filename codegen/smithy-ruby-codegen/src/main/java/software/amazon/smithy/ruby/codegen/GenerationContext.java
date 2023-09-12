@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +28,8 @@ import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -159,6 +163,18 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         return integrations.stream()
                 .map((i) -> i.getRuntimePlugins(this))
                 .flatMap(List::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * @return list of all AuthSchemes from all integrations and the application transport.
+     */
+    public List<AuthScheme> getAuthSchemes() {
+        List<AuthScheme> authSchemes = new ArrayList<>(applicationTransport.defaultAuthSchemes());
+        authSchemes.add(AnonymousAuthSchemeFactory.build());
+        integrations().forEach((i) -> {
+            i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
+        });
+        return Collections.unmodifiableList(authSchemes);
     }
 }

@@ -22,6 +22,7 @@ import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -54,17 +55,6 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     }
 
     /**
-     * Processes the finalized model before runtime plugins are consumed and
-     * code generation starts. This plugin can be used to add RuntimeClientPlugins
-     * to the integration's list of plugin.
-     *
-     * @param context - generation context to process within. Contains the finalized model.
-     */
-    default void processFinalizedModel(GenerationContext context) {
-        // pass
-    }
-
-    /**
      * Return all of the Middleware to be registered on the Client.
      *
      * @param middlewareBuilder - Client middleware to be modified
@@ -92,6 +82,15 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
      * @return list of RubyRuntimePlugins
      */
     default List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns a list of additional Auth Schemes to be added to the generated Auth module.
+     * @param context - Generation context to process within
+     * @return list of additional AuthScheme
+     */
+    default List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
         return Collections.emptyList();
     }
 

@@ -117,35 +117,30 @@ public class DirectedRubyCodegen
     @Override
     public void generateService(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
         GenerationContext context = directive.context();
+
         // Register all middleware
         MiddlewareBuilder middlewareBuilder = new MiddlewareBuilder();
         middlewareBuilder.addDefaultMiddleware(context);
-
         context.integrations().forEach((integration) -> {
             integration.modifyClientMiddleware(middlewareBuilder, context);
         });
-
         context.protocolGenerator().ifPresent((g) -> g.modifyClientMiddleware(middlewareBuilder, context));
 
-        // get all config
+        // Resolve all config
         Set<ClientConfig> unorderedConfig = new HashSet<>();
         context.applicationTransport().getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
         middlewareBuilder.getClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
-
         context.integrations().forEach((i) -> {
             i.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
         context.protocolGenerator().ifPresent((g) -> {
             g.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
-
         List<ClientConfig> clientConfigList = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());
 
-        LOGGER.fine("Client config: "
-                + clientConfigList.stream().map((m) -> m.toString()).collect(Collectors.joining(",")));
-
+        // Start generation
         ConfigGenerator configGenerator = new ConfigGenerator(directive, clientConfigList);
         configGenerator.render();
         configGenerator.renderRbs();

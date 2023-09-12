@@ -15,16 +15,22 @@
 
 package software.amazon.smithy.ruby.codegen.integrations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.traits.HttpCustomAuthTrait;
 
 public class WhiteLabelTestIntegration implements RubyIntegration {
 
@@ -61,7 +67,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .relative(Middleware.Relative.builder()
                         .before("Middleware::MidMiddleware")
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
                 .build();
         Middleware midMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -71,7 +77,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .before("Middleware:OptionalMiddleware")
                         .optional()
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
                 .build();
         Middleware afterMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -80,7 +86,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .relative(Middleware.Relative.builder()
                         .after("Middleware::MidMiddleware")
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
                 .build();
 
         middlewareBuilder.register(testMiddleware);
@@ -89,4 +95,52 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
         middlewareBuilder.register(midMiddleware);
     }
 
+    @Override
+    public List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
+        String identityResolverDocumentation = """
+                A %s that returns a %s for operations modeled with the %s auth scheme.
+                """;
+
+        String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
+        String defaultConfigValue = "proc { %s.new(proc { %s }) }"
+                .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+        String identityType = "Auth::HTTPCustomAuthIdentity";
+
+        ClientConfig identityResolverConfig = ClientConfig.builder()
+                .name("http_custom_auth_identity_resolver")
+                .type(Hearth.IDENTITY_RESOLVER.toString())
+                .documentation(
+                        identityResolverDocumentation.formatted(
+                                Hearth.IDENTITY_RESOLVER,
+                                identityType,
+                                HttpBasicAuthTrait.ID))
+                .defaultDynamicValue(defaultConfigValue)
+                .allowOperationOverride()
+                .build();
+
+        AuthScheme authScheme = AuthScheme.builder()
+                .shapeId(HttpCustomAuthTrait.ID)
+                .rubyAuthScheme("HTTPCustomAuthScheme.new")
+                .rubyIdentityType(identityType)
+                .identityResolverConfig(identityResolverConfig)
+                .additionalAuthParams(Map.of("custom_param", "'custom_value'"))
+                .rubySource("smithy-ruby-codegen-test-utils/auth/http_custom_auth.rb")
+                .extractSignerProperties((trait) -> {
+                    Map<String, String> properties = new HashMap<>();
+                    String modelValue = "'%s'".formatted(((HttpCustomAuthTrait) trait).getSignerProperty());
+                    properties.put("model_value", modelValue);
+                    return properties;
+                })
+                .putSignerProperty("static_value", "'static'")
+                .extractIdentityProperties((trait) -> {
+                    Map<String, String> properties = new HashMap<>();
+                    String modelValue = "'%s'".formatted(((HttpCustomAuthTrait) trait).getIdentityProperty());
+                    properties.put("model_value", modelValue);
+                    return properties;
+                })
+                .putIdentityProperty("static_value", "'static'")
+                .build();
+
+        return List.of(authScheme);
+    }
 }

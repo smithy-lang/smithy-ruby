@@ -35,6 +35,7 @@ Metrics/MethodLength:
 
 Metrics/ParameterLists:
   Exclude:
+    - 'lib/hearth/middleware/auth.rb'
     - 'lib/hearth/middleware/send.rb'
 
 Metrics/PerceivedComplexity:

@@ -13,11 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen;
+package software.amazon.smithy.ruby.codegen.integrations;
 
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.smithy.ruby.codegen.test.protocol.fakeprotocol.FakeProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
+import software.amazon.smithy.ruby.codegen.RubyIntegration;
+import software.amazon.smithy.ruby.codegen.protocol.FakeProtocolGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**

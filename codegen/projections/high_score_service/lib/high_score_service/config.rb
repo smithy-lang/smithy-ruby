@@ -22,13 +22,13 @@ module HighScoreService
   #   @option args [String] :endpoint
   #     Endpoint of the service
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
-  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the httpApiKeyAuth auth scheme.
+  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
-  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPBearer for operations modeled with the httpBearerAuth auth scheme.
+  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPBearer for operations modeled with the smithy.api#httpBearerAuth auth scheme.
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
   #   @option args [Hearth::IdentityResolver] :http_login_identity_resolver
-  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled with the httpBasicAuth auth scheme.
+  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled with the smithy.api#httpBasicAuth auth scheme.
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
   #     A list of Interceptors to apply to the client.  Interceptors are a generic
   #     extension point that allows injecting logic at specific stages of execution

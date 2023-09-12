@@ -1,6 +1,13 @@
-module WhiteLabel
-  # frozen_string_literal: true
+# frozen_string_literal: true
 
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module WhiteLabel
   module Plugins
     # Test plugin used for testing plugins and middleware -
     # modifies config to add a read_before_execution interceptor

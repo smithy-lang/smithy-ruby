@@ -20,6 +20,18 @@ module WhiteLabel
       end
     end
 
+    class CustomAuthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::CustomAuthInput, context: context)
+      end
+    end
+
+    class CustomAuthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::CustomAuthOutput, context: context)
+      end
+    end
+
     class DefaultsTestInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::DefaultsTestInput, context: context)

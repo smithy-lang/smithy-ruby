@@ -26,6 +26,10 @@ module WhiteLabel
 
     end
 
+    describe '#custom_auth' do
+
+    end
+
     describe '#defaults_test' do
 
     end

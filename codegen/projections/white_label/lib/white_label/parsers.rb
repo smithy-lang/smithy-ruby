@@ -19,6 +19,14 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for CustomAuth
+    class CustomAuth
+      def self.parse(http_resp)
+        data = Types::CustomAuthOutput.new
+        data
+      end
+    end
+
     # Operation Parser for DefaultsTest
     class DefaultsTest
       def self.parse(http_resp)

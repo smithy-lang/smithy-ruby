@@ -15,28 +15,28 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
-import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
-import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
-import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.synthetic.NoAuthTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -46,11 +46,13 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final ServiceShape service;
+    private final List<AuthScheme> authSchemes;
 
     public AuthGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         operations = directive.operations();
         service = directive.service();
+        authSchemes = directive.context().getAuthSchemes();
     }
 
     @Override
@@ -59,10 +61,18 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+        List<String> additionalFiles = authSchemes.stream()
+                .map((a) -> a.writeAdditionalFiles(context))
+                .flatMap(Collection::stream)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
         write(writer -> {
             writer
                     .preamble()
                     .includeRequires()
+                    .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .addModule(settings.getModule())
                     .addModule("Auth")
                     .call(() -> renderAuthParamsClass(writer))
@@ -92,33 +102,62 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
-        // TODO: this should have more params when hooked up with endpoint/auth rules?
-        writer.write("Params = Struct.new(:operation_name, keyword_init: true)");
+        List<String> authParamsList = new ArrayList<>();
+        authParamsList.add(":operation_name");
+        authSchemes.forEach((s) -> {
+            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
+            additionalAuthParams.entrySet().stream().forEach((e) -> {
+                authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
+            });
+        });
+        String authParams = authParamsList.stream().collect(Collectors.joining(", "));
+
+        writer.write("Params = Struct.new($L, keyword_init: true)", authParams);
     }
 
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
-        // TODO: this should have more params when hooked up with endpoint/auth rules?
+        Map<String, String> authParamsMap = new HashMap<String, String>();
+        authParamsMap.put("operation_name", "::Symbol");
+        authSchemes.forEach((s) -> {
+            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
+            additionalAuthParams.entrySet().stream().forEach((e) -> {
+                authParamsMap.put(RubyFormatter.toSnakeCase(e.getKey()), "untyped");
+            });
+        });
+
         writer
                 .openBlock("class Params < ::Struct[untyped]")
-                .write("attr_accessor operation_name (): ::Symbol")
+                .call(() -> {
+                    authParamsMap.entrySet().stream().forEach((e) -> {
+                        writer.write("attr_accessor $L (): $L", e.getKey(), e.getValue());
+                    });
+                })
                 .closeBlock("end");
     }
 
     private void renderAuthSchemesConstant(RubyCodeWriter writer) {
-        Set<Trait> authTraitsSet = new HashSet<>();
+        Set<Trait> authTraits = new HashSet<>();
         operations.stream().forEach(operation -> {
             ServiceIndex.of(model).getEffectiveAuthSchemes(
                     service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE).forEach((shapeId, trait) -> {
-                authTraitsSet.add(trait);
+                authTraits.add(trait);
             });
         });
 
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    authTraitsSet.stream()
+                    authTraits.stream()
                             .sorted(Comparator.comparing(Trait::toShapeId))
-                            .forEach(trait -> renderAuthScheme(writer, trait));
+                            .forEach(authTrait -> {
+                                ShapeId shapeId = authTrait.toShapeId();
+                                AuthScheme authScheme = authSchemes.stream()
+                                        .filter(s -> s.getShapeId().equals(shapeId))
+                                        .findFirst()
+                                        .orElseThrow(
+                                                () -> new IllegalStateException("No auth scheme found for " + shapeId));
+                                writer.write("$L,", authScheme.getRubyAuthScheme());
+                            });
                 })
                 .unwrite(",\n")
                 .write("")
@@ -127,22 +166,6 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private void renderRbsAuthSchemesConstant(RubyCodeWriter writer) {
         writer.write("SCHEMES: ::Array[Hearth::AuthSchemes::Base]");
-    }
-
-    private void renderAuthScheme(RubyCodeWriter writer, Trait trait) {
-        if (trait instanceof HttpApiKeyAuthTrait) {
-            writer.write("$L::HTTPApiKey.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof HttpBasicAuthTrait) {
-            writer.write("$L::HTTPBasic.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof HttpBearerAuthTrait) {
-            writer.write("$L::HTTPBearer.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof HttpDigestAuthTrait) {
-            writer.write("$L::HTTPDigest.new,", Hearth.AUTH_SCHEMES);
-        } else if (trait instanceof NoAuthTrait) {
-            writer.write("$L::Anonymous.new,", Hearth.AUTH_SCHEMES);
-        } else {
-            // Custom auth schemes not supported right now
-        }
     }
 
     private void renderAuthResolver(RubyCodeWriter writer) {
@@ -174,7 +197,7 @@ public class AuthGenerator extends RubyGeneratorBase {
         String operationName =
                 RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName());
 
-        Map<ShapeId, Trait> authSchemes =
+        Map<ShapeId, Trait> operationAuthSchemes =
                 ServiceIndex.of(model).getEffectiveAuthSchemes(
                         service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE);
 
@@ -182,41 +205,43 @@ public class AuthGenerator extends RubyGeneratorBase {
                 .write("when $L", operationName)
                 .indent()
                 .call(() -> {
-                    authSchemes.forEach((shapeId, trait) -> {
-                        if (trait instanceof HttpApiKeyAuthTrait) {
-                            renderHttpApiKeyAuthOption(writer, shapeId, (HttpApiKeyAuthTrait) trait);
-                        } else {
-                            renderAuthOption(writer, shapeId.toString(), Optional.empty(), Optional.empty());
-                        }
+                    operationAuthSchemes.forEach((shapeId, trait) -> {
+                        AuthScheme authScheme = authSchemes.stream()
+                                .filter(s -> s.getShapeId().equals(shapeId))
+                                .findFirst()
+                                .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
+
+                        renderAuthOption(writer, shapeId.toString(), trait, authScheme);
                     });
                 })
                 .dedent();
     }
 
-    private void renderHttpApiKeyAuthOption(RubyCodeWriter writer, ShapeId shapeId,
-                                           HttpApiKeyAuthTrait httpApiKeyAuthTrait) {
-        String signerProperties;
-        String name = httpApiKeyAuthTrait.getName();
-        String in = httpApiKeyAuthTrait.getIn().toString();
-        if (httpApiKeyAuthTrait.getScheme().isPresent()) {
-            String scheme = httpApiKeyAuthTrait.getScheme().get();
-            signerProperties = String.format("{ name: '%s', in: '%s', scheme: '%s' }", name, in, scheme);
-        } else {
-            signerProperties = String.format("{ name: '%s', in: '%s' }", name, in);
+    private void renderAuthOption(RubyCodeWriter writer, String schemeId, Trait trait, AuthScheme authScheme) {
+        String args = "scheme_id: '%s'".formatted(schemeId);
+
+        Map<String, String> signerPropertiesMap = authScheme.getSignerProperties(trait);
+        if (!signerPropertiesMap.isEmpty()) {
+            String signerProperties = signerPropertiesMap
+                    .entrySet().stream()
+                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
+                    .reduce((a, b) -> a + ", " + b)
+                    .map(s -> " " + s + " ")
+                    .orElse("");
+            args += ", signer_properties: {%s}".formatted(signerProperties);
         }
 
-        renderAuthOption(writer, shapeId.toString(), Optional.empty(), Optional.of(signerProperties));
-    }
+        Map<String, String> identityPropertiesMap = authScheme.getIdentityProperties(trait);
+        if (!identityPropertiesMap.isEmpty()) {
+            String identityProperties = identityPropertiesMap
+                    .entrySet().stream()
+                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
+                    .reduce((a, b) -> a + ", " + b)
+                    .map(s -> " " + s + " ")
+                    .orElse("");
+            args += ", identity_properties: {%s}".formatted(identityProperties);
+        }
 
-    private void renderAuthOption(RubyCodeWriter writer, String schemeId, Optional<String> identityProperties,
-                                  Optional<String> signerProperties) {
-        String args = "scheme_id: '" + schemeId + "'";
-        if (identityProperties.isPresent()) {
-            args += ", identity_properties: " + identityProperties.get();
-        }
-        if (signerProperties.isPresent()) {
-            args += ", signer_properties: " + signerProperties.get();
-        }
         writer.write("options << $L.new($L)", Hearth.AUTH_OPTION, args);
     }
 }

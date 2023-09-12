@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.trait;
+package software.amazon.smithy.ruby.codegen.traits;
 
 import java.util.List;
 import java.util.Optional;

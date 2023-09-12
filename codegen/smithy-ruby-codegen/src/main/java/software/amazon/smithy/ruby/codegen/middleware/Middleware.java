@@ -15,11 +15,6 @@
 
 package software.amazon.smithy.ruby.codegen.middleware;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -40,7 +34,9 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.OperationPredicate;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.ServicePredicate;
+import software.amazon.smithy.ruby.codegen.WriteAdditionalFiles;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.util.RubySource;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -188,20 +184,6 @@ public final class Middleware {
 
     @FunctionalInterface
     /**
-     * Called to write out additional files needed by this Middleware.
-     */
-    public interface WriteAdditionalFiles {
-        /**
-         * Called to write out additional files needed by this Middleware.
-         *
-         * @param context GenerationContext - allows access to file manifest and symbol providers
-         * @return List of the relative paths of files written, which will be required in client.rb.
-         */
-        List<String> writeAdditionalFiles(GenerationContext context);
-    }
-
-    @FunctionalInterface
-    /**
      * Called to get additional, operation specific parameters.
      */
     public interface OperationParams {
@@ -210,10 +192,9 @@ public final class Middleware {
          *
          * @param context   GenerationContext - allows access to file manifest and symbol providers
          * @param operation The operation
-         * @return List of the relative paths of files written, which will be required in client.rb.
+         * @return Map of params/values for the middleware
          */
-        Map<String, String> params(GenerationContext context,
-                                   OperationShape operation);
+        Map<String, String> params(GenerationContext context, OperationShape operation);
     }
 
     /**
@@ -466,39 +447,15 @@ public final class Middleware {
         }
 
         /**
-         * Used to copy a middleware ruby file into the generated SDK. The copied file
-         * must be a middleware class under the Middleware namespace. This method will
-         * apply the generated service's namespace to the middleware file.
+         * Used to copy a Ruby source file that defines a middleware into the generated SDK.
+         * The copied file must be a Middleware class (implements a call method that takes input and context)
+         * under the Middleware namespace. This method will apply the generated service's namespace to the source file.
          *
          * @param rubyFileName the file name (with path) of the ruby file to copy.
          * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
-            this.writeAdditionalFiles = (context) -> {
-                try {
-                    Path path = Paths.get(rubyFileName);
-                    String relativeName = "middleware/" + path.getFileName();
-                    String fileName =
-                            context.settings().getGemName() + "/lib/"
-                                    + context.settings().getGemName()
-                                    + "/" + relativeName;
-                    String fileContent =
-                            new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-
-                    RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
-                    writer
-                            .openBlock("module $L", context.settings().getModule())
-                            .write(fileContent)
-                            .closeBlock("end");
-
-                    context.fileManifest().writeFile(fileName, writer.toString());
-                    return Collections.singletonList(relativeName);
-                } catch (IOException e) {
-                    throw new CodegenException(
-                            "Error reading rubySource file: " + rubyFileName,
-                            e);
-                }
-            };
+            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, "middleware/");
             return this;
         }
 

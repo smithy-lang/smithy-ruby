@@ -72,9 +72,10 @@ module Weather
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :get_city)
+        auth_params: Auth::Params.new(operation_name: :get_city),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        identity_resolver_map: {}
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -149,9 +150,10 @@ module Weather
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :get_city_image)
+        auth_params: Auth::Params.new(operation_name: :get_city_image),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        identity_resolver_map: {}
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -215,9 +217,10 @@ module Weather
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :get_current_time)
+        auth_params: Auth::Params.new(operation_name: :get_current_time),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        identity_resolver_map: {}
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -298,9 +301,10 @@ module Weather
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :get_forecast)
+        auth_params: Auth::Params.new(operation_name: :get_forecast),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        identity_resolver_map: {}
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -386,9 +390,10 @@ module Weather
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :list_cities)
+        auth_params: Auth::Params.new(operation_name: :list_cities),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        identity_resolver_map: {}
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -459,9 +464,10 @@ module Weather
         error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        auth_params: Auth::Params.new(operation_name: :operation____789_bad_name)
+        auth_params: Auth::Params.new(operation_name: :operation____789_bad_name),
+        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
+        identity_resolver_map: {}
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
