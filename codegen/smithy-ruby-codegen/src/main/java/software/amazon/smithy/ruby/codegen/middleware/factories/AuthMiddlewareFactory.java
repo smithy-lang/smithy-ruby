@@ -41,8 +41,8 @@ public final class AuthMiddlewareFactory {
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
         Set<AuthScheme> authSchemesSet = context.getAuthSchemes();
-        Set<ClientConfig> clientConfigSet = new HashSet<>();
-        Map<String, String> identityResolvers = new HashMap<>();
+        Set<ClientConfig> identityResolversConfigSet = new HashSet<>();
+        Map<String, String> identityResolversMap = new HashMap<>();
 
         serviceAuthSchemes.forEach((shapeId, trait) -> {
             AuthScheme authScheme = authSchemesSet.stream()
@@ -52,9 +52,9 @@ public final class AuthMiddlewareFactory {
 
             ClientConfig config = authScheme.getIdentityResolverConfig();
             if (config != null) {
-                clientConfigSet.add(config);
+                identityResolversConfigSet.add(config);
                 String symbolizedName = RubyFormatter.toSnakeCase(config.getName());
-                identityResolvers.put(authScheme.getRubyIdentityType(), symbolizedName);
+                identityResolversMap.put(authScheme.getRubyIdentityType(), symbolizedName);
             }
         });
 
@@ -112,7 +112,7 @@ public final class AuthMiddlewareFactory {
                     params.put("auth_params", authParams);
 
                     String identityResolverMapHash = "{%s}".formatted(
-                            identityResolvers.entrySet().stream()
+                            identityResolversMap.entrySet().stream()
                                     .map(e -> "%s: %s".formatted(e.getValue(), e.getKey()))
                                     .reduce((a, b) -> a + ", " + b)
                                     .map(s -> " " + s + " ")
@@ -121,7 +121,7 @@ public final class AuthMiddlewareFactory {
 
                     return params;
                 });
-        clientConfigSet.forEach(authBuilder::addConfig);
+        identityResolversConfigSet.forEach(authBuilder::addConfig);
 
         return authBuilder.build();
     }
