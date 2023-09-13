@@ -7,5 +7,9 @@ module Hearth
       Hearth::Config::Resolver.resolve(self, options, defaults)
       super
     end
+
+    def merge(configuration)
+      self.class.new(**to_h.merge(configuration.to_h))
+    end
   end
 end

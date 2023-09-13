@@ -31,7 +31,8 @@ module WhiteLabel
       end
 
       it 'validates types' do
-        expect { Config.new(logger: 'foo') }
+        config = Config.new(logger: 'foo')
+        expect { config.validate! }
           .to raise_error(ArgumentError, /config\[:logger\]/)
       end
     end

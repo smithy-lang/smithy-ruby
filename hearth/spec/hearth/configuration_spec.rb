@@ -12,7 +12,9 @@ module Hearth
           )
         end
 
-        def self.defaults
+        private
+
+        def defaults
           { simple_option: ['default'] }
         end
       end
@@ -45,15 +47,11 @@ module Hearth
       end
     end
 
-    describe '#validate!' do
-      it 'raises on invalid types' do
-        config = config_class.new(simple_option: 1)
-        expect do
-          config.validate!
-        end.to raise_error(
-          ArgumentError,
-          'Expected config[:simple_option] to be in [String], got Integer.'
-        )
+    describe '#merge' do
+      it 'merges the configuration' do
+        config = config_class.new(simple_option: 'test')
+        merged = config.merge(config_class.new(simple_option: 'test2'))
+        expect(merged.simple_option).to eq('test2')
       end
     end
   end
