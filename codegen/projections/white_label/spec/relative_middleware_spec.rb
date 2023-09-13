@@ -8,8 +8,7 @@ module WhiteLabel
     context 'relative middleware ordering' do
       it 'allows a specific order of middleware to their relatives and ' \
          'a middleware to be set when their relative is optional' do
-        config = Config.new(stub_responses: true)
-        client = Client.new(config)
+        client = Client.new(stub_responses: true)
         output = client.relative_middleware_operation
         expect(output.metadata[:middleware_order])
           .to eq(

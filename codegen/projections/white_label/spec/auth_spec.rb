@@ -218,15 +218,11 @@ module WhiteLabel
   end
 
   describe Client do
-    let(:config) do
-      Config.new(**{ stub_responses: true }.merge(config_hash))
-    end
-
     let(:identity_resolver) do
       Hearth::IdentityResolver.new(proc { identity })
     end
 
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(**{ stub_responses: true }.merge(config_hash)) }
 
     describe '#http_api_key_auth' do
       let(:config_hash) do

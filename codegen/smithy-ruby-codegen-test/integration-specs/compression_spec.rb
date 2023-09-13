@@ -28,8 +28,7 @@ module WhiteLabel
   end
 
   describe Client do
-    let(:config) { Config.new(stub_responses: true) }
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(stub_responses: true) }
 
     context '#request_compression_operation' do
       it 'compresses the body and sets the Content-Encoding header' do

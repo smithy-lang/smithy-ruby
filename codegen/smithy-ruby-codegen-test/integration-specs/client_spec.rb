@@ -4,15 +4,14 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
-    let(:config) { Config.new(stub_responses: true) }
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(stub_responses: true) }
 
     describe '#kitchen_sink' do
       it 'uses validate_input' do
         expect(Hearth::Middleware::Validate)
           .to receive(:new)
           .with(anything,
-                validate_input: config.validate_input,
+                validate_input: client.config.validate_input,
                 validator: anything)
           .and_call_original
 
@@ -42,7 +41,7 @@ module WhiteLabel
       it 'uses endpoint from config' do
         expect(Hearth::HTTP::Request)
           .to receive(:new)
-          .with(hash_including(uri: URI(config.endpoint)))
+          .with(hash_including(uri: URI(client.config.endpoint)))
           .and_call_original
 
         client.kitchen_sink

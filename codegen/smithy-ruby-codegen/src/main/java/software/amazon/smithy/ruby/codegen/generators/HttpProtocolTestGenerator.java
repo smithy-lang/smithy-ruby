@@ -89,16 +89,14 @@ public class HttpProtocolTestGenerator {
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
                 // TODO: Ability to inject additional required config, eg credentials
-                .openBlock("let(:config) do")
-                .openBlock("Config.new(")
+                .openBlock("let(:client) do")
+                .openBlock("Client.new(")
                 .write("stub_responses: true,")
                 .write("validate_input: false,")
                 .write("endpoint: 'http://127.0.0.1',")
                 .write("retry_strategy: Hearth::Retry::Standard.new(max_attempts: 0)")
                 .closeBlock(")")
                 .closeBlock("end")
-                .write("")
-                .write("let(:client) { Client.new(config) }")
                 .call(() -> renderTests())
                 .closeBlock("end")
                 .closeBlock("end");

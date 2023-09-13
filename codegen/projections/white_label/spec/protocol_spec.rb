@@ -11,16 +11,14 @@ require 'white_label'
 
 module WhiteLabel
   describe Client do
-    let(:config) do
-      Config.new(
+    let(:client) do
+      Client.new(
         stub_responses: true,
         validate_input: false,
         endpoint: 'http://127.0.0.1',
         retry_strategy: Hearth::Retry::Standard.new(max_attempts: 0)
       )
     end
-
-    let(:client) { Client.new(config) }
 
     describe '#operation____paginators_test_with_bad_names' do
 

@@ -4,8 +4,7 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
-    let(:config) { Config.new(stub_responses: true, validate_input: false) }
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(stub_responses: true, validate_input: false) }
 
     describe '#endpoint_operation' do
       it 'prepends to the host' do
