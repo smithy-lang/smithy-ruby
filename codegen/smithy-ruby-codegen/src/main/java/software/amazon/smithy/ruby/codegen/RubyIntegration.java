@@ -17,11 +17,9 @@ package software.amazon.smithy.ruby.codegen;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
@@ -65,57 +63,52 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
     }
 
     /**
-     * Returns a list of additional (non-middleware) Config
-     * to be added to the generated Client.
+     * Returns a List of additional (non-middleware) Config to be added to the generated Client.
      *
      * @param context - Generation context to process within
-     * @return list of additional config
+     * @return List of ClientConfig to be added
      */
     default List<ClientConfig> getAdditionalClientConfig(GenerationContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * Returns a list of RubyRuntimePlugins to be added to the generated Client.
+     * Returns a List of RubyRuntimePlugins to be added to the generated Client.
      *
      * @param context - Generation context to process within
-     * @return list of RubyRuntimePlugins
+     * @return List of RubyRuntimePlugins
      */
     default List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * Returns a list of additional Auth Schemes to be added to the generated Auth module.
+     * Returns a List of additional Auth Schemes to be added to the generated Auth module and middleware.
+     *
      * @param context - Generation context to process within
-     * @return list of additional AuthScheme
+     * @return List of AuthSchemes to be added
      */
     default List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * Writes additional files.
+     * Returns a List of additional Gem Dependencies.
      *
-     * @param context - context for generation
-     * @return List of relative paths generated to be added to module requires.
+     * @param context - Generation context to process within
+     * @return List of RubyDependency to be added
      */
-    default List<String> writeAdditionalFiles(GenerationContext context) {
+    default List<RubyDependency> getAdditionalGemDependencies(GenerationContext context) {
         return Collections.emptyList();
     }
 
     /**
-     * Adds additional Gem Dependencies.
+     * Writes additional files.
      *
-     * @param rubySettings       - generation settings
-     * @param finalResolvedModel - the resolved model (post any transforms)
-     * @param service            - service to generate for
-     * @param protocol           - the resolved protocol
-     * @return Set of ruby dependencies to be added
+     * @param context - Generation context to process within
+     * @return List of relative paths generated to be added to module requires.
      */
-    default Set<RubyDependency> additionalGemDependencies(
-            RubySettings rubySettings, Model finalResolvedModel,
-            ServiceShape service, ShapeId protocol) {
-        return Collections.emptySet();
+    default List<String> writeAdditionalFiles(GenerationContext context) {
+        return Collections.emptyList();
     }
 }

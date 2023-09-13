@@ -134,6 +134,24 @@ public final class AuthScheme {
         Map<String, String> extractProperties(Trait trait);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof AuthScheme)) {
+            return false;
+        }
+
+        AuthScheme other = (AuthScheme) o;
+
+        return this.shapeId.equals(other.shapeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shapeId);
+    }
+
     public static class Builder implements SmithyBuilder<AuthScheme> {
         private ShapeId shapeId;
         private String rubyAuthScheme;

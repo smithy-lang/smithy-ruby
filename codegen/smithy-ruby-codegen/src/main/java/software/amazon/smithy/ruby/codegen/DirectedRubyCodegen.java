@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.directed.CreateContextDirective;
@@ -59,10 +57,7 @@ import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 
 public class DirectedRubyCodegen
-    implements DirectedCodegen<GenerationContext, RubySettings, RubyIntegration> {
-
-    private static final Logger LOGGER =
-            Logger.getLogger(DirectedRubyCodegen.class.getName());
+        implements DirectedCodegen<GenerationContext, RubySettings, RubyIntegration> {
 
     private TypesFileBlockGenerator typesFileBlockGenerator;
 
@@ -81,35 +76,34 @@ public class DirectedRubyCodegen
                 .collect(Collectors.toList());
 
         Map<ShapeId, ProtocolGenerator> supportedProtocols = ProtocolGenerator
-            .collectSupportedProtocolGenerators(integrations);
+                .collectSupportedProtocolGenerators(integrations);
 
         ShapeId protocol = directive.settings()
-            .resolveServiceProtocol(service, model, supportedProtocols.keySet());
+                .resolveServiceProtocol(service, model, supportedProtocols.keySet());
 
         Optional<ProtocolGenerator> protocolGenerator =
-            ProtocolGenerator.resolve(protocol, integrations);
+                ProtocolGenerator.resolve(protocol, integrations);
 
         ApplicationTransport applicationTransport;
 
         if (protocolGenerator.isPresent()) {
             applicationTransport =
-                protocolGenerator.get().getApplicationTransport();
+                    protocolGenerator.get().getApplicationTransport();
         } else {
             applicationTransport = ApplicationTransport
-                .createDefaultHttpApplicationTransport();
+                    .createDefaultHttpApplicationTransport();
         }
 
         GenerationContext context = new GenerationContext(
-            directive.settings(),
-            directive.fileManifest(),
-            integrations,
-            model,
-            service,
-            protocol,
-            protocolGenerator,
-            applicationTransport,
-            collectDependencies(model, service, protocol, directive.settings(), integrations),
-            directive.symbolProvider());
+                directive.settings(),
+                directive.fileManifest(),
+                integrations,
+                model,
+                service,
+                protocol,
+                protocolGenerator,
+                applicationTransport,
+                directive.symbolProvider());
 
         return context;
     }
@@ -225,25 +219,5 @@ public class DirectedRubyCodegen
     public void customizeAfterIntegrations(CustomizeDirective<GenerationContext, RubySettings> directive) {
         // Close all module blocks for types.rb and types.rbs files
         this.typesFileBlockGenerator.closeAllBlocks();
-    }
-
-    private Set<RubyDependency> collectDependencies(
-        Model model,
-        ServiceShape service,
-        ShapeId protocol,
-        RubySettings settings,
-        List<RubyIntegration> integrations
-    ) {
-        Set<RubyDependency> rubyDependencies = new HashSet<>();
-        rubyDependencies.addAll(settings.getBaseDependencies());
-        rubyDependencies.addAll(
-            integrations.stream()
-                .map((integration) -> integration
-                        .additionalGemDependencies(settings, model, service, protocol))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet())
-        );
-
-        return rubyDependencies;
     }
 }

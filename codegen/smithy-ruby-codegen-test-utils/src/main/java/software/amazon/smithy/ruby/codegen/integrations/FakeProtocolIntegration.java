@@ -26,7 +26,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * Provide support for whitelabel testing (implements fakeProtocol).
  */
 @SmithyInternalApi
-public class TestIntegration implements RubyIntegration {
+public class FakeProtocolIntegration implements RubyIntegration {
 
     @Override
     public List<ProtocolGenerator> getProtocolGenerators() {

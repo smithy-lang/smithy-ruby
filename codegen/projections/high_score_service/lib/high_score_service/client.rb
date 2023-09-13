@@ -64,12 +64,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :api_key_auth),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -134,12 +133,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :basic_auth),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -204,12 +202,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :bearer_auth),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -287,12 +284,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :create_high_score),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -360,12 +356,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :delete_high_score),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -430,12 +425,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :digest_auth),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -509,12 +503,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_high_score),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -587,12 +580,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :list_high_scores),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -670,12 +662,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :update_high_score),
-        http_api_key_identity_resolver: options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver),
         auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        identity_resolver_map: { http_login_identity_resolver: Hearth::Identities::HTTPLogin, http_bearer_identity_resolver: Hearth::Identities::HTTPBearer, http_api_key_identity_resolver: Hearth::Identities::HTTPApiKey },
         auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        http_bearer_identity_resolver: options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        http_login_identity_resolver: options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver)
+        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
+        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
+        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,

@@ -15,24 +15,17 @@ module Hearth
       #  parameters that may be used to resolve auth options.
       # @param [Array<Hearth::AuthScheme::Base>] auth_schemes A list of
       #  auth schemes to consider for authentication.
-      # @param [Hash<Symbol, Class>] identity_resolver_map A map of identity
-      #  resolver config names to identity types.
-      def initialize(app, auth_resolver:, auth_params:, auth_schemes:,
-                     identity_resolver_map:, **kwargs)
+      def initialize(app, auth_resolver:, auth_params:, auth_schemes:, **kwargs)
         @app = app
         @auth_resolver = auth_resolver
         @auth_params = auth_params
         @auth_schemes = auth_schemes.to_h { |s| [s.scheme_id, s] }
-        @identity_resolver_map = identity_resolver_map
 
         @identity_resolvers = {}
         kwargs.each do |key, value|
-          next unless key.end_with?('_identity_resolver')
+          next unless key.superclass == Hearth::Identities::Base
 
-          type = @identity_resolver_map[key]
-          raise "Unknown identity resolver type #{key}" unless type
-
-          @identity_resolvers[type] = value
+          @identity_resolvers[key] = value
         end
       end
 

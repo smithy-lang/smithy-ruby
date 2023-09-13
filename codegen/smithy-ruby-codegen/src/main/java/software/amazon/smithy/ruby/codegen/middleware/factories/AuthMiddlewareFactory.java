@@ -17,9 +17,9 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -41,65 +41,42 @@ public final class AuthMiddlewareFactory {
         Map<ShapeId, Trait> serviceAuthSchemes =
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
-        List<AuthScheme> authSchemesList = context.getAuthSchemes();
-        Set<ClientConfig> clientConfigSet = new HashSet<>();
-        Map<String, String> identityResolvers = new HashMap<>();
+        Set<AuthScheme> authSchemesSet = context.getAuthSchemes();
+        Set<ClientConfig> identityResolversConfigSet = new HashSet<>();
+        Map<String, String> identityResolversMap = new HashMap<>();
 
         serviceAuthSchemes.forEach((shapeId, trait) -> {
-            AuthScheme authScheme = authSchemesList.stream()
+            AuthScheme authScheme = authSchemesSet.stream()
                     .filter(s -> s.getShapeId().equals(shapeId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
 
             ClientConfig config = authScheme.getIdentityResolverConfig();
             if (config != null) {
-                clientConfigSet.add(config);
-                String symbolizedName = RubyFormatter.toSnakeCase(config.getName());
-                identityResolvers.put(authScheme.getRubyIdentityType(), symbolizedName);
+                identityResolversConfigSet.add(config);
+                identityResolversMap.put(authScheme.getRubyIdentityType(), config.renderGetConfigValue());
             }
         });
 
-        String authResolverDocumentation = """
-                A class that responds to a `resolve(auth_params)` method where `auth_params` is
-                the {Auth::Params} struct. For a given operation_name, the method must return an
-                ordered list of {%s} objects to be considered for authentication.
-                """.formatted(Hearth.AUTH_OPTION);
-        ClientConfig authResolver = ClientConfig.builder()
-                .name("auth_resolver")
-                .type("Auth::Resolver")
-                .allowOperationOverride()
-                .documentation(authResolverDocumentation)
-                .defaultValue("Auth::Resolver.new")
-                .build();
-
-        String authSchemesDocumentation = """
-                An ordered list of {%s} objects that will considered when attempting to authenticate
-                the request. The first scheme that returns an Identity from its %s will be used to
-                authenticate the request.
-                """.formatted(Hearth.AUTH_SCHEMES + "::Base", Hearth.IDENTITY_RESOLVER);
-        ClientConfig authSchemes = ClientConfig.builder()
-                .name("auth_schemes")
-                .type("Array")
-                .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
-                .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
-                .defaultValue("Auth::SCHEMES")
-                .allowOperationOverride()
-                .documentation(authSchemesDocumentation)
-                .build();
+        ClientConfig authResolver = buildAuthResolverConfig();
+        ClientConfig authSchemes = buildAuthSchemesConfig();
 
         Middleware.Builder authBuilder = Middleware.builder()
                 .klass(Hearth.AUTH_MIDDLEWARE)
                 .step(MiddlewareStackStep.SIGN)
                 .addConfig(authResolver)
                 .addConfig(authSchemes)
-                .operationParams((ctx, operation) -> {
+                .renderAdd((writer, middleware, context1, operation) -> {
                     Map<String, String> params = new HashMap<>();
+                    // Static params - auth resolver, schemes, and params
+                    params.put("auth_resolver", authResolver.renderGetConfigValue());
+                    params.put("auth_schemes", authSchemes.renderGetConfigValue());
 
                     HashMap<String, String> authParamsMap = new HashMap<>();
                     authParamsMap.put("operation_name",
                             RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName()));
 
-                    authSchemesList.forEach(s -> {
+                    authSchemesSet.forEach(s -> {
                         Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
                         additionalAuthParams.entrySet().forEach(e -> {
                             authParamsMap.put(e.getKey(), e.getValue());
@@ -112,18 +89,65 @@ public final class AuthMiddlewareFactory {
                                     .orElse(""));
                     params.put("auth_params", authParams);
 
-                    String identityResolverMapHash = "{%s}".formatted(
-                            identityResolvers.entrySet().stream()
-                                    .map(e -> "%s: %s".formatted(e.getValue(), e.getKey()))
-                                    .reduce((a, b) -> a + ", " + b)
-                                    .map(s -> " " + s + " ")
-                                    .orElse(""));
-                    params.put("identity_resolver_map", identityResolverMapHash);
+                    String staticParamsBlock = params
+                            .entrySet()
+                            .stream()
+                            .map(entry -> entry.getKey() + ": " + entry.getValue())
+                            .collect(Collectors.joining(",\n"));
 
-                    return params;
+                    // Dynamic params - identity resolvers as Class => config entries
+                    String identityResolversBlock = identityResolversMap
+                            .entrySet()
+                            .stream()
+                            .map(entry -> "%s => %s".formatted(entry.getKey(), entry.getValue()))
+                            .collect(Collectors.joining(",\n"));
+
+                    writer
+                            .write("stack.use($L,", middleware.getKlass())
+                            .indent()
+                            .writeInline(staticParamsBlock)
+                            .call(() -> {
+                                if (!identityResolversBlock.isEmpty()) {
+                                    writer.writeInline(",\n$L", identityResolversBlock);
+                                }
+                            })
+                            .dedent()
+                            .write("\n)");
                 });
-        clientConfigSet.forEach(authBuilder::addConfig);
 
+        identityResolversConfigSet.forEach(authBuilder::addConfig);
         return authBuilder.build();
+    }
+
+    private static ClientConfig buildAuthResolverConfig() {
+        String authResolverDocumentation = """
+                A class that responds to a `resolve(auth_params)` method where `auth_params` is
+                the {Auth::Params} struct. For a given operation_name, the method must return an
+                ordered list of {%s} objects to be considered for authentication.
+                """.formatted(Hearth.AUTH_OPTION);
+        return ClientConfig.builder()
+                .name("auth_resolver")
+                .type("Auth::Resolver")
+                .allowOperationOverride()
+                .documentation(authResolverDocumentation)
+                .defaultValue("Auth::Resolver.new")
+                .build();
+    }
+
+    private static ClientConfig buildAuthSchemesConfig() {
+        String authSchemesDocumentation = """
+                An ordered list of {%s} objects that will considered when attempting to authenticate
+                the request. The first scheme that returns an Identity from its %s will be used to
+                authenticate the request.
+                """.formatted(Hearth.AUTH_SCHEMES + "::Base", Hearth.IDENTITY_RESOLVER);
+        return ClientConfig.builder()
+                .name("auth_schemes")
+                .type("Array")
+                .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
+                .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
+                .defaultValue("Auth::SCHEMES")
+                .allowOperationOverride()
+                .documentation(authSchemesDocumentation)
+                .build();
     }
 }

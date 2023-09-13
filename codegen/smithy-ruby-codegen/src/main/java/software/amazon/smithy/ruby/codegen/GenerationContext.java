@@ -15,8 +15,9 @@
 
 package software.amazon.smithy.ruby.codegen;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -49,7 +50,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
-    private final Set<RubyDependency> rubyDependencies;
     private final SymbolProvider symbolProvider;
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
@@ -62,7 +62,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
      * @param protocol             the protocol to generate for
      * @param protocolGenerator    the resolved protocol generate to use for generation
      * @param applicationTransport resolved application transport.
-     * @param rubyDependencies     set of Ruby dependencies
      * @param symbolProvider       a symbol provider scoped to the Types module
      */
     public GenerationContext(RubySettings rubySettings,
@@ -73,7 +72,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                              ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
                              ApplicationTransport applicationTransport,
-                             Set<RubyDependency> rubyDependencies,
                              SymbolProvider symbolProvider) {
 
         this.rubySettings = rubySettings;
@@ -84,7 +82,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.protocol = protocol;
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
-        this.rubyDependencies = rubyDependencies;
         this.symbolProvider = symbolProvider;
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
@@ -150,31 +147,39 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     }
 
     /**
-     * @return set of RubyDependencies
+     * @return Set of RubyDependencies from the base and all integrations
      */
     public Set<RubyDependency> getRubyDependencies() {
-        return rubyDependencies;
+        Set<RubyDependency> rubyDependencies = new HashSet<>();
+        rubyDependencies.addAll(settings().getBaseDependencies());
+        rubyDependencies.addAll(
+                integrations.stream()
+                        .map((integration) -> integration.getAdditionalGemDependencies(this))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toSet())
+        );
+        return Collections.unmodifiableSet(rubyDependencies);
     }
 
     /**
-     * @return list of all RubyRuntimePlugins from all integrations
+     * @return Set of all RubyRuntimePlugins from all integrations
      */
-    public List<RubyRuntimePlugin> getRuntimePlugins() {
+    public Set<RubyRuntimePlugin> getRuntimePlugins() {
         return integrations.stream()
                 .map((i) -> i.getRuntimePlugins(this))
                 .flatMap(List::stream)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     /**
-     * @return list of all AuthSchemes from all integrations and the application transport.
+     * @return Set of all AuthSchemes from all integrations and the application transport.
      */
-    public List<AuthScheme> getAuthSchemes() {
-        List<AuthScheme> authSchemes = new ArrayList<>(applicationTransport.defaultAuthSchemes());
+    public Set<AuthScheme> getAuthSchemes() {
+        Set<AuthScheme> authSchemes = new HashSet<>(applicationTransport.defaultAuthSchemes());
         authSchemes.add(AnonymousAuthSchemeFactory.build());
         integrations().forEach((i) -> {
             i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
         });
-        return Collections.unmodifiableList(authSchemes);
+        return Collections.unmodifiableSet(authSchemes);
     }
 }
