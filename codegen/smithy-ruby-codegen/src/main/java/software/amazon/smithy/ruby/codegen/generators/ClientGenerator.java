@@ -84,6 +84,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                         .sorted()
                         .collect(Collectors.toList())
         );
+        additionalFiles.sort(String::compareTo);
 
         write(writer -> {
             writer
