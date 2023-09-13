@@ -168,19 +168,19 @@ module WhiteLabel
     it 'validates identity resolvers' do
       msg = /to be in \[Hearth::IdentityResolver\], got String/
       expect do
-        Config.new(http_api_key_identity_resolver: 'foo')
+        Config.new(http_api_key_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_bearer_identity_resolver: 'foo')
+        Config.new(http_bearer_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_login_identity_resolver: 'foo')
+        Config.new(http_login_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_custom_auth_identity_resolver: 'foo')
+        Config.new(http_custom_auth_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
     end
 

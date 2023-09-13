@@ -75,7 +75,7 @@ module Benchmark
 
     report_data['cpu'] = RbConfig::CONFIG['host_cpu']
     report_data['os'] = host_os
-    report_data['execution_env'] =  ENV['EXECUTION_ENV'] || 'unknown'
+    report_data['execution_env'] = ENV['EXECUTION_ENV'] || 'unknown'
 
     report_data['timestamp'] = Time.now.to_i
 
@@ -153,11 +153,9 @@ module Benchmark
       report_data.merge!(Benchmark.fork_run do |out|
         require gem_name
         client_klass =  Kernel.const_get(client_module_name).const_get(:Client)
-        config_klass = Kernel.const_get(client_module_name).const_get(:Config)
         unless defined?(JRUBY_VERSION)
           r = ::MemoryProfiler.report do
-            config = config_klass.new(stub_responses: true)
-            client_klass.new(config)
+            client_klass.new(stub_responses: true)
           end
           out[:client_mem_retained_kb] = r.total_retained_memsize / 1024.0
           out[:client_mem_allocated_kb] = r.total_allocated_memsize / 1024.0
@@ -173,19 +171,16 @@ module Benchmark
       require gem_name
 
       client_klass = Kernel.const_get(client_module_name).const_get(:Client)
-      config_klass = Kernel.const_get(client_module_name).const_get(:Config)
 
       report_data[:client_init_ms] = Benchmark.measure_time(300) do
-        config = config_klass.new(stub_responses: true)
-        client_klass.new(config)
+        client_klass.new(stub_responses: true)
       end
 
       values = report_data[:client_init_ms]
       puts "\t\t#{gem_name} client init avg: #{'%.2f' % (values.sum(0.0) / values.size)} ms"
 
       operation_benchmarks.each do |test_name, test_def|
-        config = config_klass.new(stub_responses: true)
-        client = client_klass.new(config)
+        client = client_klass.new(stub_responses: true)
         req = test_def[:setup].call(client)
 
 
