@@ -85,15 +85,5 @@ module Hearth
         plugin_list.apply(config)
       end
     end
-
-    describe '#dup' do
-      it 'creates a deep copy' do
-        orig = PluginList.new
-        copy = orig.dup
-        copy.add(plugin)
-
-        expect(orig.to_a).to be_empty
-      end
-    end
   end
 end

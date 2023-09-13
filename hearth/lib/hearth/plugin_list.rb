@@ -41,10 +41,6 @@ module Hearth
       @plugins.each { |p| p.call(config) }
     end
 
-    def dup
-      PluginList.new(self)
-    end
-
     def each(&block)
       @plugins.each(&block)
     end

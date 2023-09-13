@@ -72,7 +72,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
                     .closeBlock(") do")
                     .indent()
                     .write("include $T", Hearth.CONFIGURATION)
-                    .write("\nprivate\n")
+                    .write("")
                     .call(() -> renderValidateMethod(writer))
                     .write("")
                     .call(() -> renderDefaultsMethod(writer))
@@ -123,7 +123,9 @@ public class ConfigGenerator extends RubyGeneratorBase {
     }
 
     private void renderValidateMethod(RubyCodeWriter writer) {
-        writer.openBlock("def validate!");
+        writer
+                .writeDocstring("Validates the configuration.")
+                .openBlock("def validate!");
         clientConfigList.forEach(clientConfig -> {
             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
             clientConfig.getConstraints().forEach(c ->
@@ -134,8 +136,9 @@ public class ConfigGenerator extends RubyGeneratorBase {
 
     private void renderDefaultsMethod(RubyCodeWriter writer) {
         writer
+                .writeDocstring("Returns the default values for the configuration.")
                 .openBlock("def self.defaults")
-                .openBlock("@defaults ||= {");
+                .openBlock("{");
 
         clientConfigList.forEach(clientConfig -> {
             writer.write("$L: $L,", clientConfig.getName(), clientConfig.renderDefaults(context));

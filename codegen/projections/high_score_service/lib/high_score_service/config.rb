@@ -109,8 +109,7 @@ module HighScoreService
   ) do
     include Hearth::Configuration
 
-    private
-
+    # Validates the configuration.
     def validate!
       Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
@@ -129,8 +128,9 @@ module HighScoreService
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
+    # Returns the default values for the configuration.
     def self.defaults
-      @defaults ||= {
+      {
         auth_resolver: [proc { Auth::Resolver.new }],
         auth_schemes: [proc { Auth::SCHEMES }],
         disable_host_prefix: [false],

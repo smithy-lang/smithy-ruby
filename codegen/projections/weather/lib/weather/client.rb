@@ -10,21 +10,22 @@
 require 'stringio'
 
 module Weather
-  # An API client for Weather
-  # See {#initialize} for a full list of supported configuration options
   # Provides weather forecasts.
   class Client
     include Hearth::ClientStubs
+
+    # @api private
     @plugins = Hearth::PluginList.new
 
+    # @return [Hearth::PluginList]
     def self.plugins
       @plugins
     end
 
-    # @param [Config] config
-    #   An instance of {Config}
-    def initialize(config = Weather::Config.new, options = {})
-      @config = initialize_config(config)
+    # @param [Hash] options
+    #   Options used to construct an instance of {Config}
+    def initialize(options = {})
+      @config = initialize_config(options)
       @stubs = Hearth::Stubs.new
     end
 
@@ -54,10 +55,10 @@ module Weather
     #   resp.data.city.number #=> String
     #   resp.data.city.case #=> String
     def get_city(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityInput,
@@ -131,10 +132,10 @@ module Weather
     #   resp.data #=> Types::GetCityImageOutput
     #   resp.data.image #=> String
     def get_city_image(params = {}, options = {}, &block)
+      response_body = output_stream(options, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCityImageInput.build(params, context: 'params')
-      response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCityImageInput,
@@ -197,10 +198,10 @@ module Weather
     #   resp.data #=> Types::GetCurrentTimeOutput
     #   resp.data.time #=> Time
     def get_current_time(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetCurrentTimeInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetCurrentTimeInput,
@@ -280,10 +281,10 @@ module Weather
     #   resp.data.precipitation.baz.baz #=> String
     #   resp.data.precipitation.baz.bar #=> String
     def get_forecast(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetForecastInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetForecastInput,
@@ -368,10 +369,10 @@ module Weather
     #   resp.data.items[0].case #=> String
     #   resp.data.sparse_items #=> Array<CitySummary>
     def list_cities(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListCitiesInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListCitiesInput,
@@ -441,10 +442,10 @@ module Weather
     #   resp.data.member #=> Types::Struct____456efg
     #   resp.data.member.member___123foo #=> String
     def operation____789_bad_name(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::Struct____789BadNameInput,
@@ -496,27 +497,30 @@ module Weather
 
     private
 
-    def initialize_config(config)
-      config = config.dup
-      client_interceptors = config.interceptors
-      config.interceptors = Hearth::InterceptorList.new
-      Client.plugins.apply(config)
-      Hearth::PluginList.new(config.plugins).apply(config)
-      config.interceptors.concat(client_interceptors)
+    def initialize_config(options)
+      client_interceptors = options.delete(:interceptors)
+      config = Config.new(**options)
+      Client.plugins.each { |p| p.call(config) }
+      config.plugins.each { |p| p.call(config) }
+      config.interceptors.concat(Hearth::InterceptorList.new(client_interceptors)) if client_interceptors
+      config.validate!
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins] || options[:interceptors]
+      return @config if options.empty?
 
-      config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
-      config.interceptors.concat(Hearth::InterceptorList.new(options[:interceptors])) if options[:interceptors]
+      operation_plugins = options.delete(:plugins)
+      operation_interceptors = options.delete(:interceptors)
+      config = @config.merge(options)
+      Hearth::PluginList.new(operation_plugins).each { |p| p.call(config) } if operation_plugins
+      config.interceptors.concat(Hearth::InterceptorList.new(operation_interceptors)) if operation_interceptors
+      config.validate!
       config.freeze
     end
 
     def output_stream(options = {}, &block)
-      return options[:output_stream] if options[:output_stream]
+      return options.delete(:output_stream) if options[:output_stream]
       return Hearth::BlockIO.new(block) if block
 
       ::StringIO.new

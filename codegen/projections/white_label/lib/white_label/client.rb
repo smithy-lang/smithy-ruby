@@ -14,8 +14,6 @@ require_relative 'middleware/relative_middleware'
 require_relative 'plugins/test_plugin'
 
 module WhiteLabel
-  # An API client for WhiteLabel
-  # See {#initialize} for a full list of supported configuration options
   # The test SDK.
   # This service should pass the tests.
   # @deprecated
@@ -31,18 +29,21 @@ module WhiteLabel
   # @since today
   class Client
     include Hearth::ClientStubs
+
+    # @api private
     @plugins = Hearth::PluginList.new([
       Plugins::TestPlugin.new
     ])
 
+    # @return [Hearth::PluginList]
     def self.plugins
       @plugins
     end
 
-    # @param [Config] config
-    #   An instance of {Config}
-    def initialize(config = WhiteLabel::Config.new, options = {})
-      @config = initialize_config(config)
+    # @param [Hash] options
+    #   Options used to construct an instance of {Config}
+    def initialize(options = {})
+      @config = initialize_config(options)
       @stubs = Hearth::Stubs.new
     end
 
@@ -61,10 +62,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::CustomAuthOutput
     def custom_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::CustomAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -185,10 +186,10 @@ module WhiteLabel
     #   resp.data.iso8601_timestamp #=> Time
     #   resp.data.epoch_timestamp #=> Time
     def defaults_test(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -257,10 +258,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::EndpointOperationOutput
     def endpoint_operation(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -335,10 +336,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     def endpoint_with_host_label_operation(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -411,10 +412,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::HttpApiKeyAuthOutput
     def http_api_key_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -483,10 +484,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::HttpBasicAuthOutput
     def http_basic_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -555,10 +556,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::HttpBearerAuthOutput
     def http_bearer_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -627,10 +628,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::HttpDigestAuthOutput
     def http_digest_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -841,10 +842,10 @@ module WhiteLabel
     #     message: "Client error"
     #   }
     def kitchen_sink(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -917,10 +918,10 @@ module WhiteLabel
     #   resp.data.username #=> String
     #   resp.data.user_id #=> String
     def mixin_test(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -989,10 +990,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::NoAuthOutput
     def no_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::NoAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1061,10 +1062,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::OptionalAuthOutput
     def optional_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OptionalAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1133,10 +1134,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::OrderedAuthOutput
     def ordered_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::OrderedAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1210,10 +1211,10 @@ module WhiteLabel
     #   resp.data.items #=> Array<String>
     #   resp.data.items[0] #=> String
     def paginators_test(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1287,10 +1288,10 @@ module WhiteLabel
     #   resp.data.items #=> Array<String>
     #   resp.data.items[0] #=> String
     def paginators_test_with_items(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1359,10 +1360,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::RelativeMiddlewareOperationOutput
     def relative_middleware_operation(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RelativeMiddlewareOperationInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1436,10 +1437,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::RequestCompressionOperationOutput
     def request_compression_operation(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionOperationInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1517,10 +1518,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::RequestCompressionStreamingOperationOutput
     def request_compression_streaming_operation(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1597,10 +1598,10 @@ module WhiteLabel
     #   resp.data #=> Types::StreamingOperationOutput
     #   resp.data.stream #=> String
     def streaming_operation(params = {}, options = {}, &block)
+      response_body = output_stream(options, &block)
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params, context: 'params')
-      response_body = output_stream(options, &block)
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1670,10 +1671,10 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::StreamingWithLengthOutput
     def streaming_with_length(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1745,10 +1746,10 @@ module WhiteLabel
     #   resp.data #=> Types::WaitersTestOutput
     #   resp.data.status #=> String
     def waiters_test(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1823,10 +1824,10 @@ module WhiteLabel
     #   resp.data.member___items #=> Array<String>
     #   resp.data.member___items[0] #=> String
     def operation____paginators_test_with_bad_names(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
@@ -1885,27 +1886,30 @@ module WhiteLabel
 
     private
 
-    def initialize_config(config)
-      config = config.dup
-      client_interceptors = config.interceptors
-      config.interceptors = Hearth::InterceptorList.new
-      Client.plugins.apply(config)
-      Hearth::PluginList.new(config.plugins).apply(config)
-      config.interceptors.concat(client_interceptors)
+    def initialize_config(options)
+      client_interceptors = options.delete(:interceptors)
+      config = Config.new(**options)
+      Client.plugins.each { |p| p.call(config) }
+      config.plugins.each { |p| p.call(config) }
+      config.interceptors.concat(Hearth::InterceptorList.new(client_interceptors)) if client_interceptors
+      config.validate!
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins] || options[:interceptors]
+      return @config if options.empty?
 
-      config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
-      config.interceptors.concat(Hearth::InterceptorList.new(options[:interceptors])) if options[:interceptors]
+      operation_plugins = options.delete(:plugins)
+      operation_interceptors = options.delete(:interceptors)
+      config = @config.merge(options)
+      Hearth::PluginList.new(operation_plugins).each { |p| p.call(config) } if operation_plugins
+      config.interceptors.concat(Hearth::InterceptorList.new(operation_interceptors)) if operation_interceptors
+      config.validate!
       config.freeze
     end
 
     def output_stream(options = {}, &block)
-      return options[:output_stream] if options[:output_stream]
+      return options.delete(:output_stream) if options[:output_stream]
       return Hearth::BlockIO.new(block) if block
 
       ::StringIO.new

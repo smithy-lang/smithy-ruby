@@ -12,21 +12,22 @@ require 'stringio'
 require_relative 'middleware/request_id'
 
 module HighScoreService
-  # An API client for HighScoreService
-  # See {#initialize} for a full list of supported configuration options
   # Rails High Score example from their generator docs
   class Client
     include Hearth::ClientStubs
+
+    # @api private
     @plugins = Hearth::PluginList.new
 
+    # @return [Hearth::PluginList]
     def self.plugins
       @plugins
     end
 
-    # @param [Config] config
-    #   An instance of {Config}
-    def initialize(config = HighScoreService::Config.new, options = {})
-      @config = initialize_config(config)
+    # @param [Hash] options
+    #   Options used to construct an instance of {Config}
+    def initialize(options = {})
+      @config = initialize_config(options)
       @stubs = Hearth::Stubs.new
     end
 
@@ -45,10 +46,10 @@ module HighScoreService
     # @example Response structure
     #   resp.data #=> Types::ApiKeyAuthOutput
     def api_key_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ApiKeyAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ApiKeyAuthInput,
@@ -114,10 +115,10 @@ module HighScoreService
     # @example Response structure
     #   resp.data #=> Types::BasicAuthOutput
     def basic_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::BasicAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::BasicAuthInput,
@@ -183,10 +184,10 @@ module HighScoreService
     # @example Response structure
     #   resp.data #=> Types::BearerAuthOutput
     def bearer_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::BearerAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::BearerAuthInput,
@@ -265,10 +266,10 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     #   resp.data.location #=> String
     def create_high_score(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::CreateHighScoreInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::CreateHighScoreInput,
@@ -337,10 +338,10 @@ module HighScoreService
     # @example Response structure
     #   resp.data #=> Types::DeleteHighScoreOutput
     def delete_high_score(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DeleteHighScoreInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DeleteHighScoreInput,
@@ -406,10 +407,10 @@ module HighScoreService
     # @example Response structure
     #   resp.data #=> Types::DigestAuthOutput
     def digest_auth(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::DigestAuthInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::DigestAuthInput,
@@ -484,10 +485,10 @@ module HighScoreService
     #   resp.data.high_score.created_at #=> Time
     #   resp.data.high_score.updated_at #=> Time
     def get_high_score(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::GetHighScoreInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::GetHighScoreInput,
@@ -561,10 +562,10 @@ module HighScoreService
     #   resp.data.high_scores[0].created_at #=> Time
     #   resp.data.high_scores[0].updated_at #=> Time
     def list_high_scores(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::ListHighScoresInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::ListHighScoresInput,
@@ -643,10 +644,10 @@ module HighScoreService
     #   resp.data.high_score.created_at #=> Time
     #   resp.data.high_score.updated_at #=> Time
     def update_high_score(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
       input = Params::UpdateHighScoreInput.build(params, context: 'params')
-      response_body = ::StringIO.new
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Hearth::Middleware::Validate,
         validator: Validators::UpdateHighScoreInput,
@@ -702,22 +703,25 @@ module HighScoreService
 
     private
 
-    def initialize_config(config)
-      config = config.dup
-      client_interceptors = config.interceptors
-      config.interceptors = Hearth::InterceptorList.new
-      Client.plugins.apply(config)
-      Hearth::PluginList.new(config.plugins).apply(config)
-      config.interceptors.concat(client_interceptors)
+    def initialize_config(options)
+      client_interceptors = options.delete(:interceptors)
+      config = Config.new(**options)
+      Client.plugins.each { |p| p.call(config) }
+      config.plugins.each { |p| p.call(config) }
+      config.interceptors.concat(Hearth::InterceptorList.new(client_interceptors)) if client_interceptors
+      config.validate!
       config.freeze
     end
 
     def operation_config(options)
-      return @config unless options[:plugins] || options[:interceptors]
+      return @config if options.empty?
 
-      config = @config.dup
-      Hearth::PluginList.new(options[:plugins]).apply(config) if options[:plugins]
-      config.interceptors.concat(Hearth::InterceptorList.new(options[:interceptors])) if options[:interceptors]
+      operation_plugins = options.delete(:plugins)
+      operation_interceptors = options.delete(:interceptors)
+      config = @config.merge(options)
+      Hearth::PluginList.new(operation_plugins).each { |p| p.call(config) } if operation_plugins
+      config.interceptors.concat(Hearth::InterceptorList.new(operation_interceptors)) if operation_interceptors
+      config.validate!
       config.freeze
     end
   end

@@ -34,7 +34,6 @@ module Hearth
         @config.members.each do |key|
           @config[key] = key(key)
         end
-        @config.freeze
       end
 
       def resolve_default(key)
