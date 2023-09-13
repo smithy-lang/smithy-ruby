@@ -128,8 +128,9 @@ module HighScoreService
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
-    # Returns the default values for the configuration.
-    def self.defaults
+    private
+
+    def defaults
       {
         auth_resolver: [proc { Auth::Resolver.new }],
         auth_schemes: [proc { Auth::SCHEMES }],

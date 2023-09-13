@@ -74,7 +74,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
                     .write("include $T", Hearth.CONFIGURATION)
                     .write("")
                     .call(() -> renderValidateMethod(writer))
-                    .write("")
+                    .write("\nprivate\n")
                     .call(() -> renderDefaultsMethod(writer))
                     .closeBlock("end")
                     .closeBlock("end\n");
@@ -136,8 +136,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
 
     private void renderDefaultsMethod(RubyCodeWriter writer) {
         writer
-                .writeDocstring("Returns the default values for the configuration.")
-                .openBlock("def self.defaults")
+                .openBlock("def defaults")
                 .openBlock("{");
 
         clientConfigList.forEach(clientConfig -> {
