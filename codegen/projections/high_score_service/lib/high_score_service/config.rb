@@ -132,19 +132,19 @@ module HighScoreService
 
     def defaults
       {
-        auth_resolver: [proc { Auth::Resolver.new }],
-        auth_schemes: [proc { Auth::SCHEMES }],
+        auth_resolver: [Auth::Resolver.new],
+        auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
-        interceptors: [proc { Hearth::InterceptorList.new }],
+        interceptors: [Hearth::InterceptorList.new],
         log_level: [:warn],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
-        plugins: [proc { Hearth::PluginList.new }],
-        retry_strategy: [proc { Hearth::Retry::Standard.new }],
+        plugins: [Hearth::PluginList.new],
+        retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
         validate_input: [true]
       }.freeze

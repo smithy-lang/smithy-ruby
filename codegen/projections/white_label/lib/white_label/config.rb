@@ -158,8 +158,8 @@ module WhiteLabel
 
     def defaults
       {
-        auth_resolver: [proc { Auth::Resolver.new }],
-        auth_schemes: [proc { Auth::SCHEMES }],
+        auth_resolver: [Auth::Resolver.new],
+        auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
@@ -168,12 +168,12 @@ module WhiteLabel
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         http_custom_auth_identity_resolver: [proc { Hearth::IdentityResolver.new(proc { Auth::HTTPCustomAuthIdentity.new(key: 'key') }) }],
         http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
-        interceptors: [proc { Hearth::InterceptorList.new }],
+        interceptors: [Hearth::InterceptorList.new],
         log_level: [:warn],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
-        plugins: [proc { Hearth::PluginList.new }],
+        plugins: [Hearth::PluginList.new],
         request_min_compression_size_bytes: [10240],
-        retry_strategy: [proc { Hearth::Retry::Standard.new }],
+        retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
         test_config: ['default'],
         validate_input: [true]

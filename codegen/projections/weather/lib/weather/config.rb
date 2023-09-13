@@ -114,16 +114,16 @@ module Weather
 
     def defaults
       {
-        auth_resolver: [proc { Auth::Resolver.new }],
-        auth_schemes: [proc { Auth::SCHEMES }],
+        auth_resolver: [Auth::Resolver.new],
+        auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
-        interceptors: [proc { Hearth::InterceptorList.new }],
+        interceptors: [Hearth::InterceptorList.new],
         log_level: [:warn],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
-        plugins: [proc { Hearth::PluginList.new }],
-        retry_strategy: [proc { Hearth::Retry::Standard.new }],
+        plugins: [Hearth::PluginList.new],
+        retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
         validate_input: [true]
       }.freeze

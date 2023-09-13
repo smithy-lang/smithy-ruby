@@ -273,9 +273,7 @@ public class ClientConfig {
          */
         public Builder defaultValue(String value) {
             validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder()
-                    .dynamicProvider("proc { " + value + " }")
-                    .build();
+            this.defaults = ConfigProviderChain.builder().dynamicProvider(value).build();
             return this;
         }
 
