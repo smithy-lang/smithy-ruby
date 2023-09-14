@@ -45,6 +45,12 @@ module Hearth
         config = config_class.new
         expect(config.simple_option).to eq('default')
       end
+
+      it 'raises on unknown options' do
+        expect do
+          config_class.new(unknown_option: 'test')
+        end.to raise_error(ArgumentError, /unknown_option/)
+      end
     end
 
     describe '#merge' do

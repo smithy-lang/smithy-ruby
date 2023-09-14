@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Config do
-    describe '#build' do
+    describe '#initialize' do
       it 'sets member values' do
         config_keys = {
           disable_host_prefix: true,
@@ -34,6 +34,11 @@ module WhiteLabel
         config = Config.new(logger: 'foo')
         expect { config.validate! }
           .to raise_error(ArgumentError, /config\[:logger\]/)
+      end
+
+      it 'raises on unknown keys' do
+        expect { Config.new(foo: 'bar') }
+          .to raise_error(ArgumentError, /unknown keywords: foo/)
       end
     end
   end

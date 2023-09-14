@@ -5,10 +5,9 @@ require_relative 'spec_helper'
 module WhiteLabel
   describe Client do
     let(:interceptor_class) do
-      Class.new(Hearth::Interceptor) do
+      Class.new do
         def initialize(name = 'NA')
           @name = name
-          super()
         end
 
         def read_before_execution(context); end

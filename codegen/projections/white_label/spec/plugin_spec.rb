@@ -6,6 +6,8 @@ module WhiteLabel
   describe Client do
     describe 'client class plugins' do
       it 'applies plugins to modify config during initialize' do
+        config = Config.new
+        expect(config.test_config).to eq('default')
         client = Client.new
         expect(client.config.test_config).to eq('client_override')
       end

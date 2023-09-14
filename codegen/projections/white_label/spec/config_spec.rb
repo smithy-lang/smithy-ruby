@@ -35,6 +35,11 @@ module WhiteLabel
         expect { config.validate! }
           .to raise_error(ArgumentError, /config\[:logger\]/)
       end
+
+      it 'raises on unknown keys' do
+        expect { Config.new(foo: 'bar') }
+          .to raise_error(ArgumentError, /unknown keywords: foo/)
+      end
     end
   end
 end

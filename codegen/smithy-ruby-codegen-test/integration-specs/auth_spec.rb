@@ -158,13 +158,6 @@ module WhiteLabel
   end
 
   describe Config do
-    it 'adds identity resolvers to config' do
-      expect(subject).to respond_to(:http_api_key_identity_resolver)
-      expect(subject).to respond_to(:http_bearer_identity_resolver)
-      expect(subject).to respond_to(:http_login_identity_resolver)
-      expect(subject).to respond_to(:http_custom_auth_identity_resolver)
-    end
-
     it 'validates identity resolvers' do
       msg = /to be in \[Hearth::IdentityResolver\], got String/
       expect do
