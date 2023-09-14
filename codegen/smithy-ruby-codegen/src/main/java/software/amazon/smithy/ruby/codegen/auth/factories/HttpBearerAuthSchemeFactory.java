@@ -30,7 +30,7 @@ public final class HttpBearerAuthSchemeFactory {
                 """;
 
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPBearer.new(token: 'stubbed bearer')";
-        String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
+        String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
         String identityType = Hearth.IDENTITIES + "::HTTPBearer";
 

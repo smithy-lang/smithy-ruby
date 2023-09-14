@@ -234,7 +234,7 @@ public class ClientConfig {
         }
 
         /**
-         * @param rubyDefaultBlock a single, dynamic default value to use.
+         * @param rubyDefaultBlock a single, dynamic default value to use. Assumes a proc with a cfg parameter.
          * @return this builder
          */
         public Builder defaultDynamicValue(String rubyDefaultBlock) {

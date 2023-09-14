@@ -102,7 +102,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 """;
 
         String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
-        String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
+        String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
         String identityType = "Auth::HTTPCustomAuthIdentity";
 

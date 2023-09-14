@@ -109,7 +109,7 @@ public class ConfigProviderChain implements ConfigDefaults {
          * @return this builder
          */
         public Builder dynamicProvider(String rubyDefaultBlock) {
-            this.providers.add(new DynamicConfigProvider(rubyDefaultBlock));
+            this.providers.add(new DynamicConfigProvider("proc { |cfg| " + rubyDefaultBlock + " }"));
             return this;
         }
 

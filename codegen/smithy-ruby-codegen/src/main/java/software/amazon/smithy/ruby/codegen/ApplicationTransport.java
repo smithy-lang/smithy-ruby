@@ -87,7 +87,7 @@ public final class ApplicationTransport {
                 .name("endpoint")
                 .type("String")
                 .documentation("Endpoint of the service")
-                .defaultDynamicValue("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }")
+                .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
                 .build();
         ClientFragment request = ClientFragment.builder()
                 .addConfig(endpoint)
@@ -104,7 +104,7 @@ public final class ApplicationTransport {
                 .type("Hearth::HTTP::Client")
                 .documentation("The HTTP Client to use for request transport.")
                 .documentationDefaultValue("Hearth::HTTP::Client.new")
-                .defaultDynamicValue("proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }")
+                .defaultDynamicValue("Hearth::HTTP::Client.new(logger: cfg[:logger])")
                 .build();
 
         ClientFragment client = ClientFragment.builder()
