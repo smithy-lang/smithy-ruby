@@ -44,7 +44,6 @@ public final class HttpBasicAuthSchemeFactory {
                                 identityType,
                                 HttpBasicAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
-                .allowOperationOverride()
                 .build();
 
         return AuthScheme.builder()

@@ -54,7 +54,7 @@ public final class AuthMiddlewareFactory {
             ClientConfig config = authScheme.getIdentityResolverConfig();
             if (config != null) {
                 identityResolversConfigSet.add(config);
-                identityResolversMap.put(authScheme.getRubyIdentityType(), config.renderGetConfigValue());
+                identityResolversMap.put(authScheme.getRubyIdentityType(), config.getValue());
             }
         });
 
@@ -69,8 +69,8 @@ public final class AuthMiddlewareFactory {
                 .renderAdd((writer, middleware, context1, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     // Static params - auth resolver, schemes, and params
-                    params.put("auth_resolver", authResolver.renderGetConfigValue());
-                    params.put("auth_schemes", authSchemes.renderGetConfigValue());
+                    params.put("auth_resolver", authResolver.getValue());
+                    params.put("auth_schemes", authSchemes.getValue());
 
                     HashMap<String, String> authParamsMap = new HashMap<>();
                     authParamsMap.put("operation_name",
@@ -128,7 +128,6 @@ public final class AuthMiddlewareFactory {
         return ClientConfig.builder()
                 .name("auth_resolver")
                 .type("Auth::Resolver")
-                .allowOperationOverride()
                 .documentation(authResolverDocumentation)
                 .defaultValue("Auth::Resolver.new")
                 .build();
@@ -146,7 +145,6 @@ public final class AuthMiddlewareFactory {
                 .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
                 .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .defaultValue("Auth::SCHEMES")
-                .allowOperationOverride()
                 .documentation(authSchemesDocumentation)
                 .build();
     }

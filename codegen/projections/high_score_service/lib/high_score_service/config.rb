@@ -9,11 +9,11 @@
 
 module HighScoreService
   # @!method initialize(*options)
-  #   @option args [Auth::Resolver] :auth_resolver
+  #   @option args [Auth::Resolver] :auth_resolver (Auth::Resolver.new)
   #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
   #     the {Auth::Params} struct. For a given operation_name, the method must return an
   #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
-  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes
+  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes (Auth::SCHEMES)
   #     An ordered list of {Hearth::AuthSchemes::Base} objects that will considered when attempting to authenticate
   #     the request. The first scheme that returns an Identity from its Hearth::IdentityResolver will be used to
   #     authenticate the request.

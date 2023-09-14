@@ -87,13 +87,12 @@ public final class ApplicationTransport {
                 .name("endpoint")
                 .type("String")
                 .documentation("Endpoint of the service")
-                .allowOperationOverride()
                 .defaultDynamicValue("proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }")
                 .build();
         ClientFragment request = ClientFragment.builder()
                 .addConfig(endpoint)
                 // TODO: Replace URI with Endpoint middleware - should be a blank request
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.renderGetConfigValue() + "))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.getValue() + "))")
                 .build();
 
         ClientFragment response = ClientFragment.builder()
@@ -105,13 +104,12 @@ public final class ApplicationTransport {
                 .type("Hearth::HTTP::Client")
                 .documentation("The HTTP Client to use for request transport.")
                 .documentationDefaultValue("Hearth::HTTP::Client.new")
-                .allowOperationOverride()
                 .defaultDynamicValue("proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }")
                 .build();
 
         ClientFragment client = ClientFragment.builder()
                 .addConfig(httpClient)
-                .render((self, ctx) -> httpClient.renderGetConfigValue())
+                .render((self, ctx) -> httpClient.getValue())
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {

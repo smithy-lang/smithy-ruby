@@ -65,11 +65,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :api_key_auth),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -83,7 +83,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::ApiKeyAuth,
         stubs: @stubs
@@ -91,7 +91,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -134,11 +134,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :basic_auth),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -152,7 +152,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::BasicAuth,
         stubs: @stubs
@@ -160,7 +160,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -203,11 +203,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :bearer_auth),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -221,7 +221,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::BearerAuth,
         stubs: @stubs
@@ -229,7 +229,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -285,11 +285,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :create_high_score),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -303,7 +303,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::UnprocessableEntityError],
         stub_data_class: Stubs::CreateHighScore,
         stubs: @stubs
@@ -311,7 +311,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -357,11 +357,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :delete_high_score),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -375,7 +375,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::DeleteHighScore,
         stubs: @stubs
@@ -383,7 +383,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -426,11 +426,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :digest_auth),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -444,7 +444,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::DigestAuth,
         stubs: @stubs
@@ -452,7 +452,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -504,11 +504,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_high_score),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -522,7 +522,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::GetHighScore,
         stubs: @stubs
@@ -530,7 +530,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -581,11 +581,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :list_high_scores),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -599,7 +599,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::ListHighScores,
         stubs: @stubs
@@ -607,7 +607,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -663,11 +663,11 @@ module HighScoreService
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :update_high_score),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -681,7 +681,7 @@ module HighScoreService
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::UnprocessableEntityError],
         stub_data_class: Stubs::UpdateHighScore,
         stubs: @stubs
@@ -689,7 +689,7 @@ module HighScoreService
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,

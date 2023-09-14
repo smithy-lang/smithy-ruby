@@ -45,7 +45,6 @@ public final class HttpApiKeyAuthSchemeFactory {
                                 identityType,
                                 HttpApiKeyAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
-                .allowOperationOverride()
                 .build();
 
         return AuthScheme.builder()

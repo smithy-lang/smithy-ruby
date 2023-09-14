@@ -34,7 +34,6 @@ public class ClientConfig {
     private final String documentationType;
     private final String rbsType;
     private final ConfigDefaults defaults;
-    private final boolean allowOperationOverride;
     private final List<ConfigConstraint> constraints;
 
     /**
@@ -53,7 +52,6 @@ public class ClientConfig {
         if (builder.documentationDefaultValue != null) {
             this.defaults.setDocumentationDefault(builder.documentationDefaultValue);
         }
-        this.allowOperationOverride = builder.allowOperationOverride;
         this.constraints = List.copyOf(builder.constraints);
     }
 
@@ -67,6 +65,13 @@ public class ClientConfig {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return The value of the config using the config's name.
+     */
+    public String getValue() {
+        return "config." + getName();
     }
 
     /**
@@ -117,24 +122,6 @@ public class ClientConfig {
     }
 
     /**
-     * If true, this config can be overridden
-     * per operation.
-     *
-     * @return allowOperationOverride
-     */
-    public boolean allowOperationOverride() {
-        return allowOperationOverride;
-    }
-
-    public String renderGetConfigValue() {
-        String getConfigValue = "config." + getName();
-        if (allowOperationOverride()) {
-            getConfigValue = "options.fetch(:" + getName() + ", config." + getName() + ")";
-        }
-        return getConfigValue;
-    }
-
-    /**
      * @param configCollection set of config to add this ClientConfig and all of its dependent config to.
      */
     public void addToConfigCollection(Set<ClientConfig> configCollection) {
@@ -173,7 +160,6 @@ public class ClientConfig {
         private String documentationType;
         private String rbsType;
         private ConfigDefaults defaults;
-        private boolean allowOperationOverride = false;
         private final List<ConfigConstraint> constraints;
 
         protected Builder() {
@@ -237,16 +223,6 @@ public class ClientConfig {
         }
 
         /**
-         * allows config value to be overridden by values passed on an operation call.
-         *
-         * @return this builder
-         */
-        public Builder allowOperationOverride() {
-            this.allowOperationOverride = true;
-            return this;
-        }
-
-        /**
          * @param value a single, static default value to use. This should only be used for primitives like
          *              Integer, Boolean or String.
          * @return this builder
@@ -273,7 +249,7 @@ public class ClientConfig {
          */
         public Builder defaultValue(String value) {
             validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder().dynamicProvider(value).build();
+            this.defaults = ConfigProviderChain.builder().staticProvider(value).build();
             return this;
         }
 

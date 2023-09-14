@@ -102,7 +102,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 """;
 
         String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
-        String defaultConfigValue = "proc { %s.new(proc { %s }) }"
+        String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
         String identityType = "Auth::HTTPCustomAuthIdentity";
 
@@ -115,7 +115,6 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                                 identityType,
                                 HttpBasicAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
-                .allowOperationOverride()
                 .build();
 
         AuthScheme authScheme = AuthScheme.builder()

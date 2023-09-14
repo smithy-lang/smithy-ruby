@@ -103,8 +103,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :all_query_string_types),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -118,7 +118,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::AllQueryStringTypes,
         stubs: @stubs
@@ -126,7 +126,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -175,8 +175,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :constant_and_variable_query_string),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -190,7 +190,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::ConstantAndVariableQueryString,
         stubs: @stubs
@@ -198,7 +198,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -247,8 +247,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :constant_query_string),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -262,7 +262,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::ConstantQueryString,
         stubs: @stubs
@@ -270,7 +270,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -326,8 +326,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :document_type),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -341,7 +341,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::DocumentType,
         stubs: @stubs
@@ -349,7 +349,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -403,8 +403,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :document_type_as_payload),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -418,7 +418,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::DocumentTypeAsPayload,
         stubs: @stubs
@@ -426,7 +426,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -469,8 +469,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :empty_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -484,7 +484,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::EmptyOperation,
         stubs: @stubs
@@ -492,7 +492,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -539,8 +539,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -554,7 +554,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointOperation,
         stubs: @stubs
@@ -562,7 +562,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -611,8 +611,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -626,7 +626,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs
@@ -634,7 +634,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -686,8 +686,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :greeting_with_errors),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -701,7 +701,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
         stub_data_class: Stubs::GreetingWithErrors,
         stubs: @stubs
@@ -709,7 +709,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -761,8 +761,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_payload_traits),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -776,7 +776,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPayloadTraits,
         stubs: @stubs
@@ -784,7 +784,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -834,8 +834,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_payload_traits_with_media_type),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -849,7 +849,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
         stubs: @stubs
@@ -857,7 +857,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -912,8 +912,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_payload_with_structure),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -927,7 +927,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPayloadWithStructure,
         stubs: @stubs
@@ -935,7 +935,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -988,8 +988,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_prefix_headers),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1003,7 +1003,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPrefixHeaders,
         stubs: @stubs
@@ -1011,7 +1011,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1057,8 +1057,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_prefix_headers_in_response),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1072,7 +1072,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpPrefixHeadersInResponse,
         stubs: @stubs
@@ -1080,7 +1080,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1126,8 +1126,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_request_with_float_labels),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1141,7 +1141,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithFloatLabels,
         stubs: @stubs
@@ -1149,7 +1149,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1195,8 +1195,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_request_with_greedy_label_in_path),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1210,7 +1210,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
         stubs: @stubs
@@ -1218,7 +1218,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1272,8 +1272,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_request_with_labels),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1287,7 +1287,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithLabels,
         stubs: @stubs
@@ -1295,7 +1295,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1348,8 +1348,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_request_with_labels_and_timestamp_format),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1363,7 +1363,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
         stubs: @stubs
@@ -1371,7 +1371,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1415,8 +1415,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_response_code),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1430,7 +1430,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpResponseCode,
         stubs: @stubs
@@ -1438,7 +1438,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1485,8 +1485,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :ignore_query_params_in_response),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1500,7 +1500,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::IgnoreQueryParamsInResponse,
         stubs: @stubs
@@ -1508,7 +1508,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1604,8 +1604,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :input_and_output_with_headers),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1619,7 +1619,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::InputAndOutputWithHeaders,
         stubs: @stubs
@@ -1627,7 +1627,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1693,8 +1693,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :json_enums),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1708,7 +1708,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::JsonEnums,
         stubs: @stubs
@@ -1716,7 +1716,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1809,8 +1809,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :json_maps),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1824,7 +1824,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::JsonMaps,
         stubs: @stubs
@@ -1832,7 +1832,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1913,8 +1913,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :json_unions),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1928,7 +1928,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::JsonUnions,
         stubs: @stubs
@@ -1936,7 +1936,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2087,8 +2087,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :kitchen_sink_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2102,7 +2102,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::ErrorWithMembers, Stubs::ErrorWithoutMembers],
         stub_data_class: Stubs::KitchenSinkOperation,
         stubs: @stubs
@@ -2110,7 +2110,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2157,8 +2157,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :media_type_header),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2172,7 +2172,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::MediaTypeHeader,
         stubs: @stubs
@@ -2180,7 +2180,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2228,8 +2228,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :nested_attributes_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2243,7 +2243,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::NestedAttributesOperation,
         stubs: @stubs
@@ -2251,7 +2251,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2306,8 +2306,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :null_and_empty_headers_client),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2321,7 +2321,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::NullAndEmptyHeadersClient,
         stubs: @stubs
@@ -2329,7 +2329,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2385,8 +2385,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :null_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2400,7 +2400,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::NullOperation,
         stubs: @stubs
@@ -2408,7 +2408,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2455,8 +2455,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :omits_null_serializes_empty_string),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2470,7 +2470,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::OmitsNullSerializesEmptyString,
         stubs: @stubs
@@ -2478,7 +2478,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2524,8 +2524,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation_with_optional_input_output),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2539,7 +2539,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::OperationWithOptionalInputOutput,
         stubs: @stubs
@@ -2547,7 +2547,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2594,8 +2594,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :query_idempotency_token_auto_fill),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2609,7 +2609,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
         stubs: @stubs
@@ -2617,7 +2617,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2667,8 +2667,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :query_params_as_string_list_map),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2682,7 +2682,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::QueryParamsAsStringListMap,
         stubs: @stubs
@@ -2690,7 +2690,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2735,8 +2735,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_operation),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2750,7 +2750,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::StreamingOperation,
         stubs: @stubs
@@ -2758,7 +2758,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2817,8 +2817,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :timestamp_format_headers),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2832,7 +2832,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::TimestampFormatHeaders,
         stubs: @stubs
@@ -2840,7 +2840,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -2890,8 +2890,8 @@ module RailsJson
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation____789_bad_name),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -2905,7 +2905,7 @@ module RailsJson
       stack.use(Middleware::RequestId)
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::Operation____789BadName,
         stubs: @stubs
@@ -2913,7 +2913,7 @@ module RailsJson
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,

@@ -9,11 +9,11 @@
 
 module WhiteLabel
   # @!method initialize(*options)
-  #   @option args [Auth::Resolver] :auth_resolver
+  #   @option args [Auth::Resolver] :auth_resolver (Auth::Resolver.new)
   #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
   #     the {Auth::Params} struct. For a given operation_name, the method must return an
   #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
-  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes
+  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes (Auth::SCHEMES)
   #     An ordered list of {Hearth::AuthSchemes::Base} objects that will considered when attempting to authenticate
   #     the request. The first scheme that returns an Identity from its Hearth::IdentityResolver will be used to
   #     authenticate the request.
@@ -166,7 +166,7 @@ module WhiteLabel
         http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
-        http_custom_auth_identity_resolver: [proc { Hearth::IdentityResolver.new(proc { Auth::HTTPCustomAuthIdentity.new(key: 'key') }) }],
+        http_custom_auth_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Auth::HTTPCustomAuthIdentity.new(key: 'key') }) : nil }],
         http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
         interceptors: [Hearth::InterceptorList.new],
         log_level: [:warn],

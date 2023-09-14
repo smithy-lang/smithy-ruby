@@ -44,7 +44,6 @@ public final class HttpDigestAuthSchemeFactory {
                                 identityType,
                                 HttpDigestAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
-                .allowOperationOverride()
                 .build();
 
         return AuthScheme.builder()

@@ -74,8 +74,8 @@ module Weather
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_city),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -88,7 +88,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::NoSuchResource],
         stub_data_class: Stubs::GetCity,
         stubs: @stubs
@@ -96,7 +96,7 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -151,8 +151,8 @@ module Weather
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_city_image),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -165,7 +165,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::NoSuchResource],
         stub_data_class: Stubs::GetCityImage,
         stubs: @stubs
@@ -173,7 +173,7 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -217,8 +217,8 @@ module Weather
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_current_time),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -231,7 +231,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::GetCurrentTime,
         stubs: @stubs
@@ -239,7 +239,7 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -300,8 +300,8 @@ module Weather
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_forecast),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -314,7 +314,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::GetForecast,
         stubs: @stubs
@@ -322,7 +322,7 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -388,8 +388,8 @@ module Weather
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :list_cities),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -402,7 +402,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::ListCities,
         stubs: @stubs
@@ -410,7 +410,7 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -461,8 +461,8 @@ module Weather
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation____789_bad_name),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -475,7 +475,7 @@ module Weather
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::NoSuchResource],
         stub_data_class: Stubs::Operation____789BadName,
         stubs: @stubs
@@ -483,7 +483,7 @@ module Weather
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,

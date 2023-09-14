@@ -84,12 +84,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :custom_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -102,7 +102,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::CustomAuth,
         stubs: @stubs
@@ -110,7 +110,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -208,12 +208,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :defaults_test, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -226,7 +226,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::DefaultsTest,
         stubs: @stubs
@@ -234,7 +234,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -284,12 +284,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_operation, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -302,7 +302,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointOperation,
         stubs: @stubs
@@ -310,7 +310,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -362,12 +362,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -380,7 +380,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs
@@ -388,7 +388,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -434,12 +434,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_api_key_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -452,7 +452,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpApiKeyAuth,
         stubs: @stubs
@@ -460,7 +460,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -506,12 +506,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_basic_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -524,7 +524,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpBasicAuth,
         stubs: @stubs
@@ -532,7 +532,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -578,12 +578,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_bearer_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -596,7 +596,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpBearerAuth,
         stubs: @stubs
@@ -604,7 +604,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -650,12 +650,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_digest_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -668,7 +668,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::HttpDigestAuth,
         stubs: @stubs
@@ -676,7 +676,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -864,12 +864,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :kitchen_sink, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -882,7 +882,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
         stub_data_class: Stubs::KitchenSink,
         stubs: @stubs
@@ -890,7 +890,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -940,12 +940,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :mixin_test, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -958,7 +958,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::MixinTest,
         stubs: @stubs
@@ -966,7 +966,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1012,12 +1012,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :no_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1030,7 +1030,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::NoAuth,
         stubs: @stubs
@@ -1038,7 +1038,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1084,12 +1084,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :optional_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1102,7 +1102,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::OptionalAuth,
         stubs: @stubs
@@ -1110,7 +1110,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1156,12 +1156,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :ordered_auth, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1174,7 +1174,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::OrderedAuth,
         stubs: @stubs
@@ -1182,7 +1182,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1233,12 +1233,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :paginators_test, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1251,7 +1251,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::PaginatorsTest,
         stubs: @stubs
@@ -1259,7 +1259,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1310,12 +1310,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :paginators_test_with_items, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1328,7 +1328,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::PaginatorsTestWithItems,
         stubs: @stubs
@@ -1336,7 +1336,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1385,12 +1385,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :relative_middleware_operation, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1403,7 +1403,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::RelativeMiddlewareOperation,
         stubs: @stubs
@@ -1411,7 +1411,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1455,8 +1455,8 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::RequestCompression,
         streaming: false,
         encodings: ['gzip'],
-        request_min_compression_size_bytes: options.fetch(:request_min_compression_size_bytes, config.request_min_compression_size_bytes),
-        disable_request_compression: options.fetch(:disable_request_compression, config.disable_request_compression)
+        request_min_compression_size_bytes: config.request_min_compression_size_bytes,
+        disable_request_compression: config.disable_request_compression
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::HTTP::Middleware::ContentMD5)
@@ -1466,12 +1466,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :request_compression_operation, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1484,7 +1484,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::RequestCompressionOperation,
         stubs: @stubs
@@ -1492,7 +1492,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1536,8 +1536,8 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::RequestCompression,
         streaming: true,
         encodings: ['gzip'],
-        request_min_compression_size_bytes: options.fetch(:request_min_compression_size_bytes, config.request_min_compression_size_bytes),
-        disable_request_compression: options.fetch(:disable_request_compression, config.disable_request_compression)
+        request_min_compression_size_bytes: config.request_min_compression_size_bytes,
+        disable_request_compression: config.disable_request_compression
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1545,12 +1545,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :request_compression_streaming_operation, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1563,7 +1563,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::RequestCompressionStreamingOperation,
         stubs: @stubs
@@ -1571,7 +1571,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1619,12 +1619,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_operation, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1637,7 +1637,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::StreamingOperation,
         stubs: @stubs
@@ -1645,7 +1645,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1693,12 +1693,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_with_length, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1711,7 +1711,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::StreamingWithLength,
         stubs: @stubs
@@ -1719,7 +1719,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1768,12 +1768,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :waiters_test, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1786,7 +1786,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::WaitersTest,
         stubs: @stubs
@@ -1794,7 +1794,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
@@ -1846,12 +1846,12 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation____paginators_test_with_bad_names, custom_param: 'custom_value'),
-        auth_resolver: options.fetch(:auth_resolver, config.auth_resolver),
-        auth_schemes: options.fetch(:auth_schemes, config.auth_schemes),
-        Hearth::Identities::HTTPLogin => options.fetch(:http_login_identity_resolver, config.http_login_identity_resolver),
-        Auth::HTTPCustomAuthIdentity => options.fetch(:http_custom_auth_identity_resolver, config.http_custom_auth_identity_resolver),
-        Hearth::Identities::HTTPBearer => options.fetch(:http_bearer_identity_resolver, config.http_bearer_identity_resolver),
-        Hearth::Identities::HTTPApiKey => options.fetch(:http_api_key_identity_resolver, config.http_api_key_identity_resolver)
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1864,7 +1864,7 @@ module WhiteLabel
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
-        client: options.fetch(:http_client, config.http_client),
+        client: config.http_client,
         stub_error_classes: [],
         stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
         stubs: @stubs
@@ -1872,7 +1872,7 @@ module WhiteLabel
       resp = stack.run(
         input: input,
         context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(options.fetch(:endpoint, config.endpoint))),
+          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
           response: Hearth::HTTP::Response.new(body: response_body),
           params: params,
           logger: config.logger,
