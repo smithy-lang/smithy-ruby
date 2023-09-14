@@ -33,14 +33,6 @@ module Hearth
 
     alias << add
 
-    # Applies all of the plugins in order to the config allowing them to make
-    # modifications.
-    #
-    # @param [Config] config Service config to be provided to each plugin
-    def apply(config)
-      @plugins.each { |p| p.call(config) }
-    end
-
     def each(&block)
       @plugins.each(&block)
     end

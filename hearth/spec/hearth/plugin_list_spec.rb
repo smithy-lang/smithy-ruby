@@ -75,15 +75,5 @@ module Hearth
         end
       end
     end
-
-    describe '#apply' do
-      let(:config) { double }
-      let(:plugin_list) { PluginList.new([plugin]) }
-
-      it 'applies the plugins' do
-        expect(plugin).to receive(:call).with(config)
-        plugin_list.apply(config)
-      end
-    end
   end
 end

@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Config do
-    describe '#build' do
+    describe '#initialize' do
       it 'sets member values' do
         config_keys = {
           disable_host_prefix: true,
