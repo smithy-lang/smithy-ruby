@@ -92,7 +92,7 @@ public final class ApplicationTransport {
         ClientFragment request = ClientFragment.builder()
                 .addConfig(endpoint)
                 // TODO: Replace URI with Endpoint middleware - should be a blank request
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.getValue() + "))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.renderGetConfigValue() + "))")
                 .build();
 
         ClientFragment response = ClientFragment.builder()
@@ -109,7 +109,7 @@ public final class ApplicationTransport {
 
         ClientFragment client = ClientFragment.builder()
                 .addConfig(httpClient)
-                .render((self, ctx) -> httpClient.getValue())
+                .render((self, ctx) -> httpClient.renderGetConfigValue())
                 .build();
 
         MiddlewareList defaultMiddleware = (transport, context) -> {

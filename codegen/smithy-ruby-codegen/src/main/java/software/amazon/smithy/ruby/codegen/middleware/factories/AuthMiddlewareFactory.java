@@ -54,7 +54,7 @@ public final class AuthMiddlewareFactory {
             ClientConfig config = authScheme.getIdentityResolverConfig();
             if (config != null) {
                 identityResolversConfigSet.add(config);
-                identityResolversMap.put(authScheme.getRubyIdentityType(), config.getValue());
+                identityResolversMap.put(authScheme.getRubyIdentityType(), config.renderGetConfigValue());
             }
         });
 
@@ -69,8 +69,8 @@ public final class AuthMiddlewareFactory {
                 .renderAdd((writer, middleware, context1, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     // Static params - auth resolver, schemes, and params
-                    params.put("auth_resolver", authResolver.getValue());
-                    params.put("auth_schemes", authSchemes.getValue());
+                    params.put("auth_resolver", authResolver.renderGetConfigValue());
+                    params.put("auth_schemes", authSchemes.renderGetConfigValue());
 
                     HashMap<String, String> authParamsMap = new HashMap<>();
                     authParamsMap.put("operation_name",

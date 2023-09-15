@@ -213,7 +213,7 @@ public final class Middleware {
 
                     config.stream()
                             .forEach((c) -> {
-                                params.put(c.getName(), c.getValue());
+                                params.put(c.getName(), c.renderGetConfigValue());
                             });
 
                     if (params.isEmpty()) {

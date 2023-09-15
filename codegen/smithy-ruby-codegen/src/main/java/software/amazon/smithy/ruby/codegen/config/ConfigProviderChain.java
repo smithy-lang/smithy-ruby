@@ -105,11 +105,14 @@ public class ConfigProviderChain implements ConfigDefaults {
         }
 
         /**
-         * @param rubyDefaultBlock a ruby code block to provide a value
+         * @param rubyProcBody The body of a ruby proc that provides a default value. The proc body is wrapped
+         *                     in a proc with a single argument, cfg, which is the config object.
+         *                     As an example, a proc body of "cfg.logger" would be equivalent to
+         *                     "proc { |cfg| cfg.logger }"
          * @return this builder
          */
-        public Builder dynamicProvider(String rubyDefaultBlock) {
-            this.providers.add(new DynamicConfigProvider("proc { |cfg| " + rubyDefaultBlock + " }"));
+        public Builder dynamicProvider(String rubyProcBody) {
+            this.providers.add(new DynamicConfigProvider("proc { |cfg| " + rubyProcBody + " }"));
             return this;
         }
 

@@ -68,9 +68,9 @@ public class ClientConfig {
     }
 
     /**
-     * @return The value of the config using the config's name.
+     * @return The config value using the config's accessor.
      */
-    public String getValue() {
+    public String renderGetConfigValue() {
         return "config." + getName();
     }
 
@@ -234,12 +234,15 @@ public class ClientConfig {
         }
 
         /**
-         * @param rubyDefaultBlock a single, dynamic default value to use. Assumes a proc with a cfg parameter.
+         * @param rubyProcBody The body of a ruby proc that provides a default value. The proc body is wrapped
+         *                     in a proc with a single argument, cfg, which is the config object.
+         *                     As an example, a proc body of "cfg.logger" would be equivalent to
+         *                     "proc { |cfg| cfg.logger }"
          * @return this builder
          */
-        public Builder defaultDynamicValue(String rubyDefaultBlock) {
+        public Builder defaultDynamicValue(String rubyProcBody) {
             validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
+            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyProcBody).build();
             return this;
         }
 
