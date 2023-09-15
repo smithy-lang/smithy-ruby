@@ -45,7 +45,6 @@ public final class RequestCompressionMiddlewareFactory {
                 .rbsType("bool")
                 .defaultPrimitiveValue("false")
                 .documentation(disableRequestCompressionDocumentation)
-                .allowOperationOverride()
                 .build();
 
         String minCompressionDocumentation = """
@@ -57,7 +56,6 @@ public final class RequestCompressionMiddlewareFactory {
                 .name("request_min_compression_size_bytes")
                 .type("Integer")
                 .documentation(minCompressionDocumentation)
-                .allowOperationOverride()
                 .defaultPrimitiveValue("10240")
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();

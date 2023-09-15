@@ -128,7 +128,6 @@ public final class AuthMiddlewareFactory {
         return ClientConfig.builder()
                 .name("auth_resolver")
                 .type("Auth::Resolver")
-                .allowOperationOverride()
                 .documentation(authResolverDocumentation)
                 .defaultValue("Auth::Resolver.new")
                 .build();
@@ -146,7 +145,6 @@ public final class AuthMiddlewareFactory {
                 .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
                 .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .defaultValue("Auth::SCHEMES")
-                .allowOperationOverride()
                 .documentation(authSchemesDocumentation)
                 .build();
     }

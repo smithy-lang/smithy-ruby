@@ -9,11 +9,11 @@
 
 module HighScoreService
   # @!method initialize(*options)
-  #   @option args [Auth::Resolver] :auth_resolver
+  #   @option args [Auth::Resolver] :auth_resolver (Auth::Resolver.new)
   #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
   #     the {Auth::Params} struct. For a given operation_name, the method must return an
   #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
-  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes
+  #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes (Auth::SCHEMES)
   #     An ordered list of {Hearth::AuthSchemes::Base} objects that will considered when attempting to authenticate
   #     the request. The first scheme that returns an Identity from its Hearth::IdentityResolver will be used to
   #     authenticate the request.
@@ -109,8 +109,7 @@ module HighScoreService
   ) do
     include Hearth::Configuration
 
-    private
-
+    # Validates the configuration.
     def validate!
       Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
@@ -129,21 +128,23 @@ module HighScoreService
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
-    def self.defaults
-      @defaults ||= {
-        auth_resolver: [proc { Auth::Resolver.new }],
-        auth_schemes: [proc { Auth::SCHEMES }],
+    private
+
+    def defaults
+      {
+        auth_resolver: [Auth::Resolver.new],
+        auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
-        interceptors: [proc { Hearth::InterceptorList.new }],
+        interceptors: [Hearth::InterceptorList.new],
         log_level: [:warn],
         logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
-        plugins: [proc { Hearth::PluginList.new }],
-        retry_strategy: [proc { Hearth::Retry::Standard.new }],
+        plugins: [Hearth::PluginList.new],
+        retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
         validate_input: [true]
       }.freeze

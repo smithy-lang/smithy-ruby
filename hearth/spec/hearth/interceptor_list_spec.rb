@@ -12,6 +12,12 @@ module Hearth
     end
 
     describe '#initialize' do
+      it 'raises when given a non enumerable' do
+        expect do
+          InterceptorList.new('bad_arg')
+        end.to raise_error(ArgumentError)
+      end
+
       it 'can be initialized with a list of Interceptor' do
         interceptors = InterceptorList.new([interceptor])
         expect(interceptors.to_a).to eq([interceptor])
@@ -48,16 +54,6 @@ module Hearth
 
       it 'returns self' do
         expect(subject.concat(other_list)).to be(subject)
-      end
-    end
-
-    describe '#dup' do
-      it 'creates a deep copy' do
-        orig = InterceptorList.new
-        copy = orig.dup
-        copy.append(interceptor)
-
-        expect(orig.to_a).to be_empty
       end
     end
   end

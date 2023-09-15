@@ -32,7 +32,7 @@ public final class HttpApiKeyAuthSchemeFactory {
                 """;
 
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPApiKey.new(key: 'stubbed api key')";
-        String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
+        String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
         String identityType = Hearth.IDENTITIES + "::HTTPApiKey";
 
@@ -45,7 +45,6 @@ public final class HttpApiKeyAuthSchemeFactory {
                                 identityType,
                                 HttpApiKeyAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
-                .allowOperationOverride()
                 .build();
 
         return AuthScheme.builder()

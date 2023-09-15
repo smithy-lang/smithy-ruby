@@ -4,8 +4,7 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   describe Client do
-    let(:config) { Config.new(stub_responses: true) }
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(stub_responses: true) }
 
     describe '#kitchen_sink' do
       it 'does a retry' do

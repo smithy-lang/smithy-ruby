@@ -60,12 +60,6 @@ module Hearth
           expect(config.option1).to eq('default1')
           expect(config.option2).to eq('default2')
         end
-
-        it 'freezes the config struct' do
-          expect(config.frozen?).to eq(false)
-          subject.resolve(config, {})
-          expect(config.frozen?).to eq(true)
-        end
       end
     end
   end

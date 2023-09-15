@@ -11,16 +11,14 @@ require 'high_score_service'
 
 module HighScoreService
   describe Client do
-    let(:config) do
-      Config.new(
+    let(:client) do
+      Client.new(
         stub_responses: true,
         validate_input: false,
         endpoint: 'http://127.0.0.1',
         retry_strategy: Hearth::Retry::Standard.new(max_attempts: 0)
       )
     end
-
-    let(:client) { Client.new(config) }
 
     describe '#api_key_auth' do
 

@@ -4,15 +4,12 @@ module Hearth
   # A module mixed into Config structs that resolves default value providers.
   module Configuration
     def initialize(**options)
-      Hearth::Validator.validate_unknown!(self, options, context: 'config')
-      Hearth::Config::Resolver.resolve(self, options, self.class.defaults)
-      validate!
+      Hearth::Config::Resolver.resolve(self, options, defaults)
+      super
     end
 
-    def dup
-      members.each_with_object(super) do |member, copy|
-        copy[member] = self[member].dup
-      end
+    def merge(configuration)
+      self.class.new(**to_h.merge(configuration.to_h))
     end
   end
 end

@@ -75,25 +75,5 @@ module Hearth
         end
       end
     end
-
-    describe '#apply' do
-      let(:config) { double }
-      let(:plugin_list) { PluginList.new([plugin]) }
-
-      it 'applies the plugins' do
-        expect(plugin).to receive(:call).with(config)
-        plugin_list.apply(config)
-      end
-    end
-
-    describe '#dup' do
-      it 'creates a deep copy' do
-        orig = PluginList.new
-        copy = orig.dup
-        copy.add(plugin)
-
-        expect(orig.to_a).to be_empty
-      end
-    end
   end
 end

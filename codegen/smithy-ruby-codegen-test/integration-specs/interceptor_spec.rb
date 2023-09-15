@@ -5,10 +5,9 @@ require_relative 'spec_helper'
 module WhiteLabel
   describe Client do
     let(:interceptor_class) do
-      Class.new(Hearth::Interceptor) do
+      Class.new do
         def initialize(name = 'NA')
           @name = name
-          super()
         end
 
         def read_before_execution(context); end
@@ -20,11 +19,10 @@ module WhiteLabel
 
     describe 'client configured interceptor' do
       it 'calls interceptor hook' do
-        config = Config.new(
+        client = Client.new(
           stub_responses: true,
           interceptors: Hearth::InterceptorList.new([interceptor])
         )
-        client = Client.new(config)
 
         expect(interceptor).to receive(hook)
           .with(instance_of(Hearth::InterceptorContext))
@@ -35,8 +33,7 @@ module WhiteLabel
 
     describe 'operation configured interceptor' do
       it 'calls interceptor hook' do
-        config = Config.new(stub_responses: true)
-        client = Client.new(config)
+        client = Client.new(stub_responses: true)
 
         expect(interceptor).to receive(hook)
           .with(instance_of(Hearth::InterceptorContext))
@@ -65,15 +62,13 @@ module WhiteLabel
         proc { |cfg| cfg.interceptors << operation_plugin_interceptor }
       end
 
-      let(:config) do
-        Config.new(
+      let(:client) do
+        Client.new(
           stub_responses: true,
           plugins: Hearth::PluginList.new([config_plugin]),
           interceptors: Hearth::InterceptorList.new([config_interceptor])
         )
       end
-
-      let(:client) { Client.new(config) }
 
       it 'applies interceptors in expected order' do
         expect(Plugins::TestPlugin::TEST_CLASS_INTERCEPTOR)

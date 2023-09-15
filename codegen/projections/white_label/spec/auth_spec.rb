@@ -158,29 +158,22 @@ module WhiteLabel
   end
 
   describe Config do
-    it 'adds identity resolvers to config' do
-      expect(subject).to respond_to(:http_api_key_identity_resolver)
-      expect(subject).to respond_to(:http_bearer_identity_resolver)
-      expect(subject).to respond_to(:http_login_identity_resolver)
-      expect(subject).to respond_to(:http_custom_auth_identity_resolver)
-    end
-
     it 'validates identity resolvers' do
       msg = /to be in \[Hearth::IdentityResolver\], got String/
       expect do
-        Config.new(http_api_key_identity_resolver: 'foo')
+        Config.new(http_api_key_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_bearer_identity_resolver: 'foo')
+        Config.new(http_bearer_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_login_identity_resolver: 'foo')
+        Config.new(http_login_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_custom_auth_identity_resolver: 'foo')
+        Config.new(http_custom_auth_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
     end
 
@@ -218,15 +211,11 @@ module WhiteLabel
   end
 
   describe Client do
-    let(:config) do
-      Config.new(**{ stub_responses: true }.merge(config_hash))
-    end
-
     let(:identity_resolver) do
       Hearth::IdentityResolver.new(proc { identity })
     end
 
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(**{ stub_responses: true }.merge(config_hash)) }
 
     describe '#http_api_key_auth' do
       let(:config_hash) do

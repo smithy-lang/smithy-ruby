@@ -6,7 +6,7 @@ module WhiteLabel
   describe Config do
     context 'disable_request_compression' do
       it 'raises error when given an invalid input' do
-        expect { Config.new(disable_request_compression: 'string') }
+        expect { Config.new(disable_request_compression: 'string').validate! }
           .to raise_error(
             ArgumentError,
             'Expected config[:disable_request_compression] ' \
@@ -17,7 +17,7 @@ module WhiteLabel
 
     context 'request_min_compression_size_bytes' do
       it 'raises error when given invalid integer' do
-        expect { Config.new(request_min_compression_size_bytes: -1) }
+        expect { Config.new(request_min_compression_size_bytes: -1).validate! }
           .to raise_error(
             ArgumentError,
             'Expected config[:request_min_compression_size_bytes] ' \
@@ -28,8 +28,7 @@ module WhiteLabel
   end
 
   describe Client do
-    let(:config) { Config.new(stub_responses: true) }
-    let(:client) { Client.new(config) }
+    let(:client) { Client.new(stub_responses: true) }
 
     context '#request_compression_operation' do
       it 'compresses the body and sets the Content-Encoding header' do

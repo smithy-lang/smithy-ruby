@@ -8,6 +8,10 @@ module Hearth
 
     # @param [Array<Interceptor>] interceptors ([])
     def initialize(interceptors = [])
+      unless interceptors.respond_to?(:each)
+        raise ArgumentError, 'Interceptors must be an enumerable'
+      end
+
       @interceptors = []
       interceptors.each { |i| append(i) }
     end
@@ -29,10 +33,6 @@ module Hearth
     def concat(other)
       other.each { |i| append(i) }
       self
-    end
-
-    def dup
-      InterceptorList.new(self)
     end
 
     def each(&block)

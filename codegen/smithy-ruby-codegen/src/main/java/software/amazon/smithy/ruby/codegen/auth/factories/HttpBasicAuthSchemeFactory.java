@@ -31,7 +31,7 @@ public final class HttpBasicAuthSchemeFactory {
 
         String defaultIdentity = Hearth.IDENTITIES
                 + "::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
-        String defaultConfigValue = "proc { |cfg| cfg[:stub_responses] ? %s.new(proc { %s }) : nil }"
+        String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
                 .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
         String identityType = Hearth.IDENTITIES + "::HTTPLogin";
 
@@ -44,7 +44,6 @@ public final class HttpBasicAuthSchemeFactory {
                                 identityType,
                                 HttpBasicAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
-                .allowOperationOverride()
                 .build();
 
         return AuthScheme.builder()

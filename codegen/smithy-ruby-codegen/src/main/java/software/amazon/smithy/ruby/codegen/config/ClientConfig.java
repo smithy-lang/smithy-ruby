@@ -34,7 +34,6 @@ public class ClientConfig {
     private final String documentationType;
     private final String rbsType;
     private final ConfigDefaults defaults;
-    private final boolean allowOperationOverride;
     private final List<ConfigConstraint> constraints;
 
     /**
@@ -53,7 +52,6 @@ public class ClientConfig {
         if (builder.documentationDefaultValue != null) {
             this.defaults.setDocumentationDefault(builder.documentationDefaultValue);
         }
-        this.allowOperationOverride = builder.allowOperationOverride;
         this.constraints = List.copyOf(builder.constraints);
     }
 
@@ -67,6 +65,13 @@ public class ClientConfig {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return The config value using the config's accessor.
+     */
+    public String renderGetConfigValue() {
+        return "config." + getName();
     }
 
     /**
@@ -117,24 +122,6 @@ public class ClientConfig {
     }
 
     /**
-     * If true, this config can be overridden
-     * per operation.
-     *
-     * @return allowOperationOverride
-     */
-    public boolean allowOperationOverride() {
-        return allowOperationOverride;
-    }
-
-    public String renderGetConfigValue() {
-        String getConfigValue = "config." + getName();
-        if (allowOperationOverride()) {
-            getConfigValue = "options.fetch(:" + getName() + ", config." + getName() + ")";
-        }
-        return getConfigValue;
-    }
-
-    /**
      * @param configCollection set of config to add this ClientConfig and all of its dependent config to.
      */
     public void addToConfigCollection(Set<ClientConfig> configCollection) {
@@ -173,7 +160,6 @@ public class ClientConfig {
         private String documentationType;
         private String rbsType;
         private ConfigDefaults defaults;
-        private boolean allowOperationOverride = false;
         private final List<ConfigConstraint> constraints;
 
         protected Builder() {
@@ -237,16 +223,6 @@ public class ClientConfig {
         }
 
         /**
-         * allows config value to be overridden by values passed on an operation call.
-         *
-         * @return this builder
-         */
-        public Builder allowOperationOverride() {
-            this.allowOperationOverride = true;
-            return this;
-        }
-
-        /**
          * @param value a single, static default value to use. This should only be used for primitives like
          *              Integer, Boolean or String.
          * @return this builder
@@ -258,12 +234,15 @@ public class ClientConfig {
         }
 
         /**
-         * @param rubyDefaultBlock a single, dynamic default value to use.
+         * @param rubyProcBody The body of a ruby proc that provides a default value. The proc body is wrapped
+         *                     in a proc with a single argument, cfg, which is the config object.
+         *                     As an example, a proc body of "cfg.logger" would be equivalent to
+         *                     "proc { |cfg| cfg.logger }"
          * @return this builder
          */
-        public Builder defaultDynamicValue(String rubyDefaultBlock) {
+        public Builder defaultDynamicValue(String rubyProcBody) {
             validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyDefaultBlock).build();
+            this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyProcBody).build();
             return this;
         }
 
@@ -273,9 +252,7 @@ public class ClientConfig {
          */
         public Builder defaultValue(String value) {
             validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder()
-                    .dynamicProvider("proc { " + value + " }")
-                    .build();
+            this.defaults = ConfigProviderChain.builder().staticProvider(value).build();
             return this;
         }
 
