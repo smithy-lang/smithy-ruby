@@ -33,8 +33,10 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
+        context.logger.debug('[Middleware::Auth] Started resolving auth')
         auth_options = @auth_resolver.resolve(@auth_params)
         context.auth = resolve_auth(auth_options)
+        context.logger.debug('[Middleware::Auth] Finished resolving auth')
         @app.call(input, context)
       end
 

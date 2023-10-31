@@ -70,19 +70,23 @@ module Hearth
       private
 
       def stub_response(input, context, output)
+        context.logger.debug('[Middleware::Send] Started stubbing response')
         stub = @stubs.next(context.operation_name)
         apply_stub(stub, input, context, output)
+        context.logger.debug('[Middleware::Send] Finished stubbing response')
         return unless context.response.body.respond_to?(:rewind)
 
         context.response.body.rewind
       end
 
       def send_request(context, output)
+        context.logger.debug('[Middleware::Send] Started sending request')
         @client.transmit(
           request: context.request,
           response: context.response,
           logger: context.logger
         )
+        context.logger.debug('[Middleware::Send] Finished sending request')
       rescue Hearth::NetworkingError => e
         output.error = e
       end

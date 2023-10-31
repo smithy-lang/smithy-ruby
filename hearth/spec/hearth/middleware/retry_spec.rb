@@ -93,7 +93,7 @@ end
 module Hearth
   module Middleware
     describe Retry do
-      let(:input) { double('Type::OperationInput') }
+      let(:input) { double('input') }
 
       let(:error) do
         Hearth::ApiError.new(
@@ -105,10 +105,12 @@ module Hearth
       let(:request) { Hearth::HTTP::Request.new }
       let(:response) { Hearth::HTTP::Response.new }
       let(:interceptors) { double('interceptors', each: []) }
+      let(:logger) { Logger.new(IO::NULL) }
       let(:context) do
         Hearth::Context.new(
           request: request,
           response: response,
+          logger: logger,
           interceptors: interceptors
         )
       end

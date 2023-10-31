@@ -33,11 +33,10 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        token = @retry_strategy.acquire_initial_retry_token(
-          context.metadata[:retry_token_scope]
-        )
-
+        token_scope = context.metadata[:retry_token_scope]
+        token = @retry_strategy.acquire_initial_retry_token(token_scope)
         output = nil
+        context.logger.debug('[Middleware::Retry] Starting retry loop')
         loop do
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::READ_BEFORE_ATTEMPT,
@@ -47,12 +46,12 @@ module Hearth
             aggregate_errors: true
           )
 
-          output =
-            if interceptor_error
-              Hearth::Output.new(error: interceptor_error)
-            else
-              @app.call(input, context)
-            end
+          if interceptor_error
+            Hearth::Output.new(error: interceptor_error)
+          else
+            context.logger.debug('[Middleware::Retry] Started sending request')
+            @app.call(input, context)
+          end => output
 
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::MODIFY_BEFORE_ATTEMPT_COMPLETION,
@@ -73,13 +72,16 @@ module Hearth
           output.error = interceptor_error if interceptor_error
 
           if (error = output.error)
+            context.logger.debug('[Middleware::Retry] Request errored')
             error_info = @error_inspector_class.new(error, context.response)
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token
 
             Kernel.sleep(token.retry_delay)
+            context.logger.debug('[Middleware::Retry] Retrying request')
           else
             @retry_strategy.record_success(token)
+            context.logger.debug('[Middleware::Retry] Finished sending request')
             break
           end
 
@@ -87,6 +89,7 @@ module Hearth
           reset_response(context, output)
           @retries += 1
         end
+        context.logger.debug('[Middleware::Retry] Finished retry loop')
         output
       end
 

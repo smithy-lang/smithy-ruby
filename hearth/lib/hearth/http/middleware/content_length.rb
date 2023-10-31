@@ -17,8 +17,16 @@ module Hearth
           request = context.request
           if request.body.respond_to?(:size) &&
              !request.headers.key?('Content-Length')
+            context.logger.debug(
+              '[HTTP::Middleware::ContentLength] ' \
+              'Started setting Content-Length'
+            )
             length = request.body.size
             request.headers['Content-Length'] = length
+            context.logger.debug(
+              '[HTTP::Middleware::ContentLength] ' \
+              'Finished setting Content-Length'
+            )
           end
 
           @app.call(input, context)

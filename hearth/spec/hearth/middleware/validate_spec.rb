@@ -5,8 +5,7 @@ module Hearth
     describe Validate do
       let(:app) { double('app') }
       let(:validator) { double('validator') }
-      let(:data) { { foo: 'bar' } }
-      let(:input) { double('Type::OperationInput') }
+      let(:input) { double('input') }
 
       subject do
         Validate.new(
@@ -17,7 +16,10 @@ module Hearth
       end
 
       describe '#call' do
-        let(:context) { {} }
+        let(:logger) { Logger.new(IO::NULL) }
+        let(:context) do
+          Hearth::Context.new(logger: logger)
+        end
 
         context 'validate_input is true' do
           let(:validate_input) { true }

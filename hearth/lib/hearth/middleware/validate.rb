@@ -21,8 +21,16 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        @validator.validate!(input, context: 'input') if @validate_input
+        validate_input(input, context)
         @app.call(input, context)
+      end
+
+      private
+
+      def validate_input(input, context)
+        context.logger.debug('[Middleware::Validate] Started validating input')
+        @validator.validate!(input, context: 'input') if @validate_input
+        context.logger.debug('[Middleware::Validate] Finished validating input')
       end
     end
   end

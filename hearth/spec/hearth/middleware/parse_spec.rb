@@ -4,6 +4,8 @@ module Hearth
   module Middleware
     describe Parse do
       let(:app) { double('app', call: output) }
+      let(:input) { double('input') }
+      let(:output) { Hearth::Output.new(metadata: metadata) }
       let(:error_parser) { double('error_parser') }
       let(:data_parser) { double('data_parser') }
 
@@ -12,19 +14,20 @@ module Hearth
       end
 
       describe '#call' do
-        let(:metadata) { { key: 'value' } }
-        let(:input) { double('input') }
-        let(:output) { Hearth::Output.new(metadata: metadata) }
         let(:request) { double('request') }
         let(:response) { double('response') }
+        let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Context.new(
             request: request,
             response: response,
+            logger: logger,
             interceptors: interceptors
           )
         end
+
+        let(:metadata) { { key: 'value' } }
 
         it 'calls the next middleware then parses an error or data' do
           expect(app).to receive(:call).with(input, context).ordered

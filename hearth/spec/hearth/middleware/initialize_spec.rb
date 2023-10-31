@@ -4,22 +4,25 @@ module Hearth
   module Middleware
     describe Initialize do
       let(:app) { double('app', call: output) }
-      let(:input) { double('Type::OperationInput') }
+      let(:input) { double('input') }
       let(:output) { Hearth::Output.new }
-      let(:request) { double('request') }
-      let(:response) { double('response') }
-      let(:interceptors) { double('interceptors', each: []) }
-      let(:context) do
-        Context.new(
-          request: request,
-          response: response,
-          interceptors: interceptors
-        )
-      end
 
       subject { Initialize.new(app) }
 
       describe '#call' do
+        let(:request) { double('request') }
+        let(:response) { double('response') }
+        let(:logger) { Logger.new(IO::NULL) }
+        let(:interceptors) { double('interceptors', each: []) }
+        let(:context) do
+          Context.new(
+            request: request,
+            response: response,
+            logger: logger,
+            interceptors: interceptors
+          )
+        end
+
         context 'no errors' do
           it 'calls all of the interceptor hooks and the app' do
             expect(Interceptors).to receive(:invoke)

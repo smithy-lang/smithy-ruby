@@ -4,6 +4,8 @@ module Hearth
   module Middleware
     describe Auth do
       let(:app) { double('app', call: output) }
+      let(:input) { double('input') }
+      let(:output) { double('output') }
       let(:auth_resolver) { double('auth_resolver') }
       let(:auth_params) { double('auth_params') }
 
@@ -83,15 +85,14 @@ module Hearth
       end
 
       describe '#call' do
-        let(:input) { double('input') }
-        let(:output) { double('output') }
         let(:request) { double('request') }
         let(:response) { double('response') }
-
+        let(:logger) { Logger.new(IO::NULL) }
         let(:context) do
           Context.new(
             request: request,
-            response: response
+            response: response,
+            logger: logger
           )
         end
 

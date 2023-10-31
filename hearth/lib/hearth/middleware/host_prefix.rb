@@ -21,14 +21,18 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        unless @disable_host_prefix
-          prefix = apply_labels(@host_prefix, input)
-          context.request.prefix_host(prefix)
-        end
+        prefix_host(input, context) unless @disable_host_prefix
         @app.call(input, context)
       end
 
       private
+
+      def prefix_host(input, context)
+        context.logger.debug('[Middleware::HostPrefix] Started prefixing host')
+        prefix = apply_labels(@host_prefix, input)
+        context.request.prefix_host(prefix)
+        context.logger.debug('[Middleware::HostPrefix] Finished prefixing host')
+      end
 
       def apply_labels(host_prefix, input)
         host_prefix.gsub(/\{.+?\}/) do |host_label|

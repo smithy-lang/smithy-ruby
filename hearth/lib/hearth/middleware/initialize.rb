@@ -27,6 +27,7 @@ module Hearth
           if interceptor_error
             Hearth::Output.new(error: interceptor_error)
           else
+            context.logger.debug('[Middleware::Initialize] Started request')
             @app.call(input, context)
           end
 
@@ -38,6 +39,8 @@ module Hearth
           aggregate_errors: false
         )
         output.error = interceptor_error if interceptor_error
+
+        context.logger.debug('[Middleware::Initialize] Finished request')
 
         interceptor_error = Interceptors.invoke(
           hook: Interceptor::READ_AFTER_EXECUTION,
