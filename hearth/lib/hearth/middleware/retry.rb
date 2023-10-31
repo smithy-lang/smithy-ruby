@@ -46,12 +46,13 @@ module Hearth
             aggregate_errors: true
           )
 
-          if interceptor_error
-            Hearth::Output.new(error: interceptor_error)
-          else
-            context.logger.debug('[Middleware::Retry] Started sending request')
-            @app.call(input, context)
-          end => output
+          output =
+            if interceptor_error
+              Hearth::Output.new(error: interceptor_error)
+            else
+              context.logger.debug('[Middleware::Retry] Trying request')
+              @app.call(input, context)
+            end
 
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::MODIFY_BEFORE_ATTEMPT_COMPLETION,
@@ -77,8 +78,8 @@ module Hearth
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token
 
+            context.logger.debug('[Middleware::Retry] Sleeping before retry')
             Kernel.sleep(token.retry_delay)
-            context.logger.debug('[Middleware::Retry] Retrying request')
           else
             @retry_strategy.record_success(token)
             context.logger.debug('[Middleware::Retry] Finished sending request')
