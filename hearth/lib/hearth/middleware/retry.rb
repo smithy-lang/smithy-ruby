@@ -73,12 +73,16 @@ module Hearth
           output.error = interceptor_error if interceptor_error
 
           if (error = output.error)
-            context.logger.debug('[Middleware::Retry] Request errored')
+            context.logger.debug(
+              "[Middleware::Retry] Request errored: #{error.class}"
+            )
             error_info = @error_inspector_class.new(error, context.response)
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token
 
-            context.logger.debug('[Middleware::Retry] Sleeping before retry')
+            context.logger.debug(
+              "[Middleware::Retry] Sleeping #{token.retry_delay} before retry"
+            )
             Kernel.sleep(token.retry_delay)
           else
             @retry_strategy.record_success(token)
