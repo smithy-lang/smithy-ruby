@@ -5,25 +5,25 @@ module Hearth
     module Middleware
       describe ContentLength do
         let(:app) { double('app', call: output) }
+        let(:input) { double('input') }
+        let(:output) { double('output') }
 
         subject { ContentLength.new(app) }
 
         describe '#call' do
-          let(:input) { double('input') }
-          let(:output) { double('output') }
-
           let(:request) do
             Request.new(
               http_method: 'GET',
               body: body
             )
           end
-
           let(:response) { double('response') }
+          let(:logger) { Logger.new(IO::NULL) }
           let(:context) do
             Context.new(
               request: request,
-              response: response
+              response: response,
+              logger: logger
             )
           end
 

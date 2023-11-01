@@ -5,6 +5,8 @@ module Hearth
     module Middleware
       describe RequestCompression do
         let(:app) { double('app', call: output) }
+        let(:input) { double('input') }
+        let(:output) { double('output') }
         let(:disable_request_compression) { false }
         let(:request_min_compression_size_bytes) { 10_240 } # default min
         let(:encodings) { ['gzip'] } # currently supported
@@ -27,22 +29,20 @@ module Hearth
         end
 
         describe '#call' do
-          let(:input) { double('input') }
-          let(:output) { double('output') }
           let(:body) { 'a' * 10_241 }
-
           let(:request) do
             Request.new(
               http_method: 'PUT',
               body: body
             )
           end
-
           let(:response) { double('response') }
+          let(:logger) { Logger.new(IO::NULL) }
           let(:context) do
             Context.new(
               request: request,
-              response: response
+              response: response,
+              logger: logger
             )
           end
 

@@ -36,7 +36,7 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        @builder.build(context.request, input: input)
+        build(input, context)
 
         interceptor_error = Interceptors.invoke(
           hook: Interceptor::READ_AFTER_SERIALIZATION,
@@ -48,6 +48,14 @@ module Hearth
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
         @app.call(input, context)
+      end
+
+      private
+
+      def build(input, context)
+        context.logger.debug('[Middleware::Build] Started building request')
+        @builder.build(context.request, input: input)
+        context.logger.debug('[Middleware::Build] Finished building request')
       end
     end
   end

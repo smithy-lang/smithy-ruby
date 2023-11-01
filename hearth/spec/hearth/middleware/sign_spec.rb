@@ -4,19 +4,21 @@ module Hearth
   module Middleware
     describe Build do
       let(:app) { double('app', call: output) }
+      let(:input) { double('input') }
+      let(:output) { Hearth::Output.new }
 
       subject { Sign.new(app) }
 
       describe '#call' do
-        let(:input) { double('input') }
-        let(:output) { Hearth::Output.new }
         let(:request) { double('request') }
         let(:response) { double('response') }
+        let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Context.new(
             request: request,
             response: response,
+            logger: logger,
             interceptors: interceptors
           )
         end

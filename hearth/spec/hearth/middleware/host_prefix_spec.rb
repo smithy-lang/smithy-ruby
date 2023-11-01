@@ -4,6 +4,9 @@ module Hearth
   module Middleware
     describe HostPrefix do
       let(:app) { double('app', call: output) }
+      let(:struct) { Struct.new(:foo, keyword_init: true) }
+      let(:input) { struct.new }
+      let(:output) { double('output') }
       let(:host_prefix) { 'foo.' }
 
       subject do
@@ -15,17 +18,15 @@ module Hearth
       end
 
       describe '#call' do
-        let(:struct) { Struct.new(:foo, keyword_init: true) }
-        let(:input) { struct.new }
-
-        let(:output) { double('output') }
         let(:uri) { URI('https://example.com') }
         let(:request) { Hearth::HTTP::Request.new(uri: uri) }
         let(:response) { double('response') }
+        let(:logger) { Logger.new(IO::NULL) }
         let(:context) do
           Context.new(
             request: request,
-            response: response
+            response: response,
+            logger: logger
           )
         end
 

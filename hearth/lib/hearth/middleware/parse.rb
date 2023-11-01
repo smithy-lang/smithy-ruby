@@ -66,11 +66,15 @@ module Hearth
       private
 
       def parse_error(context, output)
+        context.logger.debug('[Middleware::Parse] Started parsing error')
         output.error = @error_parser.parse(context.response, output.metadata)
+        context.logger.debug('[Middleware::Parse] Finished parsing error')
       end
 
       def parse_data(context, output)
+        context.logger.debug('[Middleware::Parse] Started parsing data')
         output.data = @data_parser.parse(context.response)
+        context.logger.debug('[Middleware::Parse] Finished parsing data')
       end
     end
   end

@@ -50,13 +50,14 @@ module Hearth
       private
 
       def sign_request(context)
+        context.logger.debug('[Middleware::Sign] Started signing request')
         auth = context.auth
-
         auth.signer.sign(
           request: context.request,
           identity: auth.identity,
           properties: auth.signer_properties
         )
+        context.logger.debug('[Middleware::Sign] Finished signing request')
       end
     end
   end

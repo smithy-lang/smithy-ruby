@@ -35,10 +35,11 @@ module Hearth
 
     describe Send do
       let(:app) { double('app') }
+      let(:input) { double('input') }
+      let(:output) { Hearth::Output.new }
       let(:client) { double('client') }
       let(:stub_responses) { false }
       let(:stubs) { Hearth::Stubs.new }
-      let(:logger) { double('Logger') }
 
       subject do
         Send.new(
@@ -52,12 +53,11 @@ module Hearth
       end
 
       describe '#call' do
-        let(:operation) { :operation }
-        let(:input) { double('Type::OperationInput') }
-        let(:output) { Hearth::Output.new }
         let(:request) { double('request') }
         let(:body) { StringIO.new }
         let(:response) { double('response', body: body) }
+        let(:operation) { :operation }
+        let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
         let(:context) do
           Hearth::Context.new(

@@ -10,10 +10,17 @@ module Hearth
         SUPPORTED_ENCODINGS = %w[gzip].freeze
         CHUNK_SIZE = 1 * 1024 * 1024 # one MB
 
-        def initialize(app,
-                       disable_request_compression:,
-                       request_min_compression_size_bytes:,
-                       encodings:,
+        # @param [Class] app The next middleware in the stack.
+        # @param [Boolean] disable_request_compression If true, the request
+        #  body is not compressed.
+        # @param [Integer] request_min_compression_size_bytes The minimum size
+        #  of the request body to be compressed.
+        # @param [Array<String>] encodings The encodings to be used for
+        #  compression.
+        # @param [Boolean] streaming If true, the request body is compressed
+        #  in chunks.
+        def initialize(app, disable_request_compression:,
+                       request_min_compression_size_bytes:, encodings:,
                        streaming:)
           @app = app
           @disable_request_compression = disable_request_compression
@@ -27,23 +34,33 @@ module Hearth
         # @param context
         # @return [Output]
         def call(input, context)
-          request = context.request
-          unless @disable_request_compression
-            selected_encoding = @encodings.find do |encoding|
-              SUPPORTED_ENCODINGS.include?(encoding)
-            end
-            if selected_encoding
-              if @streaming
-                process_streaming_compression(selected_encoding, request)
-              elsif request.body.size >= @request_min_compression_size_bytes
-                process_compression(selected_encoding, request)
-              end
-            end
-          end
+          compress_request(context) unless @disable_request_compression
           @app.call(input, context)
         end
 
         private
+
+        def compress_request(context)
+          selected_encoding = @encodings.find do |encoding|
+            SUPPORTED_ENCODINGS.include?(encoding)
+          end
+          return unless selected_encoding
+
+          context.logger.debug(
+            '[HTTP::Middleware::RequestCompression] ' \
+            'Started compressing request'
+          )
+          request = context.request
+          if @streaming
+            compress_streaming_body(selected_encoding, request)
+          elsif request.body.size >= @request_min_compression_size_bytes
+            compress_body(selected_encoding, request)
+          end
+          context.logger.debug(
+            '[HTTP::Middleware::RequestCompression] ' \
+            'Finished compressing request'
+          )
+        end
 
         def update_content_encoding(encoding, request)
           headers = request.headers
@@ -54,7 +71,7 @@ module Hearth
           end
         end
 
-        def process_compression(encoding, request)
+        def compress_body(encoding, request)
           case encoding
           when 'gzip'
             gzip_compress(request)
@@ -85,7 +102,7 @@ module Hearth
           end
         end
 
-        def process_streaming_compression(encoding, request)
+        def compress_streaming_body(encoding, request)
           case encoding
           when 'gzip'
             request.body = GzipIO.new(request.body)
