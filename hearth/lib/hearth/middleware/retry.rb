@@ -74,6 +74,7 @@ module Hearth
           output.error = interceptor_error if interceptor_error
 
           if (error = output.error)
+            log_debug(context, "Request failed with error: #{error}")
             error_info = @error_inspector_class.new(error, context.response)
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token

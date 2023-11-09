@@ -9,7 +9,6 @@ module Hearth
   class Context
     def initialize(options = {})
       @invocation_id = SecureRandom.uuid
-      @client_class = options[:client_class]
       @operation_name = options[:operation_name]
       @request = options[:request]
       @response = options[:response]
@@ -21,7 +20,7 @@ module Hearth
     # @return [String] The invocation ID for the request.
     attr_reader :invocation_id
 
-    # @return [Symbol] Name of the API operation called.
+    # @return [Symbol] The name of the API operation called.
     attr_reader :operation_name
 
     # @return [Hearth::HTTP::Request]

@@ -89,6 +89,12 @@ module Hearth
         end
       end
 
+      describe '#inspect' do
+        it 'removes @entries' do
+          expect(fields.inspect).not_to include('@entries')
+        end
+      end
+
       describe Fields::Proxy do
         let(:proxy) { Fields::Proxy.new(fields, :header) }
 
@@ -171,8 +177,8 @@ module Hearth
         end
 
         describe '#inspect' do
-          it 'is just the class name' do
-            expect(proxy.inspect).to eq('#<Hearth::HTTP::Fields::Proxy>')
+          it 'is to_h' do
+            expect(proxy.inspect).to eq(proxy.to_h)
           end
         end
       end
