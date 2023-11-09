@@ -26,8 +26,8 @@ module WhiteLabel
       it 'uses defaults' do
         config = Config.new
         expect(config.logger).to be_a(Logger)
-        expect(config.interceptors).to be_a(InterceptorList)
-        expect(config.plugins).to be_a(PluginList)
+        expect(config.interceptors).to be_a(Hearth::InterceptorList)
+        expect(config.plugins).to be_a(Hearth::PluginList)
         expect(config.request_min_compression_size_bytes).to be_a(Integer)
       end
 

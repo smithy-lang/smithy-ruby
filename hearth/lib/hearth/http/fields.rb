@@ -107,6 +107,7 @@ module Hearth
         end
         alias each_pair each
 
+        # @api private
         def inspect
           to_h
         end

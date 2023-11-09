@@ -37,8 +37,6 @@ module Hearth
         def each: () { (Hash[String, String]) -> void } -> void
 
         alias each_pair each
-
-        def inspect: () -> String
       end
     end
   end
