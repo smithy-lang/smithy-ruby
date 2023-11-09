@@ -73,22 +73,22 @@ module Hearth
 
       def stub_response(input, context, output)
         stub = @stubs.next(context.operation_name)
-        log_debug(context) { "Stubbing response with stub: #{stub}" }
+        log_debug(context, "Stubbing response with stub: #{stub}")
         apply_stub(stub, input, context, output)
-        log_debug(context) { "Stubbed response: #{context.response.inspect}" }
+        log_debug(context, "Stubbed response: #{context.response.inspect}")
         return unless context.response.body.respond_to?(:rewind)
 
         context.response.body.rewind
       end
 
       def send_request(context, output)
-        log_debug(context) { "Sending request: #{context.request.inspect}" }
+        log_debug(context, "Sending request: #{context.request.inspect}")
         @client.transmit(
           request: context.request,
           response: context.response,
           logger: context.logger
         )
-        log_debug(context) { "Received response: #{context.response.inspect}" }
+        log_debug(context, "Received response: #{context.response.inspect}")
       rescue Hearth::NetworkingError => e
         output.error = e
       end

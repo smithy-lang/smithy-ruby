@@ -21,7 +21,7 @@ module Hearth
              request.body.respond_to?(:size)
             length = request.body.size
             request.headers['Content-Length'] = length
-            log_debug(context) { "Set Content-Length to #{length}" }
+            log_debug(context, "Set Content-Length to #{length}")
           end
 
           @app.call(input, context)

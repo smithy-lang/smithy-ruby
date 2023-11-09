@@ -69,12 +69,12 @@ module Hearth
 
       def parse_error(context, output)
         output.error = @error_parser.parse(context.response, output.metadata)
-        log_debug(context) { "Parsed error: #{output.error}" } if output.error
+        log_debug(context, "Parsed error: #{output.error}") if output.error
       end
 
       def parse_data(context, output)
         output.data = @data_parser.parse(context.response)
-        log_debug(context) { "Parsed data: #{output.data}" } if output.data
+        log_debug(context, "Parsed data: #{output.data}") if output.data
       end
     end
   end

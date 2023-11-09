@@ -30,9 +30,9 @@ module Hearth
       private
 
       def validate_input(input, context)
-        log_debug(context) { "Validating input with: #{input}" }
+        log_debug(context, "Validating input with: #{input}")
         @validator.validate!(input, context: 'input')
-        log_debug(context) { 'Validated input' }
+        log_debug(context, 'Validated input')
       end
     end
   end

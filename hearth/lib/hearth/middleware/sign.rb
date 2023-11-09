@@ -52,13 +52,13 @@ module Hearth
       private
 
       def sign_request(context)
-        log_debug(context) { "Signing request with: #{context.auth.signer}" }
+        log_debug(context, "Signing request with: #{context.auth.signer}")
         context.auth.signer.sign(
           request: context.request,
           identity: context.auth.identity,
           properties: context.auth.signer_properties
         )
-        log_debug(context) { "Signed request: #{context.request.inspect}" }
+        log_debug(context, "Signed request: #{context.request.inspect}")
       end
     end
   end

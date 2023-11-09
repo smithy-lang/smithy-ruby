@@ -37,7 +37,7 @@ module Hearth
 
         output = nil
         token = @retry_strategy.acquire_initial_retry_token(nil)
-        log_debug(context) { "Starting retry loop with token: #{token}" }
+        log_debug(context, "Starting retry loop with token: #{token}")
         loop do
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::READ_BEFORE_ATTEMPT,
@@ -51,7 +51,7 @@ module Hearth
             if interceptor_error
               Hearth::Output.new(error: interceptor_error)
             else
-              log_debug(context) { 'Attempting request in retry loop' }
+              log_debug(context, 'Attempting request in retry loop')
               @app.call(input, context)
             end
 
@@ -74,17 +74,17 @@ module Hearth
           output.error = interceptor_error if interceptor_error
 
           if (error = output.error)
-            log_debug(context) { "Request failed with error: #{error}" }
+            log_debug(context, "Request failed with error: #{error}")
             error_info = @error_inspector_class.new(error, context.response)
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token
 
-            log_debug(context) { "Retry token refreshed: #{token}" }
-            log_debug(context) { "Sleeping for #{token.retry_delay} seconds" }
+            log_debug(context, "Retry token refreshed: #{token}")
+            log_debug(context, "Sleeping for #{token.retry_delay} seconds")
             Kernel.sleep(token.retry_delay)
           else
             @retry_strategy.record_success(token)
-            log_debug(context) { 'Request succeeded' }
+            log_debug(context, 'Request succeeded')
             break
           end
 
@@ -92,7 +92,7 @@ module Hearth
           reset_response(context, output)
           @retries += 1
         end
-        log_debug(context) { 'Finished retry loop' }
+        log_debug(context, 'Finished retry loop')
         output
       end
 

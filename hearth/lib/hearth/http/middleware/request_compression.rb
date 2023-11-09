@@ -48,14 +48,14 @@ module Hearth
           end
           return unless selected_encoding
 
-          log_debug(context) { "Compressing request with #{selected_encoding}" }
+          log_debug(context, "Compressing request with: #{selected_encoding}")
           request = context.request
           if @streaming
             compress_streaming_body(selected_encoding, request)
-            log_debug(context) { 'Compressed request body in chunks' }
+            log_debug(context, 'Compressed request body in chunks')
           elsif request.body.size >= @request_min_compression_size_bytes
             compress_body(selected_encoding, request)
-            log_debug(context) { 'Compressed request body' }
+            log_debug(context, 'Compressed request body')
           end
         end
 

@@ -35,11 +35,11 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        log_debug(context) { 'Resolving auth' }
+        log_debug(context, 'Resolving auth')
         auth_options = @auth_resolver.resolve(@auth_params)
-        log_debug(context) { "Resolved auth options: #{auth_options}" }
+        log_debug(context, "Resolved auth options: #{auth_options}")
         context.auth = resolve_auth(auth_options)
-        log_debug(context) { "Resolved auth: #{context.auth}" }
+        log_debug(context, "Resolved auth: #{context.auth}")
         @app.call(input, context)
       end
 
