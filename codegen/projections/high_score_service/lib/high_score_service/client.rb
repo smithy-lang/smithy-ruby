@@ -88,19 +88,21 @@ module HighScoreService
         stub_data_class: Stubs::ApiKeyAuth,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :api_key_auth,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :api_key_auth,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#api_key_auth] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#api_key_auth] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#api_key_auth] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -157,19 +159,21 @@ module HighScoreService
         stub_data_class: Stubs::BasicAuth,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :basic_auth,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :basic_auth,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#basic_auth] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#basic_auth] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#basic_auth] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -226,19 +230,21 @@ module HighScoreService
         stub_data_class: Stubs::BearerAuth,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :bearer_auth,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :bearer_auth,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#bearer_auth] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#bearer_auth] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#bearer_auth] #{output.data}")
+      output
     end
 
     # Create a new high score
@@ -308,19 +314,21 @@ module HighScoreService
         stub_data_class: Stubs::CreateHighScore,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :create_high_score,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :create_high_score,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#create_high_score] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#create_high_score] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#create_high_score] #{output.data}")
+      output
     end
 
     # Delete a high score
@@ -380,19 +388,21 @@ module HighScoreService
         stub_data_class: Stubs::DeleteHighScore,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :delete_high_score,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :delete_high_score,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#delete_high_score] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#delete_high_score] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#delete_high_score] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -449,19 +459,21 @@ module HighScoreService
         stub_data_class: Stubs::DigestAuth,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :digest_auth,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :digest_auth,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#digest_auth] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#digest_auth] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#digest_auth] #{output.data}")
+      output
     end
 
     # Get a high score
@@ -527,19 +539,21 @@ module HighScoreService
         stub_data_class: Stubs::GetHighScore,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :get_high_score,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :get_high_score,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_high_score] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#get_high_score] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_high_score] #{output.data}")
+      output
     end
 
     # List all high scores
@@ -604,19 +618,21 @@ module HighScoreService
         stub_data_class: Stubs::ListHighScores,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :list_high_scores,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :list_high_scores,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#list_high_scores] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#list_high_scores] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#list_high_scores] #{output.data}")
+      output
     end
 
     # Update a high score
@@ -686,19 +702,21 @@ module HighScoreService
         stub_data_class: Stubs::UpdateHighScore,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :update_high_score,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :update_high_score,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#update_high_score] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#update_high_score] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#update_high_score] #{output.data}")
+      output
     end
 
     private

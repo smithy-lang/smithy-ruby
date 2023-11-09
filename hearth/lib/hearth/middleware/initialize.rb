@@ -28,7 +28,7 @@ module Hearth
           if interceptor_error
             Hearth::Output.new(error: interceptor_error)
           else
-            log_debug(context, 'Initializing request')
+            log_debug(context, "Initializing request with #{input}")
             @app.call(input, context)
           end
         log_debug(context, 'Finished request')

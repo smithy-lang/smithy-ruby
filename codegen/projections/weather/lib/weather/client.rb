@@ -93,19 +93,21 @@ module Weather
         stub_data_class: Stubs::GetCity,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :get_city,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :get_city,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_city] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#get_city] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_city] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -170,19 +172,21 @@ module Weather
         stub_data_class: Stubs::GetCityImage,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :get_city_image,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :get_city_image,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_city_image] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#get_city_image] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_city_image] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -236,19 +240,21 @@ module Weather
         stub_data_class: Stubs::GetCurrentTime,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :get_current_time,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :get_current_time,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_current_time] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#get_current_time] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_current_time] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -319,19 +325,21 @@ module Weather
         stub_data_class: Stubs::GetForecast,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :get_forecast,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :get_forecast,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_forecast] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#get_forecast] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_forecast] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -407,19 +415,21 @@ module Weather
         stub_data_class: Stubs::ListCities,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :list_cities,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :list_cities,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#list_cities] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#list_cities] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#list_cities] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -480,19 +490,21 @@ module Weather
         stub_data_class: Stubs::Operation____789BadName,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :operation____789_bad_name,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :operation____789_bad_name,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] #{output.data}")
+      output
     end
 
     private
