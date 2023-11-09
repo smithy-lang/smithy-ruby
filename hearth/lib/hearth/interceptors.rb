@@ -24,7 +24,7 @@ module Hearth
         i.send(hook, i_ctx)
         log_debug(context, i, "Finished #{hook}")
       rescue StandardError => e
-        log_debug(context, i, "Error in #{hook}: #{e.class} (#{e})")
+        log_debug(context, i, "Error in #{hook}: #{e} (#{e.class})")
         log_last_interceptor_error(last_error, i, context)
         last_error = e
         break unless aggregate_errors
@@ -50,7 +50,7 @@ module Hearth
       def log_last_interceptor_error(last_error, interceptor, context)
         return unless last_error
 
-        message = "Dropping error: #{last_error.class} (#{last_error})"
+        message = "Dropping error: #{last_error} (#{last_error.class})"
         context.logger.error(
           "[#{context.invocation_id}] [#{interceptor.class}] #{message}"
         )
@@ -60,7 +60,7 @@ module Hearth
         return unless last_error && output
         return unless output.error
 
-        message = "Dropping error: #{output.error.class} (#{output.error})"
+        message = "Dropping error: #{output.error} (#{output.error.class})"
         context.logger.error(
           "[#{context.invocation_id}] [Interceptors] #{message}"
         )
