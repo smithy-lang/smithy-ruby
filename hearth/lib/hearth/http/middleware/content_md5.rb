@@ -20,7 +20,7 @@ module Hearth
           unless request.headers.key?('Content-MD5')
             md5 = Hearth::Checksums.md5(request.body)
             request.headers['Content-MD5'] = md5
-            log_debug(context, "Set Content-MD5 to #{md5}")
+            log_debug(context) { "Set Content-MD5 to #{md5}" }
           end
 
           @app.call(input, context)

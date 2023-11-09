@@ -30,10 +30,10 @@ module Hearth
       private
 
       def prefix_host(input, context)
-        log_debug(context, "Prefixing host with #{@host_prefix}")
+        log_debug(context) { "Prefixing host with #{@host_prefix}" }
         prefix = apply_labels(@host_prefix, input)
         context.request.prefix_host(prefix)
-        log_debug(context, "Prefixed host: #{context.request.uri.host}")
+        log_debug(context) { "Prefixed host: #{context.request.uri.host}" }
       end
 
       def apply_labels(host_prefix, input)

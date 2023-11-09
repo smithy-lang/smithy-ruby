@@ -5,12 +5,14 @@ module Hearth
   module Middleware
     # Helper methods for logging to middleware.
     module Logging
-      # Logs a debug message to the logger on context. The message is prefixed
-      # with the invocation id and the class name.
-      def log_debug(context, message)
-        context.logger.debug(
-          "[#{context.invocation_id}] [#{self.class}] #{message}"
-        )
+      # Logs a debug message to the logger on context.
+      # The message is prefixed with the invocation id and the class name.
+      # @param [Hearth::Context] context
+      # @param [Block] block
+      def log_debug(context, &block)
+        context.logger.debug do
+          "[#{context.invocation_id}] [#{self.class}] #{block.call}"
+        end
       end
     end
   end

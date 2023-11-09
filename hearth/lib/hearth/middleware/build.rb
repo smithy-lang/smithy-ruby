@@ -38,9 +38,9 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        log_debug(context, "Building request with: #{input}")
+        log_debug(context) { "Building request with: #{input}" }
         @builder.build(context.request, input: input)
-        log_debug(context, "Built request: #{context.request.inspect}")
+        log_debug(context) { "Built request: #{context.request.inspect}" }
 
         interceptor_error = Interceptors.invoke(
           hook: Interceptor::READ_AFTER_SERIALIZATION,
