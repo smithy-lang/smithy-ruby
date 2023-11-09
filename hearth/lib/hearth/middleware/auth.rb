@@ -5,6 +5,8 @@ module Hearth
     # A middleware that resolves identities for signing requests.
     # @api private
     class Auth
+      include Middleware::Logging
+
       # @param [Class] app The next middleware in the stack.
       # @param [#resolve(auth_params)] auth_resolver A class that responds to a
       #  `resolve(auth_params)` method where `auth_params` is a struct with an
@@ -33,10 +35,11 @@ module Hearth
       # @param context
       # @return [Output]
       def call(input, context)
-        context.logger.debug('[Middleware::Auth] Started resolving auth')
+        log_debug(context, 'Resolving auth')
         auth_options = @auth_resolver.resolve(@auth_params)
+        log_debug(context, "Resolved auth options: #{auth_options}")
         context.auth = resolve_auth(auth_options)
-        context.logger.debug('[Middleware::Auth] Finished resolving auth')
+        log_debug(context, "Resolved auth: #{context.auth}")
         @app.call(input, context)
       end
 

@@ -5,6 +5,8 @@ module Hearth
     # A middleware that signs requests using the resolved identity.
     # @api private
     class Sign
+      include Middleware::Logging
+
       # @param [Class] app The next middleware in the stack.
       def initialize(app)
         @app = app
@@ -50,14 +52,13 @@ module Hearth
       private
 
       def sign_request(context)
-        context.logger.debug('[Middleware::Sign] Started signing request')
-        auth = context.auth
-        auth.signer.sign(
+        log_debug(context, "Signing request with: #{context.auth.signer}")
+        context.auth.signer.sign(
           request: context.request,
-          identity: auth.identity,
-          properties: auth.signer_properties
+          identity: context.auth.identity,
+          properties: context.auth.signer_properties
         )
-        context.logger.debug('[Middleware::Sign] Finished signing request')
+        log_debug(context, "Signed request: #{context.request.inspect}")
       end
     end
   end

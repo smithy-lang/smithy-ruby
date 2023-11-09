@@ -37,9 +37,7 @@ module HighScoreService
   #     an interceptor to read the input, transport request, transport response or
   #     output messages. Read/write hooks allow an interceptor to modify one of these
   #     messages.
-  #   @option args [Symbol] :log_level (:warn)
-  #     The default log level to use with the Logger.
-  #   @option args [Logger] :logger (Logger.new($stdout, level: cfg.log_level))
+  #   @option args [Logger] :logger (Logger.new(IO::NULL))
   #     The Logger instance to use for logging.
   #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
   #     A list of Plugins to apply to the client. Plugins are callables that
@@ -77,8 +75,6 @@ module HighScoreService
   #   @return [Hearth::IdentityResolver]
   # @!attribute interceptors
   #   @return [Hearth::InterceptorList]
-  # @!attribute log_level
-  #   @return [Symbol]
   # @!attribute logger
   #   @return [Logger]
   # @!attribute plugins
@@ -99,7 +95,6 @@ module HighScoreService
     :http_client,
     :http_login_identity_resolver,
     :interceptors,
-    :log_level,
     :logger,
     :plugins,
     :retry_strategy,
@@ -120,7 +115,6 @@ module HighScoreService
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
       Hearth::Validator.validate_types!(http_login_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_login_identity_resolver]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
-      Hearth::Validator.validate_types!(log_level, Symbol, context: 'config[:log_level]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
@@ -141,8 +135,7 @@ module HighScoreService
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         http_login_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
         interceptors: [Hearth::InterceptorList.new],
-        log_level: [:warn],
-        logger: [proc { |cfg| Logger.new($stdout, level: cfg[:log_level]) }],
+        logger: [Logger.new(IO::NULL)],
         plugins: [Hearth::PluginList.new],
         retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],

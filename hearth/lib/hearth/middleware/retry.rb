@@ -5,6 +5,8 @@ module Hearth
     # A middleware that retries the request using a retry strategy.
     # @api private
     class Retry
+      include Middleware::Logging
+
       # @param [Class] app The next middleware in the stack.
       # @param [Strategy] retry_strategy (Standard) The retry strategy
       #   to use. Hearth has two built in classes, Standard and Adaptive.
@@ -33,10 +35,9 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        token_scope = context.metadata[:retry_token_scope]
-        token = @retry_strategy.acquire_initial_retry_token(token_scope)
         output = nil
-        context.logger.debug('[Middleware::Retry] Starting retry loop')
+        token = @retry_strategy.acquire_initial_retry_token(nil)
+        log_debug(context, "Starting retry loop with token: #{token}")
         loop do
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::READ_BEFORE_ATTEMPT,
@@ -50,7 +51,7 @@ module Hearth
             if interceptor_error
               Hearth::Output.new(error: interceptor_error)
             else
-              context.logger.debug('[Middleware::Retry] Trying request')
+              log_debug(context, 'Attempting request in retry loop')
               @app.call(input, context)
             end
 
@@ -73,20 +74,16 @@ module Hearth
           output.error = interceptor_error if interceptor_error
 
           if (error = output.error)
-            context.logger.debug(
-              "[Middleware::Retry] Request errored: #{error.class}"
-            )
             error_info = @error_inspector_class.new(error, context.response)
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token
 
-            context.logger.debug(
-              "[Middleware::Retry] Sleeping #{token.retry_delay} before retry"
-            )
+            log_debug(context, "Retry token refreshed: #{token}")
+            log_debug(context, "Sleeping for #{token.retry_delay} seconds")
             Kernel.sleep(token.retry_delay)
           else
             @retry_strategy.record_success(token)
-            context.logger.debug('[Middleware::Retry] Finished sending request')
+            log_debug(context, 'Request succeeded')
             break
           end
 
@@ -94,7 +91,7 @@ module Hearth
           reset_response(context, output)
           @retries += 1
         end
-        context.logger.debug('[Middleware::Retry] Finished retry loop')
+        log_debug(context, 'Finished retry loop')
         output
       end
 
@@ -104,10 +101,9 @@ module Hearth
         request = context.request
         request.body.rewind if request.body.respond_to?(:rewind)
 
-        auth = context.auth
-        auth.signer.reset(
+        context.auth.signer.reset(
           request: request,
-          properties: auth.signer_properties
+          properties: context.auth.signer_properties
         )
       end
 

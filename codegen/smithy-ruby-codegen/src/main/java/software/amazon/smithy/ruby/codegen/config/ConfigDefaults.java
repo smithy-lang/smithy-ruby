@@ -42,8 +42,7 @@ public interface ConfigDefaults {
     void setDocumentationDefault(String documentationDefault);
 
     /**
-     * Add any dependent ClientConfig to the collection.
-     * ConfigDefaults may depend on other ClientConfig (eg, creating a logger may use a log_level config).
+     * Add any dependent ClientConfig to the collection.ConfigDefaults may depend on other ClientConfig.
      *
      * @param configCollection collection to add dependent config to.
      */

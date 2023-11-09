@@ -195,16 +195,9 @@ public class MiddlewareBuilder {
         ClientConfig logger = ClientConfig.builder()
                 .name("logger")
                 .type("Logger")
-                .documentationDefaultValue("Logger.new($stdout, level: cfg.log_level)")
-                .defaultDynamicValue("Logger.new($stdout, level: cfg[:log_level])")
+                .documentationDefaultValue("Logger.new(IO::NULL)")
+                .defaultValue("Logger.new(IO::NULL)")
                 .documentation("The Logger instance to use for logging.")
-                .build();
-
-        ClientConfig logLevel = ClientConfig.builder()
-                .name("log_level")
-                .type("Symbol")
-                .defaultPrimitiveValue(":warn")
-                .documentation("The default log level to use with the Logger.")
                 .build();
 
         String pluginDocumentation = """
@@ -236,6 +229,6 @@ public class MiddlewareBuilder {
                 .documentation(interceptorDocumentation)
                 .build();
 
-        return Arrays.asList(logger, logLevel, plugins, interceptors);
+        return Arrays.asList(logger, plugins, interceptors);
     }
 }
