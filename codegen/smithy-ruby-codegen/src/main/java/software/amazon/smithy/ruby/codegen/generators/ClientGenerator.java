@@ -212,23 +212,28 @@ public class ClientGenerator extends RubyGeneratorBase {
                         symbolProvider.toSymbol(inputShape).getName())
                 .call(() -> middlewareBuilder
                         .render(writer, context, operation))
-                .openBlock("resp = stack.run(")
-                .write("input: input,")
-                .openBlock("context: $T.new(", Hearth.CONTEXT)
+                .openBlock("context = $T.new(", Hearth.CONTEXT)
                 .write("request: $L,",
                         context.applicationTransport().getRequest()
                                 .render(context))
                 .write("response: $L,",
                         context.applicationTransport().getResponse()
                                 .render(context))
-                .write("params: params,")
                 .write("logger: config.logger,")
                 .write("operation_name: :$L,", operationName)
                 .write("interceptors: config.interceptors")
                 .closeBlock(")")
-                .closeBlock(")")
-                .write("raise resp.error if resp.error")
-                .write("resp")
+                .write("context.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
+                        + "options: #{options}\")", operationName)
+                .write("output = stack.run(input, context)")
+                .openBlock("if output.error")
+                .write("context.logger.error(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.error} "
+                        + "(#{output.error.class})\")", operationName)
+                .write("raise output.error")
+                .closeBlock("end")
+                .write("context.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.data}\")",
+                        operationName)
+                .write("output")
                 .closeBlock("end");
         LOGGER.finer("Generated client operation method " + operationName);
     }

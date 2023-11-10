@@ -43,7 +43,7 @@ module Hearth
           .with(parser, builder_params).and_return(builder).ordered
 
         expect(builder).to receive(:call) # first middleware is called
-        subject.run(input: input, context: context)
+        subject.run(input, context)
       end
     end
   end

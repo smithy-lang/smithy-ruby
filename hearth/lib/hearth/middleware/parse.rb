@@ -5,6 +5,8 @@ module Hearth
     # A middleware that parses a response object.
     # @api private
     class Parse
+      include Middleware::Logging
+
       # @param [Class] app The next middleware in the stack.
       # @param [Class] error_parser A parser object responsible for parsing the
       #  response if there is an error. It must respond to #parse and take the
@@ -66,15 +68,13 @@ module Hearth
       private
 
       def parse_error(context, output)
-        context.logger.debug('[Middleware::Parse] Started parsing error')
         output.error = @error_parser.parse(context.response, output.metadata)
-        context.logger.debug('[Middleware::Parse] Finished parsing error')
+        log_debug(context, "Parsed error: #{output.error}") if output.error
       end
 
       def parse_data(context, output)
-        context.logger.debug('[Middleware::Parse] Started parsing data')
         output.data = @data_parser.parse(context.response)
-        context.logger.debug('[Middleware::Parse] Finished parsing data')
+        log_debug(context, "Parsed data: #{output.data}") if output.data
       end
     end
   end

@@ -1,10 +1,10 @@
 module Hearth
   class Output
-    def initialize: (?error: (ApiError)?, ?data: (Hearth::Structure)?, ?metadata: Hash[Symbol, untyped]) -> void
+    def initialize: (?error: (ApiError)?, ?data: (Structure)?, ?metadata: Hash[Symbol, untyped]) -> void
 
     attr_accessor error: (ApiError | nil)
 
-    attr_accessor data: (Hearth::Structure | nil)
+    attr_accessor data: (Structure | nil)
 
     attr_accessor metadata: Hash[Symbol, untyped]
   end

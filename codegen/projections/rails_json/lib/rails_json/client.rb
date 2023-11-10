@@ -123,19 +123,21 @@ module RailsJson
         stub_data_class: Stubs::AllQueryStringTypes,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :all_query_string_types,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :all_query_string_types,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.data}")
+      output
     end
 
     # This example uses fixed query string params and variable query string params.
@@ -195,19 +197,21 @@ module RailsJson
         stub_data_class: Stubs::ConstantAndVariableQueryString,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :constant_and_variable_query_string,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :constant_and_variable_query_string,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.data}")
+      output
     end
 
     # This example uses a constant query string parameters and a label.
@@ -267,19 +271,21 @@ module RailsJson
         stub_data_class: Stubs::ConstantQueryString,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :constant_query_string,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :constant_query_string,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.data}")
+      output
     end
 
     # This example serializes a document as part of the payload.
@@ -346,19 +352,21 @@ module RailsJson
         stub_data_class: Stubs::DocumentType,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :document_type,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :document_type,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#document_type] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] #{output.data}")
+      output
     end
 
     # This example serializes a document as the entire HTTP payload.
@@ -423,19 +431,21 @@ module RailsJson
         stub_data_class: Stubs::DocumentTypeAsPayload,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :document_type_as_payload,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :document_type_as_payload,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -489,19 +499,21 @@ module RailsJson
         stub_data_class: Stubs::EmptyOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :empty_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :empty_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#empty_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_operation] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -559,19 +571,21 @@ module RailsJson
         stub_data_class: Stubs::EndpointOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :endpoint_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :endpoint_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -631,19 +645,21 @@ module RailsJson
         stub_data_class: Stubs::EndpointWithHostLabelOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :endpoint_with_host_label_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :endpoint_with_host_label_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
+      output
     end
 
     # This operation has three possible return values:
@@ -706,19 +722,21 @@ module RailsJson
         stub_data_class: Stubs::GreetingWithErrors,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :greeting_with_errors,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :greeting_with_errors,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
+      output
     end
 
     # This examples serializes a blob shape in the payload.
@@ -781,19 +799,21 @@ module RailsJson
         stub_data_class: Stubs::HttpPayloadTraits,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_payload_traits,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_payload_traits,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.data}")
+      output
     end
 
     # This examples uses a `@mediaType` trait on the payload to force a custom
@@ -854,19 +874,21 @@ module RailsJson
         stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_payload_traits_with_media_type,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_payload_traits_with_media_type,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.data}")
+      output
     end
 
     # This examples serializes a structure in the payload.
@@ -932,19 +954,21 @@ module RailsJson
         stub_data_class: Stubs::HttpPayloadWithStructure,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_payload_with_structure,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_payload_with_structure,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.data}")
+      output
     end
 
     # This examples adds headers to the input of a request and response by prefix.
@@ -1008,19 +1032,21 @@ module RailsJson
         stub_data_class: Stubs::HttpPrefixHeaders,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_prefix_headers,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_prefix_headers,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.data}")
+      output
     end
 
     # Clients that perform this test extract all headers from the response.
@@ -1077,19 +1103,21 @@ module RailsJson
         stub_data_class: Stubs::HttpPrefixHeadersInResponse,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_prefix_headers_in_response,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_prefix_headers_in_response,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -1146,19 +1174,21 @@ module RailsJson
         stub_data_class: Stubs::HttpRequestWithFloatLabels,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_request_with_float_labels,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_request_with_float_labels,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -1215,19 +1245,21 @@ module RailsJson
         stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_request_with_greedy_label_in_path,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_request_with_greedy_label_in_path,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.data}")
+      output
     end
 
     # The example tests how requests are serialized when there's no input
@@ -1292,19 +1324,21 @@ module RailsJson
         stub_data_class: Stubs::HttpRequestWithLabels,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_request_with_labels,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_request_with_labels,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.data}")
+      output
     end
 
     # The example tests how requests serialize different timestamp formats in the
@@ -1368,19 +1402,21 @@ module RailsJson
         stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_request_with_labels_and_timestamp_format,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_request_with_labels_and_timestamp_format,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -1435,19 +1471,21 @@ module RailsJson
         stub_data_class: Stubs::HttpResponseCode,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :http_response_code,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_response_code,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.data}")
+      output
     end
 
     # This example ensures that query string bound request parameters are
@@ -1505,19 +1543,21 @@ module RailsJson
         stub_data_class: Stubs::IgnoreQueryParamsInResponse,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :ignore_query_params_in_response,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :ignore_query_params_in_response,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.data}")
+      output
     end
 
     # The example tests how requests and responses are serialized when there is
@@ -1624,19 +1664,21 @@ module RailsJson
         stub_data_class: Stubs::InputAndOutputWithHeaders,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :input_and_output_with_headers,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :input_and_output_with_headers,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.data}")
+      output
     end
 
     # This example serializes enums as top level properties, in lists, sets, and maps.
@@ -1713,19 +1755,21 @@ module RailsJson
         stub_data_class: Stubs::JsonEnums,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :json_enums,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_enums,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.data}")
+      output
     end
 
     # The example tests basic map serialization.
@@ -1829,19 +1873,21 @@ module RailsJson
         stub_data_class: Stubs::JsonMaps,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :json_maps,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_maps,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.data}")
+      output
     end
 
     # This operation uses unions for inputs and outputs.
@@ -1933,19 +1979,21 @@ module RailsJson
         stub_data_class: Stubs::JsonUnions,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :json_unions,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_unions,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2107,19 +2155,21 @@ module RailsJson
         stub_data_class: Stubs::KitchenSinkOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :kitchen_sink_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :kitchen_sink_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#kitchen_sink_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink_operation] #{output.data}")
+      output
     end
 
     # This example ensures that mediaType strings are base64 encoded in headers.
@@ -2177,19 +2227,21 @@ module RailsJson
         stub_data_class: Stubs::MediaTypeHeader,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :media_type_header,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :media_type_header,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2248,19 +2300,21 @@ module RailsJson
         stub_data_class: Stubs::NestedAttributesOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :nested_attributes_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :nested_attributes_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#nested_attributes_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#nested_attributes_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#nested_attributes_operation] #{output.data}")
+      output
     end
 
     # Null and empty headers are not sent over the wire.
@@ -2326,19 +2380,21 @@ module RailsJson
         stub_data_class: Stubs::NullAndEmptyHeadersClient,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :null_and_empty_headers_client,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :null_and_empty_headers_client,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2405,19 +2461,21 @@ module RailsJson
         stub_data_class: Stubs::NullOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :null_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :null_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#null_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_operation] #{output.data}")
+      output
     end
 
     # Omits null, but serializes empty string value.
@@ -2475,19 +2533,21 @@ module RailsJson
         stub_data_class: Stubs::OmitsNullSerializesEmptyString,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :omits_null_serializes_empty_string,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :omits_null_serializes_empty_string,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2544,19 +2604,21 @@ module RailsJson
         stub_data_class: Stubs::OperationWithOptionalInputOutput,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :operation_with_optional_input_output,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :operation_with_optional_input_output,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_optional_input_output] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_optional_input_output] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_optional_input_output] #{output.data}")
+      output
     end
 
     # Automatically adds idempotency tokens.
@@ -2614,19 +2676,21 @@ module RailsJson
         stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :query_idempotency_token_auto_fill,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :query_idempotency_token_auto_fill,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2687,19 +2751,21 @@ module RailsJson
         stub_data_class: Stubs::QueryParamsAsStringListMap,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :query_params_as_string_list_map,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :query_params_as_string_list_map,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2755,19 +2821,21 @@ module RailsJson
         stub_data_class: Stubs::StreamingOperation,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :streaming_operation,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :streaming_operation,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_operation] #{output.data}")
+      output
     end
 
     # This example tests how timestamp request and response headers are serialized.
@@ -2837,19 +2905,21 @@ module RailsJson
         stub_data_class: Stubs::TimestampFormatHeaders,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :timestamp_format_headers,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :timestamp_format_headers,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.data}")
+      output
     end
 
     # @param [Hash] params
@@ -2910,19 +2980,21 @@ module RailsJson
         stub_data_class: Stubs::Operation____789BadName,
         stubs: @stubs
       )
-      resp = stack.run(
-        input: input,
-        context: Hearth::Context.new(
-          request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
-          response: Hearth::HTTP::Response.new(body: response_body),
-          params: params,
-          logger: config.logger,
-          operation_name: :operation____789_bad_name,
-          interceptors: config.interceptors
-        )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :operation____789_bad_name,
+        interceptors: config.interceptors
       )
-      raise resp.error if resp.error
-      resp
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] #{output.data}")
+      output
     end
 
     private

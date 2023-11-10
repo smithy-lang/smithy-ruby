@@ -5,6 +5,8 @@ module Hearth
     # A middleware that prefixes the host.
     # @api private
     class HostPrefix
+      include Middleware::Logging
+
       # @param [Class] app The next middleware in the stack.
       # @param [Boolean] disable_host_prefix If true, this option will not
       #  modify the host url.
@@ -28,10 +30,10 @@ module Hearth
       private
 
       def prefix_host(input, context)
-        context.logger.debug('[Middleware::HostPrefix] Started prefixing host')
+        log_debug(context, "Prefixing host with #{@host_prefix}")
         prefix = apply_labels(@host_prefix, input)
         context.request.prefix_host(prefix)
-        context.logger.debug('[Middleware::HostPrefix] Finished prefixing host')
+        log_debug(context, "Prefixed host: #{context.request.uri.host}")
       end
 
       def apply_labels(host_prefix, input)

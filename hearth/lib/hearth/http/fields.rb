@@ -61,6 +61,11 @@ module Hearth
         @entries = {}
       end
 
+      # @api private
+      def inspect
+        super.gsub(/ @entries={.*},/, '')
+      end
+
       # Proxy class that wraps Fields to create Headers and Trailers
       class Proxy
         include Enumerable
@@ -102,8 +107,9 @@ module Hearth
         end
         alias each_pair each
 
+        # @api private
         def inspect
-          "#<#{self.class.name}>"
+          to_h
         end
       end
     end

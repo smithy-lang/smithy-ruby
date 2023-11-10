@@ -12,7 +12,6 @@ module WhiteLabel
     attr_accessor http_custom_auth_identity_resolver (): Hearth::IdentityResolver
     attr_accessor http_login_identity_resolver (): Hearth::IdentityResolver
     attr_accessor interceptors (): Hearth::InterceptorList
-    attr_accessor log_level (): Symbol
     attr_accessor logger (): Logger
     attr_accessor plugins (): Hearth::PluginList
     attr_accessor request_min_compression_size_bytes (): Integer

@@ -61,7 +61,7 @@ module Hearth
 
         it 'logs the previous error' do
           expect(interceptor1).to receive(hook).and_raise(error)
-          expect(logger).to receive(:error).with(previous_error)
+          expect(logger).to receive(:error).with(/previous/)
 
           Interceptors.invoke(
             hook: hook,
@@ -98,7 +98,7 @@ module Hearth
         it 'calls all interceptors and returns the last error' do
           expect(interceptor1).to receive(hook).and_raise(error1)
           expect(interceptor2).to receive(hook).and_raise(error2)
-          expect(logger).to receive(:error).with(error1)
+          expect(logger).to receive(:error).with(/error 1/)
 
           out = Interceptors.invoke(
             hook: hook,

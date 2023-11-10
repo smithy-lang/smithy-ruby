@@ -7,6 +7,8 @@ module Hearth
       # adds the Content-Encoding header
       # @api private
       class RequestCompression
+        include Hearth::Middleware::Logging
+
         SUPPORTED_ENCODINGS = %w[gzip].freeze
         CHUNK_SIZE = 1 * 1024 * 1024 # one MB
 
@@ -46,20 +48,15 @@ module Hearth
           end
           return unless selected_encoding
 
-          context.logger.debug(
-            '[HTTP::Middleware::RequestCompression] ' \
-            'Started compressing request'
-          )
+          log_debug(context, "Compressing request with: #{selected_encoding}")
           request = context.request
           if @streaming
             compress_streaming_body(selected_encoding, request)
+            log_debug(context, 'Compressed request body in chunks')
           elsif request.body.size >= @request_min_compression_size_bytes
             compress_body(selected_encoding, request)
+            log_debug(context, 'Compressed request body')
           end
-          context.logger.debug(
-            '[HTTP::Middleware::RequestCompression] ' \
-            'Finished compressing request'
-          )
         end
 
         def update_content_encoding(encoding, request)

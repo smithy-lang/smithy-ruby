@@ -14,7 +14,7 @@ module Hearth
     # @param input
     # @param context
     # @return [Output]
-    def run(input:, context:)
+    def run(input, context)
       stack.call(input, context)
     end
 

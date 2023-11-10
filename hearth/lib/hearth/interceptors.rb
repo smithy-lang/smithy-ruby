@@ -20,11 +20,12 @@ module Hearth
       context.interceptors.each do |i|
         next unless i.respond_to?(hook)
 
-        context.logger.debug("Invoking #{i.class.name}##{hook}")
+        log_debug(context, i, "Invoking #{hook}")
         i.send(hook, i_ctx)
-        context.logger.debug("Completed #{i.class.name}##{hook}")
+        log_debug(context, i, "Finished #{hook}")
       rescue StandardError => e
-        log_last_error(last_error, context)
+        log_debug(context, i, "Error in #{hook}: #{e} (#{e.class})")
+        log_last_interceptor_error(last_error, i, context)
         last_error = e
         break unless aggregate_errors
       end
@@ -45,14 +46,29 @@ module Hearth
         )
       end
 
-      def log_last_error(last_error, context)
-        context.logger.error(last_error) if last_error
+      def log_last_interceptor_error(last_error, interceptor, context)
+        return unless last_error
+
+        message = "Dropping last error: #{last_error} (#{last_error.class})"
+        context.logger.error(
+          "[#{context.invocation_id}] [#{interceptor.class}] #{message}"
+        )
       end
 
       def log_last_output_error(last_error, context, output)
         return unless last_error && output
+        return unless output.error
 
-        context.logger.error(output.error) if output.error
+        message = "Dropping last error: #{output.error} (#{output.error.class})"
+        context.logger.error(
+          "[#{context.invocation_id}] [Interceptors] #{message}"
+        )
+      end
+
+      def log_debug(context, interceptor, message)
+        context.logger.debug(
+          "[#{context.invocation_id}] [#{interceptor.class}] #{message}"
+        )
       end
     end
   end

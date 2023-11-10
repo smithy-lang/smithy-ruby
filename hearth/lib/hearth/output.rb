@@ -18,7 +18,7 @@ module Hearth
     # @return [Struct, nil]
     attr_accessor :data
 
-    # @return [Hash, nil]
+    # @return [Hash]
     attr_accessor :metadata
   end
 end

@@ -5,6 +5,8 @@ module Hearth
     # A middleware used to send the request.
     # @api private
     class Send
+      include Middleware::Logging
+
       # @param [Class] _app The next middleware in the stack.
       # @param [Boolean] stub_responses If true, a request is not sent and a
       #   stubbed response is returned.
@@ -70,23 +72,23 @@ module Hearth
       private
 
       def stub_response(input, context, output)
-        context.logger.debug('[Middleware::Send] Started stubbing response')
         stub = @stubs.next(context.operation_name)
+        log_debug(context, "Stubbing response with stub: #{stub}")
         apply_stub(stub, input, context, output)
-        context.logger.debug('[Middleware::Send] Finished stubbing response')
+        log_debug(context, "Stubbed response: #{context.response.inspect}")
         return unless context.response.body.respond_to?(:rewind)
 
         context.response.body.rewind
       end
 
       def send_request(context, output)
-        context.logger.debug('[Middleware::Send] Started sending request')
+        log_debug(context, "Sending request: #{context.request.inspect}")
         @client.transmit(
           request: context.request,
           response: context.response,
           logger: context.logger
         )
-        context.logger.debug('[Middleware::Send] Finished sending request')
+        log_debug(context, "Received response: #{context.response.inspect}")
       rescue Hearth::NetworkingError => e
         output.error = e
       end

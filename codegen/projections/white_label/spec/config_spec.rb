@@ -10,10 +10,9 @@ module WhiteLabel
           disable_host_prefix: true,
           endpoint: 'test',
           http_client: Hearth::HTTP::Client.new,
-          log_level: :debug,
-          logger: Logger.new($stdout, level: :debug),
+          logger: Logger.new($stdout),
           retry_strategy: Hearth::Retry::Adaptive.new,
-          stub_responses: false,
+          stub_responses: true,
           validate_input: false
         }
 
@@ -27,7 +26,9 @@ module WhiteLabel
       it 'uses defaults' do
         config = Config.new
         expect(config.logger).to be_a(Logger)
-        expect(config.logger.warn?).to be true
+        expect(config.interceptors).to be_a(Hearth::InterceptorList)
+        expect(config.plugins).to be_a(Hearth::PluginList)
+        expect(config.request_min_compression_size_bytes).to be_a(Integer)
       end
 
       it 'validates types' do

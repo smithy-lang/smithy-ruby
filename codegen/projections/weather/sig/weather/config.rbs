@@ -7,7 +7,6 @@ module Weather
     attr_accessor endpoint (): String
     attr_accessor http_client (): Hearth::HTTP::Client
     attr_accessor interceptors (): Hearth::InterceptorList
-    attr_accessor log_level (): Symbol
     attr_accessor logger (): Logger
     attr_accessor plugins (): Hearth::PluginList
     attr_accessor retry_strategy (): Hearth::Retry::Strategy

@@ -6,6 +6,8 @@ module Hearth
       # A middleware that sets Content-Length for any body that has a size.
       # @api private
       class ContentLength
+        include Hearth::Middleware::Logging
+
         def initialize(app, _ = {})
           @app = app
         end
@@ -15,18 +17,11 @@ module Hearth
         # @return [Output]
         def call(input, context)
           request = context.request
-          if request.body.respond_to?(:size) &&
-             !request.headers.key?('Content-Length')
-            context.logger.debug(
-              '[HTTP::Middleware::ContentLength] ' \
-              'Started setting Content-Length'
-            )
+          if !request.headers.key?('Content-Length') &&
+             request.body.respond_to?(:size)
             length = request.body.size
             request.headers['Content-Length'] = length
-            context.logger.debug(
-              '[HTTP::Middleware::ContentLength] ' \
-              'Finished setting Content-Length'
-            )
+            log_debug(context, "Set Content-Length to #{length}")
           end
 
           @app.call(input, context)
