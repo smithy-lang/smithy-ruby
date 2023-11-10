@@ -28,7 +28,6 @@ module Hearth
         log_last_interceptor_error(last_error, i, context)
         last_error = e
         break unless aggregate_errors
-      ensure
       end
 
       log_last_output_error(last_error, context, output)
@@ -50,7 +49,7 @@ module Hearth
       def log_last_interceptor_error(last_error, interceptor, context)
         return unless last_error
 
-        message = "Dropping error: #{last_error} (#{last_error.class})"
+        message = "Dropping last error: #{last_error} (#{last_error.class})"
         context.logger.error(
           "[#{context.invocation_id}] [#{interceptor.class}] #{message}"
         )
@@ -60,7 +59,7 @@ module Hearth
         return unless last_error && output
         return unless output.error
 
-        message = "Dropping error: #{output.error} (#{output.error.class})"
+        message = "Dropping last error: #{output.error} (#{output.error.class})"
         context.logger.error(
           "[#{context.invocation_id}] [Interceptors] #{message}"
         )
