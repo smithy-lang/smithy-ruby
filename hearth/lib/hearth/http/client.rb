@@ -248,8 +248,8 @@ module Hearth
         [
           proxy.host,
           proxy.port,
-          (proxy.user && CGI.unescape(proxy.user)),
-          (proxy.password && CGI.unescape(proxy.password))
+          proxy.user && CGI.unescape(proxy.user),
+          proxy.password && CGI.unescape(proxy.password)
         ]
       end
 
