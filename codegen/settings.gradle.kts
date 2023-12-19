@@ -15,8 +15,8 @@
 
 rootProject.name = "smithy-ruby"
 include(":smithy-ruby-codegen")
-include(":smithy-ruby-codegen-test-utils")
 include(":smithy-ruby-codegen-test")
+include(":smithy-ruby-codegen-test-utils")
 include(":smithy-ruby-rails-codegen")
 include(":smithy-ruby-rails-codegen-test")
 
