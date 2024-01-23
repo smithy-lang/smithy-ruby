@@ -1,4 +1,7 @@
 .byebug_history
 .yardoc
+.DS_Store
 doc/
+hearth/docs.zip
+*.gem
 .idea
