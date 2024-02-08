@@ -4,6 +4,8 @@ require 'cgi'
 require 'ipaddr'
 require 'uri'
 
+require_relative 'structure'
+
 module Hearth
   # Functions in the Smithy rules engine are named routines that
   # operate on a finite set of specified inputs, returning an output.
@@ -11,8 +13,15 @@ module Hearth
   # invoked without additional dependencies, called the standard library.
   # @api private
   module RulesEngine
-    # Regex that extracts anything in square brackets
-    BRACKET_REGEX = /\[(.*?)\]/
+    AuthScheme = Struct.new(:name, :properties, keyword_init: true) do
+      include Hearth::Structure
+    end
+
+    Endpoint = Struct.new(
+      :uri, :auth_schemes, :headers, keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
 
     # Evaluates two boolean values for equality, returning true if they match.
     def self.boolean_equals?(value1, value2)
@@ -90,6 +99,9 @@ module Hearth
     def self.uri_encode(value)
       CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
     end
+
+    # Regex that extracts anything in square brackets
+    BRACKET_REGEX = /\[(.*?)\]/
 
     def self.get_attr_index(parts, value)
       if (index = parts.first[BRACKET_REGEX, 1])

@@ -2,7 +2,61 @@ $version: "2.0"
 namespace smithy.ruby.tests
 
 use smithy.ruby.tests.protocols#fakeProtocol
-
+use smithy.rules#endpointRuleSet
+@endpointRuleSet({
+    "version": "1.0",
+    "parameters": {
+        "Stage": {
+            "required": false,
+            "documentation": "Specify the stage (beta|gamma|prod)",
+            "type": "String",
+        },
+        "Endpoint": {
+            "builtIn": "SDK::Endpoint",
+            "required": false,
+            "documentation": "Override the endpoint used to send requests",
+            "type": "String",
+        },
+    },
+    "rules": [
+        // Rule to allow using endpoint overrides
+        {
+            "type": "endpoint",
+            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Endpoint"}]} ],
+            "endpoint": { "url": {"ref": "Endpoint"} },
+        },
+        // Rule to for Stage
+        {
+            "type": "endpoint",
+            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Stage"}]}, {"fn": "stringEquals", "argv": [{"ref": "Stage"}, "alpha"]} ],
+            "endpoint": { "url": "https://alpha.whitelabel.dev" },
+        },
+        // Rule to for Stage = beta
+        {
+            "type": "endpoint",
+            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Stage"}]}, {"fn": "stringEquals", "argv": [{"ref": "Stage"}, "beta"]} ],
+            "endpoint": { "url": "https://beta.whitelabel.dev" },
+        },
+        // Rule to for Stage = gamma
+        {
+            "type": "endpoint",
+            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Stage"}]}, {"fn": "stringEquals", "argv": [{"ref": "Stage"}, "gamma"]} ],
+            "endpoint": { "url": "https://gamma.whitelabel.dev" },
+        },
+        // Rule to for Stage = prod
+        {
+            "type": "endpoint",
+            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Stage"}]}, {"fn": "stringEquals", "argv": [{"ref": "Stage"}, "prod"]} ],
+            "endpoint": { "url": "https://whitelabel.com" },
+        },
+        // Default to prod endpoint if none of the above rules match
+        {
+            "type": "endpoint",
+            "conditions": [],
+            "endpoint": { "url": "https://whitelabel.com" },
+        },
+    ],
+})
 @fakeProtocol
 @title("FakeProtocol Test Service")
 service WhiteLabel {
