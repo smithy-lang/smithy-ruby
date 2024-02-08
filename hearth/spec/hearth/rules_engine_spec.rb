@@ -1,0 +1,270 @@
+# frozen_string_literal: true
+
+module Hearth
+  describe RulesEngine do
+    describe '.boolean_equals?' do
+      it 'returns true when the values are equal' do
+        expect(RulesEngine.boolean_equals?(false, false))
+          .to eq true
+      end
+
+      it 'returns false when the values are not equal' do
+        expect(RulesEngine.boolean_equals?(false, true))
+          .to eq false
+      end
+    end
+
+    describe '.get_attr' do
+      context 'input array' do
+        let(:input) { %w[foo bar] }
+
+        it 'gets paths with indexes' do
+          expect(RulesEngine.get_attr(input, '[0]')).to eq('foo')
+        end
+      end
+
+      context 'complex input object' do
+        let(:input) do
+          {
+            'Thing1' => 'foo',
+            'Thing2' => %w[index0 index1],
+            'Thing3' => { 'SubThing' => 42 }
+          }
+        end
+
+        it 'gets top level paths' do
+          expect(RulesEngine.get_attr(input, 'Thing1')).to eq('foo')
+        end
+
+        it 'gets paths with indexes' do
+          expect(RulesEngine.get_attr(input, 'Thing2[0]')).to eq('index0')
+        end
+
+        it 'gets paths with sub components' do
+          expect(RulesEngine.get_attr(input, 'Thing3.SubThing')).to eq(42)
+        end
+      end
+    end
+
+    describe '.set?' do
+      it 'returns true when the value is set' do
+        expect(RulesEngine.set?('value')).to be true
+      end
+
+      it 'returns false when the value is not set' do
+        expect(RulesEngine.set?(nil)).to be false
+      end
+    end
+
+    describe '.valid_host_label?' do
+      it 'returns false for an empty value' do
+        expect(RulesEngine.valid_host_label?('')).to be false
+      end
+
+      it 'returns false for values with spaces' do
+        expect(RulesEngine.valid_host_label?('invalid label')).to be false
+      end
+
+      it 'returns true for a valid host label' do
+        expect(RulesEngine.valid_host_label?('valid-label-1')).to be true
+      end
+
+      it 'returns false for values starting with -' do
+        expect(RulesEngine.valid_host_label?('-invalid')).to be false
+      end
+
+      it 'returns false for values ending with -' do
+        expect(RulesEngine.valid_host_label?('invalid-')).to be false
+      end
+
+      it 'returns true for values starting with a number' do
+        expect(RulesEngine.valid_host_label?('1valid')).to be true
+      end
+
+      it 'returns true for a single valid character' do
+        expect(RulesEngine.valid_host_label?('h')).to be true
+      end
+
+      it 'returns false for 64 characters' do
+        expect(RulesEngine.valid_host_label?('h' * 64)).to be false
+      end
+
+      context 'allow_sub_domains=false' do
+        it 'returns false when value has subdomains' do
+          expect(RulesEngine.valid_host_label?(
+                   'a.b', allow_sub_domains: false
+                 )).to be false
+        end
+      end
+
+      context 'allow_sub_domains=true' do
+        it 'returns true when value has subdomains' do
+          expect(RulesEngine.valid_host_label?(
+                   'part1.part2', allow_sub_domains: true
+                 )).to be true
+        end
+
+        it 'returns false for multiple consecutive dots' do
+          expect(RulesEngine.valid_host_label?(
+                   'a..b-', allow_sub_domains: true
+                 )).to be false
+        end
+
+        it 'returns false for values ending in a dot' do
+          expect(RulesEngine.valid_host_label?(
+                   'a.b.', allow_sub_domains: true
+                 )).to be false
+        end
+
+        it 'returns false for sub domains starting with a dash' do
+          expect(RulesEngine.valid_host_label?(
+                   'part1.-part2', allow_sub_domains: true
+                 )).to be false
+        end
+      end
+    end
+
+    describe '.not' do
+      it 'negates the value' do
+        expect(RulesEngine.not(true)).to be false
+      end
+    end
+
+    describe '.parse_url' do
+      it 'parses a valid url' do
+        expect(RulesEngine.parse_url('https://example.com'))
+          .to eq({
+                   'scheme' => 'https',
+                   'authority' => 'example.com',
+                   'path' => '',
+                   'normalizedPath' => '/',
+                   'isIp' => false
+                 })
+      end
+
+      it 'parses a valid url with port and path' do
+        expect(RulesEngine.parse_url('https://example.com:80/foo/bar'))
+          .to eq({
+                   'scheme' => 'https',
+                   'authority' => 'example.com:80',
+                   'path' => '/foo/bar',
+                   'normalizedPath' => '/foo/bar/',
+                   'isIp' => false
+                 })
+      end
+
+      it 'parses a valid ip4 address' do
+        expect(RulesEngine.parse_url('https://127.0.0.1'))
+          .to eq({
+                   'scheme' => 'https',
+                   'authority' => '127.0.0.1',
+                   'path' => '',
+                   'normalizedPath' => '/',
+                   'isIp' => true
+                 })
+      end
+
+      it 'parses a valid ip6 address' do
+        expect(RulesEngine.parse_url('https://[fe80::1]'))
+          .to eq({
+                   'scheme' => 'https',
+                   'authority' => '[fe80::1]',
+                   'path' => '',
+                   'normalizedPath' => '/',
+                   'isIp' => true
+                 })
+      end
+
+      it 'returns nil for and invalid url' do
+        expect(RulesEngine.parse_url(
+                 'https://example.com:8443?foo=bar&faz=baz'
+               )).to be_nil
+      end
+    end
+
+    describe '.string_equals?' do
+      it 'returns true when the values are equal' do
+        expect(RulesEngine.string_equals?('a', 'a')).to be true
+      end
+
+      it 'returns false when the values are not equal' do
+        expect(RulesEngine.string_equals?('a', 'b')).to be false
+      end
+    end
+
+    describe '.substring' do
+      it 'returns the substring when the string is long enough' do
+        expect(RulesEngine.substring('abcdefg', 0, 4, false)).to eq 'abcd'
+      end
+
+      it 'returns the substring when the string is exactly the right length' do
+        expect(RulesEngine.substring('abcd', 0, 4, false)).to eq 'abcd'
+      end
+
+      it 'returns nil when the string is too short' do
+        expect(RulesEngine.substring('abc', 0, 4, false)).to be_nil
+      end
+
+      it 'returns the correct string on wide characters' do
+        expect(RulesEngine.substring("\ufdfd", 0, 4, false)).to be_nil
+      end
+
+      it 'returns nil on non unicode characters' do
+        expect(RulesEngine.substring("abcdef\u0080", 0, 4, false)).to be_nil
+      end
+
+      it 'returns substring on non printable ascii characters' do
+        expect(RulesEngine.substring("\u007Fabcdef", 0, 4, false))
+          .to eq "\u007Fabc"
+      end
+
+      context 'reverse = true' do
+        it 'returns substring from the end when string is long enough' do
+          expect(RulesEngine.substring('abcdefg', 0, 4, true)).to eq 'defg'
+        end
+
+        it 'returns nil when string is not long enough' do
+          expect(RulesEngine.substring('abc', 0, 4, true)).to be_nil
+        end
+      end
+
+      context 'substring from the middle' do
+        it 'returns substring from the middle when string is long enough' do
+          expect(RulesEngine.substring('defg', 1, 3, false)).to eq 'ef'
+        end
+      end
+    end
+
+    describe '.uri_encode' do
+      it 'returns the string when theres nothing to encode' do
+        expect(RulesEngine.uri_encode('abcdefg')).to eq('abcdefg')
+      end
+
+      it 'encodes all required ASCII characters' do
+        encoded = '%2F%3A%2C%3F%23%5B%5D%7B%7D%7C%40%21%20%24' \
+                  '%26%27%28%29%2A%2B%3B%3D%25%3C%3E%22%5E%60%5C'
+        expect(RulesEngine.uri_encode("/:,?#[]{}|@! $&'()*+;=%<>\"^`\\"))
+          .to eq(encoded)
+      end
+
+      it 'does not encode ASCII characters it should not' do
+        expect(RulesEngine.uri_encode('0123456789.underscore_dash-Tilda~'))
+          .to eq('0123456789.underscore_dash-Tilda~')
+      end
+
+      it 'encodes unicode characters' do
+        expect(RulesEngine.uri_encode('😹')).to eq('%F0%9F%98%B9')
+      end
+
+      it 'correctly encodes all printable ASCII characters' do
+        input = " !\"#$%&'()*+,-./0123456789:;<=>?" \
+                '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' \
+                'abcdefghijklmnopqrstuvwxyz{|}~'
+        encoded = '%20%21%22%23%24%25%26%27%28%29%2A%2B%2C-.' \
+                  '%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUV' \
+                  'WXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~'
+        expect(RulesEngine.uri_encode(input)).to eq(encoded)
+      end
+    end
+  end
+end
