@@ -453,6 +453,10 @@ module WhiteLabel
     #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
     #   @note
     #     This shape is meant for internal use only.
+    #   @note
+    #     This shape is recommended.
+    #     Reason: This structure member is
+    #     cool AF.
     #   @since today
     #   @return [String]
     # @!attribute simple_enum
@@ -556,6 +560,10 @@ module WhiteLabel
     #   @see https://www.ruby-lang.org/en/downloads/branches/ Ruby Branches
     #   @note
     #     This shape is meant for internal use only.
+    #   @note
+    #     This shape is recommended.
+    #     Reason: This structure member is
+    #     cool AF.
     #   @since today
     #   @return [String]
     # @!attribute simple_enum
