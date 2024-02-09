@@ -14,7 +14,7 @@ module Hearth
         Endpoint.new(
           app,
           endpoint_provider: endpoint_provider,
-          param_builder_class: param_builder
+          param_builder: param_builder
         )
       end
 

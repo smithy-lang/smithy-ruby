@@ -5,6 +5,7 @@ module HighScoreService
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
     attr_accessor endpoint (): String
+    attr_accessor endpoint_provider (): Endpoint::Resolver
     attr_accessor http_api_key_identity_resolver (): Hearth::IdentityResolver
     attr_accessor http_bearer_identity_resolver (): Hearth::IdentityResolver
     attr_accessor http_client (): Hearth::HTTP::Client

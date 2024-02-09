@@ -172,6 +172,16 @@ public final class Hearth {
             .name("Auth")
             .build();
 
+    public static final Symbol ENDPOINT_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("Endpoint")
+            .build();
+
+    public static final Symbol HOST_PREFIX_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("HostPrefix")
+            .build();
+
     public static final Symbol SIGN_MIDDLEWARE = Symbol.builder()
             .namespace("Hearth::Middleware", "::")
             .name("Sign")

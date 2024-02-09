@@ -40,6 +40,7 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.AuthGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
+import software.amazon.smithy.ruby.codegen.generators.EndpointGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EnumGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
@@ -194,6 +195,10 @@ public class DirectedRubyCodegen
         AuthGenerator authGenerator = new AuthGenerator(directive);
         authGenerator.render();
         authGenerator.renderRbs();
+
+        EndpointGenerator endpointGenerator = new EndpointGenerator(directive);
+        endpointGenerator.render();
+        endpointGenerator.renderRbs();
 
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(directive);
         paginatorsGenerator.render();

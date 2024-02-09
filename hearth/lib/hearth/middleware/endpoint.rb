@@ -7,17 +7,17 @@ module Hearth
     # the request with resolved endpoint, headers and auth schemes.
     class Endpoint
       def initialize(
-        app, endpoint_provider:, param_builder_class:
+        app, endpoint_provider:, param_builder:
       )
         @app = app
-        @param_builder_class = param_builder_class
+        @param_builder = param_builder
         @endpoint_provider = endpoint_provider
       end
 
       def call(input, context)
-        params = @param_builder_class.build(context)
+        params = @param_builder.build(context)
         endpoint = @endpoint_provider.resolve_endpoint(params)
-        # change URL
+        # TODO: update uri, keeping path/query parameters from build
         context.request.uri = endpoint.uri
         endpoint.headers.each do |key, val|
           context.request.headers[key] = val

@@ -23,6 +23,9 @@ module WhiteLabel
   #     When set to 'true' the request body will not be compressed for supported operations.
   #   @option args [String] :endpoint
   #     Endpoint of the service
+  #   @option args [Endpoint::Resolver] :endpoint_provider (Endpoint::Resolver.new)
+  #     The endpoint provider used to resolve endpoints. Any object that responds to
+  #     `#resolve_endpoint(parameters)`
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
   #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
@@ -76,6 +79,8 @@ module WhiteLabel
   #   @return [Boolean]
   # @!attribute endpoint
   #   @return [String]
+  # @!attribute endpoint_provider
+  #   @return [Endpoint::Resolver]
   # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   # @!attribute http_bearer_identity_resolver
@@ -108,6 +113,7 @@ module WhiteLabel
     :disable_host_prefix,
     :disable_request_compression,
     :endpoint,
+    :endpoint_provider,
     :http_api_key_identity_resolver,
     :http_bearer_identity_resolver,
     :http_client,
@@ -132,6 +138,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
+      Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Resolver, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
       Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -157,6 +164,7 @@ module WhiteLabel
         disable_host_prefix: [false],
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
+        endpoint_provider: [Endpoint::Resolver.new],
         http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
