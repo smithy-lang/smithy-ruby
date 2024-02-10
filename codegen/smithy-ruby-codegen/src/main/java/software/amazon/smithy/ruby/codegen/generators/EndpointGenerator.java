@@ -16,30 +16,27 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
-import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Builtins;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -53,6 +50,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private final ServiceShape service;
     private final EndpointRuleSet endpointRuleSet;
     private final Optional<EndpointTestsTrait> endpointTests;
+
     public EndpointGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         operations = directive.operations();
@@ -60,7 +58,23 @@ public class EndpointGenerator extends RubyGeneratorBase {
         endpointRuleSet =
                 service.getTrait(EndpointRuleSetTrait.class)
                         .map(t -> EndpointRuleSet.fromNode(t.getRuleSet()))
-                        .orElseGet();
+                        .orElseGet(EndpointGenerator::defaultRuleset);
+
+        endpointTests = service.getTrait(EndpointTestsTrait.class);
+    }
+
+    private static EndpointRuleSet defaultRuleset() {
+        return EndpointRuleSet.builder()
+                .parameters(Parameters.builder()
+                        .addParameter(BuiltIns.SDK_ENDPOINT)
+                        .build())
+                .addRule(EndpointRule.builder()
+                        .validateOrElse(
+                                "Endpoint is not set - you must configure an endpoint.",
+                                BuiltIns.SDK_ENDPOINT.isSet()
+                        )
+                        .endpoint(Endpoint.builder().url(BuiltIns.SDK_ENDPOINT.toExpression()).build()))
+                .build();
     }
 
     @Override
@@ -77,9 +91,11 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .addModule("Endpoint")
                     .call(() -> renderEndpointParamsClass(writer))
                     .write("")
-                    .call(() -> renderAuthSchemesConstant(writer))
-                    .write("")
-                    .call(() -> renderAuthResolver(writer))
+                    .addModule("Parameters")
+                    .call(() -> renderParamBuilders(writer))
+//                    .call(() -> renderAuthSchemesConstant(writer))
+//                    .write("")
+//                    .call(() -> renderAuthResolver(writer))
                     .closeAllModules();
         });
         LOGGER.fine("Wrote auth module to " + rbFile());
@@ -91,165 +107,85 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .preamble()
                     .addModule(settings.getModule())
                     .addModule("Endpoint")
-                    .call(() -> renderRbsAuthParamsClass(writer))
+                    .call(() -> renderRbsEndpointParamsClass(writer))
                     .write("")
-                    .call(() -> renderRbsAuthSchemesConstant(writer))
-                    .write("")
-                    .call(() -> renderRbsAuthResolver(writer))
+//                    .call(() -> renderRbsAuthSchemesConstant(writer))
+//                    .write("")
+//                    .call(() -> renderRbsAuthResolver(writer))
                     .closeAllModules();
         });
         LOGGER.fine("Wrote auth rbs module to " + rbsFile());
     }
 
     private void renderEndpointParamsClass(RubyCodeWriter writer) {
-        List<String> authParamsList = new ArrayList<>();
-        authParamsList.add(":operation_name");
-        authSchemes.forEach((s) -> {
-            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
-            additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
-            });
-        });
-        String authParams = authParamsList.stream().collect(Collectors.joining(", "));
+        List<String> params = new ArrayList<>();
+        Map<String, String> defaultParams = new LinkedHashMap<>();
+        endpointRuleSet.getParameters().forEach((parameter -> {
+            String rubyParamName = RubyFormatter.asSymbol(parameter.getName().getName().getValue());
+            params.add(rubyParamName);
+            if (parameter.getDefault().isPresent()) {
+                if (parameter.getType() == ParameterType.STRING) {
+                    defaultParams.put(rubyParamName,
+                            "'" + parameter.getDefault().get().expectStringValue().getValue() + "'");
+                } else if (parameter.getType() == ParameterType.BOOLEAN) {
+                    defaultParams.put(rubyParamName,
+                            parameter.getDefault().get().expectBooleanValue().getValue() ? "true" : "false");
+                } else {
+                    throw new IllegalArgumentException("Unexpected parameter type: " + parameter.getType());
+                }
+            }
+        }));
 
-        writer.write("Params = Struct.new($L, keyword_init: true)", authParams);
+        writer
+                .openBlock("Params = ::Struct.new(")
+                .write(String.join(",\n", params) + ", ")
+                .write("keyword_init: true")
+                .closeBlock(") do")
+                .indent()
+                .write("include $T", Hearth.STRUCTURE)
+                .call(() -> {
+                    if (!defaultParams.isEmpty()) {
+                        writer
+                                .openBlock("\ndef initialize(*)")
+                                .write("super")
+                                .call(() -> {
+                                    defaultParams.forEach((param, defaultValue) -> {
+                                        writer.write("self.$1L = $2L if self.$1L.nil?",
+                                                param,
+                                                defaultValue);
+                                    });
+                                })
+                                .closeBlock("end");
+                    }
+
+                })
+                .closeBlock("end");
     }
 
-    private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
-        Map<String, String> authParamsMap = new HashMap<String, String>();
-        authParamsMap.put("operation_name", "::Symbol");
-        authSchemes.forEach((s) -> {
-            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
-            additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsMap.put(RubyFormatter.toSnakeCase(e.getKey()), "untyped");
-            });
-        });
+    private void renderRbsEndpointParamsClass(RubyCodeWriter writer) {
+        Map<String, String> paramsToTypes = new HashMap<>();
+        endpointRuleSet.getParameters().forEach((parameter -> {
+            String rubyParamName = RubyFormatter.toSnakeCase(parameter.getName().getName().getValue());
+            if (parameter.getType() == ParameterType.STRING) {
+                paramsToTypes.put(rubyParamName, "::String");
+            } else if (parameter.getType() == ParameterType.BOOLEAN) {
+                paramsToTypes.put(rubyParamName, "bool");
+            } else {
+                throw new IllegalArgumentException("Unexpected parameter type: " + parameter.getType());
+            }
+        }));
 
         writer
                 .openBlock("class Params < ::Struct[untyped]")
                 .call(() -> {
-                    authParamsMap.entrySet().stream().forEach((e) -> {
-                        writer.write("attr_accessor $L (): $L", e.getKey(), e.getValue());
+                    paramsToTypes.forEach((param, rbsType) -> {
+                        writer.write("attr_accessor $L: $L", param, rbsType);
                     });
                 })
                 .closeBlock("end");
     }
 
-    private void renderAuthSchemesConstant(RubyCodeWriter writer) {
-        Set<Trait> authTraits = new HashSet<>();
-        operations.stream().forEach(operation -> {
-            ServiceIndex.of(model).getEffectiveAuthSchemes(
-                    service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE).forEach((shapeId, trait) -> {
-                authTraits.add(trait);
-            });
-        });
+    private void renderParamBuilders(RubyCodeWriter writer) {
 
-        writer
-                .openBlock("SCHEMES = [")
-                .call(() -> {
-                    authTraits.stream()
-                            .sorted(Comparator.comparing(Trait::toShapeId))
-                            .forEach(authTrait -> {
-                                ShapeId shapeId = authTrait.toShapeId();
-                                AuthScheme authScheme = authSchemes.stream()
-                                        .filter(s -> s.getShapeId().equals(shapeId))
-                                        .findFirst()
-                                        .orElseThrow(
-                                                () -> new IllegalStateException("No auth scheme found for " + shapeId));
-                                writer.write("$L,", authScheme.getRubyAuthScheme());
-                            });
-                })
-                .unwrite(",\n")
-                .write("")
-                .closeBlock("].freeze");
-    }
-
-    private void renderRbsAuthSchemesConstant(RubyCodeWriter writer) {
-        writer.write("SCHEMES: ::Array[Hearth::AuthSchemes::Base]");
-    }
-
-    private void renderAuthResolver(RubyCodeWriter writer) {
-        writer
-                .openBlock("class Resolver")
-                .write("")
-                .openBlock("def resolve(auth_params)")
-                .write("options = []")
-                .write("case auth_params.operation_name")
-                .call(() -> {
-                    for (OperationShape operation : operations) {
-                        renderOperationAuthOptionsCase(writer, operation);
-                    }
-                })
-                .write("end")
-                .closeBlock("end")
-                .write("")
-                .closeBlock("end");
-    }
-
-    private void renderRbsAuthResolver(RubyCodeWriter writer) {
-        writer
-                .openBlock("class Resolver")
-                .write("def resolve: (auth_params: Params) -> ::Array[Hearth::AuthOption]")
-                .closeBlock("end");
-    }
-
-    private void renderOperationAuthOptionsCase(RubyCodeWriter writer, OperationShape operation) {
-        String operationName =
-                RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName());
-
-        Map<ShapeId, Trait> operationAuthSchemes =
-                ServiceIndex.of(model).getEffectiveAuthSchemes(
-                        service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE);
-
-        writer
-                .write("when $L", operationName)
-                .indent()
-                .call(() -> {
-                    operationAuthSchemes.forEach((shapeId, trait) -> {
-                        AuthScheme authScheme = authSchemes.stream()
-                                .filter(s -> s.getShapeId().equals(shapeId))
-                                .findFirst()
-                                .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
-
-                        renderAuthOption(writer, shapeId.toString(), trait, authScheme);
-                    });
-                })
-                .dedent();
-    }
-
-    private void renderAuthOption(RubyCodeWriter writer, String schemeId, Trait trait, AuthScheme authScheme) {
-        String args = "scheme_id: '%s'".formatted(schemeId);
-
-        Map<String, String> signerPropertiesMap = authScheme.getSignerProperties(trait);
-        if (!signerPropertiesMap.isEmpty()) {
-            String signerProperties = signerPropertiesMap
-                    .entrySet().stream()
-                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
-                    .reduce((a, b) -> a + ", " + b)
-                    .map(s -> " " + s + " ")
-                    .orElse("");
-            args += ", signer_properties: {%s}".formatted(signerProperties);
-        }
-
-        Map<String, String> identityPropertiesMap = authScheme.getIdentityProperties(trait);
-        if (!identityPropertiesMap.isEmpty()) {
-            String identityProperties = identityPropertiesMap
-                    .entrySet().stream()
-                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
-                    .reduce((a, b) -> a + ", " + b)
-                    .map(s -> " " + s + " ")
-                    .orElse("");
-            args += ", identity_properties: {%s}".formatted(identityProperties);
-        }
-
-        writer.write("options << $L.new($L)", Hearth.AUTH_OPTION, args);
-    }
-
-    private static EndpointRuleSet defaultRuleset() {
-        return EndpointRuleSet.builder()
-                .parameters(Parameters.builder()
-                        .addParameter(Builtins.SDK_ENDPOINT)
-                        .build())
-                .build();
     }
 }

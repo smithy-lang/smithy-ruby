@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +32,8 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
+import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -53,6 +56,8 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final SymbolProvider symbolProvider;
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
+    private final Map<Identifier, BuiltInBinding> rulesEngineBuiltIns;
+
     /**
      * @param rubySettings         ruby settings
      * @param fileManifest         file manifest for generating files
@@ -72,7 +77,8 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                              ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
                              ApplicationTransport applicationTransport,
-                             SymbolProvider symbolProvider) {
+                             SymbolProvider symbolProvider,
+                             Set<BuiltInBinding> rulesEngineBuiltIns) {
 
         this.rubySettings = rubySettings;
         this.fileManifest = fileManifest;
@@ -83,6 +89,11 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
         this.symbolProvider = symbolProvider;
+        this.rulesEngineBuiltIns = rulesEngineBuiltIns.stream().collect(Collectors.toMap(
+                (b) -> b.getBuiltIn().getName(),
+                (b) -> b
+                )
+        );
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
 
@@ -181,5 +192,9 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
             i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
         });
         return Collections.unmodifiableSet(authSchemes);
+    }
+
+    public Optional<BuiltInBinding> getBuiltInBinding(Identifier builtIn) {
+        return Optional.ofNullable(rulesEngineBuiltIns.get(builtIn));
     }
 }

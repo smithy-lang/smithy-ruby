@@ -103,7 +103,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::AllQueryStringTypes,
+        param_builder: Endpoint::Parameters::AllQueryStringTypes,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -128,7 +129,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :all_query_string_types,
@@ -181,7 +182,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::ConstantAndVariableQueryString,
+        param_builder: Endpoint::Parameters::ConstantAndVariableQueryString,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -206,7 +208,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :constant_and_variable_query_string,
@@ -259,7 +261,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::ConstantQueryString,
+        param_builder: Endpoint::Parameters::ConstantQueryString,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -284,7 +287,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :constant_query_string,
@@ -344,7 +347,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::DocumentType,
+        param_builder: Endpoint::Parameters::DocumentType,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -369,7 +373,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :document_type,
@@ -427,7 +431,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::DocumentTypeAsPayload,
+        param_builder: Endpoint::Parameters::DocumentTypeAsPayload,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -452,7 +457,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :document_type_as_payload,
@@ -499,7 +504,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::EmptyOperation,
+        param_builder: Endpoint::Parameters::EmptyOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -524,7 +530,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :empty_operation,
@@ -571,7 +577,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::EndpointOperation,
+        param_builder: Endpoint::Parameters::EndpointOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::HostPrefix,
@@ -600,7 +607,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :endpoint_operation,
@@ -649,7 +656,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::EndpointWithHostLabelOperation,
+        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::HostPrefix,
@@ -678,7 +686,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :endpoint_with_host_label_operation,
@@ -734,7 +742,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::GreetingWithErrors,
+        param_builder: Endpoint::Parameters::GreetingWithErrors,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -759,7 +768,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :greeting_with_errors,
@@ -815,7 +824,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpPayloadTraits,
+        param_builder: Endpoint::Parameters::HttpPayloadTraits,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -840,7 +850,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_payload_traits,
@@ -894,7 +904,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpPayloadTraitsWithMediaType,
+        param_builder: Endpoint::Parameters::HttpPayloadTraitsWithMediaType,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -919,7 +930,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_payload_traits_with_media_type,
@@ -978,7 +989,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpPayloadWithStructure,
+        param_builder: Endpoint::Parameters::HttpPayloadWithStructure,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1003,7 +1015,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_payload_with_structure,
@@ -1060,7 +1072,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpPrefixHeaders,
+        param_builder: Endpoint::Parameters::HttpPrefixHeaders,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1085,7 +1098,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_prefix_headers,
@@ -1135,7 +1148,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpPrefixHeadersInResponse,
+        param_builder: Endpoint::Parameters::HttpPrefixHeadersInResponse,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1160,7 +1174,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_prefix_headers_in_response,
@@ -1210,7 +1224,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpRequestWithFloatLabels,
+        param_builder: Endpoint::Parameters::HttpRequestWithFloatLabels,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1235,7 +1250,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_request_with_float_labels,
@@ -1285,7 +1300,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpRequestWithGreedyLabelInPath,
+        param_builder: Endpoint::Parameters::HttpRequestWithGreedyLabelInPath,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1310,7 +1326,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_request_with_greedy_label_in_path,
@@ -1368,7 +1384,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpRequestWithLabels,
+        param_builder: Endpoint::Parameters::HttpRequestWithLabels,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1393,7 +1410,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_request_with_labels,
@@ -1450,7 +1467,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpRequestWithLabelsAndTimestampFormat,
+        param_builder: Endpoint::Parameters::HttpRequestWithLabelsAndTimestampFormat,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1475,7 +1493,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_request_with_labels_and_timestamp_format,
@@ -1523,7 +1541,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpResponseCode,
+        param_builder: Endpoint::Parameters::HttpResponseCode,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1548,7 +1567,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_response_code,
@@ -1599,7 +1618,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::IgnoreQueryParamsInResponse,
+        param_builder: Endpoint::Parameters::IgnoreQueryParamsInResponse,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1624,7 +1644,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :ignore_query_params_in_response,
@@ -1724,7 +1744,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::InputAndOutputWithHeaders,
+        param_builder: Endpoint::Parameters::InputAndOutputWithHeaders,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1749,7 +1770,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :input_and_output_with_headers,
@@ -1819,7 +1840,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::JsonEnums,
+        param_builder: Endpoint::Parameters::JsonEnums,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1844,7 +1866,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :json_enums,
@@ -1941,7 +1963,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::JsonMaps,
+        param_builder: Endpoint::Parameters::JsonMaps,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1966,7 +1989,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :json_maps,
@@ -2051,7 +2074,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::JsonUnions,
+        param_builder: Endpoint::Parameters::JsonUnions,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2076,7 +2100,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :json_unions,
@@ -2231,7 +2255,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::KitchenSinkOperation,
+        param_builder: Endpoint::Parameters::KitchenSinkOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2256,7 +2281,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :kitchen_sink_operation,
@@ -2307,7 +2332,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::MediaTypeHeader,
+        param_builder: Endpoint::Parameters::MediaTypeHeader,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2332,7 +2358,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :media_type_header,
@@ -2384,7 +2410,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::NestedAttributesOperation,
+        param_builder: Endpoint::Parameters::NestedAttributesOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2409,7 +2436,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :nested_attributes_operation,
@@ -2468,7 +2495,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::NullAndEmptyHeadersClient,
+        param_builder: Endpoint::Parameters::NullAndEmptyHeadersClient,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2493,7 +2521,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :null_and_empty_headers_client,
@@ -2553,7 +2581,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::NullOperation,
+        param_builder: Endpoint::Parameters::NullOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2578,7 +2607,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :null_operation,
@@ -2629,7 +2658,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::OmitsNullSerializesEmptyString,
+        param_builder: Endpoint::Parameters::OmitsNullSerializesEmptyString,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2654,7 +2684,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :omits_null_serializes_empty_string,
@@ -2704,7 +2734,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::OperationWithOptionalInputOutput,
+        param_builder: Endpoint::Parameters::OperationWithOptionalInputOutput,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2729,7 +2760,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :operation_with_optional_input_output,
@@ -2780,7 +2811,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::QueryIdempotencyTokenAutoFill,
+        param_builder: Endpoint::Parameters::QueryIdempotencyTokenAutoFill,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2805,7 +2837,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :query_idempotency_token_auto_fill,
@@ -2859,7 +2891,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::QueryParamsAsStringListMap,
+        param_builder: Endpoint::Parameters::QueryParamsAsStringListMap,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2884,7 +2917,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :query_params_as_string_list_map,
@@ -2933,7 +2966,8 @@ module RailsJson
         auth_schemes: config.auth_schemes
       )
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::StreamingOperation,
+        param_builder: Endpoint::Parameters::StreamingOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2958,7 +2992,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :streaming_operation,
@@ -3021,7 +3055,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::TimestampFormatHeaders,
+        param_builder: Endpoint::Parameters::TimestampFormatHeaders,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -3046,7 +3081,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :timestamp_format_headers,
@@ -3100,7 +3135,8 @@ module RailsJson
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::Operation____789BadName,
+        param_builder: Endpoint::Parameters::Operation____789BadName,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -3125,7 +3161,7 @@ module RailsJson
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :operation____789_bad_name,

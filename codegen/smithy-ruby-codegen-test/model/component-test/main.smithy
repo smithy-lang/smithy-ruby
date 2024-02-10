@@ -2,6 +2,7 @@ $version: "2.0"
 namespace smithy.ruby.tests
 
 use smithy.ruby.tests.protocols#fakeProtocol
+use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 @endpointRuleSet({
     "version": "1.0",
@@ -57,6 +58,12 @@ use smithy.rules#endpointRuleSet
         },
     ],
 })
+@clientContextParams(
+    Stage: {
+        type: "string"
+        documentation: "Specify the stage (beta|gamma|prod)"
+    }
+)
 @fakeProtocol
 @title("FakeProtocol Test Service")
 service WhiteLabel {

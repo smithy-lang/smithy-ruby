@@ -88,7 +88,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::CustomAuth,
+        param_builder: Endpoint::Parameters::CustomAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -112,7 +113,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :custom_auth,
@@ -218,7 +219,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::DefaultsTest,
+        param_builder: Endpoint::Parameters::DefaultsTest,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -242,7 +244,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :defaults_test,
@@ -296,7 +298,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::EndpointOperation,
+        param_builder: Endpoint::Parameters::EndpointOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::HostPrefix,
@@ -324,7 +327,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :endpoint_operation,
@@ -380,7 +383,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::EndpointWithHostLabelOperation,
+        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::HostPrefix,
@@ -408,7 +412,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :endpoint_with_host_label_operation,
@@ -462,7 +466,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpApiKeyAuth,
+        param_builder: Endpoint::Parameters::HttpApiKeyAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -486,7 +491,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_api_key_auth,
@@ -540,7 +545,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpBasicAuth,
+        param_builder: Endpoint::Parameters::HttpBasicAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -564,7 +570,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_basic_auth,
@@ -618,7 +624,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpBearerAuth,
+        param_builder: Endpoint::Parameters::HttpBearerAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -642,7 +649,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_bearer_auth,
@@ -696,7 +703,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::HttpDigestAuth,
+        param_builder: Endpoint::Parameters::HttpDigestAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -720,7 +728,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_digest_auth,
@@ -916,7 +924,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::KitchenSink,
+        param_builder: Endpoint::Parameters::KitchenSink,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -940,7 +949,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :kitchen_sink,
@@ -998,7 +1007,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::MixinTest,
+        param_builder: Endpoint::Parameters::MixinTest,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1022,7 +1032,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :mixin_test,
@@ -1076,7 +1086,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::NoAuth,
+        param_builder: Endpoint::Parameters::NoAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1100,7 +1111,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :no_auth,
@@ -1154,7 +1165,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::OptionalAuth,
+        param_builder: Endpoint::Parameters::OptionalAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1178,7 +1190,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :optional_auth,
@@ -1232,7 +1244,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::OrderedAuth,
+        param_builder: Endpoint::Parameters::OrderedAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1256,7 +1269,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :ordered_auth,
@@ -1315,7 +1328,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::PaginatorsTest,
+        param_builder: Endpoint::Parameters::PaginatorsTest,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1339,7 +1353,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :paginators_test,
@@ -1398,7 +1412,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::PaginatorsTestWithItems,
+        param_builder: Endpoint::Parameters::PaginatorsTestWithItems,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1422,7 +1437,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :paginators_test_with_items,
@@ -1479,7 +1494,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::RelativeMiddlewareOperation,
+        param_builder: Endpoint::Parameters::RelativeMiddlewareOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1503,7 +1519,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :relative_middleware_operation,
@@ -1566,7 +1582,8 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::HTTP::Middleware::ContentMD5)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::RequestCompressionOperation,
+        param_builder: Endpoint::Parameters::RequestCompressionOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1590,7 +1607,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :request_compression_operation,
@@ -1651,7 +1668,8 @@ module WhiteLabel
         disable_request_compression: config.disable_request_compression
       )
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::RequestCompressionStreamingOperation,
+        param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1675,7 +1693,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :request_compression_streaming_operation,
@@ -1731,7 +1749,8 @@ module WhiteLabel
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::StreamingOperation,
+        param_builder: Endpoint::Parameters::StreamingOperation,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1755,7 +1774,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :streaming_operation,
@@ -1811,7 +1830,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::StreamingWithLength,
+        param_builder: Endpoint::Parameters::StreamingWithLength,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1835,7 +1855,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :streaming_with_length,
@@ -1892,7 +1912,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::WaitersTest,
+        param_builder: Endpoint::Parameters::WaitersTest,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -1916,7 +1937,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :waiters_test,
@@ -1976,7 +1997,8 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::Operation____PaginatorsTestWithBadNames,
+        param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -2000,7 +2022,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :operation____paginators_test_with_bad_names,

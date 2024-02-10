@@ -68,7 +68,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::ApiKeyAuth,
+        param_builder: Endpoint::Parameters::ApiKeyAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -93,7 +94,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :api_key_auth,
@@ -143,7 +144,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::BasicAuth,
+        param_builder: Endpoint::Parameters::BasicAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -168,7 +170,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :basic_auth,
@@ -218,7 +220,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::BearerAuth,
+        param_builder: Endpoint::Parameters::BearerAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -243,7 +246,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :bearer_auth,
@@ -306,7 +309,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::CreateHighScore,
+        param_builder: Endpoint::Parameters::CreateHighScore,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -331,7 +335,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :create_high_score,
@@ -384,7 +388,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::DeleteHighScore,
+        param_builder: Endpoint::Parameters::DeleteHighScore,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -409,7 +414,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :delete_high_score,
@@ -459,7 +464,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::DigestAuth,
+        param_builder: Endpoint::Parameters::DigestAuth,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -484,7 +490,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :digest_auth,
@@ -543,7 +549,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::GetHighScore,
+        param_builder: Endpoint::Parameters::GetHighScore,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -568,7 +575,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :get_high_score,
@@ -626,7 +633,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::ListHighScores,
+        param_builder: Endpoint::Parameters::ListHighScores,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -651,7 +659,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :list_high_scores,
@@ -714,7 +722,8 @@ module HighScoreService
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoints::UpdateHighScore,
+        param_builder: Endpoint::Parameters::UpdateHighScore,
+        config: config,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -739,7 +748,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :update_high_score,

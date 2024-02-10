@@ -143,10 +143,10 @@ module WhiteLabel
 
       def initialize(*)
         super
-        self.un_required_number ||= 0
-        self.un_required_bool ||= false
-        self.number ||= 0
-        self.bool ||= false
+        self.un_required_number = 0 if self.un_required_number.nil?
+        self.un_required_bool = false if self.un_required_bool.nil?
+        self.number = 0 if self.number.nil?
+        self.bool = false if self.bool.nil?
       end
 
       def to_s
@@ -277,10 +277,10 @@ module WhiteLabel
 
       def initialize(*)
         super
-        self.un_required_number ||= 0
-        self.un_required_bool ||= false
-        self.number ||= 0
-        self.bool ||= false
+        self.un_required_number = 0 if self.un_required_number.nil?
+        self.un_required_bool = false if self.un_required_bool.nil?
+        self.number = 0 if self.number.nil?
+        self.bool = false if self.bool.nil?
       end
 
       def to_s

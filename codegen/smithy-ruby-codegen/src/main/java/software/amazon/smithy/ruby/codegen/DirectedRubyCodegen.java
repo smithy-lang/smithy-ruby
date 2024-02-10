@@ -56,6 +56,7 @@ import software.amazon.smithy.ruby.codegen.generators.VersionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 
 public class DirectedRubyCodegen
         implements DirectedCodegen<GenerationContext, RubySettings, RubyIntegration> {
@@ -95,6 +96,10 @@ public class DirectedRubyCodegen
                     .createDefaultHttpApplicationTransport();
         }
 
+        Set<BuiltInBinding> rulesEngineBuiltInBindings = new HashSet<>();
+        rulesEngineBuiltInBindings.addAll(BuiltInBinding.defaultBuiltInBindings());
+        integrations.forEach((integration) -> rulesEngineBuiltInBindings.addAll(integration.builtInBindings()));
+
         GenerationContext context = new GenerationContext(
                 directive.settings(),
                 directive.fileManifest(),
@@ -104,7 +109,8 @@ public class DirectedRubyCodegen
                 protocol,
                 protocolGenerator,
                 applicationTransport,
-                directive.symbolProvider());
+                directive.symbolProvider(),
+                rulesEngineBuiltInBindings);
 
         return context;
     }

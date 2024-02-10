@@ -21,18 +21,3 @@ module WhiteLabel
     end
   end
 end
-
-module WhiteLabel
-  module Auth
-    class Params < ::Struct[untyped]
-      attr_accessor operation_name (): ::Symbol
-      attr_accessor custom_param (): untyped
-    end
-
-    SCHEMES: ::Array[Hearth::AuthSchemes::Base]
-
-    class Resolver
-      def resolve: (auth_params: Params) -> ::Array[Hearth::AuthOption]
-    end
-  end
-end

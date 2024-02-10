@@ -19,8 +19,6 @@ module Weather
   #     authenticate the request.
   #   @option args [Boolean] :disable_host_prefix (false)
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
-  #   @option args [String] :endpoint
-  #     Endpoint of the service
   #   @option args [Endpoint::Resolver] :endpoint_provider (Endpoint::Resolver.new)
   #     The endpoint provider used to resolve endpoints. Any object that responds to
   #     `#resolve_endpoint(parameters)`
@@ -60,8 +58,6 @@ module Weather
   #   @return [Array<Hearth::AuthSchemes::Base>]
   # @!attribute disable_host_prefix
   #   @return [Boolean]
-  # @!attribute endpoint
-  #   @return [String]
   # @!attribute endpoint_provider
   #   @return [Endpoint::Resolver]
   # @!attribute http_client
@@ -82,7 +78,6 @@ module Weather
     :auth_resolver,
     :auth_schemes,
     :disable_host_prefix,
-    :endpoint,
     :endpoint_provider,
     :http_client,
     :interceptors,
@@ -100,7 +95,6 @@ module Weather
       Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
-      Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
       Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Resolver, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
@@ -118,7 +112,6 @@ module Weather
         auth_resolver: [Auth::Resolver.new],
         auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
-        endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         endpoint_provider: [Endpoint::Resolver.new],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         interceptors: [Hearth::InterceptorList.new],

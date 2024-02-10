@@ -85,7 +85,7 @@ module Weather
 
       def initialize(*)
         super
-        self.latitude ||= 0
+        self.latitude = 0 if self.latitude.nil?
       end
     end
 

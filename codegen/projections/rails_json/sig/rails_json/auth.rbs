@@ -20,17 +20,3 @@ module RailsJson
     end
   end
 end
-
-module RailsJson
-  module Auth
-    class Params < ::Struct[untyped]
-      attr_accessor operation_name (): ::Symbol
-    end
-
-    SCHEMES: ::Array[Hearth::AuthSchemes::Base]
-
-    class Resolver
-      def resolve: (auth_params: Params) -> ::Array[Hearth::AuthOption]
-    end
-  end
-end

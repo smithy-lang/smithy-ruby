@@ -49,7 +49,8 @@ public final class EndpointMiddlewareFactory {
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     params.put("param_builder",
-                            "Endpoints::" + context.symbolProvider().toSymbol(operation).getName());
+                            "Endpoint::Parameters::" + context.symbolProvider().toSymbol(operation).getName());
+                    params.put("config", "config");
                     return params;
                 })
                 .build();

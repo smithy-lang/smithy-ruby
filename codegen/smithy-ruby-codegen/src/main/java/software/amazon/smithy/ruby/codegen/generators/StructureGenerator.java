@@ -117,7 +117,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                         String attribute = symbolProvider.toMemberName(m);
                         Shape target = model.expectShape(m.getTarget());
 
-                        writer.write("self.$L ||= $L",
+                        writer.write("self.$1L = $2L if self.$1L.nil?",
                                 attribute,
                                 target.accept(new MemberDefaultVisitor()));
                     });
