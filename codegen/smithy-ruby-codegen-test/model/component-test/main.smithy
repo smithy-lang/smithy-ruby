@@ -4,6 +4,7 @@ namespace smithy.ruby.tests
 use smithy.ruby.tests.protocols#fakeProtocol
 use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
+
 @endpointRuleSet({
     "version": "1.0",
     "parameters": {
@@ -11,13 +12,23 @@ use smithy.rules#endpointRuleSet
             "required": false,
             "documentation": "Specify the stage (beta|gamma|prod)",
             "type": "String",
-        },
+        }
+        "Dataplane": {
+            "required": false,
+            "documentation": "Is this a dataplane operation",
+            type: "Boolean"
+        }
+        "ContextPath": {
+            "required": false,
+            "documentation": "Additional Path to add from context (operation input).",
+            "type": "String",
+        }
         "Endpoint": {
             "builtIn": "SDK::Endpoint",
             "required": false,
             "documentation": "Override the endpoint used to send requests",
             "type": "String",
-        },
+        }
     },
     "rules": [
         // Rule to allow using endpoint overrides
@@ -44,13 +55,17 @@ use smithy.rules#endpointRuleSet
             "conditions": [ {"fn": "isSet", "argv": [{"ref": "Stage"}]}, {"fn": "stringEquals", "argv": [{"ref": "Stage"}, "gamma"]} ],
             "endpoint": { "url": "https://gamma.whitelabel.dev" },
         },
-        // Rule to for Stage = prod
+        // prod endpoints
         {
             "type": "endpoint",
-            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Stage"}]}, {"fn": "stringEquals", "argv": [{"ref": "Stage"}, "prod"]} ],
-            "endpoint": { "url": "https://whitelabel.com" },
+            "conditions": [{"fn": "isSet", "argv": [{"ref": "Dataplane"}]}],
+            "endpoint": { "url": "https://data.whitelabel.com" },
         },
-        // Default to prod endpoint if none of the above rules match
+        {
+            "type": "endpoint",
+            "conditions": [{"fn": "isSet", "argv": [{"ref": "ContextPath"}]}],
+            "endpoint": { "url": "https://whitelabel.com/{ContextPath}" },
+        },
         {
             "type": "endpoint",
             "conditions": [],
@@ -79,6 +94,8 @@ service WhiteLabel {
         StreamingWithLength,
         EndpointOperation,
         EndpointWithHostLabelOperation,
+        DataplaneOperation,
+        EndpointOperationWithPath,
         MixinTest,
         RelativeMiddlewareOperation,
         RequestCompressionOperation,

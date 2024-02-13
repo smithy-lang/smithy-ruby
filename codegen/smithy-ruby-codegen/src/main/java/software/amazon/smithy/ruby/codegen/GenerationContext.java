@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
@@ -32,8 +34,16 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
+import software.amazon.smithy.rulesengine.language.Endpoint;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
+import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -57,6 +67,9 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
     private final Map<Identifier, BuiltInBinding> rulesEngineBuiltIns;
+    private final List<ClientConfig> modeledClientConfig;
+
+    private final EndpointRuleSet endpointRuleSet;
 
     /**
      * @param rubySettings         ruby settings
@@ -90,11 +103,47 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.applicationTransport = applicationTransport;
         this.symbolProvider = symbolProvider;
         this.rulesEngineBuiltIns = rulesEngineBuiltIns.stream().collect(Collectors.toMap(
-                (b) -> b.getBuiltIn().getName(),
-                (b) -> b
+                        (b) -> b.getBuiltIn().getName(),
+                        (b) -> b
                 )
         );
+
+        this.modeledClientConfig = new ArrayList<>();
+        service.getTrait(ClientContextParamsTrait.class).ifPresent((clientContext -> {
+            clientContext.getParameters().forEach((name, param) -> {
+                ClientConfig.Builder builder = ClientConfig.builder()
+                        .name(RubyFormatter.toSnakeCase(name));
+
+                param.getDocumentation().ifPresent((d) -> builder.documentation(d));
+                builder.type(symbolProvider.toSymbol(
+                                param.getType().createBuilderForType()
+                                        .id("smithy#temp")
+                                        .build())
+                        .expectProperty("docType").toString());
+
+                modeledClientConfig.add(builder.build());
+            });
+        }));
+        this.endpointRuleSet =
+                service.getTrait(EndpointRuleSetTrait.class)
+                        .map(t -> EndpointRuleSet.fromNode(t.getRuleSet()))
+                        .orElseGet(GenerationContext::defaultRuleset);
+
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
+    }
+
+    private static EndpointRuleSet defaultRuleset() {
+        return EndpointRuleSet.builder()
+                .parameters(Parameters.builder()
+                        .addParameter(BuiltIns.SDK_ENDPOINT)
+                        .build())
+                .addRule(EndpointRule.builder()
+                        .validateOrElse(
+                                "Endpoint is not set - you must configure an endpoint.",
+                                BuiltIns.SDK_ENDPOINT.isSet()
+                        )
+                        .endpoint(Endpoint.builder().url(BuiltIns.SDK_ENDPOINT.toExpression()).build()))
+                .build();
     }
 
     @Override
@@ -196,5 +245,33 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
     public Optional<BuiltInBinding> getBuiltInBinding(Identifier builtIn) {
         return Optional.ofNullable(rulesEngineBuiltIns.get(builtIn));
+    }
+
+    public Map<Identifier, BuiltInBinding> getBuiltInBindings() {
+        return Map.copyOf(rulesEngineBuiltIns);
+    }
+
+    public List<BuiltInBinding> getBuiltInBindingsFromEndpointRules() {
+        List<BuiltInBinding> builtInBindings = new ArrayList<>();
+        endpointRuleSet.getParameters().forEach((b) -> {
+            if (b.isBuiltIn()) {
+                builtInBindings.add(
+                        getBuiltInBinding(b.getName())
+                                .orElseThrow(
+                                        () -> new SmithyBuildException(
+                                                "Unable to find BuiltinBinding for " + b.getName()))
+                );
+            }
+        });
+
+        return builtInBindings;
+    }
+
+    public List<ClientConfig> getModeledClientConfig() {
+        return List.copyOf(modeledClientConfig);
+    }
+
+    public EndpointRuleSet getEndpointRuleSet() {
+        return endpointRuleSet;
     }
 }

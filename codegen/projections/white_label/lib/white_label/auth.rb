@@ -35,6 +35,12 @@ module WhiteLabel
           options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
         when :custom_auth
           options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
+        when :dataplane_operation
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { scheme: 'Authorization', in: 'header', name: 'X-API-Key' })
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
         when :defaults_test
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { scheme: 'Authorization', in: 'header', name: 'X-API-Key' })
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
@@ -42,6 +48,12 @@ module WhiteLabel
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
         when :endpoint_operation
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { scheme: 'Authorization', in: 'header', name: 'X-API-Key' })
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
+          options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
+        when :endpoint_operation_with_path
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { scheme: 'Authorization', in: 'header', name: 'X-API-Key' })
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBasicAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')

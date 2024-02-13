@@ -5,6 +5,7 @@ module WhiteLabel
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
     attr_accessor disable_request_compression (): bool
+    attr_accessor endpoint (): String
     attr_accessor endpoint_provider (): Endpoint::Resolver
     attr_accessor http_api_key_identity_resolver (): Hearth::IdentityResolver
     attr_accessor http_bearer_identity_resolver (): Hearth::IdentityResolver
@@ -16,6 +17,7 @@ module WhiteLabel
     attr_accessor plugins (): Hearth::PluginList
     attr_accessor request_min_compression_size_bytes (): Integer
     attr_accessor retry_strategy (): Hearth::Retry::Strategy
+    attr_accessor stage (): String
     attr_accessor stub_responses (): bool
     attr_accessor test_config (): String
     attr_accessor validate_input (): bool

@@ -137,6 +137,11 @@ public class DirectedRubyCodegen
         context.protocolGenerator().ifPresent((g) -> {
             g.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
+        context.getBuiltInBindingsFromEndpointRules().forEach((b) -> {
+            b.getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        });
+        context.getModeledClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+
         List<ClientConfig> clientConfigList = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());

@@ -88,9 +88,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::CustomAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::CustomAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -126,6 +127,86 @@ module WhiteLabel
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.data}")
+      output
+    end
+
+    # @param [Hash] params
+    #   Request parameters for this operation.
+    #   See {Types::DataplaneOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Types::DataplaneOperationOutput]
+    # @example Request syntax with placeholder values
+    #   resp = client.dataplane_operation()
+    # @example Response structure
+    #   resp.data #=> Types::DataplaneOperationOutput
+    def dataplane_operation(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::DataplaneOperationInput.build(params, context: 'params')
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::DataplaneOperationInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::DataplaneOperation
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_params: Auth::Params.new(operation_name: :dataplane_operation, custom_param: 'custom_value'),
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::DataplaneOperation
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Sign)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status: 200,
+          errors: []
+        ),
+        data_parser: Parsers::DataplaneOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: config.http_client,
+        stub_error_classes: [],
+        stub_data_class: Stubs::DataplaneOperation,
+        stubs: @stubs
+      )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :dataplane_operation,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_operation] #{output.data}")
       output
     end
 
@@ -219,9 +300,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::DefaultsTest,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::DefaultsTest
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -298,9 +380,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::EndpointOperation,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::EndpointOperation
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.",
@@ -345,6 +428,88 @@ module WhiteLabel
 
     # @param [Hash] params
     #   Request parameters for this operation.
+    #   See {Types::EndpointOperationWithPathInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Types::EndpointOperationWithPathOutput]
+    # @example Request syntax with placeholder values
+    #   resp = client.endpoint_operation_with_path(
+    #     path_member: 'pathMember' # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::EndpointOperationWithPathOutput
+    def endpoint_operation_with_path(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::EndpointOperationWithPathInput.build(params, context: 'params')
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::EndpointOperationWithPathInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::EndpointOperationWithPath
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_params: Auth::Params.new(operation_name: :endpoint_operation_with_path, custom_param: 'custom_value'),
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::EndpointOperationWithPath
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Sign)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status: 200,
+          errors: []
+        ),
+        data_parser: Parsers::EndpointOperationWithPath
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: config.http_client,
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointOperationWithPath,
+        stubs: @stubs
+      )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :endpoint_operation_with_path,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_path] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_path] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_path] #{output.data}")
+      output
+    end
+
+    # @param [Hash] params
+    #   Request parameters for this operation.
     #   See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
@@ -383,9 +548,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation
       )
       stack.use(Hearth::Middleware::HostPrefix,
         host_prefix: "foo.{label_member}.",
@@ -466,9 +632,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpApiKeyAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpApiKeyAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -545,9 +712,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpBasicAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpBasicAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -624,9 +792,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpBearerAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpBearerAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -703,9 +872,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpDigestAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpDigestAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -924,9 +1094,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::KitchenSink,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::KitchenSink
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1007,9 +1178,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::MixinTest,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::MixinTest
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1086,9 +1258,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::NoAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::NoAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1165,9 +1338,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::OptionalAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::OptionalAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1244,9 +1418,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::OrderedAuth,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::OrderedAuth
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1328,9 +1503,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::PaginatorsTest,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::PaginatorsTest
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1412,9 +1588,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::PaginatorsTestWithItems,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::PaginatorsTestWithItems
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1494,9 +1671,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::RelativeMiddlewareOperation,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::RelativeMiddlewareOperation
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1582,9 +1760,10 @@ module WhiteLabel
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::HTTP::Middleware::ContentMD5)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::RequestCompressionOperation,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::RequestCompressionOperation
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1668,9 +1847,10 @@ module WhiteLabel
         disable_request_compression: config.disable_request_compression
       )
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1749,9 +1929,10 @@ module WhiteLabel
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
       )
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::StreamingOperation,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::StreamingOperation
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1830,9 +2011,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::StreamingWithLength,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::StreamingWithLength
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1912,9 +2094,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::WaitersTest,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::WaitersTest
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -1997,9 +2180,10 @@ module WhiteLabel
       )
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames,
-        config: config,
-        endpoint_provider: config.endpoint_provider
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,

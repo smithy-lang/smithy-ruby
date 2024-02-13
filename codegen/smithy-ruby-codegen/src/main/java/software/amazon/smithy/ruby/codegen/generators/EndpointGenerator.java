@@ -23,22 +23,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
-import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
-import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
+import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
+import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
+import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
+import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -55,26 +57,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
         super(directive);
         operations = directive.operations();
         service = directive.service();
-        endpointRuleSet =
-                service.getTrait(EndpointRuleSetTrait.class)
-                        .map(t -> EndpointRuleSet.fromNode(t.getRuleSet()))
-                        .orElseGet(EndpointGenerator::defaultRuleset);
-
+        endpointRuleSet = context.getEndpointRuleSet();
         endpointTests = service.getTrait(EndpointTestsTrait.class);
-    }
-
-    private static EndpointRuleSet defaultRuleset() {
-        return EndpointRuleSet.builder()
-                .parameters(Parameters.builder()
-                        .addParameter(BuiltIns.SDK_ENDPOINT)
-                        .build())
-                .addRule(EndpointRule.builder()
-                        .validateOrElse(
-                                "Endpoint is not set - you must configure an endpoint.",
-                                BuiltIns.SDK_ENDPOINT.isSet()
-                        )
-                        .endpoint(Endpoint.builder().url(BuiltIns.SDK_ENDPOINT.toExpression()).build()))
-                .build();
     }
 
     @Override
@@ -91,8 +75,12 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .addModule("Endpoint")
                     .call(() -> renderEndpointParamsClass(writer))
                     .write("")
+                    .call(() -> renderEndpointResolver(writer))
+                    .write("")
                     .addModule("Parameters")
                     .call(() -> renderParamBuilders(writer))
+                    .closeModule()
+                    .write("")
 //                    .call(() -> renderAuthSchemesConstant(writer))
 //                    .write("")
 //                    .call(() -> renderAuthResolver(writer))
@@ -186,6 +174,78 @@ public class EndpointGenerator extends RubyGeneratorBase {
     }
 
     private void renderParamBuilders(RubyCodeWriter writer) {
+        Map<String, String> clientContextParams = new HashMap<>();
+        service.getTrait(ClientContextParamsTrait.class).ifPresent((clientContext) -> {
+            clientContext.getParameters().forEach((name, param) -> {
+                clientContextParams.put(name, RubyFormatter.toSnakeCase(name));
+            });
+        });
+
+        for (OperationShape operation : operations) {
+            Map<String, StaticContextParamDefinition> staticContextParams = new HashMap<>();
+            operation.getTrait(StaticContextParamsTrait.class).ifPresent((staticContext) -> {
+                staticContext.getParameters().forEach((name, p) -> {
+                    staticContextParams.put(name, p);
+                });
+            });
+
+            Map<String, String> contextParams = new HashMap<>();
+            context.model().expectShape(operation.getInputShape(), StructureShape.class)
+                    .getAllMembers().forEach((n, member) -> {
+                member.getMemberTrait(context.model(), ContextParamTrait.class).ifPresent(contextParam -> {
+                    contextParams.put(contextParam.getName(), symbolProvider.toMemberName(member));
+                });
+            });
+            // Optional<ContextParamTrait> contextParams = operation.getTrait(ContextParamTrait.class);
+
+            writer
+                    .write("")
+                    .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
+                    .openBlock("def self.build(config, input, context)")
+                    .write("params = Params.new")
+                    .call(() -> {
+                        for (Parameter p : endpointRuleSet.getParameters()) {
+                            String paramName = p.getName().toString();
+                            if (staticContextParams.containsKey(paramName)) {
+                                StaticContextParamDefinition def = staticContextParams.get(paramName);
+                                String value;
+                                if (def.getValue().isStringNode()) {
+                                    value = "'" + def.getValue().expectStringNode() + "'";
+                                } else if (def.getValue().isBooleanNode()) {
+                                    value = def.getValue().expectBooleanNode().getValue() ? "true" : "false";
+                                } else {
+                                    throw new SmithyBuildException("Unexpected StaticContextParam type: "
+                                            + def.getValue().getType() + " for parameter: " + paramName);
+                                }
+                                writer.write("params.$L = $L",
+                                        RubyFormatter.toSnakeCase(paramName), value);
+                            } else if (clientContextParams.containsKey(paramName)) {
+                                writer.write("params.$1L = config[:$1L]",
+                                        clientContextParams.get(paramName));
+                            } else if (contextParams.containsKey(paramName)) {
+                                writer.write("params.$L = input.$L",
+                                        RubyFormatter.toSnakeCase(paramName),
+                                        contextParams.get(paramName));
+                            } else if (p.isBuiltIn()) {
+                                context.getBuiltInBinding(p.getName()).get().renderBuild(writer, context, operation);
+                            }
+                            // some parameters may not have bindings for an operation, leave them as nil or default
+                        }
+                    })
+                    .write("params")
+                    .closeBlock("end")
+                    .closeBlock("end");
+        }
+    }
+
+    private void renderEndpointResolver(RubyCodeWriter writer) {
+        writer
+                .openBlock("class Resolver")
+                .openBlock("def resolve_endpoint(params)")
+                .write("Hearth::RulesEngine::Endpoint.new(uri: 'https://example.com')")
+                .closeBlock("end")
+                .closeBlock("end");
 
     }
+
 }

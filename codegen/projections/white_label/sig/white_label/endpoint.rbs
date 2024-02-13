@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/awslabs/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module WhiteLabel
+  module Endpoint
+    class Params < ::Struct[untyped]
+      attr_accessor dataplane: bool
+      attr_accessor endpoint: ::String
+      attr_accessor stage: ::String
+      attr_accessor context_path: ::String
+    end
+
+  end
+end

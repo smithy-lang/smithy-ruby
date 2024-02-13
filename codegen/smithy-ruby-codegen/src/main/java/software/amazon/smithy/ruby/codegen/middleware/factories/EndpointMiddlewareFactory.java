@@ -50,7 +50,11 @@ public final class EndpointMiddlewareFactory {
                     Map<String, String> params = new HashMap<>();
                     params.put("param_builder",
                             "Endpoint::Parameters::" + context.symbolProvider().toSymbol(operation).getName());
-                    params.put("config", "config");
+                    context.getBuiltInBindingsFromEndpointRules().forEach((b) -> {
+                        b.getClientConfig().forEach((c) -> params.put(c.getName(), c.renderGetConfigValue()));
+                    });
+                    context.getModeledClientConfig().forEach((c) -> params.put(c.getName(), c.renderGetConfigValue()));
+
                     return params;
                 })
                 .build();

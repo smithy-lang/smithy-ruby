@@ -5,9 +5,28 @@ $version: "1.0"
 
 namespace smithy.ruby.tests
 
+use smithy.rules#contextParam
+use smithy.rules#staticContextParams
+
 @endpoint(hostPrefix: "foo.")
 @http(method: "POST", uri: "/endpoint_operation")
 operation EndpointOperation {}
+
+@staticContextParams(Dataplane: {value: true})
+@http(method: "POST", uri: "/dataplane_operation")
+operation DataplaneOperation {}
+
+@http(method: "POST", uri: "/endpoint_operation_with_path")
+operation EndpointOperationWithPath {
+    input: PathInput
+}
+
+structure PathInput {
+    @required
+    @contextParam(name: "ContextPath")
+    pathMember: String,
+}
+
 
 @endpoint(hostPrefix: "foo.{labelMember}.")
 @http(method: "POST", uri: "/endpoint_operation_with_host_label")

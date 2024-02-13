@@ -69,7 +69,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::ApiKeyAuth,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -145,7 +145,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::BasicAuth,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -221,7 +221,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::BearerAuth,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -310,7 +310,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::CreateHighScore,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -389,7 +389,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::DeleteHighScore,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -465,7 +465,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::DigestAuth,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -550,7 +550,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::GetHighScore,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -634,7 +634,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::ListHighScores,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -723,7 +723,7 @@ module HighScoreService
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::UpdateHighScore,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,

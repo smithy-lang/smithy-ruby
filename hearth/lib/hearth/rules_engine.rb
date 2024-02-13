@@ -13,14 +13,26 @@ module Hearth
   # invoked without additional dependencies, called the standard library.
   # @api private
   module RulesEngine
-    AuthScheme = Struct.new(:name, :properties, keyword_init: true) do
-      include Hearth::Structure
+    class AuthScheme
+      def initialize(name: , properties: {})
+        @name = name
+        @properties = properties
+      end
+
+      attr_reader :name
+      attr_reader :properties
     end
 
-    Endpoint = Struct.new(
-      :uri, :auth_schemes, :headers, keyword_init: true
-    ) do
-      include Hearth::Structure
+    class Endpoint
+      def initialize(uri:, auth_schemes: [], headers: {})
+        @uri = uri
+        @auth_schemes = auth_schemes
+        @headers = headers
+      end
+
+      attr_reader :uri
+      attr_reader :auth_schemes
+      attr_reader :headers
     end
 
     # Evaluates two boolean values for equality, returning true if they match.

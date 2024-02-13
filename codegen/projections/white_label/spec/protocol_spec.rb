@@ -28,11 +28,19 @@ module WhiteLabel
 
     end
 
+    describe '#dataplane_operation' do
+
+    end
+
     describe '#defaults_test' do
 
     end
 
     describe '#endpoint_operation' do
+
+    end
+
+    describe '#endpoint_operation_with_path' do
 
     end
 

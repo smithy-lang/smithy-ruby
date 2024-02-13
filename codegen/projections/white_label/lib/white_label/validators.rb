@@ -32,6 +32,18 @@ module WhiteLabel
       end
     end
 
+    class DataplaneOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DataplaneOperationInput, context: context)
+      end
+    end
+
+    class DataplaneOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DataplaneOperationOutput, context: context)
+      end
+    end
+
     class DefaultsTestInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::DefaultsTestInput, context: context)
@@ -141,6 +153,20 @@ module WhiteLabel
     class EndpointOperationOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::EndpointOperationOutput, context: context)
+      end
+    end
+
+    class EndpointOperationWithPathInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithPathInput, context: context)
+        Hearth::Validator.validate_required!(input[:path_member], context: "#{context}[:path_member]")
+        Hearth::Validator.validate_types!(input[:path_member], ::String, context: "#{context}[:path_member]")
+      end
+    end
+
+    class EndpointOperationWithPathOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithPathOutput, context: context)
       end
     end
 

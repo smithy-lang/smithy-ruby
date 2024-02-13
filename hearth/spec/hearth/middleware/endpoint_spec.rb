@@ -9,14 +9,16 @@ module Hearth
       let(:output) { double('output') }
       let(:endpoint_provider) { double }
       let(:param_builder) { double }
-      let(:config) { double }
+      let(:config_1) { double }
+      let(:config_2) { double }
 
       subject do
         Endpoint.new(
           app,
           endpoint_provider: endpoint_provider,
           param_builder: param_builder,
-          config: config
+          config_1: config_1,
+          config_2: config_2
         )
       end
 
@@ -49,7 +51,7 @@ module Hearth
 
         it 'resolves the endpoint and modifies the request' do
           expect(param_builder).to receive(:build)
-            .with(config, context).and_return(params)
+            .with({config_1: config_1, config_2: config_2}, input, context).and_return(params)
           expect(endpoint_provider).to receive(:resolve_endpoint)
             .with(params).and_return(resolved_endpoint)
 

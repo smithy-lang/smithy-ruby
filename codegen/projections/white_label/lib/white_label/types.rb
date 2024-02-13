@@ -42,6 +42,24 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    DataplaneOperationInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    DataplaneOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :string
     #   @option params [Struct] :struct
     #   @option params [Integer] :un_required_number (0)
@@ -320,6 +338,27 @@ module WhiteLabel
     # @!method initialize(params = {})
     #   @param [Hash] params
     EndpointOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :path_member
+    # @!attribute path_member
+    #   @return [String]
+    EndpointOperationWithPathInput = ::Struct.new(
+      :path_member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    EndpointOperationWithPathOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do

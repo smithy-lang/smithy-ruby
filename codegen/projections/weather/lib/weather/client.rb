@@ -75,7 +75,7 @@ module Weather
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::GetCity,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -159,7 +159,7 @@ module Weather
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::GetCityImage,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -232,7 +232,7 @@ module Weather
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::GetCurrentTime,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -322,7 +322,7 @@ module Weather
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::GetForecast,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -417,7 +417,7 @@ module Weather
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::ListCities,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
@@ -497,7 +497,7 @@ module Weather
       stack.use(Hearth::HTTP::Middleware::ContentLength)
       stack.use(Hearth::Middleware::Endpoint,
         param_builder: Endpoint::Parameters::Operation____789BadName,
-        config: config,
+        endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider
       )
       stack.use(Hearth::Middleware::Retry,
