@@ -197,6 +197,12 @@ public final class Hearth {
             .name("Send")
             .build();
 
+    // Rules engine / Endpoints
+    public static final Symbol RULES_ENGINE_ENDPOINT = Symbol.builder()
+            .namespace("Hearth::RulesEngine", "::")
+            .name("Endpoint")
+            .build();
+
     private Hearth() {
 
     }

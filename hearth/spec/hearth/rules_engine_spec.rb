@@ -2,17 +2,6 @@
 
 module Hearth
   describe RulesEngine do
-    describe '.boolean_equals?' do
-      it 'returns true when the values are equal' do
-        expect(RulesEngine.boolean_equals?(false, false))
-          .to eq true
-      end
-
-      it 'returns false when the values are not equal' do
-        expect(RulesEngine.boolean_equals?(false, true))
-          .to eq false
-      end
-    end
 
     describe '.get_attr' do
       context 'input array' do
@@ -43,16 +32,6 @@ module Hearth
         it 'gets paths with sub components' do
           expect(RulesEngine.get_attr(input, 'Thing3.SubThing')).to eq(42)
         end
-      end
-    end
-
-    describe '.set?' do
-      it 'returns true when the value is set' do
-        expect(RulesEngine.set?('value')).to be true
-      end
-
-      it 'returns false when the value is not set' do
-        expect(RulesEngine.set?(nil)).to be false
       end
     end
 
@@ -124,12 +103,6 @@ module Hearth
       end
     end
 
-    describe '.not' do
-      it 'negates the value' do
-        expect(RulesEngine.not(true)).to be false
-      end
-    end
-
     describe '.parse_url' do
       it 'parses a valid url' do
         expect(RulesEngine.parse_url('https://example.com'))
@@ -179,16 +152,6 @@ module Hearth
         expect(RulesEngine.parse_url(
                  'https://example.com:8443?foo=bar&faz=baz'
                )).to be_nil
-      end
-    end
-
-    describe '.string_equals?' do
-      it 'returns true when the values are equal' do
-        expect(RulesEngine.string_equals?('a', 'a')).to be true
-      end
-
-      it 'returns false when the values are not equal' do
-        expect(RulesEngine.string_equals?('a', 'b')).to be false
       end
     end
 

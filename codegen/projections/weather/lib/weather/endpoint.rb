@@ -16,9 +16,16 @@ module Weather
       include Hearth::Structure
     end
 
-    class Resolver
+    class Provider
       def resolve_endpoint(params)
-        Hearth::RulesEngine::Endpoint.new(uri: 'https://example.com')
+        endpoint = params.endpoint
+
+        if (endpoint != nil)
+          return Hearth::RulesEngine::Endpoint.new(url: endpoint)
+        end
+        raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
+
+        raise ArgumentError, 'No endpoint could be resolved'
       end
     end
 

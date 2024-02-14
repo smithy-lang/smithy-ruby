@@ -21,7 +21,7 @@ module HighScoreService
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #   @option args [String] :endpoint
   #     Endpoint of the service
-  #   @option args [Endpoint::Resolver] :endpoint_provider (Endpoint::Resolver.new)
+  #   @option args [Endpoint::Provider] :endpoint_provider (Endpoint::Provider.new)
   #     The endpoint provider used to resolve endpoints. Any object that responds to
   #     `#resolve_endpoint(parameters)`
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
@@ -69,7 +69,7 @@ module HighScoreService
   # @!attribute endpoint
   #   @return [String]
   # @!attribute endpoint_provider
-  #   @return [Endpoint::Resolver]
+  #   @return [Endpoint::Provider]
   # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   # @!attribute http_bearer_identity_resolver
@@ -116,7 +116,7 @@ module HighScoreService
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
-      Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Resolver, context: 'config[:endpoint_provider]')
+      Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Provider, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
       Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -137,7 +137,7 @@ module HighScoreService
         auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
-        endpoint_provider: [Endpoint::Resolver.new],
+        endpoint_provider: [Endpoint::Provider.new],
         http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],

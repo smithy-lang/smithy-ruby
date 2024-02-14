@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -33,9 +36,24 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
+import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.TemplateVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.LiteralVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
@@ -67,10 +85,26 @@ public class EndpointGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+
+        // Possible future optimization: only write/require files for functions that are used in this ruleset
+        List<String> additionalFiles =
+                Stream.concat(
+                                context.getBuiltInBindingsFromEndpointRules().stream()
+                                        .map(b -> b.writeAdditionalFiles(context))
+                                        .flatMap(Collection::stream),
+                                context.getFunctionBindings().values().stream()
+                                        .map(b -> b.writeAdditionalFiles(context))
+                                        .flatMap(Collection::stream)
+                        )
+                        .distinct()
+                        .sorted()
+                        .collect(Collectors.toList());
+
         write(writer -> {
             writer
                     .preamble()
                     .includeRequires()
+                    .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .addModule(settings.getModule())
                     .addModule("Endpoint")
                     .call(() -> renderEndpointParamsClass(writer))
@@ -192,10 +226,10 @@ public class EndpointGenerator extends RubyGeneratorBase {
             Map<String, String> contextParams = new HashMap<>();
             context.model().expectShape(operation.getInputShape(), StructureShape.class)
                     .getAllMembers().forEach((n, member) -> {
-                member.getMemberTrait(context.model(), ContextParamTrait.class).ifPresent(contextParam -> {
-                    contextParams.put(contextParam.getName(), symbolProvider.toMemberName(member));
-                });
-            });
+                        member.getMemberTrait(context.model(), ContextParamTrait.class).ifPresent(contextParam -> {
+                            contextParams.put(contextParam.getName(), symbolProvider.toMemberName(member));
+                        });
+                    });
             // Optional<ContextParamTrait> contextParams = operation.getTrait(ContextParamTrait.class);
 
             writer
@@ -240,12 +274,225 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
     private void renderEndpointResolver(RubyCodeWriter writer) {
         writer
-                .openBlock("class Resolver")
+                .openBlock("class Provider")
                 .openBlock("def resolve_endpoint(params)")
-                .write("Hearth::RulesEngine::Endpoint.new(uri: 'https://example.com')")
+                .call(() -> mapParametersToLocals(writer))
+                .write("")
+                .call(() -> renderRules(writer, endpointRuleSet.getRules()))
+                .write("")
+                .write("raise ArgumentError, 'No endpoint could be resolved'")
                 .closeBlock("end")
                 .closeBlock("end");
 
+    }
+
+    private void renderRules(RubyCodeWriter writer, List<Rule> rules) {
+        for (Rule rule : rules) {
+            if (!rule.getConditions().isEmpty()) {
+                writer
+                        .call(() -> renderConditions(writer, rule.getConditions())).indent() // open if block
+                        .call(() -> renderRule(writer, rule))
+                        .closeBlock("end");
+            } else {
+                renderRule(writer, rule);
+            }
+        }
+    }
+
+    private void renderRule(RubyCodeWriter writer, Rule rule) {
+        rule.accept(new RenderRuleVisitor(writer));
+    }
+
+    private void renderConditions(RubyCodeWriter writer, List<Condition> conditions) {
+
+        String condition = conditions.stream().map((c) -> {
+            if (c.getResult().isPresent()) {
+                return "(" + c.getResult().get().getName().getValue()
+                        + " = " + c.getFunction().accept(new ExpressionTemplateVisitor(context)) + ")";
+            } else {
+                return "(" + c.getFunction().accept(new ExpressionTemplateVisitor(context)) + ")";
+            }
+        }).collect(Collectors.joining(" && "));
+        writer.write("if $L", condition);
+    }
+
+    private void mapParametersToLocals(RubyCodeWriter writer) {
+        for (Parameter parameter : endpointRuleSet.getParameters()) {
+            writer.write("$1L = params.$1L", RubyFormatter.toSnakeCase(parameter.getName().toString()));
+        }
+    }
+
+    private String templateExpression(Expression expression) {
+        return expression.accept(new ExpressionTemplateVisitor(context));
+    }
+
+    private static class ExpressionTemplateVisitor implements ExpressionVisitor<String> {
+
+        final GenerationContext context;
+
+        ExpressionTemplateVisitor(GenerationContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public String visitLiteral(Literal literal) {
+            return literal.accept(new TemplateLiteralVisitor(context));
+        }
+
+        @Override
+        public String visitRef(Reference reference) {
+            return RubyFormatter.toSnakeCase(reference.getName().getName().getValue());
+        }
+
+        @Override
+        public String visitGetAttr(GetAttr getAttr) {
+            return "Hearth::RuleSet::get_attr(" + getAttr.getTarget().accept(this) + ")";
+        }
+
+        @Override
+        public String visitIsSet(Expression expression) {
+            return expression.accept(this) + " != nil";
+        }
+
+        @Override
+        public String visitNot(Expression expression) {
+            return "!" + expression.accept(this);
+        }
+
+        @Override
+        public String visitBoolEquals(Expression expression1, Expression expression2) {
+            return expression1.accept(this) + " == "
+                    + expression2.accept(this);
+        }
+
+        @Override
+        public String visitStringEquals(Expression expression1, Expression expression2) {
+            return expression1.accept(this) + " == "
+                    + expression2.accept(this);
+        }
+
+        @Override
+        public String visitLibraryFunction(FunctionDefinition functionDefinition, List<Expression> args) {
+            FunctionBinding functionBinding = context.getFunctionBinding(functionDefinition.getId())
+                    .orElseThrow(() -> new SmithyBuildException(
+                            "Unable to find rules engine function binding for: " + functionDefinition.getId()));
+            String rubyArgs = args.stream().map((e) -> e.accept(new ExpressionTemplateVisitor(context))).collect(
+                    Collectors.joining(", "));
+            return functionBinding.getRubyMethodName() + "(" + rubyArgs + ")";
+        }
+    }
+
+    private static class TemplateLiteralVisitor implements LiteralVisitor<String> {
+        final GenerationContext context;
+
+        TemplateLiteralVisitor(GenerationContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public String visitBoolean(boolean b) {
+            return b ? "true" : "false";
+        }
+
+        @Override
+        public String visitString(Template template) {
+            return template.accept(new RubyTemplateVisitor(context)).collect(Collectors.joining());
+        }
+
+        @Override
+        public String visitRecord(Map<Identifier, Literal> map) {
+            StringBuilder ret = new StringBuilder();
+            ret.append("{");
+            ret.append(map.entrySet().stream()
+                    .map((e) -> {
+                        return e.getKey().getName().getValue() + "=>" + e.getValue().accept(this);
+                    })
+                    .collect(Collectors.joining(", "))
+            );
+            ret.append("}");
+            return ret.toString();
+        }
+
+        @Override
+        public String visitTuple(List<Literal> list) {
+            String ret = "["
+                    + list.stream()
+                    .map((l) -> l.accept(this))
+                    .collect(Collectors.joining(", "))
+                    + "]";
+            return ret;
+        }
+
+        @Override
+        public String visitInteger(int i) {
+            return Integer.toString(i);
+        }
+    }
+
+    private static class RubyTemplateVisitor implements TemplateVisitor<String> {
+        final GenerationContext context;
+
+        RubyTemplateVisitor(GenerationContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public String visitStaticTemplate(String s) {
+            return "\"" + s + "\"";
+        }
+
+        @Override
+        public String visitSingleDynamicTemplate(Expression expression) {
+            return expression.accept(new ExpressionTemplateVisitor(context));
+        }
+
+        @Override
+        public String visitStaticElement(String s) {
+            return s;
+        }
+
+        @Override
+        public String visitDynamicElement(Expression expression) {
+            return "#{" + expression.accept(new ExpressionTemplateVisitor(context)) + "}";
+        }
+
+        @Override
+        public String startMultipartTemplate() {
+            return "\"";
+        }
+
+        @Override
+        public String finishMultipartTemplate() {
+            return "\"";
+        }
+    }
+
+    private class RenderRuleVisitor implements RuleValueVisitor<Void> {
+
+        final RubyCodeWriter writer;
+
+        RenderRuleVisitor(RubyCodeWriter writer) {
+            this.writer = writer;
+        }
+
+        @Override
+        public Void visitTreeRule(List<Rule> list) {
+            renderRules(writer, list);
+            return null;
+        }
+
+        @Override
+        public Void visitErrorRule(Expression expression) {
+            writer.write("raise ArgumentError, $L", expression.accept(new ExpressionTemplateVisitor(context)));
+            return null;
+        }
+
+        @Override
+        public Void visitEndpointRule(Endpoint endpoint) {
+            String uriString = templateExpression(endpoint.getUrl());
+            writer.write("return $T.new(url: $L)", Hearth.RULES_ENGINE_ENDPOINT, uriString);
+            return null;
+        }
     }
 
 }

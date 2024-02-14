@@ -19,9 +19,34 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class Resolver
+    class Provider
       def resolve_endpoint(params)
-        Hearth::RulesEngine::Endpoint.new(uri: 'https://example.com')
+        stage = params.stage
+        dataplane = params.dataplane
+        context_path = params.context_path
+        endpoint = params.endpoint
+
+        if (endpoint != nil)
+          return Hearth::RulesEngine::Endpoint.new(url: endpoint)
+        end
+        if (stage != nil) && (stage == "alpha")
+          return Hearth::RulesEngine::Endpoint.new(url: "https://alpha.whitelabel.dev")
+        end
+        if (stage != nil) && (stage == "beta")
+          return Hearth::RulesEngine::Endpoint.new(url: "https://beta.whitelabel.dev")
+        end
+        if (stage != nil) && (stage == "gamma")
+          return Hearth::RulesEngine::Endpoint.new(url: "https://gamma.whitelabel.dev")
+        end
+        if (dataplane != nil)
+          return Hearth::RulesEngine::Endpoint.new(url: "https://data.whitelabel.com")
+        end
+        if (context_path != nil)
+          return Hearth::RulesEngine::Endpoint.new(url: "https://whitelabel.com/#{context_path}")
+        end
+        return Hearth::RulesEngine::Endpoint.new(url: "https://whitelabel.com")
+
+        raise ArgumentError, 'No endpoint could be resolved'
       end
     end
 

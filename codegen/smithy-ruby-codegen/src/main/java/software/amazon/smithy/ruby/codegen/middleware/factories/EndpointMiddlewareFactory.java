@@ -34,8 +34,8 @@ public final class EndpointMiddlewareFactory {
                 """;
         ClientConfig endpointProviderConfig = ClientConfig.builder()
                 .name("endpoint_provider")
-                .type("Endpoint::Resolver")
-                .defaultValue("Endpoint::Resolver.new")
+                .type("Endpoint::Provider")
+                .defaultValue("Endpoint::Provider.new")
                 .documentation(endpointProviderDocumentation)
                 .build();
 

@@ -5,7 +5,7 @@ module Weather
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
     attr_accessor endpoint (): String
-    attr_accessor endpoint_provider (): Endpoint::Resolver
+    attr_accessor endpoint_provider (): Endpoint::Provider
     attr_accessor http_client (): Hearth::HTTP::Client
     attr_accessor interceptors (): Hearth::InterceptorList
     attr_accessor logger (): Logger

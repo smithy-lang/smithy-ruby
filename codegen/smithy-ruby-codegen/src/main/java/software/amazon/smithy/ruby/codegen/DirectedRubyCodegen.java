@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +58,7 @@ import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
+import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 
 public class DirectedRubyCodegen
         implements DirectedCodegen<GenerationContext, RubySettings, RubyIntegration> {
@@ -96,9 +98,13 @@ public class DirectedRubyCodegen
                     .createDefaultHttpApplicationTransport();
         }
 
-        Set<BuiltInBinding> rulesEngineBuiltInBindings = new HashSet<>();
+        List<BuiltInBinding> rulesEngineBuiltInBindings = new ArrayList<>();
         rulesEngineBuiltInBindings.addAll(BuiltInBinding.defaultBuiltInBindings());
         integrations.forEach((integration) -> rulesEngineBuiltInBindings.addAll(integration.builtInBindings()));
+
+        List<FunctionBinding> rulesEngineFunctionBindings = new ArrayList<>();
+        rulesEngineFunctionBindings.addAll(FunctionBinding.standardLibraryFunctions());
+        integrations.forEach((integration) -> rulesEngineFunctionBindings.addAll(integration.functionBindings()));
 
         GenerationContext context = new GenerationContext(
                 directive.settings(),
@@ -110,7 +116,8 @@ public class DirectedRubyCodegen
                 protocolGenerator,
                 applicationTransport,
                 directive.symbolProvider(),
-                rulesEngineBuiltInBindings);
+                rulesEngineBuiltInBindings,
+                rulesEngineFunctionBindings);
 
         return context;
     }

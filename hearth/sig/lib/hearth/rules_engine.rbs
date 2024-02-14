@@ -15,19 +15,12 @@ module Hearth
       attr_reader headers: Hash[string, string | Array[string]]
     end
 
-    def self.boolean_equals?: (bool, bool)-> bool
 
     def self.get_attr: (Array[document] | Hash[string, document], string)-> document
 
-    def self.set?: (document?) -> bool
-
     def self.valid_host_label?: (string, allow_sub_domains: bool) -> bool
 
-    def self.not: (bool) -> bool
-
     def self.parse_url: (string) -> urlStruct?
-
-    def self.string_equals?: (string, string) -> bool
 
     def self.substring: (string, int, int, bool) -> string?
 

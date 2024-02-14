@@ -35,11 +35,6 @@ module Hearth
       attr_reader :headers
     end
 
-    # Evaluates two boolean values for equality, returning true if they match.
-    def self.boolean_equals?(value1, value2)
-      value1 == value2
-    end
-
     # Extracts a value at the given path from an object or array.
     # getAttr(value: Object | Array, path: string) Document
     def self.get_attr(value, path)
@@ -52,12 +47,6 @@ module Hearth
       else
         get_attr(val, parts.slice(1..-1).join('.'))
       end
-    end
-
-    # Evaluates whether a value, such as an endpoint parameter, is not null.
-    # isSet(value: Option<T>) bool
-    def self.set?(value)
-      !value.nil?
     end
 
     # Evaluates whether the input string is a compliant RFC 1123 host segment.
@@ -75,22 +64,11 @@ module Hearth
       !!(value =~ /\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z/)
     end
 
-    # Performs logical negation on the provided boolean value,
-    # returning the negated value.
-    def self.not(value)
-      !value
-    end
-
     # Computes a URL structure given an input string.
     def self.parse_url(value)
       URL.new(value).as_json
     rescue ArgumentError, URI::InvalidURIError
       nil
-    end
-
-    # Evaluates two string values for equality, returning true if they match.
-    def self.string_equals?(value1, value2)
-      value1 == value2
     end
 
     # Computes a portion of a given string based on
