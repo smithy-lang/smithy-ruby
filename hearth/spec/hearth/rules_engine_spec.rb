@@ -2,38 +2,6 @@
 
 module Hearth
   describe RulesEngine do
-    describe '.get_attr' do
-      context 'input array' do
-        let(:input) { %w[foo bar] }
-
-        it 'gets paths with indexes' do
-          expect(RulesEngine.get_attr(input, '[0]')).to eq('foo')
-        end
-      end
-
-      context 'complex input object' do
-        let(:input) do
-          {
-            'Thing1' => 'foo',
-            'Thing2' => %w[index0 index1],
-            'Thing3' => { 'SubThing' => 42 }
-          }
-        end
-
-        it 'gets top level paths' do
-          expect(RulesEngine.get_attr(input, 'Thing1')).to eq('foo')
-        end
-
-        it 'gets paths with indexes' do
-          expect(RulesEngine.get_attr(input, 'Thing2[0]')).to eq('index0')
-        end
-
-        it 'gets paths with sub components' do
-          expect(RulesEngine.get_attr(input, 'Thing3.SubThing')).to eq(42)
-        end
-      end
-    end
-
     describe '.valid_host_label?' do
       it 'returns false for an empty value' do
         expect(RulesEngine.valid_host_label?('')).to be false

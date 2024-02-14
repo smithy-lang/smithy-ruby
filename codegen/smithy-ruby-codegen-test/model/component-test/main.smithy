@@ -18,9 +18,9 @@ use smithy.rules#endpointRuleSet
             "documentation": "Is this a dataplane operation",
             type: "Boolean"
         }
-        "ContextPath": {
+        "ResourceUrl": {
             "required": false,
-            "documentation": "Additional Path to add from context (operation input).",
+            "documentation": "URL for a customer owned resource.",
             "type": "String",
         }
         "Endpoint": {
@@ -36,6 +36,39 @@ use smithy.rules#endpointRuleSet
             "type": "endpoint",
             "conditions": [ {"fn": "isSet", "argv": [{"ref": "Endpoint"}]} ],
             "endpoint": { "url": {"ref": "Endpoint"} },
+        },
+        {
+            "type": "endpoint",
+            "conditions": [
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "ResourceUrl"
+                        }
+                    ]
+                },
+                {
+                    "fn": "parseURL",
+                    "argv": [
+                        "{ResourceUrl}"
+                    ],
+                    "assign": "parsedUrl"
+                },
+                {
+                    "fn": "getAttr",
+                    "argv": [
+                        {
+                            "ref": "parsedUrl"
+                        },
+                        "path"
+                    ],
+                    "assign": "path"
+                }
+            ],
+            "endpoint": {
+                "url": "https://{parsedUrl#authority}/{path}"
+            },
         },
         // Rule to for Stage
         {
@@ -60,11 +93,6 @@ use smithy.rules#endpointRuleSet
             "type": "endpoint",
             "conditions": [{"fn": "isSet", "argv": [{"ref": "Dataplane"}]}],
             "endpoint": { "url": "https://data.whitelabel.com" },
-        },
-        {
-            "type": "endpoint",
-            "conditions": [{"fn": "isSet", "argv": [{"ref": "ContextPath"}]}],
-            "endpoint": { "url": "https://whitelabel.com/{ContextPath}" },
         },
         {
             "type": "endpoint",
@@ -95,7 +123,7 @@ service WhiteLabel {
         EndpointOperation,
         EndpointWithHostLabelOperation,
         DataplaneOperation,
-        EndpointOperationWithPath,
+        EndpointOperationWithResource,
         MixinTest,
         RelativeMiddlewareOperation,
         RequestCompressionOperation,

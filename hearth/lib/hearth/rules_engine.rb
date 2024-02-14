@@ -50,20 +50,6 @@ module Hearth
       attr_reader :headers
     end
 
-    # Extracts a value at the given path from an object or array.
-    # getAttr(value: Object | Array, path: string) Document
-    def self.get_attr(value, path)
-      parts = path.split('.')
-
-      val = get_attr_index(parts, value)
-
-      if parts.size == 1
-        val
-      else
-        get_attr(val, parts.slice(1..-1).join('.'))
-      end
-    end
-
     # Evaluates whether the input string is a compliant RFC 1123 host segment.
     # When allowSubDomains is true, evaluates whether the input string is
     # composed of values that are each compliant RFC 1123 host segments
@@ -103,23 +89,6 @@ module Hearth
     # Performs RFC 3986#section-2.1 defined percent-encoding on the input value.
     def self.uri_encode(value)
       CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
-    end
-
-    # Regex that extracts anything in square brackets
-    BRACKET_REGEX = /\[(.*?)\]/
-
-    def self.get_attr_index(parts, value)
-      if (index = parts.first[BRACKET_REGEX, 1])
-        # remove brackets and index from part before indexing
-        part_index = parts.first.gsub(BRACKET_REGEX, '')
-        if part_index.empty?
-          value[index.to_i]
-        else
-          value[part_index][index.to_i]
-        end
-      else
-        value[parts.first]
-      end
     end
 
     # @api private

@@ -40,7 +40,7 @@ module WhiteLabel
 
     end
 
-    describe '#endpoint_operation_with_path' do
+    describe '#endpoint_operation_with_resource' do
 
     end
 

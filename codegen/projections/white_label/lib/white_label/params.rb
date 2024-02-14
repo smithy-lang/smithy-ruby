@@ -133,20 +133,20 @@ module WhiteLabel
       end
     end
 
-    module EndpointOperationWithPathInput
+    module EndpointOperationWithResourceInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithPathInput, context: context)
-        type = Types::EndpointOperationWithPathInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceInput, context: context)
+        type = Types::EndpointOperationWithResourceInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.path_member = params[:path_member]
+        type.resource_url = params[:resource_url]
         type
       end
     end
 
-    module EndpointOperationWithPathOutput
+    module EndpointOperationWithResourceOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithPathOutput, context: context)
-        type = Types::EndpointOperationWithPathOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceOutput, context: context)
+        type = Types::EndpointOperationWithResourceOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end

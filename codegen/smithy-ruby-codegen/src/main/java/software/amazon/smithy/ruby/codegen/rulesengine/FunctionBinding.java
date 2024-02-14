@@ -21,7 +21,6 @@ import java.util.Objects;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.WriteAdditionalFiles;
 import software.amazon.smithy.ruby.codegen.util.RubySource;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsValidHostLabel;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.ParseUrl;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Substring;
@@ -50,24 +49,20 @@ public final class FunctionBinding {
     public static List<FunctionBinding> standardLibraryFunctions() {
         return List.of(
                 FunctionBinding.builder()
-                        .id(GetAttr.ID)
-                        .rubyMethodName("Hearth:::RulesEngine::get_attr")
-                        .build(),
-                FunctionBinding.builder()
                         .id(IsValidHostLabel.ID)
-                        .rubyMethodName("Hearth:::RulesEngine::valid_host_label?")
+                        .rubyMethodName("Hearth::RulesEngine::valid_host_label?")
                         .build(),
                 FunctionBinding.builder()
                         .id(ParseUrl.ID)
-                        .rubyMethodName("Hearth:::RulesEngine::parse_url")
+                        .rubyMethodName("Hearth::RulesEngine::parse_url")
                         .build(),
                 FunctionBinding.builder()
                         .id(Substring.ID)
-                        .rubyMethodName("Hearth:::RulesEngine::substring")
+                        .rubyMethodName("Hearth::RulesEngine::substring")
                         .build(),
                 FunctionBinding.builder()
                         .id(UriEncode.ID)
-                        .rubyMethodName("Hearth:::RulesEngine::uri_encode")
+                        .rubyMethodName("Hearth::RulesEngine::uri_encode")
                         .build()
         );
     }

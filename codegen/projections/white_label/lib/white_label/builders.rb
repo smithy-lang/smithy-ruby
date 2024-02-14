@@ -31,7 +31,7 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperationWithPath
+    class EndpointOperationWithResource
       def self.build(http_req, input:)
       end
     end

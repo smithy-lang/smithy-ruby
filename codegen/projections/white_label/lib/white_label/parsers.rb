@@ -51,10 +51,10 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for EndpointOperationWithPath
-    class EndpointOperationWithPath
+    # Operation Parser for EndpointOperationWithResource
+    class EndpointOperationWithResource
       def self.parse(http_resp)
-        data = Types::EndpointOperationWithPathOutput.new
+        data = Types::EndpointOperationWithResourceOutput.new
         data
       end
     end

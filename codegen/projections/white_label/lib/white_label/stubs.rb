@@ -139,13 +139,13 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperationWithPath
+    class EndpointOperationWithResource
       def self.build(params, context:)
-        Params::EndpointOperationWithPathOutput.build(params, context: context)
+        Params::EndpointOperationWithResourceOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::EndpointOperationWithPathOutput.validate!(output, context: context)
+        Validators::EndpointOperationWithResourceOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])

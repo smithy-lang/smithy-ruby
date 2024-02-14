@@ -12,7 +12,7 @@ module WhiteLabel
     Params = ::Struct.new(
       :stage,
       :dataplane,
-      :context_path,
+      :resource_url,
       :endpoint,
       keyword_init: true
     ) do
@@ -23,11 +23,14 @@ module WhiteLabel
       def resolve_endpoint(params)
         stage = params.stage
         dataplane = params.dataplane
-        context_path = params.context_path
+        resource_url = params.resource_url
         endpoint = params.endpoint
 
         if (endpoint != nil)
           return Hearth::RulesEngine::Endpoint.new(uri: endpoint)
+        end
+        if (resource_url != nil) && (parsed_url = Hearth::RulesEngine::parse_url(resource_url)) && (path = parsed_url['path'])
+          return Hearth::RulesEngine::Endpoint.new(uri: "https://#{parsed_url['authority']}/#{path}")
         end
         if (stage != nil) && (stage == "alpha")
           return Hearth::RulesEngine::Endpoint.new(uri: "https://alpha.whitelabel.dev")
@@ -40,9 +43,6 @@ module WhiteLabel
         end
         if (dataplane != nil)
           return Hearth::RulesEngine::Endpoint.new(uri: "https://data.whitelabel.com")
-        end
-        if (context_path != nil)
-          return Hearth::RulesEngine::Endpoint.new(uri: "https://whitelabel.com/#{context_path}")
         end
         return Hearth::RulesEngine::Endpoint.new(uri: "https://whitelabel.com")
 
@@ -98,11 +98,11 @@ module WhiteLabel
         end
       end
 
-      class EndpointOperationWithPath
+      class EndpointOperationWithResource
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage]
-          params.context_path = input.path_member
+          params.resource_url = input.resource_url
           params.endpoint = config[:endpoint]
           params
         end

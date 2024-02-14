@@ -16,15 +16,15 @@ operation EndpointOperation {}
 @http(method: "POST", uri: "/dataplane_operation")
 operation DataplaneOperation {}
 
-@http(method: "POST", uri: "/endpoint_operation_with_path")
-operation EndpointOperationWithPath {
-    input: PathInput
+@http(method: "POST", uri: "/endpoint_operation_with_resource")
+operation EndpointOperationWithResource {
+    input: EndpointResourceInput
 }
 
-structure PathInput {
+structure EndpointResourceInput {
     @required
-    @contextParam(name: "ContextPath")
-    pathMember: String,
+    @contextParam(name: "ResourceUrl")
+    resourceUrl: String,
 }
 
 

@@ -307,7 +307,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         String condition = conditions.stream().map((c) -> {
             if (c.getResult().isPresent()) {
-                return "(" + c.getResult().get().getName().getValue()
+                return "(" + RubyFormatter.toSnakeCase(c.getResult().get().getName().getValue())
                         + " = " + c.getFunction().accept(new ExpressionTemplateVisitor(context)) + ")";
             } else {
                 return "(" + c.getFunction().accept(new ExpressionTemplateVisitor(context)) + ")";
@@ -346,7 +346,15 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public String visitGetAttr(GetAttr getAttr) {
-            return "Hearth::RuleSet::get_attr(" + getAttr.getTarget().accept(this) + ")";
+            return getAttr.getTarget().accept(this) + getAttr.getPath().stream().map(p -> {
+                if (p instanceof GetAttr.Part.Index) {
+                    return "[" + ((GetAttr.Part.Index) p).index() + "]";
+                } else if (p instanceof GetAttr.Part.Key) {
+                    return "['" + ((GetAttr.Part.Key) p).key() + "']";
+                } else {
+                    throw new SmithyBuildException("Unknown getAttr Part type: " + p.getClass().getName());
+                }
+            }).collect(Collectors.joining());
         }
 
         @Override

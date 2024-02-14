@@ -87,12 +87,12 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class EndpointOperationWithPathInput < ::Struct[untyped]
+    class EndpointOperationWithResourceInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor path_member (): ::String
+      attr_accessor resource_url (): ::String
     end
 
-    class EndpointOperationWithPathOutput < ::Struct[untyped]
+    class EndpointOperationWithResourceOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 

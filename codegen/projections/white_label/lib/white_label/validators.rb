@@ -156,17 +156,17 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperationWithPathInput
+    class EndpointOperationWithResourceInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithPathInput, context: context)
-        Hearth::Validator.validate_required!(input[:path_member], context: "#{context}[:path_member]")
-        Hearth::Validator.validate_types!(input[:path_member], ::String, context: "#{context}[:path_member]")
+        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithResourceInput, context: context)
+        Hearth::Validator.validate_required!(input[:resource_url], context: "#{context}[:resource_url]")
+        Hearth::Validator.validate_types!(input[:resource_url], ::String, context: "#{context}[:resource_url]")
       end
     end
 
-    class EndpointOperationWithPathOutput
+    class EndpointOperationWithResourceOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithPathOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithResourceOutput, context: context)
       end
     end
 

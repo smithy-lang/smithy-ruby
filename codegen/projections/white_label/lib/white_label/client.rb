@@ -428,35 +428,35 @@ module WhiteLabel
 
     # @param [Hash] params
     #   Request parameters for this operation.
-    #   See {Types::EndpointOperationWithPathInput#initialize} for available parameters.
+    #   See {Types::EndpointOperationWithResourceInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationWithPathOutput]
+    # @return [Types::EndpointOperationWithResourceOutput]
     # @example Request syntax with placeholder values
-    #   resp = client.endpoint_operation_with_path(
-    #     path_member: 'pathMember' # required
+    #   resp = client.endpoint_operation_with_resource(
+    #     resource_url: 'resourceUrl' # required
     #   )
     # @example Response structure
-    #   resp.data #=> Types::EndpointOperationWithPathOutput
-    def endpoint_operation_with_path(params = {}, options = {})
+    #   resp.data #=> Types::EndpointOperationWithResourceOutput
+    def endpoint_operation_with_resource(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
       stack = Hearth::MiddlewareStack.new
-      input = Params::EndpointOperationWithPathInput.build(params, context: 'params')
+      input = Params::EndpointOperationWithResourceInput.build(params, context: 'params')
       stack.use(Hearth::Middleware::Initialize)
       stack.use(Middleware::TestMiddleware,
         test_config: config.test_config
       )
       stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EndpointOperationWithPathInput,
+        validator: Validators::EndpointOperationWithResourceInput,
         validate_input: config.validate_input
       )
       stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointOperationWithPath
+        builder: Builders::EndpointOperationWithResource
       )
       stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :endpoint_operation_with_path, custom_param: 'custom_value'),
+        auth_params: Auth::Params.new(operation_name: :endpoint_operation_with_resource, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes,
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
@@ -469,7 +469,7 @@ module WhiteLabel
         endpoint: config.endpoint,
         endpoint_provider: config.endpoint_provider,
         stage: config.stage,
-        param_builder: Endpoint::Parameters::EndpointOperationWithPath
+        param_builder: Endpoint::Parameters::EndpointOperationWithResource
       )
       stack.use(Hearth::Middleware::Retry,
         retry_strategy: config.retry_strategy,
@@ -482,29 +482,29 @@ module WhiteLabel
           success_status: 200,
           errors: []
         ),
-        data_parser: Parsers::EndpointOperationWithPath
+        data_parser: Parsers::EndpointOperationWithResource
       )
       stack.use(Hearth::Middleware::Send,
         stub_responses: config.stub_responses,
         client: config.http_client,
         stub_error_classes: [],
-        stub_data_class: Stubs::EndpointOperationWithPath,
+        stub_data_class: Stubs::EndpointOperationWithResource,
         stubs: @stubs
       )
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :endpoint_operation_with_path,
+        operation_name: :endpoint_operation_with_resource,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_path] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_path] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_path] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] #{output.data}")
       output
     end
 

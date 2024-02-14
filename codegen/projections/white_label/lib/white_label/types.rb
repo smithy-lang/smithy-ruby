@@ -346,11 +346,11 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :path_member
-    # @!attribute path_member
+    #   @option params [String] :resource_url
+    # @!attribute resource_url
     #   @return [String]
-    EndpointOperationWithPathInput = ::Struct.new(
-      :path_member,
+    EndpointOperationWithResourceInput = ::Struct.new(
+      :resource_url,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -358,7 +358,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOperationWithPathOutput = ::Struct.new(
+    EndpointOperationWithResourceOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
