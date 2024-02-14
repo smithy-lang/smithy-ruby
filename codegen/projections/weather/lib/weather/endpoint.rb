@@ -21,7 +21,7 @@ module Weather
         endpoint = params.endpoint
 
         if (endpoint != nil)
-          return Hearth::RulesEngine::Endpoint.new(url: endpoint)
+          return Hearth::RulesEngine::Endpoint.new(uri: endpoint)
         end
         raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
 

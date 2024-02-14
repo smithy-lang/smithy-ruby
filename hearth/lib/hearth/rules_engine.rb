@@ -13,25 +13,40 @@ module Hearth
   # invoked without additional dependencies, called the standard library.
   # @api private
   module RulesEngine
+    # An Authentication Scheme supported by an Endpoint
     class AuthScheme
-      def initialize(name: , properties: {})
+      # @param [URI] name
+      # @param [Hash] properties ({})
+      def initialize(name:, properties: {})
         @name = name
         @properties = properties
       end
 
+      # @return [String]
       attr_reader :name
+
+      # @return [Hash]
       attr_reader :properties
     end
 
+    # An Endpoint resolved by an EndpointProvider
     class Endpoint
+      # @param [String] uri
+      # @param [Array] auth_schemes ([])
+      # @param [Hash] headers ({})
       def initialize(uri:, auth_schemes: [], headers: {})
         @uri = uri
         @auth_schemes = auth_schemes
         @headers = headers
       end
 
+      # @return [String]
       attr_reader :uri
+
+      # @return [Array]
       attr_reader :auth_schemes
+
+      # @return [Hash]
       attr_reader :headers
     end
 

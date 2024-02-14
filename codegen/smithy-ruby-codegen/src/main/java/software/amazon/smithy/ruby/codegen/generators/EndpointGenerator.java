@@ -490,7 +490,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
         @Override
         public Void visitEndpointRule(Endpoint endpoint) {
             String uriString = templateExpression(endpoint.getUrl());
-            writer.write("return $T.new(url: $L)", Hearth.RULES_ENGINE_ENDPOINT, uriString);
+            writer.write("return $T.new(uri: $L)", Hearth.RULES_ENGINE_ENDPOINT, uriString);
             return null;
         }
     }

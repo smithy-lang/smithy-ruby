@@ -2,7 +2,6 @@
 
 module Hearth
   describe RulesEngine do
-
     describe '.get_attr' do
       context 'input array' do
         let(:input) { %w[foo bar] }

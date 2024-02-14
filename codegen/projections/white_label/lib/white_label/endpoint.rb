@@ -27,24 +27,24 @@ module WhiteLabel
         endpoint = params.endpoint
 
         if (endpoint != nil)
-          return Hearth::RulesEngine::Endpoint.new(url: endpoint)
+          return Hearth::RulesEngine::Endpoint.new(uri: endpoint)
         end
         if (stage != nil) && (stage == "alpha")
-          return Hearth::RulesEngine::Endpoint.new(url: "https://alpha.whitelabel.dev")
+          return Hearth::RulesEngine::Endpoint.new(uri: "https://alpha.whitelabel.dev")
         end
         if (stage != nil) && (stage == "beta")
-          return Hearth::RulesEngine::Endpoint.new(url: "https://beta.whitelabel.dev")
+          return Hearth::RulesEngine::Endpoint.new(uri: "https://beta.whitelabel.dev")
         end
         if (stage != nil) && (stage == "gamma")
-          return Hearth::RulesEngine::Endpoint.new(url: "https://gamma.whitelabel.dev")
+          return Hearth::RulesEngine::Endpoint.new(uri: "https://gamma.whitelabel.dev")
         end
         if (dataplane != nil)
-          return Hearth::RulesEngine::Endpoint.new(url: "https://data.whitelabel.com")
+          return Hearth::RulesEngine::Endpoint.new(uri: "https://data.whitelabel.com")
         end
         if (context_path != nil)
-          return Hearth::RulesEngine::Endpoint.new(url: "https://whitelabel.com/#{context_path}")
+          return Hearth::RulesEngine::Endpoint.new(uri: "https://whitelabel.com/#{context_path}")
         end
-        return Hearth::RulesEngine::Endpoint.new(url: "https://whitelabel.com")
+        return Hearth::RulesEngine::Endpoint.new(uri: "https://whitelabel.com")
 
         raise ArgumentError, 'No endpoint could be resolved'
       end

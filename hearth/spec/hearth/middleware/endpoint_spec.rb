@@ -9,16 +9,16 @@ module Hearth
       let(:output) { double('output') }
       let(:endpoint_provider) { double }
       let(:param_builder) { double }
-      let(:config_1) { double }
-      let(:config_2) { double }
+      let(:config1) { double }
+      let(:config2) { double }
 
       subject do
         Endpoint.new(
           app,
           endpoint_provider: endpoint_provider,
           param_builder: param_builder,
-          config_1: config_1,
-          config_2: config_2
+          config1: config1,
+          config2: config2
         )
       end
 
@@ -51,7 +51,8 @@ module Hearth
 
         it 'resolves the endpoint and modifies the request' do
           expect(param_builder).to receive(:build)
-            .with({config_1: config_1, config_2: config_2}, input, context).and_return(params)
+            .with({ config1: config1,
+                    config2: config2 }, input, context).and_return(params)
           expect(endpoint_provider).to receive(:resolve_endpoint)
             .with(params).and_return(resolved_endpoint)
 
@@ -59,10 +60,35 @@ module Hearth
 
           resp = subject.call(input, context)
 
-          expect(request.uri).to eq(endpoint_uri)
+          expect(request.uri).to eq(URI(endpoint_uri))
           expect(request.headers.to_h).to include(headers)
           # TODO: Expect on Auth
           expect(resp).to be output
+        end
+
+        context 'serialized request uri with path and query' do
+          let(:endpoint_uri) { 'https://example.com/path1/path2' }
+          let(:request) do
+            Hearth::HTTP::Request.new(uri: URI(
+              'https://localhost/path3/path4?query1=1&query2=2'
+            ))
+          end
+
+          it 'merges the resolved and serialized paths and query' do
+            expect(param_builder).to receive(:build)
+              .with({ config1: config1,
+                      config2: config2 }, input, context).and_return(params)
+            expect(endpoint_provider).to receive(:resolve_endpoint)
+              .with(params).and_return(resolved_endpoint)
+
+            expect(app).to receive(:call).with(input, context).ordered
+
+            subject.call(input, context)
+
+            merged_uri = 'https://example.com/path1/path2/path3/path4' \
+                         '?query1=1&query2=2'
+            expect(request.uri).to eq(URI(merged_uri))
+          end
         end
       end
     end

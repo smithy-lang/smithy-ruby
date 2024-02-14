@@ -3,9 +3,18 @@
 # in Hearth middleware
 module Hearth
   module Middleware
-    # Resolves endpoints from endpoint parameters and modify
+    # Resolves endpoints from endpoint parameters and modifies
     # the request with resolved endpoint, headers and auth schemes.
+    # @api private
     class Endpoint
+      # @param [Class] app The next middleware in the stack.
+      # @param [#resolve_endpoint(endpoint_params)] endpoint_provider An object
+      #   that responds to a `resolve_endpoint(endpoint_params)` method
+      #   where `endpoint_params` is a service specific struct.
+      #   The method must return an {Hearth::RulesEngine::Endpoint} object.
+      # @param [#build(config, input, context)] param_builder An object that
+      #   responds to a `build(config, input, context)` method and returns
+      #   an endpoint_params object.
       def initialize(
         app, endpoint_provider:, param_builder:, **kwargs
       )
@@ -18,16 +27,34 @@ module Hearth
       def call(input, context)
         params = @param_builder.build(@config, input, context)
         endpoint = @endpoint_provider.resolve_endpoint(params)
-        # TODO: update uri, keeping path/query parameters from build
-        context.request.uri = endpoint.uri
-        endpoint.headers.each do |key, val|
-          context.request.headers[key] = val
-        end
+        update_request(context, endpoint)
 
         # TODO: combine with auth middleware
         context[:auth_schemes] = endpoint.auth_schemes
 
         @app.call(input, context)
+      end
+
+      private
+
+      # apply the resolved endpoint to the request
+      def update_request(context, endpoint)
+        context.request.uri = merge_endpoints(
+          URI(endpoint.uri), context.request.uri
+        )
+        endpoint.headers.each do |key, val|
+          context.request.headers[key] = val
+        end
+      end
+
+      # merge the path and query parameters from serialization
+      # URIs from endpoint resolution MUST contain port and hostname
+      # and MAY contain port and base path.
+      def merge_endpoints(resolved_uri, request_uri)
+        merged = URI(resolved_uri)
+        merged.path = resolved_uri.path + request_uri.path
+        merged.query = request_uri.query
+        merged
       end
     end
   end
