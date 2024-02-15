@@ -56,16 +56,18 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
+import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public class EndpointGenerator extends RubyGeneratorBase {
+    public static final Identifier NAME = Identifier.of("name");
     private static final Logger LOGGER =
             Logger.getLogger(EndpointGenerator.class.getName());
-
     private final Set<OperationShape> operations;
     private final ServiceShape service;
     private final EndpointRuleSet endpointRuleSet;
@@ -109,18 +111,19 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .addModule("Endpoint")
                     .call(() -> renderEndpointParamsClass(writer))
                     .write("")
-                    .call(() -> renderEndpointResolver(writer))
+                    .call(() -> renderEndpointProvider(writer))
                     .write("")
                     .addModule("Parameters")
                     .call(() -> renderParamBuilders(writer))
                     .closeModule()
                     .write("")
-//                    .call(() -> renderAuthSchemesConstant(writer))
-//                    .write("")
-//                    .call(() -> renderAuthResolver(writer))
                     .closeAllModules();
         });
-        LOGGER.fine("Wrote auth module to " + rbFile());
+        LOGGER.fine("Wrote endpoint module to " + rbFile());
+
+        if (endpointTests.isPresent()) {
+            renderEndpointSpec();
+        }
     }
 
     public void renderRbs() {
@@ -131,9 +134,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .addModule("Endpoint")
                     .call(() -> renderRbsEndpointParamsClass(writer))
                     .write("")
-//                    .call(() -> renderRbsAuthSchemesConstant(writer))
-//                    .write("")
-//                    .call(() -> renderRbsAuthResolver(writer))
+                    .call(() -> renderRbsEndpointProvider(writer))
                     .closeAllModules();
         });
         LOGGER.fine("Wrote auth rbs module to " + rbsFile());
@@ -272,7 +273,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }
     }
 
-    private void renderEndpointResolver(RubyCodeWriter writer) {
+    private void renderEndpointProvider(RubyCodeWriter writer) {
         writer
                 .openBlock("class Provider")
                 .openBlock("def resolve_endpoint(params)")
@@ -286,8 +287,38 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
     }
 
+    private void renderRbsEndpointProvider(RubyCodeWriter writer) {
+        writer
+                .openBlock("class Provider")
+                .write("def resolve_endpoint: (Params params) -> Hearth::RulesEngine::Endpoint")
+                .closeBlock("end");
+
+    }
+
+    private void renderEndpointSpec() {
+        RubyCodeWriter specWriter = new RubyCodeWriter(context.settings().getModule());
+
+        specWriter
+                .preamble()
+                .addModule(settings.getModule())
+                .addModule("Endpoint")
+                .openBlock("describe Provider do")
+                .write("subject { Provider.new }")
+                .call(() -> renderEndpointTestCases(specWriter, endpointTests.get().getTestCases()))
+                .closeBlock("end")
+                .closeAllModules();
+
+        String endpointSpecFile =
+                settings.getGemName() + "/spec/endpoint_spec.rb";
+        context.fileManifest().writeFile(endpointSpecFile, specWriter.toString());
+        LOGGER.fine("Wrote endpoint tests to " + endpointSpecFile);
+    }
+
     private void renderRules(RubyCodeWriter writer, List<Rule> rules) {
         for (Rule rule : rules) {
+            if (rule.getDocumentation().isPresent()) {
+                writer.write("# $L", rule.getDocumentation().get());
+            }
             if (!rule.getConditions().isEmpty()) {
                 writer
                         .call(() -> renderConditions(writer, rule.getConditions())).indent() // open if block
@@ -324,6 +355,44 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
     private String templateExpression(Expression expression) {
         return expression.accept(new ExpressionTemplateVisitor(context));
+    }
+
+    private void renderEndpointTestCases(RubyCodeWriter writer, List<EndpointTestCase> testCases) {
+        for (EndpointTestCase testCase : testCases) {
+            String paramArgs = testCase.getParams().getMembers().entrySet().stream().map(e -> {
+                String value;
+                if (e.getValue().isStringNode()) {
+                    value = "'" + e.getValue().expectStringNode().getValue() + "'";
+                } else {
+                    value = e.getValue().expectBooleanNode().getValue() ? "true" : "false";
+                }
+                return RubyFormatter.toSnakeCase(e.getKey().getValue()) + ": " + value;
+            }).collect(Collectors.joining(", "));
+
+            writer
+                    .write("")
+                    .openBlock("context '$L' do",
+                            testCase.getDocumentation().orElse("Test case " + testCase.hashCode()))
+                    .openBlock("it 'produces the expected output from the EndpointProvider' do")
+                    .write("params = Params.new($L)", paramArgs)
+                    .call(() -> {
+                        if (testCase.getExpect().getError().isPresent()) {
+                            writer
+                                    .openBlock("expect do")
+                                    .write("subject.resolve_endpoint(params)")
+                                    .closeBlock("end.to raise_error(ArgumentError, '$L'",
+                                            testCase.getExpect().getError().get());
+
+                        } else {
+                            ExpectedEndpoint expected = testCase.getExpect().getEndpoint().get();
+                            writer
+                                    .write("endpoint = subject.resolve_endpoint(params)")
+                                    .write("expect(endpoint.uri).to eq('$L')", expected.getUrl());
+                        }
+                    })
+                    .closeBlock("end")
+                    .closeBlock("end");
+        }
     }
 
     private static class ExpressionTemplateVisitor implements ExpressionVisitor<String> {
@@ -498,9 +567,46 @@ public class EndpointGenerator extends RubyGeneratorBase {
         @Override
         public Void visitEndpointRule(Endpoint endpoint) {
             String uriString = templateExpression(endpoint.getUrl());
-            writer.write("return $T.new(uri: $L)", Hearth.RULES_ENGINE_ENDPOINT, uriString);
+
+            ExpressionVisitor<String> expressionVisitor = new ExpressionTemplateVisitor(context);
+            if (endpoint.getHeaders().isEmpty() && endpoint.getProperties().isEmpty()) {
+                writer.write("return $T.new(uri: $L)", Hearth.RULES_ENGINE_ENDPOINT, uriString);
+            } else {
+                String headersString = "{" + endpoint.getHeaders().entrySet().stream().map(e -> {
+                    return "'" + e.getKey() + "' => [" + e.getValue().stream().map(expression -> {
+                        return expression.accept(expressionVisitor);
+                    }).collect(Collectors.joining(", ")) + "]";
+                }).collect(Collectors.joining(", ")) + "}";
+
+                String authSchemesString;
+                Literal authSchemes = endpoint.getProperties().get(Identifier.of("authSchemes"));
+                if (authSchemes != null) {
+                    List<Literal> authSchemesList = authSchemes.asTupleLiteral().get();
+                    authSchemesString = "[" + authSchemesList.stream().map(l -> {
+                        Map<Identifier, Literal> authSchemeMap = l.asRecordLiteral().get();
+                        String name = authSchemeMap.get(NAME).accept(expressionVisitor);
+                        String propertiesHash = "{" + authSchemeMap.entrySet().stream()
+                                .filter(e -> !e.getKey().equals(NAME))
+                                .map(e -> {
+                                    return "'" + e.getKey().getName().getValue() + "' => "
+                                            + e.getValue().accept(expressionVisitor);
+                                }).collect(Collectors.joining(", ")) + "}";
+                        return "Hearth::RulesEngine::AuthScheme.new(name: "
+                                + name + ", " + "properties: " + propertiesHash + ")";
+                    }).collect(Collectors.joining(", ")) + "]";
+                } else {
+                    authSchemesString = "[]";
+                }
+
+                writer
+                        .openBlock("return $T.new(", Hearth.RULES_ENGINE_ENDPOINT)
+                        .write("uri: $L,", uriString)
+                        .write("headers: $L,", headersString)
+                        .write("auth_schemes: $L", authSchemesString)
+                        .closeBlock(")");
+
+            }
             return null;
         }
     }
-
 }

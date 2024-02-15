@@ -4,6 +4,7 @@ namespace smithy.ruby.tests
 use smithy.ruby.tests.protocols#fakeProtocol
 use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
+use smithy.rules#endpointTests
 
 @endpointRuleSet({
     "version": "1.0",
@@ -39,6 +40,7 @@ use smithy.rules#endpointRuleSet
         },
         {
             "type": "endpoint",
+            "documentation": "Use a user provided resource",
             "conditions": [
                 {
                     "fn": "isSet",
@@ -67,7 +69,19 @@ use smithy.rules#endpointRuleSet
                 }
             ],
             "endpoint": {
-                "url": "https://{parsedUrl#authority}/{path}"
+                "url": "https://{parsedUrl#authority}{path}",
+                "headers": {
+                    "x-resource-type": [
+                        "custom"
+                    ]
+                },
+                "properties": {
+                    "authSchemes": [
+                        {
+                            "name": "bearer",
+                        }
+                    ]
+                },
             },
         },
         // Rule to for Stage
@@ -101,6 +115,59 @@ use smithy.rules#endpointRuleSet
         },
     ],
 })
+@endpointTests(
+version: "1.0",
+testCases: [
+    {
+        "documentation": "Endpoint override is used",
+        "params": {
+            "Endpoint": "https://custom-endpoint.com"
+        },
+        "expect": {
+            "endpoint": {
+                "url": "https://custom-endpoint.com",
+                "headers": {
+
+                }
+            }
+        }
+    },
+    {
+        "documentation": "Endpoint override is used when other parameters are set",
+        "params": {
+            "Endpoint": "https://custom-endpoint.com",
+            "Stage": "prod",
+            "Dataplane": true,
+            "ResourceUrl": "https://resource"
+        },
+        "expect": {
+            "endpoint": {
+                "url": "https://custom-endpoint.com"
+            }
+        }
+    },
+    {
+        "documentation": "ResourceURL is parsed and used",
+        "params": {
+            "ResourceUrl": "https://resource.com/path"
+        },
+        "expect": {
+            "endpoint": {
+                "url": "https://resource.com/path",
+                "headers": {
+                    "x-resource-type": ["custom"]
+                },
+                "properties": {
+                    "authSchemes": [
+                        {
+                            "name": "bearer",
+                        }
+                    ]
+                }
+            },
+        }
+    },
+])
 @clientContextParams(
     Stage: {
         type: "string"

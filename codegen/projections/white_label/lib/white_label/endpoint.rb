@@ -29,8 +29,13 @@ module WhiteLabel
         if (endpoint != nil)
           return Hearth::RulesEngine::Endpoint.new(uri: endpoint)
         end
+        # Use a user provided resource
         if (resource_url != nil) && (parsed_url = Hearth::RulesEngine::parse_url(resource_url)) && (path = parsed_url['path'])
-          return Hearth::RulesEngine::Endpoint.new(uri: "https://#{parsed_url['authority']}/#{path}")
+          return Hearth::RulesEngine::Endpoint.new(
+            uri: "https://#{parsed_url['authority']}#{path}",
+            headers: {'x-resource-type' => ["custom"]},
+            auth_schemes: [Hearth::RulesEngine::AuthScheme.new(name: "bearer", properties: {})]
+          )
         end
         if (stage != nil) && (stage == "alpha")
           return Hearth::RulesEngine::Endpoint.new(uri: "https://alpha.whitelabel.dev")

@@ -13,5 +13,8 @@ module HighScoreService
       attr_accessor endpoint: ::String
     end
 
+    class Provider
+      def resolve_endpoint: (Params params) -> Hearth::RulesEngine::Endpoint
+    end
   end
 end
