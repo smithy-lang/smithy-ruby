@@ -5,14 +5,14 @@ module Hearth
     type urlStruct = Hash[string, string | bool]
 
     class AuthScheme
-      attr_reader name: string
-      attr_reader properties: Hash[string, untyped]
+      attr_accessor name: string
+      attr_accessor properties: Hash[string, untyped]
     end
 
     class Endpoint
-      attr_reader uri: string
-      attr_reader auth_schemes: Array[AuthScheme]
-      attr_reader headers: Hash[string, string | Array[string]]
+      attr_accessor uri: string
+      attr_accessor auth_schemes: Array[AuthScheme]
+      attr_accessor headers: Hash[string, string | Array[string]]
     end
 
 

@@ -28,6 +28,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeVisitor;
+import software.amazon.smithy.model.node.NullNode;
+import software.amazon.smithy.model.node.NumberNode;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -66,6 +74,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class EndpointGenerator extends RubyGeneratorBase {
     public static final Identifier NAME = Identifier.of("name");
+    public static final String AUTH_SCHEMES = "authSchemes";
     private static final Logger LOGGER =
             Logger.getLogger(EndpointGenerator.class.getName());
     private final Set<OperationShape> operations;
@@ -385,9 +394,32 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
                         } else {
                             ExpectedEndpoint expected = testCase.getExpect().getEndpoint().get();
+                            String expectedHeaders = "{" + expected.getHeaders().entrySet().stream().map(e -> {
+                                return "'" + e.getKey() + "' => [" + e.getValue().stream().map(h -> "'" + h + "'")
+                                        .collect(Collectors.joining(",")) + "]";
+                            }).collect(Collectors.joining(", ")) + "}";
+                            String expectedAuthSchemes = "[]";
+                            Node authSchemes = expected.getProperties().get(AUTH_SCHEMES);
+                            if (authSchemes != null) {
+                                expectedAuthSchemes = "[" + authSchemes.expectArrayNode()
+                                        .getElementsAs(ObjectNode.class).stream().map(authScheme -> {
+                                            String name = authScheme.getStringMember("name")
+                                                    .get().getValue();
+                                            String propertiesHash = authScheme
+                                                    .withoutMember("name")
+                                                    .accept(new RubyNodeVisitor());
+                                            return "Hearth::RulesEngine::AuthScheme.new(name: '"
+                                                    + name + "', " + "properties: " + propertiesHash + ")";
+                                        }).collect(Collectors.joining(", ")) + "]";
+                            }
+
                             writer
                                     .write("endpoint = subject.resolve_endpoint(params)")
-                                    .write("expect(endpoint.uri).to eq('$L')", expected.getUrl());
+                                    .write("expect(endpoint.uri).to eq('$L')", expected.getUrl())
+                                    .write("expect(endpoint.headers).to eq($L)", expectedHeaders)
+                                    .write("expect(endpoint.auth_schemes).to eq($L)", expectedAuthSchemes);
+
+
                         }
                     })
                     .closeBlock("end")
@@ -544,6 +576,43 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }
     }
 
+    private static class RubyNodeVisitor implements NodeVisitor<String> {
+
+        @Override
+        public String arrayNode(ArrayNode node) {
+            return "[" + node.getElements().stream()
+                    .map(n -> n.accept(this))
+                    .collect(Collectors.joining(", ")) + "]";
+        }
+
+        @Override
+        public String booleanNode(BooleanNode node) {
+            return node.getValue() ? "true" : "false";
+        }
+
+        @Override
+        public String nullNode(NullNode node) {
+            return "nil";
+        }
+
+        @Override
+        public String numberNode(NumberNode node) {
+            return node.getValue().toString();
+        }
+
+        @Override
+        public String objectNode(ObjectNode node) {
+            return "{" + node.getMembers().entrySet().stream().map(e -> {
+                return e.getKey().accept(this) + " => " + e.getValue().accept(this);
+            }).collect(Collectors.joining(", ")) + "}";
+        }
+
+        @Override
+        public String stringNode(StringNode node) {
+            return "'" + node.getValue() + "'";
+        }
+    }
+
     private class RenderRuleVisitor implements RuleValueVisitor<Void> {
 
         final RubyCodeWriter writer;
@@ -579,7 +648,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 }).collect(Collectors.joining(", ")) + "}";
 
                 String authSchemesString;
-                Literal authSchemes = endpoint.getProperties().get(Identifier.of("authSchemes"));
+                Literal authSchemes = endpoint.getProperties().get(Identifier.of(AUTH_SCHEMES));
                 if (authSchemes != null) {
                     List<Literal> authSchemesList = authSchemes.asTupleLiteral().get();
                     authSchemesString = "[" + authSchemesList.stream().map(l -> {

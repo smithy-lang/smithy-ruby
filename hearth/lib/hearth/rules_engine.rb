@@ -14,40 +14,29 @@ module Hearth
   # @api private
   module RulesEngine
     # An Authentication Scheme supported by an Endpoint
-    class AuthScheme
-      # @param [URI] name
-      # @param [Hash] properties ({})
-      def initialize(name:, properties: {})
-        @name = name
-        @properties = properties
+    AuthScheme = ::Struct.new(
+      :name,
+      :properties,
+      keyword_init: true
+    ) do
+      def initialize(*)
+        super
+        self.properties ||= {}
       end
-
-      # @return [String]
-      attr_reader :name
-
-      # @return [Hash]
-      attr_reader :properties
     end
 
     # An Endpoint resolved by an EndpointProvider
-    class Endpoint
-      # @param [String] uri
-      # @param [Array] auth_schemes ([])
-      # @param [Hash] headers ({})
-      def initialize(uri:, auth_schemes: [], headers: {})
-        @uri = uri
-        @auth_schemes = auth_schemes
-        @headers = headers
+    Endpoint = ::Struct.new(
+      :uri,
+      :auth_schemes,
+      :headers,
+      keyword_init: true
+    ) do
+      def initialize(*)
+        super
+        self.headers ||= {}
+        self.auth_schemes ||= []
       end
-
-      # @return [String]
-      attr_reader :uri
-
-      # @return [Array]
-      attr_reader :auth_schemes
-
-      # @return [Hash]
-      attr_reader :headers
     end
 
     # Evaluates whether the input string is a compliant RFC 1123 host segment.
