@@ -39,7 +39,6 @@ import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
@@ -67,7 +66,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final SymbolProvider symbolProvider;
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
-    private final Map<Identifier, BuiltInBinding> rulesEngineBuiltIns;
+    private final Map<String, BuiltInBinding> rulesEngineBuiltIns;
     private final Map<String, FunctionBinding> rulesEngineFunctions;
     private final List<ClientConfig> modeledClientConfig;
 
@@ -106,7 +105,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.applicationTransport = applicationTransport;
         this.symbolProvider = symbolProvider;
         this.rulesEngineBuiltIns = rulesEngineBuiltIns.stream().collect(Collectors.toMap(
-                        (b) -> b.getBuiltIn().getName(),
+                        (b) -> b.getBuiltIn().getBuiltIn().get(),
                         (b) -> b
                 )
         );
@@ -251,7 +250,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         return Collections.unmodifiableSet(authSchemes);
     }
 
-    public Optional<BuiltInBinding> getBuiltInBinding(Identifier builtIn) {
+    public Optional<BuiltInBinding> getBuiltInBinding(String builtIn) {
         return Optional.ofNullable(rulesEngineBuiltIns.get(builtIn));
     }
 
@@ -259,7 +258,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         return Optional.ofNullable(rulesEngineFunctions.get(id));
     }
 
-    public Map<Identifier, BuiltInBinding> getBuiltInBindings() {
+    public Map<String, BuiltInBinding> getBuiltInBindings() {
         return Map.copyOf(rulesEngineBuiltIns);
     }
 
@@ -272,7 +271,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         endpointRuleSet.getParameters().forEach((b) -> {
             if (b.isBuiltIn()) {
                 builtInBindings.add(
-                        getBuiltInBinding(b.getName())
+                        getBuiltInBinding(b.getBuiltIn().get())
                                 .orElseThrow(
                                         () -> new SmithyBuildException(
                                                 "Unable to find BuiltinBinding for " + b.getName()))

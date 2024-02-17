@@ -153,8 +153,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
         List<String> params = new ArrayList<>();
         Map<String, String> defaultParams = new LinkedHashMap<>();
         endpointRuleSet.getParameters().forEach((parameter -> {
-            String rubyParamName = RubyFormatter.asSymbol(parameter.getName().getName().getValue());
-            params.add(rubyParamName);
+            String rubyParamName = RubyFormatter.toSnakeCase(parameter.getName().getName().getValue());
+            params.add(RubyFormatter.asSymbol(rubyParamName));
             if (parameter.getDefault().isPresent()) {
                 if (parameter.getType() == ParameterType.STRING) {
                     defaultParams.put(rubyParamName,
@@ -271,7 +271,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                         RubyFormatter.toSnakeCase(paramName),
                                         contextParams.get(paramName));
                             } else if (p.isBuiltIn()) {
-                                context.getBuiltInBinding(p.getName()).get().renderBuild(writer, context, operation);
+                                context.getBuiltInBinding(p.getBuiltIn().get())
+                                        .get().renderBuild(writer, context, operation);
                             }
                             // some parameters may not have bindings for an operation, leave them as nil or default
                         }
@@ -309,6 +310,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         specWriter
                 .preamble()
+                .write("require '$L'", settings.getGemName())
+                .write("")
                 .addModule(settings.getModule())
                 .addModule("Endpoint")
                 .openBlock("describe Provider do")
@@ -389,7 +392,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                             writer
                                     .openBlock("expect do")
                                     .write("subject.resolve_endpoint(params)")
-                                    .closeBlock("end.to raise_error(ArgumentError, '$L'",
+                                    .closeBlock("end.to raise_error(ArgumentError, '$L')",
                                             testCase.getExpect().getError().get());
 
                         } else {

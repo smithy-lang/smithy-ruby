@@ -24,6 +24,7 @@ import software.amazon.smithy.ruby.codegen.protocol.generators.BuilderGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.generators.ParserGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.generators.StubsGenerator;
+import software.amazon.smithy.ruby.codegen.traits.FakeProtocolTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 
@@ -34,7 +35,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public class FakeProtocolGenerator implements ProtocolGenerator {
     @Override
     public ShapeId getProtocol() {
-        return ShapeId.from("smithy.ruby.tests.protocols#fakeProtocol");
+        return FakeProtocolTrait.ID;
     }
 
     @Override

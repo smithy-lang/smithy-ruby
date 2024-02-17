@@ -23,6 +23,7 @@ module HighScoreService
 
       def resolve(auth_params)
         options = []
+        # 9
         case auth_params.operation_name
         when :api_key_auth
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { in: 'header', name: 'Authorization' })

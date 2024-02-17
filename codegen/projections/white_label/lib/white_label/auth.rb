@@ -26,6 +26,7 @@ module WhiteLabel
 
       def resolve(auth_params)
         options = []
+        # 24
         case auth_params.operation_name
         when :operation____paginators_test_with_bad_names
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { scheme: 'Authorization', in: 'header', name: 'X-API-Key' })
@@ -148,8 +149,7 @@ module WhiteLabel
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
         end
-      end
 
+      end
     end
   end
-end

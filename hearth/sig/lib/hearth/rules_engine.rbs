@@ -15,7 +15,6 @@ module Hearth
       attr_accessor headers: Hash[string, string | Array[string]]
     end
 
-
     def self.get_attr: (Array[document] | Hash[string, document], string)-> document
 
     def self.valid_host_label?: (string, allow_sub_domains: bool) -> bool
