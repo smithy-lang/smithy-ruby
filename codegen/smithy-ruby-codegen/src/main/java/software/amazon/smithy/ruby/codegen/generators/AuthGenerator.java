@@ -179,6 +179,7 @@ public class AuthGenerator extends RubyGeneratorBase {
                         writer.write("case auth_params.operation_name");
                         for (OperationShape operation : operations) {
                             renderOperationAuthOptionsCase(writer, operation);
+                            writer.write("end");
                         }
                         writer.write("end");
                     }

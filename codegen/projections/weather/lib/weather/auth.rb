@@ -36,7 +36,8 @@ module Weather
         when :list_cities
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         end
-
       end
+
     end
   end
+end
