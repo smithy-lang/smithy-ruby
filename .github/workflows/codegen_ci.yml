@@ -34,12 +34,12 @@ jobs:
       working-directory: codegen
       run:
         ./gradlew :smithy-ruby-codegen-test:build
-    - name: Upload generated test SDK
+    - name: Upload generated white_label SDK
       uses: actions/upload-artifact@v2
       with:
         name: white_label
         path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label
-    - name: Upload generated test SDK
+    - name: Upload generated test SDKs
       uses: actions/upload-artifact@v2
       with:
         name: test_sdk_projections
