@@ -147,9 +147,6 @@ jobs:
           name: test_sdk_projections
           path: test_sdk_projections
 
-      - name: Copy Gemfile
-        run: cp hearth/Gemfile test_sdk_projections/
-
       - name: Install gems
         run: bundle install
         working-directory: ./test_sdk_projections
