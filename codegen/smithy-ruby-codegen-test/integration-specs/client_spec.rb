@@ -79,11 +79,11 @@ module WhiteLabel
       end
 
       it 'uses endpoint' do
-        proc = proc do |context|
+        verify = proc do |context|
           expect(context.request.uri)
             .to eq(URI(client.config.endpoint))
         end
-        interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+        interceptor = Hearth::Interceptor.new(read_before_transmit: verify)
         client.kitchen_sink({}, interceptors: [interceptor])
       end
 
@@ -146,12 +146,12 @@ module WhiteLabel
         end
 
         it 'uses endpoint from options' do
-          proc = proc do |context|
+          verify = proc do |context|
             expect(context.request.uri)
               .to eq(URI('https://override.com'))
           end
 
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          interceptor = Hearth::Interceptor.new(read_before_transmit: verify)
           client.kitchen_sink(
             {},
             endpoint: 'https://override.com',

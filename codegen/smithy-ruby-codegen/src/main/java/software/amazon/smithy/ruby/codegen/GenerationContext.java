@@ -42,6 +42,7 @@ import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
+import software.amazon.smithy.rulesengine.traits.ClientContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -122,11 +123,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                         .name(RubyFormatter.toSnakeCase(name));
 
                 param.getDocumentation().ifPresent((d) -> builder.documentation(d));
-                builder.type(symbolProvider.toSymbol(
-                                param.getType().createBuilderForType()
-                                        .id("smithy#temp")
-                                        .build())
-                        .expectProperty("docType").toString());
+                builder.type(getRubyTypeForParam(symbolProvider, param));
 
                 modeledClientConfig.add(builder.build());
             });
@@ -288,5 +285,19 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
     public EndpointRuleSet getEndpointRuleSet() {
         return endpointRuleSet;
+    }
+
+    /**
+     * Use the symbol provider to map a RulesEngine ClientContextParam's type to a Ruby Type to use in Config
+     * @param symbolProvider symbol provider
+     * @param param a ClientContextParam
+     * @return the ruby type to use for this parameter on Config
+     */
+    private static String getRubyTypeForParam(SymbolProvider symbolProvider, ClientContextParamDefinition param) {
+        return symbolProvider.toSymbol(
+                        param.getType().createBuilderForType()
+                                .id("smithy#temp")
+                                .build())
+                .expectProperty("docType").toString();
     }
 }

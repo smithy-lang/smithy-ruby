@@ -146,7 +146,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .call(() -> renderRbsEndpointProvider(writer))
                     .closeAllModules();
         });
-        LOGGER.fine("Wrote auth rbs module to " + rbsFile());
+        LOGGER.fine("Wrote endpoint rbs module to " + rbsFile());
     }
 
     private void renderEndpointParamsClass(RubyCodeWriter writer) {
@@ -178,7 +178,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 .call(() -> {
                     if (!defaultParams.isEmpty()) {
                         writer
-                                .openBlock("\ndef initialize(*)")
+                                .write("")
+                                .openBlock("def initialize(*)")
                                 .write("super")
                                 .call(() -> {
                                     defaultParams.forEach((param, defaultValue) -> {
@@ -240,7 +241,6 @@ public class EndpointGenerator extends RubyGeneratorBase {
                             contextParams.put(contextParam.getName(), symbolProvider.toMemberName(member));
                         });
                     });
-            // Optional<ContextParamTrait> contextParams = operation.getTrait(ContextParamTrait.class);
 
             writer
                     .write("")
