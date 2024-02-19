@@ -70,6 +70,7 @@ import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
 public class EndpointGenerator extends RubyGeneratorBase {
@@ -374,7 +375,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
             String paramArgs = testCase.getParams().getMembers().entrySet().stream().map(e -> {
                 String value;
                 if (e.getValue().isStringNode()) {
-                    value = "'" + e.getValue().expectStringNode().getValue() + "'";
+                    value = StringUtils.escapeJavaString(e.getValue().expectStringNode().getValue(), "");
                 } else {
                     value = e.getValue().expectBooleanNode().getValue() ? "true" : "false";
                 }

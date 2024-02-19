@@ -43,16 +43,18 @@ module Hearth
     # When allowSubDomains is true, evaluates whether the input string is
     # composed of values that are each compliant RFC 1123 host segments
     # joined by dot (.) characters.
-    def self.valid_host_label?(value, allow_sub_domains: false)
+    # rubocop:disable Style/OptionalBooleanParameter
+    def self.valid_host_label?(value, allow_sub_domains = false)
       return false if value.empty?
 
       if allow_sub_domains
         labels = value.split('.', -1)
-        return labels.all? { |l| valid_host_label?(l) }
+        return labels.all? { |l| valid_host_label?(l, false) }
       end
 
       !!(value =~ /\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z/)
     end
+    # rubocop:enable Style/OptionalBooleanParameter
 
     # Computes a URL structure given an input string.
     def self.parse_url(value)

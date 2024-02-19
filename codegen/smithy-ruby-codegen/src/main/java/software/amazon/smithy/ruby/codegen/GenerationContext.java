@@ -288,7 +288,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     }
 
     /**
-     * Use the symbol provider to map a RulesEngine ClientContextParam's type to a Ruby Type to use in Config
+     * Use the symbol provider to map a RulesEngine ClientContextParam's type to a Ruby Type to use in Config.
      * @param symbolProvider symbol provider
      * @param param a ClientContextParam
      * @return the ruby type to use for this parameter on Config
@@ -296,6 +296,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private static String getRubyTypeForParam(SymbolProvider symbolProvider, ClientContextParamDefinition param) {
         return symbolProvider.toSymbol(
                         param.getType().createBuilderForType()
+                                // use a temporary symbol, we don't need the name, just the ruby type
                                 .id("smithy#temp")
                                 .build())
                 .expectProperty("docType").toString();
