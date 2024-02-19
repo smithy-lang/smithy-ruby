@@ -253,8 +253,7 @@ public class HttpProtocolTestGenerator {
     }
 
     private void renderErrorTests(OperationShape operation) {
-        String operationName =
-                RubyFormatter.toSnakeCase(operation.getId().getName());
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
         for (StructureShape error : OperationIndex.of(model).getErrors(operation)) {
             error.getTrait(HttpResponseTestsTrait.class).ifPresent((responseTests) -> {
