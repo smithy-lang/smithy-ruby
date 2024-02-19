@@ -1,7 +1,5 @@
 module Hearth
-  module RulesEngine
-    type document = Array[document] | string | Numeric | Hash[string, document]
-
+  module Endpoints
     type urlStruct = Hash[string, string | bool]
 
     class AuthScheme
@@ -14,8 +12,6 @@ module Hearth
       attr_accessor auth_schemes: Array[AuthScheme]
       attr_accessor headers: Hash[string, string | Array[string]]
     end
-
-    def self.get_attr: (Array[document] | Hash[string, document], string)-> document
 
     def self.valid_host_label?: (string, allow_sub_domains: bool) -> bool
 
