@@ -25,7 +25,6 @@ module RailsJson
         end
         raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
 
-        raise ArgumentError, 'No endpoint could be resolved'
       end
     end
 

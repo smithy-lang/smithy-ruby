@@ -292,7 +292,13 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 .write("")
                 .call(() -> renderRules(writer, endpointRuleSet.getRules()))
                 .write("")
-                .write("raise ArgumentError, 'No endpoint could be resolved'")
+                .call(() -> {
+                    List<Rule> rules = endpointRuleSet.getRules();
+                    // if the last rule has no conditions, then we do not need a fallback error
+                    if (rules.isEmpty() || !rules.get(rules.size() - 1).getConditions().isEmpty()) {
+                        writer.write("raise ArgumentError, 'No endpoint could be resolved'");
+                    }
+                })
                 .closeBlock("end")
                 .closeBlock("end");
 
