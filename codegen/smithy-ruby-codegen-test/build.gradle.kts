@@ -166,18 +166,16 @@ tasks["smithyBuildJar"].enabled = false
 
 tasks.create<SmithyBuild>("buildSdk") {
     addRuntimeClasspath = true
-}
+}.dependsOn(tasks["generate-smithy-build"])
 
 tasks["build"]
-        .dependsOn(tasks["generate-smithy-build"])
+        .dependsOn(tasks["buildSdk"])
         .finalizedBy(
-                tasks["buildSdk"],
                 tasks["copyIntegrationSpecs"],
                 tasks["copySteepfile"],
                 tasks["copyWhiteLabelGem"],
                 tasks["copyWeatherServiceGem"]
             )
-
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
 }
