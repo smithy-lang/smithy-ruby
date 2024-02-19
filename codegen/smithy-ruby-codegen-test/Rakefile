@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 task 'test' do
-  includes = Dir.glob("*/ruby-codegen/*/lib").map { |d| "-I#{d}" }.join(" ")
+  includes = Dir.glob('*/ruby-codegen/*/lib').map { |d| "-I#{d}" }.join(' ')
   sh("bundle exec rspec */ruby-codegen/*/spec #{includes}")
 end
