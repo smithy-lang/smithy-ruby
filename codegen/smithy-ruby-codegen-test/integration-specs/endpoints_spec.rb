@@ -37,6 +37,24 @@ module WhiteLabel
           interceptors: [interceptor]
         )
       end
+
+      context 'endpoint from rules' do
+        let(:client) do
+          Client.new(stub_responses: true, endpoint: nil)
+        end
+
+        it 'prepends the label to the host' do
+          proc = proc do |context|
+            expect(context.request.uri.to_s)
+              .to eq("https://foo.#{label}.data.whitelabel.com")
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          client.endpoint_with_host_label_operation(
+            { label_member: label },
+            interceptors: [interceptor]
+          )
+        end
+      end
     end
   end
 end

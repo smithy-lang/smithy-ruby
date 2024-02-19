@@ -29,6 +29,7 @@ structure EndpointResourceInput {
 
 
 @endpoint(hostPrefix: "foo.{labelMember}.")
+@staticContextParams(Dataplane: {value: true})
 @http(method: "POST", uri: "/endpoint_operation_with_host_label")
 operation EndpointWithHostLabelOperation {
     input: HostLabelInput,

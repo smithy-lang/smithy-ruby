@@ -116,6 +116,7 @@ module WhiteLabel
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage]
+          params.dataplane = true
           params.endpoint = config[:endpoint]
           params
         end
