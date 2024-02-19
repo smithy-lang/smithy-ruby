@@ -307,7 +307,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private void renderRbsEndpointProvider(RubyCodeWriter writer) {
         writer
                 .openBlock("class Provider")
-                .write("def resolve_endpoint: (Params params) -> Hearth::RulesEngine::Endpoint")
+                .write("def resolve_endpoint: (Params params) -> Hearth::Endpoints::Endpoint")
                 .closeBlock("end");
 
     }
@@ -418,7 +418,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                             String propertiesHash = authScheme
                                                     .withoutMember("name")
                                                     .accept(new RubyNodeVisitor());
-                                            return "Hearth::RulesEngine::AuthScheme.new(name: '"
+                                            return "Hearth::Endpoints::AuthScheme.new(name: '"
                                                     + name + "', " + "properties: " + propertiesHash + ")";
                                         }).collect(Collectors.joining(", ")) + "]";
                             }
@@ -670,7 +670,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                     return "'" + e.getKey().getName().getValue() + "' => "
                                             + e.getValue().accept(expressionVisitor);
                                 }).collect(Collectors.joining(", ")) + "}";
-                        return "Hearth::RulesEngine::AuthScheme.new(name: "
+                        return "Hearth::Endpoints::AuthScheme.new(name: "
                                 + name + ", " + "properties: " + propertiesHash + ")";
                     }).collect(Collectors.joining(", ")) + "]";
                 } else {

@@ -11,7 +11,7 @@ module Hearth
       # @param [#resolve_endpoint(endpoint_params)] endpoint_provider An object
       #   that responds to a `resolve_endpoint(endpoint_params)` method
       #   where `endpoint_params` is a service specific struct.
-      #   The method must return an {Hearth::RulesEngine::Endpoint} object.
+      #   The method must return an {Hearth::Endpoints::Endpoint} object.
       # @param [#build(config, input, context)] param_builder An object that
       #   responds to a `build(config, input, context)` method and returns
       #   an endpoint_params object.

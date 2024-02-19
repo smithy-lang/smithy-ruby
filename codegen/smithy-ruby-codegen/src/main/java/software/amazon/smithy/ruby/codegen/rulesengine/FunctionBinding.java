@@ -50,19 +50,19 @@ public final class FunctionBinding {
         return List.of(
                 FunctionBinding.builder()
                         .id(IsValidHostLabel.ID)
-                        .rubyMethodName("Hearth::RulesEngine::valid_host_label?")
+                        .rubyMethodName("Hearth::Endpoints::valid_host_label?")
                         .build(),
                 FunctionBinding.builder()
                         .id(ParseUrl.ID)
-                        .rubyMethodName("Hearth::RulesEngine::parse_url")
+                        .rubyMethodName("Hearth::Endpoints::parse_url")
                         .build(),
                 FunctionBinding.builder()
                         .id(Substring.ID)
-                        .rubyMethodName("Hearth::RulesEngine::substring")
+                        .rubyMethodName("Hearth::Endpoints::substring")
                         .build(),
                 FunctionBinding.builder()
                         .id(UriEncode.ID)
-                        .rubyMethodName("Hearth::RulesEngine::uri_encode")
+                        .rubyMethodName("Hearth::Endpoints::uri_encode")
                         .build()
         );
     }

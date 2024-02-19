@@ -12,7 +12,7 @@ module Hearth
   # The rules engine has a set of included functions that can be
   # invoked without additional dependencies, called the standard library.
   # @api private
-  module RulesEngine
+  module Endpoints
     # An Authentication Scheme supported by an Endpoint
     AuthScheme = ::Struct.new(
       :name,

@@ -34,14 +34,14 @@ module Hearth
           )
         end
         let(:auth_scheme) do
-          RulesEngine::AuthScheme.new(name: 'auth1')
+          Endpoints::AuthScheme.new(name: 'auth1')
         end
         let(:endpoint_uri) { 'https://example.com' }
         let(:headers) do
           { 'headers1' => 'value1', 'headers2' => 'value2' }
         end
         let(:resolved_endpoint) do
-          RulesEngine::Endpoint.new(
+          Endpoints::Endpoint.new(
             uri: endpoint_uri,
             auth_schemes: [auth_scheme],
             headers: headers
