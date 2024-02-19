@@ -38,7 +38,7 @@ module Hearth
       context 'allow_sub_domains=false' do
         it 'returns false when value has subdomains' do
           expect(RulesEngine.valid_host_label?(
-                   'a.b', allow_sub_domains: false
+                   'a.b', false
                  )).to be false
         end
       end
