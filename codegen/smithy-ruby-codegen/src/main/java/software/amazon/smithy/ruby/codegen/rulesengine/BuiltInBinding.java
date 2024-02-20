@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -31,6 +32,7 @@ import software.amazon.smithy.ruby.codegen.util.RubySource;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Provides a binding between Smithy rules engine built-ins and Ruby code.
@@ -39,12 +41,14 @@ public final class BuiltInBinding {
     private final Parameter builtIn;
     private final Set<ClientConfig> clientConfig;
     private final RenderBuild renderBuild;
+    private final RenderTestSet renderTestSet;
     private final WriteAdditionalFiles writeAdditionalFiles;
 
     private BuiltInBinding(Builder builder) {
         this.builtIn = builder.builtIn;
         this.clientConfig = builder.clientConfig;
         this.renderBuild = builder.renderBuild;
+        this.renderTestSet = builder.renderTestSet;
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
     }
 
@@ -94,6 +98,19 @@ public final class BuiltInBinding {
     }
 
     /**
+     * Generate code to add build (set) the endpoint parameter.
+     *
+     * @param writer    writer
+     * @param context   generation context
+     * @param value     value to set
+     * @param operation operation to add to
+     */
+    public void renderTestSet(RubyCodeWriter writer, GenerationContext context,
+                              Node value, OperationShape operation) {
+        renderTestSet.renderTestSet(writer, this, value, operation, context);
+    }
+
+    /**
      * Write additional files required by this built-in builder.
      *
      * @param context generation context
@@ -138,6 +155,27 @@ public final class BuiltInBinding {
                          OperationShape operation, GenerationContext context);
     }
 
+    @FunctionalInterface
+    /**
+     * Called to render code that sets this BuiltIn during an operationInputTest.
+     * This is effectively the opposite of RenderBuild.  It is run in a rspec
+     * context with access to a `config` hash and may set values on config, create rspec
+     * mocks or create and add interceptors.
+     */
+    public interface RenderTestSet {
+        /**
+         * Called to render the build for this parameter.
+         *
+         * @param writer         - codewriter to render with
+         * @param builtInBinding - builtInBinding to render for
+         * @param value          - value to set
+         * @param operation      - operation being rendered
+         * @param context        - generation context
+         */
+        void renderTestSet(RubyCodeWriter writer, BuiltInBinding builtInBinding,
+                         Node value, OperationShape operation, GenerationContext context);
+    }
+
     /**
      * Builder for {@link BuiltInBinding}.
      */
@@ -146,6 +184,7 @@ public final class BuiltInBinding {
         private final Set<ClientConfig> clientConfig = new HashSet<>();
         private Parameter builtIn;
         private RenderBuild renderBuild;
+        private RenderTestSet renderTestSet;
         private WriteAdditionalFiles writeAdditionalFiles =
                 (context) -> Collections.emptyList();
 
@@ -158,7 +197,7 @@ public final class BuiltInBinding {
         }
 
         /**
-         * Binds this built-in to a config value.
+         * Binds this built-in to a single config value.
          *
          * @param config client config
          * @return builder
@@ -170,6 +209,17 @@ public final class BuiltInBinding {
                         RubyFormatter.toSnakeCase(builtInBinding.builtIn.getName().toString()),
                         config.getName()
                 );
+            };
+            this.renderTestSet = (writer, builtInBinding, value, operation, context) -> {
+                String v;
+                if (value.isStringNode()) {
+                    v = StringUtils.escapeJavaString(value.expectStringNode().getValue(), "");
+                } else {
+                    v = value.expectBooleanNode().getValue() ? "true" : "false";
+                }
+                writer.write("config[:$L] = $L",
+                        RubyFormatter.toSnakeCase(builtInBinding.builtIn.getName().toString()),
+                        v);
             };
             return this;
         }
@@ -191,6 +241,11 @@ public final class BuiltInBinding {
 
         public Builder renderBuild(RenderBuild renderBuild) {
             this.renderBuild = renderBuild;
+            return this;
+        }
+
+        public Builder renderTestSet(RenderTestSet renderTestSet) {
+            this.renderTestSet = renderTestSet;
             return this;
         }
 

@@ -126,11 +126,18 @@ testCases: [
         "expect": {
             "endpoint": {
                 "url": "https://custom-endpoint.com",
-                "headers": {
-
+            }
+        },
+        "operationInputs": [
+            {
+                "operationName": "EndpointOperation",
+                "operationParams": {
+                },
+                "builtInParams": {
+                    "SDK::Endpoint": "https://custom-endpoint.com"
                 }
             }
-        }
+        ]
     },
     {
         "documentation": "Endpoint override is used when other parameters are set",
@@ -144,7 +151,31 @@ testCases: [
             "endpoint": {
                 "url": "https://custom-endpoint.com"
             }
-        }
+        },
+    },
+    {
+        "documentation": "Stage is used",
+        "params": {
+            "Stage": "beta",
+        },
+        "expect": {
+            "endpoint": {
+                "url": "https://beta.whitelabel.dev"
+            }
+        },
+        "operationInputs": [
+            {
+                "operationName": "EndpointOperation",
+                "operationParams": {
+                },
+                "builtInParams": {
+
+                },
+                "clientParams": {
+                    "Stage": "beta"
+                }
+            }
+        ]
     },
     {
         "documentation": "ResourceURL is parsed and used",
@@ -165,7 +196,51 @@ testCases: [
                     ]
                 }
             },
-        }
+        },
+        "operationInputs": [
+            {
+                "operationName": "EndpointOperationWithResource",
+                "operationParams": {
+                    "resourceUrl": "https://resource.com/path"
+                },
+                "builtInParams": {
+                },
+                "clientParams": {
+                }
+            }
+        ]
+    },
+    {
+        "documentation": "Data prefix is applied",
+        "params": {
+            "Dataplane": true
+        },
+        "expect": {
+            "endpoint": {
+                "url": "https://data.whitelabel.com"
+            },
+        },
+        "operationInputs": [
+            {
+                "operationName": "DataplaneOperation",
+                "operationParams": {
+                },
+                "builtInParams": {
+                },
+                "clientParams": {
+                }
+            },
+            {
+                "operationName": "EndpointWithHostLabelOperation",
+                "operationParams": {
+                    "labelMember": "label"
+                },
+                "builtInParams": {
+                },
+                "clientParams": {
+                }
+            }
+        ]
     },
 ])
 @clientContextParams(

@@ -38,6 +38,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -65,6 +66,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
+import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
@@ -392,6 +394,12 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .write("")
                     .openBlock("context '$L' do",
                             testCase.getDocumentation().orElse("Test case " + testCase.hashCode()))
+                    .openBlock("let(:expected) do")
+                    .call(() -> {
+                        renderTestCaseExpected(writer, testCase);
+                    })
+                    .closeBlock("end") // end of let block
+                    .write("")
                     .openBlock("it 'produces the expected output from the EndpointProvider' do")
                     .write("params = Params.new($L)", paramArgs)
                     .call(() -> {
@@ -399,41 +407,122 @@ public class EndpointGenerator extends RubyGeneratorBase {
                             writer
                                     .openBlock("expect do")
                                     .write("subject.resolve_endpoint(params)")
-                                    .closeBlock("end.to raise_error(ArgumentError, '$L')",
-                                            testCase.getExpect().getError().get());
+                                    .closeBlock("end.to raise_error(ArgumentError, expected[:error])");
 
                         } else {
-                            ExpectedEndpoint expected = testCase.getExpect().getEndpoint().get();
-                            String expectedHeaders = "{" + expected.getHeaders().entrySet().stream().map(e -> {
-                                return "'" + e.getKey() + "' => [" + e.getValue().stream().map(h -> "'" + h + "'")
-                                        .collect(Collectors.joining(",")) + "]";
-                            }).collect(Collectors.joining(", ")) + "}";
-                            String expectedAuthSchemes = "[]";
-                            Node authSchemes = expected.getProperties().get(AUTH_SCHEMES);
-                            if (authSchemes != null) {
-                                expectedAuthSchemes = "[" + authSchemes.expectArrayNode()
-                                        .getElementsAs(ObjectNode.class).stream().map(authScheme -> {
-                                            String name = authScheme.getStringMember("name")
-                                                    .get().getValue();
-                                            String propertiesHash = authScheme
-                                                    .withoutMember("name")
-                                                    .accept(new RubyNodeVisitor());
-                                            return "Hearth::Endpoints::AuthScheme.new(name: '"
-                                                    + name + "', " + "properties: " + propertiesHash + ")";
-                                        }).collect(Collectors.joining(", ")) + "]";
-                            }
-
                             writer
                                     .write("endpoint = subject.resolve_endpoint(params)")
-                                    .write("expect(endpoint.uri).to eq('$L')", expected.getUrl())
-                                    .write("expect(endpoint.headers).to eq($L)", expectedHeaders)
-                                    .write("expect(endpoint.auth_schemes).to eq($L)", expectedAuthSchemes);
-
-
+                                    .write("expect(endpoint.uri).to eq(expected[:url])")
+                                    .write("expect(endpoint.headers).to eq(expected[:headers])")
+                                    .write("expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])");
                         }
                     })
+                    .closeBlock("end") // end main test case it block
+                    .call(() -> {
+                        for (EndpointTestOperationInput operationInput : testCase.getOperationInputs()) {
+                            renderOperationInputTest(writer, testCase, operationInput);
+                        }
+                    })
+                    .closeBlock("end"); // end context block
+        }
+    }
+
+    private void renderOperationInputTest(RubyCodeWriter writer, EndpointTestCase testCase,
+                           EndpointTestOperationInput operationInput) {
+        ShapeId operationId = service.getOperations().stream()
+                .filter(id -> id.getName().contains(operationInput.getOperationName()))
+                .findFirst().get();
+        OperationShape operation = model.expectShape(operationId, OperationShape.class);
+        String operationName = RubyFormatter.toSnakeCase(
+                symbolProvider.toSymbol(operation).getName());
+        String configParams =
+                operationInput.getClientParams().getMembers().entrySet().stream().map(e -> {
+                    return RubyFormatter.toSnakeCase(e.getKey().getValue()) + ": "
+                            + e.getValue().accept(new RubyNodeVisitor());
+                }).collect(Collectors.joining(", "));
+
+        writer
+                .write("")
+                .openBlock("it 'produces the correct output from the client "
+                        + "when calling $L' do", operationName)
+                .write("config = {$L}", configParams)
+                .write("config[:stub_responses] = true")
+                .write("config[:endpoint] = nil") // stub_responses sets this otherwise
+                .call(() -> {
+                    operationInput.getBuiltInParams().getMembers().forEach((builtIn, value) -> {
+                        context.getBuiltInBinding(builtIn.getValue()).get()
+                                .renderTestSet(writer, context, value, operation);
+                    });
+                })
+                .write("")
+                .write("client = Client.new(config)");
+
+
+        String operationInputs = operationInput.getOperationParams().getMembers()
+                .entrySet().stream().map(e -> {
+                    return RubyFormatter.toSnakeCase(e.getKey().getValue()) + ": "
+                            + e.getValue().accept(new RubyNodeVisitor());
+                }).collect(Collectors.joining(", "));
+
+        if (testCase.getExpect().getError().isPresent()) {
+            writer
+                    .openBlock("expect do")
+                    .write("client.$L($L)", operationName, operationInputs)
+                    .closeBlock("end.to raise_error(ArgumentError, '$L')",
+                            testCase.getExpect().getError().get());
+        } else {
+            writer.openBlock("interceptor = Hearth::Interceptor.new("
+                            + "read_before_transmit: proc do |context|")
+                    .write("expected_uri = URI.parse(expected[:url])")
+                    .write("request_uri = context.request.uri")
+                    .write("expect(request_uri.hostname).to "
+                            + "end_with(expected_uri.hostname)")
+                    .write("expect(request_uri.scheme).to eq(expected_uri.scheme)")
+                    .write("expect(request_uri.path).to start_with(expected_uri.path)")
+                    .openBlock("expected[:headers].each do |k,v|")
+                    .write("expect(context.request.headers[k]).to "
+                            + "eq(Hearth::HTTP::Field.new(k, v).value)")
                     .closeBlock("end")
-                    .closeBlock("end");
+                    .closeBlock("end)")
+                    .write("client.$L({$L}, interceptors: [interceptor])",
+                            operationName, operationInputs);
+
+            // TODO: Verify Auth
+        }
+
+        writer.closeBlock("end");
+    }
+
+    private static void renderTestCaseExpected(RubyCodeWriter writer, EndpointTestCase testCase) {
+        if (testCase.getExpect().getError().isPresent()) {
+            writer.write("{error: $L}",
+                    StringUtils.escapeJavaString(testCase.getExpect().getError().get(), ""));
+        } else {
+            ExpectedEndpoint expected = testCase.getExpect().getEndpoint().get();
+            String expectedHeaders = "{" + expected.getHeaders().entrySet().stream().map(e -> {
+                return "'" + e.getKey() + "' => [" + e.getValue().stream().map(h -> "'" + h + "'")
+                        .collect(Collectors.joining(",")) + "]";
+            }).collect(Collectors.joining(", ")) + "}";
+            String expectedAuthSchemes = "[]";
+            Node authSchemes = expected.getProperties().get(AUTH_SCHEMES);
+            if (authSchemes != null) {
+                expectedAuthSchemes = "[" + authSchemes.expectArrayNode()
+                        .getElementsAs(ObjectNode.class).stream().map(authScheme -> {
+                            String name = authScheme.getStringMember("name")
+                                    .get().getValue();
+                            String propertiesHash = authScheme
+                                    .withoutMember("name")
+                                    .accept(new RubyNodeVisitor());
+                            return "Hearth::Endpoints::AuthScheme.new(name: '"
+                                    + name + "', " + "properties: " + propertiesHash + ")";
+                        }).collect(Collectors.joining(", ")) + "]";
+            }
+            writer
+                    .openBlock("{")
+                    .write("url: '$L',", expected.getUrl())
+                    .write("headers: $L,", expectedHeaders)
+                    .write("auth_schemes: $L", expectedAuthSchemes)
+                    .closeBlock("}");
         }
     }
 

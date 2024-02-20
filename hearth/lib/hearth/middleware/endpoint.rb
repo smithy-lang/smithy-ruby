@@ -28,9 +28,7 @@ module Hearth
         params = @param_builder.build(@config, input, context)
         endpoint = @endpoint_provider.resolve_endpoint(params)
         update_request(context, endpoint)
-
-        # TODO: combine with auth middleware
-        context[:auth_schemes] = endpoint.auth_schemes
+        update_auth_properties(context, endpoint.auth_schemes)
 
         @app.call(input, context)
       end
@@ -55,6 +53,14 @@ module Hearth
         merged.path = resolved_uri.path + request_uri.path
         merged.query = request_uri.query
         merged
+      end
+
+      # merge properties from the endpoint resolved auth schemes onto
+      # the auth scheme resolved by the auth resolver.
+      def update_auth_properties(context, auth_schemes)
+        context[:endpoint_auth_schemes] = auth_schemes
+        # TODO: merge properties to context.auth
+        # Need to match auth_scheme.name to the schemeId
       end
     end
   end
