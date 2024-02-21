@@ -205,7 +205,7 @@ public final class BuiltInBinding {
         public Builder fromConfig(ClientConfig config) {
             this.clientConfig.add(config);
             this.renderBuild = (writer, builtInBinding, operation, context) -> {
-                writer.write("params.$L = config[:$L]",
+                writer.write("params.$1L = config[:$2L] unless config[:$2L].nil?",
                         RubyFormatter.toSnakeCase(builtInBinding.builtIn.getName().toString()),
                         config.getName()
                 );

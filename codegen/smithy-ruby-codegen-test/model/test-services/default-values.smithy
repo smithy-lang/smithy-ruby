@@ -33,7 +33,6 @@ use smithy.rules#endpointTests
     },
     rules: [
         {
-            "documentation": "Template the region into the URI when FIPS is enabled",
             "conditions": [
                 {
                     "fn": "isSet",
@@ -61,6 +60,7 @@ use smithy.rules#endpointTests
     "version": "1.0",
     "testCases": [
         {
+            "documentation": "Default value is used when parameter is unset",
             "params": {
                 "bar": "a b",
             }
@@ -68,6 +68,9 @@ use smithy.rules#endpointTests
                                     "operationName": "GetThing",
                                     "builtInParams": {
                                         "SDK::Endpoint": "https://custom.example.com"
+                                    },
+                                    "clientParams": {
+                                        "bar": "a b"
                                     }
                                 }],
             "expect": {
@@ -77,6 +80,7 @@ use smithy.rules#endpointTests
             }
         },
         {
+            "documentation": "Default value is not used when the parameter is set",
             "params": {
                 "bar": "a b",
                 "baz": "BIG"
@@ -85,6 +89,10 @@ use smithy.rules#endpointTests
                                     "operationName": "GetThing",
                                     "builtInParams": {
                                         "SDK::Endpoint": "https://custom.example.com"
+                                    },
+                                    "clientParams": {
+                                        "bar": "a b",
+                                        "baz": "BIG"
                                     }
                                 }],
             "expect": {

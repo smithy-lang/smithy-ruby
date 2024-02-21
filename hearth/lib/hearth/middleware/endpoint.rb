@@ -59,8 +59,15 @@ module Hearth
       # the auth scheme resolved by the auth resolver.
       def update_auth_properties(context, auth_schemes)
         context[:endpoint_auth_schemes] = auth_schemes
-        # TODO: merge properties to context.auth
-        # Need to match auth_scheme.name to the schemeId
+        return unless context.auth
+
+        matching = auth_schemes.find do |a|
+          context.auth.scheme_id == a.scheme_id
+        end
+
+        return unless matching
+
+        context.auth.signer_properties.merge!(matching.properties)
       end
     end
   end

@@ -33,7 +33,7 @@ module HighScoreService
       class ApiKeyAuth
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -41,7 +41,7 @@ module HighScoreService
       class BasicAuth
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -49,7 +49,7 @@ module HighScoreService
       class BearerAuth
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -57,7 +57,7 @@ module HighScoreService
       class CreateHighScore
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -65,7 +65,7 @@ module HighScoreService
       class DeleteHighScore
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -73,7 +73,7 @@ module HighScoreService
       class DigestAuth
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -81,7 +81,7 @@ module HighScoreService
       class GetHighScore
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -89,7 +89,7 @@ module HighScoreService
       class ListHighScores
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -97,7 +97,7 @@ module HighScoreService
       class UpdateHighScore
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end

@@ -267,10 +267,10 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                 writer.write("params.$L = $L",
                                         RubyFormatter.toSnakeCase(paramName), value);
                             } else if (clientContextParams.containsKey(paramName)) {
-                                writer.write("params.$1L = config[:$1L]",
+                                writer.write("params.$1L = config[:$1L] unless config[:$1L].nil?",
                                         clientContextParams.get(paramName));
                             } else if (contextParams.containsKey(paramName)) {
-                                writer.write("params.$L = input.$L",
+                                writer.write("params.$1L = input.$2L unless input.$2L.nil?",
                                         RubyFormatter.toSnakeCase(paramName),
                                         contextParams.get(paramName));
                             } else if (p.isBuiltIn()) {

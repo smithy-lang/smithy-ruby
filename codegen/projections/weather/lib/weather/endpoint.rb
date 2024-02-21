@@ -33,7 +33,7 @@ module Weather
       class Operation____789BadName
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -41,7 +41,7 @@ module Weather
       class GetCity
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -49,7 +49,7 @@ module Weather
       class GetCityAnnouncements
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -57,7 +57,7 @@ module Weather
       class GetCityImage
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -65,7 +65,7 @@ module Weather
       class GetCurrentTime
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -73,7 +73,7 @@ module Weather
       class GetForecast
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -81,7 +81,7 @@ module Weather
       class ListCities
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end

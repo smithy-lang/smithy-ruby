@@ -15,7 +15,7 @@ module Hearth
   module Endpoints
     # An Authentication Scheme supported by an Endpoint
     AuthScheme = ::Struct.new(
-      :name,
+      :scheme_id,
       :properties,
       keyword_init: true
     ) do

@@ -104,6 +104,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -362,6 +363,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -443,6 +445,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -464,6 +467,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -635,6 +639,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -656,6 +661,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
   end

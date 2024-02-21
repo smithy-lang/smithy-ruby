@@ -59,8 +59,8 @@ module WhiteLabel
       class Operation____PaginatorsTestWithBadNames
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -68,8 +68,8 @@ module WhiteLabel
       class CustomAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -77,9 +77,9 @@ module WhiteLabel
       class DataplaneOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
+          params.stage = config[:stage] unless config[:stage].nil?
           params.dataplane = true
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -87,8 +87,8 @@ module WhiteLabel
       class DefaultsTest
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -96,8 +96,8 @@ module WhiteLabel
       class EndpointOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -105,9 +105,9 @@ module WhiteLabel
       class EndpointOperationWithResource
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.resource_url = input.resource_url
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.resource_url = input.resource_url unless input.resource_url.nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -115,9 +115,9 @@ module WhiteLabel
       class EndpointWithHostLabelOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
+          params.stage = config[:stage] unless config[:stage].nil?
           params.dataplane = true
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -125,8 +125,8 @@ module WhiteLabel
       class HttpApiKeyAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -134,8 +134,8 @@ module WhiteLabel
       class HttpBasicAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -143,8 +143,8 @@ module WhiteLabel
       class HttpBearerAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -152,8 +152,8 @@ module WhiteLabel
       class HttpDigestAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -161,8 +161,8 @@ module WhiteLabel
       class KitchenSink
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -170,8 +170,8 @@ module WhiteLabel
       class MixinTest
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -179,8 +179,8 @@ module WhiteLabel
       class NoAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -188,8 +188,8 @@ module WhiteLabel
       class OptionalAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -197,8 +197,8 @@ module WhiteLabel
       class OrderedAuth
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -206,8 +206,8 @@ module WhiteLabel
       class PaginatorsTest
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -215,8 +215,8 @@ module WhiteLabel
       class PaginatorsTestWithItems
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -224,8 +224,8 @@ module WhiteLabel
       class RelativeMiddlewareOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -233,8 +233,8 @@ module WhiteLabel
       class RequestCompressionOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -242,8 +242,8 @@ module WhiteLabel
       class RequestCompressionStreamingOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -251,8 +251,8 @@ module WhiteLabel
       class StreamingOperation
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -260,8 +260,8 @@ module WhiteLabel
       class StreamingWithLength
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -269,8 +269,8 @@ module WhiteLabel
       class WaitersTest
         def self.build(config, input, context)
           params = Params.new
-          params.stage = config[:stage]
-          params.endpoint = config[:endpoint]
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end

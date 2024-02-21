@@ -14,6 +14,7 @@ module Hearth
       @response = options[:response]
       @logger = options[:logger]
       @interceptors = options[:interceptors] || InterceptorList.new
+      @auth = options[:auth]
       @metadata = options[:metadata] || {}
     end
 

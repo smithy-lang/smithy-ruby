@@ -33,7 +33,7 @@ module RailsJson
       class Operation____789BadName
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -41,7 +41,7 @@ module RailsJson
       class AllQueryStringTypes
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -49,7 +49,7 @@ module RailsJson
       class ConstantAndVariableQueryString
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -57,7 +57,7 @@ module RailsJson
       class ConstantQueryString
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -65,7 +65,7 @@ module RailsJson
       class DocumentType
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -73,7 +73,7 @@ module RailsJson
       class DocumentTypeAsPayload
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -81,7 +81,7 @@ module RailsJson
       class EmptyOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -89,7 +89,7 @@ module RailsJson
       class EndpointOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -97,7 +97,7 @@ module RailsJson
       class EndpointWithHostLabelOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -105,7 +105,7 @@ module RailsJson
       class GreetingWithErrors
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -113,7 +113,7 @@ module RailsJson
       class HttpPayloadTraits
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -121,7 +121,7 @@ module RailsJson
       class HttpPayloadTraitsWithMediaType
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -129,7 +129,7 @@ module RailsJson
       class HttpPayloadWithStructure
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -137,7 +137,7 @@ module RailsJson
       class HttpPrefixHeaders
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -145,7 +145,7 @@ module RailsJson
       class HttpPrefixHeadersInResponse
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -153,7 +153,7 @@ module RailsJson
       class HttpRequestWithFloatLabels
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -161,7 +161,7 @@ module RailsJson
       class HttpRequestWithGreedyLabelInPath
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -169,7 +169,7 @@ module RailsJson
       class HttpRequestWithLabels
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -177,7 +177,7 @@ module RailsJson
       class HttpRequestWithLabelsAndTimestampFormat
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -185,7 +185,7 @@ module RailsJson
       class HttpResponseCode
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -193,7 +193,7 @@ module RailsJson
       class IgnoreQueryParamsInResponse
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -201,7 +201,7 @@ module RailsJson
       class InputAndOutputWithHeaders
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -209,7 +209,7 @@ module RailsJson
       class JsonEnums
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -217,7 +217,7 @@ module RailsJson
       class JsonMaps
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -225,7 +225,7 @@ module RailsJson
       class JsonUnions
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -233,7 +233,7 @@ module RailsJson
       class KitchenSinkOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -241,7 +241,7 @@ module RailsJson
       class MediaTypeHeader
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -249,7 +249,7 @@ module RailsJson
       class NestedAttributesOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -257,7 +257,7 @@ module RailsJson
       class NullAndEmptyHeadersClient
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -265,7 +265,7 @@ module RailsJson
       class NullOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -273,7 +273,7 @@ module RailsJson
       class OmitsNullSerializesEmptyString
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -281,7 +281,7 @@ module RailsJson
       class OperationWithOptionalInputOutput
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -289,7 +289,7 @@ module RailsJson
       class QueryIdempotencyTokenAutoFill
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -297,7 +297,7 @@ module RailsJson
       class QueryParamsAsStringListMap
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -305,7 +305,7 @@ module RailsJson
       class StreamingOperation
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end
@@ -313,7 +313,7 @@ module RailsJson
       class TimestampFormatHeaders
         def self.build(config, input, context)
           params = Params.new
-          params.endpoint = config[:endpoint]
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
           params
         end
       end

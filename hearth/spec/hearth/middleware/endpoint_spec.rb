@@ -26,15 +26,17 @@ module Hearth
         let(:request) { Hearth::HTTP::Request.new }
         let(:response) { double('response') }
         let(:logger) { Logger.new(IO::NULL) }
+        let(:resolved_auth) { nil }
         let(:context) do
           Context.new(
             request: request,
             response: response,
+            auth: resolved_auth,
             logger: logger
           )
         end
-        let(:auth_scheme) do
-          Endpoints::AuthScheme.new(name: 'auth1')
+        let(:endpoint_auth_schemes) do
+          [Endpoints::AuthScheme.new(scheme_id: 'auth1')]
         end
         let(:endpoint_uri) { 'https://example.com' }
         let(:headers) do
@@ -43,13 +45,13 @@ module Hearth
         let(:resolved_endpoint) do
           Endpoints::Endpoint.new(
             uri: endpoint_uri,
-            auth_schemes: [auth_scheme],
+            auth_schemes: endpoint_auth_schemes,
             headers: headers
           )
         end
         let(:params) { double }
 
-        it 'resolves the endpoint and modifies the request' do
+        before(:each) do
           expect(param_builder).to receive(:build)
             .with({ config1: config1,
                     config2: config2 }, input, context).and_return(params)
@@ -57,12 +59,14 @@ module Hearth
             .with(params).and_return(resolved_endpoint)
 
           expect(app).to receive(:call).with(input, context).ordered
+        end
 
+        it 'resolves the endpoint and modifies the request' do
           resp = subject.call(input, context)
 
           expect(request.uri).to eq(URI(endpoint_uri))
           expect(request.headers.to_h).to include(headers)
-          # TODO: Expect on Auth
+          expect(context.auth).to be_nil
           expect(resp).to be output
         end
 
@@ -75,19 +79,67 @@ module Hearth
           end
 
           it 'merges the resolved and serialized paths and query' do
-            expect(param_builder).to receive(:build)
-              .with({ config1: config1,
-                      config2: config2 }, input, context).and_return(params)
-            expect(endpoint_provider).to receive(:resolve_endpoint)
-              .with(params).and_return(resolved_endpoint)
-
-            expect(app).to receive(:call).with(input, context).ordered
-
             subject.call(input, context)
 
             merged_uri = 'https://example.com/path1/path2/path3/path4' \
                          '?query1=1&query2=2'
             expect(request.uri).to eq(URI(merged_uri))
+          end
+        end
+
+        context 'resolved non-matching auth scheme' do
+          let(:resolved_auth) do
+            double(scheme_id: 'resolved', signer_properties: {})
+          end
+
+          let(:endpoint_auth_properties) do
+            { value: 'override' }
+          end
+
+          let(:endpoint_auth_schemes) do
+            [
+              Endpoints::AuthScheme.new(
+                scheme_id: 'endpoint',
+                properties: endpoint_auth_properties
+              )
+            ]
+          end
+
+          it 'does not update resolved auth properties' do
+            subject.call(input, context)
+
+            expect(context.auth.signer_properties)
+              .not_to include(endpoint_auth_properties)
+          end
+        end
+
+        context 'resolved matching auth scheme' do
+          let(:resolved_auth) do
+            double(scheme_id: 'matching', signer_properties: {})
+          end
+
+          let(:endpoint_auth_properties) do
+            { value: 'override' }
+          end
+
+          let(:endpoint_auth_schemes) do
+            [
+              Endpoints::AuthScheme.new(
+                scheme_id: 'non-matching',
+                properties: { other: 'non-matching' }
+              ),
+              Endpoints::AuthScheme.new(
+                scheme_id: 'matching',
+                properties: endpoint_auth_properties
+              )
+            ]
+          end
+
+          it 'does not update resolved auth properties' do
+            subject.call(input, context)
+
+            expect(context.auth.signer_properties)
+              .to include(endpoint_auth_properties)
           end
         end
       end
