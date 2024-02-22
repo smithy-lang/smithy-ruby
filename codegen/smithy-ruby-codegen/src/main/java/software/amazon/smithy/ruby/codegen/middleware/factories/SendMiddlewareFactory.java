@@ -41,7 +41,7 @@ public final class SendMiddlewareFactory {
                 .name("stub_responses")
                 .type("Boolean")
                 .rbsType("bool")
-                .defaultPrimitiveValue("false")
+                .defaultValue("false")
                 .documentation(stubResponsesDocumentation)
                 .build();
 

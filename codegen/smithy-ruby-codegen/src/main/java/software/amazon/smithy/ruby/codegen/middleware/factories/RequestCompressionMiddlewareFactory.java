@@ -43,7 +43,7 @@ public final class RequestCompressionMiddlewareFactory {
                 .name("disable_request_compression")
                 .type("Boolean")
                 .rbsType("bool")
-                .defaultPrimitiveValue("false")
+                .defaultValue("false")
                 .documentation(disableRequestCompressionDocumentation)
                 .build();
 
@@ -56,7 +56,7 @@ public final class RequestCompressionMiddlewareFactory {
                 .name("request_min_compression_size_bytes")
                 .type("Integer")
                 .documentation(minCompressionDocumentation)
-                .defaultPrimitiveValue("10240")
+                .defaultValue("10240")
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();
 

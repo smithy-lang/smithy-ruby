@@ -40,7 +40,7 @@ public final class ValidateMiddlewareFactory {
                 .name("validate_input")
                 .type("Boolean")
                 .rbsType("bool")
-                .defaultPrimitiveValue("true")
+                .defaultValue("true")
                 .documentation(validateInputDocumentation)
                 .build();
 

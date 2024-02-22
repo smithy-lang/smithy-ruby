@@ -58,6 +58,10 @@ public class MiddlewareBuilder {
                         .put(step, new ArrayList<>()));
     }
 
+    public void remove(MiddlewareStackStep step, String klass) {
+        middlewares.get(step).removeIf((m) -> m.getKlass().equals(klass));
+    }
+
     public void register(Middleware middleware) {
         middlewares.get(middleware.getStep()).add(middleware);
     }
