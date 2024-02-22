@@ -112,7 +112,7 @@ module WhiteLabel
           {
             url: 'https://resource.com/path',
             headers: {'x-resource-type' => ['custom']},
-            auth_schemes: [Hearth::Endpoints::AuthScheme.new(name: 'bearer', properties: {})]
+            auth_schemes: [Hearth::Endpoints::AuthScheme.new(scheme_id: 'smithy.api#httpBearerAuth', properties: {})]
           }
         end
 

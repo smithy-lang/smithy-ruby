@@ -57,6 +57,7 @@ import software.amazon.smithy.ruby.codegen.generators.VersionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 
@@ -106,6 +107,10 @@ public class DirectedRubyCodegen
         rulesEngineFunctionBindings.addAll(FunctionBinding.standardLibraryFunctions());
         integrations.forEach((integration) -> rulesEngineFunctionBindings.addAll(integration.functionBindings()));
 
+        List<AuthSchemeBinding> rulesEngineAuthSchemeBindings = new ArrayList<>();
+        rulesEngineAuthSchemeBindings.addAll(AuthSchemeBinding.standardAuthSchemes());
+        integrations.forEach((integration) -> rulesEngineAuthSchemeBindings.addAll(integration.authSchemeBindings()));
+
         GenerationContext context = new GenerationContext(
                 directive.settings(),
                 directive.fileManifest(),
@@ -117,7 +122,8 @@ public class DirectedRubyCodegen
                 applicationTransport,
                 directive.symbolProvider(),
                 rulesEngineBuiltInBindings,
-                rulesEngineFunctionBindings);
+                rulesEngineFunctionBindings,
+                rulesEngineAuthSchemeBindings);
 
         return context;
     }

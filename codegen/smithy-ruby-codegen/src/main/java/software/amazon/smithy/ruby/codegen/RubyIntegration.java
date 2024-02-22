@@ -23,6 +23,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -129,6 +130,14 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
      * @return list of rules engine function bindings.
      */
     default List<FunctionBinding> functionBindings() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Additional Smithy rules engine auth scheme bindings supported by this integration.
+     * @return list of rules engine auth scheme bindings.
+     */
+    default List<AuthSchemeBinding> authSchemeBindings() {
         return Collections.emptyList();
     }
 }

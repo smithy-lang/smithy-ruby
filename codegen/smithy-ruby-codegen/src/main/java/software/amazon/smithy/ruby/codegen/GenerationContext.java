@@ -35,6 +35,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 import software.amazon.smithy.rulesengine.language.Endpoint;
@@ -69,6 +70,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
     private final Map<String, BuiltInBinding> rulesEngineBuiltIns;
     private final Map<String, FunctionBinding> rulesEngineFunctions;
+    private final Map<String, AuthSchemeBinding> rulesEngineAuthSchemes;
     private final List<ClientConfig> modeledClientConfig;
 
     private final EndpointRuleSet endpointRuleSet;
@@ -94,7 +96,8 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                              ApplicationTransport applicationTransport,
                              SymbolProvider symbolProvider,
                              List<BuiltInBinding> rulesEngineBuiltIns,
-                             List<FunctionBinding> rulesEngineFunctions) {
+                             List<FunctionBinding> rulesEngineFunctions,
+                             List<AuthSchemeBinding> rulesEngineAuthSchemes) {
 
         this.rubySettings = rubySettings;
         this.fileManifest = fileManifest;
@@ -112,6 +115,11 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         );
         this.rulesEngineFunctions = rulesEngineFunctions.stream().collect(Collectors.toMap(
                         (b) -> b.getId(),
+                        (b) -> b
+                )
+        );
+        this.rulesEngineAuthSchemes = rulesEngineAuthSchemes.stream().collect(Collectors.toMap(
+                        (b) -> b.getEndpointAuthName(),
                         (b) -> b
                 )
         );
@@ -253,6 +261,10 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
     public Optional<FunctionBinding> getFunctionBinding(String id) {
         return Optional.ofNullable(rulesEngineFunctions.get(id));
+    }
+
+    public Optional<AuthSchemeBinding> getAuthSchemeBinding(String endpointAuthName) {
+        return Optional.ofNullable(rulesEngineAuthSchemes.get(endpointAuthName));
     }
 
     public Map<String, BuiltInBinding> getBuiltInBindings() {

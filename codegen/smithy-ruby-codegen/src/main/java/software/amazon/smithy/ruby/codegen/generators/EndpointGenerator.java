@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -45,6 +46,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
@@ -91,6 +93,49 @@ public class EndpointGenerator extends RubyGeneratorBase {
         service = directive.service();
         endpointRuleSet = context.getEndpointRuleSet();
         endpointTests = service.getTrait(EndpointTestsTrait.class);
+    }
+
+    private void renderTestCaseExpected(RubyCodeWriter writer, EndpointTestCase testCase) {
+        if (testCase.getExpect().getError().isPresent()) {
+            writer.write("{error: $L}",
+                    StringUtils.escapeJavaString(testCase.getExpect().getError().get(), ""));
+        } else {
+            ExpectedEndpoint expected = testCase.getExpect().getEndpoint().get();
+            String expectedHeaders = "{" + expected.getHeaders().entrySet().stream().map(e -> {
+                return "'" + e.getKey() + "' => [" + e.getValue().stream().map(h -> "'" + h + "'")
+                        .collect(Collectors.joining(",")) + "]";
+            }).collect(Collectors.joining(", ")) + "}";
+            String expectedAuthSchemes = "[]";
+            Node authSchemes = expected.getProperties().get(AUTH_SCHEMES);
+            if (authSchemes != null) {
+                expectedAuthSchemes = "[" + authSchemes.expectArrayNode()
+                        .getElementsAs(ObjectNode.class).stream().map(authScheme -> {
+                            String name = authScheme.getStringMember("name")
+                                    .get().getValue();
+                            if (!context.getAuthSchemeBinding(name).isPresent()) {
+                                return null;
+                            }
+                            AuthSchemeBinding authSchemeBinding = context.getAuthSchemeBinding(name).get();
+
+                            ObjectNode.Builder filteredProperties = ObjectNode.builder();
+                            authScheme.getStringMap().forEach((k, v) -> {
+                                if (authSchemeBinding.getAuthSchemeProperty(k).isPresent()) {
+                                    filteredProperties.withMember(
+                                            authSchemeBinding.getAuthSchemeProperty(k).get(), v);
+                                }
+                            });
+                            String propertiesHash = filteredProperties.build().accept(new RubyNodeVisitor());
+                            return "Hearth::Endpoints::AuthScheme.new(scheme_id: '"
+                                    + authSchemeBinding.getSchemeId() + "', " + "properties: " + propertiesHash + ")";
+                        }).filter(Objects::nonNull).collect(Collectors.joining(", ")) + "]";
+            }
+            writer
+                    .openBlock("{")
+                    .write("url: '$L',", expected.getUrl())
+                    .write("headers: $L,", expectedHeaders)
+                    .write("auth_schemes: $L", expectedAuthSchemes)
+                    .closeBlock("}");
+        }
     }
 
     @Override
@@ -428,7 +473,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     }
 
     private void renderOperationInputTest(RubyCodeWriter writer, EndpointTestCase testCase,
-                           EndpointTestOperationInput operationInput) {
+                                          EndpointTestOperationInput operationInput) {
         ShapeId operationId = service.getOperations().stream()
                 .filter(id -> id.getName().contains(operationInput.getOperationName()))
                 .findFirst().get();
@@ -491,39 +536,6 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }
 
         writer.closeBlock("end");
-    }
-
-    private static void renderTestCaseExpected(RubyCodeWriter writer, EndpointTestCase testCase) {
-        if (testCase.getExpect().getError().isPresent()) {
-            writer.write("{error: $L}",
-                    StringUtils.escapeJavaString(testCase.getExpect().getError().get(), ""));
-        } else {
-            ExpectedEndpoint expected = testCase.getExpect().getEndpoint().get();
-            String expectedHeaders = "{" + expected.getHeaders().entrySet().stream().map(e -> {
-                return "'" + e.getKey() + "' => [" + e.getValue().stream().map(h -> "'" + h + "'")
-                        .collect(Collectors.joining(",")) + "]";
-            }).collect(Collectors.joining(", ")) + "}";
-            String expectedAuthSchemes = "[]";
-            Node authSchemes = expected.getProperties().get(AUTH_SCHEMES);
-            if (authSchemes != null) {
-                expectedAuthSchemes = "[" + authSchemes.expectArrayNode()
-                        .getElementsAs(ObjectNode.class).stream().map(authScheme -> {
-                            String name = authScheme.getStringMember("name")
-                                    .get().getValue();
-                            String propertiesHash = authScheme
-                                    .withoutMember("name")
-                                    .accept(new RubyNodeVisitor());
-                            return "Hearth::Endpoints::AuthScheme.new(name: '"
-                                    + name + "', " + "properties: " + propertiesHash + ")";
-                        }).collect(Collectors.joining(", ")) + "]";
-            }
-            writer
-                    .openBlock("{")
-                    .write("url: '$L',", expected.getUrl())
-                    .write("headers: $L,", expectedHeaders)
-                    .write("auth_schemes: $L", expectedAuthSchemes)
-                    .closeBlock("}");
-        }
     }
 
     private static class ExpressionTemplateVisitor implements ExpressionVisitor<String> {
@@ -753,15 +765,28 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     authSchemesString = "[" + authSchemesList.stream().map(l -> {
                         Map<Identifier, Literal> authSchemeMap = l.asRecordLiteral().get();
                         String name = authSchemeMap.get(NAME).accept(expressionVisitor);
+                        Optional<AuthSchemeBinding> maybeAuthScheme = context.getAuthSchemeBinding(
+                                name.replace("\"", ""));
+                        if (!maybeAuthScheme.isPresent()) {
+                            return null;
+                        }
+                        AuthSchemeBinding authSchemeBinding = maybeAuthScheme.get();
+
                         String propertiesHash = "{" + authSchemeMap.entrySet().stream()
-                                .filter(e -> !e.getKey().equals(NAME))
+                                .filter(e -> {
+                                    String key = e.getKey().getName().getValue();
+                                    return !e.getKey().equals(NAME)
+                                            && authSchemeBinding.getAuthSchemeProperty(key).isPresent();
+                                })
                                 .map(e -> {
-                                    return "'" + e.getKey().getName().getValue() + "' => "
+                                    String key = e.getKey().getName().getValue();
+                                    return "'" + authSchemeBinding.getAuthSchemeProperty(key).get() + "' => "
                                             + e.getValue().accept(expressionVisitor);
                                 }).collect(Collectors.joining(", ")) + "}";
-                        return "Hearth::Endpoints::AuthScheme.new(name: "
-                                + name + ", " + "properties: " + propertiesHash + ")";
-                    }).collect(Collectors.joining(", ")) + "]";
+                        return "Hearth::Endpoints::AuthScheme.new(scheme_id: "
+                                + StringUtils.escapeJavaString(authSchemeBinding.getSchemeId(), "")
+                                + ", " + "properties: " + propertiesHash + ")";
+                    }).filter(Objects::nonNull).collect(Collectors.joining(", ")) + "]";
                 } else {
                     authSchemesString = "[]";
                 }
