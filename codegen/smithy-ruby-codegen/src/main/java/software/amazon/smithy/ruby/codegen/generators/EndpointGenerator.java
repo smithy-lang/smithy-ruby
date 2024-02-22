@@ -125,7 +125,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                 }
                             });
                             String propertiesHash = filteredProperties.build().accept(new RubyNodeVisitor());
-                            return "Hearth::Endpoints::AuthScheme.new(scheme_id: '"
+                            return "Hearth::EndpointRules::AuthScheme.new(scheme_id: '"
                                     + authSchemeBinding.getSchemeId() + "', " + "properties: " + propertiesHash + ")";
                         }).filter(Objects::nonNull).collect(Collectors.joining(", ")) + "]";
             }
@@ -354,7 +354,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private void renderRbsEndpointProvider(RubyCodeWriter writer) {
         writer
                 .openBlock("class Provider")
-                .write("def resolve_endpoint: (Params params) -> Hearth::Endpoints::Endpoint")
+                .write("def resolve_endpoint: (Params params) -> Hearth::EndpointRules::Endpoint")
                 .closeBlock("end");
 
     }
@@ -516,8 +516,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .closeBlock("end.to raise_error(ArgumentError, '$L')",
                             testCase.getExpect().getError().get());
         } else {
-            writer.openBlock("interceptor = Hearth::Interceptor.new("
-                            + "read_before_transmit: proc do |context|")
+            writer.openBlock("proc = proc do |context|")
                     .write("expected_uri = URI.parse(expected[:url])")
                     .write("request_uri = context.request.uri")
                     .write("expect(request_uri.hostname).to "
@@ -528,7 +527,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .write("expect(context.request.headers[k]).to "
                             + "eq(Hearth::HTTP::Field.new(k, v).value)")
                     .closeBlock("end")
-                    .closeBlock("end)")
+                    .closeBlock("end")
+                    .write("interceptor = Hearth::Interceptor.new(read_before_transmit: proc)")
                     .write("client.$L({$L}, interceptors: [interceptor])",
                             operationName, operationInputs);
 
@@ -783,7 +783,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                     return "'" + authSchemeBinding.getAuthSchemeProperty(key).get() + "' => "
                                             + e.getValue().accept(expressionVisitor);
                                 }).collect(Collectors.joining(", ")) + "}";
-                        return "Hearth::Endpoints::AuthScheme.new(scheme_id: "
+                        return "Hearth::EndpointRules::AuthScheme.new(scheme_id: "
                                 + StringUtils.escapeJavaString(authSchemeBinding.getSchemeId(), "")
                                 + ", " + "properties: " + propertiesHash + ")";
                     }).filter(Objects::nonNull).collect(Collectors.joining(", ")) + "]";

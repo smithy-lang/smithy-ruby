@@ -36,14 +36,14 @@ module Hearth
           )
         end
         let(:endpoint_auth_schemes) do
-          [Endpoints::AuthScheme.new(scheme_id: 'auth1')]
+          [EndpointRules::AuthScheme.new(scheme_id: 'auth1')]
         end
         let(:endpoint_uri) { 'https://example.com' }
         let(:headers) do
           { 'headers1' => 'value1', 'headers2' => 'value2' }
         end
         let(:resolved_endpoint) do
-          Endpoints::Endpoint.new(
+          EndpointRules::Endpoint.new(
             uri: endpoint_uri,
             auth_schemes: endpoint_auth_schemes,
             headers: headers
@@ -98,7 +98,7 @@ module Hearth
 
           let(:endpoint_auth_schemes) do
             [
-              Endpoints::AuthScheme.new(
+              EndpointRules::AuthScheme.new(
                 scheme_id: 'endpoint',
                 properties: endpoint_auth_properties
               )
@@ -124,11 +124,11 @@ module Hearth
 
           let(:endpoint_auth_schemes) do
             [
-              Endpoints::AuthScheme.new(
+              EndpointRules::AuthScheme.new(
                 scheme_id: 'non-matching',
                 properties: { other: 'non-matching' }
               ),
-              Endpoints::AuthScheme.new(
+              EndpointRules::AuthScheme.new(
                 scheme_id: 'matching',
                 properties: endpoint_auth_properties
               )

@@ -17,7 +17,7 @@ module WhiteLabel
     end
 
     class Provider
-      def resolve_endpoint: (Params params) -> Hearth::Endpoints::Endpoint
+      def resolve_endpoint: (Params params) -> Hearth::EndpointRules::Endpoint
     end
   end
 end

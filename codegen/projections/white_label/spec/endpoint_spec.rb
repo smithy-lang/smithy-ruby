@@ -38,7 +38,7 @@ module WhiteLabel
           config[:endpoint] = "https://custom-endpoint.com"
 
           client = Client.new(config)
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc do |context|
+          proc = proc do |context|
             expected_uri = URI.parse(expected[:url])
             request_uri = context.request.uri
             expect(request_uri.hostname).to end_with(expected_uri.hostname)
@@ -47,7 +47,8 @@ module WhiteLabel
             expected[:headers].each do |k,v|
               expect(context.request.headers[k]).to eq(Hearth::HTTP::Field.new(k, v).value)
             end
-          end)
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           client.endpoint_operation({}, interceptors: [interceptor])
         end
       end
@@ -93,7 +94,7 @@ module WhiteLabel
           config[:endpoint] = nil
 
           client = Client.new(config)
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc do |context|
+          proc = proc do |context|
             expected_uri = URI.parse(expected[:url])
             request_uri = context.request.uri
             expect(request_uri.hostname).to end_with(expected_uri.hostname)
@@ -102,7 +103,8 @@ module WhiteLabel
             expected[:headers].each do |k,v|
               expect(context.request.headers[k]).to eq(Hearth::HTTP::Field.new(k, v).value)
             end
-          end)
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           client.endpoint_operation({}, interceptors: [interceptor])
         end
       end
@@ -112,7 +114,7 @@ module WhiteLabel
           {
             url: 'https://resource.com/path',
             headers: {'x-resource-type' => ['custom']},
-            auth_schemes: [Hearth::Endpoints::AuthScheme.new(scheme_id: 'smithy.api#httpBearerAuth', properties: {})]
+            auth_schemes: [Hearth::EndpointRules::AuthScheme.new(scheme_id: 'smithy.api#httpBearerAuth', properties: {})]
           }
         end
 
@@ -130,7 +132,7 @@ module WhiteLabel
           config[:endpoint] = nil
 
           client = Client.new(config)
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc do |context|
+          proc = proc do |context|
             expected_uri = URI.parse(expected[:url])
             request_uri = context.request.uri
             expect(request_uri.hostname).to end_with(expected_uri.hostname)
@@ -139,7 +141,8 @@ module WhiteLabel
             expected[:headers].each do |k,v|
               expect(context.request.headers[k]).to eq(Hearth::HTTP::Field.new(k, v).value)
             end
-          end)
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           client.endpoint_operation_with_resource({resource_url: 'https://resource.com/path'}, interceptors: [interceptor])
         end
       end
@@ -167,7 +170,7 @@ module WhiteLabel
           config[:endpoint] = nil
 
           client = Client.new(config)
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc do |context|
+          proc = proc do |context|
             expected_uri = URI.parse(expected[:url])
             request_uri = context.request.uri
             expect(request_uri.hostname).to end_with(expected_uri.hostname)
@@ -176,7 +179,8 @@ module WhiteLabel
             expected[:headers].each do |k,v|
               expect(context.request.headers[k]).to eq(Hearth::HTTP::Field.new(k, v).value)
             end
-          end)
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           client.dataplane_operation({}, interceptors: [interceptor])
         end
 
@@ -186,7 +190,7 @@ module WhiteLabel
           config[:endpoint] = nil
 
           client = Client.new(config)
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc do |context|
+          proc = proc do |context|
             expected_uri = URI.parse(expected[:url])
             request_uri = context.request.uri
             expect(request_uri.hostname).to end_with(expected_uri.hostname)
@@ -195,7 +199,8 @@ module WhiteLabel
             expected[:headers].each do |k,v|
               expect(context.request.headers[k]).to eq(Hearth::HTTP::Field.new(k, v).value)
             end
-          end)
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           client.endpoint_with_host_label_operation({label_member: 'label'}, interceptors: [interceptor])
         end
       end

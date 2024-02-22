@@ -27,29 +27,29 @@ module WhiteLabel
         endpoint = params.endpoint
 
         if (endpoint != nil)
-          return Hearth::Endpoints::Endpoint.new(uri: endpoint)
+          return Hearth::EndpointRules::Endpoint.new(uri: endpoint)
         end
         # Use a user provided resource
-        if (resource_url != nil) && (parsed_url = Hearth::Endpoints::parse_url(resource_url)) && (path = parsed_url['path'])
-          return Hearth::Endpoints::Endpoint.new(
+        if (resource_url != nil) && (parsed_url = Hearth::EndpointRules::parse_url(resource_url)) && (path = parsed_url['path'])
+          return Hearth::EndpointRules::Endpoint.new(
             uri: "https://#{parsed_url['authority']}#{path}",
             headers: {'x-resource-type' => ["custom"]},
-            auth_schemes: [Hearth::Endpoints::AuthScheme.new(scheme_id: "smithy.api#httpBearerAuth", properties: {})]
+            auth_schemes: [Hearth::EndpointRules::AuthScheme.new(scheme_id: "smithy.api#httpBearerAuth", properties: {})]
           )
         end
         if (stage != nil) && (stage == "alpha")
-          return Hearth::Endpoints::Endpoint.new(uri: "https://alpha.whitelabel.dev")
+          return Hearth::EndpointRules::Endpoint.new(uri: "https://alpha.whitelabel.dev")
         end
         if (stage != nil) && (stage == "beta")
-          return Hearth::Endpoints::Endpoint.new(uri: "https://beta.whitelabel.dev")
+          return Hearth::EndpointRules::Endpoint.new(uri: "https://beta.whitelabel.dev")
         end
         if (stage != nil) && (stage == "gamma")
-          return Hearth::Endpoints::Endpoint.new(uri: "https://gamma.whitelabel.dev")
+          return Hearth::EndpointRules::Endpoint.new(uri: "https://gamma.whitelabel.dev")
         end
         if (dataplane != nil)
-          return Hearth::Endpoints::Endpoint.new(uri: "https://data.whitelabel.com")
+          return Hearth::EndpointRules::Endpoint.new(uri: "https://data.whitelabel.com")
         end
-        return Hearth::Endpoints::Endpoint.new(uri: "https://whitelabel.com")
+        return Hearth::EndpointRules::Endpoint.new(uri: "https://whitelabel.com")
 
       end
     end

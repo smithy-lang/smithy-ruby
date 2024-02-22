@@ -199,7 +199,7 @@ public final class Hearth {
 
     // Rules engine / Endpoints
     public static final Symbol RULES_ENGINE_ENDPOINT = Symbol.builder()
-            .namespace("Hearth::Endpoints", "::")
+            .namespace("Hearth::EndpointRules", "::")
             .name("Endpoint")
             .build();
 

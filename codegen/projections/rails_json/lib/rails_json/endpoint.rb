@@ -21,7 +21,7 @@ module RailsJson
         endpoint = params.endpoint
 
         if (endpoint != nil)
-          return Hearth::Endpoints::Endpoint.new(uri: endpoint)
+          return Hearth::EndpointRules::Endpoint.new(uri: endpoint)
         end
         raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
 

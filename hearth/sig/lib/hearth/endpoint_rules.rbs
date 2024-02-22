@@ -1,5 +1,5 @@
 module Hearth
-  module Endpoints
+  module EndpointRules
     type urlStruct = Hash[string, string | bool]
 
     class AuthScheme
