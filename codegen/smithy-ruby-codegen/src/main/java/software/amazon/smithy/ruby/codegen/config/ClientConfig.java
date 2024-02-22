@@ -223,11 +223,20 @@ public class ClientConfig {
         }
 
         /**
-         * @param value a single, static default value to use. This should only be used for primitives like
-         *              Integer, Boolean or String.
+         * @param defaults chain of default providers to use.
+         * @return this builder.
+         */
+        public Builder defaults(ConfigDefaults defaults) {
+            validateDefaultNotSet();
+            this.defaults = defaults;
+            return this;
+        }
+
+        /**
+         * @param value a single non-shared default. Initialized on each creation of Config.
          * @return this builder
          */
-        public Builder defaultPrimitiveValue(String value) {
+        public Builder defaultValue(String value) {
             validateDefaultNotSet();
             this.defaults = ConfigProviderChain.builder().staticProvider(value).build();
             return this;
@@ -243,16 +252,6 @@ public class ClientConfig {
         public Builder defaultDynamicValue(String rubyProcBody) {
             validateDefaultNotSet();
             this.defaults = ConfigProviderChain.builder().dynamicProvider(rubyProcBody).build();
-            return this;
-        }
-
-        /**
-         * @param value a single non-shared default. Initialized on each creation of Config.
-         * @return this builder
-         */
-        public Builder defaultValue(String value) {
-            validateDefaultNotSet();
-            this.defaults = ConfigProviderChain.builder().staticProvider(value).build();
             return this;
         }
 

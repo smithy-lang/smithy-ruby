@@ -38,7 +38,7 @@ public final class HostPrefixMiddlewareFactory {
                 .name("disable_host_prefix")
                 .type("Boolean")
                 .rbsType("bool")
-                .defaultPrimitiveValue("false")
+                .defaultValue("false")
                 .documentation(hostPrefixDocumentation)
                 .build();
 
