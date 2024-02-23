@@ -41,7 +41,7 @@ public final class RubyDependency
             .type(Type.DEPENDENCY)
             .importPath("hearth")
             .gemName("hearth")
-            .version("~> 1.0.0.pre1")
+            .version("~> 1.0.0.pre2")
             .build();
 
     public static final RubyDependency HEARTH_XML_MATCHER = new Builder()

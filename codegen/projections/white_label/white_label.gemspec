@@ -14,5 +14,5 @@ Gem::Specification.new do |spec|
   spec.summary       = 'White Label Test Service'
   spec.files         = Dir['lib/**/*.rb', 'VERSION']
 
-  spec.add_runtime_dependency 'hearth', '~> 1.0.0.pre1'
+  spec.add_runtime_dependency 'hearth', '~> 1.0.0.pre2'
 end
