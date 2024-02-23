@@ -59,30 +59,31 @@ class ServiceDefinition(val file: File) {
     val moduleName: String
     val gemName: String
     val projectionName: String
+
     init {
         model = Model.assembler()
                 .addImport(file.absolutePath)
                 // Grab the result directly rather than worrying about checking for errors via unwrap.
                 // All we care about here is the service shape, any unchecked errors will be exposed
                 // as part of the actual build task done by the smithy gradle plugin.
-                .assemble().result.get();
-        val services = model.shapes(ServiceShape::class.javaObjectType).sorted().toList();
+                .assemble().result.get()
+        val services = model.shapes(ServiceShape::class.javaObjectType).sorted().toList()
         if (services.size != 1) {
             throw Exception("There must be exactly one service in each test model file, but found " +
-                    "${services.size} in ${file.name}: ${services.map { it.id }}");
+                    "${services.size} in ${file.name}: ${services.map { it.id }}")
         }
         service = services[0]
 
         moduleName = CaseUtils.toPascalCase(file.name.split(".")[0])
         gemName = moduleName.toLowerCase()
 
-        projectionName = file.name.split(".")[0];
+        projectionName = file.name.split(".")[0]
     }
 }
 
 fun forEachTestService(task: (service: ServiceDefinition) -> Unit) {
-    val modelsDir = "model/test-services";
-    val models = project.file(modelsDir);
+    val modelsDir = "model/test-services"
+    val models = project.file(modelsDir)
 
     fileTree(models).filter { it.isFile }.files.forEach eachFile@{ file ->
         val service = ServiceDefinition(file)
@@ -97,7 +98,7 @@ tasks.register("generate-smithy-build") {
     doLast {
         val projectionsBuilder = Node.objectNodeBuilder()
         val modelsDir = "model/test-services"
-        val models = project.file(modelsDir);
+        val models = project.file(modelsDir)
 
         forEachTestService { service ->
             val projectionContents = Node.objectNodeBuilder()
@@ -149,10 +150,17 @@ tasks.register<Copy>("copyWhiteLabelGem") {
     from("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen")
     into("$buildDir/../../projections/")
 }
+
 tasks.register<Copy>("copyWeatherServiceGem") {
     from("$buildDir/smithyprojections/smithy-ruby-codegen-test/weather-service/ruby-codegen")
     into("$buildDir/../../projections/")
 }
+
+tasks.register<Delete>("cleanProjections") {
+    delete("$buildDir/../../projections/weather/")
+    delete("$buildDir/../../projections/white_label/")
+}
+
 tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label/spec")
@@ -161,6 +169,7 @@ tasks.register<Copy>("copySteepfile") {
     from("./Steepfile")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
 }
+
 tasks.register<Copy>("copyRakeAndGemFiles") {
     from("./Rakefile", "./Gemfile")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test")
@@ -173,14 +182,16 @@ tasks.create<SmithyBuild>("buildSdk") {
 }.dependsOn(tasks["generate-smithy-build"])
 
 tasks["build"]
-        .dependsOn(tasks["buildSdk"])
+        .dependsOn(
+                tasks["cleanProjections"],
+                tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
                 tasks["copySteepfile"],
                 tasks["copyRakeAndGemFiles"],
                 tasks["copyWhiteLabelGem"],
                 tasks["copyWeatherServiceGem"]
-            )
+        )
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
 }

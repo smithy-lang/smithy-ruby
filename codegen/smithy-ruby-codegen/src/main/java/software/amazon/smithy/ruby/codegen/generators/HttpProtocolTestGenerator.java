@@ -81,6 +81,13 @@ public class HttpProtocolTestGenerator {
     public void render() {
         FileManifest fileManifest = context.fileManifest();
 
+        if (TopDownIndex.of(model).getContainedOperations(
+                context.service()).stream()
+                    .noneMatch((operation) -> operation.hasTrait(HttpRequestTestsTrait.class)
+                        || operation.hasTrait(HttpResponseTestsTrait.class))) {
+            return;
+        }
+
         writer
                 .preamble()
                 .includeRequires()
