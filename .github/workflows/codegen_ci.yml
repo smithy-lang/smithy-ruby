@@ -114,7 +114,7 @@ jobs:
         run: bundle install
         working-directory: ./white_label
 
-      - name: Integration specs
+      - name: Integration tests
         run: bundle exec rspec
         working-directory: ./white_label
 

@@ -114,6 +114,6 @@ jobs:
         run: bundle install
         working-directory: ./rails_json
 
-      - name: Tests
+      - name: Protocol tests
         run: bundle exec rspec
         working-directory: ./rails_json
