@@ -57,7 +57,7 @@ tasks.register<Copy>("copyIntegrationSpecs") {
 }
 tasks.register<Copy>("copySteepfile") {
     from("./Steepfile")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/rails_json")
 }
 tasks.register<Copy>("copyHighScoreServiceGem") {
     from("$buildDir/smithyprojections/smithy-ruby-rails-codegen-test/high-score-service/ruby-codegen")

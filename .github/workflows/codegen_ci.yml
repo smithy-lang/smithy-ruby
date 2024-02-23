@@ -76,7 +76,7 @@ jobs:
         working-directory: ./white_label
 
       - name: Type checks
-        run: steep check
+        run: bundle exec steep check
         working-directory: ./white_label
 
   ruby-integration-specs:

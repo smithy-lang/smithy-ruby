@@ -76,7 +76,7 @@ jobs:
         working-directory: ./rails_json
 
       - name: Type checks
-        run: steep check
+        run: bundle exec steep check
         working-directory: ./rails_json
 
   rails-json-protocol-specs:
