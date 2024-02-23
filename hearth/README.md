@@ -202,5 +202,5 @@ inherit from these protocol specific error classes.
 This project is licensed under the Apache-2.0 License.
 
 <!--- Links -->
-[smithy-ruby]: https://github.com/awslabs/smithy-ruby
+[smithy-ruby]: https://github.com/smithy-lang/smithy-ruby
 [Smithy]: https://awslabs.github.io/smithy/

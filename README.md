@@ -10,7 +10,7 @@ SDK core libraries.
 [apache-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
 [apache-url]: LICENSE
 
-## Generating an SDK for a [Rails JSON](https://github.com/awslabs/smithy-ruby/wiki/Rails-JSON-Protocol) API
+## Generating an SDK for a [Rails JSON](https://github.com/smithy-lang/smithy-ruby/wiki/Rails-JSON-Protocol) API
 1. Create a new gradle project
 2. Add smithy to the plugins list (Note, you can find the latest plugin version at: https://plugins.gradle.org/plugin/software.amazon.smithy)
 ```kotlin
@@ -27,7 +27,7 @@ dependencies {
 4. Add your smithy model. under `<project_root>/model`.
 5. Create a [smithy-build.json](https://awslabs.github.io/smithy/1.0/guides/building-models/build-config.html) file
    that defines how Smithy should build your SDK. It must define a section under `plugins` for `ruby-codegen`. For
-   reference see: [rails json test smithy-build.json](https://github.com/awslabs/smithy-ruby/blob/main/codegen/smithy-ruby-rails-codegen-test/smithy-build.json).
+   reference see: [rails json test smithy-build.json](https://github.com/smithy-lang/smithy-ruby/blob/main/codegen/smithy-ruby-rails-codegen-test/smithy-build.json).
 
 6. Execute the gradle `build` task.
    This will generate the SDK from your model using the settings from your
@@ -44,7 +44,7 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 ## Development
 
-[Design Documentation (WIP)](https://github.com/awslabs/smithy-ruby/wiki)
+[Design Documentation (WIP)](https://github.com/smithy-lang/smithy-ruby/wiki)
 
 ### Troubleshooting
 
