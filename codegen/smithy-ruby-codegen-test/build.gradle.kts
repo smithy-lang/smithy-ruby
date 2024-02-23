@@ -46,15 +46,9 @@ dependencies {
     implementation(project(":smithy-ruby-codegen-test-utils"))
 }
 
-tasks.register<Copy>("copyWhiteLabelGem") {
-    mustRunAfter("copyIntegrationSpecs")
-    mustRunAfter("copySteepfile")
-    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen")
-    into("$buildDir/../../projections/")
-}
-tasks.register<Copy>("copyWeatherServiceGem") {
-    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/weather-service/ruby-codegen")
-    into("$buildDir/../../projections/")
+tasks.register<Delete>("cleanProjections") {
+    delete("$buildDir/../../projections/weather/")
+    delete("$buildDir/../../projections/white_label/")
 }
 tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
@@ -64,11 +58,23 @@ tasks.register<Copy>("copySteepfile") {
     from("./Steepfile")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
 }
+tasks.register<Copy>("copyWeatherServiceGem") {
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/weather-service/ruby-codegen")
+    into("$buildDir/../../projections/")
+}
+tasks.register<Copy>("copyWhiteLabelGem") {
+    mustRunAfter("copyIntegrationSpecs")
+    mustRunAfter("copySteepfile")
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen")
+    into("$buildDir/../../projections/")
+}
+
+tasks["build"].dependsOn(tasks["cleanProjections"])
 tasks["build"].finalizedBy(
     tasks["copyIntegrationSpecs"],
     tasks["copySteepfile"],
-    tasks["copyWhiteLabelGem"],
-    tasks["copyWeatherServiceGem"]
+    tasks["copyWeatherServiceGem"],
+    tasks["copyWhiteLabelGem"]
 )
 
 java.sourceSets["main"].java {
