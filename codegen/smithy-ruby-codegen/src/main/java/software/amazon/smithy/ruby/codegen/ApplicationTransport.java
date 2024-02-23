@@ -82,17 +82,9 @@ public final class ApplicationTransport {
      * @return Returns the created application Transport.
      */
     public static ApplicationTransport createDefaultHttpApplicationTransport() {
-        // TODO: remove this when endpoint middleware is created
-        ClientConfig endpoint = ClientConfig.builder()
-                .name("endpoint")
-                .type("String")
-                .documentation("Endpoint of the service")
-                .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
-                .build();
+
         ClientFragment request = ClientFragment.builder()
-                .addConfig(endpoint)
-                // TODO: Replace URI with Endpoint middleware - should be a blank request
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(" + endpoint.renderGetConfigValue() + "))")
+                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(''))")
                 .build();
 
         ClientFragment response = ClientFragment.builder()

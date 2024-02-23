@@ -39,6 +39,24 @@ module WhiteLabel
       end
     end
 
+    module DataplaneOperationInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneOperationInput, context: context)
+        type = Types::DataplaneOperationInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module DataplaneOperationOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneOperationOutput, context: context)
+        type = Types::DataplaneOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
     module DefaultsTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)
@@ -110,6 +128,25 @@ module WhiteLabel
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationOutput, context: context)
         type = Types::EndpointOperationOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    module EndpointOperationWithResourceInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceInput, context: context)
+        type = Types::EndpointOperationWithResourceInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.resource_url = params[:resource_url]
+        type
+      end
+    end
+
+    module EndpointOperationWithResourceOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceOutput, context: context)
+        type = Types::EndpointOperationWithResourceOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end

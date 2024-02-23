@@ -174,13 +174,15 @@ public class AuthGenerator extends RubyGeneratorBase {
                 .write("")
                 .openBlock("def resolve(auth_params)")
                 .write("options = []")
-                .write("case auth_params.operation_name")
                 .call(() -> {
-                    for (OperationShape operation : operations) {
-                        renderOperationAuthOptionsCase(writer, operation);
+                    if (!operations.isEmpty()) {
+                        writer.write("case auth_params.operation_name");
+                        for (OperationShape operation : operations) {
+                            renderOperationAuthOptionsCase(writer, operation);
+                        }
+                        writer.write("end");
                     }
                 })
-                .write("end")
                 .closeBlock("end")
                 .write("")
                 .closeBlock("end");

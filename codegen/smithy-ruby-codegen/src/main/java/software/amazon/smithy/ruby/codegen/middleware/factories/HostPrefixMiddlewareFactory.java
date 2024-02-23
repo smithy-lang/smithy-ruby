@@ -43,11 +43,11 @@ public final class HostPrefixMiddlewareFactory {
                 .build();
 
         return Middleware.builder()
-                .klass("Hearth::Middleware::HostPrefix")
-                .step(MiddlewareStackStep.BUILD)
+                .klass(Hearth.HOST_PREFIX_MIDDLEWARE)
+                .step(MiddlewareStackStep.AFTER_BUILD)
                 .addConfig(disableHostPrefix)
                 .relative(Middleware.Relative.builder()
-                        .before(Hearth.BUILD_MIDDLEWARE)
+                        .after(Hearth.ENDPOINT_MIDDLEWARE)
                         .build())
                 .operationPredicate((model, service, operation) -> operation.hasTrait(EndpointTrait.class))
                 .operationParams((ctx, operation) -> {

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,7 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.AuthGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
+import software.amazon.smithy.ruby.codegen.generators.EndpointGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EnumGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
@@ -55,6 +57,9 @@ import software.amazon.smithy.ruby.codegen.generators.VersionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
 import software.amazon.smithy.ruby.codegen.generators.YardOptsGenerator;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
+import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
+import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
+import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 
 public class DirectedRubyCodegen
         implements DirectedCodegen<GenerationContext, RubySettings, RubyIntegration> {
@@ -94,6 +99,18 @@ public class DirectedRubyCodegen
                     .createDefaultHttpApplicationTransport();
         }
 
+        List<BuiltInBinding> rulesEngineBuiltInBindings = new ArrayList<>();
+        rulesEngineBuiltInBindings.addAll(BuiltInBinding.defaultBuiltInBindings());
+        integrations.forEach((integration) -> rulesEngineBuiltInBindings.addAll(integration.builtInBindings()));
+
+        List<FunctionBinding> rulesEngineFunctionBindings = new ArrayList<>();
+        rulesEngineFunctionBindings.addAll(FunctionBinding.standardLibraryFunctions());
+        integrations.forEach((integration) -> rulesEngineFunctionBindings.addAll(integration.functionBindings()));
+
+        List<AuthSchemeBinding> rulesEngineAuthSchemeBindings = new ArrayList<>();
+        rulesEngineAuthSchemeBindings.addAll(AuthSchemeBinding.standardAuthSchemes());
+        integrations.forEach((integration) -> rulesEngineAuthSchemeBindings.addAll(integration.authSchemeBindings()));
+
         GenerationContext context = new GenerationContext(
                 directive.settings(),
                 directive.fileManifest(),
@@ -103,7 +120,10 @@ public class DirectedRubyCodegen
                 protocol,
                 protocolGenerator,
                 applicationTransport,
-                directive.symbolProvider());
+                directive.symbolProvider(),
+                rulesEngineBuiltInBindings,
+                rulesEngineFunctionBindings,
+                rulesEngineAuthSchemeBindings);
 
         return context;
     }
@@ -130,6 +150,11 @@ public class DirectedRubyCodegen
         context.protocolGenerator().ifPresent((g) -> {
             g.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
+        context.getBuiltInBindingsFromEndpointRules().forEach((b) -> {
+            b.getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        });
+        context.getModeledClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+
         List<ClientConfig> clientConfigList = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
                 .collect(Collectors.toList());
@@ -194,6 +219,10 @@ public class DirectedRubyCodegen
         AuthGenerator authGenerator = new AuthGenerator(directive);
         authGenerator.render();
         authGenerator.renderRbs();
+
+        EndpointGenerator endpointGenerator = new EndpointGenerator(directive);
+        endpointGenerator.render();
+        endpointGenerator.renderRbs();
 
         PaginatorsGenerator paginatorsGenerator = new PaginatorsGenerator(directive);
         paginatorsGenerator.render();

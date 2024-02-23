@@ -58,11 +58,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ApiKeyAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :api_key_auth),
         auth_resolver: config.auth_resolver,
@@ -70,6 +65,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::ApiKeyAuth,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -89,7 +94,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :api_key_auth,
@@ -129,11 +134,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::BasicAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :basic_auth),
         auth_resolver: config.auth_resolver,
@@ -141,6 +141,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::BasicAuth,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -160,7 +170,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :basic_auth,
@@ -200,11 +210,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::BearerAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :bearer_auth),
         auth_resolver: config.auth_resolver,
@@ -212,6 +217,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::BearerAuth,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -231,7 +246,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :bearer_auth,
@@ -284,11 +299,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::CreateHighScore
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :create_high_score),
         auth_resolver: config.auth_resolver,
@@ -296,6 +306,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::CreateHighScore,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -315,7 +335,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :create_high_score,
@@ -358,11 +378,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DeleteHighScore
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :delete_high_score),
         auth_resolver: config.auth_resolver,
@@ -370,6 +385,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::DeleteHighScore,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -389,7 +414,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :delete_high_score,
@@ -429,11 +454,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DigestAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :digest_auth),
         auth_resolver: config.auth_resolver,
@@ -441,6 +461,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::DigestAuth,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -460,7 +490,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :digest_auth,
@@ -509,11 +539,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetHighScore
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_high_score),
         auth_resolver: config.auth_resolver,
@@ -521,6 +546,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::GetHighScore,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -540,7 +575,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :get_high_score,
@@ -588,11 +623,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ListHighScores
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :list_high_scores),
         auth_resolver: config.auth_resolver,
@@ -600,6 +630,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::ListHighScores,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -619,7 +659,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :list_high_scores,
@@ -672,11 +712,6 @@ module HighScoreService
       stack.use(Hearth::Middleware::Build,
         builder: Builders::UpdateHighScore
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :update_high_score),
         auth_resolver: config.auth_resolver,
@@ -684,6 +719,16 @@ module HighScoreService
         Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::UpdateHighScore,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -703,7 +748,7 @@ module HighScoreService
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :update_high_score,

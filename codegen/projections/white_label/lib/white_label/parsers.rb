@@ -27,6 +27,14 @@ module WhiteLabel
       end
     end
 
+    # Operation Parser for DataplaneOperation
+    class DataplaneOperation
+      def self.parse(http_resp)
+        data = Types::DataplaneOperationOutput.new
+        data
+      end
+    end
+
     # Operation Parser for DefaultsTest
     class DefaultsTest
       def self.parse(http_resp)
@@ -39,6 +47,14 @@ module WhiteLabel
     class EndpointOperation
       def self.parse(http_resp)
         data = Types::EndpointOperationOutput.new
+        data
+      end
+    end
+
+    # Operation Parser for EndpointOperationWithResource
+    class EndpointOperationWithResource
+      def self.parse(http_resp)
+        data = Types::EndpointOperationWithResourceOutput.new
         data
       end
     end

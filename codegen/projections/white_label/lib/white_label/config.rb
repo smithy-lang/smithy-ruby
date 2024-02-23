@@ -23,6 +23,9 @@ module WhiteLabel
   #     When set to 'true' the request body will not be compressed for supported operations.
   #   @option args [String] :endpoint
   #     Endpoint of the service
+  #   @option args [Endpoint::Provider] :endpoint_provider (Endpoint::Provider.new)
+  #     The endpoint provider used to resolve endpoints. Any object that responds to
+  #     `#resolve_endpoint(parameters)`
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
   #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
@@ -60,6 +63,8 @@ module WhiteLabel
   #     * `Retry::Adaptive` - An experimental retry mode that includes all the functionality
   #       of `standard` mode along with automatic client side throttling. This is a provisional
   #       mode that may change behavior in the future.
+  #   @option args [String] :stage
+  #     Specify the stage (beta|gamma|prod)
   #   @option args [Boolean] :stub_responses (false)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [String] :test_config ('default')
@@ -76,6 +81,8 @@ module WhiteLabel
   #   @return [Boolean]
   # @!attribute endpoint
   #   @return [String]
+  # @!attribute endpoint_provider
+  #   @return [Endpoint::Provider]
   # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   # @!attribute http_bearer_identity_resolver
@@ -96,6 +103,8 @@ module WhiteLabel
   #   @return [Integer]
   # @!attribute retry_strategy
   #   @return [Hearth::Retry::Strategy]
+  # @!attribute stage
+  #   @return [String]
   # @!attribute stub_responses
   #   @return [Boolean]
   # @!attribute test_config
@@ -108,6 +117,7 @@ module WhiteLabel
     :disable_host_prefix,
     :disable_request_compression,
     :endpoint,
+    :endpoint_provider,
     :http_api_key_identity_resolver,
     :http_bearer_identity_resolver,
     :http_client,
@@ -118,6 +128,7 @@ module WhiteLabel
     :plugins,
     :request_min_compression_size_bytes,
     :retry_strategy,
+    :stage,
     :stub_responses,
     :test_config,
     :validate_input,
@@ -132,6 +143,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
+      Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Provider, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
       Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -143,6 +155,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_range!(request_min_compression_size_bytes, min: 0, max: 10485760, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
+      Hearth::Validator.validate_types!(stage, String, context: 'config[:stage]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(test_config, String, context: 'config[:test_config]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
@@ -157,6 +170,7 @@ module WhiteLabel
         disable_host_prefix: [false],
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
+        endpoint_provider: [Endpoint::Provider.new],
         http_api_key_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_identity_resolver: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityResolver.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
@@ -167,6 +181,7 @@ module WhiteLabel
         plugins: [Hearth::PluginList.new],
         request_min_compression_size_bytes: [10240],
         retry_strategy: [Hearth::Retry::Standard.new],
+        stage: [],
         stub_responses: [false],
         test_config: ['default'],
         validate_input: [true]

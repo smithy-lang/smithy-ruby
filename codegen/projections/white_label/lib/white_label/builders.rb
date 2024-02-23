@@ -16,12 +16,22 @@ module WhiteLabel
       end
     end
 
+    class DataplaneOperation
+      def self.build(http_req, input:)
+      end
+    end
+
     class DefaultsTest
       def self.build(http_req, input:)
       end
     end
 
     class EndpointOperation
+      def self.build(http_req, input:)
+      end
+    end
+
+    class EndpointOperationWithResource
       def self.build(http_req, input:)
       end
     end

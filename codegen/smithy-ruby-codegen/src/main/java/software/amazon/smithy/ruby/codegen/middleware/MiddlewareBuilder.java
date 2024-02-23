@@ -33,6 +33,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.InitializeMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.RetryMiddlewareFactory;
@@ -186,9 +187,10 @@ public class MiddlewareBuilder {
 
         register(InitializeMiddlewareFactory.build(context));
         register(ValidateMiddlewareFactory.build(context));
-        register(HostPrefixMiddlewareFactory.build(context));
         register(RetryMiddlewareFactory.build(context));
         register(AuthMiddlewareFactory.build(context));
+        register(EndpointMiddlewareFactory.build(context));
+        register(HostPrefixMiddlewareFactory.build(context));
         register(SignMiddlewareFactory.build(context));
         register(SendMiddlewareFactory.build(context));
 

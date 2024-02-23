@@ -42,6 +42,24 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    DataplaneOperationInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    DataplaneOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :string
     #   @option params [Struct] :struct
     #   @option params [Integer] :un_required_number (0)
@@ -143,10 +161,10 @@ module WhiteLabel
 
       def initialize(*)
         super
-        self.un_required_number ||= 0
-        self.un_required_bool ||= false
-        self.number ||= 0
-        self.bool ||= false
+        self.un_required_number = 0 if self.un_required_number.nil?
+        self.un_required_bool = false if self.un_required_bool.nil?
+        self.number = 0 if self.number.nil?
+        self.bool = false if self.bool.nil?
       end
 
       def to_s
@@ -277,10 +295,10 @@ module WhiteLabel
 
       def initialize(*)
         super
-        self.un_required_number ||= 0
-        self.un_required_bool ||= false
-        self.number ||= 0
-        self.bool ||= false
+        self.un_required_number = 0 if self.un_required_number.nil?
+        self.un_required_bool = false if self.un_required_bool.nil?
+        self.number = 0 if self.number.nil?
+        self.bool = false if self.bool.nil?
       end
 
       def to_s
@@ -320,6 +338,27 @@ module WhiteLabel
     # @!method initialize(params = {})
     #   @param [Hash] params
     EndpointOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :resource_url
+    # @!attribute resource_url
+    #   @return [String]
+    EndpointOperationWithResourceInput = ::Struct.new(
+      :resource_url,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    EndpointOperationWithResourceOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do

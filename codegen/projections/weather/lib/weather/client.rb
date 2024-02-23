@@ -67,15 +67,20 @@ module Weather
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCity
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_city),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::GetCity,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -94,7 +99,7 @@ module Weather
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :get_city,
@@ -146,15 +151,20 @@ module Weather
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCityImage
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_city_image),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::GetCityImage,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -173,7 +183,7 @@ module Weather
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :get_city_image,
@@ -214,15 +224,20 @@ module Weather
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetCurrentTime
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_current_time),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::GetCurrentTime,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -241,7 +256,7 @@ module Weather
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :get_current_time,
@@ -299,15 +314,20 @@ module Weather
       stack.use(Hearth::Middleware::Build,
         builder: Builders::GetForecast
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :get_forecast),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::GetForecast,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -326,7 +346,7 @@ module Weather
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :get_forecast,
@@ -389,15 +409,20 @@ module Weather
       stack.use(Hearth::Middleware::Build,
         builder: Builders::ListCities
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :list_cities),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::ListCities,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -416,7 +441,7 @@ module Weather
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :list_cities,
@@ -464,15 +489,20 @@ module Weather
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____789BadName
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation____789_bad_name),
         auth_resolver: config.auth_resolver,
         auth_schemes: config.auth_schemes
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        param_builder: Endpoint::Parameters::Operation____789BadName,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -491,7 +521,7 @@ module Weather
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :operation____789_bad_name,

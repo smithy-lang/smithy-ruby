@@ -48,6 +48,26 @@ module WhiteLabel
       end
     end
 
+    class DataplaneOperation
+      def self.build(params, context:)
+        Params::DataplaneOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DataplaneOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class DefaultsTest
       def self.build(params, context:)
         Params::DefaultsTestOutput.build(params, context: context)
@@ -84,6 +104,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -106,6 +127,26 @@ module WhiteLabel
 
       def self.validate!(output, context:)
         Validators::EndpointOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class EndpointOperationWithResource
+      def self.build(params, context:)
+        Params::EndpointOperationWithResourceOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointOperationWithResourceOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -322,6 +363,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -403,6 +445,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -424,6 +467,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -595,6 +639,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
 
@@ -616,6 +661,7 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
+        http_resp.status = 200
       end
     end
   end

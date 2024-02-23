@@ -23,6 +23,7 @@ require_relative 'hearth/networking_error'
 require_relative 'hearth/request'
 require_relative 'hearth/response'
 
+require_relative 'hearth/endpoint_rules'
 require_relative 'hearth/http'
 require_relative 'hearth/identity_resolver'
 require_relative 'hearth/interceptor'

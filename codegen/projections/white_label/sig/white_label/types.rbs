@@ -23,6 +23,14 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    class DataplaneOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class DataplaneOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
     class DefaultsTestInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String
@@ -76,6 +84,15 @@ module WhiteLabel
     end
 
     class EndpointOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class EndpointOperationWithResourceInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor resource_url (): ::String
+    end
+
+    class EndpointOperationWithResourceOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 

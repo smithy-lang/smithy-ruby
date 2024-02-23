@@ -1,0 +1,49 @@
+module Hearth
+  module EndpointRules
+    type urlStruct = Hash[string, string | bool]
+
+    class AuthScheme
+      def initialize: (scheme_id: string, properties: Hash[string, untyped]) -> void
+      attr_accessor scheme_id: string
+      attr_accessor properties: Hash[string, untyped]
+    end
+
+    class Endpoint
+      def initialize: (uri: string, headers: Hash[string, string | Array[string]], auth_schemes: Array[AuthScheme]) -> void
+      attr_accessor uri: string
+      attr_accessor auth_schemes: Array[AuthScheme]
+      attr_accessor headers: Hash[string, string | Array[string]]
+    end
+
+    def self.valid_host_label?: (string, allow_sub_domains: bool) -> bool
+
+    def self.parse_url: (string) -> urlStruct?
+
+    def self.substring: (string, int, int, bool) -> string?
+
+    def self.uri_encode: (string) -> string
+
+    # @api private
+    class URL
+      def initialize: (string) -> void
+
+      attr_reader scheme: string
+
+      attr_reader authority: string
+
+      attr_reader path: string
+
+      attr_reader normalized_path: string
+
+      attr_reader is_ip: bool
+
+      def as_json: (?::Hash[untyped, untyped] _options) -> urlStruct
+
+      private
+
+      def _authority: (string url, string uri) -> string
+
+      def _is_ip: (string) -> bool
+    end
+  end
+end

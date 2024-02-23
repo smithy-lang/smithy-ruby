@@ -46,6 +46,7 @@ module Hearth
       private
 
       ResolvedAuth = Struct.new(
+        :scheme_id,
         :signer,
         :signer_properties,
         :identity,
@@ -89,6 +90,7 @@ module Hearth
         identity = identity_resolver.identity(identity_properties)
 
         ResolvedAuth.new(
+          scheme_id: scheme_id,
           identity: identity,
           identity_properties: auth_option.identity_properties,
           signer: auth_scheme.signer,

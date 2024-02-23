@@ -18,9 +18,11 @@ package software.amazon.smithy.ruby.codegen.protocol.generators;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
@@ -66,6 +68,11 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     @Override
     protected void renderErrorStubMethod(Shape errorShape) {
 
+    }
+
+    @Override
+    protected void renderStatusCodeStubber(OperationShape operation) {
+        writer.write("http_resp.status = 200");
     }
 }
 

@@ -34,11 +34,17 @@ jobs:
       working-directory: codegen
       run:
         ./gradlew :smithy-ruby-codegen-test:build
-    - name: Upload generated test SDK
+    - name: Upload generated white_label SDK
       uses: actions/upload-artifact@v2
       with:
         name: white_label
         path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label
+    - name: Upload generated test SDKs
+      uses: actions/upload-artifact@v2
+      with:
+        name: test_sdk_projections
+        path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test
+
 
   ruby-rbs-type-check:
     needs: [generate-test-sdk]
@@ -117,6 +123,38 @@ jobs:
       - name: Integration specs
         run: rspec
         working-directory: ./white_label
+
+  generated-smithy-specs:
+    needs: [generate-test-sdk]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - uses: actions/checkout@v2
+
+      - name: Build and install Hearth
+        run: |
+          gem build hearth.gemspec
+          gem install hearth-$(<VERSION).gem
+        working-directory: ./hearth
+
+      - name: Download generated SDK Projections
+        uses: actions/download-artifact@v2
+        with:
+          name: test_sdk_projections
+          path: test_sdk_projections
+
+      - name: Install gems
+        run: bundle install
+        working-directory: ./test_sdk_projections
+
+      - name: All specs
+        run: bundle exec rake test
+        working-directory: ./test_sdk_projections
+
 
   codegen-rubocop:
     runs-on: ubuntu-latest

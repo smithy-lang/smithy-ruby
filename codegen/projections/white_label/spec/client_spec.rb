@@ -79,12 +79,12 @@ module WhiteLabel
       end
 
       it 'uses endpoint' do
-        expect(Hearth::HTTP::Request)
-          .to receive(:new)
-          .with(hash_including(uri: URI(client.config.endpoint)))
-          .and_call_original
-
-        client.kitchen_sink
+        proc = proc do |context|
+          expect(context.request.uri)
+            .to eq(URI(client.config.endpoint))
+        end
+        interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+        client.kitchen_sink({}, interceptors: [interceptor])
       end
 
       context 'operation overrides' do
@@ -146,12 +146,17 @@ module WhiteLabel
         end
 
         it 'uses endpoint from options' do
-          expect(Hearth::HTTP::Request)
-            .to receive(:new)
-            .with(hash_including(uri: URI('endpoint')))
-            .and_call_original
+          proc = proc do |context|
+            expect(context.request.uri)
+              .to eq(URI('https://override.com'))
+          end
 
-          client.kitchen_sink({}, endpoint: 'endpoint')
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          client.kitchen_sink(
+            {},
+            endpoint: 'https://override.com',
+            interceptors: [interceptor]
+          )
         end
       end
     end

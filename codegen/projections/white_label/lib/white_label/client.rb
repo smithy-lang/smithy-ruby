@@ -77,11 +77,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::CustomAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :custom_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -90,6 +85,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::CustomAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -108,7 +114,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :custom_auth,
@@ -121,6 +127,86 @@ module WhiteLabel
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.data}")
+      output
+    end
+
+    # @param [Hash] params
+    #   Request parameters for this operation.
+    #   See {Types::DataplaneOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Types::DataplaneOperationOutput]
+    # @example Request syntax with placeholder values
+    #   resp = client.dataplane_operation()
+    # @example Response structure
+    #   resp.data #=> Types::DataplaneOperationOutput
+    def dataplane_operation(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::DataplaneOperationInput.build(params, context: 'params')
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::DataplaneOperationInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::DataplaneOperation
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_params: Auth::Params.new(operation_name: :dataplane_operation, custom_param: 'custom_value'),
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::DataplaneOperation
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Sign)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status: 200,
+          errors: []
+        ),
+        data_parser: Parsers::DataplaneOperation
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: config.http_client,
+        stub_error_classes: [],
+        stub_data_class: Stubs::DataplaneOperation,
+        stubs: @stubs
+      )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :dataplane_operation,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_operation] #{output.data}")
       output
     end
 
@@ -203,11 +289,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::DefaultsTest
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :defaults_test, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -216,6 +297,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::DefaultsTest
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -234,7 +326,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :defaults_test,
@@ -274,17 +366,8 @@ module WhiteLabel
         validator: Validators::EndpointOperationInput,
         validate_input: config.validate_input
       )
-      stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.",
-        disable_host_prefix: config.disable_host_prefix
-      )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointOperation
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_operation, custom_param: 'custom_value'),
@@ -294,6 +377,21 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::EndpointOperation
+      )
+      stack.use(Hearth::Middleware::HostPrefix,
+        host_prefix: "foo.",
+        disable_host_prefix: config.disable_host_prefix
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -312,7 +410,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :endpoint_operation,
@@ -325,6 +423,88 @@ module WhiteLabel
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
+      output
+    end
+
+    # @param [Hash] params
+    #   Request parameters for this operation.
+    #   See {Types::EndpointOperationWithResourceInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Types::EndpointOperationWithResourceOutput]
+    # @example Request syntax with placeholder values
+    #   resp = client.endpoint_operation_with_resource(
+    #     resource_url: 'resourceUrl' # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::EndpointOperationWithResourceOutput
+    def endpoint_operation_with_resource(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      stack = Hearth::MiddlewareStack.new
+      input = Params::EndpointOperationWithResourceInput.build(params, context: 'params')
+      stack.use(Hearth::Middleware::Initialize)
+      stack.use(Middleware::TestMiddleware,
+        test_config: config.test_config
+      )
+      stack.use(Hearth::Middleware::Validate,
+        validator: Validators::EndpointOperationWithResourceInput,
+        validate_input: config.validate_input
+      )
+      stack.use(Hearth::Middleware::Build,
+        builder: Builders::EndpointOperationWithResource
+      )
+      stack.use(Hearth::Middleware::Auth,
+        auth_params: Auth::Params.new(operation_name: :endpoint_operation_with_resource, custom_param: 'custom_value'),
+        auth_resolver: config.auth_resolver,
+        auth_schemes: config.auth_schemes,
+        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
+        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
+        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
+        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::EndpointOperationWithResource
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
+      )
+      stack.use(Hearth::Middleware::Sign)
+      stack.use(Hearth::Middleware::Parse,
+        error_parser: Hearth::HTTP::ErrorParser.new(
+          error_module: Errors,
+          success_status: 200,
+          errors: []
+        ),
+        data_parser: Parsers::EndpointOperationWithResource
+      )
+      stack.use(Hearth::Middleware::Send,
+        stub_responses: config.stub_responses,
+        client: config.http_client,
+        stub_error_classes: [],
+        stub_data_class: Stubs::EndpointOperationWithResource,
+        stubs: @stubs
+      )
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :endpoint_operation_with_resource,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] #{output.data}")
       output
     end
 
@@ -354,17 +534,8 @@ module WhiteLabel
         validator: Validators::EndpointWithHostLabelOperationInput,
         validate_input: config.validate_input
       )
-      stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.{label_member}.",
-        disable_host_prefix: config.disable_host_prefix
-      )
       stack.use(Hearth::Middleware::Build,
         builder: Builders::EndpointWithHostLabelOperation
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation, custom_param: 'custom_value'),
@@ -374,6 +545,21 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation
+      )
+      stack.use(Hearth::Middleware::HostPrefix,
+        host_prefix: "foo.{label_member}.",
+        disable_host_prefix: config.disable_host_prefix
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -392,7 +578,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :endpoint_with_host_label_operation,
@@ -435,11 +621,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpApiKeyAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_api_key_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -448,6 +629,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpApiKeyAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -466,7 +658,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_api_key_auth,
@@ -509,11 +701,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpBasicAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_basic_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -522,6 +709,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpBasicAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -540,7 +738,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_basic_auth,
@@ -583,11 +781,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpBearerAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_bearer_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -596,6 +789,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpBearerAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -614,7 +818,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_bearer_auth,
@@ -657,11 +861,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::HttpDigestAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :http_digest_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -670,6 +869,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::HttpDigestAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -688,7 +898,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :http_digest_auth,
@@ -873,11 +1083,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::KitchenSink
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :kitchen_sink, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -886,6 +1091,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::KitchenSink
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -904,7 +1120,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :kitchen_sink,
@@ -951,11 +1167,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::MixinTest
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :mixin_test, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -964,6 +1175,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::MixinTest
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -982,7 +1204,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :mixin_test,
@@ -1025,11 +1247,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::NoAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :no_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1038,6 +1255,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::NoAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1056,7 +1284,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :no_auth,
@@ -1099,11 +1327,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OptionalAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :optional_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1112,6 +1335,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::OptionalAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1130,7 +1364,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :optional_auth,
@@ -1173,11 +1407,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::OrderedAuth
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :ordered_auth, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1186,6 +1415,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::OrderedAuth
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1204,7 +1444,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :ordered_auth,
@@ -1252,11 +1492,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTest
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :paginators_test, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1265,6 +1500,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::PaginatorsTest
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1283,7 +1529,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :paginators_test,
@@ -1331,11 +1577,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::PaginatorsTestWithItems
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :paginators_test_with_items, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1344,6 +1585,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::PaginatorsTestWithItems
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1362,7 +1614,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :paginators_test_with_items,
@@ -1408,11 +1660,6 @@ module WhiteLabel
       )
       stack.use(Middleware::MidMiddleware)
       stack.use(Middleware::AfterMiddleware)
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :relative_middleware_operation, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1421,6 +1668,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::RelativeMiddlewareOperation
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1439,7 +1697,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :relative_middleware_operation,
@@ -1490,12 +1748,6 @@ module WhiteLabel
         request_min_compression_size_bytes: config.request_min_compression_size_bytes,
         disable_request_compression: config.disable_request_compression
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::HTTP::Middleware::ContentMD5)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :request_compression_operation, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1504,6 +1756,18 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::HTTP::Middleware::ContentMD5)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::RequestCompressionOperation
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1522,7 +1786,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :request_compression_operation,
@@ -1567,16 +1831,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::RequestCompressionStreamingOperation
       )
-      stack.use(Hearth::HTTP::Middleware::RequestCompression,
-        streaming: true,
-        encodings: ['gzip'],
-        request_min_compression_size_bytes: config.request_min_compression_size_bytes,
-        disable_request_compression: config.disable_request_compression
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :request_compression_streaming_operation, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1585,6 +1839,22 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::RequestCompression,
+        streaming: true,
+        encodings: ['gzip'],
+        request_min_compression_size_bytes: config.request_min_compression_size_bytes,
+        disable_request_compression: config.disable_request_compression
+      )
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1603,7 +1873,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :request_compression_streaming_operation,
@@ -1649,10 +1919,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingOperation
       )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_operation, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1661,6 +1927,16 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::StreamingOperation
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1679,7 +1955,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :streaming_operation,
@@ -1724,11 +2000,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::StreamingWithLength
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :streaming_with_length, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1737,6 +2008,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::StreamingWithLength
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1755,7 +2037,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :streaming_with_length,
@@ -1801,11 +2083,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::WaitersTest
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :waiters_test, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1814,6 +2091,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::WaitersTest
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1832,7 +2120,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :waiters_test,
@@ -1881,11 +2169,6 @@ module WhiteLabel
       stack.use(Hearth::Middleware::Build,
         builder: Builders::Operation____PaginatorsTestWithBadNames
       )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
       stack.use(Hearth::Middleware::Auth,
         auth_params: Auth::Params.new(operation_name: :operation____paginators_test_with_bad_names, custom_param: 'custom_value'),
         auth_resolver: config.auth_resolver,
@@ -1894,6 +2177,17 @@ module WhiteLabel
         Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
         Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
         Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
+      )
+      stack.use(Hearth::HTTP::Middleware::ContentLength)
+      stack.use(Hearth::Middleware::Endpoint,
+        endpoint: config.endpoint,
+        endpoint_provider: config.endpoint_provider,
+        stage: config.stage,
+        param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames
+      )
+      stack.use(Hearth::Middleware::Retry,
+        retry_strategy: config.retry_strategy,
+        error_inspector_class: Hearth::HTTP::ErrorInspector
       )
       stack.use(Hearth::Middleware::Sign)
       stack.use(Hearth::Middleware::Parse,
@@ -1912,7 +2206,7 @@ module WhiteLabel
         stubs: @stubs
       )
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI(config.endpoint)),
+        request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
         operation_name: :operation____paginators_test_with_bad_names,
