@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['3.0', 3.1, 3.2]
+        ruby: ['3.0', 3.1, 3.2, 3.3]
 
     steps:
       - name: Setup Ruby
@@ -85,7 +85,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['3.0', 3.1, 3.2]
+        ruby: ['3.0', 3.1, 3.2, 3.3]
 
     steps:
       - name: Setup Ruby
@@ -115,17 +115,17 @@ jobs:
         working-directory: ./white_label
 
       - name: Integration specs
-        run: rspec
+        run: bundle exec rspec
         working-directory: ./white_label
 
   codegen-rubocop:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup Ruby 3.2
+      - name: Setup Ruby 3.3
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.3
 
       - uses: actions/checkout@v2
 
