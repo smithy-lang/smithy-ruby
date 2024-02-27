@@ -14,7 +14,7 @@ module WhiteLabel
     describe Provider do
       subject { Provider.new }
 
-      context 'Endpoint override is used' do
+      context "Endpoint override is used" do
         let(:expected) do
           {
             url: 'https://custom-endpoint.com',
@@ -53,7 +53,7 @@ module WhiteLabel
         end
       end
 
-      context 'Endpoint override is used when other parameters are set' do
+      context "Endpoint override is used when other parameters are set" do
         let(:expected) do
           {
             url: 'https://custom-endpoint.com',
@@ -71,7 +71,7 @@ module WhiteLabel
         end
       end
 
-      context 'Errors when both Endpoint and ResourceURL are set' do
+      context "Errors when both Endpoint and ResourceURL are set" do
         let(:expected) do
           {error: "Unable to set both Endpoint and ResourceUrl: \"https://resource\""}
         end
@@ -84,7 +84,7 @@ module WhiteLabel
         end
       end
 
-      context 'Stage is used' do
+      context "Stage is used" do
         let(:expected) do
           {
             url: 'https://beta.whitelabel.dev',
@@ -122,7 +122,7 @@ module WhiteLabel
         end
       end
 
-      context 'ResourceURL is parsed and used' do
+      context "ResourceURL is parsed and used" do
         let(:expected) do
           {
             url: 'https://resource.com/path',
@@ -160,7 +160,7 @@ module WhiteLabel
         end
       end
 
-      context 'Data prefix is applied' do
+      context "Data prefix is applied" do
         let(:expected) do
           {
             url: 'https://data.whitelabel.com',

@@ -56,8 +56,10 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.TemplateVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.LiteralVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
@@ -397,7 +399,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     }
 
     private void renderRule(RubyCodeWriter writer, Rule rule) {
-        rule.accept(new RenderRuleVisitor(writer));
+        rule.accept(new RubyRuleVisitor(writer));
     }
 
     private void renderConditions(RubyCodeWriter writer, List<Condition> conditions) {
@@ -405,9 +407,9 @@ public class EndpointGenerator extends RubyGeneratorBase {
         String condition = conditions.stream().map((c) -> {
             if (c.getResult().isPresent()) {
                 return "(" + RubyFormatter.toSnakeCase(c.getResult().get().getName().getValue())
-                        + " = " + c.getFunction().accept(new ExpressionTemplateVisitor(context)) + ")";
+                        + " = " + c.getFunction().accept(new RubyExpressionVisitor(context)) + ")";
             } else {
-                return "(" + c.getFunction().accept(new ExpressionTemplateVisitor(context)) + ")";
+                return "(" + c.getFunction().accept(new RubyExpressionVisitor(context)) + ")";
             }
         }).collect(Collectors.joining(" && "));
         writer.write("if $L", condition);
@@ -420,7 +422,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     }
 
     private String templateExpression(Expression expression) {
-        return expression.accept(new ExpressionTemplateVisitor(context));
+        return expression.accept(new RubyExpressionVisitor(context));
     }
 
     private void renderEndpointTestCases(RubyCodeWriter writer, List<EndpointTestCase> testCases) {
@@ -538,11 +540,11 @@ public class EndpointGenerator extends RubyGeneratorBase {
         writer.closeBlock("end");
     }
 
-    private static class ExpressionTemplateVisitor implements ExpressionVisitor<String> {
+    private static class RubyExpressionVisitor implements ExpressionVisitor<String> {
 
         final GenerationContext context;
 
-        ExpressionTemplateVisitor(GenerationContext context) {
+        RubyExpressionVisitor(GenerationContext context) {
             this.context = context;
         }
 
@@ -576,6 +578,16 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public String visitNot(Expression expression) {
+            if (expression.getClass().equals(StringEquals.class)) {
+                StringEquals eq = (StringEquals) expression;
+                return  eq.getArguments().get(0).accept(this) + " != "
+                        + eq.getArguments().get(1).accept(this);
+            } else if (expression.getClass().equals(BooleanEquals.class)) {
+                BooleanEquals eq = (BooleanEquals) expression;
+                return  eq.getArguments().get(0).accept(this) + " != "
+                        + eq.getArguments().get(1).accept(this);
+            }
+
             return "!" + expression.accept(this);
         }
 
@@ -596,7 +608,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
             FunctionBinding functionBinding = context.getFunctionBinding(functionDefinition.getId())
                     .orElseThrow(() -> new SmithyBuildException(
                             "Unable to find rules engine function binding for: " + functionDefinition.getId()));
-            String rubyArgs = args.stream().map((e) -> e.accept(new ExpressionTemplateVisitor(context))).collect(
+            String rubyArgs = args.stream().map((e) -> e.accept(new RubyExpressionVisitor(context))).collect(
                     Collectors.joining(", "));
             return functionBinding.getRubyMethodName() + "(" + rubyArgs + ")";
         }
@@ -663,7 +675,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public String visitSingleDynamicTemplate(Expression expression) {
-            return expression.accept(new ExpressionTemplateVisitor(context));
+            return expression.accept(new RubyExpressionVisitor(context));
         }
 
         @Override
@@ -674,7 +686,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public String visitDynamicElement(Expression expression) {
-            return "#{" + expression.accept(new ExpressionTemplateVisitor(context)) + "}";
+            return "#{" + expression.accept(new RubyExpressionVisitor(context)) + "}";
         }
 
         @Override
@@ -725,11 +737,11 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }
     }
 
-    private class RenderRuleVisitor implements RuleValueVisitor<Void> {
+    private class RubyRuleVisitor implements RuleValueVisitor<Void> {
 
         final RubyCodeWriter writer;
 
-        RenderRuleVisitor(RubyCodeWriter writer) {
+        RubyRuleVisitor(RubyCodeWriter writer) {
             this.writer = writer;
         }
 
@@ -741,7 +753,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public Void visitErrorRule(Expression expression) {
-            writer.write("raise ArgumentError, $L", expression.accept(new ExpressionTemplateVisitor(context)));
+            writer.write("raise ArgumentError, $L", expression.accept(new RubyExpressionVisitor(context)));
             return null;
         }
 
@@ -749,7 +761,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
         public Void visitEndpointRule(Endpoint endpoint) {
             String uriString = templateExpression(endpoint.getUrl());
 
-            ExpressionVisitor<String> expressionVisitor = new ExpressionTemplateVisitor(context);
+            ExpressionVisitor<String> expressionVisitor = new RubyExpressionVisitor(context);
             if (endpoint.getHeaders().isEmpty() && endpoint.getProperties().isEmpty()) {
                 writer.write("return $T.new(uri: $L)", Hearth.RULES_ENGINE_ENDPOINT, uriString);
             } else {
