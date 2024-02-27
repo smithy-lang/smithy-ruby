@@ -173,7 +173,7 @@ public final class BuiltInBinding {
          * @param context        - generation context
          */
         void renderTestSet(RubyCodeWriter writer, BuiltInBinding builtInBinding,
-                         Node value, OperationShape operation, GenerationContext context);
+                           Node value, OperationShape operation, GenerationContext context);
     }
 
     /**
@@ -218,7 +218,7 @@ public final class BuiltInBinding {
                     v = value.expectBooleanNode().getValue() ? "true" : "false";
                 }
                 writer.write("config[:$L] = $L",
-                        RubyFormatter.toSnakeCase(builtInBinding.builtIn.getName().toString()),
+                        config.getName(),
                         v);
             };
             return this;
@@ -227,6 +227,7 @@ public final class BuiltInBinding {
         /**
          * Source this endpoint parameter from a static/constant value. This is useful for supporting
          * legacy BuiltIns without adding configuration to the new SDK.
+         *
          * @param value value to set this endpoint parameter to in builders
          * @return this builder
          */

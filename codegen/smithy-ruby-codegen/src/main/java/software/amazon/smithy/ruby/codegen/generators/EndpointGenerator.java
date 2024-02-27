@@ -59,6 +59,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.TemplateVi
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.LiteralVisitor;
@@ -580,12 +581,15 @@ public class EndpointGenerator extends RubyGeneratorBase {
         public String visitNot(Expression expression) {
             if (expression.getClass().equals(StringEquals.class)) {
                 StringEquals eq = (StringEquals) expression;
-                return  eq.getArguments().get(0).accept(this) + " != "
+                return eq.getArguments().get(0).accept(this) + " != "
                         + eq.getArguments().get(1).accept(this);
             } else if (expression.getClass().equals(BooleanEquals.class)) {
                 BooleanEquals eq = (BooleanEquals) expression;
-                return  eq.getArguments().get(0).accept(this) + " != "
+                return eq.getArguments().get(0).accept(this) + " != "
                         + eq.getArguments().get(1).accept(this);
+            } else if (expression.getClass().equals(IsSet.class)) {
+                IsSet isSet = (IsSet) expression;
+                return isSet.getArguments().get(0).accept(this) + ".nil?";
             }
 
             return "!" + expression.accept(this);
