@@ -63,11 +63,24 @@ module WhiteLabel
         end
 
         it 'produces the expected output from the EndpointProvider' do
-          params = Params.new(endpoint: "https://custom-endpoint.com", stage: "prod", dataplane: true, resource_url: "https://resource")
+          params = Params.new(endpoint: "https://custom-endpoint.com", stage: "prod", dataplane: true)
           endpoint = subject.resolve_endpoint(params)
           expect(endpoint.uri).to eq(expected[:url])
           expect(endpoint.headers).to eq(expected[:headers])
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
+        end
+      end
+
+      context 'Errors when both Endpoint and ResourceURL are set' do
+        let(:expected) do
+          {error: "Unable to set both Endpoint and ResourceUrl: \"https://resource\""}
+        end
+
+        it 'produces the expected output from the EndpointProvider' do
+          params = Params.new(endpoint: "https://custom-endpoint.com", resource_url: "https://resource")
+          expect do
+            subject.resolve_endpoint(params)
+          end.to raise_error(ArgumentError, expected[:error])
         end
       end
 

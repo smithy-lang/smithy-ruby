@@ -34,6 +34,11 @@ use smithy.rules#endpointTests
     "rules": [
         // Rule to allow using endpoint overrides
         {
+            "type": "error",
+            "conditions": [ {"fn": "isSet", "argv": [{"ref": "Endpoint"}]}, {"fn": "isSet", "argv": [{"ref": "ResourceUrl"}]}  ],
+            "error": "Unable to set both Endpoint and ResourceUrl: \"{ResourceUrl}\"",
+        },
+        {
             "type": "endpoint",
             "conditions": [ {"fn": "isSet", "argv": [{"ref": "Endpoint"}]} ],
             "endpoint": { "url": {"ref": "Endpoint"} },
@@ -145,12 +150,21 @@ testCases: [
             "Endpoint": "https://custom-endpoint.com",
             "Stage": "prod",
             "Dataplane": true,
-            "ResourceUrl": "https://resource"
         },
         "expect": {
             "endpoint": {
                 "url": "https://custom-endpoint.com"
             }
+        },
+    },
+    {
+        "documentation": "Errors when both Endpoint and ResourceURL are set",
+        "params": {
+            "Endpoint": "https://custom-endpoint.com",
+            "ResourceUrl": "https://resource"
+        },
+        "expect": {
+            "error": "Unable to set both Endpoint and ResourceUrl: \"https://resource\""
         },
     },
     {

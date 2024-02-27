@@ -437,7 +437,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("context '$L' do",
+                    .openBlock("context $S do",
                             testCase.getDocumentation().orElse("Test case " + testCase.hashCode()))
                     .openBlock("let(:expected) do")
                     .call(() -> {
@@ -658,7 +658,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public String visitStaticTemplate(String s) {
-            return "\"" + s + "\"";
+            return StringUtils.escapeJavaString(s, "");
         }
 
         @Override
@@ -668,7 +668,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public String visitStaticElement(String s) {
-            return s;
+            String escaped = StringUtils.escapeJavaString(s, "");
+            return escaped.substring(1, escaped.length() - 1); // remove leading and trailing quotes
         }
 
         @Override

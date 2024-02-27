@@ -224,6 +224,34 @@ public final class BuiltInBinding {
             return this;
         }
 
+        /**
+         * Source this endpoint parameter from a static/constant value. This is useful for supporting
+         * legacy BuiltIns without adding configuration to the new SDK.
+         * @param value value to set this endpoint parameter to in builders
+         * @return this builder
+         */
+        public Builder fromConstantValue(String value) {
+            this.renderBuild = (writer, builtInBinding, operation, context) -> {
+                writer.write("params.$1L = $2L",
+                        RubyFormatter.toSnakeCase(builtInBinding.builtIn.getName().toString()),
+                        value
+                );
+            };
+            this.renderTestSet = (writer, builtInBinding, expectValue, operation, context) -> {
+                String v;
+                if (expectValue.isStringNode()) {
+                    v = StringUtils.escapeJavaString(expectValue.expectStringNode().getValue(), "");
+                } else {
+                    v = expectValue.expectBooleanNode().getValue() ? "true" : "false";
+                }
+                writer.write("allow_any_instance_of(Params).to receive(:$L).and_return($L)",
+                        RubyFormatter.toSnakeCase(builtInBinding.builtIn.getName().toString()),
+                        v
+                );
+            };
+            return this;
+        }
+
         public Builder writeAdditionalFiles(WriteAdditionalFiles w) {
             this.writeAdditionalFiles = Objects.requireNonNull(w);
             return this;

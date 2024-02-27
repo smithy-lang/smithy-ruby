@@ -26,6 +26,9 @@ module WhiteLabel
         resource_url = params.resource_url
         endpoint = params.endpoint
 
+        if (endpoint != nil) && (resource_url != nil)
+          raise ArgumentError, "Unable to set both Endpoint and ResourceUrl: \"#{resource_url}\""
+        end
         if (endpoint != nil)
           return Hearth::EndpointRules::Endpoint.new(uri: endpoint)
         end
