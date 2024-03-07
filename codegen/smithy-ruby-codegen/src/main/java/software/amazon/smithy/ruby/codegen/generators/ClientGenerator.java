@@ -244,6 +244,7 @@ public class ClientGenerator extends RubyGeneratorBase {
         boolean isStreaming = outputShape.members().stream()
                 .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent());
 
+        // TODO: overload this by expanding params and options
         writer.writeInline("def $L: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)",
                 operationName);
         if (isStreaming) {

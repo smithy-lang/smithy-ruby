@@ -43,12 +43,12 @@ module WhiteLabel
       attr_accessor simple_enum (): ::String
       attr_accessor typed_enum (): ::String
       attr_accessor int_enum (): ::Integer
-      attr_accessor null_document (): document
-      attr_accessor string_document (): document
-      attr_accessor boolean_document (): document
-      attr_accessor numbers_document (): document
-      attr_accessor list_document (): document
-      attr_accessor map_document (): document
+      attr_accessor null_document (): Hearth::document
+      attr_accessor string_document (): Hearth::document
+      attr_accessor boolean_document (): Hearth::document
+      attr_accessor numbers_document (): Hearth::document
+      attr_accessor list_document (): Hearth::document
+      attr_accessor map_document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
       attr_accessor iso8601_timestamp (): ::Time
@@ -67,12 +67,12 @@ module WhiteLabel
       attr_accessor simple_enum (): ::String
       attr_accessor typed_enum (): ::String
       attr_accessor int_enum (): ::Integer
-      attr_accessor null_document (): document
-      attr_accessor string_document (): document
-      attr_accessor boolean_document (): document
-      attr_accessor numbers_document (): document
-      attr_accessor list_document (): document
-      attr_accessor map_document (): document
+      attr_accessor null_document (): Hearth::document
+      attr_accessor string_document (): Hearth::document
+      attr_accessor boolean_document (): Hearth::document
+      attr_accessor numbers_document (): Hearth::document
+      attr_accessor list_document (): Hearth::document
+      attr_accessor map_document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
       attr_accessor iso8601_timestamp (): ::Time
@@ -143,7 +143,7 @@ module WhiteLabel
       attr_accessor simple_enum (): ::String
       attr_accessor typed_enum (): ::String
       attr_accessor struct (): Struct
-      attr_accessor document (): document
+      attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
       attr_accessor list_of_structs (): ::Array[Struct]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
@@ -157,7 +157,7 @@ module WhiteLabel
       attr_accessor simple_enum (): ::String
       attr_accessor typed_enum (): ::String
       attr_accessor struct (): Struct
-      attr_accessor document (): document
+      attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
       attr_accessor list_of_structs (): ::Array[Struct]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]

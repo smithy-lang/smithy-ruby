@@ -301,7 +301,7 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol documentShape(DocumentShape shape) {
-        String rbsType = "document"; // alias defined in Hearth
+        String rbsType = "Hearth::document"; // alias defined in Hearth
         String docType = "Hash, Array, String, Boolean, Numeric";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Document__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)

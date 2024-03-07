@@ -69,24 +69,24 @@ module RailsJson
 
     class DocumentTypeAsPayloadInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class DocumentTypeAsPayloadOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class DocumentTypeInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string_value (): ::String
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class DocumentTypeOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string_value (): ::String
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class EmptyOperationInput < ::Struct[untyped]
