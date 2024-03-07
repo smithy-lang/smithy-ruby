@@ -17,7 +17,7 @@ module WhiteLabel
     SCHEMES: ::Array[Hearth::AuthSchemes::Base]
 
     class Resolver
-      def resolve: (auth_params: Params) -> ::Array[Hearth::AuthOption]
+      def resolve: (Params auth_params) -> ::Array[Hearth::AuthOption] | ::Array
     end
   end
 end

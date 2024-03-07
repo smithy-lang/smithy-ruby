@@ -1,0 +1,11 @@
+module Hearth
+  module Validator
+    def self.validate_types!: (Object value, *Array[Class] types, context: ::String) -> nil
+
+    def self.validate_required!: (Object value, context: ::String) -> nil
+
+    def self.validate_unknown!: (::Struct[untyped] struct, ::Hash[::Symbol, untyped] params, context: ::String) -> nil
+
+    def self.validate_range!: (Object value, min: ::Numeric, max: ::Numeric, context: ::String) -> nil
+  end
+end
