@@ -45,8 +45,7 @@ public final class RubySource {
 
             Path path = Paths.get(rubyFile);
             String relativeName = Paths.get(destPath, path.getFileName().toString()).toString();
-            String fileName = Paths.get(gemName, "lib", gemName, destPath, relativeName).toString();
-
+            String fileName = Paths.get(gemName, "lib", gemName, relativeName).toString();
 
             String resourcePath = Paths.get("ruby", rubyFile).toString();
             InputStream io = RubySource.class.getClassLoader().getResourceAsStream(resourcePath);
