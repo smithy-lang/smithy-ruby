@@ -98,6 +98,8 @@ public class ConfigGenerator extends RubyGeneratorBase {
                             writer.write("attr_accessor $L (): $L", member, rbsType);
                         });
                     })
+                    .write("")
+                    .write("def validate!: () -> void")
                     .closeBlock("end")
                     .closeBlock("end");
         });

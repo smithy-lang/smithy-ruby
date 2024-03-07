@@ -16,5 +16,7 @@ module HighScoreService
     attr_accessor retry_strategy (): Hearth::Retry::Strategy
     attr_accessor stub_responses (): bool
     attr_accessor validate_input (): bool
+
+    def validate!: () -> void
   end
 end

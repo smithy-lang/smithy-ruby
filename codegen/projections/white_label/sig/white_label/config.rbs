@@ -21,5 +21,7 @@ module WhiteLabel
     attr_accessor stub_responses (): bool
     attr_accessor test_config (): String
     attr_accessor validate_input (): bool
+
+    def validate!: () -> void
   end
 end
