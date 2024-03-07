@@ -29,9 +29,12 @@ public final class RubySource {
     }
 
     /**
-     * Creates a WriteAdditionalFiles that writes a ruby source file.
+     * Creates a WriteAdditionalFiles that writes a ruby source file.  Ruby source files should be placed
+     * in a `ruby` directory in your resources, eg: `src/main/resources/ruby/middleware/my_middleware.rb'.
+     * Do not include the `ruby/` prefix in the `rubyFile` path.
      *
      * @param rubyFile the path to the ruby source file in resources.
+     *                 Do not including the leading `ruby/`, it will be added.
      * @param destPath the destination path inside the generated gem to write the file to.
      * @return the WriteAdditionalFiles.
      */
@@ -41,12 +44,14 @@ public final class RubySource {
             String gemModule = context.settings().getModule();
 
             Path path = Paths.get(rubyFile);
-            String relativeName = destPath + path.getFileName();
-            String fileName = gemName + "/lib/" + gemName + "/" + relativeName;
+            String relativeName = Paths.get(destPath, path.getFileName().toString()).toString();
+            String fileName = Paths.get(gemName, "lib", gemName, destPath, relativeName).toString();
 
-            InputStream io = RubySource.class.getClassLoader().getResourceAsStream(rubyFile);
+
+            String resourcePath = Paths.get("ruby", rubyFile).toString();
+            InputStream io = RubySource.class.getClassLoader().getResourceAsStream(resourcePath);
             if (io == null) {
-                throw new SmithyBuildException("Unable to find rubySource file in resources: " + rubyFile);
+                throw new SmithyBuildException("Unable to find rubySource file in resources: " + resourcePath);
             }
             String fileContent = IoUtils.toUtf8String(io);
 

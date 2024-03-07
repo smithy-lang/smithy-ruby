@@ -455,11 +455,7 @@ public final class Middleware {
          * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
-            return rubySource(rubyFileName, "middleware/");
-        }
-
-        public Builder rubySource(String rubyFileName, String destPath) {
-            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, destPath);
+            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, "middleware/");
             return this;
         }
 
