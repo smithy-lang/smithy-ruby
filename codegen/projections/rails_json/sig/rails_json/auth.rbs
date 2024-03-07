@@ -16,7 +16,7 @@ module RailsJson
     SCHEMES: ::Array[Hearth::AuthSchemes::Base]
 
     class Resolver
-      def resolve: (Params auth_params) -> ::Array[Hearth::AuthOption] | ::Array
+      def resolve: (Params auth_params) -> ::Array[?Hearth::AuthOption]
     end
   end
 end
