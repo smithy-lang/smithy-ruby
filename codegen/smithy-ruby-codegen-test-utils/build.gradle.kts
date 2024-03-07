@@ -18,6 +18,14 @@ extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test.utils"
 
 tasks["jar"].enabled = true
 
+sourceSets {
+    main {
+        resources {
+            srcDirs("ruby")
+        }
+    }
+}
+
 plugins {
     `java-library`
     id("software.amazon.smithy").version("0.5.3")
