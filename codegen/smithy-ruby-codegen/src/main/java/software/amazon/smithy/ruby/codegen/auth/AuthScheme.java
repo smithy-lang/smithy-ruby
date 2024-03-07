@@ -222,7 +222,11 @@ public final class AuthScheme {
          * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
-            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, "auth/");
+            return rubySource(rubyFileName, "auth/");
+        }
+
+        public Builder rubySource(String rubyFileName, String destPath) {
+            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, destPath);
             return this;
         }
 

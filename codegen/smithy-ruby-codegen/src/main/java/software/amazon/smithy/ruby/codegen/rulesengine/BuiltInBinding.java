@@ -259,7 +259,11 @@ public final class BuiltInBinding {
         }
 
         public Builder rubySource(String rubyFileName) {
-            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, "endpoint/");
+            return rubySource(rubyFileName, "endpoint/");
+        }
+
+        public Builder rubySource(String rubyFileName, String destPath) {
+            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, destPath);
             return this;
         }
 

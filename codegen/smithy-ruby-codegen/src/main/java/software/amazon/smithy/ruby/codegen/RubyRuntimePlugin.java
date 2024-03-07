@@ -88,9 +88,14 @@ public class RubyRuntimePlugin {
          * @return Return the Builder
          */
         public Builder rubySource(String rubyFileName) {
-            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, "plugins/");
+            return rubySource(rubyFileName, "plugins/");
+        }
+
+        public Builder rubySource(String rubyFileName, String destPath) {
+            this.writeAdditionalFiles = RubySource.rubySource(rubyFileName, destPath);
             return this;
         }
+
 
         /**
          * Plugins may be implemented via classes with the `call(config)` method.
