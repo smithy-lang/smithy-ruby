@@ -40,7 +40,7 @@ public class RailsIntegration implements RubyIntegration {
         Middleware requestId = Middleware.builder()
                 .klass("Middleware::RequestId")
                 .step(MiddlewareStackStep.PARSE)
-                .rubySource("smithy-ruby-rails-codegen/middleware/request_id.rb")
+                .rubySource("ruby/middleware/request_id.rb")
                 .build();
         middlewareBuilder.register(requestId);
     }

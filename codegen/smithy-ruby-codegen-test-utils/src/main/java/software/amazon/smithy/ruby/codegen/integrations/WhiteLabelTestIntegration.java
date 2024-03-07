@@ -42,7 +42,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
     @Override
     public List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
         return List.of(RubyRuntimePlugin.builder()
-                .rubySource("smithy-ruby-codegen-test-utils/plugins/test_plugin.rb")
+                .rubySource("ruby/plugins/test_plugin.rb")
                 .pluginClass("Plugins::TestPlugin")
                 .build());
     }
@@ -58,7 +58,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .defaultValue("'default'")
                         .build())
                 .step(MiddlewareStackStep.INITIALIZE)
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/test_middleware.rb")
+                .rubySource("ruby/middleware/test_middleware.rb")
                 .build();
         Middleware beforeMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -67,7 +67,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .relative(Middleware.Relative.builder()
                         .before("Middleware::MidMiddleware")
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
+                .rubySource("ruby/middleware/relative_middleware.rb")
                 .build();
         Middleware midMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -77,7 +77,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .before("Middleware:OptionalMiddleware")
                         .optional()
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
+                .rubySource("ruby/middleware/relative_middleware.rb")
                 .build();
         Middleware afterMiddleware = Middleware.builder()
                 .appliesOnlyToOperations("RelativeMiddlewareOperation")
@@ -86,7 +86,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .relative(Middleware.Relative.builder()
                         .after("Middleware::MidMiddleware")
                         .build())
-                .rubySource("smithy-ruby-codegen-test-utils/middleware/relative_middleware.rb")
+                .rubySource("ruby/middleware/relative_middleware.rb")
                 .build();
 
         middlewareBuilder.register(testMiddleware);
@@ -123,7 +123,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
                 .additionalAuthParams(Map.of("custom_param", "'custom_value'"))
-                .rubySource("smithy-ruby-codegen-test-utils/auth/http_custom_auth.rb")
+                .rubySource("ruby/auth/http_custom_auth.rb")
                 .extractSignerProperties((trait) -> {
                     Map<String, String> properties = new HashMap<>();
                     String modelValue = "'%s'".formatted(((HttpCustomAuthTrait) trait).getSignerProperty());
