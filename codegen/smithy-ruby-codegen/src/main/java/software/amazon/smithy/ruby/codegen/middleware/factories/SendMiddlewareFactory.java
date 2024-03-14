@@ -49,7 +49,7 @@ public final class SendMiddlewareFactory {
                 .klass(Hearth.SEND_MIDDLEWARE)
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client", transport.getTransportClient().render(context))
-                .addParam("stubs", "@stubs")
+                .addParam("stubs", "stubs")
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     params.put("stub_data_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());

@@ -46,6 +46,7 @@ import software.amazon.smithy.ruby.codegen.generators.EnumGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
 import software.amazon.smithy.ruby.codegen.generators.IntEnumGenerator;
+import software.amazon.smithy.ruby.codegen.generators.MiddlewareGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.PaginatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
@@ -164,7 +165,10 @@ public class DirectedRubyCodegen
         configGenerator.render();
         configGenerator.renderRbs();
 
-        ClientGenerator clientGenerator = new ClientGenerator(directive, middlewareBuilder, clientConfigList);
+        MiddlewareGenerator middlewareGenerator = new MiddlewareGenerator(directive, middlewareBuilder);
+        middlewareGenerator.render();
+
+        ClientGenerator clientGenerator = new ClientGenerator(directive, clientConfigList);
         clientGenerator.render();
         clientGenerator.renderRbs();
     }
