@@ -44,12 +44,6 @@ public final class SendMiddlewareFactory {
                 .defaultValue("false")
                 .documentation(stubResponsesDocumentation)
                 .build();
-        ClientConfig stubs = ClientConfig.builder()
-                .name("stubs")
-                .type("Hearth::ClientStubs")
-                .rbsType("Hearth::ClientStubs")
-                .defaultValue("Hearth::ClientStubs.new")
-                .build();
 
         return Middleware.builder()
                 .klass(Hearth.SEND_MIDDLEWARE)

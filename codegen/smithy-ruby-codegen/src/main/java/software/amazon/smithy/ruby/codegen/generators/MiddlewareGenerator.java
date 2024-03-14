@@ -73,7 +73,7 @@ public class MiddlewareGenerator extends RubyGeneratorBase {
                     .closeAllModules();
         });
 
-        LOGGER.fine("Wrote middleware to " + rbFile());
+        LOGGER.fine("Wrote client to " + rbFile());
     }
 
     private void renderOperations(RubyCodeWriter writer) {
