@@ -44,12 +44,18 @@ public final class SendMiddlewareFactory {
                 .defaultValue("false")
                 .documentation(stubResponsesDocumentation)
                 .build();
+        ClientConfig stubs = ClientConfig.builder()
+                .name("stubs")
+                .type("Hearth::ClientStubs")
+                .rbsType("Hearth::ClientStubs")
+                .defaultValue("Hearth::ClientStubs.new")
+                .build();
 
         return Middleware.builder()
                 .klass(Hearth.SEND_MIDDLEWARE)
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client", transport.getTransportClient().render(context))
-                .addParam("stubs", "@stubs")
+                .addParam("stubs", "stubs")
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     params.put("stub_data_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
