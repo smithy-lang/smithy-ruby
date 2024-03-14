@@ -32,7 +32,6 @@ import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
-import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -45,17 +44,12 @@ public class ClientGenerator extends RubyGeneratorBase {
             Logger.getLogger(ClientGenerator.class.getName());
 
     private final Set<OperationShape> operations;
-    private final MiddlewareBuilder middlewareBuilder;
     private final Set<RubyRuntimePlugin> runtimePlugins;
     private boolean hasOutputStreamingOperation = false;
 
-    public ClientGenerator(
-            GenerateServiceDirective<GenerationContext, RubySettings> directive,
-            MiddlewareBuilder middlewareBuilder
-    ) {
+    public ClientGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         this.operations = directive.operations();
-        this.middlewareBuilder = middlewareBuilder;
         this.runtimePlugins = context.getRuntimePlugins();
 
         operations.forEach(operation -> {
@@ -75,15 +69,12 @@ public class ClientGenerator extends RubyGeneratorBase {
      * Render/Generate the service client.
      */
     public void render() {
-        List<String> additionalFiles = middlewareBuilder.writeAdditionalFiles(context);
-        additionalFiles.addAll(
-                runtimePlugins.stream()
-                        .map(plugin -> plugin.writeAdditionalFiles(context))
-                        .flatMap(List::stream)
-                        .distinct()
-                        .sorted()
-                        .collect(Collectors.toList())
-        );
+        List<String> additionalFiles = runtimePlugins.stream()
+            .map(plugin -> plugin.writeAdditionalFiles(context))
+            .flatMap(List::stream)
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
         additionalFiles.sort(String::compareTo);
 
         write(writer -> {
@@ -189,7 +180,8 @@ public class ClientGenerator extends RubyGeneratorBase {
     private void renderOperation(RubyCodeWriter writer, OperationShape operation) {
         Shape inputShape = model.expectShape(operation.getInputShape());
         Shape outputShape = model.expectShape(operation.getOutputShape());
-        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        String classOperationName = symbolProvider.toSymbol(operation).getName();
+        String operationName = RubyFormatter.toSnakeCase(classOperationName);
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
 
         writer
@@ -207,11 +199,10 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .write("config = operation_config(options)")
-                .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
-                .call(() -> middlewareBuilder
-                        .render(writer, context, operation))
+                .write("stack = $L::Middleware::$L.build(config, @stubs)",
+                        settings.getModule(), classOperationName)
                 .openBlock("context = $T.new(", Hearth.CONTEXT)
                 .write("request: $L,",
                         context.applicationTransport().getRequest()
