@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'stubs'
-
 module Hearth
   # This module provides the ability to specify the data and/or errors to
   # return when a client is using stubbed responses.
@@ -119,7 +117,7 @@ module Hearth
     #   `:stub_responses => true`.
     def stub_responses(operation_name, *stubs)
       if @config.stub_responses
-        @stubs.add_stubs(operation_name, stubs.flatten)
+        @config.stubs.add_stubs(operation_name, stubs.flatten)
       else
         msg = 'Stubbing is not enabled. Enable stubbing in Config ' \
               'with `stub_responses: true`'
