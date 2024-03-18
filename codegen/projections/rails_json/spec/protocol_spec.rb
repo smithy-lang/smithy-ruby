@@ -1881,7 +1881,7 @@ module RailsJson
         end
 
         # Tests requests with string list header bindings that require quoting
-        it 'RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
+        it 'RailsJsonInputAndOutputWithQuotedStringHeaders' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['X-StringList'] = '"b,c", "\"def\"", a'
@@ -2015,7 +2015,7 @@ module RailsJson
         end
 
         # Tests requests with string list header bindings that require quoting
-        it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
+        it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end

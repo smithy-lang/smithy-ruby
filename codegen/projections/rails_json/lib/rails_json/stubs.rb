@@ -856,7 +856,7 @@ module RailsJson
         unless stub[:header_timestamp_list].nil? || stub[:header_timestamp_list].empty?
           http_resp.headers['X-TimestampList'] = stub[:header_timestamp_list]
             .compact
-            .map { |s| Hearth::TimeHelper.to_date_time(s) }
+            .map { |s| Hearth::TimeHelper.to_http_date(s) }
             .join(', ')
         end
         http_resp.headers['X-Enum'] = stub[:header_enum] unless stub[:header_enum].nil? || stub[:header_enum].empty?
