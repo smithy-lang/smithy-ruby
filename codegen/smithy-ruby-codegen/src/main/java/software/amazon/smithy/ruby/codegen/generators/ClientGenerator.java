@@ -119,7 +119,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .openBlock("class Client")
                     .write("include $T\n", Hearth.CLIENT_STUBS)
                     .write("def self.plugins: () -> Hearth::PluginList\n")
-                    .write("def initialize: (?Config, ?::Hash[::Symbol, untyped] options) -> void\n")
+                    .write("def initialize: (?::Hash[::Symbol, untyped] options) -> void\n")
                     .write("attr_reader config: Config")
                     .write("")
                     .call(() -> renderRbsOperations(writer))

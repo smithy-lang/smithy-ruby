@@ -13,7 +13,7 @@ module WhiteLabel
 
     def self.plugins: () -> Hearth::PluginList
 
-    def initialize: (?Config, ?::Hash[::Symbol, untyped] options) -> void
+    def initialize: (?::Hash[::Symbol, untyped] options) -> void
 
     attr_reader config: Config
 
