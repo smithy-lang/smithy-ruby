@@ -32,6 +32,11 @@ public final class Hearth {
             .name("Context")
             .build();
 
+    public static final Symbol OUTPUT = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("Output")
+            .build();
+
     public static final Symbol CONFIGURATION = Symbol.builder()
             .namespace("Hearth", "::")
             .name("Configuration")

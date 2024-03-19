@@ -38,7 +38,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ApiKeyAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.api_key_auth()
     # @example Response structure
@@ -71,7 +71,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::BasicAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.basic_auth()
     # @example Response structure
@@ -104,7 +104,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::BearerAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.bearer_auth()
     # @example Response structure
@@ -138,7 +138,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::CreateHighScoreOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.create_high_score(
     #     high_score: {
@@ -184,7 +184,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DeleteHighScoreOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.delete_high_score(
     #     id: 'id' # required
@@ -219,7 +219,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DigestAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.digest_auth()
     # @example Response structure
@@ -253,7 +253,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GetHighScoreOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.get_high_score(
     #     id: 'id' # required
@@ -295,7 +295,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ListHighScoresOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.list_high_scores()
     # @example Response structure
@@ -336,7 +336,7 @@ module HighScoreService
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::UpdateHighScoreOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.update_high_score(
     #     id: 'id', # required

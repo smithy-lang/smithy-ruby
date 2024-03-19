@@ -38,7 +38,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::AllQueryStringTypesOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.all_query_string_types(
     #     query_string: 'queryString',
@@ -112,7 +112,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ConstantAndVariableQueryStringOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.constant_and_variable_query_string(
     #     baz: 'baz',
@@ -152,7 +152,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ConstantQueryStringOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.constant_query_string(
     #     hello: 'hello' # required
@@ -188,7 +188,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DocumentTypeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.document_type(
     #     string_value: 'stringValue',
@@ -234,7 +234,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DocumentTypeAsPayloadOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.document_type_as_payload(
     #     document_value: {
@@ -277,7 +277,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EmptyOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.empty_operation()
     # @example Response structure
@@ -310,7 +310,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_operation()
     # @example Response structure
@@ -343,7 +343,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointWithHostLabelOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
@@ -386,7 +386,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GreetingWithErrorsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.greeting_with_errors()
     # @example Response structure
@@ -424,7 +424,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPayloadTraitsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_payload_traits(
     #     foo: 'foo',
@@ -464,7 +464,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPayloadTraitsWithMediaTypeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_payload_traits_with_media_type(
     #     foo: 'foo',
@@ -506,7 +506,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPayloadWithStructureOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_payload_with_structure(
     #     nested: {
@@ -549,7 +549,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPrefixHeadersOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_prefix_headers(
     #     foo: 'foo',
@@ -591,7 +591,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPrefixHeadersInResponseOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_prefix_headers_in_response()
     # @example Response structure
@@ -626,7 +626,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithFloatLabelsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_float_labels(
     #     float: 1.0, # required
@@ -662,7 +662,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithGreedyLabelInPathOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_greedy_label_in_path(
     #     foo: 'foo', # required
@@ -700,7 +700,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithLabelsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_labels(
     #     string: 'string', # required
@@ -744,7 +744,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithLabelsAndTimestampFormatOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_labels_and_timestamp_format(
     #     member_epoch_seconds: Time.now, # required
@@ -785,7 +785,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpResponseCodeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_response_code()
     # @example Response structure
@@ -822,7 +822,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::IgnoreQueryParamsInResponseOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.ignore_query_params_in_response()
     # @example Response structure
@@ -858,7 +858,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::InputAndOutputWithHeadersOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.input_and_output_with_headers(
     #     header_string: 'headerString',
@@ -943,7 +943,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::JsonEnumsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.json_enums(
     #     foo_enum1: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
@@ -999,7 +999,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::JsonMapsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.json_maps(
     #     dense_struct_map: {
@@ -1082,7 +1082,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::JsonUnionsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.json_unions(
     #     contents: {
@@ -1152,7 +1152,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::KitchenSinkOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.kitchen_sink_operation(
     #     blob: 'Blob',
@@ -1294,7 +1294,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::MediaTypeHeaderOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.media_type_header(
     #     json: 'json'
@@ -1330,7 +1330,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NestedAttributesOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.nested_attributes_operation(
     #     simple_struct: {
@@ -1370,7 +1370,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NullAndEmptyHeadersClientOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.null_and_empty_headers_client(
     #     a: 'a',
@@ -1413,7 +1413,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NullOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.null_operation(
     #     string: 'string',
@@ -1460,7 +1460,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OmitsNullSerializesEmptyStringOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.omits_null_serializes_empty_string(
     #     null_value: 'nullValue',
@@ -1496,7 +1496,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OperationWithOptionalInputOutputOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation_with_optional_input_output(
     #     value: 'Value'
@@ -1534,7 +1534,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::QueryIdempotencyTokenAutoFillOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.query_idempotency_token_auto_fill(
     #     token: 'token'
@@ -1569,7 +1569,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::QueryParamsAsStringListMapOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.query_params_as_string_list_map(
     #     qux: 'qux',
@@ -1609,7 +1609,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::StreamingOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_operation(
     #     output: 'output'
@@ -1646,7 +1646,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::TimestampFormatHeadersOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.timestamp_format_headers(
     #     member_epoch_seconds: Time.now,
@@ -1694,7 +1694,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::Struct____789BadNameOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation____789_bad_name(
     #     member___123abc: '__123abc', # required
