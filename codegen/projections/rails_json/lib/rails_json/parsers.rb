@@ -397,8 +397,7 @@ module RailsJson
             .map { |s| s == 'true' }
         end
         unless http_resp.headers['X-TimestampList'].nil? || http_resp.headers['X-TimestampList'].empty?
-          data.header_timestamp_list = http_resp.headers['X-TimestampList']
-            .split(',').each_slice(2).map { |v| Time.parse(v[0] + v[1])}
+          data.header_timestamp_list = Hearth::Http::HeaderListParser.parse_http_date_list(http_resp.headers['X-TimestampList'])
         end
         data.header_enum = http_resp.headers['X-Enum']
         unless http_resp.headers['X-EnumList'].nil? || http_resp.headers['X-EnumList'].empty?

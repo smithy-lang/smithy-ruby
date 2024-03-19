@@ -388,22 +388,16 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
                                     .map((t) -> t.getFormat())
                                     .orElse(TimestampFormatTrait.Format.HTTP_DATE));
             switch (format) {
-                case EPOCH_SECONDS:
-                    splitByComma()
-                            .write(".map { |s| Time.at(s.to_f) }")
-                            .dedent();
-                    break;
                 case HTTP_DATE:
-                    // header default to rfc822/http-date, which has a comma after day
-                    writer.write("$1L$2L", dataSetter, valueGetter)
-                            .indent()
-                            .write(".split(',').each_slice(2).map { |v| Time.parse(v[0] + v[1])}")
-                            .dedent();
+                    // header timestamps default to rfc822/http-date, which has a comma after day
+                    writer.write("$1LHearth::Http::HeaderListParser.parse_http_date_list($2L)",
+                                    dataSetter, valueGetter);
                     break;
-                case DATE_TIME:
                 default:
                     splitByComma()
-                            .write(".map { |s| Time.parse(s) }")
+                            .write(".map { |s| $L }",
+                                    TimestampFormat.parseTimestamp(shape, memberShape, "s",
+                                            TimestampFormatTrait.Format.HTTP_DATE))
                             .dedent();
             }
             return null;

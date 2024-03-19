@@ -47,6 +47,20 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         }
     },
     {
+        id: "RailsJsonInputAndOutputWithQuotedStringHeaders",
+        documentation: "Tests requests with string list header bindings that require quoting",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
+        },
+        body: "",
+        params: {
+            headerStringList: ["b,c", "\"def\"", "a"]
+        }
+    },
+    {
         id: "RailsJsonInputAndOutputWithNumericHeaders",
         documentation: "Tests requests with numeric header bindings",
         protocol: railsJson,
@@ -88,6 +102,20 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerTrueBool: true,
             headerFalseBool: false,
             headerBooleanList: [true, false, true]
+        }
+    },
+    {
+        id: "RailsJsonInputAndOutputWithTimestampHeaders",
+        documentation: "Tests requests with timestamp header bindings",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+        },
+        body: "",
+        params: {
+            headerTimestampList: [1576540098, 1576540098]
         }
     },
     {
@@ -137,6 +165,18 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         body: "",
         params: {
             headerStringList: ["b,c", "\"def\"", "a"]
+        }
+    },
+    {
+        id: "RailsJsonInputAndOutputWithTimestampHeaders",
+        documentation: "Tests responses with timestamp header bindings",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+        },
+        params: {
+            headerTimestampList: [1576540098, 1576540098]
         }
     },
     {
