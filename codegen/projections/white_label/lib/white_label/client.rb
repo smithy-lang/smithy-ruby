@@ -54,7 +54,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::CustomAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.custom_auth()
     # @example Response structure
@@ -87,7 +87,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DataplaneOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.dataplane_operation()
     # @example Response structure
@@ -120,7 +120,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DefaultsTestOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.defaults_test(
     #     string: 'String',
@@ -205,7 +205,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_operation()
     # @example Response structure
@@ -238,7 +238,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationWithResourceOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_operation_with_resource(
     #     resource_url: 'resourceUrl' # required
@@ -273,7 +273,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointWithHostLabelOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
@@ -308,7 +308,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpApiKeyAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_api_key_auth()
     # @example Response structure
@@ -341,7 +341,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpBasicAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_basic_auth()
     # @example Response structure
@@ -374,7 +374,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpBearerAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_bearer_auth()
     # @example Response structure
@@ -407,7 +407,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpDigestAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_digest_auth()
     # @example Response structure
@@ -453,7 +453,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::KitchenSinkOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.kitchen_sink(
     #     string: 'String',
@@ -615,7 +615,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::MixinTestOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.mixin_test(
     #     user_id: 'userId'
@@ -652,7 +652,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NoAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.no_auth()
     # @example Response structure
@@ -685,7 +685,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OptionalAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.optional_auth()
     # @example Response structure
@@ -718,7 +718,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OrderedAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.ordered_auth()
     # @example Response structure
@@ -751,7 +751,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::PaginatorsTestOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.paginators_test(
     #     next_token: 'nextToken'
@@ -789,7 +789,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::PaginatorsTestWithItemsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.paginators_test_with_items(
     #     next_token: 'nextToken'
@@ -827,7 +827,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RelativeMiddlewareOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.relative_middleware_operation()
     # @example Response structure
@@ -860,7 +860,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RequestCompressionOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.request_compression_operation(
     #     body: 'body'
@@ -895,7 +895,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RequestCompressionStreamingOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.request_compression_streaming_operation(
     #     body: 'body'
@@ -930,7 +930,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::StreamingOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_operation(
     #     stream: 'stream'
@@ -966,7 +966,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::StreamingWithLengthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_with_length(
     #     stream: 'stream'
@@ -1001,7 +1001,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::WaitersTestOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.waiters_test(
     #     status: 'Status'
@@ -1037,7 +1037,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::Struct____PaginatorsTestWithBadNamesOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation____paginators_test_with_bad_names(
     #     member___next_token: '__nextToken'

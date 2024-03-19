@@ -38,7 +38,7 @@ module Weather
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GetCityOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.get_city(
     #     city_id: 'cityId' # required
@@ -82,7 +82,7 @@ module Weather
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GetCityImageOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.get_city_image(
     #     city_id: 'cityId', # required
@@ -127,7 +127,7 @@ module Weather
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GetCurrentTimeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.get_current_time()
     # @example Response structure
@@ -161,7 +161,7 @@ module Weather
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GetForecastOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.get_forecast(
     #     city_id: 'cityId' # required
@@ -212,7 +212,7 @@ module Weather
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ListCitiesOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.list_cities(
     #     next_token: 'nextToken',
@@ -268,7 +268,7 @@ module Weather
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::Struct____789BadNameOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation____789_bad_name(
     #     member___123abc: '__123abc', # required
