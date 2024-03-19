@@ -381,14 +381,10 @@ module RailsJson
         data.header_true_bool = http_resp.headers['X-Boolean1'] == 'true' unless http_resp.headers['X-Boolean1'].nil?
         data.header_false_bool = http_resp.headers['X-Boolean2'] == 'true' unless http_resp.headers['X-Boolean2'].nil?
         unless http_resp.headers['X-StringList'].nil? || http_resp.headers['X-StringList'].empty?
-          data.header_string_list = http_resp.headers['X-StringList']
-            .split(', ')
-            .map { |s| s.to_s }
+          data.header_string_list = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-StringList'])
         end
         unless http_resp.headers['X-StringSet'].nil? || http_resp.headers['X-StringSet'].empty?
-          data.header_string_set = http_resp.headers['X-StringSet']
-            .split(', ')
-            .map { |s| s.to_s }
+          data.header_string_set = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-StringSet'])
         end
         unless http_resp.headers['X-IntegerList'].nil? || http_resp.headers['X-IntegerList'].empty?
           data.header_integer_list = http_resp.headers['X-IntegerList']
@@ -401,15 +397,11 @@ module RailsJson
             .map { |s| s == 'true' }
         end
         unless http_resp.headers['X-TimestampList'].nil? || http_resp.headers['X-TimestampList'].empty?
-          data.header_timestamp_list = http_resp.headers['X-TimestampList']
-            .split(', ')
-            .map { |s| Time.parse(s) }
+          data.header_timestamp_list = Hearth::Http::HeaderListParser.parse_http_date_list(http_resp.headers['X-TimestampList'])
         end
         data.header_enum = http_resp.headers['X-Enum']
         unless http_resp.headers['X-EnumList'].nil? || http_resp.headers['X-EnumList'].empty?
-          data.header_enum_list = http_resp.headers['X-EnumList']
-            .split(', ')
-            .map { |s| s.to_s }
+          data.header_enum_list = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-EnumList'])
         end
         map = Hearth::JSON.load(http_resp.body)
         data
@@ -712,9 +704,7 @@ module RailsJson
         data.a = http_resp.headers['X-A']
         data.b = http_resp.headers['X-B']
         unless http_resp.headers['X-C'].nil? || http_resp.headers['X-C'].empty?
-          data.c = http_resp.headers['X-C']
-            .split(', ')
-            .map { |s| s.to_s }
+          data.c = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-C'])
         end
         map = Hearth::JSON.load(http_resp.body)
         data
