@@ -323,7 +323,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
             writer.write("$1L$2L unless $3L.nil?",
                     dataSetter,
                     TimestampFormat.serializeTimestamp(
-                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.DATE_TIME, false),
+                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.HTTP_DATE, false),
                     inputGetter);
             return null;
         }
@@ -387,7 +387,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         public Void timestampShape(TimestampShape shape) {
             writer.write(".map { |s| $L }",
                     TimestampFormat.serializeTimestamp(
-                            shape, memberShape, "s", TimestampFormatTrait.Format.DATE_TIME, true));
+                            shape, memberShape, "s", TimestampFormatTrait.Format.HTTP_DATE, true));
             return null;
         }
     }
