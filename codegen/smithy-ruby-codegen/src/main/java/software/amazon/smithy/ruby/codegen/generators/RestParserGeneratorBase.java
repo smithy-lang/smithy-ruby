@@ -397,7 +397,7 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
                     splitByComma()
                             .write(".map { |s| $L }",
                                     TimestampFormat.parseTimestamp(shape, memberShape, "s",
-                                            TimestampFormatTrait.Format.HTTP_DATE))
+                                            null)) //default HTTP_DATE case is handled above
                             .dedent();
             }
             return null;
