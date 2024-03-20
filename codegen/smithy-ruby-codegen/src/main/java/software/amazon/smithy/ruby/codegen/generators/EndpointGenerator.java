@@ -410,7 +410,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 return "(" + RubyFormatter.toSnakeCase(c.getResult().get().getName().getValue())
                         + " = " + c.getFunction().accept(new RubyExpressionVisitor(context)) + ")";
             } else {
-                return "(" + c.getFunction().accept(new RubyExpressionVisitor(context)) + ")";
+                return c.getFunction().accept(new RubyExpressionVisitor(context));
             }
         }).collect(Collectors.joining(" && "));
         writer.write("if $L", condition);

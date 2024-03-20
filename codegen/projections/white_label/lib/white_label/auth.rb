@@ -147,7 +147,9 @@ module WhiteLabel
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpBearerAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpDigestAuth')
           options << Hearth::AuthOption.new(scheme_id: 'smithy.ruby.tests#httpCustomAuth', signer_properties: { static_value: 'static', model_value: 'signer' }, identity_properties: { static_value: 'static', model_value: 'identity' })
+        else nil
         end
+        options
       end
 
     end
