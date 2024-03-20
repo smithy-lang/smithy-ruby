@@ -180,7 +180,10 @@ public class AuthGenerator extends RubyGeneratorBase {
                         for (OperationShape operation : operations) {
                             renderOperationAuthOptionsCase(writer, operation);
                         }
-                        writer.write("end");
+                        writer
+                                .write("else nil")
+                                .write("end")
+                                .write("options");
                     }
                 })
                 .closeBlock("end")

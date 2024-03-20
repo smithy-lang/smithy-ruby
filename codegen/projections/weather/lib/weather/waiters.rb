@@ -25,8 +25,8 @@ module Weather
         @client = client
         @waiter = Hearth::Waiters::Waiter.new({
           max_wait_time: options[:max_wait_time],
-          min_delay: 2 || options[:min_delay],
-          max_delay: 120 || options[:max_delay],
+          min_delay: options[:min_delay] || 2,
+          max_delay: options[:max_delay] || 120,
           poller: Hearth::Waiters::Poller.new(
             operation_name: :get_city,
             acceptors: [
@@ -102,8 +102,8 @@ module Weather
         @client = client
         @waiter = Hearth::Waiters::Waiter.new({
           max_wait_time: options[:max_wait_time],
-          min_delay: 2 || options[:min_delay],
-          max_delay: 120 || options[:max_delay],
+          min_delay: options[:min_delay] || 2,
+          max_delay: options[:max_delay] || 120,
           poller: Hearth::Waiters::Poller.new(
             operation_name: :list_cities,
             acceptors: [

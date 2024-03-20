@@ -20,7 +20,7 @@ module RailsJson
       def resolve_endpoint(params)
         endpoint = params.endpoint
 
-        if (endpoint != nil)
+        if endpoint != nil
           return Hearth::EndpointRules::Endpoint.new(uri: endpoint)
         end
         raise ArgumentError, "Endpoint is not set - you must configure an endpoint."

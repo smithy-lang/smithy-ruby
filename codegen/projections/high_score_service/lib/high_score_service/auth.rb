@@ -42,7 +42,9 @@ module HighScoreService
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :update_high_score
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
+        else nil
         end
+        options
       end
 
     end
