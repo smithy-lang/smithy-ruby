@@ -11,7 +11,7 @@ module Hearth
       end
 
       let(:debug_output) { false }
-      let(:logger) { double('logger') }
+      let(:logger) { nil }
       let(:proxy) { nil }
       let(:ssl_timeout) { nil }
       let(:verify_peer) { false }
@@ -356,6 +356,21 @@ module Hearth
               response: response,
               logger: request_logger
             )
+          end
+
+          context 'client logger is set' do
+            let(:logger) { double('logger') }
+
+            it 'sets the client logger on debug_output with precedence' do
+              stub_request(:any, uri.to_s)
+              expect_any_instance_of(Net::HTTP)
+                .to receive(:set_debug_output).with(logger)
+              subject.transmit(
+                request: request,
+                response: response,
+                logger: request_logger
+              )
+            end
           end
         end
 
