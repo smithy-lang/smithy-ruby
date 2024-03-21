@@ -99,7 +99,7 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
                 .write("when 508 then 'LoopDetectedError'")
                 .write("when 510 then 'NotExtendedError'")
                 .write("when 511 then 'NetworkAuthenticationRequiredError'")
-                .write("else 'UnknownError'")
+                .write("else nil")
                 // end
                 .write("end");
     }
