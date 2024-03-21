@@ -2,6 +2,7 @@ module Hearth
   module Configuration
     def initialize: (**Hash[Symbol, untyped] options) -> void
 
-    def dup: () -> Hearth::Configuration
+    def merge: (Hash[Symbol, untyped] configuration) -> Configuration
+    def dup: () -> Configuration
   end
 end

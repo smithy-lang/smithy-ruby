@@ -63,3 +63,7 @@ interface _ErrorInspector
 
   def hints: () -> Hash[Symbol, untyped]
 end
+
+interface _WritableIO
+  def write: (*_ToS) -> Integer
+end

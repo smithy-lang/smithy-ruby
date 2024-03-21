@@ -86,5 +86,23 @@ public class ModuleGenerator {
                 .closeBlock("end");
         });
         LOGGER.fine("Wrote module file to " + fileName);
+
+        renderRbs();
+    }
+
+    /**
+     * Render/generate the RBS types for the module.
+     */
+    private void renderRbs() {
+        String fileName =
+                settings.getGemName() + "/sig/" + settings.getGemName() + ".rbs";
+
+        context.writerDelegator().useFileWriter(fileName, settings.getModule(), writer -> {
+            writer
+                    .preamble()
+                    .openBlock("module $L", settings.getModule())
+                    .write("VERSION: ::String")
+                    .closeBlock("end");
+        });
     }
 }

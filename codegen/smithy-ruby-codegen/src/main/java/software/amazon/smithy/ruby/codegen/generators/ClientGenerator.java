@@ -250,7 +250,8 @@ public class ClientGenerator extends RubyGeneratorBase {
         if (isStreaming) {
             writer.writeInline("?{ (::String) -> Hearth::BlockIO }");
         }
-        writer.write("-> Hearth::Output");
+        writer.write("-> Hearth::Output[Types::$L]",
+                symbolProvider.toSymbol(outputShape).getName());
     }
 
     private void renderInitializeConfigMethod(RubyCodeWriter writer) {
