@@ -130,7 +130,6 @@ module Hearth
       end
 
       # Starts and returns a new HTTP connection.
-      # @param [URI] endpoint
       # @return [Net::HTTP]
       def new_connection(endpoint, logger)
         http = create_http(endpoint)
