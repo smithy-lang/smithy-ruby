@@ -11,7 +11,7 @@ module Hearth
     class Client
       # @api private
       OPTIONS = {
-        logger: Logger.new($stdout),
+        logger: nil,
         debug_output: nil,
         proxy: nil,
         open_timeout: 15,
@@ -31,12 +31,11 @@ module Hearth
       #
       # @param [Hash] options The options for this HTTP Client
       #
-      # @option options [Logger] :logger (Logger.new($stdout)) A logger
-      #   used to log Net::HTTP requests and responses when `:debug_output`
-      #   is enabled.
+      # @option options [Logger] :logger (nil) A logger used to log Net::HTTP
+      #   requests and responses when `:debug_output` is enabled.
       #
       # @option options [Boolean] :debug_output (false) When `true`,
-      #   sets an output stream to the configured Logger for debugging.
+      #   sets an output stream to the configured Logger (if any) for debugging.
       #
       # @option options [String, URI] :proxy A proxy to send
       #   requests through. Formatted like 'http://proxy.com:123'.
@@ -135,7 +134,7 @@ module Hearth
       # @return [Net::HTTP]
       def new_connection(endpoint, logger)
         http = create_http(endpoint)
-        http.set_debug_output(logger || @logger) if @debug_output
+        http.set_debug_output(@logger || logger) if @debug_output
         configure_timeouts(http)
 
         if endpoint.scheme == 'https'
