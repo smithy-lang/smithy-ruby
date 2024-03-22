@@ -39,12 +39,12 @@ public final class HttpApiKeyAuthSchemeFactory {
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_api_key_identity_resolver")
-                .type(Hearth.IDENTITY_RESOLVER.toString())
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpApiKeyAuthTrait.ID))
+                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .build();

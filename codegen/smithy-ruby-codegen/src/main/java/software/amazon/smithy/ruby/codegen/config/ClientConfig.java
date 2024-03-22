@@ -42,8 +42,8 @@ public class ClientConfig {
     public ClientConfig(Builder builder) {
         this.name = builder.name;
         this.documentation = builder.documentation;
-        this.documentationType = builder.documentationType != null ? builder.documentationType : builder.type;
-        this.rbsType = builder.rbsType != null ? builder.rbsType : builder.type;
+        this.documentationType = builder.documentationType;
+        this.rbsType = builder.rbsType != null ? builder.rbsType : builder.documentationType;
         if (builder.defaults != null) {
             this.defaults = builder.defaults;
         } else {
@@ -154,10 +154,9 @@ public class ClientConfig {
      */
     public static class Builder implements SmithyBuilder<ClientConfig> {
         private String name;
-        private String type;
         private String documentation;
-        private String documentationDefaultValue;
         private String documentationType;
+        private String documentationDefaultValue;
         private String rbsType;
         private ConfigDefaults defaults;
         private final List<ConfigConstraint> constraints;
@@ -176,29 +175,11 @@ public class ClientConfig {
         }
 
         /**
-         * @param type ruby type for the config.  Used for validation, must be a valid Ruby class.
-         * @return this builder.
-         */
-        public Builder type(String type) {
-            this.type = type;
-            return this;
-        }
-
-        /**
          * @param documentation documentation for the config option.
          * @return this builder.
          */
         public Builder documentation(String documentation) {
             this.documentation = documentation;
-            return this;
-        }
-
-        /**
-         * @param defaultValue an optional default value to be use in documentation.
-         * @return this builder
-         */
-        public Builder documentationDefaultValue(String defaultValue) {
-            this.documentationDefaultValue = defaultValue;
             return this;
         }
 
@@ -209,6 +190,15 @@ public class ClientConfig {
          */
         public Builder documentationType(String type) {
             this.documentationType = type;
+            return this;
+        }
+
+        /**
+         * @param defaultValue an optional default value to be use in documentation.
+         * @return this builder
+         */
+        public Builder documentationDefaultValue(String defaultValue) {
+            this.documentationDefaultValue = defaultValue;
             return this;
         }
 

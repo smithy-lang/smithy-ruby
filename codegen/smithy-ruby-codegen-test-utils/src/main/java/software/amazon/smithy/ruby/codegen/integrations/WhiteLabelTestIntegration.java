@@ -53,8 +53,8 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .klass("Middleware::TestMiddleware")
                 .addConfig(ClientConfig.builder()
                         .name("test_config")
-                        .type("String")
                         .documentation("A Test Config")
+                        .documentationType("String")
                         .defaultValue("'default'")
                         .build())
                 .step(MiddlewareStackStep.INITIALIZE)
@@ -108,12 +108,12 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_custom_auth_identity_resolver")
-                .type(Hearth.IDENTITY_RESOLVER.toString())
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpBasicAuthTrait.ID))
+                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
 

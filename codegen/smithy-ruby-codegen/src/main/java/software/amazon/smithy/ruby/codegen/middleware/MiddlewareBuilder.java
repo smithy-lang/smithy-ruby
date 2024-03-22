@@ -201,9 +201,9 @@ public class MiddlewareBuilder {
     private Collection<? extends ClientConfig> getDefaultClientConfig() {
         ClientConfig logger = ClientConfig.builder()
                 .name("logger")
-                .type("Logger")
                 .defaultValue("Logger.new(IO::NULL)")
                 .documentation("The Logger instance to use for logging.")
+                .documentationType("Logger")
                 .documentationDefaultValue("Logger.new(IO::NULL)")
                 .constraint(new TypeConstraint("Logger"))
                 .build();
@@ -214,9 +214,9 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig plugins = ClientConfig.builder()
                 .name("plugins")
-                .type("Hearth::PluginList")
                 .defaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
+                .documentationType("Hearth::PluginList")
                 .documentationDefaultValue("Hearth::PluginList.new")
                 .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
@@ -232,9 +232,9 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig interceptors = ClientConfig.builder()
                 .name("interceptors")
-                .type("Hearth::InterceptorList")
                 .defaultValue("Hearth::InterceptorList.new")
                 .documentation(interceptorDocumentation)
+                .documentationType("Hearth::InterceptorList")
                 .documentationDefaultValue("Hearth::InterceptorList.new")
                 .constraint(new TypeConstraint("Hearth::InterceptorList"))
                 .build();

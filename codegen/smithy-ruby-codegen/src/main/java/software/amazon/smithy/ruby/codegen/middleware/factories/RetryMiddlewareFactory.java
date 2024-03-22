@@ -44,9 +44,9 @@ public final class RetryMiddlewareFactory {
             + "#refresh_retry_token(retry_token, error_info),#record_success(retry_token)";
         ClientConfig retryStrategy = ClientConfig.builder()
                 .name("retry_strategy")
-                .type(retryStrategyTypes)
                 .defaultValue("Hearth::Retry::Standard.new")
                 .documentation(retryStrategyDocumentation)
+                .documentationType(retryStrategyTypes)
                 .documentationDefaultValue("Hearth::Retry::Standard.new")
                 .constraint(
                         new RespondsToConstraint(

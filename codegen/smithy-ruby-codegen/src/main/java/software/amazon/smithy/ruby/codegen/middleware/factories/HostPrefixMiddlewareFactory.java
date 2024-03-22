@@ -37,10 +37,10 @@ public final class HostPrefixMiddlewareFactory {
                 """;
         ClientConfig disableHostPrefix = ClientConfig.builder()
                 .name("disable_host_prefix")
-                .type("Boolean")
-                .rbsType("bool")
                 .defaultValue("false")
                 .documentation(hostPrefixDocumentation)
+                .documentationType("Boolean")
+                .rbsType("bool")
                 .constraint(new TypeConstraint("Boolean"))
                 .build();
 

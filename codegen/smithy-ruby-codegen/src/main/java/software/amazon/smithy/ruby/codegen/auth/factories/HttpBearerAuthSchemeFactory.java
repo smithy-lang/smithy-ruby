@@ -37,12 +37,12 @@ public final class HttpBearerAuthSchemeFactory {
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_bearer_identity_resolver")
-                .type(Hearth.IDENTITY_RESOLVER.toString())
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpBearerAuthTrait.ID))
+                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .build();

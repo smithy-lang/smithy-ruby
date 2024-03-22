@@ -36,9 +36,9 @@ public final class EndpointMiddlewareFactory {
                 """;
         ClientConfig endpointProviderConfig = ClientConfig.builder()
                 .name("endpoint_provider")
-                .type("#resolve(params)")
                 .defaultValue("Endpoint::Provider.new")
                 .documentation(endpointProviderDocumentation)
+                .documentationType("#resolve(params)")
                 .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();
 

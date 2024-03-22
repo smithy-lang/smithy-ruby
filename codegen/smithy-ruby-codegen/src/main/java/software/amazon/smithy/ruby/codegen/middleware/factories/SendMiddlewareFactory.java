@@ -40,10 +40,10 @@ public final class SendMiddlewareFactory {
                 """;
         ClientConfig stubResponses = ClientConfig.builder()
                 .name("stub_responses")
-                .type("Boolean")
-                .rbsType("bool")
                 .defaultValue("false")
                 .documentation(stubResponsesDocumentation)
+                .documentationType("Boolean")
+                .rbsType("bool")
                 .constraint(new TypeConstraint("Boolean"))
                 .build();
 

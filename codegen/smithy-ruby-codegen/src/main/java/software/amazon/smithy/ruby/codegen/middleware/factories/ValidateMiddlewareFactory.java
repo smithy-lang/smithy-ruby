@@ -39,10 +39,10 @@ public final class ValidateMiddlewareFactory {
                 """;
         ClientConfig validateInput = ClientConfig.builder()
                 .name("validate_input")
-                .type("Boolean")
                 .rbsType("bool")
                 .defaultValue("true")
                 .documentation(validateInputDocumentation)
+                .documentationType("Boolean")
                 .constraint(new TypeConstraint("Boolean"))
                 .build();
 

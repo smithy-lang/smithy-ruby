@@ -38,12 +38,12 @@ public final class HttpBasicAuthSchemeFactory {
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_login_identity_resolver")
-                .type(Hearth.IDENTITY_RESOLVER.toString())
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpBasicAuthTrait.ID))
+                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .build();

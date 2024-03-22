@@ -41,10 +41,10 @@ public final class RequestCompressionMiddlewareFactory {
                 """;
         ClientConfig disableRequestCompression = ClientConfig.builder()
                 .name("disable_request_compression")
-                .type("Boolean")
-                .rbsType("bool")
                 .defaultValue("false")
                 .documentation(disableRequestCompressionDocumentation)
+                .documentationType("Boolean")
+                .rbsType("bool")
                 .constraint(new TypeConstraint("Boolean"))
                 .build();
 
@@ -54,9 +54,9 @@ public final class RequestCompressionMiddlewareFactory {
                 """;
         ClientConfig requestMinCompressionSizeBytes = ClientConfig.builder()
                 .name("request_min_compression_size_bytes")
-                .type("Integer")
                 .defaultValue("10240")
                 .documentation(minCompressionDocumentation)
+                .documentationType("Integer")
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();
 

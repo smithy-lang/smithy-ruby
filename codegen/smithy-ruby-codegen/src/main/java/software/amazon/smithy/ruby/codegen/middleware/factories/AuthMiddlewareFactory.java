@@ -130,9 +130,9 @@ public final class AuthMiddlewareFactory {
                 """.formatted(Hearth.AUTH_OPTION);
         return ClientConfig.builder()
                 .name("auth_resolver")
-                .type("#resolve(params)")
                 .defaultValue("Auth::Resolver.new")
                 .documentation(authResolverDocumentation)
+                .documentationType("#resolve(params)")
                 .documentationDefaultValue("Auth::Resolver.new")
                 .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();
@@ -146,7 +146,6 @@ public final class AuthMiddlewareFactory {
                 """.formatted(Hearth.AUTH_SCHEMES + "::Base", Hearth.IDENTITY_RESOLVER);
         return ClientConfig.builder()
                 .name("auth_schemes")
-                .type("Array")
                 .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .defaultValue("Auth::SCHEMES")
                 .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
