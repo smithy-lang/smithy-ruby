@@ -68,6 +68,40 @@ module Hearth
       end
     end
 
+    describe '.validate_responds_to!' do
+      context 'value responds to the method' do
+        let(:params) { { foo: '' } }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_responds_to!(
+              input[:foo],
+              :empty?,
+              context: context
+            )
+          end.to_not raise_error
+        end
+      end
+
+      context 'value does not respond to the method' do
+        let(:params) { { foo: '' } }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_responds_to!(
+              input[:foo],
+              :non_existent_method,
+              context: context
+            )
+          end.to raise_error(
+            ArgumentError,
+            "Expected #{context} to respond to " \
+            '[non_existent_method], got String.'
+          )
+        end
+      end
+    end
+
     describe '.validate_types!' do
       context 'value is the type' do
         let(:params) { { foo: 'bar' } }

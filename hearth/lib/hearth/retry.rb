@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'retry/strategy'
-
 require_relative 'retry/adaptive'
 require_relative 'retry/capacity_not_available_error'
 require_relative 'retry/client_rate_limiter'
