@@ -181,7 +181,6 @@ public class ClientConfig {
          */
         public Builder type(String type) {
             this.type = type;
-            this.constraints.add(0, new TypeConstraint(type));
             return this;
         }
 

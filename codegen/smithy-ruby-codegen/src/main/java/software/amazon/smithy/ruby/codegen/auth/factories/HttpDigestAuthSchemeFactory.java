@@ -19,6 +19,7 @@ import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 
 public final class HttpDigestAuthSchemeFactory {
     private HttpDigestAuthSchemeFactory() {
@@ -44,6 +45,7 @@ public final class HttpDigestAuthSchemeFactory {
                                 identityType,
                                 HttpDigestAuthTrait.ID))
                 .defaultDynamicValue(defaultConfigValue)
+                .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .build();
 
         return AuthScheme.builder()

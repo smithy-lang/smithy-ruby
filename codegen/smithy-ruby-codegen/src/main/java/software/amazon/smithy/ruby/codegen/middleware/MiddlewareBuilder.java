@@ -32,6 +32,7 @@ import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
@@ -201,9 +202,10 @@ public class MiddlewareBuilder {
         ClientConfig logger = ClientConfig.builder()
                 .name("logger")
                 .type("Logger")
-                .documentationDefaultValue("Logger.new(IO::NULL)")
                 .defaultValue("Logger.new(IO::NULL)")
                 .documentation("The Logger instance to use for logging.")
+                .documentationDefaultValue("Logger.new(IO::NULL)")
+                .constraint(new TypeConstraint("Logger"))
                 .build();
 
         String pluginDocumentation = """
@@ -214,8 +216,9 @@ public class MiddlewareBuilder {
                 .name("plugins")
                 .type("Hearth::PluginList")
                 .defaultValue("Hearth::PluginList.new")
-                .documentationDefaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
+                .documentationDefaultValue("Hearth::PluginList.new")
+                .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
 
         String interceptorDocumentation = """
@@ -231,8 +234,9 @@ public class MiddlewareBuilder {
                 .name("interceptors")
                 .type("Hearth::InterceptorList")
                 .defaultValue("Hearth::InterceptorList.new")
-                .documentationDefaultValue("Hearth::InterceptorList.new")
                 .documentation(interceptorDocumentation)
+                .documentationDefaultValue("Hearth::InterceptorList.new")
+                .constraint(new TypeConstraint("Hearth::InterceptorList"))
                 .build();
 
         return Arrays.asList(logger, plugins, interceptors);

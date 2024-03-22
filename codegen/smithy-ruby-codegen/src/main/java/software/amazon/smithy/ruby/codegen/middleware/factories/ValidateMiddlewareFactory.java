@@ -23,6 +23,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -42,6 +43,7 @@ public final class ValidateMiddlewareFactory {
                 .rbsType("bool")
                 .defaultValue("true")
                 .documentation(validateInputDocumentation)
+                .constraint(new TypeConstraint("Boolean"))
                 .build();
 
         return Middleware.builder()

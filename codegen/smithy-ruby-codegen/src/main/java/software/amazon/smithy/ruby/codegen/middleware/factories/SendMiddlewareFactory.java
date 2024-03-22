@@ -23,6 +23,7 @@ import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -43,6 +44,7 @@ public final class SendMiddlewareFactory {
                 .rbsType("bool")
                 .defaultValue("false")
                 .documentation(stubResponsesDocumentation)
+                .constraint(new TypeConstraint("Boolean"))
                 .build();
 
         return Middleware.builder()

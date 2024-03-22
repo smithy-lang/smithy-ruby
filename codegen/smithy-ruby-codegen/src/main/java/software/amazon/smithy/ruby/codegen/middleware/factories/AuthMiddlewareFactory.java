@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +30,8 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.RespondsToConstraint;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -127,9 +130,11 @@ public final class AuthMiddlewareFactory {
                 """.formatted(Hearth.AUTH_OPTION);
         return ClientConfig.builder()
                 .name("auth_resolver")
-                .type("Auth::Resolver")
-                .documentation(authResolverDocumentation)
+                .type("#resolve(params)")
                 .defaultValue("Auth::Resolver.new")
+                .documentation(authResolverDocumentation)
+                .documentationDefaultValue("Auth::Resolver.new")
+                .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();
     }
 
@@ -142,10 +147,11 @@ public final class AuthMiddlewareFactory {
         return ClientConfig.builder()
                 .name("auth_schemes")
                 .type("Array")
-                .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
                 .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .defaultValue("Auth::SCHEMES")
+                .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
                 .documentation(authSchemesDocumentation)
+                .constraint(new TypeConstraint("Array"))
                 .build();
     }
 }
