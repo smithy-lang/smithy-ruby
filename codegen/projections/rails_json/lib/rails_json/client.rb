@@ -34,7 +34,7 @@ module RailsJson
     attr_reader :config
 
     # This example uses all query string types.
-    # @param [Hash] params
+    # @param [Hash | Types::AllQueryStringTypesInput] params
     #   Request parameters for this operation.
     #   See {Types::AllQueryStringTypesInput#initialize} for available parameters.
     # @param [Hash] options
@@ -148,7 +148,7 @@ module RailsJson
     # This example uses fixed query string params and variable query string params.
     # The fixed query string parameters and variable parameters must both be
     # serialized (implementations may need to merge them together).
-    # @param [Hash] params
+    # @param [Hash | Types::ConstantAndVariableQueryStringInput] params
     #   Request parameters for this operation.
     #   See {Types::ConstantAndVariableQueryStringInput#initialize} for available parameters.
     # @param [Hash] options
@@ -228,7 +228,7 @@ module RailsJson
     # This simply tests that labels and query string parameters are
     # compatible. The fixed query string parameter named "hello" should
     # in no way conflict with the label, `{hello}`.
-    # @param [Hash] params
+    # @param [Hash | Types::ConstantQueryStringInput] params
     #   Request parameters for this operation.
     #   See {Types::ConstantQueryStringInput#initialize} for available parameters.
     # @param [Hash] options
@@ -304,7 +304,7 @@ module RailsJson
     end
 
     # This example serializes a document as part of the payload.
-    # @param [Hash] params
+    # @param [Hash | Types::DocumentTypeInput] params
     #   Request parameters for this operation.
     #   See {Types::DocumentTypeInput#initialize} for available parameters.
     # @param [Hash] options
@@ -390,7 +390,7 @@ module RailsJson
     end
 
     # This example serializes a document as the entire HTTP payload.
-    # @param [Hash] params
+    # @param [Hash | Types::DocumentTypeAsPayloadInput] params
     #   Request parameters for this operation.
     #   See {Types::DocumentTypeAsPayloadInput#initialize} for available parameters.
     # @param [Hash] options
@@ -473,7 +473,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::EmptyOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::EmptyOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -546,7 +546,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::EndpointOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::EndpointOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -623,7 +623,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::EndpointWithHostLabelOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -710,7 +710,7 @@ module RailsJson
     #
     # Implementations must be able to successfully take a response and
     # properly deserialize successful and error responses.
-    # @param [Hash] params
+    # @param [Hash | Types::GreetingWithErrorsInput] params
     #   Request parameters for this operation.
     #   See {Types::GreetingWithErrorsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -788,7 +788,7 @@ module RailsJson
     #
     # In this example, no JSON document is synthesized because the payload is
     # not a structure or a union type.
-    # @param [Hash] params
+    # @param [Hash | Types::HttpPayloadTraitsInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpPayloadTraitsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -868,7 +868,7 @@ module RailsJson
 
     # This examples uses a `@mediaType` trait on the payload to force a custom
     # content-type to be serialized.
-    # @param [Hash] params
+    # @param [Hash | Types::HttpPayloadTraitsWithMediaTypeInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpPayloadTraitsWithMediaTypeInput#initialize} for available parameters.
     # @param [Hash] options
@@ -950,7 +950,7 @@ module RailsJson
     #
     # Note that serializing a structure changes the wrapper element name
     # to match the targeted structure.
-    # @param [Hash] params
+    # @param [Hash | Types::HttpPayloadWithStructureInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpPayloadWithStructureInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1033,7 +1033,7 @@ module RailsJson
 
     # This examples adds headers to the input of a request and response by prefix.
     # @see https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait httpPrefixHeaders Trait
-    # @param [Hash] params
+    # @param [Hash | Types::HttpPrefixHeadersInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpPrefixHeadersInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1115,7 +1115,7 @@ module RailsJson
     end
 
     # Clients that perform this test extract all headers from the response.
-    # @param [Hash] params
+    # @param [Hash | Types::HttpPrefixHeadersInResponseInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpPrefixHeadersInResponseInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1190,7 +1190,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpRequestWithFloatLabelsInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpRequestWithFloatLabelsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1266,7 +1266,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpRequestWithGreedyLabelInPathInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpRequestWithGreedyLabelInPathInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1344,7 +1344,7 @@ module RailsJson
 
     # The example tests how requests are serialized when there's no input
     # payload but there are HTTP labels.
-    # @param [Hash] params
+    # @param [Hash | Types::HttpRequestWithLabelsInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpRequestWithLabelsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1428,7 +1428,7 @@ module RailsJson
 
     # The example tests how requests serialize different timestamp formats in the
     # URI path.
-    # @param [Hash] params
+    # @param [Hash | Types::HttpRequestWithLabelsAndTimestampFormatInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpRequestWithLabelsAndTimestampFormatInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1509,7 +1509,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpResponseCodeInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpResponseCodeInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1586,7 +1586,7 @@ module RailsJson
     # This example ensures that query string bound request parameters are
     # serialized in the body of responses if the structure is used in both
     # the request and response.
-    # @param [Hash] params
+    # @param [Hash | Types::IgnoreQueryParamsInResponseInput] params
     #   Request parameters for this operation.
     #   See {Types::IgnoreQueryParamsInResponseInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1662,7 +1662,7 @@ module RailsJson
 
     # The example tests how requests and responses are serialized when there is
     # no input or output payload but there are HTTP header bindings.
-    # @param [Hash] params
+    # @param [Hash | Types::InputAndOutputWithHeadersInput] params
     #   Request parameters for this operation.
     #   See {Types::InputAndOutputWithHeadersInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1787,7 +1787,7 @@ module RailsJson
     end
 
     # This example serializes enums as top level properties, in lists, sets, and maps.
-    # @param [Hash] params
+    # @param [Hash | Types::JsonEnumsInput] params
     #   Request parameters for this operation.
     #   See {Types::JsonEnumsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1883,7 +1883,7 @@ module RailsJson
     end
 
     # The example tests basic map serialization.
-    # @param [Hash] params
+    # @param [Hash | Types::JsonMapsInput] params
     #   Request parameters for this operation.
     #   See {Types::JsonMapsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2006,7 +2006,7 @@ module RailsJson
     end
 
     # This operation uses unions for inputs and outputs.
-    # @param [Hash] params
+    # @param [Hash | Types::JsonUnionsInput] params
     #   Request parameters for this operation.
     #   See {Types::JsonUnionsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2116,7 +2116,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::KitchenSinkOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::KitchenSinkOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2298,7 +2298,7 @@ module RailsJson
     end
 
     # This example ensures that mediaType strings are base64 encoded in headers.
-    # @param [Hash] params
+    # @param [Hash | Types::MediaTypeHeaderInput] params
     #   Request parameters for this operation.
     #   See {Types::MediaTypeHeaderInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2374,7 +2374,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::NestedAttributesOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::NestedAttributesOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2454,7 +2454,7 @@ module RailsJson
 
     # Null and empty headers are not sent over the wire.
     # Tags: ["client-only"]
-    # @param [Hash] params
+    # @param [Hash | Types::NullAndEmptyHeadersClientInput] params
     #   Request parameters for this operation.
     #   See {Types::NullAndEmptyHeadersClientInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2537,7 +2537,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::NullOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::NullOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2624,7 +2624,7 @@ module RailsJson
     end
 
     # Omits null, but serializes empty string value.
-    # @param [Hash] params
+    # @param [Hash | Types::OmitsNullSerializesEmptyStringInput] params
     #   Request parameters for this operation.
     #   See {Types::OmitsNullSerializesEmptyStringInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2700,7 +2700,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::OperationWithOptionalInputOutputInput] params
     #   Request parameters for this operation.
     #   See {Types::OperationWithOptionalInputOutputInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2778,7 +2778,7 @@ module RailsJson
 
     # Automatically adds idempotency tokens.
     # Tags: ["client-only"]
-    # @param [Hash] params
+    # @param [Hash | Types::QueryIdempotencyTokenAutoFillInput] params
     #   Request parameters for this operation.
     #   See {Types::QueryIdempotencyTokenAutoFillInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2853,7 +2853,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::QueryParamsAsStringListMapInput] params
     #   Request parameters for this operation.
     #   See {Types::QueryParamsAsStringListMapInput#initialize} for available parameters.
     # @param [Hash] options
@@ -2933,7 +2933,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::StreamingOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::StreamingOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -3009,7 +3009,7 @@ module RailsJson
     end
 
     # This example tests how timestamp request and response headers are serialized.
-    # @param [Hash] params
+    # @param [Hash | Types::TimestampFormatHeadersInput] params
     #   Request parameters for this operation.
     #   See {Types::TimestampFormatHeadersInput#initialize} for available parameters.
     # @param [Hash] options
@@ -3097,7 +3097,7 @@ module RailsJson
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::Struct____789BadNameInput] params
     #   Request parameters for this operation.
     #   See {Types::Struct____789BadNameInput#initialize} for available parameters.
     # @param [Hash] options

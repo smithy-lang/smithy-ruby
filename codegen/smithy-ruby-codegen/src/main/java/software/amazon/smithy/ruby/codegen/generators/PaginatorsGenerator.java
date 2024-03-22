@@ -129,12 +129,13 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     }
 
     private void renderRbsPaginator(RubyCodeWriter writer, String operationName, PaginationInfo paginationInfo) {
+        String outputType = symbolProvider.toSymbol(paginationInfo.getOutput()).getName();
         writer
                 .write("")
                 .openBlock("class $L", operationName)
                 .write("def initialize: (Client, ?::Hash[::Symbol, untyped] params, "
                         + "?::Hash[::Symbol, untyped] options) -> void\n")
-                .write("def pages: () -> ::Enumerator[Hearth::Output, void]")
+                .write("def pages: () -> ::Enumerator[Hearth::Output[Types::$L], void]", outputType)
                 .call(() -> {
                     List<MemberShape> itemMembers = paginationInfo.getItemsMemberPath();
                     if (!itemMembers.isEmpty()) {

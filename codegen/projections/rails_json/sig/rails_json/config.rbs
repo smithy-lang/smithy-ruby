@@ -1,6 +1,6 @@
 module RailsJson
   class Config < ::Struct[untyped]
-    include Hearth::Configuration
+    include Hearth::Configuration[instance]
     attr_accessor auth_resolver (): Auth::Resolver
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
@@ -9,7 +9,7 @@ module RailsJson
     attr_accessor http_client (): Hearth::HTTP::Client
     attr_accessor interceptors (): Hearth::InterceptorList
     attr_accessor logger (): Logger
-    attr_accessor plugins (): Hearth::PluginList
+    attr_accessor plugins (): Hearth::PluginList[Config]
     attr_accessor retry_strategy (): Hearth::Retry::Strategy
     attr_accessor stub_responses (): bool
     attr_accessor validate_input (): bool

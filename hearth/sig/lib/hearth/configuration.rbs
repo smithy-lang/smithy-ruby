@@ -1,8 +1,7 @@
 module Hearth
-  module Configuration
+  module Configuration[T]
     def initialize: (**Hash[Symbol, untyped] options) -> void
 
-    def merge: (Hash[Symbol, untyped] configuration) -> Configuration
-    def dup: () -> Configuration
+    def merge: (Hash[Symbol, untyped] configuration) -> T
   end
 end

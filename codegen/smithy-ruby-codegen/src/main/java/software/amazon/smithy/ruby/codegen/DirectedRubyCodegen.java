@@ -164,7 +164,7 @@ public class DirectedRubyCodegen
         configGenerator.render();
         configGenerator.renderRbs();
 
-        ClientGenerator clientGenerator = new ClientGenerator(directive, middlewareBuilder);
+        ClientGenerator clientGenerator = new ClientGenerator(directive, middlewareBuilder, clientConfigList);
         clientGenerator.render();
         clientGenerator.renderRbs();
     }

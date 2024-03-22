@@ -34,7 +34,7 @@ module HighScoreService
     # @return [Config] config
     attr_reader :config
 
-    # @param [Hash] params
+    # @param [Hash | Types::ApiKeyAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::ApiKeyAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -110,7 +110,7 @@ module HighScoreService
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::BasicAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::BasicAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -186,7 +186,7 @@ module HighScoreService
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::BearerAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::BearerAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -263,7 +263,7 @@ module HighScoreService
     end
 
     # Create a new high score
-    # @param [Hash] params
+    # @param [Hash | Types::CreateHighScoreInput] params
     #   Request parameters for this operation.
     #   See {Types::CreateHighScoreInput#initialize} for available parameters.
     # @param [Hash] options
@@ -352,7 +352,7 @@ module HighScoreService
     end
 
     # Delete a high score
-    # @param [Hash] params
+    # @param [Hash | Types::DeleteHighScoreInput] params
     #   Request parameters for this operation.
     #   See {Types::DeleteHighScoreInput#initialize} for available parameters.
     # @param [Hash] options
@@ -430,7 +430,7 @@ module HighScoreService
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::DigestAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::DigestAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -507,7 +507,7 @@ module HighScoreService
     end
 
     # Get a high score
-    # @param [Hash] params
+    # @param [Hash | Types::GetHighScoreInput] params
     #   Request parameters for this operation.
     #   See {Types::GetHighScoreInput#initialize} for available parameters.
     # @param [Hash] options
@@ -592,7 +592,7 @@ module HighScoreService
     end
 
     # List all high scores
-    # @param [Hash] params
+    # @param [Hash | Types::ListHighScoresInput] params
     #   Request parameters for this operation.
     #   See {Types::ListHighScoresInput#initialize} for available parameters.
     # @param [Hash] options
@@ -676,7 +676,7 @@ module HighScoreService
     end
 
     # Update a high score
-    # @param [Hash] params
+    # @param [Hash | Types::UpdateHighScoreInput] params
     #   Request parameters for this operation.
     #   See {Types::UpdateHighScoreInput#initialize} for available parameters.
     # @param [Hash] options

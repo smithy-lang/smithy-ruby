@@ -11,18 +11,78 @@ module Weather
   class Client
     include Hearth::ClientStubs
 
-    def self.plugins: () -> Hearth::PluginList
+    def self.plugins: () -> Hearth::PluginList[Config]
 
-    def initialize: (?Config, ?::Hash[::Symbol, untyped] options) -> void
+    def initialize: (?::Hash[::Symbol, untyped] options) -> void |
+      (
+        ?auth_resolver: Auth::Resolver,
+        ?auth_schemes: Array[Hearth::AuthSchemes::Base],
+        ?disable_host_prefix: bool,
+        ?endpoint: String,
+        ?endpoint_provider: Endpoint::Provider,
+        ?http_client: Hearth::HTTP::Client,
+        ?interceptors: Hearth::InterceptorList,
+        ?logger: Logger,
+        ?plugins: Hearth::PluginList[Config],
+        ?retry_strategy: Hearth::Retry::Strategy,
+        ?stub_responses: bool,
+        ?validate_input: bool      ) -> void
 
     attr_reader config: Config
 
-    def get_city: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output[Types::GetCityOutput]
-    def get_city_announcements: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)?{ (::String) -> Hearth::BlockIO }-> Hearth::Output[Types::GetCityAnnouncementsOutput]
-    def get_city_image: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)?{ (::String) -> Hearth::BlockIO }-> Hearth::Output[Types::GetCityImageOutput]
-    def get_current_time: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output[Types::GetCurrentTimeOutput]
-    def get_forecast: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output[Types::GetForecastOutput]
-    def list_cities: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output[Types::ListCitiesOutput]
-    def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output[Types::Struct____789BadNameOutput]
+    def get_city: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCityOutput] |
+      (?Types::GetCityInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCityOutput] |
+      (
+        city_id: ::String
+      )  -> Hearth::Output[Types::GetCityOutput]
+
+    def get_city_announcements: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
+      (?Types::GetCityAnnouncementsInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
+      (
+        city_id: ::String
+      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput]
+
+    def get_city_image: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
+      (?Types::GetCityImageInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
+      (
+        city_id: ::String,
+        image_type: ImageType,
+        resolution: ::Integer
+      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput]
+
+    def get_current_time: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCurrentTimeOutput] |
+      (?Types::GetCurrentTimeInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCurrentTimeOutput] |
+      (
+
+      )  -> Hearth::Output[Types::GetCurrentTimeOutput]
+
+    def get_forecast: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetForecastOutput] |
+      (?Types::GetForecastInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetForecastOutput] |
+      (
+        city_id: ::String
+      )  -> Hearth::Output[Types::GetForecastOutput]
+
+    def list_cities: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListCitiesOutput] |
+      (?Types::ListCitiesInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListCitiesOutput] |
+      (
+        ?next_token: ::String,
+        ?a_string: ::String,
+        ?default_bool: bool,
+        ?boxed_bool: bool,
+        ?default_number: ::Integer,
+        ?boxed_number: ::Integer,
+        ?some_enum: ::String,
+        ?page_size: ::Integer
+      )  -> Hearth::Output[Types::ListCitiesOutput]
+
+    def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
+      (?Types::Struct____789BadNameInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
+      (
+        member___123abc: ::String,
+        ?member: {
+          member___123foo: untyped
+        }
+      )  -> Hearth::Output[Types::Struct____789BadNameOutput]
+
   end
 end

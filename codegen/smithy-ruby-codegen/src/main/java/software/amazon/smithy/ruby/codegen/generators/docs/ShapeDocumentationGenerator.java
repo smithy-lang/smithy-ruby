@@ -265,7 +265,7 @@ public class ShapeDocumentationGenerator {
                     """;
 
             writer
-                    .writeYardParam("Hash", "params", paramsDocString)
+                    .writeYardParam("Hash | Types::" + inputShapeName, "params", paramsDocString)
                     .writeYardParam("Hash", "options", optionsDocString);
 
             Shape outputShape = model.expectShape(shape.getOutputShape());

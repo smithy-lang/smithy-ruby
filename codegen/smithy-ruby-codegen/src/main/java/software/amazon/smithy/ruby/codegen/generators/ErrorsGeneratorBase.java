@@ -209,7 +209,7 @@ public abstract class ErrorsGeneratorBase {
      * Render RBS signature for error code.
      */
     public void renderRbsErrorCode() {
-        rbsWriter.write("def self.error_code: (Hearth::HTTP::Response) -> String");
+        rbsWriter.write("def self.error_code: (Hearth::HTTP::Response) -> (::String | nil)");
     }
 
     private void renderServiceModelErrors(ShapeVisitor<Void> visitor) {

@@ -10,8 +10,8 @@ end
 class Logger
 end
 
-interface _Plugin
-  def call: (Hearth::Configuration) -> void
+interface _Plugin[T]
+  def call: (Hearth::Configuration[T]) -> void
 end
 
 interface _Interceptor
