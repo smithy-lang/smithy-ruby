@@ -57,6 +57,7 @@ public final class RequestCompressionMiddlewareFactory {
                 .defaultValue("10240")
                 .documentation(minCompressionDocumentation)
                 .documentationType("Integer")
+                .constraint(new TypeConstraint("Integer"))
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();
 

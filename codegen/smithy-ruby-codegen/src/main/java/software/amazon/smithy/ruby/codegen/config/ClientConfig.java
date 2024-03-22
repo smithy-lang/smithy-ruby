@@ -184,8 +184,7 @@ public class ClientConfig {
         }
 
         /**
-         * @param type an optional type to use in documentation (defaults to the type).
-         *             Useful for collection types such as Array[Callable]
+         * @param type an optional type to use in documentation. Useful for collection types such as Array[Callable]
          * @return this builder
          */
         public Builder documentationType(String type) {

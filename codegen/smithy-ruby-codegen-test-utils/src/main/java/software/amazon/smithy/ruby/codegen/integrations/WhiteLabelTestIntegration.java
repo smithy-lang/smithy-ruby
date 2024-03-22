@@ -27,6 +27,7 @@ import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -56,6 +57,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                         .documentation("A Test Config")
                         .documentationType("String")
                         .defaultValue("'default'")
+                        .constraint(new TypeConstraint("String"))
                         .build())
                 .step(MiddlewareStackStep.INITIALIZE)
                 .rubySource("middleware/test_middleware.rb")
@@ -115,6 +117,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                                 HttpBasicAuthTrait.ID))
                 .documentationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
+                .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .build();
 
         AuthScheme authScheme = AuthScheme.builder()
