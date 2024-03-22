@@ -66,6 +66,7 @@ public final class BuiltInBinding {
                                 .name("endpoint")
                                 .documentation("Endpoint of the service")
                                 .documentationType("String")
+                                .rbsType("String")
                                 .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
                                 .constraint(new TypeConstraint("String"))
                                 .build())

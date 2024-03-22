@@ -43,7 +43,7 @@ public class ClientConfig {
         this.name = builder.name;
         this.documentation = builder.documentation;
         this.documentationType = builder.documentationType;
-        this.rbsType = builder.rbsType != null ? builder.rbsType : builder.documentationType;
+        this.rbsType = builder.rbsType;
         if (builder.defaults != null) {
             this.defaults = builder.defaults;
         } else {
@@ -102,7 +102,7 @@ public class ClientConfig {
      * @return The Rbs type
      */
     public String getRbsType() {
-        return rbsType;
+        return rbsType != null ? rbsType : "untyped";
     }
 
     /**

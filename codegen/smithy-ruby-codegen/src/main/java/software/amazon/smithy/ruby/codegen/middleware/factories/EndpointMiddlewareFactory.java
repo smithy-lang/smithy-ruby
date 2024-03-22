@@ -39,6 +39,7 @@ public final class EndpointMiddlewareFactory {
                 .defaultValue("Endpoint::Provider.new")
                 .documentation(endpointProviderDocumentation)
                 .documentationType("#resolve(params)")
+                .rbsType("Hearth::_EndpointResolver[Endpoints::Params]")
                 .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();
 

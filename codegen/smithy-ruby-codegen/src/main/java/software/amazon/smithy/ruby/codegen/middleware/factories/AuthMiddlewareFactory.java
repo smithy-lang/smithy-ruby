@@ -133,6 +133,7 @@ public final class AuthMiddlewareFactory {
                 .defaultValue("Auth::Resolver.new")
                 .documentation(authResolverDocumentation)
                 .documentationType("#resolve(params)")
+                .rbsType("Hearth::_AuthResolver[Auth::Params]")
                 .documentationDefaultValue("Auth::Resolver.new")
                 .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();

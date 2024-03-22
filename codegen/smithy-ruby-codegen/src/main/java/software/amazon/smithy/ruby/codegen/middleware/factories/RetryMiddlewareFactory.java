@@ -46,6 +46,7 @@ public final class RetryMiddlewareFactory {
                 .name("retry_strategy")
                 .defaultValue("Hearth::Retry::Standard.new")
                 .documentation(retryStrategyDocumentation)
+                .rbsType("Hearth::_RetryStrategy")
                 .documentationType(retryStrategyTypes)
                 .documentationDefaultValue("Hearth::Retry::Standard.new")
                 .constraint(

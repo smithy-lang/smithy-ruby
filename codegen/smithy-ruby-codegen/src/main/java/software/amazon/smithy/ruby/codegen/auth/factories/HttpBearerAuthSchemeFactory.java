@@ -43,8 +43,9 @@ public final class HttpBearerAuthSchemeFactory {
                                 identityType,
                                 HttpBearerAuthTrait.ID))
                 .documentationType(Hearth.IDENTITY_RESOLVER.toString())
-                .defaultDynamicValue(defaultConfigValue)
+                .rbsType(Hearth.IDENTITY_RESOLVER.toString())
                 .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
+                .defaultDynamicValue(defaultConfigValue)
                 .build();
 
         return AuthScheme.builder()

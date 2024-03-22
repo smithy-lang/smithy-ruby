@@ -1,16 +1,16 @@
 module RailsJson
   class Config < ::Struct[untyped]
     include Hearth::Configuration
-    attr_accessor auth_resolver (): #resolve(params)
+    attr_accessor auth_resolver (): Hearth::_AuthResolver[Auth::Params]
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
     attr_accessor endpoint (): String
-    attr_accessor endpoint_provider (): #resolve(params)
+    attr_accessor endpoint_provider (): Hearth::_EndpointResolver[Endpoints::Params]
     attr_accessor http_client (): Hearth::HTTP::Client
     attr_accessor interceptors (): Hearth::InterceptorList
     attr_accessor logger (): Logger
     attr_accessor plugins (): Hearth::PluginList
-    attr_accessor retry_strategy (): #acquire_initial_retry_token(token_scope),#refresh_retry_token(retry_token, error_info),#record_success(retry_token)
+    attr_accessor retry_strategy (): Hearth::_RetryStrategy
     attr_accessor stub_responses (): bool
     attr_accessor validate_input (): bool
   end

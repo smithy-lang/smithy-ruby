@@ -204,6 +204,7 @@ public class MiddlewareBuilder {
                 .defaultValue("Logger.new(IO::NULL)")
                 .documentation("The Logger instance to use for logging.")
                 .documentationType("Logger")
+                .rbsType("Logger")
                 .documentationDefaultValue("Logger.new(IO::NULL)")
                 .constraint(new TypeConstraint("Logger"))
                 .build();
@@ -217,6 +218,7 @@ public class MiddlewareBuilder {
                 .defaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
                 .documentationType("Hearth::PluginList")
+                .rbsType("Hearth::PluginList")
                 .documentationDefaultValue("Hearth::PluginList.new")
                 .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
@@ -235,6 +237,7 @@ public class MiddlewareBuilder {
                 .defaultValue("Hearth::InterceptorList.new")
                 .documentation(interceptorDocumentation)
                 .documentationType("Hearth::InterceptorList")
+                .rbsType("Hearth::InterceptorList")
                 .documentationDefaultValue("Hearth::InterceptorList.new")
                 .constraint(new TypeConstraint("Hearth::InterceptorList"))
                 .build();

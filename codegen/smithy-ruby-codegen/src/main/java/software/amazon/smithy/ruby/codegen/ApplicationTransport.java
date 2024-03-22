@@ -96,6 +96,7 @@ public final class ApplicationTransport {
                 .name("http_client")
                 .documentation("The HTTP Client to use for request transport.")
                 .documentationType("Hearth::HTTP::Client")
+                .rbsType("Hearth::HTTP::Client")
                 .documentationDefaultValue("Hearth::HTTP::Client.new")
                 .defaultDynamicValue("Hearth::HTTP::Client.new(logger: cfg[:logger])")
                 .constraint(new TypeConstraint("Hearth::HTTP::Client"))
