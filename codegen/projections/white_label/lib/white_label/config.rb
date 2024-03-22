@@ -46,7 +46,7 @@ module WhiteLabel
   #     messages.
   #   @option args [Logger] :logger (Logger.new(IO::NULL))
   #     The Logger instance to use for logging.
-  #   @option args [Hearth::PluginList[Config]] :plugins (Hearth::PluginList.new)
+  #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
   #     A list of Plugins to apply to the client. Plugins are callables that
   #     take {Config} as an argument. Plugins may modify the provided config.
   #   @option args [Integer] :request_min_compression_size_bytes (10240)
@@ -98,7 +98,7 @@ module WhiteLabel
   # @!attribute logger
   #   @return [Logger]
   # @!attribute plugins
-  #   @return [Hearth::PluginList[Config]]
+  #   @return [Hearth::PluginList]
   # @!attribute request_min_compression_size_bytes
   #   @return [Integer]
   # @!attribute retry_strategy
@@ -151,7 +151,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(http_login_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_login_identity_resolver]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
-      Hearth::Validator.validate_types!(plugins, Hearth::PluginList[Config], context: 'config[:plugins]')
+      Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
       Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_range!(request_min_compression_size_bytes, min: 0, max: 10485760, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')

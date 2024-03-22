@@ -42,7 +42,7 @@ module HighScoreService
   #     messages.
   #   @option args [Logger] :logger (Logger.new(IO::NULL))
   #     The Logger instance to use for logging.
-  #   @option args [Hearth::PluginList[Config]] :plugins (Hearth::PluginList.new)
+  #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
   #     A list of Plugins to apply to the client. Plugins are callables that
   #     take {Config} as an argument. Plugins may modify the provided config.
   #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
@@ -83,7 +83,7 @@ module HighScoreService
   # @!attribute logger
   #   @return [Logger]
   # @!attribute plugins
-  #   @return [Hearth::PluginList[Config]]
+  #   @return [Hearth::PluginList]
   # @!attribute retry_strategy
   #   @return [Hearth::Retry::Strategy]
   # @!attribute stub_responses
@@ -123,7 +123,7 @@ module HighScoreService
       Hearth::Validator.validate_types!(http_login_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_login_identity_resolver]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
-      Hearth::Validator.validate_types!(plugins, Hearth::PluginList[Config], context: 'config[:plugins]')
+      Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
       Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
