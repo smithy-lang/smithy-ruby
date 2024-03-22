@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 
 /**
- * Range Constraint for config value.
+ * Responds To Method Constraint for config value.
  */
 public class RespondsToConstraint implements ConfigConstraint {
 
