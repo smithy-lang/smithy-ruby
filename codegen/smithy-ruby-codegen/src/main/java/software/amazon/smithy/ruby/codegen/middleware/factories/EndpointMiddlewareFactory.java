@@ -32,14 +32,14 @@ public final class EndpointMiddlewareFactory {
     public static Middleware build(GenerationContext context) {
         String endpointProviderDocumentation = """
                 The endpoint provider used to resolve endpoints. Any object that responds to
-                `#resolve_endpoint(parameters)`
+                `#resolve(parameters)`
                 """;
         ClientConfig endpointProviderConfig = ClientConfig.builder()
                 .name("endpoint_provider")
-                .type("#resolve_endpoint(params)")
+                .type("#resolve(params)")
                 .defaultValue("Endpoint::Provider.new")
                 .documentation(endpointProviderDocumentation)
-                .constraint(new RespondsToConstraint(List.of("resolve_endpoint")))
+                .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();
 
         return Middleware.builder()

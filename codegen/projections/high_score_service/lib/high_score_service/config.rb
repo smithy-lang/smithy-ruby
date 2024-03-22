@@ -21,9 +21,9 @@ module HighScoreService
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #   @option args [String] :endpoint
   #     Endpoint of the service
-  #   @option args [#resolve_endpoint(params)] :endpoint_provider (Endpoint::Provider.new)
+  #   @option args [#resolve(params)] :endpoint_provider (Endpoint::Provider.new)
   #     The endpoint provider used to resolve endpoints. Any object that responds to
-  #     `#resolve_endpoint(parameters)`
+  #     `#resolve(parameters)`
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
   #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
@@ -69,7 +69,7 @@ module HighScoreService
   # @!attribute endpoint
   #   @return [String]
   # @!attribute endpoint_provider
-  #   @return [#resolve_endpoint(params)]
+  #   @return [#resolve(params)]
   # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   # @!attribute http_bearer_identity_resolver
@@ -116,7 +116,7 @@ module HighScoreService
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
-      Hearth::Validator.validate_responds_to!(endpoint_provider, :resolve_endpoint, context: 'config[:endpoint_provider]')
+      Hearth::Validator.validate_responds_to!(endpoint_provider, :resolve, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
       Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')

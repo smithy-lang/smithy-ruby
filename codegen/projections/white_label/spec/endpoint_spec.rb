@@ -25,7 +25,7 @@ module WhiteLabel
 
         it 'produces the expected output from the EndpointProvider' do
           params = Params.new(endpoint: "https://custom-endpoint.com")
-          endpoint = subject.resolve_endpoint(params)
+          endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
           expect(endpoint.headers).to eq(expected[:headers])
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
@@ -64,7 +64,7 @@ module WhiteLabel
 
         it 'produces the expected output from the EndpointProvider' do
           params = Params.new(endpoint: "https://custom-endpoint.com", stage: "prod", dataplane: true)
-          endpoint = subject.resolve_endpoint(params)
+          endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
           expect(endpoint.headers).to eq(expected[:headers])
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
@@ -79,7 +79,7 @@ module WhiteLabel
         it 'produces the expected output from the EndpointProvider' do
           params = Params.new(endpoint: "https://custom-endpoint.com", resource_url: "https://resource")
           expect do
-            subject.resolve_endpoint(params)
+            subject.resolve(params)
           end.to raise_error(ArgumentError, expected[:error])
         end
       end
@@ -95,7 +95,7 @@ module WhiteLabel
 
         it 'produces the expected output from the EndpointProvider' do
           params = Params.new(stage: "beta")
-          endpoint = subject.resolve_endpoint(params)
+          endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
           expect(endpoint.headers).to eq(expected[:headers])
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
@@ -133,7 +133,7 @@ module WhiteLabel
 
         it 'produces the expected output from the EndpointProvider' do
           params = Params.new(resource_url: "https://resource.com/path")
-          endpoint = subject.resolve_endpoint(params)
+          endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
           expect(endpoint.headers).to eq(expected[:headers])
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
@@ -171,7 +171,7 @@ module WhiteLabel
 
         it 'produces the expected output from the EndpointProvider' do
           params = Params.new(dataplane: true)
-          endpoint = subject.resolve_endpoint(params)
+          endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
           expect(endpoint.headers).to eq(expected[:headers])
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
