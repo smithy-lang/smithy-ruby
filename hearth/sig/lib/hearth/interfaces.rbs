@@ -11,52 +11,52 @@ class Logger
 end
 
 module Hearth
-  interface _Plugin
-    def call: (Hearth::Configuration) -> void
+  interface _Plugin[T]
+    def call: (Configuration[T]) -> void
   end
 
   interface _Interceptor
-    def read_before_execution: (Hearth::InterceptorContext) -> void
+    def read_before_execution: (InterceptorContext) -> void
 
-    def modify_before_serialization: (Hearth::InterceptorContext) -> void
+    def modify_before_serialization: (InterceptorContext) -> void
 
-    def read_before_serialization: (Hearth::InterceptorContext) -> void
+    def read_before_serialization: (InterceptorContext) -> void
 
-    def read_after_serialization: (Hearth::InterceptorContext) -> void
+    def read_after_serialization: (InterceptorContext) -> void
 
-    def modify_before_retry_loop: (Hearth::InterceptorContext) -> void
+    def modify_before_retry_loop: (InterceptorContext) -> void
 
-    def read_before_attempt: (Hearth::InterceptorContext) -> void
+    def read_before_attempt: (InterceptorContext) -> void
 
-    def modify_before_signing: (Hearth::InterceptorContext) -> void
+    def modify_before_signing: (InterceptorContext) -> void
 
-    def read_before_signing: (Hearth::InterceptorContext) -> void
+    def read_before_signing: (InterceptorContext) -> void
 
-    def read_after_signing: (Hearth::InterceptorContext) -> void
+    def read_after_signing: (InterceptorContext) -> void
 
-    def modify_before_transmit: (Hearth::InterceptorContext) -> void
+    def modify_before_transmit: (InterceptorContext) -> void
 
-    def read_before_transmit: (Hearth::InterceptorContext) -> void
+    def read_before_transmit: (InterceptorContext) -> void
 
-    def read_after_transmit: (Hearth::InterceptorContext) -> void
+    def read_after_transmit: (InterceptorContext) -> void
 
-    def modify_before_deserialization: (Hearth::InterceptorContext) -> void
+    def modify_before_deserialization: (InterceptorContext) -> void
 
-    def read_before_deserialization: (Hearth::InterceptorContext) -> void
+    def read_before_deserialization: (InterceptorContext) -> void
 
-    def read_after_deserialization: (Hearth::InterceptorContext) -> void
+    def read_after_deserialization: (InterceptorContext) -> void
 
-    def modify_before_attempt_completion: (Hearth::InterceptorContext) -> void
+    def modify_before_attempt_completion: (InterceptorContext) -> void
 
-    def read_after_attempt: (Hearth::InterceptorContext) -> void
+    def read_after_attempt: (InterceptorContext) -> void
 
-    def modify_before_completion: (Hearth::InterceptorContext) -> void
+    def modify_before_completion: (InterceptorContext) -> void
 
-    def read_after_execution: (Hearth::InterceptorContext) -> void
+    def read_after_execution: (InterceptorContext) -> void
   end
 
   interface _ErrorInspector
-    def initialize: (Hearth::ApiError, Hearth::Response) -> void
+    def initialize: (ApiError, Response) -> void
 
     def retryable?: () -> bool
 
@@ -68,7 +68,7 @@ module Hearth
   interface _RetryStrategy
     def acquire_initial_retry_token: (?String? _token_scope) -> Retry::Token
 
-    def refresh_retry_token: (Retry::Token _retry_token, _ErrorInspector _error_info) -> (nil | Retry::Token)
+    def refresh_retry_token: (Retry::Token _retry_token, _ErrorInspector _error_info) -> Retry::Token?
 
     def record_success: (Retry::Token _retry_token) -> Retry::Token
   end

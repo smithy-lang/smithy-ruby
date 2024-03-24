@@ -6,7 +6,7 @@ module Hearth
 
     alias << add
 
-    def apply: (Hearth::Configuration[T]) -> void
+    def apply: (Configuration[T]) -> void
 
     def dup: () -> PluginList[T]
 
