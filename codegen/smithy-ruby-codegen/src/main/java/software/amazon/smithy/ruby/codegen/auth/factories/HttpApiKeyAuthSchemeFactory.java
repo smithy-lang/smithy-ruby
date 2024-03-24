@@ -21,6 +21,7 @@ import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 
 public final class HttpApiKeyAuthSchemeFactory {
     private HttpApiKeyAuthSchemeFactory() {
@@ -38,12 +39,14 @@ public final class HttpApiKeyAuthSchemeFactory {
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_api_key_identity_resolver")
-                .type(Hearth.IDENTITY_RESOLVER.toString())
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpApiKeyAuthTrait.ID))
+                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
+                .rbsType(Hearth.IDENTITY_RESOLVER.toString())
+                .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
 

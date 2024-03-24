@@ -9,7 +9,7 @@
 
 module WhiteLabel
   # @!method initialize(*options)
-  #   @option args [Auth::Resolver] :auth_resolver (Auth::Resolver.new)
+  #   @option args [#resolve(params)] :auth_resolver (Auth::Resolver.new)
   #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
   #     the {Auth::Params} struct. For a given operation_name, the method must return an
   #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
@@ -23,9 +23,9 @@ module WhiteLabel
   #     When set to 'true' the request body will not be compressed for supported operations.
   #   @option args [String] :endpoint
   #     Endpoint of the service
-  #   @option args [Endpoint::Provider] :endpoint_provider (Endpoint::Provider.new)
+  #   @option args [#resolve(params)] :endpoint_provider (Endpoint::Provider.new)
   #     The endpoint provider used to resolve endpoints. Any object that responds to
-  #     `#resolve_endpoint(parameters)`
+  #     `#resolve(parameters)`
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
   #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
@@ -52,7 +52,7 @@ module WhiteLabel
   #   @option args [Integer] :request_min_compression_size_bytes (10240)
   #     The minimum size bytes that triggers compression for request bodies.
   #     The value must be non-negative integer value between 0 and 10485780 bytes inclusive.
-  #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
+  #   @option args [#acquire_initial_retry_token(token_scope),#refresh_retry_token(retry_token, error_info),#record_success(retry_token)] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes may have additional
   #     options, such as `max_retries` and backoff strategies.
   #
@@ -72,7 +72,7 @@ module WhiteLabel
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   # @!attribute auth_resolver
-  #   @return [Auth::Resolver]
+  #   @return [#resolve(params)]
   # @!attribute auth_schemes
   #   @return [Array<Hearth::AuthSchemes::Base>]
   # @!attribute disable_host_prefix
@@ -82,7 +82,7 @@ module WhiteLabel
   # @!attribute endpoint
   #   @return [String]
   # @!attribute endpoint_provider
-  #   @return [Endpoint::Provider]
+  #   @return [#resolve(params)]
   # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   # @!attribute http_bearer_identity_resolver
@@ -102,7 +102,7 @@ module WhiteLabel
   # @!attribute request_min_compression_size_bytes
   #   @return [Integer]
   # @!attribute retry_strategy
-  #   @return [Hearth::Retry::Strategy]
+  #   @return [#acquire_initial_retry_token(token_scope),#refresh_retry_token(retry_token, error_info),#record_success(retry_token)]
   # @!attribute stage
   #   @return [String]
   # @!attribute stub_responses
@@ -138,12 +138,12 @@ module WhiteLabel
 
     # Validates the configuration.
     def validate!
-      Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
+      Hearth::Validator.validate_responds_to!(auth_resolver, :resolve, context: 'config[:auth_resolver]')
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
-      Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Provider, context: 'config[:endpoint_provider]')
+      Hearth::Validator.validate_responds_to!(endpoint_provider, :resolve, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
       Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -154,7 +154,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
       Hearth::Validator.validate_types!(request_min_compression_size_bytes, Integer, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_range!(request_min_compression_size_bytes, min: 0, max: 10485760, context: 'config[:request_min_compression_size_bytes]')
-      Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
+      Hearth::Validator.validate_responds_to!(retry_strategy, :acquire_initial_retry_token, :refresh_retry_token, :record_success, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stage, String, context: 'config[:stage]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(test_config, String, context: 'config[:test_config]')

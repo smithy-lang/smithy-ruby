@@ -8,6 +8,100 @@ module Hearth
 
     subject { Validator }
 
+    describe '.validate_range!' do
+      context 'value is the within the expected range' do
+        let(:params) { { foo: 10 } }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_range!(
+              input[:foo],
+              min: 0,
+              max: 10,
+              context: context
+            )
+          end.to_not raise_error
+        end
+      end
+
+      context 'value is outside of the expected range' do
+        let(:params) { { foo: -1 } }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_range!(
+              input[:foo],
+              min: 0,
+              max: 10,
+              context: context
+            )
+          end.to raise_error(
+            ArgumentError,
+            "Expected #{context} to be between 0 to 10, got -1."
+          )
+        end
+      end
+    end
+
+    describe '.validate_required!' do
+      context 'value exists' do
+        let(:params) { { foo: '' } }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_required!(input[:foo], context: context)
+          end.to_not raise_error
+        end
+      end
+
+      context 'value does not exist' do
+        let(:params) { {} }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_required!(input[:foo], context: context)
+          end.to raise_error(
+            ArgumentError,
+            "Expected #{context} to be set."
+          )
+        end
+      end
+    end
+
+    describe '.validate_responds_to!' do
+      context 'value responds to the method' do
+        let(:params) { { foo: '' } }
+
+        it 'does not raise an error' do
+          expect do
+            subject.validate_responds_to!(
+              input[:foo],
+              :empty?,
+              context: context
+            )
+          end.to_not raise_error
+        end
+      end
+
+      context 'value does not respond to the method' do
+        let(:params) { { foo: '' } }
+
+        it 'raises an ArgumentError' do
+          expect do
+            subject.validate_responds_to!(
+              input[:foo],
+              :non_existent_method,
+              context: context
+            )
+          end.to raise_error(
+            ArgumentError,
+            "Expected #{context} to respond to " \
+            '[non_existent_method], got String.'
+          )
+        end
+      end
+    end
+
     describe '.validate_types!' do
       context 'value is the type' do
         let(:params) { { foo: 'bar' } }
@@ -80,31 +174,6 @@ module Hearth
       end
     end
 
-    describe '.validate_required!' do
-      context 'value exists' do
-        let(:params) { { foo: '' } }
-
-        it 'does not raise an error' do
-          expect do
-            subject.validate_required!(input[:foo], context: context)
-          end.to_not raise_error
-        end
-      end
-
-      context 'value does not exist' do
-        let(:params) { {} }
-
-        it 'raises an ArgumentError' do
-          expect do
-            subject.validate_required!(input[:foo], context: context)
-          end.to raise_error(
-            ArgumentError,
-            "Expected #{context} to be set."
-          )
-        end
-      end
-    end
-
     describe '.validate_unknown!' do
       let(:struct_class) { Struct.new(:foo, :bar, keyword_init: true) }
       let(:struct) { struct_class.new }
@@ -141,41 +210,6 @@ module Hearth
           end.to raise_error(
             ArgumentError,
             'Unexpected members: [input[:baz], input[:qux]]'
-          )
-        end
-      end
-    end
-
-    describe '.validate_range!' do
-      context 'value is the within the expected range' do
-        let(:params) { { foo: 10 } }
-
-        it 'does not raise an error' do
-          expect do
-            subject.validate_range!(
-              input[:foo],
-              min: 0,
-              max: 10,
-              context: context
-            )
-          end.to_not raise_error
-        end
-      end
-
-      context 'value is outside of the expected range' do
-        let(:params) { { foo: -1 } }
-
-        it 'raises an ArgumentError' do
-          expect do
-            subject.validate_range!(
-              input[:foo],
-              min: 0,
-              max: 10,
-              context: context
-            )
-          end.to raise_error(
-            ArgumentError,
-            "Expected #{context} to be between 0 to 10, got -1."
           )
         end
       end

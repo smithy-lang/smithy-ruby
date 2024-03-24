@@ -172,11 +172,11 @@ public class AuthGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("class Resolver")
                 .write("")
-                .openBlock("def resolve(auth_params)")
+                .openBlock("def resolve(params)")
                 .write("options = []")
                 .call(() -> {
                     if (!operations.isEmpty()) {
-                        writer.write("case auth_params.operation_name");
+                        writer.write("case params.operation_name");
                         for (OperationShape operation : operations) {
                             renderOperationAuthOptionsCase(writer, operation);
                         }
@@ -194,7 +194,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     private void renderRbsAuthResolver(RubyCodeWriter writer) {
         writer
                 .openBlock("class Resolver")
-                .write("def resolve: (Params auth_params) -> ::Array[Hearth::AuthOption]")
+                .write("def resolve: (params: Params) -> ::Array[Hearth::AuthOption]")
                 .closeBlock("end");
     }
 

@@ -20,7 +20,7 @@ module WhiteLabel
     end
 
     class Provider
-      def resolve_endpoint(params)
+      def resolve(params)
         stage = params.stage
         dataplane = params.dataplane
         resource_url = params.resource_url

@@ -16,10 +16,12 @@
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.RespondsToConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -30,13 +32,15 @@ public final class EndpointMiddlewareFactory {
     public static Middleware build(GenerationContext context) {
         String endpointProviderDocumentation = """
                 The endpoint provider used to resolve endpoints. Any object that responds to
-                `#resolve_endpoint(parameters)`
+                `#resolve(parameters)`
                 """;
         ClientConfig endpointProviderConfig = ClientConfig.builder()
                 .name("endpoint_provider")
-                .type("Endpoint::Provider")
                 .defaultValue("Endpoint::Provider.new")
                 .documentation(endpointProviderDocumentation)
+                .documentationType("#resolve(params)")
+                .rbsType("Hearth::_EndpointResolver[Endpoint::Params]")
+                .constraint(new RespondsToConstraint(List.of("resolve")))
                 .build();
 
         return Middleware.builder()
