@@ -17,7 +17,7 @@ module Weather
     end
 
     class Provider
-      def resolve_endpoint(params)
+      def resolve(params)
         endpoint = params.endpoint
 
         if endpoint != nil

@@ -9,7 +9,7 @@
 
 module HighScoreService
   # @!method initialize(*options)
-  #   @option args [Auth::Resolver] :auth_resolver (Auth::Resolver.new)
+  #   @option args [#resolve(params)] :auth_resolver (Auth::Resolver.new)
   #     A class that responds to a `resolve(auth_params)` method where `auth_params` is
   #     the {Auth::Params} struct. For a given operation_name, the method must return an
   #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
@@ -21,9 +21,9 @@ module HighScoreService
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #   @option args [String] :endpoint
   #     Endpoint of the service
-  #   @option args [Endpoint::Provider] :endpoint_provider (Endpoint::Provider.new)
+  #   @option args [#resolve(params)] :endpoint_provider (Endpoint::Provider.new)
   #     The endpoint provider used to resolve endpoints. Any object that responds to
-  #     `#resolve_endpoint(parameters)`
+  #     `#resolve(parameters)`
   #   @option args [Hearth::IdentityResolver] :http_api_key_identity_resolver
   #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_bearer_identity_resolver
@@ -45,7 +45,7 @@ module HighScoreService
   #   @option args [Hearth::PluginList] :plugins (Hearth::PluginList.new)
   #     A list of Plugins to apply to the client. Plugins are callables that
   #     take {Config} as an argument. Plugins may modify the provided config.
-  #   @option args [Hearth::Retry::Strategy] :retry_strategy (Hearth::Retry::Standard.new)
+  #   @option args [#acquire_initial_retry_token(token_scope),#refresh_retry_token(retry_token, error_info),#record_success(retry_token)] :retry_strategy (Hearth::Retry::Standard.new)
   #     Specifies which retry strategy class to use. Strategy classes may have additional
   #     options, such as `max_retries` and backoff strategies.
   #
@@ -61,7 +61,7 @@ module HighScoreService
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   # @!attribute auth_resolver
-  #   @return [Auth::Resolver]
+  #   @return [#resolve(params)]
   # @!attribute auth_schemes
   #   @return [Array<Hearth::AuthSchemes::Base>]
   # @!attribute disable_host_prefix
@@ -69,7 +69,7 @@ module HighScoreService
   # @!attribute endpoint
   #   @return [String]
   # @!attribute endpoint_provider
-  #   @return [Endpoint::Provider]
+  #   @return [#resolve(params)]
   # @!attribute http_api_key_identity_resolver
   #   @return [Hearth::IdentityResolver]
   # @!attribute http_bearer_identity_resolver
@@ -85,7 +85,7 @@ module HighScoreService
   # @!attribute plugins
   #   @return [Hearth::PluginList]
   # @!attribute retry_strategy
-  #   @return [Hearth::Retry::Strategy]
+  #   @return [#acquire_initial_retry_token(token_scope),#refresh_retry_token(retry_token, error_info),#record_success(retry_token)]
   # @!attribute stub_responses
   #   @return [Boolean]
   # @!attribute validate_input
@@ -112,11 +112,11 @@ module HighScoreService
 
     # Validates the configuration.
     def validate!
-      Hearth::Validator.validate_types!(auth_resolver, Auth::Resolver, context: 'config[:auth_resolver]')
+      Hearth::Validator.validate_responds_to!(auth_resolver, :resolve, context: 'config[:auth_resolver]')
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
-      Hearth::Validator.validate_types!(endpoint_provider, Endpoint::Provider, context: 'config[:endpoint_provider]')
+      Hearth::Validator.validate_responds_to!(endpoint_provider, :resolve, context: 'config[:endpoint_provider]')
       Hearth::Validator.validate_types!(http_api_key_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_api_key_identity_resolver]')
       Hearth::Validator.validate_types!(http_bearer_identity_resolver, Hearth::IdentityResolver, context: 'config[:http_bearer_identity_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -124,7 +124,7 @@ module HighScoreService
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
       Hearth::Validator.validate_types!(plugins, Hearth::PluginList, context: 'config[:plugins]')
-      Hearth::Validator.validate_types!(retry_strategy, Hearth::Retry::Strategy, context: 'config[:retry_strategy]')
+      Hearth::Validator.validate_responds_to!(retry_strategy, :acquire_initial_retry_token, :refresh_retry_token, :record_success, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end

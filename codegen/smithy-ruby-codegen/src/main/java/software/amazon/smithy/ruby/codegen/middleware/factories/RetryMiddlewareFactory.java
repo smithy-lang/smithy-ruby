@@ -15,9 +15,11 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import java.util.List;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.RespondsToConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -38,13 +40,19 @@ public final class RetryMiddlewareFactory {
                   of `standard` mode along with automatic client side throttling. This is a provisional
                   mode that may change behavior in the future.
                 """;
-
+        String retryStrategyTypes = "#acquire_initial_retry_token(token_scope),"
+            + "#refresh_retry_token(retry_token, error_info),#record_success(retry_token)";
         ClientConfig retryStrategy = ClientConfig.builder()
                 .name("retry_strategy")
-                .type("Hearth::Retry::Strategy")
-                .documentationDefaultValue("Hearth::Retry::Standard.new")
                 .defaultValue("Hearth::Retry::Standard.new")
                 .documentation(retryStrategyDocumentation)
+                .rbsType("Hearth::_RetryStrategy")
+                .documentationType(retryStrategyTypes)
+                .documentationDefaultValue("Hearth::Retry::Standard.new")
+                .constraint(
+                        new RespondsToConstraint(
+                                List.of("acquire_initial_retry_token", "refresh_retry_token", "record_success"))
+                )
                 .build();
 
         return Middleware.builder()

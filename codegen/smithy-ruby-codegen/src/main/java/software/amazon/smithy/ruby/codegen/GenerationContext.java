@@ -35,6 +35,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
@@ -127,11 +128,14 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.modeledClientConfig = new ArrayList<>();
         service.getTrait(ClientContextParamsTrait.class).ifPresent((clientContext -> {
             clientContext.getParameters().forEach((name, param) -> {
-                ClientConfig.Builder builder = ClientConfig.builder()
-                        .name(RubyFormatter.toSnakeCase(name));
+                String paramType = getRubyTypeForParam(symbolProvider, param);
 
+                ClientConfig.Builder builder = ClientConfig.builder()
+                        .name(RubyFormatter.toSnakeCase(name))
+                        .documentationType(paramType)
+                        .rbsType(paramType)
+                        .constraint(new TypeConstraint(paramType));
                 param.getDocumentation().ifPresent((d) -> builder.documentation(d));
-                builder.type(getRubyTypeForParam(symbolProvider, param));
 
                 modeledClientConfig.add(builder.build());
             });

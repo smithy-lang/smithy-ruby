@@ -23,6 +23,9 @@ require_relative 'hearth/networking_error'
 require_relative 'hearth/request'
 require_relative 'hearth/response'
 
+# must be required before endpoint rules
+require_relative 'hearth/structure'
+
 require_relative 'hearth/endpoint_rules'
 require_relative 'hearth/http'
 require_relative 'hearth/identity_resolver'
@@ -40,7 +43,6 @@ require_relative 'hearth/query/param_list'
 require_relative 'hearth/refreshing_identity_resolver'
 require_relative 'hearth/retry'
 require_relative 'hearth/signers'
-require_relative 'hearth/structure'
 require_relative 'hearth/stubs'
 require_relative 'hearth/time_helper'
 require_relative 'hearth/union'

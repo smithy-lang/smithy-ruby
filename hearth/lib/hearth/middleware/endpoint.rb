@@ -8,8 +8,8 @@ module Hearth
     # @api private
     class Endpoint
       # @param [Class] app The next middleware in the stack.
-      # @param [#resolve_endpoint(endpoint_params)] endpoint_provider An object
-      #   that responds to a `resolve_endpoint(endpoint_params)` method
+      # @param [#resolve(endpoint_params)] endpoint_provider An object
+      #   that responds to a `resolve(endpoint_params)` method
       #   where `endpoint_params` is a service specific struct.
       #   The method must return an {Hearth::Endpoints::Endpoint} object.
       # @param [#build(config, input, context)] param_builder An object that
@@ -26,7 +26,7 @@ module Hearth
 
       def call(input, context)
         params = @param_builder.build(@config, input, context)
-        endpoint = @endpoint_provider.resolve_endpoint(params)
+        endpoint = @endpoint_provider.resolve(params)
         update_request(context, endpoint)
         update_auth_properties(context, endpoint.auth_schemes)
 

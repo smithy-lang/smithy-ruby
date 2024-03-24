@@ -27,6 +27,7 @@ import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
@@ -53,9 +54,10 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .klass("Middleware::TestMiddleware")
                 .addConfig(ClientConfig.builder()
                         .name("test_config")
-                        .type("String")
                         .documentation("A Test Config")
+                        .documentationType("String")
                         .defaultValue("'default'")
+                        .constraint(new TypeConstraint("String"))
                         .build())
                 .step(MiddlewareStackStep.INITIALIZE)
                 .rubySource("middleware/test_middleware.rb")
@@ -108,13 +110,14 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
 
         ClientConfig identityResolverConfig = ClientConfig.builder()
                 .name("http_custom_auth_identity_resolver")
-                .type(Hearth.IDENTITY_RESOLVER.toString())
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpBasicAuthTrait.ID))
+                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
+                .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
                 .build();
 
         AuthScheme authScheme = AuthScheme.builder()

@@ -3,7 +3,7 @@
 module Hearth
   module Retry
     # Adaptive retry strategy for retrying requests.
-    class Adaptive < Strategy
+    class Adaptive
       # @param [#call] backoff (ExponentialBackoff) A callable object that
       #   calculates a backoff delay for a retry attempt.
       # @param [Integer] max_attempts (3) The maximum number of attempts that

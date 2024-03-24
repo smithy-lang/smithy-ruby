@@ -26,6 +26,7 @@ import software.amazon.smithy.model.traits.RequestCompressionTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.RangeConstraint;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -38,25 +39,26 @@ public final class RequestCompressionMiddlewareFactory {
         String disableRequestCompressionDocumentation = """
                 When set to 'true' the request body will not be compressed for supported operations.
                 """;
-
         ClientConfig disableRequestCompression = ClientConfig.builder()
                 .name("disable_request_compression")
-                .type("Boolean")
-                .rbsType("bool")
                 .defaultValue("false")
                 .documentation(disableRequestCompressionDocumentation)
+                .documentationType("Boolean")
+                .rbsType("bool")
+                .constraint(new TypeConstraint("Boolean"))
                 .build();
 
         String minCompressionDocumentation = """
                 The minimum size bytes that triggers compression for request bodies.
                 The value must be non-negative integer value between 0 and 10485780 bytes inclusive.
                 """;
-
         ClientConfig requestMinCompressionSizeBytes = ClientConfig.builder()
                 .name("request_min_compression_size_bytes")
-                .type("Integer")
-                .documentation(minCompressionDocumentation)
                 .defaultValue("10240")
+                .documentation(minCompressionDocumentation)
+                .documentationType("Integer")
+                .rbsType("Integer")
+                .constraint(new TypeConstraint("Integer"))
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();
 
