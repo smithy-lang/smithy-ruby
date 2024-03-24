@@ -60,7 +60,6 @@ public class OperationKeywordArgRbsVisitor extends ShapeVisitor.Default<Void> {
         return null;
     }
 
-
     @Override
     public Void structureShape(StructureShape shape) {
         writer.write("{").indent();

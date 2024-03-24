@@ -11,8 +11,8 @@ class Logger
 end
 
 module Hearth
-  interface _Plugin[T]
-    def call: (Configuration[T]) -> void
+  interface _Plugin
+    def call: (Configuration) -> void
   end
 
   interface _Interceptor

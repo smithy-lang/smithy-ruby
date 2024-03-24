@@ -133,7 +133,7 @@ module WhiteLabel
         ?list_of_structs: ::Array[Struct],
         ?map_of_strings: ::Hash[::String, ::String],
         ?map_of_structs: ::Hash[::String, Struct],
-        ?union: Union
+        ?union: Hearth::Union
       )  -> Hearth::Output[Types::KitchenSinkOutput]
 
     def mixin_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::MixinTestOutput] |

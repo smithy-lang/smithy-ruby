@@ -215,12 +215,11 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig plugins = ClientConfig.builder()
                 .name("plugins")
-                .rbsType("Hearth::PluginList[Config]")
                 .defaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
                 .documentationType("Hearth::PluginList")
-                .rbsType("Hearth::PluginList")
                 .documentationDefaultValue("Hearth::PluginList.new")
+                .rbsType("Hearth::PluginList")
                 .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
 

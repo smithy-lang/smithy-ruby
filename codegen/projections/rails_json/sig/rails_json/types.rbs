@@ -378,12 +378,12 @@ module RailsJson
 
     class JsonUnionsInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor contents (): MyUnion
+      attr_accessor contents (): Hearth::Union
     end
 
     class JsonUnionsOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor contents (): MyUnion
+      attr_accessor contents (): Hearth::Union
     end
 
     class KitchenSink < ::Struct[untyped]

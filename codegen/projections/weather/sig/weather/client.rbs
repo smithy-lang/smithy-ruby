@@ -46,7 +46,7 @@ module Weather
       (?Types::GetCityImageInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
       (
         city_id: ::String,
-        image_type: ImageType,
+        image_type: Hearth::Union,
         resolution: ::Integer
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput]
 

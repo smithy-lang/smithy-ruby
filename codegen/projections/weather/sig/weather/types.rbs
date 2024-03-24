@@ -66,13 +66,13 @@ module Weather
     class GetCityAnnouncementsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor last_updated (): ::Time
-      attr_accessor announcements (): Announcements
+      attr_accessor announcements (): Hearth::Union
     end
 
     class GetCityImageInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor city_id (): ::String
-      attr_accessor image_type (): ImageType
+      attr_accessor image_type (): Hearth::Union
       attr_accessor resolution (): ::Integer
     end
 
@@ -110,7 +110,7 @@ module Weather
     class GetForecastOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor chance_of_rain (): ::Float
-      attr_accessor precipitation (): Precipitation
+      attr_accessor precipitation (): Hearth::Union
     end
 
     class ImageType < Hearth::Union

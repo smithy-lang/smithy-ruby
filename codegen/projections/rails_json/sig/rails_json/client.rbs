@@ -241,7 +241,7 @@ module RailsJson
     def json_unions: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonUnionsOutput] |
       (?Types::JsonUnionsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonUnionsOutput] |
       (
-        ?contents: MyUnion
+        ?contents: Hearth::Union
       )  -> Hearth::Output[Types::JsonUnionsOutput]
 
     def kitchen_sink_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::KitchenSinkOperationOutput] |

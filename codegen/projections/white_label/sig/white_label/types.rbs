@@ -148,7 +148,7 @@ module WhiteLabel
       attr_accessor list_of_structs (): ::Array[Struct]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
       attr_accessor map_of_structs (): ::Hash[::String, Struct]
-      attr_accessor union (): Union
+      attr_accessor union (): Hearth::Union
     end
 
     class KitchenSinkOutput < ::Struct[untyped]
@@ -162,7 +162,7 @@ module WhiteLabel
       attr_accessor list_of_structs (): ::Array[Struct]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
       attr_accessor map_of_structs (): ::Hash[::String, Struct]
-      attr_accessor union (): Union
+      attr_accessor union (): Hearth::Union
     end
 
     class MixinTestInput < ::Struct[untyped]

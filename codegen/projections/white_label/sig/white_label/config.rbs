@@ -1,6 +1,7 @@
 module WhiteLabel
   class Config < ::Struct[untyped]
-    include Hearth::Configuration[instance]
+    include Hearth::Configuration
+
     attr_accessor auth_resolver (): Hearth::_AuthResolver[Auth::Params]
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
