@@ -213,6 +213,9 @@ subprojects {
 
         tasks["checkstyleTest"].enabled = false
 
+        checkstyle {
+            toolVersion = "10.3.4"
+        }
         tasks.withType<Checkstyle>() {
             ignoreFailures = false
         }
